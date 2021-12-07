@@ -1,0 +1,210 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__xyl__srv__handlers" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_xyl_srv_handlers</compoundname>
+    <includes refid="light__xyl__srv_8h" local="no">light_xyl_srv.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__srv__handlers_a80f48ab5648dec6fbe5490cf0f030179_1a80f48ab5648dec6fbe5490cf0f030179" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_light_xyl_srv_handlers::xy_set) (struct bt_mesh_light_xyl_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_xy_set *set, struct bt_mesh_light_xy_status *rsp)</definition>
+        <argsstring>)(struct bt_mesh_light_xyl_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_xy_set *set, struct bt_mesh_light_xy_status *rsp)</argsstring>
+        <name>xy_set</name>
+        <briefdescription>
+<para>Set the xy state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When a set message is received, the model publishes a status message, with the response set to <computeroutput>rsp</computeroutput>. When an acknowledged set message is received, the model also sends a response back to a client. If a state change is non-instantaneous, for example when <ref refid="group__bt__mesh__model__types_gaa845685eb265d1294b17bb80fbde4996_1gaa845685eb265d1294b17bb80fbde4996" kindref="member">bt_mesh_model_transition_time</ref> returns a nonzero value, the application is responsible for publishing a value of the xy state at the end of the transition.</para>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server to set the xy state of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters of the state change. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response structure to be filled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_srv.h" line="103" column="1" bodyfile="include/bluetooth/mesh/light_xyl_srv.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__srv__handlers_a453a09eff68e9ad3fec0da6e07a4948c_1a453a09eff68e9ad3fec0da6e07a4948c" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_light_xyl_srv_handlers::xy_get) (struct bt_mesh_light_xyl_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_light_xy_status *rsp)</definition>
+        <argsstring>)(struct bt_mesh_light_xyl_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_light_xy_status *rsp)</argsstring>
+        <name>xy_get</name>
+        <briefdescription>
+<para>Get the xy state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server to get the xy state of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response structure to be filled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_srv.h" line="116" column="1" bodyfile="include/bluetooth/mesh/light_xyl_srv.h" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__srv__handlers_a5f39a624f2b13b3bf578562956a96df5_1a5f39a624f2b13b3bf578562956a96df5" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_light_xyl_srv_handlers::range_update) (struct bt_mesh_light_xyl_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_xy_range *old_range, const struct bt_mesh_light_xy_range *new_range)</definition>
+        <argsstring>)(struct bt_mesh_light_xyl_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_xy_range *old_range, const struct bt_mesh_light_xy_range *new_range)</argsstring>
+        <name>range_update</name>
+        <briefdescription>
+<para>The Range state has changed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server the Range state was changed on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the set message that triggered the update. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">old_range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The old Range. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">new_range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The new Range. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_srv.h" line="127" column="1" bodyfile="include/bluetooth/mesh/light_xyl_srv.h" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__srv__handlers_ab8b78e35f10d5973bf0b3dcd3bfaca78_1ab8b78e35f10d5973bf0b3dcd3bfaca78" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_light_xyl_srv_handlers::default_update) (struct bt_mesh_light_xyl_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_xy *old_default, const struct bt_mesh_light_xy *new_default)</definition>
+        <argsstring>)(struct bt_mesh_light_xyl_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_xy *old_default, const struct bt_mesh_light_xy *new_default)</argsstring>
+        <name>default_update</name>
+        <briefdescription>
+<para>The Default Parameter state has changed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server the Default Parameter state was changed on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the set message that triggered the update. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">old_default</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The old Default Parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">new_default</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The new Default Parameters. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_srv.h" line="139" column="1" bodyfile="include/bluetooth/mesh/light_xyl_srv.h" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Light xyL Server state access handlers. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/light_xyl_srv.h" line="87" column="1" bodyfile="include/bluetooth/mesh/light_xyl_srv.h" bodystart="87" bodyend="143"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__xyl__srv__handlers_ab8b78e35f10d5973bf0b3dcd3bfaca78_1ab8b78e35f10d5973bf0b3dcd3bfaca78" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_srv_handlers</scope><name>default_update</name></member>
+      <member refid="structbt__mesh__light__xyl__srv__handlers_a5f39a624f2b13b3bf578562956a96df5_1a5f39a624f2b13b3bf578562956a96df5" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_srv_handlers</scope><name>range_update</name></member>
+      <member refid="structbt__mesh__light__xyl__srv__handlers_a453a09eff68e9ad3fec0da6e07a4948c_1a453a09eff68e9ad3fec0da6e07a4948c" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_srv_handlers</scope><name>xy_get</name></member>
+      <member refid="structbt__mesh__light__xyl__srv__handlers_a80f48ab5648dec6fbe5490cf0f030179_1a80f48ab5648dec6fbe5490cf0f030179" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_srv_handlers</scope><name>xy_set</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

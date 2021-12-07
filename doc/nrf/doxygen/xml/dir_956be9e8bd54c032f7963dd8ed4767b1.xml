@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_956be9e8bd54c032f7963dd8ed4767b1" kind="dir">
+    <compoundname>lib/lte_link_control</compoundname>
+    <innerfile refid="lte__lc__helpers_8h">lte_lc_helpers.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/lte_link_control/"/>
+  </compounddef>
+</doxygen>

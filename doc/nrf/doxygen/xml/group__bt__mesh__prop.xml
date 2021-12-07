@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__prop" kind="group">
+    <compoundname>bt_mesh_prop</compoundname>
+    <title>Generic Property models</title>
+    <innerclass refid="structbt__mesh__prop" prot="public">bt_mesh_prop</innerclass>
+    <innerclass refid="structbt__mesh__prop__val" prot="public">bt_mesh_prop_val</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__mesh__prop_1ga79ad26ae27108b0b537be96f2349bf3b" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_prop_access</name>
+        <enumvalue id="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1gga79ad26ae27108b0b537be96f2349bf3ba06ee096b5eed4e97ece966cf8153e8df" prot="public">
+          <name>BT_MESH_PROP_ACCESS_PROHIBITED</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Access to the property is prohibited. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1gga79ad26ae27108b0b537be96f2349bf3ba0a7216d4c01c0560f0b17dfd1cb2d9f5" prot="public">
+          <name>BT_MESH_PROP_ACCESS_READ</name>
+          <initializer>= BIT(0)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Property may be read. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1gga79ad26ae27108b0b537be96f2349bf3ba061f36866bf2708e058afcbd71aa8f83" prot="public">
+          <name>BT_MESH_PROP_ACCESS_WRITE</name>
+          <initializer>= BIT(1)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Property may be written. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1gga79ad26ae27108b0b537be96f2349bf3baf6c82b60777445ad5cbd1171399e5ea9" prot="public">
+          <name>BT_MESH_PROP_ACCESS_READ_WRITE</name>
+          <initializer>=
+		(BT_MESH_PROP_ACCESS_READ | BT_MESH_PROP_ACCESS_WRITE)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Property may be read or written. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Access flags for properties </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop.h" line="25" column="1" bodyfile="include/bluetooth/mesh/gen_prop.h" bodystart="25" bodyend="35"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__mesh__prop_1gac34d580cb712d2f85859e2108f1ccbbc" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_prop_srv_kind</name>
+        <enumvalue id="group__bt__mesh__prop_gac34d580cb712d2f85859e2108f1ccbbc_1ggac34d580cb712d2f85859e2108f1ccbbcab727ea0eebc2ce1d9bea7be92647c7f5" prot="public">
+          <name>BT_MESH_PROP_SRV_KIND_MFR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Manufacturer property server. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__prop_gac34d580cb712d2f85859e2108f1ccbbc_1ggac34d580cb712d2f85859e2108f1ccbbca9b439eb94191f4ef50a124c7adcf3d70" prot="public">
+          <name>BT_MESH_PROP_SRV_KIND_ADMIN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Admin property server. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__prop_gac34d580cb712d2f85859e2108f1ccbbc_1ggac34d580cb712d2f85859e2108f1ccbbca95919081f188837278e3edcc6b03d556" prot="public">
+          <name>BT_MESH_PROP_SRV_KIND_USER</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>User property server. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__prop_gac34d580cb712d2f85859e2108f1ccbbc_1ggac34d580cb712d2f85859e2108f1ccbbca7ef76e26a89e28527ea93f9373f488c6" prot="public">
+          <name>BT_MESH_PROP_SRV_KIND_CLIENT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Client property server. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Property Server kinds. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop.h" line="38" column="1" bodyfile="include/bluetooth/mesh/gen_prop.h" bodystart="38" bodyend="47"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Generic Property models. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

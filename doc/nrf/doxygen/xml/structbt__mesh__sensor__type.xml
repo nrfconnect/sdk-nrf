@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__sensor__type" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_sensor_type</compoundname>
+    <includes refid="sensor_8h" local="no">sensor.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__sensor__type_aed31940845cebac81fb571e25c2c6fbe_1aed31940845cebac81fb571e25c2c6fbe" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_sensor_type::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device Property ID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="209" column="10" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="209" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__type_ae38ae586fbdc542a1994ef2bc9520fee_1ae38ae586fbdc542a1994ef2bc9520fee" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_sensor_type::flags</definition>
+        <argsstring></argsstring>
+        <name>flags</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Flags, <simplesect kind="see"><para><ref refid="group__bt__mesh__sensor_ga85cd4621595890b015912b46bceceef7_1ga85cd4621595890b015912b46bceceef7" kindref="member">BT_MESH_SENSOR_TYPE_FLAG_SERIES</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="211" column="9" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="211" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__type_a6b3f8f18c8ed98e9a08c589b1a2dcf3b_1a6b3f8f18c8ed98e9a08c589b1a2dcf3b" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_sensor_type::channel_count</definition>
+        <argsstring></argsstring>
+        <name>channel_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The number of channels supported by this type. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="213" column="9" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="213" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__type_a84d93aa99ed1eb1d0c1d868c5b37803c_1a84d93aa99ed1eb1d0c1d868c5b37803c" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__channel" kindref="compound">bt_mesh_sensor_channel</ref> *</type>
+        <definition>const struct bt_mesh_sensor_channel* bt_mesh_sensor_type::channels</definition>
+        <argsstring></argsstring>
+        <name>channels</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Array of channel descriptors.</para>
+<para>All channels are mandatory and immutable. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="218" column="35" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="218" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Sensor type. Should only be instantiated in sensor_types.c. See <ref refid="sensor__types_8h" kindref="compound">sensor_types.h</ref> for a list of all defined sensor types. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_mesh_sensor_channel</label>
+        <link refid="structbt__mesh__sensor__channel"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>format</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bt_mesh_sensor_format</label>
+        <link refid="structbt__mesh__sensor__format"/>
+      </node>
+      <node id="1">
+        <label>bt_mesh_sensor_type</label>
+        <link refid="structbt__mesh__sensor__type"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>channels</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/sensor.h" line="207" column="1" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="207" bodyend="219"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__sensor__type_a6b3f8f18c8ed98e9a08c589b1a2dcf3b_1a6b3f8f18c8ed98e9a08c589b1a2dcf3b" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_type</scope><name>channel_count</name></member>
+      <member refid="structbt__mesh__sensor__type_a84d93aa99ed1eb1d0c1d868c5b37803c_1a84d93aa99ed1eb1d0c1d868c5b37803c" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_type</scope><name>channels</name></member>
+      <member refid="structbt__mesh__sensor__type_ae38ae586fbdc542a1994ef2bc9520fee_1ae38ae586fbdc542a1994ef2bc9520fee" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_type</scope><name>flags</name></member>
+      <member refid="structbt__mesh__sensor__type_aed31940845cebac81fb571e25c2c6fbe_1aed31940845cebac81fb571e25c2c6fbe" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_type</scope><name>id</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

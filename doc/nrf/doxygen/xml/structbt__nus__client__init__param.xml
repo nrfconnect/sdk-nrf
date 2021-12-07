@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__nus__client__init__param" kind="struct" language="C++" prot="public">
+    <compoundname>bt_nus_client_init_param</compoundname>
+    <includes refid="nus__client_8h" local="no">nus_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__nus__client__init__param_a6936dc4ffd714b4221244dea3575fa2d_1a6936dc4ffd714b4221244dea3575fa2d" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__nus__client__cb" kindref="compound">bt_nus_client_cb</ref></type>
+        <definition>struct bt_nus_client_cb bt_nus_client_init_param::cb</definition>
+        <argsstring></argsstring>
+        <name>cb</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Callbacks provided by the user. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus_client.h" line="106" column="23" bodyfile="include/bluetooth/services/nus_client.h" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>NUS Client initialization structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_nus_client_cb</label>
+        <link refid="structbt__nus__client__cb"/>
+      </node>
+      <node id="1">
+        <label>bt_nus_client_init_param</label>
+        <link refid="structbt__nus__client__init__param"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>cb</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/nus_client.h" line="103" column="1" bodyfile="include/bluetooth/services/nus_client.h" bodystart="103" bodyend="107"/>
+    <listofallmembers>
+      <member refid="structbt__nus__client__init__param_a6936dc4ffd714b4221244dea3575fa2d_1a6936dc4ffd714b4221244dea3575fa2d" prot="public" virt="non-virtual"><scope>bt_nus_client_init_param</scope><name>cb</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

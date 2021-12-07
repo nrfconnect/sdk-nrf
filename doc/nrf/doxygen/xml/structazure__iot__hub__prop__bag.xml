@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structazure__iot__hub__prop__bag" kind="struct" language="C++" prot="public">
+    <compoundname>azure_iot_hub_prop_bag</compoundname>
+    <includes refid="azure__iot__hub_8h" local="no">azure_iot_hub.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structazure__iot__hub__prop__bag_a4e7d762406177e7a7f630ec3f2c93467_1a4e7d762406177e7a7f630ec3f2c93467" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* azure_iot_hub_prop_bag::key</definition>
+        <argsstring></argsstring>
+        <name>key</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Null-terminated key string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="120" column="6" bodyfile="include/net/azure_iot_hub.h" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structazure__iot__hub__prop__bag_a19b7ba5bdad0264e01ef5298688aba84_1a19b7ba5bdad0264e01ef5298688aba84" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* azure_iot_hub_prop_bag::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Null-terminated value string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="122" column="6" bodyfile="include/net/azure_iot_hub.h" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Property bag structure for key/value string pairs. Per Azure IoT Hub documentation, the key must be defined, while the value can be a string, an empty string or NULL. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="note"><para>If value is provided as a string, it&apos;s the equivalent to &quot;key=value&quot;. If the value is an empty string (only null-terminator), it&apos;s the equivalent of &quot;key=&quot;. If value is NULL, it&apos;s the equivalent of &quot;key&quot;. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="include/net/azure_iot_hub.h" line="118" column="1" bodyfile="include/net/azure_iot_hub.h" bodystart="118" bodyend="123"/>
+    <listofallmembers>
+      <member refid="structazure__iot__hub__prop__bag_a4e7d762406177e7a7f630ec3f2c93467_1a4e7d762406177e7a7f630ec3f2c93467" prot="public" virt="non-virtual"><scope>azure_iot_hub_prop_bag</scope><name>key</name></member>
+      <member refid="structazure__iot__hub__prop__bag_a19b7ba5bdad0264e01ef5298688aba84_1a19b7ba5bdad0264e01ef5298688aba84" prot="public" virt="non-virtual"><scope>azure_iot_hub_prop_bag</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

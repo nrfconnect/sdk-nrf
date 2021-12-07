@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__antenna__cal__ctrl__reg" kind="group">
+    <compoundname>st25r3911b_antenna_cal_ctrl_reg</compoundname>
+    <title>Antenna Calibration</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__antenna__cal__ctrl__reg_1ga4e5ed53f741dd86863449b1cc92c3fdb" prot="public" static="no">
+        <name>ST25R3911B_REG_ANTENNA_CAL_CTRL_TRE0</name>
+        <initializer>BIT(3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="448" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="448" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__antenna__cal__ctrl__reg_1ga08030377bc2611c1400d4bb5b81f5e01" prot="public" static="no">
+        <name>ST25R3911B_REG_ANTENNA_CAL_CTRL_TRE1</name>
+        <initializer>BIT(4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="449" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="449" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__antenna__cal__ctrl__reg_1gab2bf98f84c85caaefb89f5bbff3a550a" prot="public" static="no">
+        <name>ST25R3911B_REG_ANTENNA_CAL_CTRL_TRE2</name>
+        <initializer>BIT(5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="450" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="450" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__antenna__cal__ctrl__reg_1ga73fe0176103e532e037a4ccb179f395d" prot="public" static="no">
+        <name>ST25R3911B_REG_ANTENNA_CAL_CTRL_TRE3</name>
+        <initializer>BIT(6)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="451" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="451" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__antenna__cal__ctrl__reg_1gad6fd3950ab1ede85855634ec7477f327" prot="public" static="no">
+        <name>ST25R3911B_REG_ANTENNA_CAL_CTRL_TRIM_S</name>
+        <initializer>BIT(7)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="452" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="452" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Control Register bits </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

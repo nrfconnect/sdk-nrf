@@ -1,0 +1,218 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="hid__keymap__def__keyboard_8h" kind="file" language="C++">
+    <compoundname>hid_keymap_def_keyboard.h</compoundname>
+    <includes refid="hid__keymap_8h" local="yes">hid_keymap.h</includes>
+    <includes refid="key__id_8h" local="no">caf/key_id.h</includes>
+    <incdepgraph>
+      <node id="2">
+        <label>hid_keymap.h</label>
+        <link refid="hid__keymap_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>hid_report_consumer_ctrl.h</label>
+        <link refid="hid__report__consumer__ctrl_8h"/>
+      </node>
+      <node id="6">
+        <label>hid_report_desc.h</label>
+        <link refid="hid__report__desc_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>hid_report_keyboard.h</label>
+        <link refid="hid__report__keyboard_8h"/>
+      </node>
+      <node id="8">
+        <label>hid_report_mouse.h</label>
+        <link refid="hid__report__mouse_8h"/>
+      </node>
+      <node id="10">
+        <label>hid_report_system_ctrl.h</label>
+        <link refid="hid__report__system__ctrl_8h"/>
+      </node>
+      <node id="12">
+        <label>hid_report_user_config.h</label>
+        <link refid="hid__report__user__config_8h"/>
+      </node>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/nrf52840dk_nrf52840/hid_keymap_def_keyboard.h</label>
+        <link refid="hid__keymap__def__keyboard_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>caf/key_id.h</label>
+        <link refid="key__id_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>stddef.h</label>
+      </node>
+      <node id="7">
+        <label>sys/util.h</label>
+      </node>
+      <node id="4">
+        <label>toolchain/common.h</label>
+      </node>
+      <node id="5">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="hid__keymap__def__keyboard_8h_a57736452eedc25797c30bf53e03d0819_1a57736452eedc25797c30bf53e03d0819" prot="public" static="no" mutable="no">
+        <type>const struct @81</type>
+        <definition>const struct @81 hid_keymap_def_include_once</definition>
+        <argsstring></argsstring>
+        <name>hid_keymap_def_include_once</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840dk_nrf52840/hid_keymap_def_keyboard.h" line="17" column="41"/>
+      </memberdef>
+      <memberdef kind="variable" id="hid__keymap__def__keyboard_8h_ace211ad226ddfac785ff036368d74e8d_1ace211ad226ddfac785ff036368d74e8d" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structhid__keymap" kindref="compound">hid_keymap</ref></type>
+        <definition>const struct hid_keymap hid_keymap[]</definition>
+        <argsstring>[]</argsstring>
+        <name>hid_keymap</name>
+        <initializer>= {
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x00), 0x0004, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x01), 0x0005, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x02), 0x00E1, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x04), 0x0004, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x05), 0x0005, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x06), 0x0006, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x07), 0x0007, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x08), 0x0008, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x09), 0x0009, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x0A), 0x000A, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x0B), 0x000B, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x0C), 0x000C, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x0D), 0x000D, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x0E), 0x000E, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x0F), 0x000F, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x10), 0x0010, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x11), 0x0011, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x12), 0x0012, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x13), 0x0013, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x14), 0x0014, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x15), 0x0015, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x16), 0x0016, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x17), 0x0017, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x18), 0x0018, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x19), 0x0019, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x1A), 0x001A, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x1B), 0x001B, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x1C), 0x001C, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x1D), 0x001D, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x2C), 0x002C, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref> }, 
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840dk_nrf52840/hid_keymap_def_keyboard.h" line="24" column="30" bodyfile="applications/nrf_desktop/configuration/nrf52840dk_nrf52840/hid_keymap_def_keyboard.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="hid__keymap_8h" kindref="compound">hid_keymap.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="key__id_8h" kindref="compound">caf/key_id.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>configuration<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>from<sp/>hid_state<sp/>module<sp/>and<sp/>holds</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*<sp/>information<sp/>about<sp/>mapping<sp/>between<sp/>buttons<sp/>and<sp/>generated<sp/>reports.</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>structure<sp/>enforces<sp/>the<sp/>header<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>in<sp/>the<sp/>build.</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*<sp/>Violating<sp/>this<sp/>requirement<sp/>triggers<sp/>a<sp/>multiple<sp/>definition<sp/>error<sp/>at<sp/>link<sp/>time.</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17" refid="hid__keymap__def__keyboard_8h_a57736452eedc25797c30bf53e03d0819_1a57736452eedc25797c30bf53e03d0819" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{}<sp/><ref refid="hid__keymap__def__keyboard_8h_a57736452eedc25797c30bf53e03d0819_1a57736452eedc25797c30bf53e03d0819" kindref="member">hid_keymap_def_include_once</ref>;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="20"><highlight class="comment"><sp/>*<sp/>HID<sp/>keymap.<sp/>The<sp/>Consumer<sp/>Control<sp/>keys<sp/>are<sp/>defined<sp/>in<sp/>section<sp/>15<sp/>of</highlight></codeline>
+<codeline lineno="21"><highlight class="comment"><sp/>*<sp/>the<sp/>HID<sp/>Usage<sp/>Tables<sp/>document<sp/>under<sp/>the<sp/>following<sp/>URL:</highlight></codeline>
+<codeline lineno="22"><highlight class="comment"><sp/>*<sp/>https://www.usb.org/sites/default/files/hut1_12.pdf</highlight></codeline>
+<codeline lineno="23"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="hid__keymap__def__keyboard_8h_ace211ad226ddfac785ff036368d74e8d_1ace211ad226ddfac785ff036368d74e8d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structhid__keymap" kindref="compound">hid_keymap</ref><sp/><ref refid="structhid__keymap" kindref="compound">hid_keymap</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x00),<sp/>0x0004,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>A<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x01),<sp/>0x0005,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>B<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x02),<sp/>0x00E1,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>left<sp/>shift<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x04),<sp/>0x0004,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>A<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x05),<sp/>0x0005,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>B<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x06),<sp/>0x0006,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>C<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x07),<sp/>0x0007,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>D<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x08),<sp/>0x0008,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>E<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x09),<sp/>0x0009,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>F<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x0A),<sp/>0x000A,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>G<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x0B),<sp/>0x000B,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>H<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x0C),<sp/>0x000C,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>I<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x0D),<sp/>0x000D,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>J<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x0E),<sp/>0x000E,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>K<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x0F),<sp/>0x000F,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>L<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x10),<sp/>0x0010,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>M<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x11),<sp/>0x0011,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>N<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x12),<sp/>0x0012,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>O<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x13),<sp/>0x0013,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>P<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x14),<sp/>0x0014,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>Q<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x15),<sp/>0x0015,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>R<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x16),<sp/>0x0016,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>S<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x17),<sp/>0x0017,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>T<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x18),<sp/>0x0018,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>U<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x19),<sp/>0x0019,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>V<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x1A),<sp/>0x001A,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>W<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x1B),<sp/>0x001B,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>X<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x1C),<sp/>0x001C,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>Y<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x1D),<sp/>0x001D,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>Z<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x2C),<sp/>0x002C,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>spacebar<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/nrf52840dk_nrf52840/hid_keymap_def_keyboard.h"/>
+  </compounddef>
+</doxygen>

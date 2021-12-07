@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__bms" kind="group">
+    <compoundname>bt_bms</compoundname>
+    <title>Bond Management Service API</title>
+    <innerclass refid="structbt__bms__authorize__params" prot="public">bt_bms_authorize_params</innerclass>
+    <innerclass refid="structbt__bms__cb" prot="public">bt_bms_cb</innerclass>
+    <innerclass refid="structbt__bms__feature" prot="public">bt_bms_feature</innerclass>
+    <innerclass refid="structbt__bms__features" prot="public">bt_bms_features</innerclass>
+    <innerclass refid="structbt__bms__init__params" prot="public">bt_bms_init_params</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__bms_1ga349279ee23f69b3119e119338ea12eb9" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_bms_op</name>
+        <enumvalue id="group__bt__bms_ga349279ee23f69b3119e119338ea12eb9_1gga349279ee23f69b3119e119338ea12eb9ab92aedecd4d6c3c01c108579339c9cee" prot="public">
+          <name>BT_BMS_OP_DEL_REQ_BOND</name>
+          <initializer>= 0x03</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__bms_ga349279ee23f69b3119e119338ea12eb9_1gga349279ee23f69b3119e119338ea12eb9ae7dfdfd95605675746b9d3e5ee82ea85" prot="public">
+          <name>BT_BMS_OP_DEL_ALL_BONDS</name>
+          <initializer>= 0x06</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__bms_ga349279ee23f69b3119e119338ea12eb9_1gga349279ee23f69b3119e119338ea12eb9ad7d3860136608c8e1c5c3c3613ffa25b" prot="public">
+          <name>BT_BMS_OP_DEL_REST_BONDS</name>
+          <initializer>= 0x09</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>BMS Control Point operation codes (LE transport). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bms.h" line="24" column="1" bodyfile="include/bluetooth/services/bms.h" bodystart="24" bodyend="37"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__bms_1gae61e7e88e727357315ebf0369f27ea92" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_bms_init</definition>
+        <argsstring>(const struct bt_bms_init_params *init_params)</argsstring>
+        <name>bt_bms_init</name>
+        <param>
+          <type>const struct <ref refid="structbt__bms__init__params" kindref="compound">bt_bms_init_params</ref> *</type>
+          <declname>init_params</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the BMS Service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Initialize the BMS Service by specifying a list of supported operations. If any operation is configured as authorized, you need to provide authorize() callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>init_params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Initialization parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bms.h" line="113" column="5" declfile="include/bluetooth/services/bms.h" declline="113" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Bond Management Service (BMS). </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

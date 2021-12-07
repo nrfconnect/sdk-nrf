@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__asset" kind="group">
+    <compoundname>asset</compoundname>
+    <title>Tracker Led State Event</title>
+    <innerclass refid="structled__state__event" prot="public">led_state_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__asset_1ga9aa8c3dcec2b8da09483d627b83aa1de" prot="public" static="no" strong="no">
+        <type></type>
+        <name>led_state</name>
+        <enumvalue id="group__asset_ga9aa8c3dcec2b8da09483d627b83aa1de_1gga9aa8c3dcec2b8da09483d627b83aa1deaa408428ca5d52147b453b8f551e0487d" prot="public">
+          <name>LED_STATE_LTE_CONNECTING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__asset_ga9aa8c3dcec2b8da09483d627b83aa1de_1gga9aa8c3dcec2b8da09483d627b83aa1deaff54b56cbd16602c088ea708481e0c74" prot="public">
+          <name>LED_STATE_GPS_SEARCHING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__asset_ga9aa8c3dcec2b8da09483d627b83aa1de_1gga9aa8c3dcec2b8da09483d627b83aa1dea84f64175d758cd830769bbf83254f3b8" prot="public">
+          <name>LED_STATE_CLOUD_PUBLISHING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__asset_ga9aa8c3dcec2b8da09483d627b83aa1de_1gga9aa8c3dcec2b8da09483d627b83aa1dea52d886b55806436f180f8171a05d1426" prot="public">
+          <name>LED_STATE_ACTIVE_MODE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__asset_ga9aa8c3dcec2b8da09483d627b83aa1de_1gga9aa8c3dcec2b8da09483d627b83aa1dea4456f9b8899e4f1e319b75d8934895d4" prot="public">
+          <name>LED_STATE_PASSIVE_MODE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__asset_ga9aa8c3dcec2b8da09483d627b83aa1de_1gga9aa8c3dcec2b8da09483d627b83aa1dea30b0c414920b44b2e7765d0a824d6607" prot="public">
+          <name>LED_STATE_ERROR_SYSTEM_FAULT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__asset_ga9aa8c3dcec2b8da09483d627b83aa1de_1gga9aa8c3dcec2b8da09483d627b83aa1deac188de127c969202682ba32a52198c7a" prot="public">
+          <name>LED_STATE_FOTA_UPDATE_REBOOT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__asset_ga9aa8c3dcec2b8da09483d627b83aa1de_1gga9aa8c3dcec2b8da09483d627b83aa1dea08a53ff022dfcfabc3423a845e816bd6" prot="public">
+          <name>LED_STATE_TURN_OFF</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__asset_ga9aa8c3dcec2b8da09483d627b83aa1de_1gga9aa8c3dcec2b8da09483d627b83aa1dea145e65a5f5c3812b0151c79330eecbd2" prot="public">
+          <name>LED_STATE_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Asset Tracker led states in the application. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/led_state_event.h" line="21" column="1" bodyfile="applications/asset_tracker_v2/src/events/led_state_event.h" bodystart="21" bodyend="31"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Led State Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

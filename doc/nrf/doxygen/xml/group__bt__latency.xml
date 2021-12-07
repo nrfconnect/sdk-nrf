@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__latency" kind="group">
+    <compoundname>bt_latency</compoundname>
+    <title>Bluetooth LE GATT Latency Service API</title>
+    <innerclass refid="structbt__latency__cb" prot="public">bt_latency_cb</innerclass>
+    <innerclass refid="structbt__latency" prot="public">bt_latency</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__latency_1gac9b94e92ef5a16b71f1958bc2bb73b74" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_latency_init</definition>
+        <argsstring>(struct bt_latency *latency, const struct bt_latency_cb *cb)</argsstring>
+        <name>bt_latency_init</name>
+        <param>
+          <type>struct <ref refid="structbt__latency" kindref="compound">bt_latency</ref> *</type>
+          <declname>latency</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__latency__cb" kindref="compound">bt_latency_cb</ref> *</type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the GATT latency service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">latency</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Latency service instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callbacks.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>(-EINVAL)</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Special error code used when the input parameters are invalid. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>(-EALREADY)</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Special error code used when the latency service has been initialed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/latency.h" line="78" column="5" declfile="include/bluetooth/services/latency.h" declline="78" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__latency_1gaf6011460fd425bd41cc69002f53e8cb2" prot="public" static="no">
+        <name>BT_UUID_LATENCY_VAL</name>
+        <initializer>	BT_UUID_128_ENCODE(0x67136e01, 0x58db, 0xf39b, 0x3446, 0xfdde58c0813a)</initializer>
+        <briefdescription>
+<para>Latency Service UUID. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/latency.h" line="55" column="9" bodyfile="include/bluetooth/services/latency.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__latency_1ga866193c007a9674fec50b3750e0166d3" prot="public" static="no">
+        <name>BT_UUID_LATENCY</name>
+        <initializer>BT_UUID_DECLARE_128(<ref refid="group__bt__latency_gaf6011460fd425bd41cc69002f53e8cb2_1gaf6011460fd425bd41cc69002f53e8cb2" kindref="member">BT_UUID_LATENCY_VAL</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/latency.h" line="58" column="9" bodyfile="include/bluetooth/services/latency.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__latency_1ga2e6249d526f5f2f9463a659ab9ead21b" prot="public" static="no">
+        <name>BT_UUID_LATENCY_CHAR_VAL</name>
+        <initializer>	BT_UUID_128_ENCODE(0x67136e02, 0x58db, 0xf39b, 0x3446, 0xfdde58c0813a)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/latency.h" line="60" column="9" bodyfile="include/bluetooth/services/latency.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__latency_1ga91c69dc0339905f97044d6c37677e0bf" prot="public" static="no">
+        <name>BT_UUID_LATENCY_CHAR</name>
+        <initializer>BT_UUID_DECLARE_128(<ref refid="group__bt__latency_ga2e6249d526f5f2f9463a659ab9ead21b_1ga2e6249d526f5f2f9463a659ab9ead21b" kindref="member">BT_UUID_LATENCY_CHAR_VAL</ref>)</initializer>
+        <briefdescription>
+<para>UUID of the Latency Characteristic. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/latency.h" line="64" column="9" bodyfile="include/bluetooth/services/latency.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Bluetooth LE GATT Latency Service. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__pelion__state__event" kind="group">
+    <compoundname>pelion_state_event</compoundname>
+    <title>PELION State Event</title>
+    <innerclass refid="structpelion__state__event" prot="public">pelion_state_event</innerclass>
+    <innerclass refid="structpelion__create__objects__event" prot="public">pelion_create_objects_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__pelion__state__event_1ga17199c5dd6fbca573fccd18367ddbcbc" prot="public" static="no" strong="no">
+        <type></type>
+        <name>pelion_state</name>
+        <enumvalue id="group__pelion__state__event_ga17199c5dd6fbca573fccd18367ddbcbc_1gga17199c5dd6fbca573fccd18367ddbcbcaf4f62690151ba3d25b714e972a096d28" prot="public">
+          <name>PELION_STATE_DISABLED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pelion__state__event_ga17199c5dd6fbca573fccd18367ddbcbc_1gga17199c5dd6fbca573fccd18367ddbcbcae23744d13a618753822fc6a9dd2131d8" prot="public">
+          <name>PELION_STATE_INITIALIZED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pelion__state__event_ga17199c5dd6fbca573fccd18367ddbcbc_1gga17199c5dd6fbca573fccd18367ddbcbcaf05ce6f90e5e76eb14e5b16da484d9d4" prot="public">
+          <name>PELION_STATE_REGISTERED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pelion__state__event_ga17199c5dd6fbca573fccd18367ddbcbc_1gga17199c5dd6fbca573fccd18367ddbcbcafffa35e89120cb8cafbd62a1335e7346" prot="public">
+          <name>PELION_STATE_UNREGISTERED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pelion__state__event_ga17199c5dd6fbca573fccd18367ddbcbc_1gga17199c5dd6fbca573fccd18367ddbcbca82eee7e02ec65c3af84cc294da44be53" prot="public">
+          <name>PELION_STATE_SUSPENDED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pelion__state__event_ga17199c5dd6fbca573fccd18367ddbcbc_1gga17199c5dd6fbca573fccd18367ddbcbcaf2a7fda47aaad4db086f0fcf61acaa40" prot="public">
+          <name>PELION_STATE_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Pelion states. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/pelion_client/src/events/pelion_event.h" line="25" column="1" bodyfile="applications/pelion_client/src/events/pelion_event.h" bodystart="25" bodyend="33"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>PELION State Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

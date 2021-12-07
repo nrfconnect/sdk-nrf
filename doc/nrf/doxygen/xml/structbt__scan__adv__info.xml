@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__scan__adv__info" kind="struct" language="C++" prot="public">
+    <compoundname>bt_scan_adv_info</compoundname>
+    <includes refid="scan_8h" local="no">scan.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__scan__adv__info_ab548476cd34e85e4a3b5e829be008874_1ab548476cd34e85e4a3b5e829be008874" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_scan_adv_info::adv_type</definition>
+        <argsstring></argsstring>
+        <name>adv_type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Bluetooth LE advertising type. According to Bluetooth Specification 7.8.5 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="142" column="9" bodyfile="include/bluetooth/scan.h" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__scan__adv__info_adc1abf4f254a3c7c4f83af3b55753089_1adc1abf4f254a3c7c4f83af3b55753089" prot="public" static="no" mutable="no">
+        <type>int8_t</type>
+        <definition>int8_t bt_scan_adv_info::rssi</definition>
+        <argsstring></argsstring>
+        <name>rssi</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Received Signal Strength Indication in dBm. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="145" column="8" bodyfile="include/bluetooth/scan.h" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Advertising info structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/scan.h" line="138" column="1" bodyfile="include/bluetooth/scan.h" bodystart="138" bodyend="146"/>
+    <listofallmembers>
+      <member refid="structbt__scan__adv__info_ab548476cd34e85e4a3b5e829be008874_1ab548476cd34e85e4a3b5e829be008874" prot="public" virt="non-virtual"><scope>bt_scan_adv_info</scope><name>adv_type</name></member>
+      <member refid="structbt__scan__adv__info_adc1abf4f254a3c7c4f83af3b55753089_1adc1abf4f254a3c7c4f83af3b55753089" prot="public" virt="non-virtual"><scope>bt_scan_adv_info</scope><name>rssi</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

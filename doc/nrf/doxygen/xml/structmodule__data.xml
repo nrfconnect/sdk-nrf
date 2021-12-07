@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structmodule__data" kind="struct" language="C++" prot="public">
+    <compoundname>module_data</compoundname>
+    <includes refid="modules__common_8h" local="no">modules_common.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmodule__data_ac70a05c36e48d86201cd1cf02c4ab476_1ac70a05c36e48d86201cd1cf02c4ab476" prot="public" static="no" mutable="no">
+        <type>sys_snode_t</type>
+        <definition>sys_snode_t module_data::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/modules/modules_common.h" line="35" column="13" bodyfile="applications/asset_tracker_v2/src/modules/modules_common.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodule__data_a6bf12259328b5869b228300e40cf7fd3_1a6bf12259328b5869b228300e40cf7fd3" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t module_data::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/modules/modules_common.h" line="37" column="10" bodyfile="applications/asset_tracker_v2/src/modules/modules_common.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodule__data_a4ef81c23135dd5dc0c7588fe6228e4db_1a4ef81c23135dd5dc0c7588fe6228e4db" prot="public" static="no" mutable="no">
+        <type>k_tid_t</type>
+        <definition>k_tid_t module_data::thread_id</definition>
+        <argsstring></argsstring>
+        <name>thread_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/modules/modules_common.h" line="38" column="9" bodyfile="applications/asset_tracker_v2/src/modules/modules_common.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodule__data_a841086b470516d563bb0271b3016d6ff_1a841086b470516d563bb0271b3016d6ff" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* module_data::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/modules/modules_common.h" line="39" column="6" bodyfile="applications/asset_tracker_v2/src/modules/modules_common.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodule__data_a095bedb58a13cfc03913e957f1494b96_1a095bedb58a13cfc03913e957f1494b96" prot="public" static="no" mutable="no">
+        <type>struct k_msgq *</type>
+        <definition>struct k_msgq* module_data::msg_q</definition>
+        <argsstring></argsstring>
+        <name>msg_q</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/modules/modules_common.h" line="40" column="13" bodyfile="applications/asset_tracker_v2/src/modules/modules_common.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodule__data_ad43bb544952202655c84cb009075a216_1ad43bb544952202655c84cb009075a216" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool module_data::supports_shutdown</definition>
+        <argsstring></argsstring>
+        <name>supports_shutdown</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/modules/modules_common.h" line="42" column="6" bodyfile="applications/asset_tracker_v2/src/modules/modules_common.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/modules/modules_common.h" line="33" column="1" bodyfile="applications/asset_tracker_v2/src/modules/modules_common.h" bodystart="33" bodyend="43"/>
+    <listofallmembers>
+      <member refid="structmodule__data_ac70a05c36e48d86201cd1cf02c4ab476_1ac70a05c36e48d86201cd1cf02c4ab476" prot="public" virt="non-virtual"><scope>module_data</scope><name>header</name></member>
+      <member refid="structmodule__data_a6bf12259328b5869b228300e40cf7fd3_1a6bf12259328b5869b228300e40cf7fd3" prot="public" virt="non-virtual"><scope>module_data</scope><name>id</name></member>
+      <member refid="structmodule__data_a095bedb58a13cfc03913e957f1494b96_1a095bedb58a13cfc03913e957f1494b96" prot="public" virt="non-virtual"><scope>module_data</scope><name>msg_q</name></member>
+      <member refid="structmodule__data_a841086b470516d563bb0271b3016d6ff_1a841086b470516d563bb0271b3016d6ff" prot="public" virt="non-virtual"><scope>module_data</scope><name>name</name></member>
+      <member refid="structmodule__data_ad43bb544952202655c84cb009075a216_1ad43bb544952202655c84cb009075a216" prot="public" virt="non-virtual"><scope>module_data</scope><name>supports_shutdown</name></member>
+      <member refid="structmodule__data_a4ef81c23135dd5dc0c7588fe6228e4db_1a4ef81c23135dd5dc0c7588fe6228e4db" prot="public" virt="non-virtual"><scope>module_data</scope><name>thread_id</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

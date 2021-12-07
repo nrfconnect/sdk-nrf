@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structble__data__event" kind="struct" language="C++" prot="public">
+    <compoundname>ble_data_event</compoundname>
+    <includes refid="ble__data__event_8h" local="no">ble_data_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structble__data__event_acb7ae414d6a7d2488bddc030184cfdc3_1acb7ae414d6a7d2488bddc030184cfdc3" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header ble_data_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/ble_data_event.h" line="28" column="19" bodyfile="applications/connectivity_bridge/src/events/ble_data_event.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structble__data__event_add0bb8d91c0238723b23bea52adc1aa3_1add0bb8d91c0238723b23bea52adc1aa3" prot="public" static="no" mutable="no">
+        <type>uint8_t *</type>
+        <definition>uint8_t* ble_data_event::buf</definition>
+        <argsstring></argsstring>
+        <name>buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/ble_data_event.h" line="30" column="9" bodyfile="applications/connectivity_bridge/src/events/ble_data_event.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structble__data__event_a28b94311e741d95057009de896a999e8_1a28b94311e741d95057009de896a999e8" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t ble_data_event::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/ble_data_event.h" line="31" column="8" bodyfile="applications/connectivity_bridge/src/events/ble_data_event.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Peer connection event. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>ble_data_event</label>
+        <link refid="structble__data__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/connectivity_bridge/src/events/ble_data_event.h" line="27" column="1" bodyfile="applications/connectivity_bridge/src/events/ble_data_event.h" bodystart="27" bodyend="32"/>
+    <listofallmembers>
+      <member refid="structble__data__event_add0bb8d91c0238723b23bea52adc1aa3_1add0bb8d91c0238723b23bea52adc1aa3" prot="public" virt="non-virtual"><scope>ble_data_event</scope><name>buf</name></member>
+      <member refid="structble__data__event_acb7ae414d6a7d2488bddc030184cfdc3_1acb7ae414d6a7d2488bddc030184cfdc3" prot="public" virt="non-virtual"><scope>ble_data_event</scope><name>header</name></member>
+      <member refid="structble__data__event_a28b94311e741d95057009de896a999e8_1a28b94311e741d95057009de896a999e8" prot="public" virt="non-virtual"><scope>ble_data_event</scope><name>len</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

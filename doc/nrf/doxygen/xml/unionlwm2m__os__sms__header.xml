@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="unionlwm2m__os__sms__header" kind="union" language="C++" prot="public">
+    <compoundname>lwm2m_os_sms_header</compoundname>
+    <includes refid="lwm2m__os_8h" local="no">lwm2m_os.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="unionlwm2m__os__sms__header_a844be90bfe04efe1b01c1d4dd2584fd6_1a844be90bfe04efe1b01c1d4dd2584fd6" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlwm2m__os__sms__deliver__header" kindref="compound">lwm2m_os_sms_deliver_header</ref></type>
+        <definition>struct lwm2m_os_sms_deliver_header lwm2m_os_sms_header::deliver</definition>
+        <argsstring></argsstring>
+        <name>deliver</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="83" column="34" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>lwm2m_os_sms_deliver_address</label>
+        <link refid="structlwm2m__os__sms__deliver__address"/>
+      </node>
+      <node id="2">
+        <label>lwm2m_os_sms_deliver_header</label>
+        <link refid="structlwm2m__os__sms__deliver__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>originating_address</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>app_port</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>lwm2m_os_sms_header</label>
+        <link refid="unionlwm2m__os__sms__header"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>deliver</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>lwm2m_os_sms_udh_app_port</label>
+        <link refid="structlwm2m__os__sms__udh__app__port"/>
+      </node>
+    </collaborationgraph>
+    <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="82" column="1" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="82" bodyend="84"/>
+    <listofallmembers>
+      <member refid="unionlwm2m__os__sms__header_a844be90bfe04efe1b01c1d4dd2584fd6_1a844be90bfe04efe1b01c1d4dd2584fd6" prot="public" virt="non-virtual"><scope>lwm2m_os_sms_header</scope><name>deliver</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

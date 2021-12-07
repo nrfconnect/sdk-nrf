@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnrf__cloud__modem__info" kind="struct" language="C++" prot="public">
+    <compoundname>nrf_cloud_modem_info</compoundname>
+    <includes refid="nrf__cloud_8h" local="no">nrf_cloud.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnrf__cloud__modem__info_a00e2c46118c80bdaefcd479e688d9718_1a00e2c46118c80bdaefcd479e688d9718" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__nrf__cloud_gaf64999062e1a8b99a963570664862acf_1gaf64999062e1a8b99a963570664862acf" kindref="member">nrf_cloud_shadow_info</ref></type>
+        <definition>enum nrf_cloud_shadow_info nrf_cloud_modem_info::device</definition>
+        <argsstring></argsstring>
+        <name>device</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="335" column="27" bodyfile="include/net/nrf_cloud.h" bodystart="335" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__modem__info_a328ba927fdce4416020ed413753c266f_1a328ba927fdce4416020ed413753c266f" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__nrf__cloud_gaf64999062e1a8b99a963570664862acf_1gaf64999062e1a8b99a963570664862acf" kindref="member">nrf_cloud_shadow_info</ref></type>
+        <definition>enum nrf_cloud_shadow_info nrf_cloud_modem_info::network</definition>
+        <argsstring></argsstring>
+        <name>network</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="336" column="27" bodyfile="include/net/nrf_cloud.h" bodystart="336" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__modem__info_a06766141bd68bf83c70c6c4bb327bd94_1a06766141bd68bf83c70c6c4bb327bd94" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__nrf__cloud_gaf64999062e1a8b99a963570664862acf_1gaf64999062e1a8b99a963570664862acf" kindref="member">nrf_cloud_shadow_info</ref></type>
+        <definition>enum nrf_cloud_shadow_info nrf_cloud_modem_info::sim</definition>
+        <argsstring></argsstring>
+        <name>sim</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="337" column="27" bodyfile="include/net/nrf_cloud.h" bodystart="337" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Modem info data and which sections should be encoded. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/nrf_cloud.h" line="334" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="334" bodyend="346"/>
+    <listofallmembers>
+      <member refid="structnrf__cloud__modem__info_a00e2c46118c80bdaefcd479e688d9718_1a00e2c46118c80bdaefcd479e688d9718" prot="public" virt="non-virtual"><scope>nrf_cloud_modem_info</scope><name>device</name></member>
+      <member refid="structnrf__cloud__modem__info_a328ba927fdce4416020ed413753c266f_1a328ba927fdce4416020ed413753c266f" prot="public" virt="non-virtual"><scope>nrf_cloud_modem_info</scope><name>network</name></member>
+      <member refid="structnrf__cloud__modem__info_a06766141bd68bf83c70c6c4bb327bd94_1a06766141bd68bf83c70c6c4bb327bd94" prot="public" virt="non-virtual"><scope>nrf_cloud_modem_info</scope><name>sim</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structat__param__list" kind="struct" language="C++" prot="public">
+    <compoundname>at_param_list</compoundname>
+    <includes refid="at__params_8h" local="no">at_params.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structat__param__list_a05bd3e7467629154872bd06c06aa05e5_1a05bd3e7467629154872bd06c06aa05e5" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t at_param_list::param_count</definition>
+        <argsstring></argsstring>
+        <name>param_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="73" column="8" bodyfile="include/modem/at_params.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structat__param__list_a3ad9823a03746a411548be933ead9ba8_1a3ad9823a03746a411548be933ead9ba8" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structat__param" kindref="compound">at_param</ref> *</type>
+        <definition>struct at_param* at_param_list::params</definition>
+        <argsstring></argsstring>
+        <name>params</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="74" column="15" bodyfile="include/modem/at_params.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>List of AT parameters that compose an AT command or response. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Contains an array of opaque data. Setter and getter methods should be used to get access to the parameters in the array. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>at_param</label>
+        <link refid="structat__param"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>value</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>at_param_list</label>
+        <link refid="structat__param__list"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>params</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>at_param_value</label>
+        <link refid="unionat__param__value"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/modem/at_params.h" line="72" column="1" bodyfile="include/modem/at_params.h" bodystart="72" bodyend="75"/>
+    <listofallmembers>
+      <member refid="structat__param__list_a05bd3e7467629154872bd06c06aa05e5_1a05bd3e7467629154872bd06c06aa05e5" prot="public" virt="non-virtual"><scope>at_param_list</scope><name>param_count</name></member>
+      <member refid="structat__param__list_a3ad9823a03746a411548be933ead9ba8_1a3ad9823a03746a411548be933ead9ba8" prot="public" virt="non-virtual"><scope>at_param_list</scope><name>params</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

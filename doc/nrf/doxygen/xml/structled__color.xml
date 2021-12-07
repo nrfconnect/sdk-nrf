@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structled__color" kind="struct" language="C++" prot="public">
+    <compoundname>led_color</compoundname>
+    <includes refid="applications_2asset__tracker_2src_2ui_2include_2led__effect_8h" local="no">led_effect.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structled__color_a5b946daf74a6d17adcafbe89196b70e0_1a5b946daf74a6d17adcafbe89196b70e0" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t led_color::c</definition>
+        <argsstring>[3]</argsstring>
+        <name>c</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Values for color channels. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/led_effect.h" line="23" column="9" bodyfile="applications/asset_tracker/src/ui/include/led_effect.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Color of LED. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker/src/ui/include/led_effect.h" line="22" column="1" bodyfile="applications/asset_tracker/src/ui/include/led_effect.h" bodystart="22" bodyend="24"/>
+    <listofallmembers>
+      <member refid="structled__color_a5b946daf74a6d17adcafbe89196b70e0_1a5b946daf74a6d17adcafbe89196b70e0" prot="public" virt="non-virtual"><scope>led_color</scope><name>c</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

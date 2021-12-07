@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_21cbe3e91f3793446ed68d520ce757bf" kind="dir">
+    <compoundname>applications/asset_tracker_v2/src/ext_sensors</compoundname>
+    <innerfile refid="ext__sensors_8h">ext_sensors.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/ext_sensors/"/>
+  </compounddef>
+</doxygen>

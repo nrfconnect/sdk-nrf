@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__caf__keep__alive__event" kind="group">
+    <compoundname>caf_keep_alive_event</compoundname>
+    <title>CAF Keep Alive Event</title>
+    <innerclass refid="structkeep__alive__event" prot="public">keep_alive_event</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__caf__keep__alive__event_1ga61088a42184f79c3d78191210e25588a" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void keep_alive</definition>
+        <argsstring>(void)</argsstring>
+        <name>keep_alive</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Keep the device alive. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The function generates the power manager event that would reset the power down counter when processed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/keep_alive_event.h" line="43" column="20" bodyfile="include/caf/events/keep_alive_event.h" bodystart="43" bodyend="48"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>CAF Keep Alive Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

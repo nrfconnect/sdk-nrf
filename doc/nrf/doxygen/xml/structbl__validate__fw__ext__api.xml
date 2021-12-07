@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbl__validate__fw__ext__api" kind="struct" language="C++" prot="public">
+    <compoundname>bl_validate_fw_ext_api</compoundname>
+    <includes refid="bl__validation_8h" local="no">bl_validation.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbl__validate__fw__ext__api_aa2b7041ca13491a152aa84c77ca5a165_1aa2b7041ca13491a152aa84c77ca5a165" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bl__validation_ga69ddf3f49620ef2f8f8e6ca9b67bb1c6_1ga69ddf3f49620ef2f8f8e6ca9b67bb1c6" kindref="member">bl_validate_firmware_t</ref></type>
+        <definition>bl_validate_firmware_t bl_validate_fw_ext_api::bl_validate_firmware</definition>
+        <argsstring></argsstring>
+        <name>bl_validate_firmware</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_validation.h" line="65" column="24" bodyfile="include/bl_validation.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Structure describing the BL_VALIDATE_FW EXT_API. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bl_validation.h" line="64" column="1" bodyfile="include/bl_validation.h" bodystart="64" bodyend="66"/>
+    <listofallmembers>
+      <member refid="structbl__validate__fw__ext__api_aa2b7041ca13491a152aa84c77ca5a165_1aa2b7041ca13491a152aa84c77ca5a165" prot="public" virt="non-virtual"><scope>bl_validate_fw_ext_api</scope><name>bl_validate_firmware</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

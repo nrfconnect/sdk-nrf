@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_5d173afff8ba5c7e179a90e6840668e3" kind="dir">
+    <compoundname>applications/asset_tracker_v2/src/cloud/cloud_codec</compoundname>
+    <innerdir refid="dir_cc43658e726f31dc70d802befca1e9d3">applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot</innerdir>
+    <innerdir refid="dir_6271202fbb469ca919ca3e7524f458be">applications/asset_tracker_v2/src/cloud/cloud_codec/azure_iot_hub</innerdir>
+    <innerdir refid="dir_4b0d34bc944a87ba6a85de82142f2ae8">applications/asset_tracker_v2/src/cloud/cloud_codec/nrf_cloud</innerdir>
+    <innerfile refid="v2_2src_2cloud_2cloud__codec_2cloud__codec_8h">cloud_codec.h</innerfile>
+    <innerfile refid="json__common_8h">json_common.h</innerfile>
+    <innerfile refid="json__helpers_8h">json_helpers.h</innerfile>
+    <innerfile refid="json__protocol__names_8h">json_protocol_names.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/"/>
+  </compounddef>
+</doxygen>

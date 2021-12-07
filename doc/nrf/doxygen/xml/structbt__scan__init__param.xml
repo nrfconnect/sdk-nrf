@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__scan__init__param" kind="struct" language="C++" prot="public">
+    <compoundname>bt_scan_init_param</compoundname>
+    <includes refid="scan_8h" local="no">scan.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__scan__init__param_aad34818a41033b73a6fbe4d02f007bcf_1aad34818a41033b73a6fbe4d02f007bcf" prot="public" static="no" mutable="no">
+        <type>const struct bt_le_scan_param *</type>
+        <definition>const struct bt_le_scan_param* bt_scan_init_param::scan_param</definition>
+        <argsstring></argsstring>
+        <name>scan_param</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Scan parameters required to initialize the module. Can be initialized as NULL. If NULL, the parameters required to initialize the module are loaded from the static configuration. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="175" column="29" bodyfile="include/bluetooth/scan.h" bodystart="175" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__scan__init__param_ab7d6888712c8c43227cf2f6b6a25499c_1ab7d6888712c8c43227cf2f6b6a25499c" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool bt_scan_init_param::connect_if_match</definition>
+        <argsstring></argsstring>
+        <name>connect_if_match</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If set to true, the module automatically connects after a filter match. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="180" column="6" bodyfile="include/bluetooth/scan.h" bodystart="180" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__scan__init__param_a9f4515dc08a48e320c59b19615538acd_1a9f4515dc08a48e320c59b19615538acd" prot="public" static="no" mutable="no">
+        <type>const struct bt_le_conn_param *</type>
+        <definition>const struct bt_le_conn_param* bt_scan_init_param::conn_param</definition>
+        <argsstring></argsstring>
+        <name>conn_param</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Connection parameters. Can be initialized as NULL. If NULL, the default static configuration is used. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="185" column="29" bodyfile="include/bluetooth/scan.h" bodystart="185" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Structure for Scanning Module initialization. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/scan.h" line="170" column="1" bodyfile="include/bluetooth/scan.h" bodystart="170" bodyend="186"/>
+    <listofallmembers>
+      <member refid="structbt__scan__init__param_a9f4515dc08a48e320c59b19615538acd_1a9f4515dc08a48e320c59b19615538acd" prot="public" virt="non-virtual"><scope>bt_scan_init_param</scope><name>conn_param</name></member>
+      <member refid="structbt__scan__init__param_ab7d6888712c8c43227cf2f6b6a25499c_1ab7d6888712c8c43227cf2f6b6a25499c" prot="public" virt="non-virtual"><scope>bt_scan_init_param</scope><name>connect_if_match</name></member>
+      <member refid="structbt__scan__init__param_aad34818a41033b73a6fbe4d02f007bcf_1aad34818a41033b73a6fbe4d02f007bcf" prot="public" virt="non-virtual"><scope>bt_scan_init_param</scope><name>scan_param</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

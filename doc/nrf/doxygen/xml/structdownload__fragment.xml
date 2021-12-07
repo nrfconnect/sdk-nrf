@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structdownload__fragment" kind="struct" language="C++" prot="public">
+    <compoundname>download_fragment</compoundname>
+    <includes refid="download__client_8h" local="no">download_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structdownload__fragment_a809fee973cc3f082a02cb31f06bf8c55_1a809fee973cc3f082a02cb31f06bf8c55" prot="public" static="no" mutable="no">
+        <type>const void *</type>
+        <definition>const void* download_fragment::buf</definition>
+        <argsstring></argsstring>
+        <name>buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="67" column="12" bodyfile="include/net/download_client.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdownload__fragment_ae060ba8c28f8f83084f3db22f6087f52_1ae060ba8c28f8f83084f3db22f6087f52" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t download_fragment::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="68" column="8" bodyfile="include/net/download_client.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/download_client.h" line="66" column="1" bodyfile="include/net/download_client.h" bodystart="66" bodyend="69"/>
+    <listofallmembers>
+      <member refid="structdownload__fragment_a809fee973cc3f082a02cb31f06bf8c55_1a809fee973cc3f082a02cb31f06bf8c55" prot="public" virt="non-virtual"><scope>download_fragment</scope><name>buf</name></member>
+      <member refid="structdownload__fragment_ae060ba8c28f8f83084f3db22f6087f52_1ae060ba8c28f8f83084f3db22f6087f52" prot="public" virt="non-virtual"><scope>download_fragment</scope><name>len</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

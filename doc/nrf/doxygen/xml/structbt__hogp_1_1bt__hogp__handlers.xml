@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__hogp_1_1bt__hogp__handlers" kind="struct" language="C++" prot="public">
+    <compoundname>bt_hogp::bt_hogp_handlers</compoundname>
+    <includes refid="hogp_8h" local="no">hogp.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__hogp_1_1bt__hogp__handlers_aba015eb64574b1ca74fda6c3e85e4ef5_1aba015eb64574b1ca74fda6c3e85e4ef5" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_hogp::bt_hogp_handlers::pm</definition>
+        <argsstring></argsstring>
+        <name>pm</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Protocol Mode Characteristic value handle. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="162" column="10" bodyfile="include/bluetooth/services/hogp.h" bodystart="162" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp_1_1bt__hogp__handlers_af0853b4766eab7a8828574932b49c2f4_1af0853b4766eab7a8828574932b49c2f4" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_hogp::bt_hogp_handlers::rep_map</definition>
+        <argsstring></argsstring>
+        <name>rep_map</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Report Map descriptor handle. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="164" column="10" bodyfile="include/bluetooth/services/hogp.h" bodystart="164" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp_1_1bt__hogp__handlers_aae8215923ecbf272da71e9e381fe2972_1aae8215923ecbf272da71e9e381fe2972" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_hogp::bt_hogp_handlers::info</definition>
+        <argsstring></argsstring>
+        <name>info</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>HID Information Characteristic handle. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="166" column="10" bodyfile="include/bluetooth/services/hogp.h" bodystart="166" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp_1_1bt__hogp__handlers_ac3e3771364ff2bc9f07da533c07ac52c_1ac3e3771364ff2bc9f07da533c07ac52c" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_hogp::bt_hogp_handlers::cp</definition>
+        <argsstring></argsstring>
+        <name>cp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>HID Control Point Characteristic handle. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="168" column="10" bodyfile="include/bluetooth/services/hogp.h" bodystart="168" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Handlers for descriptors </para>
+    </detaileddescription>
+    <location file="include/bluetooth/services/hogp.h" line="160" column="1" bodyfile="include/bluetooth/services/hogp.h" bodystart="160" bodyend="169"/>
+    <listofallmembers>
+      <member refid="structbt__hogp_1_1bt__hogp__handlers_ac3e3771364ff2bc9f07da533c07ac52c_1ac3e3771364ff2bc9f07da533c07ac52c" prot="public" virt="non-virtual"><scope>bt_hogp::bt_hogp_handlers</scope><name>cp</name></member>
+      <member refid="structbt__hogp_1_1bt__hogp__handlers_aae8215923ecbf272da71e9e381fe2972_1aae8215923ecbf272da71e9e381fe2972" prot="public" virt="non-virtual"><scope>bt_hogp::bt_hogp_handlers</scope><name>info</name></member>
+      <member refid="structbt__hogp_1_1bt__hogp__handlers_aba015eb64574b1ca74fda6c3e85e4ef5_1aba015eb64574b1ca74fda6c3e85e4ef5" prot="public" virt="non-virtual"><scope>bt_hogp::bt_hogp_handlers</scope><name>pm</name></member>
+      <member refid="structbt__hogp_1_1bt__hogp__handlers_af0853b4766eab7a8828574932b49c2f4_1af0853b4766eab7a8828574932b49c2f4" prot="public" virt="non-virtual"><scope>bt_hogp::bt_hogp_handlers</scope><name>rep_map</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

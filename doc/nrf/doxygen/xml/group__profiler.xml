@@ -1,0 +1,722 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__profiler" kind="group">
+    <compoundname>profiler</compoundname>
+    <title>Profiler</title>
+    <innerclass refid="structprofiler__event__enabled__bm" prot="public">profiler_event_enabled_bm</innerclass>
+    <innerclass refid="structlog__event__buf" prot="public">log_event_buf</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__profiler_1ga89852e0ad202010e105fec68bcf32b0c" prot="public" static="no" strong="no">
+        <type></type>
+        <name>profiler_arg</name>
+        <enumvalue id="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca678202bddcd4779c81f72b14b7b8cbae" prot="public">
+          <name>PROFILER_ARG_U8</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca899a6c2002edfef4f60c7e75a4a2cf69" prot="public">
+          <name>PROFILER_ARG_S8</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0caa387e8b7208038189c01369162a52735" prot="public">
+          <name>PROFILER_ARG_U16</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca96122842997a14b3aca0da742f82aec1" prot="public">
+          <name>PROFILER_ARG_S16</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0cab21cd820de822e41d279d031f10aa9b8" prot="public">
+          <name>PROFILER_ARG_U32</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca815733ff998318cfc958e1660a65c3b1" prot="public">
+          <name>PROFILER_ARG_S32</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca299fe4adc1aa65b416c377cf04b7686f" prot="public">
+          <name>PROFILER_ARG_STRING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca21f5b43a7cc989eff99cd3cfd8f84466" prot="public">
+          <name>PROFILER_ARG_TIMESTAMP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Data types for profiling. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="56" column="1" bodyfile="include/profiler.h" bodystart="56" bodyend="65"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__profiler_1ga0f2a03e1f83334f0db71a0062918fceb" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t profiler_num_events</definition>
+        <argsstring></argsstring>
+        <name>profiler_num_events</name>
+        <briefdescription>
+<para>Number of event types registered in the Profiler. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="51" column="16" declfile="include/profiler.h" declline="51" declcolumn="16"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__profiler_1ga375a45b926b010d935b8a30553222e63" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int profiler_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>profiler_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize the Profiler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>This function is thread-safe, but not safe to use in interrupts.</para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="88" column="5" declfile="include/profiler.h" declline="88" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_1gae125c3995785c915be880a92dab0d6c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void profiler_term</definition>
+        <argsstring>(void)</argsstring>
+        <name>profiler_term</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Terminate the Profiler. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="97" column="6" declfile="include/profiler.h" declline="97" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_1gac15c886614d3ee5c3a3405936d39f34d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const char *</type>
+        <definition>const char * profiler_get_event_descr</definition>
+        <argsstring>(size_t profiler_event_id)</argsstring>
+        <name>profiler_get_event_descr</name>
+        <param>
+          <type>size_t</type>
+          <declname>profiler_event_id</declname>
+        </param>
+        <briefdescription>
+<para>Retrieve the description of an event type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>profiler_event_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event ID.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Event description. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="109" column="12" declfile="include/profiler.h" declline="109" declcolumn="12"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_1ga82d756f3c6784263dc1ab4b4a966cee4" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_profiling_enabled</definition>
+        <argsstring>(size_t profiler_event_id)</argsstring>
+        <name>is_profiling_enabled</name>
+        <param>
+          <type>size_t</type>
+          <declname>profiler_event_id</declname>
+        </param>
+        <briefdescription>
+<para>Check if profiling is enabled for a given event type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>profiler_event_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event ID.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Logical value indicating if the event type is currently profiled. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="123" column="20" bodyfile="include/profiler.h" bodystart="123" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_1ga8989953e56676d2f45f00fe27ab6fc28" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint16_t</type>
+        <definition>uint16_t profiler_register_event_type</definition>
+        <argsstring>(const char *name, const char *const *args, const enum profiler_arg *arg_types, uint8_t arg_cnt)</argsstring>
+        <name>profiler_register_event_type</name>
+        <param>
+          <type>const char *</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>const char *const *</type>
+          <declname>args</declname>
+        </param>
+        <param>
+          <type>const enum <ref refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1ga89852e0ad202010e105fec68bcf32b0c" kindref="member">profiler_arg</ref> *</type>
+          <declname>arg_types</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>arg_cnt</declname>
+        </param>
+        <briefdescription>
+<para>Register an event type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>This function is thread-safe, but not safe to use in interrupts.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the event type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>args</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Names of data values sent with the event. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>arg_types</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Types of data values sent with the event. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>arg_cnt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of data values sent with the event.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>ID assigned to the event type. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="146" column="10" declfile="include/profiler.h" declline="146" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_1ga176d440a55afda0f8778f6a2d4ba5607" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void profiler_log_start</definition>
+        <argsstring>(struct log_event_buf *buf)</argsstring>
+        <name>profiler_log_start</name>
+        <param>
+          <type>struct <ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref> *</type>
+          <declname>buf</declname>
+        </param>
+        <briefdescription>
+<para>Initialize a buffer for the data of an event. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="161" column="6" declfile="include/profiler.h" declline="161" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_1ga0bb341e6119f5bbfe0036e56c97a15a3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void profiler_log_encode_uint32</definition>
+        <argsstring>(struct log_event_buf *buf, uint32_t data)</argsstring>
+        <name>profiler_log_encode_uint32</name>
+        <param>
+          <type>struct <ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref> *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Encode and add uint32_t data type to a buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>The buffer must be initialized with <ref refid="group__profiler_ga176d440a55afda0f8778f6a2d4ba5607_1ga176d440a55afda0f8778f6a2d4ba5607" kindref="member">profiler_log_start</ref> before calling this function.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to add to the buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="175" column="6" declfile="include/profiler.h" declline="175" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_1gaa528114afe4dd551b8405b8a3bc99071" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void profiler_log_encode_int32</definition>
+        <argsstring>(struct log_event_buf *buf, int32_t data)</argsstring>
+        <name>profiler_log_encode_int32</name>
+        <param>
+          <type>struct <ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref> *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Encode and add int32_t data type to a buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>The buffer must be initialized with <ref refid="group__profiler_ga176d440a55afda0f8778f6a2d4ba5607_1ga176d440a55afda0f8778f6a2d4ba5607" kindref="member">profiler_log_start</ref> before calling this function.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to add to the buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="190" column="6" declfile="include/profiler.h" declline="190" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_1ga791756eceb337d778575ebfd66010071" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void profiler_log_encode_uint16</definition>
+        <argsstring>(struct log_event_buf *buf, uint16_t data)</argsstring>
+        <name>profiler_log_encode_uint16</name>
+        <param>
+          <type>struct <ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref> *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Encode and add uint16_t data type to a buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>The buffer must be initialized with <ref refid="group__profiler_ga176d440a55afda0f8778f6a2d4ba5607_1ga176d440a55afda0f8778f6a2d4ba5607" kindref="member">profiler_log_start</ref> before calling this function.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to add to the buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="205" column="6" declfile="include/profiler.h" declline="205" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_1ga839fca8f6eef9033606026ff8aeafa91" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void profiler_log_encode_int16</definition>
+        <argsstring>(struct log_event_buf *buf, int16_t data)</argsstring>
+        <name>profiler_log_encode_int16</name>
+        <param>
+          <type>struct <ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref> *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>int16_t</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Encode and add int16_t data type to a buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>The buffer must be initialized with <ref refid="group__profiler_ga176d440a55afda0f8778f6a2d4ba5607_1ga176d440a55afda0f8778f6a2d4ba5607" kindref="member">profiler_log_start</ref> before calling this function.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to add to the buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="220" column="6" declfile="include/profiler.h" declline="220" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_1ga68ca82c3fadfbcbefefcdcb0140f0755" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void profiler_log_encode_uint8</definition>
+        <argsstring>(struct log_event_buf *buf, uint8_t data)</argsstring>
+        <name>profiler_log_encode_uint8</name>
+        <param>
+          <type>struct <ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref> *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Encode and add uint8_t data type to a buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>The buffer must be initialized with <ref refid="group__profiler_ga176d440a55afda0f8778f6a2d4ba5607_1ga176d440a55afda0f8778f6a2d4ba5607" kindref="member">profiler_log_start</ref> before calling this function.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to add to the buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="235" column="6" declfile="include/profiler.h" declline="235" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_1gadaf621e1df80d49a1aec8af067431d69" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void profiler_log_encode_int8</definition>
+        <argsstring>(struct log_event_buf *buf, int8_t data)</argsstring>
+        <name>profiler_log_encode_int8</name>
+        <param>
+          <type>struct <ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref> *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>int8_t</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Encode and add int8_t data type to a buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>The buffer must be initialized with <ref refid="group__profiler_ga176d440a55afda0f8778f6a2d4ba5607_1ga176d440a55afda0f8778f6a2d4ba5607" kindref="member">profiler_log_start</ref> before calling this function.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to add to the buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="250" column="6" declfile="include/profiler.h" declline="250" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_1ga14b5fa05c4158aeaf9c0df0147c45382" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void profiler_log_encode_string</definition>
+        <argsstring>(struct log_event_buf *buf, const char *string)</argsstring>
+        <name>profiler_log_encode_string</name>
+        <param>
+          <type>struct <ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref> *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>string</declname>
+        </param>
+        <briefdescription>
+<para>Encode and add string to a buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum 255 characters can be sent (the rest is ommited).</para>
+<para><simplesect kind="warning"><para>The buffer must be initialized with <ref refid="group__profiler_ga176d440a55afda0f8778f6a2d4ba5607_1ga176d440a55afda0f8778f6a2d4ba5607" kindref="member">profiler_log_start</ref> before calling this function.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>string</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>String to add to the buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="267" column="6" declfile="include/profiler.h" declline="267" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_1ga93557044119d9b29df8b8913275da555" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void profiler_log_add_mem_address</definition>
+        <argsstring>(struct log_event_buf *buf, const void *mem_address)</argsstring>
+        <name>profiler_log_add_mem_address</name>
+        <param>
+          <type>struct <ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref> *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>mem_address</declname>
+        </param>
+        <briefdescription>
+<para>Encode and add the event&apos;s address in memory to the buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This information is used for event identification.</para>
+<para><simplesect kind="warning"><para>The buffer must be initialized with <ref refid="group__profiler_ga176d440a55afda0f8778f6a2d4ba5607_1ga176d440a55afda0f8778f6a2d4ba5607" kindref="member">profiler_log_start</ref> before calling this function.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>mem_address</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Memory address to encode. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="285" column="6" declfile="include/profiler.h" declline="285" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_1gab72de937bd51654b2178f49b10c2b46d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void profiler_log_send</definition>
+        <argsstring>(struct log_event_buf *buf, uint16_t event_type_id)</argsstring>
+        <name>profiler_log_send</name>
+        <param>
+          <type>struct <ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref> *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>event_type_id</declname>
+        </param>
+        <briefdescription>
+<para>Send data from the buffer to the host. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function only sends data that is already stored in the buffer. Use <ref refid="group__profiler_ga0bb341e6119f5bbfe0036e56c97a15a3_1ga0bb341e6119f5bbfe0036e56c97a15a3" kindref="member">profiler_log_encode_uint32</ref>, <ref refid="group__profiler_gaa528114afe4dd551b8405b8a3bc99071_1gaa528114afe4dd551b8405b8a3bc99071" kindref="member">profiler_log_encode_int32</ref>, <ref refid="group__profiler_ga791756eceb337d778575ebfd66010071_1ga791756eceb337d778575ebfd66010071" kindref="member">profiler_log_encode_uint16</ref>, <ref refid="group__profiler_ga839fca8f6eef9033606026ff8aeafa91_1ga839fca8f6eef9033606026ff8aeafa91" kindref="member">profiler_log_encode_int16</ref>, <ref refid="group__profiler_ga68ca82c3fadfbcbefefcdcb0140f0755_1ga68ca82c3fadfbcbefefcdcb0140f0755" kindref="member">profiler_log_encode_uint8</ref>, <ref refid="group__profiler_gadaf621e1df80d49a1aec8af067431d69_1gadaf621e1df80d49a1aec8af067431d69" kindref="member">profiler_log_encode_int8</ref>, <ref refid="group__profiler_ga14b5fa05c4158aeaf9c0df0147c45382_1ga14b5fa05c4158aeaf9c0df0147c45382" kindref="member">profiler_log_encode_string</ref> or <ref refid="group__profiler_ga93557044119d9b29df8b8913275da555_1ga93557044119d9b29df8b8913275da555" kindref="member">profiler_log_add_mem_address</ref> to add data to the buffer.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>event_type_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event type ID as assigned to the event type when it is registered. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="307" column="6" declfile="include/profiler.h" declline="307" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__profiler_1ga1773d77149a83eeb24fa98431a3bbd0c" prot="public" static="no">
+        <name>CONFIG_PROFILER_MAX_NUMBER_OF_APPLICATION_EVENTS</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum number of events. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="24" column="9" bodyfile="include/profiler.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__profiler_1gaf5f1aa14d4ba40bfca0b2928d05dada3" prot="public" static="no">
+        <name>CONFIG_PROFILER_NUMBER_OF_INTERNAL_EVENTS</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of internal events. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="29" column="9" bodyfile="include/profiler.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__profiler_1ga73fbb9bd4540f0db682089a1de850b14" prot="public" static="no">
+        <name>PROFILER_MAX_NUMBER_OF_APPLICATION_AND_INTERNAL_EVENTS</name>
+        <initializer>	((<ref refid="group__profiler_ga1773d77149a83eeb24fa98431a3bbd0c_1ga1773d77149a83eeb24fa98431a3bbd0c" kindref="member">CONFIG_PROFILER_MAX_NUMBER_OF_APPLICATION_EVENTS</ref>) + \
+	(<ref refid="group__profiler_gaf5f1aa14d4ba40bfca0b2928d05dada3_1gaf5f1aa14d4ba40bfca0b2928d05dada3" kindref="member">CONFIG_PROFILER_NUMBER_OF_INTERNAL_EVENTS</ref>))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum number of events including user application events and internal events. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="33" column="9" bodyfile="include/profiler.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Profiler. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

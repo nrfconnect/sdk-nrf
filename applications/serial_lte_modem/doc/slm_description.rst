@@ -148,7 +148,7 @@ CONFIG_SLM_CONNECT_UART_2 - UART 2
 .. _CONFIG_SLM_START_SLEEP:
 
 CONFIG_SLM_START_SLEEP - Enter sleep on startup
-   This option makes nRF9160 enter deep sleep after startup.
+   This option makes the nRF9160 enter deep sleep after startup.
    It is not selected by default.
 
 .. _CONFIG_SLM_INTERFACE_PIN:

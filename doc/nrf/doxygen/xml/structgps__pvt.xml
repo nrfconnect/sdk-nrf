@@ -1,0 +1,218 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structgps__pvt" kind="struct" language="C++" prot="public">
+    <compoundname>gps_pvt</compoundname>
+    <includes refid="gps_8h" local="no">gps.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structgps__pvt_ac4c37adb684dfafcad8b5dcf41f68076_1ac4c37adb684dfafcad8b5dcf41f68076" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double gps_pvt::latitude</definition>
+        <argsstring></argsstring>
+        <name>latitude</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="72" column="8" bodyfile="include/drivers/gps.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__pvt_ab551fdbe8715e1176807106371766e05_1ab551fdbe8715e1176807106371766e05" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double gps_pvt::longitude</definition>
+        <argsstring></argsstring>
+        <name>longitude</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="73" column="8" bodyfile="include/drivers/gps.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__pvt_a056fd000a4e6529ee2ae12695d5b4070_1a056fd000a4e6529ee2ae12695d5b4070" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float gps_pvt::altitude</definition>
+        <argsstring></argsstring>
+        <name>altitude</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="74" column="7" bodyfile="include/drivers/gps.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__pvt_a6d14b16df20afa24802b9e01d5995e9a_1a6d14b16df20afa24802b9e01d5995e9a" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float gps_pvt::accuracy</definition>
+        <argsstring></argsstring>
+        <name>accuracy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="75" column="7" bodyfile="include/drivers/gps.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__pvt_a446db66df9fb6a7fe78539a954e1f4df_1a446db66df9fb6a7fe78539a954e1f4df" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float gps_pvt::speed</definition>
+        <argsstring></argsstring>
+        <name>speed</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="76" column="7" bodyfile="include/drivers/gps.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__pvt_a4b0c6b293e45494f11632b8b8986b575_1a4b0c6b293e45494f11632b8b8986b575" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float gps_pvt::heading</definition>
+        <argsstring></argsstring>
+        <name>heading</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="77" column="7" bodyfile="include/drivers/gps.h" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__pvt_aed00ad4c670e3f96b302584a2d13d305_1aed00ad4c670e3f96b302584a2d13d305" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float gps_pvt::pdop</definition>
+        <argsstring></argsstring>
+        <name>pdop</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="78" column="7" bodyfile="include/drivers/gps.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__pvt_a9606e3854f9a5ed883cef80d968c2847_1a9606e3854f9a5ed883cef80d968c2847" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float gps_pvt::hdop</definition>
+        <argsstring></argsstring>
+        <name>hdop</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="79" column="7" bodyfile="include/drivers/gps.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__pvt_a97b548f745a77c99764ba0423db5c950_1a97b548f745a77c99764ba0423db5c950" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float gps_pvt::vdop</definition>
+        <argsstring></argsstring>
+        <name>vdop</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="80" column="7" bodyfile="include/drivers/gps.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__pvt_abc48bd115d91a6b469cb5091cbf1b435_1abc48bd115d91a6b469cb5091cbf1b435" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float gps_pvt::tdop</definition>
+        <argsstring></argsstring>
+        <name>tdop</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="81" column="7" bodyfile="include/drivers/gps.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__pvt_afd51b7de7a2a9954b57ad7e62895f9bb_1afd51b7de7a2a9954b57ad7e62895f9bb" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float gps_pvt::gdop</definition>
+        <argsstring></argsstring>
+        <name>gdop</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="82" column="7" bodyfile="include/drivers/gps.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__pvt_a077481110568a8e34341bc9cde5a0552_1a077481110568a8e34341bc9cde5a0552" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structgps__datetime" kindref="compound">gps_datetime</ref></type>
+        <definition>struct gps_datetime gps_pvt::datetime</definition>
+        <argsstring></argsstring>
+        <name>datetime</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="83" column="19" bodyfile="include/drivers/gps.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__pvt_aa3a533ed9e7b5e342e0c905b17c463f0_1aa3a533ed9e7b5e342e0c905b17c463f0" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structgps__sv" kindref="compound">gps_sv</ref></type>
+        <definition>struct gps_sv gps_pvt::sv[12]</definition>
+        <argsstring>[12]</argsstring>
+        <name>sv</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="84" column="13" bodyfile="include/drivers/gps.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>gps_datetime</label>
+        <link refid="structgps__datetime"/>
+      </node>
+      <node id="1">
+        <label>gps_pvt</label>
+        <link refid="structgps__pvt"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>datetime</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>sv</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>gps_sv</label>
+        <link refid="structgps__sv"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/drivers/gps.h" line="71" column="1" bodyfile="include/drivers/gps.h" bodystart="71" bodyend="85"/>
+    <listofallmembers>
+      <member refid="structgps__pvt_a6d14b16df20afa24802b9e01d5995e9a_1a6d14b16df20afa24802b9e01d5995e9a" prot="public" virt="non-virtual"><scope>gps_pvt</scope><name>accuracy</name></member>
+      <member refid="structgps__pvt_a056fd000a4e6529ee2ae12695d5b4070_1a056fd000a4e6529ee2ae12695d5b4070" prot="public" virt="non-virtual"><scope>gps_pvt</scope><name>altitude</name></member>
+      <member refid="structgps__pvt_a077481110568a8e34341bc9cde5a0552_1a077481110568a8e34341bc9cde5a0552" prot="public" virt="non-virtual"><scope>gps_pvt</scope><name>datetime</name></member>
+      <member refid="structgps__pvt_afd51b7de7a2a9954b57ad7e62895f9bb_1afd51b7de7a2a9954b57ad7e62895f9bb" prot="public" virt="non-virtual"><scope>gps_pvt</scope><name>gdop</name></member>
+      <member refid="structgps__pvt_a9606e3854f9a5ed883cef80d968c2847_1a9606e3854f9a5ed883cef80d968c2847" prot="public" virt="non-virtual"><scope>gps_pvt</scope><name>hdop</name></member>
+      <member refid="structgps__pvt_a4b0c6b293e45494f11632b8b8986b575_1a4b0c6b293e45494f11632b8b8986b575" prot="public" virt="non-virtual"><scope>gps_pvt</scope><name>heading</name></member>
+      <member refid="structgps__pvt_ac4c37adb684dfafcad8b5dcf41f68076_1ac4c37adb684dfafcad8b5dcf41f68076" prot="public" virt="non-virtual"><scope>gps_pvt</scope><name>latitude</name></member>
+      <member refid="structgps__pvt_ab551fdbe8715e1176807106371766e05_1ab551fdbe8715e1176807106371766e05" prot="public" virt="non-virtual"><scope>gps_pvt</scope><name>longitude</name></member>
+      <member refid="structgps__pvt_aed00ad4c670e3f96b302584a2d13d305_1aed00ad4c670e3f96b302584a2d13d305" prot="public" virt="non-virtual"><scope>gps_pvt</scope><name>pdop</name></member>
+      <member refid="structgps__pvt_a446db66df9fb6a7fe78539a954e1f4df_1a446db66df9fb6a7fe78539a954e1f4df" prot="public" virt="non-virtual"><scope>gps_pvt</scope><name>speed</name></member>
+      <member refid="structgps__pvt_aa3a533ed9e7b5e342e0c905b17c463f0_1aa3a533ed9e7b5e342e0c905b17c463f0" prot="public" virt="non-virtual"><scope>gps_pvt</scope><name>sv</name></member>
+      <member refid="structgps__pvt_abc48bd115d91a6b469cb5091cbf1b435_1abc48bd115d91a6b469cb5091cbf1b435" prot="public" virt="non-virtual"><scope>gps_pvt</scope><name>tdop</name></member>
+      <member refid="structgps__pvt_a97b548f745a77c99764ba0423db5c950_1a97b548f745a77c99764ba0423db5c950" prot="public" virt="non-virtual"><scope>gps_pvt</scope><name>vdop</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

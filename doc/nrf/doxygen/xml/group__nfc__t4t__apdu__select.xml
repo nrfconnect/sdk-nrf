@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__t4t__apdu__select" kind="group">
+    <compoundname>nfc_t4t_apdu_select</compoundname>
+    <title>Parameters for selecting</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__t4t__apdu__select_1gab99e890e32682d82e438ecf68f2a911e" prot="public" static="no">
+        <name>NFC_T4T_APDU_SELECT_BY_FILE_ID</name>
+        <initializer>0x000C</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Select by file identifier, first or only occurrence. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="35" column="9" bodyfile="include/nfc/t4t/apdu.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t4t__apdu__select_1gac4ad0fc5a26935fafa483517d82a98fa" prot="public" static="no">
+        <name>NFC_T4T_APDU_SELECT_BY_NAME</name>
+        <initializer>0x0400</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Select by name, first or only occurrence. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="38" column="9" bodyfile="include/nfc/t4t/apdu.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>instruction code in C-APDU </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,318 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__sensor__types__power__supply__output" kind="group">
+    <compoundname>bt_mesh_sensor_types_power_supply_output</compoundname>
+    <title>Power supply output</title>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__power__supply__output_1ga1db0e589ce60d8c79547a23623fed347" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_avg_output_current</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_avg_output_current</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Average output current</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Electric Current Value<itemizedlist>
+<listitem><para>Unit: Ampere</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 0.01 A)</para>
+</listitem><listitem><para>Range: 0 to 655.33</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Sensing duration<itemizedlist>
+<listitem><para>Unit: Seconds</para>
+</listitem><listitem><para>Encoding: 8 bit unsigned exponential time (pow(1.1, N - 64) seconds)</para>
+</listitem><listitem><para>Range: 0 to 73216705 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1166" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="1166" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__power__supply__output_1gaa3bb631d2bcc3f1bf9e349587ad3ce0d" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_avg_output_voltage</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_avg_output_voltage</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Average output voltage</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Voltage Value<itemizedlist>
+<listitem><para>Unit: Volt</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1/64 V)</para>
+</listitem><listitem><para>Range: 0 to 1023.95</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Sensing duration<itemizedlist>
+<listitem><para>Unit: Seconds</para>
+</listitem><listitem><para>Encoding: 8 bit unsigned exponential time (pow(1.1, N - 64) seconds)</para>
+</listitem><listitem><para>Range: 0 to 73216705 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1180" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="1180" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__power__supply__output_1ga6746fda55de19eb71ea28731258dee89" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_output_current_range</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_output_current_range</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Output current range</para>
+<para>This sensor type should be used as a sensor setting.</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Minimum Electric Current Value<itemizedlist>
+<listitem><para>Unit: Ampere</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 0.01 A)</para>
+</listitem><listitem><para>Range: 0 to 655.33</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Maximum Electric Current Value<itemizedlist>
+<listitem><para>Unit: Ampere</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 0.01 A)</para>
+</listitem><listitem><para>Range: 0 to 655.33 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1196" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="1196" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__power__supply__output_1gadf184cb08059e512e2b9a36915756950" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_output_current_stat</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_output_current_stat</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Output current statistics</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Average Electric Current Value<itemizedlist>
+<listitem><para>Unit: Ampere</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 0.01 A)</para>
+</listitem><listitem><para>Range: 0 to 655.33</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Standard Deviation Electric Current Value<itemizedlist>
+<listitem><para>Unit: Ampere</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 0.01 A)</para>
+</listitem><listitem><para>Range: 0 to 655.33</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Minimum Electric Current Value<itemizedlist>
+<listitem><para>Unit: Ampere</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 0.01 A)</para>
+</listitem><listitem><para>Range: 0 to 655.33</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Maximum Electric Current Value<itemizedlist>
+<listitem><para>Unit: Ampere</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 0.01 A)</para>
+</listitem><listitem><para>Range: 0 to 655.33</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Sensing Duration<itemizedlist>
+<listitem><para>Unit: Seconds</para>
+</listitem><listitem><para>Encoding: 8 bit unsigned exponential time (pow(1.1, N - 64) seconds)</para>
+</listitem><listitem><para>Range: 0 to 73216705 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1222" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="1222" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__power__supply__output_1gaea2fc2d612b5acd9ee9db9b270454e81" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_output_ripple_voltage_spec</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_output_ripple_voltage_spec</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Output ripple voltage specification</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Output Ripple Voltage<itemizedlist>
+<listitem><para>Unit: Percent</para>
+</listitem><listitem><para>Encoding: 8 bit unsigned scalar (Resolution: 0.5 %)</para>
+</listitem><listitem><para>Range: 0 to 100.0 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1233" column="1" declfile="include/bluetooth/mesh/sensor_types.h" declline="1233" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__power__supply__output_1gac7a5f309b0292060a8b4476b80b9d6b8" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_output_voltage_range</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_output_voltage_range</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Output voltage range</para>
+<para>This sensor type should be used as a sensor setting.</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Minimum Voltage Value<itemizedlist>
+<listitem><para>Unit: Volt</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1/64 V)</para>
+</listitem><listitem><para>Range: 0 to 1023.95</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Maximum Voltage Value<itemizedlist>
+<listitem><para>Unit: Volt</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1/64 V)</para>
+</listitem><listitem><para>Range: 0 to 1023.95 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1249" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="1249" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__power__supply__output_1ga168b127c7f0bfc126f83129badb374a3" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_output_voltage_stat</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_output_voltage_stat</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Output voltage statistics</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Average Voltage Value<itemizedlist>
+<listitem><para>Unit: Volt</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1/64 V)</para>
+</listitem><listitem><para>Range: 0 to 1023.95</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Standard Deviation Voltage Value<itemizedlist>
+<listitem><para>Unit: Volt</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1/64 V)</para>
+</listitem><listitem><para>Range: 0 to 1023.95</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Minimum Voltage Value<itemizedlist>
+<listitem><para>Unit: Volt</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1/64 V)</para>
+</listitem><listitem><para>Range: 0 to 1023.95</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Maximum Voltage Value<itemizedlist>
+<listitem><para>Unit: Volt</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1/64 V)</para>
+</listitem><listitem><para>Range: 0 to 1023.95</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Sensing Duration<itemizedlist>
+<listitem><para>Unit: Seconds</para>
+</listitem><listitem><para>Encoding: 8 bit unsigned exponential time (pow(1.1, N - 64) seconds)</para>
+</listitem><listitem><para>Range: 0 to 73216705 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1275" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="1275" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__power__supply__output_1ga55c26d39cce4b9f2c134da2d2d3c1959" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_present_output_current</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_present_output_current</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present output current</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Present Output Current<itemizedlist>
+<listitem><para>Unit: Ampere</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 0.01 A)</para>
+</listitem><listitem><para>Range: 0 to 655.33 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1285" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="1285" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__power__supply__output_1ga43251f567c4a50c4c24887c3d0811c25" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_present_output_voltage</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_present_output_voltage</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present output voltage</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Present Output Voltage<itemizedlist>
+<listitem><para>Unit: Volt</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1/64 V)</para>
+</listitem><listitem><para>Range: 0 to 1023.95 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1295" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="1295" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__power__supply__output_1gae85a67a3401701ae538c33ee6ad672ad" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_present_rel_output_ripple_voltage</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_present_rel_output_ripple_voltage</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present relative output ripple voltage</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Output Ripple Voltage<itemizedlist>
+<listitem><para>Unit: Percent</para>
+</listitem><listitem><para>Encoding: 8 bit unsigned scalar (Resolution: 0.5 %)</para>
+</listitem><listitem><para>Range: 0 to 100.0 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1306" column="1" declfile="include/bluetooth/mesh/sensor_types.h" declline="1306" declcolumn="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>sensor types </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

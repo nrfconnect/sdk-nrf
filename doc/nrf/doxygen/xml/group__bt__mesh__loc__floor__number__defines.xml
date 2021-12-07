@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__loc__floor__number__defines" kind="group">
+    <compoundname>bt_mesh_loc_floor_number_defines</compoundname>
+    <title>Defines for floor number.</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__loc__floor__number__defines_1gaed3dc8c78d4b33615bad10cdd3d6142e" prot="public" static="no">
+        <name>BT_MESH_LOC_FLOOR_NUMBER_MIN</name>
+        <initializer>(-20)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Lowest floor number that can be represented. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="42" column="9" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__loc__floor__number__defines_1gab55be7523d221616c27b560f7730ec15" prot="public" static="no">
+        <name>BT_MESH_LOC_FLOOR_NUMBER_MAX</name>
+        <initializer>232</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Highest floor number that can be represented. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="44" column="9" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__loc__floor__number__defines_1gae6d749dfcdf34afa89ae437ebec53f7a" prot="public" static="no">
+        <name>BT_MESH_LOC_FLOOR_NUMBER_GROUND_FLOOR_0</name>
+        <initializer>0xfc</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Ground floor (where the ground floor is referred to as floor 0) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="46" column="9" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__loc__floor__number__defines_1ga4df62ea8fd95bd5d7b41ea69cd98c23a" prot="public" static="no">
+        <name>BT_MESH_LOC_FLOOR_NUMBER_GROUND_FLOOR_1</name>
+        <initializer>0xfd</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Ground floor (where the ground floor is referred to as floor 1) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="48" column="9" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__loc__floor__number__defines_1ga61d806b2872354509dd8f258a67639ef" prot="public" static="no">
+        <name>BT_MESH_LOC_FLOOR_NUMBER_UNKNOWN</name>
+        <initializer>0xff</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Unknown or unconfigured floor number. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="50" column="9" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Boundaries and special values for the local floor number. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

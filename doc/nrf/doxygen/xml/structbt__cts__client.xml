@@ -1,0 +1,147 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__cts__client" kind="struct" language="C++" prot="public">
+    <compoundname>bt_cts_client</compoundname>
+    <includes refid="cts__client_8h" local="no">cts_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__cts__client_aab18c5f5d16f543c393715f1aa24ea10_1aab18c5f5d16f543c393715f1aa24ea10" prot="public" static="no" mutable="no">
+        <type>struct bt_conn *</type>
+        <definition>struct bt_conn* bt_cts_client::conn</definition>
+        <argsstring></argsstring>
+        <name>conn</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Connection object. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="80" column="14" bodyfile="include/bluetooth/services/cts_client.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__cts__client_adc69f7b90b0b959edc24af383852e9cc_1adc69f7b90b0b959edc24af383852e9cc" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_cts_client::handle_ct</definition>
+        <argsstring></argsstring>
+        <name>handle_ct</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handle of the Current Time Characteristic. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="83" column="10" bodyfile="include/bluetooth/services/cts_client.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__cts__client_a5cc69a754026946c14eb8ca50317bc7c_1a5cc69a754026946c14eb8ca50317bc7c" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_cts_client::handle_ct_ccc</definition>
+        <argsstring></argsstring>
+        <name>handle_ct_ccc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handle of the CCCD of the Current Time Characteristic. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="86" column="10" bodyfile="include/bluetooth/services/cts_client.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__cts__client_aae10bf567e00a06a9bc1d9d71b9758d4_1aae10bf567e00a06a9bc1d9d71b9758d4" prot="public" static="no" mutable="no">
+        <type>atomic_t</type>
+        <definition>atomic_t bt_cts_client::state</definition>
+        <argsstring></argsstring>
+        <name>state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Internal state. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="89" column="10" bodyfile="include/bluetooth/services/cts_client.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__cts__client_a2547fd2fef419998b7a47aaf554e5619_1a2547fd2fef419998b7a47aaf554e5619" prot="public" static="no" mutable="no">
+        <type>struct bt_gatt_read_params</type>
+        <definition>struct bt_gatt_read_params bt_cts_client::read_params</definition>
+        <argsstring></argsstring>
+        <name>read_params</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Read parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="92" column="26" bodyfile="include/bluetooth/services/cts_client.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__cts__client_a89c93fdb87902f7a18f6fd50e57acfa4_1a89c93fdb87902f7a18f6fd50e57acfa4" prot="public" static="no" mutable="no">
+        <type>struct bt_gatt_subscribe_params</type>
+        <definition>struct bt_gatt_subscribe_params bt_cts_client::notify_params</definition>
+        <argsstring></argsstring>
+        <name>notify_params</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Notification parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="95" column="31" bodyfile="include/bluetooth/services/cts_client.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__cts__client_a0bf89bcc970dc52049213cd9c13c414d_1a0bf89bcc970dc52049213cd9c13c414d" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__gatt__cts__c_gabfb977421f36ad2fc0567242e5a829e6_1gabfb977421f36ad2fc0567242e5a829e6" kindref="member">bt_cts_read_cb</ref></type>
+        <definition>bt_cts_read_cb bt_cts_client::read_cb</definition>
+        <argsstring></argsstring>
+        <name>read_cb</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Read value callback. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="98" column="16" bodyfile="include/bluetooth/services/cts_client.h" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__cts__client_a7c997ac0e9414f04093f4eefd42d768e_1a7c997ac0e9414f04093f4eefd42d768e" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__gatt__cts__c_ga385428a3225d5730001bb3ab1d4cefb2_1ga385428a3225d5730001bb3ab1d4cefb2" kindref="member">bt_cts_notify_cb</ref></type>
+        <definition>bt_cts_notify_cb bt_cts_client::notify_cb</definition>
+        <argsstring></argsstring>
+        <name>notify_cb</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Notification callback. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="101" column="18" bodyfile="include/bluetooth/services/cts_client.h" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Current Time Service client structure. This structure contains status information for the client. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_cts_client</label>
+        <link refid="structbt__cts__client"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>notify_cb</edgelabel>
+          <edgelabel>read_cb</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/cts_client.h" line="78" column="1" bodyfile="include/bluetooth/services/cts_client.h" bodystart="78" bodyend="102"/>
+    <listofallmembers>
+      <member refid="structbt__cts__client_aab18c5f5d16f543c393715f1aa24ea10_1aab18c5f5d16f543c393715f1aa24ea10" prot="public" virt="non-virtual"><scope>bt_cts_client</scope><name>conn</name></member>
+      <member refid="structbt__cts__client_adc69f7b90b0b959edc24af383852e9cc_1adc69f7b90b0b959edc24af383852e9cc" prot="public" virt="non-virtual"><scope>bt_cts_client</scope><name>handle_ct</name></member>
+      <member refid="structbt__cts__client_a5cc69a754026946c14eb8ca50317bc7c_1a5cc69a754026946c14eb8ca50317bc7c" prot="public" virt="non-virtual"><scope>bt_cts_client</scope><name>handle_ct_ccc</name></member>
+      <member refid="structbt__cts__client_a7c997ac0e9414f04093f4eefd42d768e_1a7c997ac0e9414f04093f4eefd42d768e" prot="public" virt="non-virtual"><scope>bt_cts_client</scope><name>notify_cb</name></member>
+      <member refid="structbt__cts__client_a89c93fdb87902f7a18f6fd50e57acfa4_1a89c93fdb87902f7a18f6fd50e57acfa4" prot="public" virt="non-virtual"><scope>bt_cts_client</scope><name>notify_params</name></member>
+      <member refid="structbt__cts__client_a0bf89bcc970dc52049213cd9c13c414d_1a0bf89bcc970dc52049213cd9c13c414d" prot="public" virt="non-virtual"><scope>bt_cts_client</scope><name>read_cb</name></member>
+      <member refid="structbt__cts__client_a2547fd2fef419998b7a47aaf554e5619_1a2547fd2fef419998b7a47aaf554e5619" prot="public" virt="non-virtual"><scope>bt_cts_client</scope><name>read_params</name></member>
+      <member refid="structbt__cts__client_aae10bf567e00a06a9bc1d9d71b9758d4_1aae10bf567e00a06a9bc1d9d71b9758d4" prot="public" virt="non-virtual"><scope>bt_cts_client</scope><name>state</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

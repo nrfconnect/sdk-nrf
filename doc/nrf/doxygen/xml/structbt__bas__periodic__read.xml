@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__bas__periodic__read" kind="struct" language="C++" prot="public">
+    <compoundname>bt_bas_periodic_read</compoundname>
+    <includes refid="bas__client_8h" local="no">bas_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__bas__periodic__read_ad28438619797faf0304f1160695a1158_1ad28438619797faf0304f1160695a1158" prot="public" static="no" mutable="no">
+        <type>struct k_work_delayable</type>
+        <definition>struct k_work_delayable bt_bas_periodic_read::read_work</definition>
+        <argsstring></argsstring>
+        <name>read_work</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Work queue used to measure the read interval. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="74" column="23" bodyfile="include/bluetooth/services/bas_client.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__bas__periodic__read_a05d12265ba371c3a3bd24b1ba798c842_1a05d12265ba371c3a3bd24b1ba798c842" prot="public" static="no" mutable="no">
+        <type>struct bt_gatt_read_params</type>
+        <definition>struct bt_gatt_read_params bt_bas_periodic_read::params</definition>
+        <argsstring></argsstring>
+        <name>params</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Read parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="76" column="26" bodyfile="include/bluetooth/services/bas_client.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__bas__periodic__read_a8191a57c11b09cdcefea9b2e32f9a15d_1a8191a57c11b09cdcefea9b2e32f9a15d" prot="public" static="no" mutable="no">
+        <type>atomic_t</type>
+        <definition>atomic_t bt_bas_periodic_read::interval</definition>
+        <argsstring></argsstring>
+        <name>interval</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Read value interval. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="78" column="10" bodyfile="include/bluetooth/services/bas_client.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/bas_client.h" line="72" column="1" bodyfile="include/bluetooth/services/bas_client.h" bodystart="72" bodyend="79"/>
+    <listofallmembers>
+      <member refid="structbt__bas__periodic__read_a8191a57c11b09cdcefea9b2e32f9a15d_1a8191a57c11b09cdcefea9b2e32f9a15d" prot="public" virt="non-virtual"><scope>bt_bas_periodic_read</scope><name>interval</name></member>
+      <member refid="structbt__bas__periodic__read_a05d12265ba371c3a3bd24b1ba798c842_1a05d12265ba371c3a3bd24b1ba798c842" prot="public" virt="non-virtual"><scope>bt_bas_periodic_read</scope><name>params</name></member>
+      <member refid="structbt__bas__periodic__read_ad28438619797faf0304f1160695a1158_1ad28438619797faf0304f1160695a1158" prot="public" virt="non-virtual"><scope>bt_bas_periodic_read</scope><name>read_work</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

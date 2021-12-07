@@ -1,0 +1,399 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__light__xyl__srv" kind="group">
+    <compoundname>bt_mesh_light_xyl_srv</compoundname>
+    <title>Light xyL Server model</title>
+    <innerclass refid="structbt__mesh__light__xy__set" prot="public">bt_mesh_light_xy_set</innerclass>
+    <innerclass refid="structbt__mesh__light__xy__status" prot="public">bt_mesh_light_xy_status</innerclass>
+    <innerclass refid="structbt__mesh__light__xyl__srv__handlers" prot="public">bt_mesh_light_xyl_srv_handlers</innerclass>
+    <innerclass refid="structbt__mesh__light__xyl__srv" prot="public">bt_mesh_light_xyl_srv</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__light__xyl__srv_1gaac1efb34c19118d62bf5ba517e6c72b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_xyl_srv_pub</definition>
+        <argsstring>(struct bt_mesh_light_xyl_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_light_xyl_status *status)</argsstring>
+        <name>bt_mesh_light_xyl_srv_pub</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl__srv" kindref="compound">bt_mesh_light_xyl_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl__status" kindref="compound">bt_mesh_light_xyl_status</ref> *</type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+<para>Publish the current xyL status. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Asynchronously publishes a xyL status message with the configured publish parameters.</para>
+<para><simplesect kind="note"><para>This API is only used publishing unprompted status messages. Response messages for get and set messages are handled internally.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server instance to publish on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to send with the default publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current status.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_srv.h" line="198" column="5" declfile="include/bluetooth/mesh/light_xyl_srv.h" declline="198" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__xyl__srv_1ga24100fa2866a2e443850c3d4e92a6ede" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_xyl_srv_target_pub</definition>
+        <argsstring>(struct bt_mesh_light_xyl_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_light_xyl_status *status)</argsstring>
+        <name>bt_mesh_light_xyl_srv_target_pub</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl__srv" kindref="compound">bt_mesh_light_xyl_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl__status" kindref="compound">bt_mesh_light_xyl_status</ref> *</type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+<para>Publish the current xyL target status. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Asynchronously publishes a xyL target status message with the configured publish parameters.</para>
+<para><simplesect kind="note"><para>This API is only used publishing unprompted status messages. Response messages for get and set messages are handled internally.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server instance to publish on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to send with the default publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current status.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_srv.h" line="220" column="5" declfile="include/bluetooth/mesh/light_xyl_srv.h" declline="220" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__xyl__srv_1ga3782457b1bd6f7d35adb477707c9e256" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_xyl_srv_range_pub</definition>
+        <argsstring>(struct bt_mesh_light_xyl_srv *srv, struct bt_mesh_msg_ctx *ctx, enum bt_mesh_model_status status_code)</argsstring>
+        <name>bt_mesh_light_xyl_srv_range_pub</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl__srv" kindref="compound">bt_mesh_light_xyl_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1ga6fcaf7e02af730b2100af1ef0a01f323" kindref="member">bt_mesh_model_status</ref></type>
+          <declname>status_code</declname>
+        </param>
+        <briefdescription>
+<para>Publish the current xyL Range status. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Asynchronously publishes a xyL Range status message with the configured publish parameters.</para>
+<para><simplesect kind="note"><para>This API is only used publishing unprompted status messages. Response messages for get and set messages are handled internally.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server instance to publish on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to send with the default publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status_code</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The status code of the response.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_srv.h" line="242" column="5" declfile="include/bluetooth/mesh/light_xyl_srv.h" declline="242" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__xyl__srv_1ga83df0b16f4b4d9d503d8f97951b68767" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_xyl_srv_default_pub</definition>
+        <argsstring>(struct bt_mesh_light_xyl_srv *srv, struct bt_mesh_msg_ctx *ctx)</argsstring>
+        <name>bt_mesh_light_xyl_srv_default_pub</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl__srv" kindref="compound">bt_mesh_light_xyl_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <briefdescription>
+<para>Publish the current xyL Default parameter status. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Asynchronously publishes a xyL Default parameter status message with the configured publish parameters.</para>
+<para><simplesect kind="note"><para>This API is only used publishing unprompted status messages. Response messages for get and set messages are handled internally.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server instance to publish on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to send with the default publish parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_srv.h" line="263" column="5" declfile="include/bluetooth/mesh/light_xyl_srv.h" declline="263" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__light__xyl__srv_1ga4e8b3a998505e12ed2077cdbe2958d0c" prot="public" static="no">
+        <name>BT_MESH_LIGHT_XYL_SRV_INIT</name>
+        <param><defname>_lightness_srv</defname></param>
+        <param><defname>_light_xyl_handlers</defname></param>
+        <initializer>	{                                                                      \
+		.handlers = _light_xyl_handlers,                               \
+		.lightness_srv = _lightness_srv,				\
+		.range = {                                                     \
+			.min = { .x = 0, .y = 0 },                             \
+			.max = { .x = UINT16_MAX, .y = UINT16_MAX }            \
+		}                                                              \
+	}</initializer>
+        <briefdescription>
+<para>initialization parameters for a <ref refid="group__bt__mesh__light__xyl__srv" kindref="compound">Light xyL Server model</ref> instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_lightness_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to Lightness server instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_light_xyl_handlers</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light xyL server callbacks. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_srv.h" line="34" column="9" bodyfile="include/bluetooth/mesh/light_xyl_srv.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__light__xyl__srv_1gad44b01b85ce189377f2531fd8e1fc37a" prot="public" static="no">
+        <name>BT_MESH_MODEL_LIGHT_XYL_SRV</name>
+        <param><defname>_srv</defname></param>
+        <initializer>		BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_XYL_SRV,               \
+				 _bt_mesh_light_xyl_srv_op, &amp;(_srv)-&gt;pub,      \
+				 BT_MESH_MODEL_USER_DATA(                      \
+					 struct <ref refid="structbt__mesh__light__xyl__srv" kindref="compound">bt_mesh_light_xyl_srv</ref>, _srv),  \
+				 &amp;_bt_mesh_light_xyl_srv_cb),                  \
+		BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_XYL_SETUP_SRV,         \
+				 _bt_mesh_light_xyl_setup_srv_op, NULL,        \
+				 BT_MESH_MODEL_USER_DATA(                      \
+					 struct <ref refid="structbt__mesh__light__xyl__srv" kindref="compound">bt_mesh_light_xyl_srv</ref>, _srv),  \
+				 &amp;_bt_mesh_light_xyl_setup_srv_cb)</initializer>
+        <briefdescription>
+<para>Light XYL Server model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__light__xyl__srv" kindref="compound">Light xyL Server model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_srv.h" line="50" column="9" bodyfile="include/bluetooth/mesh/light_xyl_srv.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Light xyL Server model. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

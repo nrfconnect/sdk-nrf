@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__hue__sat" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_hue_sat</compoundname>
+    <includes refid="light__hsl_8h" local="no">light_hsl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__hue__sat_a63cda1067f1e71740e7e8cc824b2158f_1a63cda1067f1e71740e7e8cc824b2158f" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_light_hue_sat::hue</definition>
+        <argsstring></argsstring>
+        <name>hue</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Hue level </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl.h" line="43" column="10" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__hue__sat_add6afe272eaebac4af05aec1fa201082_1add6afe272eaebac4af05aec1fa201082" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_light_hue_sat::saturation</definition>
+        <argsstring></argsstring>
+        <name>saturation</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Saturation level </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl.h" line="45" column="10" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Light Hue and Saturation parameters </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/light_hsl.h" line="41" column="1" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="41" bodyend="46"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__hue__sat_a63cda1067f1e71740e7e8cc824b2158f_1a63cda1067f1e71740e7e8cc824b2158f" prot="public" virt="non-virtual"><scope>bt_mesh_light_hue_sat</scope><name>hue</name></member>
+      <member refid="structbt__mesh__light__hue__sat_add6afe272eaebac4af05aec1fa201082_1add6afe272eaebac4af05aec1fa201082" prot="public" virt="non-virtual"><scope>bt_mesh_light_hue_sat</scope><name>saturation</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

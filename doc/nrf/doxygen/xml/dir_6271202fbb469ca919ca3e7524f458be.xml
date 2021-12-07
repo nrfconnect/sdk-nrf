@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_6271202fbb469ca919ca3e7524f458be" kind="dir">
+    <compoundname>applications/asset_tracker_v2/src/cloud/cloud_codec/azure_iot_hub</compoundname>
+    <innerfile refid="json__protocol__names__azure__iot__hub_8h">json_protocol_names_azure_iot_hub.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/azure_iot_hub/"/>
+  </compounddef>
+</doxygen>

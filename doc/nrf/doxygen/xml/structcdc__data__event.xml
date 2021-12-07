@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structcdc__data__event" kind="struct" language="C++" prot="public">
+    <compoundname>cdc_data_event</compoundname>
+    <includes refid="cdc__data__event_8h" local="no">cdc_data_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structcdc__data__event_a14c8ce29c337cf82e94c4b13c3e6b128_1a14c8ce29c337cf82e94c4b13c3e6b128" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header cdc_data_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/cdc_data_event.h" line="28" column="19" bodyfile="applications/connectivity_bridge/src/events/cdc_data_event.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcdc__data__event_a93e58dcdc7b9054bac0d005c94d96ae3_1a93e58dcdc7b9054bac0d005c94d96ae3" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t cdc_data_event::dev_idx</definition>
+        <argsstring></argsstring>
+        <name>dev_idx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/cdc_data_event.h" line="30" column="9" bodyfile="applications/connectivity_bridge/src/events/cdc_data_event.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcdc__data__event_ac4cdd6859f29ff58c68c61392449d663_1ac4cdd6859f29ff58c68c61392449d663" prot="public" static="no" mutable="no">
+        <type>uint8_t *</type>
+        <definition>uint8_t* cdc_data_event::buf</definition>
+        <argsstring></argsstring>
+        <name>buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/cdc_data_event.h" line="31" column="9" bodyfile="applications/connectivity_bridge/src/events/cdc_data_event.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcdc__data__event_af6acea0bdc715862aa6945b8dc557e7c_1af6acea0bdc715862aa6945b8dc557e7c" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t cdc_data_event::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/cdc_data_event.h" line="32" column="8" bodyfile="applications/connectivity_bridge/src/events/cdc_data_event.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Peer connection event. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>cdc_data_event</label>
+        <link refid="structcdc__data__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/connectivity_bridge/src/events/cdc_data_event.h" line="27" column="1" bodyfile="applications/connectivity_bridge/src/events/cdc_data_event.h" bodystart="27" bodyend="33"/>
+    <listofallmembers>
+      <member refid="structcdc__data__event_ac4cdd6859f29ff58c68c61392449d663_1ac4cdd6859f29ff58c68c61392449d663" prot="public" virt="non-virtual"><scope>cdc_data_event</scope><name>buf</name></member>
+      <member refid="structcdc__data__event_a93e58dcdc7b9054bac0d005c94d96ae3_1a93e58dcdc7b9054bac0d005c94d96ae3" prot="public" virt="non-virtual"><scope>cdc_data_event</scope><name>dev_idx</name></member>
+      <member refid="structcdc__data__event_a14c8ce29c337cf82e94c4b13c3e6b128_1a14c8ce29c337cf82e94c4b13c3e6b128" prot="public" virt="non-virtual"><scope>cdc_data_event</scope><name>header</name></member>
+      <member refid="structcdc__data__event_af6acea0bdc715862aa6945b8dc557e7c_1af6acea0bdc715862aa6945b8dc557e7c" prot="public" virt="non-virtual"><scope>cdc_data_event</scope><name>len</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

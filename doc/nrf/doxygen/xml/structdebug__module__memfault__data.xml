@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structdebug__module__memfault__data" kind="struct" language="C++" prot="public">
+    <compoundname>debug_module_memfault_data</compoundname>
+    <includes refid="debug__module__event_8h" local="no">debug_module_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structdebug__module__memfault__data_afcf22be3ff141d37164458d31bb5e180_1afcf22be3ff141d37164458d31bb5e180" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t debug_module_memfault_data::buf[0]</definition>
+        <argsstring>[0]</argsstring>
+        <name>buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/debug_module_event.h" line="44" column="9" bodyfile="applications/asset_tracker_v2/src/events/debug_module_event.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdebug__module__memfault__data_a4d953abf4e815f014991b52ee20277f2_1a4d953abf4e815f014991b52ee20277f2" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t debug_module_memfault_data::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/debug_module_event.h" line="45" column="8" bodyfile="applications/asset_tracker_v2/src/events/debug_module_event.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/events/debug_module_event.h" line="43" column="1" bodyfile="applications/asset_tracker_v2/src/events/debug_module_event.h" bodystart="43" bodyend="46"/>
+    <listofallmembers>
+      <member refid="structdebug__module__memfault__data_afcf22be3ff141d37164458d31bb5e180_1afcf22be3ff141d37164458d31bb5e180" prot="public" virt="non-virtual"><scope>debug_module_memfault_data</scope><name>buf</name></member>
+      <member refid="structdebug__module__memfault__data_a4d953abf4e815f014991b52ee20277f2_1a4d953abf4e815f014991b52ee20277f2" prot="public" virt="non-virtual"><scope>debug_module_memfault_data</scope><name>len</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

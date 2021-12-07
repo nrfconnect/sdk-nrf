@@ -1,0 +1,284 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlte__lc__conn__eval__params" kind="struct" language="C++" prot="public">
+    <compoundname>lte_lc_conn_eval_params</compoundname>
+    <includes refid="lte__lc_8h" local="no">lte_lc.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlte__lc__conn__eval__params_a4275500b93a571b85e9cfa799e1e5101_1a4275500b93a571b85e9cfa799e1e5101" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__lte__lc_ga91261e353062129cf610715b32e5cd05_1ga91261e353062129cf610715b32e5cd05" kindref="member">lte_lc_rrc_mode</ref></type>
+        <definition>enum lte_lc_rrc_mode lte_lc_conn_eval_params::rrc_state</definition>
+        <argsstring></argsstring>
+        <name>rrc_state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>RRC connection state during measurements. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="478" column="21" bodyfile="include/modem/lte_lc.h" bodystart="478" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__conn__eval__params_ac19c504508a86bb15a787da70e8178da_1ac19c504508a86bb15a787da70e8178da" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__lte__lc_ga816742ab87acf8ecbd33c31029b56886_1ga816742ab87acf8ecbd33c31029b56886" kindref="member">lte_lc_energy_estimate</ref></type>
+        <definition>enum lte_lc_energy_estimate lte_lc_conn_eval_params::energy_estimate</definition>
+        <argsstring></argsstring>
+        <name>energy_estimate</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Relative estimated energy consumption for data transmission compared to nominal consumption. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="483" column="28" bodyfile="include/modem/lte_lc.h" bodystart="483" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__conn__eval__params_adf5e4da5a76c7d5f032d0e7952e1e809_1adf5e4da5a76c7d5f032d0e7952e1e809" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__lte__lc_ga528bc95d77f8c08447ac4ecd99a7ccb3_1ga528bc95d77f8c08447ac4ecd99a7ccb3" kindref="member">lte_lc_tau_triggered</ref></type>
+        <definition>enum lte_lc_tau_triggered lte_lc_conn_eval_params::tau_trig</definition>
+        <argsstring></argsstring>
+        <name>tau_trig</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Value that signifies if the evaluated cell is a part of the Tracking Area Identifier list received from the network. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="488" column="26" bodyfile="include/modem/lte_lc.h" bodystart="488" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__conn__eval__params_ac943bb7114c5d06eb767a3c46752b7d9_1ac943bb7114c5d06eb767a3c46752b7d9" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__lte__lc_ga1d93115b17f12f4a51f52bb0c6429c5c_1ga1d93115b17f12f4a51f52bb0c6429c5c" kindref="member">lte_lc_ce_level</ref></type>
+        <definition>enum lte_lc_ce_level lte_lc_conn_eval_params::ce_level</definition>
+        <argsstring></argsstring>
+        <name>ce_level</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Coverage Enhancement level for PRACH depending on RRC state measured in.</para>
+<para>RRC IDLE: CE level is estimated based on RSRP and network configuration.</para>
+<para>RRC CONNECTED: Currently configured CE level.</para>
+<para>CE levels 0-2 are supported in NB-IoT. CE levels 0-1 are supported in LTE-M. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="499" column="21" bodyfile="include/modem/lte_lc.h" bodystart="499" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__conn__eval__params_aa0af4f40cf1838e3077bc1924704f9e0_1aa0af4f40cf1838e3077bc1924704f9e0" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int lte_lc_conn_eval_params::earfcn</definition>
+        <argsstring></argsstring>
+        <name>earfcn</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>EARFCN for given cell where EARFCN is per 3GPP TS 36.101. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="502" column="5" bodyfile="include/modem/lte_lc.h" bodystart="502" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__conn__eval__params_a323bef4abafe1e97a029b48be11264ce_1a323bef4abafe1e97a029b48be11264ce" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t lte_lc_conn_eval_params::dl_pathloss</definition>
+        <argsstring></argsstring>
+        <name>dl_pathloss</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Reduction in power density in dB. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="505" column="9" bodyfile="include/modem/lte_lc.h" bodystart="505" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__conn__eval__params_a042cb96289a8b8af7826a4769bec247e_1a042cb96289a8b8af7826a4769bec247e" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t lte_lc_conn_eval_params::rsrp</definition>
+        <argsstring></argsstring>
+        <name>rsrp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current RSRP level at time of report. -17: RSRP &lt; -156 dBm -16: -156 ≤ RSRP &lt; -155 dBm ... -3: -143 ≤ RSRP &lt; -142 dBm -2: -142 ≤ RSRP &lt; -141 dBm -1: -141 ≤ RSRP &lt; -140 dBm 0: RSRP &lt; -140 dBm 1: -140 ≤ RSRP &lt; -139 dBm 2: -139 ≤ RSRP &lt; -138 dBm ... 95: -46 ≤ RSRP &lt; -45 dBm 96: -45 ≤ RSRP &lt; -44 dBm 97: -44 ≤ RSRP dBm 255: not known or not detectable </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="523" column="9" bodyfile="include/modem/lte_lc.h" bodystart="523" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__conn__eval__params_adf172188b08dd4bd09864b12bd5690c2_1adf172188b08dd4bd09864b12bd5690c2" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t lte_lc_conn_eval_params::rsrq</definition>
+        <argsstring></argsstring>
+        <name>rsrq</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current RSRQ level at time of report. -30: RSRQ &lt; -34 dB -29: -34 ≤ RSRQ &lt; -33.5 dB ... -2: -20.5 ≤ RSRQ &lt; -20 dB -1: -20 ≤ RSRQ &lt; -19.5 dB 0: RSRQ &lt; -19.5 dB 1: -19.5 ≤ RSRQ &lt; -19 dB 2: -19 ≤ RSRQ &lt; -18.5 dB ... 32: -4 ≤ RSRQ &lt; -3.5 dB 33: -3.5 ≤ RSRQ &lt; -3 dB 34: -3 ≤ RSRQ dB 35: -3 ≤ RSRQ &lt; -2.5 dB 36: -2.5 ≤ RSRQ &lt; -2 dB ... 45: 2 ≤ RSRQ &lt; 2.5 dB 46: 2.5 ≤ RSRQ dB 255: not known or not detectable. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="545" column="9" bodyfile="include/modem/lte_lc.h" bodystart="545" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__conn__eval__params_a27d4be3a999829a2875936046c0047f3_1a27d4be3a999829a2875936046c0047f3" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t lte_lc_conn_eval_params::tx_rep</definition>
+        <argsstring></argsstring>
+        <name>tx_rep</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Estimate of TX repetitions depending on RRC state measured in. 3GPP TS 36.331 and 36.213</para>
+<para>RRC IDLE: Initial preamble repetition level in (N)PRACH based on CE level and network configuration.</para>
+<para>RRC CONNECTED: Latest physical data channel (N)PUSCH transmission repetition level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="554" column="9" bodyfile="include/modem/lte_lc.h" bodystart="554" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__conn__eval__params_a9bdb6e26ac4a5fe00164bf13a96279f1_1a9bdb6e26ac4a5fe00164bf13a96279f1" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t lte_lc_conn_eval_params::rx_rep</definition>
+        <argsstring></argsstring>
+        <name>rx_rep</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Estimate of RX repetitions depending on RRC state measured in. 3GPP TS 36.331 and 36.213</para>
+<para>RRC IDLE: Initial Random Access control channel (M/NPDCCH) repetition level based on CE level and network configuration.</para>
+<para>RRC CONNECTED: Latest physical data channel (N)PDSCH reception repetition level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="563" column="9" bodyfile="include/modem/lte_lc.h" bodystart="563" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__conn__eval__params_a0e56203e1b8302b4bb52648ebb5a8f9f_1a0e56203e1b8302b4bb52648ebb5a8f9f" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t lte_lc_conn_eval_params::phy_cid</definition>
+        <argsstring></argsstring>
+        <name>phy_cid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Physical cell ID of evaluated cell. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="566" column="9" bodyfile="include/modem/lte_lc.h" bodystart="566" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__conn__eval__params_a6e5edb9cf304a6658c8b7b04cdc97566_1a6e5edb9cf304a6658c8b7b04cdc97566" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t lte_lc_conn_eval_params::band</definition>
+        <argsstring></argsstring>
+        <name>band</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current band information. 0 when band information is not available. 3GPP TS 36.101. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="569" column="9" bodyfile="include/modem/lte_lc.h" bodystart="569" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__conn__eval__params_aaa01bb4377cc21095776998081d9ab35_1aaa01bb4377cc21095776998081d9ab35" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t lte_lc_conn_eval_params::snr</definition>
+        <argsstring></argsstring>
+        <name>snr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current signal-to-noise ratio at time of report. 0: SNR &lt; -24 dB 1: -24 dB &lt;= SNR &lt; -23 dB 2: -23 dB &lt;= SNR &lt; -22 dB ... 47: 22 dB &lt;= SNR &lt; 23 dB 48: 23 dB &lt;= SNR &lt; 24 dB 49: 24 dB &lt;= SNR 127: Not known or not detectable. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="581" column="9" bodyfile="include/modem/lte_lc.h" bodystart="581" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__conn__eval__params_a2ac204ba9a2de81ce75cb5662425a9dc_1a2ac204ba9a2de81ce75cb5662425a9dc" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t lte_lc_conn_eval_params::tx_power</definition>
+        <argsstring></argsstring>
+        <name>tx_power</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Estimate of TX power in dBm depending on RRC state measured in. 3GPP TS 36.101 and 36.213.</para>
+<para>RRC IDLE: Estimated TX power level is for first preamble transmission in (N)PRACH).</para>
+<para>RRC CONNECTED: Latest physical data channel (N)PUSCH transmission power level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="590" column="9" bodyfile="include/modem/lte_lc.h" bodystart="590" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__conn__eval__params_a7d1909a5372e4f280c2e016e881c8328_1a7d1909a5372e4f280c2e016e881c8328" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int lte_lc_conn_eval_params::mcc</definition>
+        <argsstring></argsstring>
+        <name>mcc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Mobile Country Code. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="593" column="5" bodyfile="include/modem/lte_lc.h" bodystart="593" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__conn__eval__params_aecc02d6b039cfaac9f49d94209783c9f_1aecc02d6b039cfaac9f49d94209783c9f" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int lte_lc_conn_eval_params::mnc</definition>
+        <argsstring></argsstring>
+        <name>mnc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Mobile Network Code. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="596" column="5" bodyfile="include/modem/lte_lc.h" bodystart="596" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__conn__eval__params_a3aff0af3cc2c15ee6be4221bae7a6678_1a3aff0af3cc2c15ee6be4221bae7a6678" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t lte_lc_conn_eval_params::cell_id</definition>
+        <argsstring></argsstring>
+        <name>cell_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>E-UTRAN cell ID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="599" column="10" bodyfile="include/modem/lte_lc.h" bodystart="599" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Connection evaluation parameters. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="note"><para>For more information on the various connection evaluation parameters, refer to the &quot;nRF91 AT Commands - Command Reference Guide&quot;. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="include/modem/lte_lc.h" line="476" column="1" bodyfile="include/modem/lte_lc.h" bodystart="476" bodyend="600"/>
+    <listofallmembers>
+      <member refid="structlte__lc__conn__eval__params_a6e5edb9cf304a6658c8b7b04cdc97566_1a6e5edb9cf304a6658c8b7b04cdc97566" prot="public" virt="non-virtual"><scope>lte_lc_conn_eval_params</scope><name>band</name></member>
+      <member refid="structlte__lc__conn__eval__params_ac943bb7114c5d06eb767a3c46752b7d9_1ac943bb7114c5d06eb767a3c46752b7d9" prot="public" virt="non-virtual"><scope>lte_lc_conn_eval_params</scope><name>ce_level</name></member>
+      <member refid="structlte__lc__conn__eval__params_a3aff0af3cc2c15ee6be4221bae7a6678_1a3aff0af3cc2c15ee6be4221bae7a6678" prot="public" virt="non-virtual"><scope>lte_lc_conn_eval_params</scope><name>cell_id</name></member>
+      <member refid="structlte__lc__conn__eval__params_a323bef4abafe1e97a029b48be11264ce_1a323bef4abafe1e97a029b48be11264ce" prot="public" virt="non-virtual"><scope>lte_lc_conn_eval_params</scope><name>dl_pathloss</name></member>
+      <member refid="structlte__lc__conn__eval__params_aa0af4f40cf1838e3077bc1924704f9e0_1aa0af4f40cf1838e3077bc1924704f9e0" prot="public" virt="non-virtual"><scope>lte_lc_conn_eval_params</scope><name>earfcn</name></member>
+      <member refid="structlte__lc__conn__eval__params_ac19c504508a86bb15a787da70e8178da_1ac19c504508a86bb15a787da70e8178da" prot="public" virt="non-virtual"><scope>lte_lc_conn_eval_params</scope><name>energy_estimate</name></member>
+      <member refid="structlte__lc__conn__eval__params_a7d1909a5372e4f280c2e016e881c8328_1a7d1909a5372e4f280c2e016e881c8328" prot="public" virt="non-virtual"><scope>lte_lc_conn_eval_params</scope><name>mcc</name></member>
+      <member refid="structlte__lc__conn__eval__params_aecc02d6b039cfaac9f49d94209783c9f_1aecc02d6b039cfaac9f49d94209783c9f" prot="public" virt="non-virtual"><scope>lte_lc_conn_eval_params</scope><name>mnc</name></member>
+      <member refid="structlte__lc__conn__eval__params_a0e56203e1b8302b4bb52648ebb5a8f9f_1a0e56203e1b8302b4bb52648ebb5a8f9f" prot="public" virt="non-virtual"><scope>lte_lc_conn_eval_params</scope><name>phy_cid</name></member>
+      <member refid="structlte__lc__conn__eval__params_a4275500b93a571b85e9cfa799e1e5101_1a4275500b93a571b85e9cfa799e1e5101" prot="public" virt="non-virtual"><scope>lte_lc_conn_eval_params</scope><name>rrc_state</name></member>
+      <member refid="structlte__lc__conn__eval__params_a042cb96289a8b8af7826a4769bec247e_1a042cb96289a8b8af7826a4769bec247e" prot="public" virt="non-virtual"><scope>lte_lc_conn_eval_params</scope><name>rsrp</name></member>
+      <member refid="structlte__lc__conn__eval__params_adf172188b08dd4bd09864b12bd5690c2_1adf172188b08dd4bd09864b12bd5690c2" prot="public" virt="non-virtual"><scope>lte_lc_conn_eval_params</scope><name>rsrq</name></member>
+      <member refid="structlte__lc__conn__eval__params_a9bdb6e26ac4a5fe00164bf13a96279f1_1a9bdb6e26ac4a5fe00164bf13a96279f1" prot="public" virt="non-virtual"><scope>lte_lc_conn_eval_params</scope><name>rx_rep</name></member>
+      <member refid="structlte__lc__conn__eval__params_aaa01bb4377cc21095776998081d9ab35_1aaa01bb4377cc21095776998081d9ab35" prot="public" virt="non-virtual"><scope>lte_lc_conn_eval_params</scope><name>snr</name></member>
+      <member refid="structlte__lc__conn__eval__params_adf5e4da5a76c7d5f032d0e7952e1e809_1adf5e4da5a76c7d5f032d0e7952e1e809" prot="public" virt="non-virtual"><scope>lte_lc_conn_eval_params</scope><name>tau_trig</name></member>
+      <member refid="structlte__lc__conn__eval__params_a2ac204ba9a2de81ce75cb5662425a9dc_1a2ac204ba9a2de81ce75cb5662425a9dc" prot="public" virt="non-virtual"><scope>lte_lc_conn_eval_params</scope><name>tx_power</name></member>
+      <member refid="structlte__lc__conn__eval__params_a27d4be3a999829a2875936046c0047f3_1a27d4be3a999829a2875936046c0047f3" prot="public" virt="non-virtual"><scope>lte_lc_conn_eval_params</scope><name>tx_rep</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

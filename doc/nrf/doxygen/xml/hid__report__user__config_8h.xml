@@ -1,0 +1,188 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="hid__report__user__config_8h" kind="file" language="C++">
+    <compoundname>hid_report_user_config.h</compoundname>
+    <includedby refid="hid__report__desc_8h" local="yes">applications/nrf_desktop/configuration/common/hid_report_desc.h</includedby>
+    <invincdepgraph>
+      <node id="3">
+        <label>applications/nrf_desktop/configuration/common/hid_keymap.h</label>
+        <link refid="hid__keymap_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>applications/nrf_desktop/configuration/common/hid_report_desc.h</label>
+        <link refid="hid__report__desc_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/common/hid_report_user_config.h</label>
+        <link refid="hid__report__user__config_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/hid_keymap_def.h</label>
+        <link refid="nrf52810dmouse__nrf52810_2hid__keymap__def_8h"/>
+      </node>
+      <node id="5">
+        <label>applications/nrf_desktop/configuration/nrf52840dk_nrf52840/hid_keymap_def.h</label>
+        <link refid="nrf52840dk__nrf52840_2hid__keymap__def_8h"/>
+      </node>
+      <node id="6">
+        <label>applications/nrf_desktop/configuration/nrf52840dk_nrf52840/hid_keymap_def_keyboard.h</label>
+        <link refid="hid__keymap__def__keyboard_8h"/>
+      </node>
+      <node id="7">
+        <label>applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/hid_keymap_def.h</label>
+        <link refid="nrf52840gmouse__nrf52840_2hid__keymap__def_8h"/>
+      </node>
+      <node id="8">
+        <label>applications/nrf_desktop/configuration/nrf52dmouse_nrf52832/hid_keymap_def.h</label>
+        <link refid="nrf52dmouse__nrf52832_2hid__keymap__def_8h"/>
+      </node>
+      <node id="9">
+        <label>applications/nrf_desktop/configuration/nrf52kbd_nrf52832/hid_keymap_def.h</label>
+        <link refid="nrf52kbd__nrf52832_2hid__keymap__def_8h"/>
+      </node>
+      <node id="10">
+        <label>applications/nrf_desktop/src/events/config_event.h</label>
+        <link refid="config__event_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>applications/nrf_desktop/src/events/hid_event.h</label>
+        <link refid="hid__event_8h"/>
+      </node>
+      <node id="13">
+        <label>applications/nrf_desktop/src/events/hids_event.h</label>
+        <link refid="hids__event_8h"/>
+      </node>
+      <node id="11">
+        <label>applications/nrf_desktop/src/util/config_channel_transport.h</label>
+        <link refid="config__channel__transport_8h"/>
+      </node>
+    </invincdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="hid__report__user__config_8h_a26c3867b74b7ed6a1e4355db2c1188ec_1a26c3867b74b7ed6a1e4355db2c1188ec" prot="public" static="no">
+        <name>REPORT_SIZE_USER_CONFIG</name>
+        <initializer>29 /* bytes */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_user_config.h" line="14" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_user_config.h" bodystart="14" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__user__config_8h_afe1a4f1a4a2a48848fe441224ab84a2c_1afe1a4f1a4a2a48848fe441224ab84a2c" prot="public" static="no">
+        <name>REPORT_MAP_USER_CONFIG</name>
+        <param><defname>report_id</defname></param>
+        <initializer>									\
+	0x85, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958" kindref="member">report_id</ref>,						\
+	0x06, 0x00, 0xff, /* Usage Page (Vendor Defined 0xFF00) */	\
+	0x0A, 0x01, 0xff, /* Usage (0xFF01) */				\
+	0x15, 0x00,       /* Logical Minimum (0) */			\
+	0x26, 0xff, 0x00, /* Logical Maximum (255) */			\
+	0x75, 0x08,       /* Report Size (8) */				\
+	0x95, <ref refid="hid__report__user__config_8h_a26c3867b74b7ed6a1e4355db2c1188ec_1a26c3867b74b7ed6a1e4355db2c1188ec" kindref="member">REPORT_SIZE_USER_CONFIG</ref>,       /* Report Count */		\
+	0xB1, 0x02        /* Feature (Data, Variable, Absolute) */	\</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_user_config.h" line="17" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_user_config.h" bodystart="17" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__user__config_8h_aff21155ee986b5a27ebf9a996b6fa06f_1aff21155ee986b5a27ebf9a996b6fa06f" prot="public" static="no">
+        <name>REPORT_MAP_USER_CONFIG_OUT</name>
+        <param><defname>report_id</defname></param>
+        <initializer>									\
+	0x85, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958" kindref="member">report_id</ref>,						\
+	0x06, 0x00, 0xff, /* Usage Page (Vendor Defined 0xFF00) */	\
+	0x0A, 0x02, 0xff, /* Usage (0xFF02) */				\
+	0x15, 0x00,       /* Logical Minimum (0) */			\
+	0x26, 0xff, 0x00, /* Logical Maximum (255) */			\
+	0x75, 0x08,       /* Report Size (8) */				\
+	0x95, <ref refid="hid__report__user__config_8h_a26c3867b74b7ed6a1e4355db2c1188ec_1a26c3867b74b7ed6a1e4355db2c1188ec" kindref="member">REPORT_SIZE_USER_CONFIG</ref>,       /* Report Count */		\
+	0x91, 0x02        /* Output (Data, Variable, Absolute) */	\</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_user_config.h" line="28" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_user_config.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_HID_REPORT_USER_CONFIG_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_HID_REPORT_USER_CONFIG_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14" refid="hid__report__user__config_8h_a26c3867b74b7ed6a1e4355db2c1188ec_1a26c3867b74b7ed6a1e4355db2c1188ec" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>REPORT_SIZE_USER_CONFIG<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>29<sp/></highlight><highlight class="comment">/*<sp/>bytes<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17" refid="hid__report__user__config_8h_afe1a4f1a4a2a48848fe441224ab84a2c_1afe1a4f1a4a2a48848fe441224ab84a2c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>REPORT_MAP_USER_CONFIG(report_id)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="18"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="19"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x85,<sp/>report_id,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="20"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x06,<sp/>0x00,<sp/>0xff,<sp/></highlight><highlight class="comment">/*<sp/>Usage<sp/>Page<sp/>(Vendor<sp/>Defined<sp/>0xFF00)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="21"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x0A,<sp/>0x01,<sp/>0xff,<sp/></highlight><highlight class="comment">/*<sp/>Usage<sp/>(0xFF01)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="22"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x15,<sp/>0x00,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Logical<sp/>Minimum<sp/>(0)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="23"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x26,<sp/>0xff,<sp/>0x00,<sp/></highlight><highlight class="comment">/*<sp/>Logical<sp/>Maximum<sp/>(255)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="24"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x75,<sp/>0x08,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Report<sp/>Size<sp/>(8)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="25"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x95,<sp/>REPORT_SIZE_USER_CONFIG,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Report<sp/>Count<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="26"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0xB1,<sp/>0x02<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Feature<sp/>(Data,<sp/>Variable,<sp/>Absolute)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="27"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="hid__report__user__config_8h_aff21155ee986b5a27ebf9a996b6fa06f_1aff21155ee986b5a27ebf9a996b6fa06f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>REPORT_MAP_USER_CONFIG_OUT(report_id)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="29"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="30"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x85,<sp/>report_id,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="31"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x06,<sp/>0x00,<sp/>0xff,<sp/></highlight><highlight class="comment">/*<sp/>Usage<sp/>Page<sp/>(Vendor<sp/>Defined<sp/>0xFF00)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="32"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x0A,<sp/>0x02,<sp/>0xff,<sp/></highlight><highlight class="comment">/*<sp/>Usage<sp/>(0xFF02)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="33"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x15,<sp/>0x00,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Logical<sp/>Minimum<sp/>(0)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="34"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x26,<sp/>0xff,<sp/>0x00,<sp/></highlight><highlight class="comment">/*<sp/>Logical<sp/>Maximum<sp/>(255)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="35"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x75,<sp/>0x08,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Report<sp/>Size<sp/>(8)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="36"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x95,<sp/>REPORT_SIZE_USER_CONFIG,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Report<sp/>Count<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="37"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x91,<sp/>0x02<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Output<sp/>(Data,<sp/>Variable,<sp/>Absolute)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="38"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_HID_REPORT_USER_CONFIG_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/common/hid_report_user_config.h"/>
+  </compounddef>
+</doxygen>

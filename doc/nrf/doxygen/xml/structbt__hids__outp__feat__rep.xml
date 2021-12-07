@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__hids__outp__feat__rep" kind="struct" language="C++" prot="public">
+    <compoundname>bt_hids_outp_feat_rep</compoundname>
+    <includes refid="hids_8h" local="no">hids.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__hids__outp__feat__rep_af91d6f7b9687b91c6a27f60033cb92fb_1af91d6f7b9687b91c6a27f60033cb92fb" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_outp_feat_rep::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Report ID defined in the HIDS Report Map. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="237" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="237" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__outp__feat__rep_abbd16eb402c010e2285991620b3d6303_1abbd16eb402c010e2285991620b3d6303" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_outp_feat_rep::idx</definition>
+        <argsstring></argsstring>
+        <name>idx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Index in Output/Feature Report Array. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="240" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="240" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__outp__feat__rep_a41c344c4077df14ec4ccf622588022aa_1a41c344c4077df14ec4ccf622588022aa" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_outp_feat_rep::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of report. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="243" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="243" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__outp__feat__rep_a8f52b2db87472c06bf346d255dc99e9f_1a8f52b2db87472c06bf346d255dc99e9f" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_outp_feat_rep::offset</definition>
+        <argsstring></argsstring>
+        <name>offset</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Report data offset. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="246" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="246" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__outp__feat__rep_a572df402f06f515ce8bbadde49fa326a_1a572df402f06f515ce8bbadde49fa326a" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_outp_feat_rep::att_ind</definition>
+        <argsstring></argsstring>
+        <name>att_ind</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Index in the service attribute array. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="249" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="249" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__outp__feat__rep_a82bf86c63642d03b5eef380fd237e051_1a82bf86c63642d03b5eef380fd237e051" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_outp_feat_rep::perm</definition>
+        <argsstring></argsstring>
+        <name>perm</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Report permissions</para>
+<para>Use GATT attribute permission bit field values here. Different permissions may be used for write and read:<itemizedlist>
+<listitem><para>BT_GATT_PERM_READ</para>
+</listitem><listitem><para>BT_GATT_PERM_READ_ENCRYPT</para>
+</listitem><listitem><para>BT_GATT_PERM_READ_AUTHEN</para>
+</listitem><listitem><para>BT_GATT_PERM_WRITE</para>
+</listitem><listitem><para>BT_GATT_PERM_WRITE_ENCRYPT</para>
+</listitem><listitem><para>BT_GATT_PERM_WRITE_AUTHEN</para>
+</listitem></itemizedlist>
+</para>
+<para>If no attribute is chosen, the configured default is used. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="264" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="264" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__outp__feat__rep_ab99b39a32a48750cb04d85d583d740f2_1ab99b39a32a48750cb04d85d583d740f2" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__hids_gaaaafa67ab95764aba437dfa81eb38d63_1gaaaafa67ab95764aba437dfa81eb38d63" kindref="member">bt_hids_rep_handler_t</ref></type>
+        <definition>bt_hids_rep_handler_t bt_hids_outp_feat_rep::handler</definition>
+        <argsstring></argsstring>
+        <name>handler</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Callback with updated report data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="267" column="23" bodyfile="include/bluetooth/services/hids.h" bodystart="267" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Output or Feature Report. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_hids_outp_feat_rep</label>
+        <link refid="structbt__hids__outp__feat__rep"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>handler</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_hids_rep</label>
+        <link refid="structbt__hids__rep"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/hids.h" line="235" column="1" bodyfile="include/bluetooth/services/hids.h" bodystart="235" bodyend="268"/>
+    <listofallmembers>
+      <member refid="structbt__hids__outp__feat__rep_a572df402f06f515ce8bbadde49fa326a_1a572df402f06f515ce8bbadde49fa326a" prot="public" virt="non-virtual"><scope>bt_hids_outp_feat_rep</scope><name>att_ind</name></member>
+      <member refid="structbt__hids__outp__feat__rep_ab99b39a32a48750cb04d85d583d740f2_1ab99b39a32a48750cb04d85d583d740f2" prot="public" virt="non-virtual"><scope>bt_hids_outp_feat_rep</scope><name>handler</name></member>
+      <member refid="structbt__hids__outp__feat__rep_af91d6f7b9687b91c6a27f60033cb92fb_1af91d6f7b9687b91c6a27f60033cb92fb" prot="public" virt="non-virtual"><scope>bt_hids_outp_feat_rep</scope><name>id</name></member>
+      <member refid="structbt__hids__outp__feat__rep_abbd16eb402c010e2285991620b3d6303_1abbd16eb402c010e2285991620b3d6303" prot="public" virt="non-virtual"><scope>bt_hids_outp_feat_rep</scope><name>idx</name></member>
+      <member refid="structbt__hids__outp__feat__rep_a8f52b2db87472c06bf346d255dc99e9f_1a8f52b2db87472c06bf346d255dc99e9f" prot="public" virt="non-virtual"><scope>bt_hids_outp_feat_rep</scope><name>offset</name></member>
+      <member refid="structbt__hids__outp__feat__rep_a82bf86c63642d03b5eef380fd237e051_1a82bf86c63642d03b5eef380fd237e051" prot="public" virt="non-virtual"><scope>bt_hids_outp_feat_rep</scope><name>perm</name></member>
+      <member refid="structbt__hids__outp__feat__rep_a41c344c4077df14ec4ccf622588022aa_1a41c344c4077df14ec4ccf622588022aa" prot="public" virt="non-virtual"><scope>bt_hids_outp_feat_rep</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__battery__event" kind="group">
+    <compoundname>battery_event</compoundname>
+    <title>Battery Event</title>
+    <innerclass refid="structbattery__state__event" prot="public">battery_state_event</innerclass>
+    <innerclass refid="structbattery__level__event" prot="public">battery_level_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__battery__event_1ga2dea9a97c86318a10297e8714a1b3d4a" prot="public" static="no" strong="no">
+        <type></type>
+        <name>battery_state</name>
+        <enumvalue id="group__battery__event_ga2dea9a97c86318a10297e8714a1b3d4a_1gga2dea9a97c86318a10297e8714a1b3d4a" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(BATTERY_STATE_,  IDLE )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__battery__event_ga2dea9a97c86318a10297e8714a1b3d4a_1gga2dea9a97c86318a10297e8714a1b3d4a" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(BATTERY_STATE_,  IDLE )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__battery__event_ga2dea9a97c86318a10297e8714a1b3d4a_1gga2dea9a97c86318a10297e8714a1b3d4a" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(BATTERY_STATE_,  IDLE )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__battery__event_ga2dea9a97c86318a10297e8714a1b3d4a_1gga2dea9a97c86318a10297e8714a1b3d4aa3cf36fdcd0a3f23a9b30c4cf72ea5a93" prot="public">
+          <name>BATTERY_STATE_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Battery states. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/battery_event.h" line="30" column="1" bodyfile="applications/nrf_desktop/src/events/battery_event.h" bodystart="30" bodyend="36"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__battery__event_1ga69c58fd3c795f20daaf50575a928922e" prot="public" static="no">
+        <name>BATTERY_STATE_LIST</name>
+        <initializer>	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(IDLE)			\
+	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(CHARGING)		\
+	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(ERROR)</initializer>
+        <briefdescription>
+<para>Battery state list. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/battery_event.h" line="24" column="9" bodyfile="applications/nrf_desktop/src/events/battery_event.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Battery Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structusb__state__event" kind="struct" language="C++" prot="public">
+    <compoundname>usb_state_event</compoundname>
+    <includes refid="usb__event_8h" local="no">usb_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structusb__state__event_ab178951c5db0bb45d28646ab9d0beb8d_1ab178951c5db0bb45d28646ab9d0beb8d" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header usb_state_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event header. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/usb_event.h" line="42" column="19" bodyfile="applications/nrf_desktop/src/events/usb_event.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structusb__state__event_af7ed7b5cd91f3961939f8b4368213002_1af7ed7b5cd91f3961939f8b4368213002" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__usb__event_ga1cbdfbce25ec33689d021842d10576d2_1ga1cbdfbce25ec33689d021842d10576d2" kindref="member">usb_state</ref></type>
+        <definition>enum usb_state usb_state_event::state</definition>
+        <argsstring></argsstring>
+        <name>state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>State of the USB module. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/usb_event.h" line="44" column="15" bodyfile="applications/nrf_desktop/src/events/usb_event.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>USB state event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>usb_state_event</label>
+        <link refid="structusb__state__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/nrf_desktop/src/events/usb_event.h" line="41" column="1" bodyfile="applications/nrf_desktop/src/events/usb_event.h" bodystart="41" bodyend="45"/>
+    <listofallmembers>
+      <member refid="structusb__state__event_ab178951c5db0bb45d28646ab9d0beb8d_1ab178951c5db0bb45d28646ab9d0beb8d" prot="public" virt="non-virtual"><scope>usb_state_event</scope><name>header</name></member>
+      <member refid="structusb__state__event_af7ed7b5cd91f3961939f8b4368213002_1af7ed7b5cd91f3961939f8b4368213002" prot="public" virt="non-virtual"><scope>usb_state_event</scope><name>state</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

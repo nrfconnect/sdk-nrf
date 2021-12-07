@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_4767e129a0ec16522602f8633518fe17" kind="dir">
+    <compoundname>applications/nrf_desktop/src/util</compoundname>
+    <innerdir refid="dir_1d7ad51cf99936c8f75707cef157e57f">applications/nrf_desktop/src/util/chmap_filter</innerdir>
+    <innerfile refid="config__channel__transport_8h">config_channel_transport.h</innerfile>
+    <innerfile refid="hwid_8h">hwid.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/nrf_desktop/src/util/"/>
+  </compounddef>
+</doxygen>

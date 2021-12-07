@@ -1,0 +1,278 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__at__cmd__parser" kind="group">
+    <compoundname>at_cmd_parser</compoundname>
+    <title>AT command parser</title>
+    <innergroup refid="group__at__cmd__parser__utils">AT Command utility functions.</innergroup>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__at__cmd__parser_1ga13add1560682c9d97e1c021e993128bc" prot="public" static="no" strong="no">
+        <type></type>
+        <name>at_cmd_type</name>
+        <enumvalue id="group__at__cmd__parser_ga13add1560682c9d97e1c021e993128bc_1gga13add1560682c9d97e1c021e993128bca28e437532c951473ca072177f08f2750" prot="public">
+          <name>AT_CMD_TYPE_UNKNOWN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Unknown command, indicates that the actual command type could not be resolved. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__at__cmd__parser_ga13add1560682c9d97e1c021e993128bc_1gga13add1560682c9d97e1c021e993128bca22ed5e640baaea818b889a403078ab61" prot="public">
+          <name>AT_CMD_TYPE_SET_COMMAND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>AT set command. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__at__cmd__parser_ga13add1560682c9d97e1c021e993128bc_1gga13add1560682c9d97e1c021e993128bcaa8871399ff63f7aa8d0f8696e77450ea" prot="public">
+          <name>AT_CMD_TYPE_READ_COMMAND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>AT read command. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__at__cmd__parser_ga13add1560682c9d97e1c021e993128bc_1gga13add1560682c9d97e1c021e993128bca907ee6e676bbd42d004d7f7b0875f8f5" prot="public">
+          <name>AT_CMD_TYPE_TEST_COMMAND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>AT test command. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_cmd_parser.h" line="109" column="1" bodyfile="include/modem/at_cmd_parser.h" bodystart="109" bodyend="120"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__at__cmd__parser_1ga29b87ad5f40dbf0e47aae6f7ac5610ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_parser_max_params_from_str</definition>
+        <argsstring>(const char *at_params_str, char **next_param_str, struct at_param_list *const list, size_t max_params_count)</argsstring>
+        <name>at_parser_max_params_from_str</name>
+        <param>
+          <type>const char *</type>
+          <declname>at_params_str</declname>
+        </param>
+        <param>
+          <type>char **</type>
+          <declname>next_param_str</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *const</type>
+          <declname>list</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>max_params_count</declname>
+        </param>
+        <briefdescription>
+<para>Parse a maximum number of AT command or response parameters from a string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function parses the parameters from <computeroutput>at_params_str</computeroutput> and saves them in <computeroutput>list</computeroutput>. If there are more parameters than <computeroutput>max_params_count</computeroutput>, they are ignored.</para>
+<para><computeroutput>list</computeroutput> must be initialized. It can be reused to parse multiple commands. When calling this function, the list is cleared. The maximum number of AT parameters that can be parsed and stored is limited by the size of <computeroutput>list</computeroutput>.</para>
+<para>If an error is returned by the parser, the content of <computeroutput>list</computeroutput> should be ignored.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>at_params_str</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>AT parameters as a null-terminated string. Can be numeric or string parameters.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>next_param_str</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>In the case a string contains multiple notifications, the parser will stop parsing when it is done parsing the first notification, and return the remainder of the string in this pointer. The return code will be EAGAIN. If multinotification is not used, this pointer can be set to NULL.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to an initialized list where parameters are stored. Must not be NULL. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>max_params_count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of parameters expected in <computeroutput>at_params_str</computeroutput>. Can be set to a smaller value to parse only some parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New notification detected in string re-run the parser with the string pointed to by <computeroutput>next_param_str</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-E2BIG</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The <ref refid="structat__param__list" kindref="compound">at_param_list</ref> supplied cannot hold all detected parameters in string. The list will contain the maximum number of parameters possible. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>One or more of the supplied parameters are invalid. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_cmd_parser.h" line="66" column="5" declfile="include/modem/at_cmd_parser.h" declline="66" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser_1ga2b9fe0b886dc000a48a646e11b251ee5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_parser_params_from_str</definition>
+        <argsstring>(const char *at_params_str, char **next_param_str, struct at_param_list *const list)</argsstring>
+        <name>at_parser_params_from_str</name>
+        <param>
+          <type>const char *</type>
+          <declname>at_params_str</declname>
+        </param>
+        <param>
+          <type>char **</type>
+          <declname>next_param_str</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *const</type>
+          <declname>list</declname>
+        </param>
+        <briefdescription>
+<para>Parse AT command or response parameters from a string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function parses the parameters from <computeroutput>at_params_str</computeroutput> and saves them in <computeroutput>list</computeroutput>.</para>
+<para><computeroutput>list</computeroutput> must be initialized. It can be reused to parse multiple commands. When calling this function, the list is cleared. The maximum number of AT parameters that can be parsed and stored is limited by the size of <computeroutput>list</computeroutput>.</para>
+<para>If an error is returned by the parser, the content of <computeroutput>list</computeroutput> should be ignored.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>at_params_str</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>AT parameters as a null-terminated string. Can be numeric or string parameters.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>next_param_str</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>In the case a string contains multiple notifications, the parser will stop parsing when it is done parsing the first notification, and return the remainder of the string in this pointer. The return code will be EAGAIN. If multinotification is not used, this pointer can be set to NULL.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to an initialized list where parameters are stored. Must not be NULL.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New notification detected in string re-run the parser with the string pointed to by <computeroutput>next_param_str</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-E2BIG</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The <ref refid="structat__param__list" kindref="compound">at_param_list</ref> supplied cannot hold all detected parameters in string. The list will contain the maximum number of parameters possible. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>One or more of the supplied parameters are invalid. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_cmd_parser.h" line="106" column="5" declfile="include/modem/at_cmd_parser.h" declline="106" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser_1gafde14495d4dbffbeec9bbda1416d4ba5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>enum <ref refid="group__at__cmd__parser_ga13add1560682c9d97e1c021e993128bc_1ga13add1560682c9d97e1c021e993128bc" kindref="member">at_cmd_type</ref></type>
+        <definition>enum at_cmd_type at_parser_cmd_type_get</definition>
+        <argsstring>(const char *at_cmd)</argsstring>
+        <name>at_parser_cmd_type_get</name>
+        <param>
+          <type>const char *</type>
+          <declname>at_cmd</declname>
+        </param>
+        <briefdescription>
+<para>Identify the AT command type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">at_cmd</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A pointer to the AT command string.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Command type. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_cmd_parser.h" line="129" column="17" declfile="include/modem/at_cmd_parser.h" declline="129" declcolumn="17"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Basic parser for AT commands. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

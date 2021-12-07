@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__t4t__tlv__block__file__control__val" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_t4t_tlv_block_file_control_val</compoundname>
+    <includes refid="t4t_2tlv__block_8h" local="no">tlv_block.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__t4t__tlv__block__file__control__val_af2a5e3bb1ef0941373bb329b51038f7a_1af2a5e3bb1ef0941373bb329b51038f7a" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structnfc__t4t__tlv__block__file" kindref="compound">nfc_t4t_tlv_block_file</ref></type>
+        <definition>struct nfc_t4t_tlv_block_file nfc_t4t_tlv_block_file_control_val::file</definition>
+        <argsstring></argsstring>
+        <name>file</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the described file content. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/tlv_block.h" line="70" column="29" bodyfile="include/nfc/t4t/tlv_block.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__tlv__block__file__control__val_ab57f58b02d5b257262c4bdb72c2d7581_1ab57f58b02d5b257262c4bdb72c2d7581" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t nfc_t4t_tlv_block_file_control_val::max_file_size</definition>
+        <argsstring></argsstring>
+        <name>max_file_size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum size (in bytes) of the file. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/tlv_block.h" line="73" column="10" bodyfile="include/nfc/t4t/tlv_block.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__tlv__block__file__control__val_aac4fea8900894e0575327fb16d552cf2_1aac4fea8900894e0575327fb16d552cf2" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t nfc_t4t_tlv_block_file_control_val::file_id</definition>
+        <argsstring></argsstring>
+        <name>file_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>File identifier. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/tlv_block.h" line="76" column="10" bodyfile="include/nfc/t4t/tlv_block.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__tlv__block__file__control__val_ace902f3aae1b2a6835f9877b06316c2a_1ace902f3aae1b2a6835f9877b06316c2a" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_t4t_tlv_block_file_control_val::read_access</definition>
+        <argsstring></argsstring>
+        <name>read_access</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>File read access condition. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/tlv_block.h" line="79" column="9" bodyfile="include/nfc/t4t/tlv_block.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__tlv__block__file__control__val_a1f9ff5e6438c492ede15745dc9084245_1a1f9ff5e6438c492ede15745dc9084245" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_t4t_tlv_block_file_control_val::write_access</definition>
+        <argsstring></argsstring>
+        <name>write_access</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>File write access condition. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/tlv_block.h" line="82" column="9" bodyfile="include/nfc/t4t/tlv_block.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Extended NDEF/NDEF/Proprietary File Control Value descriptor. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>nfc_t4t_tlv_block_file</label>
+        <link refid="structnfc__t4t__tlv__block__file"/>
+      </node>
+      <node id="1">
+        <label>nfc_t4t_tlv_block_file_control_val</label>
+        <link refid="structnfc__t4t__tlv__block__file__control__val"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>file</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/nfc/t4t/tlv_block.h" line="67" column="1" bodyfile="include/nfc/t4t/tlv_block.h" bodystart="67" bodyend="83"/>
+    <listofallmembers>
+      <member refid="structnfc__t4t__tlv__block__file__control__val_af2a5e3bb1ef0941373bb329b51038f7a_1af2a5e3bb1ef0941373bb329b51038f7a" prot="public" virt="non-virtual"><scope>nfc_t4t_tlv_block_file_control_val</scope><name>file</name></member>
+      <member refid="structnfc__t4t__tlv__block__file__control__val_aac4fea8900894e0575327fb16d552cf2_1aac4fea8900894e0575327fb16d552cf2" prot="public" virt="non-virtual"><scope>nfc_t4t_tlv_block_file_control_val</scope><name>file_id</name></member>
+      <member refid="structnfc__t4t__tlv__block__file__control__val_ab57f58b02d5b257262c4bdb72c2d7581_1ab57f58b02d5b257262c4bdb72c2d7581" prot="public" virt="non-virtual"><scope>nfc_t4t_tlv_block_file_control_val</scope><name>max_file_size</name></member>
+      <member refid="structnfc__t4t__tlv__block__file__control__val_ace902f3aae1b2a6835f9877b06316c2a_1ace902f3aae1b2a6835f9877b06316c2a" prot="public" virt="non-virtual"><scope>nfc_t4t_tlv_block_file_control_val</scope><name>read_access</name></member>
+      <member refid="structnfc__t4t__tlv__block__file__control__val_a1f9ff5e6438c492ede15745dc9084245_1a1f9ff5e6438c492ede15745dc9084245" prot="public" virt="non-virtual"><scope>nfc_t4t_tlv_block_file_control_val</scope><name>write_access</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

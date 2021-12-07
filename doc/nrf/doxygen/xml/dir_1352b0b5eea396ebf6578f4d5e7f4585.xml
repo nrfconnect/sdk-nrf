@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_1352b0b5eea396ebf6578f4d5e7f4585" kind="dir">
+    <compoundname>applications/serial_lte_modem</compoundname>
+    <innerdir refid="dir_60a01d8504ccf8e2f60ec68b1acb78bd">applications/serial_lte_modem/src</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/serial_lte_modem/"/>
+  </compounddef>
+</doxygen>

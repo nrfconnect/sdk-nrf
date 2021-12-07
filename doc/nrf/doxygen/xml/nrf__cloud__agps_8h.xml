@@ -1,0 +1,183 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="nrf__cloud__agps_8h" kind="file" language="C++">
+    <compoundname>nrf_cloud_agps.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <includes local="no">nrf_modem_gnss.h</includes>
+    <includes refid="nrf__cloud_8h" local="no">net/nrf_cloud.h</includes>
+    <incdepgraph>
+      <node id="4">
+        <label>net/nrf_cloud.h</label>
+        <link refid="nrf__cloud_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/net/nrf_cloud_agps.h</label>
+        <link refid="nrf__cloud__agps_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>cJSON.h</label>
+      </node>
+      <node id="6">
+        <label>net/mqtt.h</label>
+      </node>
+      <node id="3">
+        <label>nrf_modem_gnss.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+      <node id="5">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nrf__cloud__agps_ga2646fa6d36694986bb6782e612e484c9_1ga2646fa6d36694986bb6782e612e484c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_agps_process</definition>
+        <argsstring>(const char *buf, size_t buf_len)</argsstring>
+        <name>nrf_cloud_agps_process</name>
+        <param>
+          <type>const char *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buf_len</declname>
+        </param>
+        <briefdescription>
+<para>Processes binary A-GPS data received from nRF Cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to data received from nRF Cloud. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buf_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer size of data to be processed.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if successful, otherwise a (negative) error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_agps.h" line="51" column="5" declfile="include/net/nrf_cloud_agps.h" declline="51" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__agps_ga948fc5e163c93c733e5c8143430c28fa_1ga948fc5e163c93c733e5c8143430c28fa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nrf_cloud_agps_processed</definition>
+        <argsstring>(struct nrf_modem_gnss_agps_data_frame *received_elements)</argsstring>
+        <name>nrf_cloud_agps_processed</name>
+        <param>
+          <type>struct nrf_modem_gnss_agps_data_frame *</type>
+          <declname>received_elements</declname>
+        </param>
+        <briefdescription>
+<para>Query which A-GPS elements were actually received. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>received_elements</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>return copy of requested elements received since agps request made </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_agps.h" line="58" column="6" declfile="include/net/nrf_cloud_agps.h" declline="58" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__agps_ga36b42cf6ff674b5916560315bc511e4d_1ga36b42cf6ff674b5916560315bc511e4d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nrf_cloud_agps_request_in_progress</definition>
+        <argsstring>(void)</argsstring>
+        <name>nrf_cloud_agps_request_in_progress</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Query whether A-GPS data has been requested from cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>True if request is outstanding. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_agps.h" line="64" column="6" declfile="include/net/nrf_cloud_agps.h" declline="64" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Module to provide nRF Cloud A-GPS support to nRF9160 SiP. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NRF_CLOUD_AGPS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_AGPS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;nrf_modem_gnss.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nrf__cloud_8h" kindref="compound">net/nrf_cloud.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(CONFIG_NRF_CLOUD_MQTT)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nrf_cloud_agps_request(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>nrf_modem_gnss_agps_data_frame<sp/>*request);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nrf_cloud_agps_request_all(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>CONFIG_NRF_CLOUD_MQTT<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="group__nrf__cloud__agps_ga2646fa6d36694986bb6782e612e484c9_1ga2646fa6d36694986bb6782e612e484c9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__agps_ga2646fa6d36694986bb6782e612e484c9_1ga2646fa6d36694986bb6782e612e484c9" kindref="member">nrf_cloud_agps_process</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*buf,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>buf_len);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58" refid="group__nrf__cloud__agps_ga948fc5e163c93c733e5c8143430c28fa_1ga948fc5e163c93c733e5c8143430c28fa" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__agps_ga948fc5e163c93c733e5c8143430c28fa_1ga948fc5e163c93c733e5c8143430c28fa" kindref="member">nrf_cloud_agps_processed</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>nrf_modem_gnss_agps_data_frame<sp/>*received_elements);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="group__nrf__cloud__agps_ga36b42cf6ff674b5916560315bc511e4d_1ga36b42cf6ff674b5916560315bc511e4d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__agps_ga36b42cf6ff674b5916560315bc511e4d_1ga36b42cf6ff674b5916560315bc511e4d" kindref="member">nrf_cloud_agps_request_in_progress</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>NRF_CLOUD_AGPS_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/net/nrf_cloud_agps.h"/>
+  </compounddef>
+</doxygen>

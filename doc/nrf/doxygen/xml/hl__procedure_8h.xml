@@ -1,0 +1,483 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="hl__procedure_8h" kind="file" language="C++">
+    <compoundname>hl_procedure.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <includes refid="cc__file_8h" local="no">nfc/t4t/cc_file.h</includes>
+    <incdepgraph>
+      <node id="3">
+        <label>nfc/t4t/cc_file.h</label>
+        <link refid="cc__file_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/nfc/t4t/hl_procedure.h</label>
+        <link refid="hl__procedure_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>nfc/t4t/tlv_block.h</label>
+        <link refid="t4t_2tlv__block_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>stdint.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structnfc__t4t__hl__procedure__cb" prot="public">nfc_t4t_hl_procedure_cb</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nfc__t4t__hl__procedure_ga90858cf624981b851cb0df52722983b7_1ga90858cf624981b851cb0df52722983b7" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nfc_t4t_hl_procedure_select</name>
+        <enumvalue id="group__nfc__t4t__hl__procedure_ga90858cf624981b851cb0df52722983b7_1gga90858cf624981b851cb0df52722983b7a59160d986dfc93efb645bafde0953c3c" prot="public">
+          <name>NFC_T4T_HL_PROCEDURE_NDEF_APP_SELECT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>NDEF App select. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__hl__procedure_ga90858cf624981b851cb0df52722983b7_1gga90858cf624981b851cb0df52722983b7abb77f0c1335db555d34af367c3675be2" prot="public">
+          <name>NFC_T4T_HL_PROCEDURE_CC_SELECT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>CC file select. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__hl__procedure_ga90858cf624981b851cb0df52722983b7_1gga90858cf624981b851cb0df52722983b7a516d5a6a09dbb01ba809dbe20de7e9cf" prot="public">
+          <name>NFC_T4T_HL_PROCEDURE_NDEF_FILE_SELECT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>NDEF file select. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Type of selection procedure. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/hl_procedure.h" line="25" column="1" bodyfile="include/nfc/t4t/hl_procedure.h" bodystart="25" bodyend="34"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__t4t__hl__procedure_ga658dc604246ec88c6c48720c7df2eb05_1ga658dc604246ec88c6c48720c7df2eb05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_hl_procedure_on_data_received</definition>
+        <argsstring>(const uint8_t *data, size_t len)</argsstring>
+        <name>nfc_t4t_hl_procedure_on_data_received</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Handle High Level Procedure received data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Function for handling the received data. It should be called immediately upon receiving the ISO-DEP data.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to received data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Received data length.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/hl_procedure.h" line="93" column="5" declfile="include/nfc/t4t/hl_procedure.h" declline="93" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__hl__procedure_ga58f491543fe88016c03d80ae143c4688_1ga58f491543fe88016c03d80ae143c4688" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_hl_procedure_cb_register</definition>
+        <argsstring>(const struct nfc_t4t_hl_procedure_cb *cb)</argsstring>
+        <name>nfc_t4t_hl_procedure_cb_register</name>
+        <param>
+          <type>const struct <ref refid="structnfc__t4t__hl__procedure__cb" kindref="compound">nfc_t4t_hl_procedure_cb</ref> *</type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Register High Level Procedure callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Function for register callback. It should be used to provides synchronization between NFC T4T operation.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to callback structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/hl_procedure.h" line="105" column="5" declfile="include/nfc/t4t/hl_procedure.h" declline="105" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__hl__procedure_gad2ca40605c06e8572791c4f3853768ed_1gad2ca40605c06e8572791c4f3853768ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_hl_procedure_ndef_tag_app_select</definition>
+        <argsstring>(void)</argsstring>
+        <name>nfc_t4t_hl_procedure_ndef_tag_app_select</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Perform NDEF Tag Application Select Procedure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/hl_procedure.h" line="112" column="5" declfile="include/nfc/t4t/hl_procedure.h" declline="112" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__hl__procedure_gab4f9d37b03ee4d234fea71c5bf2ac50d_1gab4f9d37b03ee4d234fea71c5bf2ac50d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_hl_procedure_cc_select</definition>
+        <argsstring>(void)</argsstring>
+        <name>nfc_t4t_hl_procedure_cc_select</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Perform NDEF Tag Capability Container Select Procedure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/hl_procedure.h" line="119" column="5" declfile="include/nfc/t4t/hl_procedure.h" declline="119" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__hl__procedure_ga1976a6b22a2d8c1769e4c06ca36e6002_1ga1976a6b22a2d8c1769e4c06ca36e6002" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_hl_procedure_cc_read</definition>
+        <argsstring>(struct nfc_t4t_cc_file *cc)</argsstring>
+        <name>nfc_t4t_hl_procedure_cc_read</name>
+        <param>
+          <type>struct <ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref> *</type>
+          <declname>cc</declname>
+        </param>
+        <briefdescription>
+<para>Perform Capability Container Read Procedure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">cc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Capability Cointainer descriptor.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/hl_procedure.h" line="128" column="5" declfile="include/nfc/t4t/hl_procedure.h" declline="128" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__hl__procedure_gad5eb9e940967be61d62bea8c84f3b568_1gad5eb9e940967be61d62bea8c84f3b568" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_hl_procedure_ndef_file_select</definition>
+        <argsstring>(uint16_t id)</argsstring>
+        <name>nfc_t4t_hl_procedure_ndef_file_select</name>
+        <param>
+          <type>uint16_t</type>
+          <declname>id</declname>
+        </param>
+        <briefdescription>
+<para>Perform NDEF file Select Procedure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>File Identifier</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/hl_procedure.h" line="137" column="5" declfile="include/nfc/t4t/hl_procedure.h" declline="137" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__hl__procedure_gac8a895f1c15b0b510f8d62a0a4b59c23_1gac8a895f1c15b0b510f8d62a0a4b59c23" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_hl_procedure_ndef_read</definition>
+        <argsstring>(struct nfc_t4t_cc_file *cc, uint8_t *ndef_buff, uint16_t ndef_len)</argsstring>
+        <name>nfc_t4t_hl_procedure_ndef_read</name>
+        <param>
+          <type>struct <ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref> *</type>
+          <declname>cc</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>ndef_buff</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>ndef_len</declname>
+        </param>
+        <briefdescription>
+<para>Perform NDEF Read Procedure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">cc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to Capability Containers descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">ndef_buff</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to buffer where the NDEF file will be stored. The NDEF Read procedure is an asynchronous operation, the data buffer have to be keep until this procedure will be finished. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ndef_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of NDEF file buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/hl_procedure.h" line="151" column="5" declfile="include/nfc/t4t/hl_procedure.h" declline="151" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__hl__procedure_ga356f7b2f32af9ad7818df5de71bd05d4_1ga356f7b2f32af9ad7818df5de71bd05d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_hl_procedure_ndef_update</definition>
+        <argsstring>(struct nfc_t4t_cc_file *cc, uint8_t *ndef_data, uint16_t ndef_len)</argsstring>
+        <name>nfc_t4t_hl_procedure_ndef_update</name>
+        <param>
+          <type>struct <ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref> *</type>
+          <declname>cc</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>ndef_data</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>ndef_len</declname>
+        </param>
+        <briefdescription>
+<para>Perform NDEF Update Procedure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to Capability Containers descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ndef_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the NDEF file data. The NDEF Read procedure is an asynchronous operation, the data buffer have to be keep until this procedure will be finished. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ndef_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of NDEF file.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/hl_procedure.h" line="166" column="5" declfile="include/nfc/t4t/hl_procedure.h" declline="166" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NFC_T4T_HL_PROCEDURE_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T4T_HL_PROCEDURE_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="cc__file_8h" kindref="compound">nfc/t4t/cc_file.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="group__nfc__t4t__hl__procedure_ga90858cf624981b851cb0df52722983b7_1ga90858cf624981b851cb0df52722983b7" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__hl__procedure_ga90858cf624981b851cb0df52722983b7_1ga90858cf624981b851cb0df52722983b7" kindref="member">nfc_t4t_hl_procedure_select</ref><sp/>{</highlight></codeline>
+<codeline lineno="27" refid="group__nfc__t4t__hl__procedure_ga90858cf624981b851cb0df52722983b7_1gga90858cf624981b851cb0df52722983b7a59160d986dfc93efb645bafde0953c3c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__t4t__hl__procedure_ga90858cf624981b851cb0df52722983b7_1gga90858cf624981b851cb0df52722983b7a59160d986dfc93efb645bafde0953c3c" kindref="member">NFC_T4T_HL_PROCEDURE_NDEF_APP_SELECT</ref>,</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="group__nfc__t4t__hl__procedure_ga90858cf624981b851cb0df52722983b7_1gga90858cf624981b851cb0df52722983b7abb77f0c1335db555d34af367c3675be2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__t4t__hl__procedure_ga90858cf624981b851cb0df52722983b7_1gga90858cf624981b851cb0df52722983b7abb77f0c1335db555d34af367c3675be2" kindref="member">NFC_T4T_HL_PROCEDURE_CC_SELECT</ref>,</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__t4t__hl__procedure_ga90858cf624981b851cb0df52722983b7_1gga90858cf624981b851cb0df52722983b7a516d5a6a09dbb01ba809dbe20de7e9cf" kindref="member">NFC_T4T_HL_PROCEDURE_NDEF_FILE_SELECT</ref></highlight></codeline>
+<codeline lineno="34" refid="group__nfc__t4t__hl__procedure_ga90858cf624981b851cb0df52722983b7_1gga90858cf624981b851cb0df52722983b7a516d5a6a09dbb01ba809dbe20de7e9cf" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="structnfc__t4t__hl__procedure__cb" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t4t__hl__procedure__cb" kindref="compound">nfc_t4t_hl_procedure_cb</ref><sp/>{</highlight></codeline>
+<codeline lineno="48" refid="structnfc__t4t__hl__procedure__cb_ad9366be49e62bf700acc18f80966ace5_1ad9366be49e62bf700acc18f80966ace5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structnfc__t4t__hl__procedure__cb_ad9366be49e62bf700acc18f80966ace5_1ad9366be49e62bf700acc18f80966ace5" kindref="member">selected</ref>)(</highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__hl__procedure_ga90858cf624981b851cb0df52722983b7_1ga90858cf624981b851cb0df52722983b7" kindref="member">nfc_t4t_hl_procedure_select</ref><sp/>type);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="structnfc__t4t__hl__procedure__cb_a6880f5cc86ecc9f5d18aebe535c19082_1a6880f5cc86ecc9f5d18aebe535c19082" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structnfc__t4t__hl__procedure__cb_a6880f5cc86ecc9f5d18aebe535c19082_1a6880f5cc86ecc9f5d18aebe535c19082" kindref="member">cc_read</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref><sp/>*cc);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="structnfc__t4t__hl__procedure__cb_a6d23265b065912838f55ac400f281030_1a6d23265b065912838f55ac400f281030" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structnfc__t4t__hl__procedure__cb_a6d23265b065912838f55ac400f281030_1a6d23265b065912838f55ac400f281030" kindref="member">ndef_read</ref>)(uint16_t<sp/>file_id,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*data,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__cc__file_a1302d3273fd912674c8769f1c488780f_1a1302d3273fd912674c8769f1c488780f" kindref="member">len</ref>);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="structnfc__t4t__hl__procedure__cb_a4f4d02ce643eb7d597ff8ac27776c50c_1a4f4d02ce643eb7d597ff8ac27776c50c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structnfc__t4t__hl__procedure__cb_a4f4d02ce643eb7d597ff8ac27776c50c_1a4f4d02ce643eb7d597ff8ac27776c50c" kindref="member">ndef_updated</ref>)(uint16_t<sp/>file_id);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="group__nfc__t4t__hl__procedure_ga658dc604246ec88c6c48720c7df2eb05_1ga658dc604246ec88c6c48720c7df2eb05" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__hl__procedure_ga658dc604246ec88c6c48720c7df2eb05_1ga658dc604246ec88c6c48720c7df2eb05" kindref="member">nfc_t4t_hl_procedure_on_data_received</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*data,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__cc__file_a1302d3273fd912674c8769f1c488780f_1a1302d3273fd912674c8769f1c488780f" kindref="member">len</ref>);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105" refid="group__nfc__t4t__hl__procedure_ga58f491543fe88016c03d80ae143c4688_1ga58f491543fe88016c03d80ae143c4688" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__hl__procedure_ga58f491543fe88016c03d80ae143c4688_1ga58f491543fe88016c03d80ae143c4688" kindref="member">nfc_t4t_hl_procedure_cb_register</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__hl__procedure__cb" kindref="compound">nfc_t4t_hl_procedure_cb</ref><sp/>*cb);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112" refid="group__nfc__t4t__hl__procedure_gad2ca40605c06e8572791c4f3853768ed_1gad2ca40605c06e8572791c4f3853768ed" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__hl__procedure_gad2ca40605c06e8572791c4f3853768ed_1gad2ca40605c06e8572791c4f3853768ed" kindref="member">nfc_t4t_hl_procedure_ndef_tag_app_select</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119" refid="group__nfc__t4t__hl__procedure_gab4f9d37b03ee4d234fea71c5bf2ac50d_1gab4f9d37b03ee4d234fea71c5bf2ac50d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__hl__procedure_gab4f9d37b03ee4d234fea71c5bf2ac50d_1gab4f9d37b03ee4d234fea71c5bf2ac50d" kindref="member">nfc_t4t_hl_procedure_cc_select</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128" refid="group__nfc__t4t__hl__procedure_ga1976a6b22a2d8c1769e4c06ca36e6002_1ga1976a6b22a2d8c1769e4c06ca36e6002" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__hl__procedure_ga1976a6b22a2d8c1769e4c06ca36e6002_1ga1976a6b22a2d8c1769e4c06ca36e6002" kindref="member">nfc_t4t_hl_procedure_cc_read</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref><sp/>*cc);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137" refid="group__nfc__t4t__hl__procedure_gad5eb9e940967be61d62bea8c84f3b568_1gad5eb9e940967be61d62bea8c84f3b568" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__hl__procedure_gad5eb9e940967be61d62bea8c84f3b568_1gad5eb9e940967be61d62bea8c84f3b568" kindref="member">nfc_t4t_hl_procedure_ndef_file_select</ref>(uint16_t<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="151" refid="group__nfc__t4t__hl__procedure_gac8a895f1c15b0b510f8d62a0a4b59c23_1gac8a895f1c15b0b510f8d62a0a4b59c23" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__hl__procedure_gac8a895f1c15b0b510f8d62a0a4b59c23_1gac8a895f1c15b0b510f8d62a0a4b59c23" kindref="member">nfc_t4t_hl_procedure_ndef_read</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref><sp/>*cc,</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*ndef_buff,<sp/>uint16_t<sp/>ndef_len);</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166" refid="group__nfc__t4t__hl__procedure_ga356f7b2f32af9ad7818df5de71bd05d4_1ga356f7b2f32af9ad7818df5de71bd05d4" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__hl__procedure_ga356f7b2f32af9ad7818df5de71bd05d4_1ga356f7b2f32af9ad7818df5de71bd05d4" kindref="member">nfc_t4t_hl_procedure_ndef_update</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref><sp/>*cc,</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*ndef_data,<sp/>uint16_t<sp/>ndef_len);</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>NFC_T4T_HL_PROCEDURE_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/nfc/t4t/hl_procedure.h"/>
+  </compounddef>
+</doxygen>

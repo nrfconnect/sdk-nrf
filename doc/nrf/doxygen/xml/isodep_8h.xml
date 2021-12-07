@@ -1,0 +1,558 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="isodep_8h" kind="file" language="C++">
+    <compoundname>isodep.h</compoundname>
+    <innerclass refid="structnfc__t4t__isodep__tag" prot="public">nfc_t4t_isodep_tag</innerclass>
+    <innerclass refid="structnfc__t4t__isodep__cb" prot="public">nfc_t4t_isodep_cb</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__isodep__error_ga8f1b80dc2d81992dd5d3401eb78db1ff_1ga8f1b80dc2d81992dd5d3401eb78db1ff" prot="public" static="no">
+        <name>NFC_T4T_ISODEP_SYNTAX_ERROR</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Correct frame was received with invalid content. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="26" column="9" bodyfile="include/nfc/t4t/isodep.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__isodep__error_gacb9bdb2fb2240d4785ea5198f22b0c97_1gacb9bdb2fb2240d4785ea5198f22b0c97" prot="public" static="no">
+        <name>NFC_T4T_ISODEP_SEMANTIC_ERROR</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Correct frame was received when it is not expected. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="29" column="9" bodyfile="include/nfc/t4t/isodep.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__isodep__error_ga07d57d523f93497277eaee9584c13eee_1ga07d57d523f93497277eaee9584c13eee" prot="public" static="no">
+        <name>NFC_T4T_ISODEP_TRANSMISSION_ERROR</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Unrecoverable transmission error. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="32" column="9" bodyfile="include/nfc/t4t/isodep.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__isodep__error_gabf75cf10acba7a140ce2e8998c0c5f13_1gabf75cf10acba7a140ce2e8998c0c5f13" prot="public" static="no">
+        <name>NFC_T4T_ISODEP_TIMEOUT_ERROR</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Unrecoverable timeout error. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="35" column="9" bodyfile="include/nfc/t4t/isodep.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t4t__isodep_gae5f55ab1ede9beb54ea5e13ad3daec91_1gae5f55ab1ede9beb54ea5e13ad3daec91" prot="public" static="no">
+        <name>NFC_T4T_ISODEP_HIST_MAX_LEN</name>
+        <initializer>15</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum historical bytes count in RATS Response. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="42" column="9" bodyfile="include/nfc/t4t/isodep.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1gac253eb67748b027115894a4ffc58f275" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nfc_t4t_isodep_fsd</name>
+        <enumvalue id="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a3f3b13159c1ad8102847b28c8dfe2dfe" prot="public">
+          <name>NFC_T4T_ISODEP_FSD_16</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>16-byte frame size. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275af91321ed3281593da723bd9e3425a13c" prot="public">
+          <name>NFC_T4T_ISODEP_FSD_24</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>24-byte frame size. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a137778ded758f4dc12bf4dff341f885b" prot="public">
+          <name>NFC_T4T_ISODEP_FSD_32</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>32-byte frame size. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275acea78a385433fef0901baf4933b96c2d" prot="public">
+          <name>NFC_T4T_ISODEP_FSD_40</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>40-byte frame size. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275ac53bf32b072263019224442f6494793c" prot="public">
+          <name>NFC_T4T_ISODEP_FSD_48</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>48-byte frame size. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a013b657f624b06bb065ec8bf1554796c" prot="public">
+          <name>NFC_T4T_ISODEP_FSD_64</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>64-byte frame size. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a28f920c3f31931d76021c9788fd79ef6" prot="public">
+          <name>NFC_T4T_ISODEP_FSD_96</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>96-byte frame size. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a5267a96b31bf5c158489cfe11a690097" prot="public">
+          <name>NFC_T4T_ISODEP_FSD_128</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>128-byte frame size. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a6f9d14a7fff36d4dc25700765d19cc43" prot="public">
+          <name>NFC_T4T_ISODEP_FSD_256</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>256-byte frame size. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>NFC Type 4 Tag ISO-DEP frame size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="81" column="1" bodyfile="include/nfc/t4t/isodep.h" bodystart="81" bodyend="108"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__t4t__isodep_ga9ff839d76d33bc880049d0a0665ae06c_1ga9ff839d76d33bc880049d0a0665ae06c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_isodep_rats_send</definition>
+        <argsstring>(enum nfc_t4t_isodep_fsd fsd, uint8_t did)</argsstring>
+        <name>nfc_t4t_isodep_rats_send</name>
+        <param>
+          <type>enum <ref refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1gac253eb67748b027115894a4ffc58f275" kindref="member">nfc_t4t_isodep_fsd</ref></type>
+          <declname>fsd</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>did</declname>
+        </param>
+        <briefdescription>
+<para>Send a Request for Answer to Select (RATS). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function sends a RATS command according to NFC Forum Digital Specification 2.0 14.6.1. The RATS command is used by Reader/Writer to negotiate the maximum frame size and the bit rate divisors with the Listener. This function must be called before <ref refid="group__nfc__t4t__isodep_ga661bc7f4fbe514d8a7161b4e4d3fe19a_1ga661bc7f4fbe514d8a7161b4e4d3fe19a" kindref="member">nfc_t4t_isodep_transmit</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">fsd</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Frame size for the Reader/Writer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">did</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Logical number of the addressed Listener. Usually it should be set to 0 in case of communication with one Listener.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>According to NFC Forum Digital Specification 2.0, FSD must be set to 256 bytes.</para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="176" column="5" declfile="include/nfc/t4t/isodep.h" declline="176" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__isodep_ga9e434a9ef3cbc1310af460dfda425bc1_1ga9e434a9ef3cbc1310af460dfda425bc1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_isodep_tag_deselect</definition>
+        <argsstring>(void)</argsstring>
+        <name>nfc_t4t_isodep_tag_deselect</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Send a Deselect command. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Function for sending S(DESELECT) frame according to NFC Forum Digital Specification 2.0 16.2.7. Reader/Writer deactivates a Listener by sending this command.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="187" column="5" declfile="include/nfc/t4t/isodep.h" declline="187" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__isodep_ga4589d21d98031f41e8d83453b66f9745_1ga4589d21d98031f41e8d83453b66f9745" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_isodep_data_received</definition>
+        <argsstring>(const uint8_t *data, size_t data_len, int err)</argsstring>
+        <name>nfc_t4t_isodep_data_received</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>data_len</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>err</declname>
+        </param>
+        <briefdescription>
+<para>Handle NFC ISO-DEP protocol received data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Function for handling the received data. It should be called immediately upon receiving the data from Reader/Writer. In case of a transmission error, the error recovery procedure will be started.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the received data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Received data length. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Transmission error.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="203" column="5" declfile="include/nfc/t4t/isodep.h" declline="203" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__isodep_ga661bc7f4fbe514d8a7161b4e4d3fe19a_1ga661bc7f4fbe514d8a7161b4e4d3fe19a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_isodep_transmit</definition>
+        <argsstring>(const uint8_t *data, size_t data_len)</argsstring>
+        <name>nfc_t4t_isodep_transmit</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>data_len</declname>
+        </param>
+        <briefdescription>
+<para>Exchange the specified amount of data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function can be called when a Tag is in selected state after calling <ref refid="group__nfc__t4t__isodep_ga9ff839d76d33bc880049d0a0665ae06c_1ga9ff839d76d33bc880049d0a0665ae06c" kindref="member">nfc_t4t_isodep_rats_send</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data to transfer over ISO-DEP protocol. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the data to transmit.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="216" column="5" declfile="include/nfc/t4t/isodep.h" declline="216" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__isodep_gae5b90a4d46139b4a7f0ee76187cb2d28_1gae5b90a4d46139b4a7f0ee76187cb2d28" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_t4t_isodep_on_timeout</definition>
+        <argsstring>(void)</argsstring>
+        <name>nfc_t4t_isodep_on_timeout</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Handle a transmission timeout error. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function must be called when a Reader/Writer detects a timeout in the Tag Response. When a timeout occurs, then the timeout error recovery procedure is started. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="225" column="6" declfile="include/nfc/t4t/isodep.h" declline="225" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__isodep_gaaf341c030d05c07e5061ac0f09bfd92a_1gaaf341c030d05c07e5061ac0f09bfd92a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_isodep_init</definition>
+        <argsstring>(uint8_t *tx_buf, size_t tx_size, uint8_t *rx_buf, size_t rx_size, const struct nfc_t4t_isodep_cb *cb)</argsstring>
+        <name>nfc_t4t_isodep_init</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>tx_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>tx_size</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>rx_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>rx_size</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structnfc__t4t__isodep__cb" kindref="compound">nfc_t4t_isodep_cb</ref> *</type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Initialize NFC ISO-DEP protocol. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function prepares a buffer for the ISO-DEP protocol and validates it size.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">tx_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer for TX data. Data is set there before sending. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">tx_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the TX buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">rx_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer for RX data. Data is set there after receiving valid data from an NFC Tag. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">rx_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the RX buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="243" column="5" declfile="include/nfc/t4t/isodep.h" declline="243" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NFC_T4T_ISODEP_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T4T_ISODEP_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="group__isodep__error_ga8f1b80dc2d81992dd5d3401eb78db1ff_1ga8f1b80dc2d81992dd5d3401eb78db1ff" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T4T_ISODEP_SYNTAX_ERROR<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="group__isodep__error_gacb9bdb2fb2240d4785ea5198f22b0c97_1gacb9bdb2fb2240d4785ea5198f22b0c97" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T4T_ISODEP_SEMANTIC_ERROR<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="group__isodep__error_ga07d57d523f93497277eaee9584c13eee_1ga07d57d523f93497277eaee9584c13eee" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T4T_ISODEP_TRANSMISSION_ERROR<sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="group__isodep__error_gabf75cf10acba7a140ce2e8998c0c5f13_1gabf75cf10acba7a140ce2e8998c0c5f13" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T4T_ISODEP_TIMEOUT_ERROR<sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="group__nfc__t4t__isodep_gae5f55ab1ede9beb54ea5e13ad3daec91_1gae5f55ab1ede9beb54ea5e13ad3daec91" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T4T_ISODEP_HIST_MAX_LEN<sp/>15</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="structnfc__t4t__isodep__tag" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t4t__isodep__tag" kindref="compound">nfc_t4t_isodep_tag</ref><sp/>{</highlight></codeline>
+<codeline lineno="49" refid="structnfc__t4t__isodep__tag_a5f32ae4e015e218c621075ab63c87ec2_1a5f32ae4e015e218c621075ab63c87ec2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structnfc__t4t__isodep__tag_a5f32ae4e015e218c621075ab63c87ec2_1a5f32ae4e015e218c621075ab63c87ec2" kindref="member">fwt</ref>;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="structnfc__t4t__isodep__tag_aa2e7bf71f17de141f689156273d20edd_1aa2e7bf71f17de141f689156273d20edd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structnfc__t4t__isodep__tag_aa2e7bf71f17de141f689156273d20edd_1aa2e7bf71f17de141f689156273d20edd" kindref="member">sfgt</ref>;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="structnfc__t4t__isodep__tag_a84d24f76d4e831049cc0c6d63af1d666_1a84d24f76d4e831049cc0c6d63af1d666" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnfc__t4t__isodep__tag_a84d24f76d4e831049cc0c6d63af1d666_1a84d24f76d4e831049cc0c6d63af1d666" kindref="member">fsc</ref>;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58" refid="structnfc__t4t__isodep__tag_a4734acc37f052ef4b29f8517f1db1e9b_1a4734acc37f052ef4b29f8517f1db1e9b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnfc__t4t__isodep__tag_a4734acc37f052ef4b29f8517f1db1e9b_1a4734acc37f052ef4b29f8517f1db1e9b" kindref="member">did</ref>;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="structnfc__t4t__isodep__tag_a367e1c3672090617be347c214b48b07a_1a367e1c3672090617be347c214b48b07a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnfc__t4t__isodep__tag_a367e1c3672090617be347c214b48b07a_1a367e1c3672090617be347c214b48b07a" kindref="member">lp_divisor</ref>;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="structnfc__t4t__isodep__tag_a6391903b13c32df05e3fb3cb33c4a4f4_1a6391903b13c32df05e3fb3cb33c4a4f4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnfc__t4t__isodep__tag_a6391903b13c32df05e3fb3cb33c4a4f4_1a6391903b13c32df05e3fb3cb33c4a4f4" kindref="member">pl_divisor</ref>;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="structnfc__t4t__isodep__tag_a307935fce929434fddb8089de6019012_1a307935fce929434fddb8089de6019012" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnfc__t4t__isodep__tag_a307935fce929434fddb8089de6019012_1a307935fce929434fddb8089de6019012" kindref="member">historical</ref>[<ref refid="group__nfc__t4t__isodep_gae5f55ab1ede9beb54ea5e13ad3daec91_1gae5f55ab1ede9beb54ea5e13ad3daec91" kindref="member">NFC_T4T_ISODEP_HIST_MAX_LEN</ref>];</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="structnfc__t4t__isodep__tag_a78749852d8fefcf0e086cb6f9699a40f_1a78749852d8fefcf0e086cb6f9699a40f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnfc__t4t__isodep__tag_a78749852d8fefcf0e086cb6f9699a40f_1a78749852d8fefcf0e086cb6f9699a40f" kindref="member">historical_len</ref>;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="structnfc__t4t__isodep__tag_a529ccaed9378b748540824325af60a13_1a529ccaed9378b748540824325af60a13" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__isodep__tag_a529ccaed9378b748540824325af60a13_1a529ccaed9378b748540824325af60a13" kindref="member">did_supported</ref>;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="structnfc__t4t__isodep__tag_a7ef10a9e37f626db8d4308bdcc9632fb_1a7ef10a9e37f626db8d4308bdcc9632fb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__isodep__tag_a7ef10a9e37f626db8d4308bdcc9632fb_1a7ef10a9e37f626db8d4308bdcc9632fb" kindref="member">nad_supported</ref>;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81" refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1gac253eb67748b027115894a4ffc58f275" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1gac253eb67748b027115894a4ffc58f275" kindref="member">nfc_t4t_isodep_fsd</ref><sp/>{</highlight></codeline>
+<codeline lineno="83" refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a3f3b13159c1ad8102847b28c8dfe2dfe" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a3f3b13159c1ad8102847b28c8dfe2dfe" kindref="member">NFC_T4T_ISODEP_FSD_16</ref><sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275af91321ed3281593da723bd9e3425a13c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275af91321ed3281593da723bd9e3425a13c" kindref="member">NFC_T4T_ISODEP_FSD_24</ref>,</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89" refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a137778ded758f4dc12bf4dff341f885b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a137778ded758f4dc12bf4dff341f885b" kindref="member">NFC_T4T_ISODEP_FSD_32</ref>,</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275acea78a385433fef0901baf4933b96c2d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275acea78a385433fef0901baf4933b96c2d" kindref="member">NFC_T4T_ISODEP_FSD_40</ref>,</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275ac53bf32b072263019224442f6494793c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275ac53bf32b072263019224442f6494793c" kindref="member">NFC_T4T_ISODEP_FSD_48</ref>,</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98" refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a013b657f624b06bb065ec8bf1554796c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a013b657f624b06bb065ec8bf1554796c" kindref="member">NFC_T4T_ISODEP_FSD_64</ref>,</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101" refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a28f920c3f31931d76021c9788fd79ef6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a28f920c3f31931d76021c9788fd79ef6" kindref="member">NFC_T4T_ISODEP_FSD_96</ref>,</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104" refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a5267a96b31bf5c158489cfe11a690097" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a5267a96b31bf5c158489cfe11a690097" kindref="member">NFC_T4T_ISODEP_FSD_128</ref>,</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a6f9d14a7fff36d4dc25700765d19cc43" kindref="member">NFC_T4T_ISODEP_FSD_256</ref></highlight></codeline>
+<codeline lineno="108" refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a6f9d14a7fff36d4dc25700765d19cc43" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115" refid="structnfc__t4t__isodep__cb" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t4t__isodep__cb" kindref="compound">nfc_t4t_isodep_cb</ref><sp/>{</highlight></codeline>
+<codeline lineno="124" refid="structnfc__t4t__isodep__cb_a5d347f8dd108daeb92d897a106ae9de5_1a5d347f8dd108daeb92d897a106ae9de5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structnfc__t4t__isodep__cb_a5d347f8dd108daeb92d897a106ae9de5_1a5d347f8dd108daeb92d897a106ae9de5" kindref="member">data_received</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*data,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>data_len);</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130" refid="structnfc__t4t__isodep__cb_a933f0d21b349a8083f866e9db0b31440_1a933f0d21b349a8083f866e9db0b31440" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structnfc__t4t__isodep__cb_a933f0d21b349a8083f866e9db0b31440_1a933f0d21b349a8083f866e9db0b31440" kindref="member">selected</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t4t__isodep__tag" kindref="compound">nfc_t4t_isodep_tag</ref><sp/>*t4t_tag);</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136" refid="structnfc__t4t__isodep__cb_a93ef1d446e099407eb65f75542dec7a0_1a93ef1d446e099407eb65f75542dec7a0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structnfc__t4t__isodep__cb_a93ef1d446e099407eb65f75542dec7a0_1a93ef1d446e099407eb65f75542dec7a0" kindref="member">deselected</ref>)(void);</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147" refid="structnfc__t4t__isodep__cb_a381a164c51d60ab9d47f5ebec4281c93_1a381a164c51d60ab9d47f5ebec4281c93" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structnfc__t4t__isodep__cb_a381a164c51d60ab9d47f5ebec4281c93_1a381a164c51d60ab9d47f5ebec4281c93" kindref="member">ready_to_send</ref>)(uint8_t<sp/>*data,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>data_len,<sp/>uint32_t<sp/>ftd);</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154" refid="structnfc__t4t__isodep__cb_aa2e2e8c0ad37b234333236f27efba90c_1aa2e2e8c0ad37b234333236f27efba90c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structnfc__t4t__isodep__cb_aa2e2e8c0ad37b234333236f27efba90c_1aa2e2e8c0ad37b234333236f27efba90c" kindref="member">error</ref>)(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>err);</highlight></codeline>
+<codeline lineno="155"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176" refid="group__nfc__t4t__isodep_ga9ff839d76d33bc880049d0a0665ae06c_1ga9ff839d76d33bc880049d0a0665ae06c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__isodep_ga9ff839d76d33bc880049d0a0665ae06c_1ga9ff839d76d33bc880049d0a0665ae06c" kindref="member">nfc_t4t_isodep_rats_send</ref>(</highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1gac253eb67748b027115894a4ffc58f275" kindref="member">nfc_t4t_isodep_fsd</ref><sp/>fsd,<sp/>uint8_t<sp/><ref refid="structnfc__t4t__isodep__tag_a4734acc37f052ef4b29f8517f1db1e9b_1a4734acc37f052ef4b29f8517f1db1e9b" kindref="member">did</ref>);</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187" refid="group__nfc__t4t__isodep_ga9e434a9ef3cbc1310af460dfda425bc1_1ga9e434a9ef3cbc1310af460dfda425bc1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__isodep_ga9e434a9ef3cbc1310af460dfda425bc1_1ga9e434a9ef3cbc1310af460dfda425bc1" kindref="member">nfc_t4t_isodep_tag_deselect</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight></codeline>
+<codeline lineno="203" refid="group__nfc__t4t__isodep_ga4589d21d98031f41e8d83453b66f9745_1ga4589d21d98031f41e8d83453b66f9745" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__isodep_ga4589d21d98031f41e8d83453b66f9745_1ga4589d21d98031f41e8d83453b66f9745" kindref="member">nfc_t4t_isodep_data_received</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*data,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>data_len,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>err);</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="216" refid="group__nfc__t4t__isodep_ga661bc7f4fbe514d8a7161b4e4d3fe19a_1ga661bc7f4fbe514d8a7161b4e4d3fe19a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__isodep_ga661bc7f4fbe514d8a7161b4e4d3fe19a_1ga661bc7f4fbe514d8a7161b4e4d3fe19a" kindref="member">nfc_t4t_isodep_transmit</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*data,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>data_len);</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="225" refid="group__nfc__t4t__isodep_gae5b90a4d46139b4a7f0ee76187cb2d28_1gae5b90a4d46139b4a7f0ee76187cb2d28" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__isodep_gae5b90a4d46139b4a7f0ee76187cb2d28_1gae5b90a4d46139b4a7f0ee76187cb2d28" kindref="member">nfc_t4t_isodep_on_timeout</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight></codeline>
+<codeline lineno="243" refid="group__nfc__t4t__isodep_gaaf341c030d05c07e5061ac0f09bfd92a_1gaaf341c030d05c07e5061ac0f09bfd92a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__isodep_gaaf341c030d05c07e5061ac0f09bfd92a_1gaaf341c030d05c07e5061ac0f09bfd92a" kindref="member">nfc_t4t_isodep_init</ref>(uint8_t<sp/>*tx_buf,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>tx_size,</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*rx_buf,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>rx_size,</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__isodep__cb" kindref="compound">nfc_t4t_isodep_cb</ref><sp/>*cb);</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"></highlight></codeline>
+<codeline lineno="247"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="248"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="250"><highlight class="normal"></highlight></codeline>
+<codeline lineno="255"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>NFC_T4T_ISODEP_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/nfc/t4t/isodep.h"/>
+  </compounddef>
+</doxygen>

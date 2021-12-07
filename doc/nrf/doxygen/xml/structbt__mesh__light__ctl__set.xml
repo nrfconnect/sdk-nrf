@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__ctl__set" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_ctl_set</compoundname>
+    <includes refid="light__ctl_8h" local="no">light_ctl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__ctl__set_ac5a078567780e1d9c953c3abb2c8b3c0_1ac5a078567780e1d9c953c3abb2c8b3c0" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__light__ctl" kindref="compound">bt_mesh_light_ctl</ref></type>
+        <definition>struct bt_mesh_light_ctl bt_mesh_light_ctl_set::params</definition>
+        <argsstring></argsstring>
+        <name>params</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>CTL set parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl.h" line="49" column="24" bodyfile="include/bluetooth/mesh/light_ctl.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__ctl__set_afb7ac566997769b1cc6bbebbdde0a00e_1afb7ac566997769b1cc6bbebbdde0a00e" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref> *</type>
+        <definition>const struct bt_mesh_model_transition* bt_mesh_light_ctl_set::transition</definition>
+        <argsstring></argsstring>
+        <name>transition</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transition time parameters for the state change, or NULL.</para>
+<para>When sending, setting the transition to NULL makes the receiver use its default transition time parameters, or 0 if no default transition time is set. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl.h" line="57" column="37" bodyfile="include/bluetooth/mesh/light_ctl.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Light CTL set message parameters. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_mesh_light_ctl</label>
+        <link refid="structbt__mesh__light__ctl"/>
+      </node>
+      <node id="1">
+        <label>bt_mesh_light_ctl_set</label>
+        <link refid="structbt__mesh__light__ctl__set"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>params</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>transition</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bt_mesh_model_transition</label>
+        <link refid="structbt__mesh__model__transition"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/light_ctl.h" line="47" column="1" bodyfile="include/bluetooth/mesh/light_ctl.h" bodystart="47" bodyend="58"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__ctl__set_ac5a078567780e1d9c953c3abb2c8b3c0_1ac5a078567780e1d9c953c3abb2c8b3c0" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctl_set</scope><name>params</name></member>
+      <member refid="structbt__mesh__light__ctl__set_afb7ac566997769b1cc6bbebbdde0a00e_1afb7ac566997769b1cc6bbebbdde0a00e" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctl_set</scope><name>transition</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

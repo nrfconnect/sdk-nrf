@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__time__tai__utc__change" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_time_tai_utc_change</compoundname>
+    <includes refid="time_8h" local="no">time.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__time__tai__utc__change_addfa7ad7036f96e4547c3d5c17bd2982_1addfa7ad7036f96e4547c3d5c17bd2982" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t bt_mesh_time_tai_utc_change::delta_new</definition>
+        <argsstring></argsstring>
+        <name>delta_new</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>New TAI-UTC Delta (leap seconds). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time.h" line="76" column="9" bodyfile="include/bluetooth/mesh/time.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__time__tai__utc__change_af21b7bb24d170613652700f0f1f7830a_1af21b7bb24d170613652700f0f1f7830a" prot="public" static="no" mutable="no">
+        <type>uint64_t</type>
+        <definition>uint64_t bt_mesh_time_tai_utc_change::timestamp</definition>
+        <argsstring></argsstring>
+        <name>timestamp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>TAI update point for TAI-UTC Delta. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time.h" line="78" column="10" bodyfile="include/bluetooth/mesh/time.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Time UTC Delta change. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/time.h" line="74" column="1" bodyfile="include/bluetooth/mesh/time.h" bodystart="74" bodyend="79"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__time__tai__utc__change_addfa7ad7036f96e4547c3d5c17bd2982_1addfa7ad7036f96e4547c3d5c17bd2982" prot="public" virt="non-virtual"><scope>bt_mesh_time_tai_utc_change</scope><name>delta_new</name></member>
+      <member refid="structbt__mesh__time__tai__utc__change_af21b7bb24d170613652700f0f1f7830a_1af21b7bb24d170613652700f0f1f7830a" prot="public" virt="non-virtual"><scope>bt_mesh_time_tai_utc_change</scope><name>timestamp</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

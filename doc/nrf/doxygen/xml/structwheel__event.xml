@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structwheel__event" kind="struct" language="C++" prot="public">
+    <compoundname>wheel_event</compoundname>
+    <includes refid="wheel__event_8h" local="no">wheel_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structwheel__event_abeae8bede30b4deb313f00d1d34a2003_1abeae8bede30b4deb313f00d1d34a2003" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header wheel_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/wheel_event.h" line="24" column="19" bodyfile="applications/nrf_desktop/src/events/wheel_event.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structwheel__event_ae4a8186ba7b487acbf2d20a47ba2f5e2_1ae4a8186ba7b487acbf2d20a47ba2f5e2" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t wheel_event::wheel</definition>
+        <argsstring></argsstring>
+        <name>wheel</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/wheel_event.h" line="26" column="9" bodyfile="applications/nrf_desktop/src/events/wheel_event.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>wheel_event</label>
+        <link refid="structwheel__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/nrf_desktop/src/events/wheel_event.h" line="23" column="1" bodyfile="applications/nrf_desktop/src/events/wheel_event.h" bodystart="23" bodyend="27"/>
+    <listofallmembers>
+      <member refid="structwheel__event_abeae8bede30b4deb313f00d1d34a2003_1abeae8bede30b4deb313f00d1d34a2003" prot="public" virt="non-virtual"><scope>wheel_event</scope><name>header</name></member>
+      <member refid="structwheel__event_ae4a8186ba7b487acbf2d20a47ba2f5e2_1ae4a8186ba7b487acbf2d20a47ba2f5e2" prot="public" virt="non-virtual"><scope>wheel_event</scope><name>wheel</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

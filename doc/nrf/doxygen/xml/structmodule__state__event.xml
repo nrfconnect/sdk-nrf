@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structmodule__state__event" kind="struct" language="C++" prot="public">
+    <compoundname>module_state_event</compoundname>
+    <includes refid="module__state__event_8h" local="no">module_state_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmodule__state__event_a26d38951b8d6b92acc9c32da0a58e7c9_1a26d38951b8d6b92acc9c32da0a58e7c9" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header module_state_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event header. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="207" column="19" bodyfile="include/caf/events/module_state_event.h" bodystart="207" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodule__state__event_a9f9b001f57e28f02ce119cecb3cd1d8d_1a9f9b001f57e28f02ce119cecb3cd1d8d" prot="public" static="no" mutable="no">
+        <type>const void *</type>
+        <definition>const void* module_state_event::module_id</definition>
+        <argsstring></argsstring>
+        <name>module_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>ID of the module. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="210" column="12" bodyfile="include/caf/events/module_state_event.h" bodystart="210" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodule__state__event_ad160c7caa7b02392522786204faa70bd_1ad160c7caa7b02392522786204faa70bd" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__caf__module__state__event_ga17d626d50e9a9d43cc372a32d2bd8f90_1ga17d626d50e9a9d43cc372a32d2bd8f90" kindref="member">module_state</ref></type>
+        <definition>enum module_state module_state_event::state</definition>
+        <argsstring></argsstring>
+        <name>state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>New state of the module. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="213" column="18" bodyfile="include/caf/events/module_state_event.h" bodystart="213" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Module state event. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The module state event is submitted by a module to inform that state of the module changed. The <ref refid="group__caf__module__state__event_gadfd325057870175b5df3bd26759175e4_1gadfd325057870175b5df3bd26759175e4" kindref="member">module_set_state</ref> can be used to submit the module state event for a module. The <ref refid="group__caf__module__state__event_gad1a80ac5733dc3538a4e4511b1081803_1gad1a80ac5733dc3538a4e4511b1081803" kindref="member">check_state</ref> can be used in event_handler to check if the event carries information that selected module reported selected state. See <ref refid="group__caf__module__state__event_ga17d626d50e9a9d43cc372a32d2bd8f90_1ga17d626d50e9a9d43cc372a32d2bd8f90" kindref="member">module_state</ref> for details about available module states.</para>
+<para>Name of the module must be defined as MODULE before including the <ref refid="module__state__event_8h" kindref="compound">module_state_event.h</ref> header. For example, &quot;#define MODULE buttons&quot; defines name of the module as buttons. The module name is used to identify a module.</para>
+<para>Every application module must register for module state event and submit this event when state of the module changes. An application module can initialize itself when all the required application modules are initialized (report MODULE_STATE_READY). This ensures proper initialization order of the application modules. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>module_state_event</label>
+        <link refid="structmodule__state__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/caf/events/module_state_event.h" line="205" column="1" bodyfile="include/caf/events/module_state_event.h" bodystart="205" bodyend="214"/>
+    <listofallmembers>
+      <member refid="structmodule__state__event_a26d38951b8d6b92acc9c32da0a58e7c9_1a26d38951b8d6b92acc9c32da0a58e7c9" prot="public" virt="non-virtual"><scope>module_state_event</scope><name>header</name></member>
+      <member refid="structmodule__state__event_a9f9b001f57e28f02ce119cecb3cd1d8d_1a9f9b001f57e28f02ce119cecb3cd1d8d" prot="public" virt="non-virtual"><scope>module_state_event</scope><name>module_id</name></member>
+      <member refid="structmodule__state__event_ad160c7caa7b02392522786204faa70bd_1ad160c7caa7b02392522786204faa70bd" prot="public" virt="non-virtual"><scope>module_state_event</scope><name>state</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

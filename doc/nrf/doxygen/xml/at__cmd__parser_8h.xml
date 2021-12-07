@@ -1,0 +1,372 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="at__cmd__parser_8h" kind="file" language="C++">
+    <compoundname>at_cmd_parser.h</compoundname>
+    <includes local="no">stdlib.h</includes>
+    <includes local="no">zephyr/types.h</includes>
+    <includes refid="at__params_8h" local="no">modem/at_params.h</includes>
+    <includedby refid="slm__at__host_8h" local="no">applications/serial_lte_modem/src/slm_at_host.h</includedby>
+    <includedby refid="slm__util_8h" local="no">applications/serial_lte_modem/src/slm_util.h</includedby>
+    <includedby refid="lte__lc__helpers_8h" local="no">lib/lte_link_control/lte_lc_helpers.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/modem/at_cmd_parser.h</label>
+        <link refid="at__cmd__parser_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>modem/at_params.h</label>
+        <link refid="at__params_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stdlib.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>applications/serial_lte_modem/src/slm_at_host.h</label>
+        <link refid="slm__at__host_8h"/>
+      </node>
+      <node id="3">
+        <label>applications/serial_lte_modem/src/slm_util.h</label>
+        <link refid="slm__util_8h"/>
+      </node>
+      <node id="1">
+        <label>include/modem/at_cmd_parser.h</label>
+        <link refid="at__cmd__parser_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>lib/lte_link_control/lte_lc_helpers.h</label>
+        <link refid="lte__lc__helpers_8h"/>
+      </node>
+    </invincdepgraph>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__at__cmd__parser_ga13add1560682c9d97e1c021e993128bc_1ga13add1560682c9d97e1c021e993128bc" prot="public" static="no" strong="no">
+        <type></type>
+        <name>at_cmd_type</name>
+        <enumvalue id="group__at__cmd__parser_ga13add1560682c9d97e1c021e993128bc_1gga13add1560682c9d97e1c021e993128bca28e437532c951473ca072177f08f2750" prot="public">
+          <name>AT_CMD_TYPE_UNKNOWN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Unknown command, indicates that the actual command type could not be resolved. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__at__cmd__parser_ga13add1560682c9d97e1c021e993128bc_1gga13add1560682c9d97e1c021e993128bca22ed5e640baaea818b889a403078ab61" prot="public">
+          <name>AT_CMD_TYPE_SET_COMMAND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>AT set command. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__at__cmd__parser_ga13add1560682c9d97e1c021e993128bc_1gga13add1560682c9d97e1c021e993128bcaa8871399ff63f7aa8d0f8696e77450ea" prot="public">
+          <name>AT_CMD_TYPE_READ_COMMAND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>AT read command. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__at__cmd__parser_ga13add1560682c9d97e1c021e993128bc_1gga13add1560682c9d97e1c021e993128bca907ee6e676bbd42d004d7f7b0875f8f5" prot="public">
+          <name>AT_CMD_TYPE_TEST_COMMAND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>AT test command. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_cmd_parser.h" line="109" column="1" bodyfile="include/modem/at_cmd_parser.h" bodystart="109" bodyend="120"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__at__cmd__parser_ga29b87ad5f40dbf0e47aae6f7ac5610ae_1ga29b87ad5f40dbf0e47aae6f7ac5610ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_parser_max_params_from_str</definition>
+        <argsstring>(const char *at_params_str, char **next_param_str, struct at_param_list *const list, size_t max_params_count)</argsstring>
+        <name>at_parser_max_params_from_str</name>
+        <param>
+          <type>const char *</type>
+          <declname>at_params_str</declname>
+        </param>
+        <param>
+          <type>char **</type>
+          <declname>next_param_str</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *const</type>
+          <declname>list</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>max_params_count</declname>
+        </param>
+        <briefdescription>
+<para>Parse a maximum number of AT command or response parameters from a string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function parses the parameters from <computeroutput>at_params_str</computeroutput> and saves them in <computeroutput>list</computeroutput>. If there are more parameters than <computeroutput>max_params_count</computeroutput>, they are ignored.</para>
+<para><computeroutput>list</computeroutput> must be initialized. It can be reused to parse multiple commands. When calling this function, the list is cleared. The maximum number of AT parameters that can be parsed and stored is limited by the size of <computeroutput>list</computeroutput>.</para>
+<para>If an error is returned by the parser, the content of <computeroutput>list</computeroutput> should be ignored.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>at_params_str</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>AT parameters as a null-terminated string. Can be numeric or string parameters.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>next_param_str</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>In the case a string contains multiple notifications, the parser will stop parsing when it is done parsing the first notification, and return the remainder of the string in this pointer. The return code will be EAGAIN. If multinotification is not used, this pointer can be set to NULL.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to an initialized list where parameters are stored. Must not be NULL. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>max_params_count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of parameters expected in <computeroutput>at_params_str</computeroutput>. Can be set to a smaller value to parse only some parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New notification detected in string re-run the parser with the string pointed to by <computeroutput>next_param_str</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-E2BIG</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The <ref refid="structat__param__list" kindref="compound">at_param_list</ref> supplied cannot hold all detected parameters in string. The list will contain the maximum number of parameters possible. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>One or more of the supplied parameters are invalid. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_cmd_parser.h" line="66" column="5" declfile="include/modem/at_cmd_parser.h" declline="66" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser_ga2b9fe0b886dc000a48a646e11b251ee5_1ga2b9fe0b886dc000a48a646e11b251ee5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_parser_params_from_str</definition>
+        <argsstring>(const char *at_params_str, char **next_param_str, struct at_param_list *const list)</argsstring>
+        <name>at_parser_params_from_str</name>
+        <param>
+          <type>const char *</type>
+          <declname>at_params_str</declname>
+        </param>
+        <param>
+          <type>char **</type>
+          <declname>next_param_str</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *const</type>
+          <declname>list</declname>
+        </param>
+        <briefdescription>
+<para>Parse AT command or response parameters from a string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function parses the parameters from <computeroutput>at_params_str</computeroutput> and saves them in <computeroutput>list</computeroutput>.</para>
+<para><computeroutput>list</computeroutput> must be initialized. It can be reused to parse multiple commands. When calling this function, the list is cleared. The maximum number of AT parameters that can be parsed and stored is limited by the size of <computeroutput>list</computeroutput>.</para>
+<para>If an error is returned by the parser, the content of <computeroutput>list</computeroutput> should be ignored.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>at_params_str</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>AT parameters as a null-terminated string. Can be numeric or string parameters.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>next_param_str</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>In the case a string contains multiple notifications, the parser will stop parsing when it is done parsing the first notification, and return the remainder of the string in this pointer. The return code will be EAGAIN. If multinotification is not used, this pointer can be set to NULL.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to an initialized list where parameters are stored. Must not be NULL.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New notification detected in string re-run the parser with the string pointed to by <computeroutput>next_param_str</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-E2BIG</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The <ref refid="structat__param__list" kindref="compound">at_param_list</ref> supplied cannot hold all detected parameters in string. The list will contain the maximum number of parameters possible. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>One or more of the supplied parameters are invalid. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_cmd_parser.h" line="106" column="5" declfile="include/modem/at_cmd_parser.h" declline="106" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser_gafde14495d4dbffbeec9bbda1416d4ba5_1gafde14495d4dbffbeec9bbda1416d4ba5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>enum <ref refid="group__at__cmd__parser_ga13add1560682c9d97e1c021e993128bc_1ga13add1560682c9d97e1c021e993128bc" kindref="member">at_cmd_type</ref></type>
+        <definition>enum at_cmd_type at_parser_cmd_type_get</definition>
+        <argsstring>(const char *at_cmd)</argsstring>
+        <name>at_parser_cmd_type_get</name>
+        <param>
+          <type>const char *</type>
+          <declname>at_cmd</declname>
+        </param>
+        <briefdescription>
+<para>Identify the AT command type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">at_cmd</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A pointer to the AT command string.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Command type. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_cmd_parser.h" line="129" column="17" declfile="include/modem/at_cmd_parser.h" declline="129" declcolumn="17"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>AT_CMD_PARSER_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CMD_PARSER_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdlib.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="at__params_8h" kindref="compound">modem/at_params.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="group__at__cmd__parser_ga29b87ad5f40dbf0e47aae6f7ac5610ae_1ga29b87ad5f40dbf0e47aae6f7ac5610ae" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__at__cmd__parser_ga29b87ad5f40dbf0e47aae6f7ac5610ae_1ga29b87ad5f40dbf0e47aae6f7ac5610ae" kindref="member">at_parser_max_params_from_str</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*at_params_str,</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>**next_param_str,</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structat__param__list" kindref="compound">at_param_list</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>list,</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>max_params_count);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106" refid="group__at__cmd__parser_ga2b9fe0b886dc000a48a646e11b251ee5_1ga2b9fe0b886dc000a48a646e11b251ee5" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__at__cmd__parser_ga2b9fe0b886dc000a48a646e11b251ee5_1ga2b9fe0b886dc000a48a646e11b251ee5" kindref="member">at_parser_params_from_str</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*at_params_str,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>**next_param_str,</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structat__param__list" kindref="compound">at_param_list</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>list);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109" refid="group__at__cmd__parser_ga13add1560682c9d97e1c021e993128bc_1ga13add1560682c9d97e1c021e993128bc" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__at__cmd__parser_ga13add1560682c9d97e1c021e993128bc_1ga13add1560682c9d97e1c021e993128bc" kindref="member">at_cmd_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="113" refid="group__at__cmd__parser_ga13add1560682c9d97e1c021e993128bc_1gga13add1560682c9d97e1c021e993128bca28e437532c951473ca072177f08f2750" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__at__cmd__parser_ga13add1560682c9d97e1c021e993128bc_1gga13add1560682c9d97e1c021e993128bca28e437532c951473ca072177f08f2750" kindref="member">AT_CMD_TYPE_UNKNOWN</ref>,</highlight></codeline>
+<codeline lineno="115" refid="group__at__cmd__parser_ga13add1560682c9d97e1c021e993128bc_1gga13add1560682c9d97e1c021e993128bca22ed5e640baaea818b889a403078ab61" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__at__cmd__parser_ga13add1560682c9d97e1c021e993128bc_1gga13add1560682c9d97e1c021e993128bca22ed5e640baaea818b889a403078ab61" kindref="member">AT_CMD_TYPE_SET_COMMAND</ref>,</highlight></codeline>
+<codeline lineno="117" refid="group__at__cmd__parser_ga13add1560682c9d97e1c021e993128bc_1gga13add1560682c9d97e1c021e993128bcaa8871399ff63f7aa8d0f8696e77450ea" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__at__cmd__parser_ga13add1560682c9d97e1c021e993128bc_1gga13add1560682c9d97e1c021e993128bcaa8871399ff63f7aa8d0f8696e77450ea" kindref="member">AT_CMD_TYPE_READ_COMMAND</ref>,</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__at__cmd__parser_ga13add1560682c9d97e1c021e993128bc_1gga13add1560682c9d97e1c021e993128bca907ee6e676bbd42d004d7f7b0875f8f5" kindref="member">AT_CMD_TYPE_TEST_COMMAND</ref></highlight></codeline>
+<codeline lineno="120" refid="group__at__cmd__parser_ga13add1560682c9d97e1c021e993128bc_1gga13add1560682c9d97e1c021e993128bca907ee6e676bbd42d004d7f7b0875f8f5" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129" refid="group__at__cmd__parser_gafde14495d4dbffbeec9bbda1416d4ba5_1gafde14495d4dbffbeec9bbda1416d4ba5" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__at__cmd__parser_ga13add1560682c9d97e1c021e993128bc_1ga13add1560682c9d97e1c021e993128bc" kindref="member">at_cmd_type</ref><sp/><ref refid="group__at__cmd__parser_gafde14495d4dbffbeec9bbda1416d4ba5_1gafde14495d4dbffbeec9bbda1416d4ba5" kindref="member">at_parser_cmd_type_get</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*at_cmd);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>AT_CMD_PARSER_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/modem/at_cmd_parser.h"/>
+  </compounddef>
+</doxygen>

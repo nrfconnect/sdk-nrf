@@ -1,0 +1,563 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__aws__iot" kind="group">
+    <compoundname>aws_iot</compoundname>
+    <title>AWS IoT library</title>
+    <innerclass refid="structaws__iot__topic__data" prot="public">aws_iot_topic_data</innerclass>
+    <innerclass refid="structaws__iot__app__topic__data" prot="public">aws_iot_app_topic_data</innerclass>
+    <innerclass refid="structaws__iot__data" prot="public">aws_iot_data</innerclass>
+    <innerclass refid="structaws__iot__evt" prot="public">aws_iot_evt</innerclass>
+    <innerclass refid="structaws__iot__config" prot="public">aws_iot_config</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__aws__iot_1ga220727b3c718f4f1a6e665298b39cae2" prot="public" static="no" strong="no">
+        <type></type>
+        <name>aws_iot_topic_type</name>
+        <enumvalue id="group__aws__iot_ga220727b3c718f4f1a6e665298b39cae2_1gga220727b3c718f4f1a6e665298b39cae2a0cf7deb69492d346df6f1129a69751b5" prot="public">
+          <name>AWS_IOT_SHADOW_TOPIC_UNKNOWN</name>
+          <initializer>= 0x0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Unknown device shadow topic. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_ga220727b3c718f4f1a6e665298b39cae2_1gga220727b3c718f4f1a6e665298b39cae2a496fa67e8877bd82a4b3f164451a9ffd" prot="public">
+          <name>AWS_IOT_SHADOW_TOPIC_GET</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>This topic type corresponds to $aws/things/&lt;thing-name&gt;/shadow/get, publishing an empty message to this topic requests the device shadow document. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_ga220727b3c718f4f1a6e665298b39cae2_1gga220727b3c718f4f1a6e665298b39cae2a054dc4a4ad8206fce1f0577c49ff847c" prot="public">
+          <name>AWS_IOT_SHADOW_TOPIC_UPDATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>This topic type corresponds to $aws/things/&lt;thing-name&gt;/shadow/update, publishing data to this topic updates the device shadow document. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_ga220727b3c718f4f1a6e665298b39cae2_1gga220727b3c718f4f1a6e665298b39cae2ab6c478ac80d764badcf5674158df71b0" prot="public">
+          <name>AWS_IOT_SHADOW_TOPIC_DELETE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>This topic type corresponds to $aws/things/&lt;thing-name&gt;/shadow/delete, publishing an empty message to this topic deletes the device Shadow document. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>AWS IoT shadow topics, used in messages to specify which shadow topic that will be published to. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="30" column="1" bodyfile="include/net/aws_iot.h" bodystart="30" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__aws__iot_1ga1c599b6654c6c82352c5e66fa6e98765" prot="public" static="no" strong="no">
+        <type></type>
+        <name>aws_disconnect_result</name>
+        <enumvalue id="group__aws__iot_ga1c599b6654c6c82352c5e66fa6e98765_1gga1c599b6654c6c82352c5e66fa6e98765ad6bdb20113bbbb8f29d12f0f69e56c69" prot="public">
+          <name>AWS_IOT_DISCONNECT_USER_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_ga1c599b6654c6c82352c5e66fa6e98765_1gga1c599b6654c6c82352c5e66fa6e98765af60b8544eec0ac7cfd23a43c1dff0b69" prot="public">
+          <name>AWS_IOT_DISCONNECT_CLOSED_BY_REMOTE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_ga1c599b6654c6c82352c5e66fa6e98765_1gga1c599b6654c6c82352c5e66fa6e98765acbab07d93fc25c3e593c6716a451156c" prot="public">
+          <name>AWS_IOT_DISCONNECT_INVALID_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_ga1c599b6654c6c82352c5e66fa6e98765_1gga1c599b6654c6c82352c5e66fa6e98765a3629dcd561a852961ae7d289b42a0405" prot="public">
+          <name>AWS_IOT_DISCONNECT_MISC</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_ga1c599b6654c6c82352c5e66fa6e98765_1gga1c599b6654c6c82352c5e66fa6e98765ad3fed0848d1ec354be15822eb2d58870" prot="public">
+          <name>AWS_IOT_DISCONNECT_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>@ AWS broker disconnect results. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="51" column="1" bodyfile="include/net/aws_iot.h" bodystart="51" bodyend="57"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__aws__iot_1ga456586665996aa221dcdf0c289c3c746" prot="public" static="no" strong="no">
+        <type></type>
+        <name>aws_connect_result</name>
+        <enumvalue id="group__aws__iot_ga456586665996aa221dcdf0c289c3c746_1gga456586665996aa221dcdf0c289c3c746a969c0fd65239fc91469d77d5d1e84fba" prot="public">
+          <name>AWS_IOT_CONNECT_RES_SUCCESS</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_ga456586665996aa221dcdf0c289c3c746_1gga456586665996aa221dcdf0c289c3c746a751cf2431cec67733223320531fc4b81" prot="public">
+          <name>AWS_IOT_CONNECT_RES_ERR_NOT_INITD</name>
+          <initializer>= -1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_ga456586665996aa221dcdf0c289c3c746_1gga456586665996aa221dcdf0c289c3c746ab9b98696ab37ae11dc87ad07f32722f5" prot="public">
+          <name>AWS_IOT_CONNECT_RES_ERR_INVALID_PARAM</name>
+          <initializer>= -2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_ga456586665996aa221dcdf0c289c3c746_1gga456586665996aa221dcdf0c289c3c746a421dbc5e11500c2f8b0c4e3a9fc0a2c6" prot="public">
+          <name>AWS_IOT_CONNECT_RES_ERR_NETWORK</name>
+          <initializer>= -3</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_ga456586665996aa221dcdf0c289c3c746_1gga456586665996aa221dcdf0c289c3c746aae5cf6f66942283ad3fb7e494d19adad" prot="public">
+          <name>AWS_IOT_CONNECT_RES_ERR_BACKEND</name>
+          <initializer>= -4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_ga456586665996aa221dcdf0c289c3c746_1gga456586665996aa221dcdf0c289c3c746a90954fec385d4952e242d26053882c39" prot="public">
+          <name>AWS_IOT_CONNECT_RES_ERR_MISC</name>
+          <initializer>= -5</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_ga456586665996aa221dcdf0c289c3c746_1gga456586665996aa221dcdf0c289c3c746acd8648d89fe0127f54ef690632960ad8" prot="public">
+          <name>AWS_IOT_CONNECT_RES_ERR_NO_MEM</name>
+          <initializer>= -6</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_ga456586665996aa221dcdf0c289c3c746_1gga456586665996aa221dcdf0c289c3c746ae221e96602f0acab8fa0df6a663c69ae" prot="public">
+          <name>AWS_IOT_CONNECT_RES_ERR_PRV_KEY</name>
+          <initializer>= -7</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_ga456586665996aa221dcdf0c289c3c746_1gga456586665996aa221dcdf0c289c3c746a41d898630184849c55550fe550d2cfee" prot="public">
+          <name>AWS_IOT_CONNECT_RES_ERR_CERT</name>
+          <initializer>= -8</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_ga456586665996aa221dcdf0c289c3c746_1gga456586665996aa221dcdf0c289c3c746a0d8ee60f2098a496ec924f99849a19b0" prot="public">
+          <name>AWS_IOT_CONNECT_RES_ERR_CERT_MISC</name>
+          <initializer>= -9</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_ga456586665996aa221dcdf0c289c3c746_1gga456586665996aa221dcdf0c289c3c746abdfc59c884474050a540ec022587b14e" prot="public">
+          <name>AWS_IOT_CONNECT_RES_ERR_TIMEOUT_NO_DATA</name>
+          <initializer>= -10</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_ga456586665996aa221dcdf0c289c3c746_1gga456586665996aa221dcdf0c289c3c746a322b175fff3e73222e1c950d777904b1" prot="public">
+          <name>AWS_IOT_CONNECT_RES_ERR_ALREADY_CONNECTED</name>
+          <initializer>= -11</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>AWS broker connect results. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="60" column="1" bodyfile="include/net/aws_iot.h" bodystart="60" bodyend="77"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__aws__iot_1gae9de5373422676c25b58a93746587638" prot="public" static="no" strong="no">
+        <type></type>
+        <name>aws_iot_evt_type</name>
+        <enumvalue id="group__aws__iot_gae9de5373422676c25b58a93746587638_1ggae9de5373422676c25b58a93746587638a02a509b4f4a10d6b0bc4233a9e61faad" prot="public">
+          <name>AWS_IOT_EVT_CONNECTING</name>
+          <initializer>= 0x1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Connecting to AWS IoT broker. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_gae9de5373422676c25b58a93746587638_1ggae9de5373422676c25b58a93746587638a282d36de7b433f860327df3c63a6316e" prot="public">
+          <name>AWS_IOT_EVT_CONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Connected to AWS IoT broker. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_gae9de5373422676c25b58a93746587638_1ggae9de5373422676c25b58a93746587638a963b40d670a04d811065f04f2c6b9981" prot="public">
+          <name>AWS_IOT_EVT_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>AWS IoT library has subscribed to all configured topics. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_gae9de5373422676c25b58a93746587638_1ggae9de5373422676c25b58a93746587638ae71994c8300c824cc227dce81f7b8ced" prot="public">
+          <name>AWS_IOT_EVT_DISCONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Disconnected to AWS IoT broker. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_gae9de5373422676c25b58a93746587638_1ggae9de5373422676c25b58a93746587638aaa4d453fb0a1d8a6e42737082b806bb1" prot="public">
+          <name>AWS_IOT_EVT_DATA_RECEIVED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Data received from AWS message broker. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_gae9de5373422676c25b58a93746587638_1ggae9de5373422676c25b58a93746587638a61d3c66e8309de00b8516d4e695c6529" prot="public">
+          <name>AWS_IOT_EVT_FOTA_START</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA update start. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_gae9de5373422676c25b58a93746587638_1ggae9de5373422676c25b58a93746587638abbc07a964320fd80fbb18368e8a6d791" prot="public">
+          <name>AWS_IOT_EVT_FOTA_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA update done, request to reboot. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_gae9de5373422676c25b58a93746587638_1ggae9de5373422676c25b58a93746587638abf242dce03ef2f7cd07860ff4aff65a2" prot="public">
+          <name>AWS_IOT_EVT_FOTA_ERASE_PENDING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA erase pending. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_gae9de5373422676c25b58a93746587638_1ggae9de5373422676c25b58a93746587638a0511e6a8638a479eec08433d99141ba6" prot="public">
+          <name>AWS_IOT_EVT_FOTA_ERASE_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA erase done. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_gae9de5373422676c25b58a93746587638_1ggae9de5373422676c25b58a93746587638aee83af981739065cd0cac05c53179396" prot="public">
+          <name>AWS_IOT_EVT_FOTA_DL_PROGRESS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA progress notification. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_gae9de5373422676c25b58a93746587638_1ggae9de5373422676c25b58a93746587638a16c0c368189125809447e9fc848da445" prot="public">
+          <name>AWS_IOT_EVT_FOTA_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA error. Used to propagate FOTA-related errors to the application. This is to distinguish between AWS_IOT irrecoverable errors and FOTA errors, so they can be handled differently. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__iot_gae9de5373422676c25b58a93746587638_1ggae9de5373422676c25b58a93746587638aa792b1f227096fcf2238021629ec2ea2" prot="public">
+          <name>AWS_IOT_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>AWS IoT library irrecoverable error. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>AWS IoT notification event types, used to signal the application. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="80" column="1" bodyfile="include/net/aws_iot.h" bodystart="80" bodyend="108"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__aws__iot_1ga8ca449b8869e8b51bc3a16081ba93c06" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* aws_iot_evt_handler_t) (const struct aws_iot_evt *evt)</definition>
+        <argsstring>)(const struct aws_iot_evt *evt)</argsstring>
+        <name>aws_iot_evt_handler_t</name>
+        <briefdescription>
+<para>AWS IoT library asynchronous event handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The event and any associated parameters. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="159" column="9" bodyfile="include/net/aws_iot.h" bodystart="159" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__aws__iot_1ga85215ccf79938672b0fa5ae3cd3c079f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_iot_init</definition>
+        <argsstring>(const struct aws_iot_config *const config, aws_iot_evt_handler_t event_handler)</argsstring>
+        <name>aws_iot_init</name>
+        <param>
+          <type>const struct <ref refid="structaws__iot__config" kindref="compound">aws_iot_config</ref> *const</type>
+          <declname>config</declname>
+        </param>
+        <param>
+          <type><ref refid="group__aws__iot_ga8ca449b8869e8b51bc3a16081ba93c06_1ga8ca449b8869e8b51bc3a16081ba93c06" kindref="member">aws_iot_evt_handler_t</ref></type>
+          <declname>event_handler</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>This API must be called exactly once, and it must return successfully.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">config</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to struct containing connection parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">event_handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to event handler to receive AWS IoT module events.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="186" column="5" declfile="include/net/aws_iot.h" declline="186" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__iot_1ga680f256a6054e074f04764a88d743454" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_iot_connect</definition>
+        <argsstring>(struct aws_iot_config *const config)</argsstring>
+        <name>aws_iot_connect</name>
+        <param>
+          <type>struct <ref refid="structaws__iot__config" kindref="compound">aws_iot_config</ref> *const</type>
+          <declname>config</declname>
+        </param>
+        <briefdescription>
+<para>Connect to the AWS IoT broker. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function exposes the MQTT socket to main so that it can be polled on.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">config</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to struct containing connection parameters, the MQTT connection socket number will be copied to the socket entry of the struct.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="201" column="5" declfile="include/net/aws_iot.h" declline="201" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__iot_1ga777becb5532ce9e4fdcf9b5625c88149" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_iot_disconnect</definition>
+        <argsstring>(void)</argsstring>
+        <name>aws_iot_disconnect</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Disconnect from the AWS IoT broker. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>0 If successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="208" column="5" declfile="include/net/aws_iot.h" declline="208" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__iot_1ga6d7ff95e36fa026d20fad6baefa908b3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_iot_send</definition>
+        <argsstring>(const struct aws_iot_data *const tx_data)</argsstring>
+        <name>aws_iot_send</name>
+        <param>
+          <type>const struct <ref refid="structaws__iot__data" kindref="compound">aws_iot_data</ref> *const</type>
+          <declname>tx_data</declname>
+        </param>
+        <briefdescription>
+<para>Send data to AWS IoT broker. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">tx_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to struct containing data to be transmitted to the AWS IoT broker.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="218" column="5" declfile="include/net/aws_iot.h" declline="218" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__iot_1gab620edf70e4117a467e9b9bf8ea8175a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_iot_input</definition>
+        <argsstring>(void)</argsstring>
+        <name>aws_iot_input</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Get data from AWS IoT broker. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>0 If successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="225" column="5" declfile="include/net/aws_iot.h" declline="225" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__iot_1gae80e01c9d1a95978ea1bfb3774c624e0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_iot_ping</definition>
+        <argsstring>(void)</argsstring>
+        <name>aws_iot_ping</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Ping AWS IoT broker. Must be called periodically to keep connection to broker alive. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>0 If successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="233" column="5" declfile="include/net/aws_iot.h" declline="233" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__iot_1ga9a6202e917653b627bc7b37df4590f9d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_iot_subscription_topics_add</definition>
+        <argsstring>(const struct aws_iot_topic_data *const topic_list, size_t list_count)</argsstring>
+        <name>aws_iot_subscription_topics_add</name>
+        <param>
+          <type>const struct <ref refid="structaws__iot__topic__data" kindref="compound">aws_iot_topic_data</ref> *const</type>
+          <declname>topic_list</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>list_count</declname>
+        </param>
+        <briefdescription>
+<para>Add a list of application specific topics that will be subscribed to upon connection to AWS IoT broker. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">topic_list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to list of topics. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">list_count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of entries in the list.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="244" column="5" declfile="include/net/aws_iot.h" declline="244" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Library to connect the device to the AWS IoT message broker. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

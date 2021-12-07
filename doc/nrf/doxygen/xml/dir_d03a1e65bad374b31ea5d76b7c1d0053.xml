@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_d03a1e65bad374b31ea5d76b7c1d0053" kind="dir">
+    <compoundname>applications/nrf_desktop/src/util/chmap_filter/include</compoundname>
+    <innerfile refid="chmap__filter_8h">chmap_filter.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/nrf_desktop/src/util/chmap_filter/include/"/>
+  </compounddef>
+</doxygen>

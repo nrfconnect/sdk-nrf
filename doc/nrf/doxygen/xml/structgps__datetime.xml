@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structgps__datetime" kind="struct" language="C++" prot="public">
+    <compoundname>gps_datetime</compoundname>
+    <includes refid="gps_8h" local="no">gps.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structgps__datetime_ac03ed79d762f5109baaca4c1efc19527_1ac03ed79d762f5109baaca4c1efc19527" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t gps_datetime::year</definition>
+        <argsstring></argsstring>
+        <name>year</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="39" column="10" bodyfile="include/drivers/gps.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__datetime_ac153ffda1f8898e812750b3c3c83e599_1ac153ffda1f8898e812750b3c3c83e599" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t gps_datetime::month</definition>
+        <argsstring></argsstring>
+        <name>month</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="40" column="9" bodyfile="include/drivers/gps.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__datetime_aff68a44b70e3aedd045ff2ebc590a031_1aff68a44b70e3aedd045ff2ebc590a031" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t gps_datetime::day</definition>
+        <argsstring></argsstring>
+        <name>day</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="41" column="9" bodyfile="include/drivers/gps.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__datetime_a99d36b0d4374763af3557d451089f4aa_1a99d36b0d4374763af3557d451089f4aa" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t gps_datetime::hour</definition>
+        <argsstring></argsstring>
+        <name>hour</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="42" column="9" bodyfile="include/drivers/gps.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__datetime_a3ed68810f40b2c415aa1c5388598f4b5_1a3ed68810f40b2c415aa1c5388598f4b5" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t gps_datetime::minute</definition>
+        <argsstring></argsstring>
+        <name>minute</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="43" column="9" bodyfile="include/drivers/gps.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__datetime_a35b3dbbf04045e0ac862290441e584f3_1a35b3dbbf04045e0ac862290441e584f3" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t gps_datetime::seconds</definition>
+        <argsstring></argsstring>
+        <name>seconds</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="44" column="9" bodyfile="include/drivers/gps.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__datetime_a368808e508e9eab90517972d9e89a18b_1a368808e508e9eab90517972d9e89a18b" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t gps_datetime::ms</definition>
+        <argsstring></argsstring>
+        <name>ms</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="45" column="10" bodyfile="include/drivers/gps.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/drivers/gps.h" line="38" column="1" bodyfile="include/drivers/gps.h" bodystart="38" bodyend="46"/>
+    <listofallmembers>
+      <member refid="structgps__datetime_aff68a44b70e3aedd045ff2ebc590a031_1aff68a44b70e3aedd045ff2ebc590a031" prot="public" virt="non-virtual"><scope>gps_datetime</scope><name>day</name></member>
+      <member refid="structgps__datetime_a99d36b0d4374763af3557d451089f4aa_1a99d36b0d4374763af3557d451089f4aa" prot="public" virt="non-virtual"><scope>gps_datetime</scope><name>hour</name></member>
+      <member refid="structgps__datetime_a3ed68810f40b2c415aa1c5388598f4b5_1a3ed68810f40b2c415aa1c5388598f4b5" prot="public" virt="non-virtual"><scope>gps_datetime</scope><name>minute</name></member>
+      <member refid="structgps__datetime_ac153ffda1f8898e812750b3c3c83e599_1ac153ffda1f8898e812750b3c3c83e599" prot="public" virt="non-virtual"><scope>gps_datetime</scope><name>month</name></member>
+      <member refid="structgps__datetime_a368808e508e9eab90517972d9e89a18b_1a368808e508e9eab90517972d9e89a18b" prot="public" virt="non-virtual"><scope>gps_datetime</scope><name>ms</name></member>
+      <member refid="structgps__datetime_a35b3dbbf04045e0ac862290441e584f3_1a35b3dbbf04045e0ac862290441e584f3" prot="public" virt="non-virtual"><scope>gps_datetime</scope><name>seconds</name></member>
+      <member refid="structgps__datetime_ac03ed79d762f5109baaca4c1efc19527_1ac03ed79d762f5109baaca4c1efc19527" prot="public" virt="non-virtual"><scope>gps_datetime</scope><name>year</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

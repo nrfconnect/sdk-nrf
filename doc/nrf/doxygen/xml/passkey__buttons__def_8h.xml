@@ -1,0 +1,189 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="passkey__buttons__def_8h" kind="file" language="C++">
+    <compoundname>passkey_buttons_def.h</compoundname>
+    <includes refid="passkey__buttons_8h" local="yes">passkey_buttons.h</includes>
+    <incdepgraph>
+      <node id="2">
+        <label>passkey_buttons.h</label>
+        <link refid="passkey__buttons_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/nrf52kbd_nrf52832/passkey_buttons_def.h</label>
+        <link refid="passkey__buttons__def_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>caf/key_id.h</label>
+        <link refid="key__id_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>sys/util.h</label>
+      </node>
+      <node id="4">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="passkey__buttons__def_8h_a50010549adf17d474f2f6f8df4c51322_1a50010549adf17d474f2f6f8df4c51322" prot="public" static="no" mutable="no">
+        <type>const struct @111</type>
+        <definition>const struct @111 passkey_buttons_def_include_once</definition>
+        <argsstring></argsstring>
+        <name>passkey_buttons_def_include_once</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52kbd_nrf52832/passkey_buttons_def.h" line="16" column="46"/>
+      </memberdef>
+      <memberdef kind="variable" id="passkey__buttons__def_8h_ac741030956c073a92dde9c013a025517_1ac741030956c073a92dde9c013a025517" prot="public" static="yes" mutable="no">
+        <type>const uint16_t</type>
+        <definition>const uint16_t confirm_keys[]</definition>
+        <argsstring>[]</argsstring>
+        <name>confirm_keys</name>
+        <initializer>= {
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x04, 0x0A),   
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x02, 0x0E),   
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52kbd_nrf52832/passkey_buttons_def.h" line="18" column="23" bodyfile="applications/nrf_desktop/configuration/nrf52kbd_nrf52832/passkey_buttons_def.h" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="passkey__buttons__def_8h_a374379039fa84bc66bb13a1f7ee3e043_1a374379039fa84bc66bb13a1f7ee3e043" prot="public" static="yes" mutable="no">
+        <type>const uint16_t</type>
+        <definition>const uint16_t delete_keys[]</definition>
+        <argsstring>[]</argsstring>
+        <name>delete_keys</name>
+        <initializer>= {
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x01, 0x0A),   
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52kbd_nrf52832/passkey_buttons_def.h" line="23" column="23" bodyfile="applications/nrf_desktop/configuration/nrf52kbd_nrf52832/passkey_buttons_def.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="passkey__buttons__def_8h_a78235930ebe6f26345cf46da9b893b2b_1a78235930ebe6f26345cf46da9b893b2b" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structpasskey__input__config" kindref="compound">passkey_input_config</ref></type>
+        <definition>const struct passkey_input_config input_configs[]</definition>
+        <argsstring>[]</argsstring>
+        <name>input_configs</name>
+        <initializer>= {
+	{
+		.key_ids = {
+			<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x07, 0x08),   
+			<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x07, 0x01),   
+			<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x07, 0x02),   
+			<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x07, 0x03),   
+			<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x07, 0x04),   
+			<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x06, 0x04),   
+			<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x06, 0x05),   
+			<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x07, 0x05),   
+			<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x07, 0x06),   
+			<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x07, 0x07),   
+		},
+	},
+	{
+		.key_ids = {
+			<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x03, 0x0C),   
+			<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x02, 0x0B),   
+			<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x02, 0x0C),   
+			<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x02, 0x0D),   
+			<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x01, 0x0B),   
+			<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x01, 0x0C),   
+			<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x01, 0x0D),   
+			<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x0B),   
+			<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x0C),   
+			<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x0D),   
+		},
+	},
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52kbd_nrf52832/passkey_buttons_def.h" line="27" column="40" bodyfile="applications/nrf_desktop/configuration/nrf52kbd_nrf52832/passkey_buttons_def.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="passkey__buttons_8h" kindref="compound">passkey_buttons.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>configuration<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>from<sp/>passkey_buttons<sp/>module</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*<sp/>and<sp/>holds<sp/>information<sp/>about<sp/>buttons<sp/>used<sp/>to<sp/>input<sp/>passkey.</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>structure<sp/>enforces<sp/>the<sp/>header<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>in<sp/>the<sp/>build.</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*<sp/>Violating<sp/>this<sp/>requirement<sp/>triggers<sp/>a<sp/>multiple<sp/>definition<sp/>error<sp/>at<sp/>link<sp/>time.</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16" refid="passkey__buttons__def_8h_a50010549adf17d474f2f6f8df4c51322_1a50010549adf17d474f2f6f8df4c51322" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{}<sp/><ref refid="passkey__buttons__def_8h_a50010549adf17d474f2f6f8df4c51322_1a50010549adf17d474f2f6f8df4c51322" kindref="member">passkey_buttons_def_include_once</ref>;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="passkey__buttons__def_8h_ac741030956c073a92dde9c013a025517_1ac741030956c073a92dde9c013a025517" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>uint16_t<sp/><ref refid="passkey__buttons__def_8h_ac741030956c073a92dde9c013a025517_1ac741030956c073a92dde9c013a025517" kindref="member">confirm_keys</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x04,<sp/>0x0A),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>enter<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x02,<sp/>0x0E),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>keypad<sp/>enter<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="passkey__buttons__def_8h_a374379039fa84bc66bb13a1f7ee3e043_1a374379039fa84bc66bb13a1f7ee3e043" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>uint16_t<sp/><ref refid="passkey__buttons__def_8h_a374379039fa84bc66bb13a1f7ee3e043_1a374379039fa84bc66bb13a1f7ee3e043" kindref="member">delete_keys</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x01,<sp/>0x0A),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>backspace<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="passkey__buttons__def_8h_a78235930ebe6f26345cf46da9b893b2b_1a78235930ebe6f26345cf46da9b893b2b" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structpasskey__input__config" kindref="compound">passkey_input_config</ref><sp/><ref refid="passkey__buttons__def_8h_a78235930ebe6f26345cf46da9b893b2b_1a78235930ebe6f26345cf46da9b893b2b" kindref="member">input_configs</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.<ref refid="structpasskey__input__config_a713f1c30142f0df50b7c4c6565fece44_1a713f1c30142f0df50b7c4c6565fece44" kindref="member">key_ids</ref><sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x07,<sp/>0x08),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>0<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x07,<sp/>0x01),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>1<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x07,<sp/>0x02),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>2<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x07,<sp/>0x03),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>3<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x07,<sp/>0x04),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>4<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x06,<sp/>0x04),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>5<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x06,<sp/>0x05),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>6<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x07,<sp/>0x05),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>7<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x07,<sp/>0x06),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>8<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x07,<sp/>0x07),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>9<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>},</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>},</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.key_ids<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x03,<sp/>0x0C),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>keypad<sp/>0<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x02,<sp/>0x0B),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>keypad<sp/>1<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x02,<sp/>0x0C),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>keypad<sp/>2<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x02,<sp/>0x0D),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>keypad<sp/>3<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x01,<sp/>0x0B),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>keypad<sp/>4<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x01,<sp/>0x0C),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>keypad<sp/>5<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x01,<sp/>0x0D),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>keypad<sp/>6<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x0B),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>keypad<sp/>7<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x0C),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>keypad<sp/>8<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x0D),<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>keypad<sp/>9<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>},</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>},</highlight></codeline>
+<codeline lineno="56"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/nrf52kbd_nrf52832/passkey_buttons_def.h"/>
+  </compounddef>
+</doxygen>

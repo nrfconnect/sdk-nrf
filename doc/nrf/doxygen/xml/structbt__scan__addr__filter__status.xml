@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__scan__addr__filter__status" kind="struct" language="C++" prot="public">
+    <compoundname>bt_scan_addr_filter_status</compoundname>
+    <includes refid="scan_8h" local="no">scan.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__scan__addr__filter__status_a3b36d13e0f6e544e2e19887add3fc7dc_1a3b36d13e0f6e544e2e19887add3fc7dc" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool bt_scan_addr_filter_status::match</definition>
+        <argsstring></argsstring>
+        <name>match</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set to true if this type of filter is matched. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="207" column="6" bodyfile="include/bluetooth/scan.h" bodystart="207" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__scan__addr__filter__status_acb320acfafd89eb7e46e49d0e884af57_1acb320acfafd89eb7e46e49d0e884af57" prot="public" static="no" mutable="no">
+        <type>const bt_addr_le_t *</type>
+        <definition>const bt_addr_le_t* bt_scan_addr_filter_status::addr</definition>
+        <argsstring></argsstring>
+        <name>addr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the matched filter address. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="210" column="20" bodyfile="include/bluetooth/scan.h" bodystart="210" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Address filter status structure, used to inform the application which address filter is matched. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/scan.h" line="205" column="1" bodyfile="include/bluetooth/scan.h" bodystart="205" bodyend="211"/>
+    <listofallmembers>
+      <member refid="structbt__scan__addr__filter__status_acb320acfafd89eb7e46e49d0e884af57_1acb320acfafd89eb7e46e49d0e884af57" prot="public" virt="non-virtual"><scope>bt_scan_addr_filter_status</scope><name>addr</name></member>
+      <member refid="structbt__scan__addr__filter__status_a3b36d13e0f6e544e2e19887add3fc7dc_1a3b36d13e0f6e544e2e19887add3fc7dc" prot="public" virt="non-virtual"><scope>bt_scan_addr_filter_status</scope><name>match</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__xyl__range__status" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_xyl_range_status</compoundname>
+    <includes refid="light__xyl_8h" local="no">light_xyl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__range__status_ad470028ac70d250b1c5f930a98017b8a_1ad470028ac70d250b1c5f930a98017b8a" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1ga6fcaf7e02af730b2100af1ef0a01f323" kindref="member">bt_mesh_model_status</ref></type>
+        <definition>enum bt_mesh_model_status bt_mesh_light_xyl_range_status::status_code</definition>
+        <argsstring></argsstring>
+        <name>status_code</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Range status code </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl.h" line="82" column="26" bodyfile="include/bluetooth/mesh/light_xyl.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__range__status_a75c3683f9f78648e7d081516b273358b_1a75c3683f9f78648e7d081516b273358b" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__light__xy__range" kindref="compound">bt_mesh_light_xy_range</ref></type>
+        <definition>struct bt_mesh_light_xy_range bt_mesh_light_xyl_range_status::range</definition>
+        <argsstring></argsstring>
+        <name>range</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Range status parameters </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl.h" line="84" column="29" bodyfile="include/bluetooth/mesh/light_xyl.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Light xyL range status message parameters. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>bt_mesh_light_xy</label>
+        <link refid="structbt__mesh__light__xy"/>
+      </node>
+      <node id="2">
+        <label>bt_mesh_light_xy_range</label>
+        <link refid="structbt__mesh__light__xy__range"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>max</edgelabel>
+          <edgelabel>min</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>bt_mesh_light_xyl_range_status</label>
+        <link refid="structbt__mesh__light__xyl__range__status"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>range</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/light_xyl.h" line="80" column="1" bodyfile="include/bluetooth/mesh/light_xyl.h" bodystart="80" bodyend="85"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__xyl__range__status_a75c3683f9f78648e7d081516b273358b_1a75c3683f9f78648e7d081516b273358b" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_range_status</scope><name>range</name></member>
+      <member refid="structbt__mesh__light__xyl__range__status_ad470028ac70d250b1c5f930a98017b8a_1ad470028ac70d250b1c5f930a98017b8a" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_range_status</scope><name>status_code</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="mpsl__cx__config__bluetooth_8h" kind="file" language="C++">
+    <compoundname>mpsl_cx_config_bluetooth.h</compoundname>
+    <includes local="no">stdint.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/mpsl/mpsl_cx_config_bluetooth.h</label>
+        <link refid="mpsl__cx__config__bluetooth_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stdint.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__mpsl__cx__bluetooth_ga1d89748aebe09ba978acc328f57fbe8e_1ga1d89748aebe09ba978acc328f57fbe8e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>int32_t mpsl_cx_bt_interface_3wire_config_set</definition>
+        <argsstring>(void)</argsstring>
+        <name>mpsl_cx_bt_interface_3wire_config_set</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Configures the Bluetooth Radio Coexistence interface. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function sets device interface parameters for the Coexistence module. The module is used to control PTA interface through the given pins and resources.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Coexistence interface successfully configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-NRF_EPERM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Coexistence interface is not available. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/mpsl/mpsl_cx_config_bluetooth.h" line="31" column="9" declfile="include/mpsl/mpsl_cx_config_bluetooth.h" declline="31" declcolumn="9"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MPSL_CX_CONFIG_BT_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MPSL_CX_CONFIG_BT_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdint.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="group__mpsl__cx__bluetooth_ga1d89748aebe09ba978acc328f57fbe8e_1ga1d89748aebe09ba978acc328f57fbe8e" refkind="member"><highlight class="normal">int32_t<sp/><ref refid="group__mpsl__cx__bluetooth_ga1d89748aebe09ba978acc328f57fbe8e_1ga1d89748aebe09ba978acc328f57fbe8e" kindref="member">mpsl_cx_bt_interface_3wire_config_set</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/mpsl/mpsl_cx_config_bluetooth.h"/>
+  </compounddef>
+</doxygen>

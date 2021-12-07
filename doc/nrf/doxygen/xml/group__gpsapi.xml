@@ -1,0 +1,704 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__gpsapi" kind="group">
+    <compoundname>gpsapi</compoundname>
+    <title>GPS API</title>
+    <innerclass refid="structgps__nmea" prot="public">gps_nmea</innerclass>
+    <innerclass refid="structgps__datetime" prot="public">gps_datetime</innerclass>
+    <innerclass refid="structgps__sv" prot="public">gps_sv</innerclass>
+    <innerclass refid="structgps__pvt" prot="public">gps_pvt</innerclass>
+    <innerclass refid="structgps__config" prot="public">gps_config</innerclass>
+    <innerclass refid="structgps__agps__request" prot="public">gps_agps_request</innerclass>
+    <innerclass refid="structgps__event" prot="public">gps_event</innerclass>
+    <innerclass refid="structgps__driver__api" prot="public">gps_driver_api</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__gpsapi_1ga6e93eed6a2f60cb5ef982aa2bcb2e199" prot="public" static="no" strong="no">
+        <type></type>
+        <name>gps_nav_mode</name>
+        <enumvalue id="group__gpsapi_ga6e93eed6a2f60cb5ef982aa2bcb2e199_1gga6e93eed6a2f60cb5ef982aa2bcb2e199a46484b8056fc652713c8cd3b62a461f4" prot="public">
+          <name>GPS_NAV_MODE_SINGLE_FIX</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Search will be stopped after first fix. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_ga6e93eed6a2f60cb5ef982aa2bcb2e199_1gga6e93eed6a2f60cb5ef982aa2bcb2e199a92c5572990e5cde255f9e69c4299518d" prot="public">
+          <name>GPS_NAV_MODE_CONTINUOUS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Search continues until explicitly stopped. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_ga6e93eed6a2f60cb5ef982aa2bcb2e199_1gga6e93eed6a2f60cb5ef982aa2bcb2e199a484d44786e33b6292241a287dfb68ff8" prot="public">
+          <name>GPS_NAV_MODE_PERIODIC</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Periodically start search, stops on fix. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="87" column="1" bodyfile="include/drivers/gps.h" bodystart="87" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__gpsapi_1gabc6fdafb6f37fac688b38c5aea0993df" prot="public" static="no" strong="no">
+        <type></type>
+        <name>gps_use_case</name>
+        <enumvalue id="group__gpsapi_gabc6fdafb6f37fac688b38c5aea0993df_1ggabc6fdafb6f37fac688b38c5aea0993dfa098704c548e55c603e0417311cee9fac" prot="public">
+          <name>GPS_USE_CASE_SINGLE_COLD_START</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Target best single cold start performance. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_gabc6fdafb6f37fac688b38c5aea0993df_1ggabc6fdafb6f37fac688b38c5aea0993dfa0b345c0b21f21001a65e2bf4d3b2d6ee" prot="public">
+          <name>GPS_USE_CASE_MULTIPLE_HOT_START</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Target best multiple hot starts performance. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="98" column="1" bodyfile="include/drivers/gps.h" bodystart="98" bodyend="104"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__gpsapi_1ga2f2168aeab0b29444e8c416592dff43e" prot="public" static="no" strong="no">
+        <type></type>
+        <name>gps_accuracy</name>
+        <enumvalue id="group__gpsapi_ga2f2168aeab0b29444e8c416592dff43e_1gga2f2168aeab0b29444e8c416592dff43ea9347226b355becde62be95ddb90cd4dc" prot="public">
+          <name>GPS_ACCURACY_NORMAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Use normal accuracy thresholds for producing GPS fix. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_ga2f2168aeab0b29444e8c416592dff43e_1gga2f2168aeab0b29444e8c416592dff43eab7eed2e29a16e8ec73ef6f1d4366dc67" prot="public">
+          <name>GPS_ACCURACY_LOW</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Allow low accuracy fixes using 3 satellites. Note that one of the two conditions must be met:<itemizedlist>
+<listitem><para>Altitude, accurate within 10s of meters provided using <ref refid="group__gpsapi_gaea52e45ca0200eb544a25b00f896a45c_1gaea52e45ca0200eb544a25b00f896a45c" kindref="member">gps_agps_write()</ref>. Valid for 24 hours.</para>
+</listitem><listitem><para>One fix using 5 or more satellites in the previous 24 hours, without the device rebooting in the meantime.</para>
+</listitem></itemizedlist>
+</para>
+<para>See the GNSS documentation for more details. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="106" column="1" bodyfile="include/drivers/gps.h" bodystart="106" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__gpsapi_1ga238bfaa4b889e85868695930d42beffd" prot="public" static="no" strong="no">
+        <type></type>
+        <name>gps_power_mode</name>
+        <enumvalue id="group__gpsapi_ga238bfaa4b889e85868695930d42beffd_1gga238bfaa4b889e85868695930d42beffda1b2385edf8e6c93a548c1a08c204e73d" prot="public">
+          <name>GPS_POWER_MODE_DISABLED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Best GPS performance. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_ga238bfaa4b889e85868695930d42beffd_1gga238bfaa4b889e85868695930d42beffda15793254861817f25333cc0b9d597e59" prot="public">
+          <name>GPS_POWER_MODE_PERFORMANCE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Lower power, without significant GPS performance degradation. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_ga238bfaa4b889e85868695930d42beffd_1gga238bfaa4b889e85868695930d42beffda890bc50d754a212e3db344d8b667a749" prot="public">
+          <name>GPS_POWER_MODE_SAVE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Lowest power option, with acceptable GPS performance. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="122" column="1" bodyfile="include/drivers/gps.h" bodystart="122" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__gpsapi_1gad3f99d23156cafbb3f55ed7eb5d9c389" prot="public" static="no" strong="no">
+        <type></type>
+        <name>gps_agps_type</name>
+        <enumvalue id="group__gpsapi_gad3f99d23156cafbb3f55ed7eb5d9c389_1ggad3f99d23156cafbb3f55ed7eb5d9c389a059f6a539e03a48745197f8ef2952f0e" prot="public">
+          <name>GPS_AGPS_UTC_PARAMETERS</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>UTC parameters. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_gad3f99d23156cafbb3f55ed7eb5d9c389_1ggad3f99d23156cafbb3f55ed7eb5d9c389a4cc63bebf68159c406ed199e00ee3ff9" prot="public">
+          <name>GPS_AGPS_EPHEMERIDES</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Ephemerides. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_gad3f99d23156cafbb3f55ed7eb5d9c389_1ggad3f99d23156cafbb3f55ed7eb5d9c389a3d56e1cc3ade13d07b6328db764748f3" prot="public">
+          <name>GPS_AGPS_ALMANAC</name>
+          <initializer>= 3</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Almanac. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_gad3f99d23156cafbb3f55ed7eb5d9c389_1ggad3f99d23156cafbb3f55ed7eb5d9c389aaa3b9e8a705a97d0c48443688cb47929" prot="public">
+          <name>GPS_AGPS_KLOBUCHAR_CORRECTION</name>
+          <initializer>= 4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Ionospheric correction parameters, Klobuchar model. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_gad3f99d23156cafbb3f55ed7eb5d9c389_1ggad3f99d23156cafbb3f55ed7eb5d9c389af4a97c3ade090d6f6de2bc1b1d0e64ec" prot="public">
+          <name>GPS_AGPS_NEQUICK_CORRECTION</name>
+          <initializer>= 5</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Ionospheric correction parameters, NeQuick model. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_gad3f99d23156cafbb3f55ed7eb5d9c389_1ggad3f99d23156cafbb3f55ed7eb5d9c389a41e6a858b33ecd08b2d19915c68a92dd" prot="public">
+          <name>GPS_AGPS_GPS_TOWS</name>
+          <initializer>= 6</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Time of week. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_gad3f99d23156cafbb3f55ed7eb5d9c389_1ggad3f99d23156cafbb3f55ed7eb5d9c389af51387dd669a11aefdb86fb8abe08959" prot="public">
+          <name>GPS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS</name>
+          <initializer>= 7</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>GPS system clock and time of week </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_gad3f99d23156cafbb3f55ed7eb5d9c389_1ggad3f99d23156cafbb3f55ed7eb5d9c389a1e38ed821e0d8b5d64334e58da536d98" prot="public">
+          <name>GPS_AGPS_LOCATION</name>
+          <initializer>= 8</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Approximate location. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_gad3f99d23156cafbb3f55ed7eb5d9c389_1ggad3f99d23156cafbb3f55ed7eb5d9c389a607bac78b75ecc3dd61cc619a37bb99a" prot="public">
+          <name>GPS_AGPS_INTEGRITY</name>
+          <initializer>= 9</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Satellite integrity data. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>GPS assistance data types. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="171" column="1" bodyfile="include/drivers/gps.h" bodystart="171" bodyend="198"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__gpsapi_1ga734c073d2a05d059991d908c0bd30854" prot="public" static="no" strong="no">
+        <type></type>
+        <name>gps_event_type</name>
+        <enumvalue id="group__gpsapi_ga734c073d2a05d059991d908c0bd30854_1gga734c073d2a05d059991d908c0bd30854ab34d49601be22c4ef2469761152554e1" prot="public">
+          <name>GPS_EVT_SEARCH_STARTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_ga734c073d2a05d059991d908c0bd30854_1gga734c073d2a05d059991d908c0bd30854a6b6ebc25ac1e79757dd8afa239bcf559" prot="public">
+          <name>GPS_EVT_SEARCH_STOPPED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_ga734c073d2a05d059991d908c0bd30854_1gga734c073d2a05d059991d908c0bd30854a0c6d9378785d03ff7b658dbfa93c1b4c" prot="public">
+          <name>GPS_EVT_SEARCH_TIMEOUT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_ga734c073d2a05d059991d908c0bd30854_1gga734c073d2a05d059991d908c0bd30854a1a041df3fa333665786eb768a67bae9f" prot="public">
+          <name>GPS_EVT_PVT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_ga734c073d2a05d059991d908c0bd30854_1gga734c073d2a05d059991d908c0bd30854a771e46d6a8a00e5d5266f1ab438c4fdb" prot="public">
+          <name>GPS_EVT_PVT_FIX</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_ga734c073d2a05d059991d908c0bd30854_1gga734c073d2a05d059991d908c0bd30854ac97f199dde475733fdf4813c4f7c7b47" prot="public">
+          <name>GPS_EVT_NMEA</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_ga734c073d2a05d059991d908c0bd30854_1gga734c073d2a05d059991d908c0bd30854aaaab234fc9b704e72cb4c892ea757613" prot="public">
+          <name>GPS_EVT_NMEA_FIX</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_ga734c073d2a05d059991d908c0bd30854_1gga734c073d2a05d059991d908c0bd30854a7c3ad3a5f55acd81043a46fd517d149a" prot="public">
+          <name>GPS_EVT_OPERATION_BLOCKED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_ga734c073d2a05d059991d908c0bd30854_1gga734c073d2a05d059991d908c0bd30854a8a0add4c9781788b811c4b1c14b69320" prot="public">
+          <name>GPS_EVT_OPERATION_UNBLOCKED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_ga734c073d2a05d059991d908c0bd30854_1gga734c073d2a05d059991d908c0bd30854a0b388d3cc2b46d334c5926cb5fd70a48" prot="public">
+          <name>GPS_EVT_AGPS_DATA_NEEDED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_ga734c073d2a05d059991d908c0bd30854_1gga734c073d2a05d059991d908c0bd30854adc8f969127524b13ffaa12e1bc5552ea" prot="public">
+          <name>GPS_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>GPS event types. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="233" column="1" bodyfile="include/drivers/gps.h" bodystart="233" bodyend="245"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__gpsapi_1ga2344aec3b94338acce3a8609a5ebabba" prot="public" static="no" strong="no">
+        <type></type>
+        <name>gps_error</name>
+        <enumvalue id="group__gpsapi_ga2344aec3b94338acce3a8609a5ebabba_1gga2344aec3b94338acce3a8609a5ebabbaa8f8df46b3f31aed5ee924e03559d08f4" prot="public">
+          <name>GPS_ERROR_GPS_DISABLED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gpsapi_ga2344aec3b94338acce3a8609a5ebabba_1gga2344aec3b94338acce3a8609a5ebabbaa41e347150f6720cb6ac0a479a72b0598" prot="public">
+          <name>GPS_ERROR_EVT_QUEUE_FULL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>GPS errors. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="250" column="1" bodyfile="include/drivers/gps.h" bodystart="250" bodyend="253"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__gpsapi_1gac25165e60fbf6688d807f34dc69668c0" prot="public" static="no">
+        <type>void(*</type>
+        <definition>gps_event_handler_t</definition>
+        <argsstring>)(const struct device *dev, struct gps_event *evt)</argsstring>
+        <name>gps_event_handler_t</name>
+        <briefdescription>
+<para>Callback API on GPS event. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dev</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to GPS device </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to event data </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="272" column="9" bodyfile="include/drivers/gps.h" bodystart="272" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__gpsapi_1gaee325e306cf329fc21c394caa2f14999" prot="public" static="no">
+        <type>int(*</type>
+        <definition>gps_start_t</definition>
+        <argsstring>)(const struct device *dev, struct gps_config *cfg)</argsstring>
+        <name>gps_start_t</name>
+        <briefdescription>
+<para>Callback API for starting GPS operation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>See <ref refid="group__gpsapi_ga3e7d7cf78f64c8e17608bccc70080309_1ga3e7d7cf78f64c8e17608bccc70080309" kindref="member">gps_start()</ref> for argument description </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="281" column="9" bodyfile="include/drivers/gps.h" bodystart="281" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__gpsapi_1ga6d1d111c92123ee813858e6b59722eba" prot="public" static="no">
+        <type>int(*</type>
+        <definition>gps_stop_t</definition>
+        <argsstring>)(const struct device *dev)</argsstring>
+        <name>gps_stop_t</name>
+        <briefdescription>
+<para>Callback API for stopping GPS operation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>See <ref refid="group__gpsapi_ga1a97928834c63137930898dfce16fd7d_1ga1a97928834c63137930898dfce16fd7d" kindref="member">gps_stop()</ref> for argument description </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="289" column="9" bodyfile="include/drivers/gps.h" bodystart="289" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__gpsapi_1ga3e155b76796cd48e9b2bfe0ac14e56dd" prot="public" static="no">
+        <type>int(*</type>
+        <definition>gps_agps_write_t</definition>
+        <argsstring>)(const struct device *dev, enum gps_agps_type type, void *data, size_t data_len)</argsstring>
+        <name>gps_agps_write_t</name>
+        <briefdescription>
+<para>Callback API for writing to A-GPS data to GPS module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>See gps_write() for argument description </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="297" column="9" bodyfile="include/drivers/gps.h" bodystart="297" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__gpsapi_1ga62d5954025672629c7d7eeca46c9a260" prot="public" static="no">
+        <type>int(*</type>
+        <definition>gps_init_t</definition>
+        <argsstring>)(const struct device *dev, gps_event_handler_t handler)</argsstring>
+        <name>gps_init_t</name>
+        <briefdescription>
+<para>Callback API for initializing GPS device. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>See <ref refid="group__gpsapi_gaa02d2ccb96caad30026c0fc8c1ebbf2a_1gaa02d2ccb96caad30026c0fc8c1ebbf2a" kindref="member">gps_init()</ref> for argument description </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="307" column="9" bodyfile="include/drivers/gps.h" bodystart="307" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__gpsapi_1ga50cdcdc1ee7f568eb1b8ee54573a46e6" prot="public" static="no">
+        <type>int(*</type>
+        <definition>gps_deinit_t</definition>
+        <argsstring>)(const struct device *dev)</argsstring>
+        <name>gps_deinit_t</name>
+        <briefdescription>
+<para>Callback API for deinitializing GPS device. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>See <ref refid="group__gpsapi_ga305f2ac8f71d972e0b1665f0ec03a604_1ga305f2ac8f71d972e0b1665f0ec03a604" kindref="member">gps_deinit()</ref> for argument description </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="316" column="9" bodyfile="include/drivers/gps.h" bodystart="316" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__gpsapi_1ga3e7d7cf78f64c8e17608bccc70080309" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int gps_start</definition>
+        <argsstring>(const struct device *dev, struct gps_config *cfg)</argsstring>
+        <name>gps_start</name>
+        <param>
+          <type>const struct device *</type>
+          <declname>dev</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structgps__config" kindref="compound">gps_config</ref> *</type>
+          <declname>cfg</declname>
+        </param>
+        <briefdescription>
+<para>Function to start GPS operation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If GPS is already running a call to this function will restart the GPS.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dev</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to GPS device </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cfg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to GPS configuration.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Zero on success or (negative) error code otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="341" column="19" bodyfile="include/drivers/gps.h" bodystart="341" bodyend="356"/>
+      </memberdef>
+      <memberdef kind="function" id="group__gpsapi_1ga1a97928834c63137930898dfce16fd7d" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int gps_stop</definition>
+        <argsstring>(const struct device *dev)</argsstring>
+        <name>gps_stop</name>
+        <param>
+          <type>const struct device *</type>
+          <declname>dev</declname>
+        </param>
+        <briefdescription>
+<para>Function to stop GPS operation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dev</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to GPS device</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Zero on success or (negative) error code otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="365" column="19" bodyfile="include/drivers/gps.h" bodystart="365" bodyend="380"/>
+      </memberdef>
+      <memberdef kind="function" id="group__gpsapi_1gaea52e45ca0200eb544a25b00f896a45c" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int gps_agps_write</definition>
+        <argsstring>(const struct device *dev, enum gps_agps_type type, void *data, size_t data_len)</argsstring>
+        <name>gps_agps_write</name>
+        <param>
+          <type>const struct device *</type>
+          <declname>dev</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__gpsapi_gad3f99d23156cafbb3f55ed7eb5d9c389_1gad3f99d23156cafbb3f55ed7eb5d9c389" kindref="member">gps_agps_type</ref></type>
+          <declname>type</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>data_len</declname>
+        </param>
+        <briefdescription>
+<para>Function to write A-GPS data to GPS module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dev</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to GPS device </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A-GPS data type </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to A-GPS data </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of <computeroutput>data</computeroutput> </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Zero on success or (negative) error code otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="392" column="19" bodyfile="include/drivers/gps.h" bodystart="392" bodyend="409"/>
+      </memberdef>
+      <memberdef kind="function" id="group__gpsapi_1gaa02d2ccb96caad30026c0fc8c1ebbf2a" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int gps_init</definition>
+        <argsstring>(const struct device *dev, gps_event_handler_t handler)</argsstring>
+        <name>gps_init</name>
+        <param>
+          <type>const struct device *</type>
+          <declname>dev</declname>
+        </param>
+        <param>
+          <type><ref refid="group__gpsapi_gac25165e60fbf6688d807f34dc69668c0_1gac25165e60fbf6688d807f34dc69668c0" kindref="member">gps_event_handler_t</ref></type>
+          <declname>handler</declname>
+        </param>
+        <briefdescription>
+<para>Initializes GPS device. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dev</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to GPS device. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to GPS event handler.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Zero on success or (negative) error code otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="419" column="19" bodyfile="include/drivers/gps.h" bodystart="419" bodyend="435"/>
+      </memberdef>
+      <memberdef kind="function" id="group__gpsapi_1ga305f2ac8f71d972e0b1665f0ec03a604" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int gps_deinit</definition>
+        <argsstring>(const struct device *dev)</argsstring>
+        <name>gps_deinit</name>
+        <param>
+          <type>const struct device *</type>
+          <declname>dev</declname>
+        </param>
+        <briefdescription>
+<para>Deinitializes GPS device. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dev</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to GPS device.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Zero on success or (negative) error code otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="444" column="19" bodyfile="include/drivers/gps.h" bodystart="444" bodyend="459"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__gpsapi_1ga00435983c4a8a89cc616d39f05a35b72" prot="public" static="no">
+        <name>GPS_NMEA_SENTENCE_MAX_LENGTH</name>
+        <initializer>83</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="30" column="9" bodyfile="include/drivers/gps.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__gpsapi_1ga0b424df75f98d452797f1d65c32481e3" prot="public" static="no">
+        <name>GPS_PVT_MAX_SV_COUNT</name>
+        <initializer>12</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="31" column="9" bodyfile="include/drivers/gps.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

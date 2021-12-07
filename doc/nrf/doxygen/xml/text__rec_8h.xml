@@ -1,0 +1,327 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="text__rec_8h" kind="file" language="C++">
+    <compoundname>text_rec.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <includes refid="record_8h" local="no">nfc/ndef/record.h</includes>
+    <incdepgraph>
+      <node id="3">
+        <label>nfc/ndef/record.h</label>
+        <link refid="record_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/nfc/ndef/text_rec.h</label>
+        <link refid="text__rec_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structnfc__ndef__text__rec__payload" prot="public">nfc_ndef_text_rec_payload</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__text__rec_ga76f9d049e5fad818817f964d8515f052_1ga76f9d049e5fad818817f964d8515f052" prot="public" static="no">
+        <name>NFC_NDEF_TEXT_REC_TYPE_LENGTH</name>
+        <initializer>1</initializer>
+        <briefdescription>
+<para>Size of the type field of the Text record, defined in the file <computeroutput>text_rec.c</computeroutput>. It is used in the <ref refid="group__nfc__text__rec_ga76967f47f9f2dac4ebada420a0e1a1e2_1ga76967f47f9f2dac4ebada420a0e1a1e2" kindref="member">NFC_NDEF_TEXT_RECORD_DESC_DEF</ref> macro. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/text_rec.h" line="84" column="9" bodyfile="include/nfc/ndef/text_rec.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__text__rec_ga76967f47f9f2dac4ebada420a0e1a1e2_1ga76967f47f9f2dac4ebada420a0e1a1e2" prot="public" static="no">
+        <name>NFC_NDEF_TEXT_RECORD_DESC_DEF</name>
+        <param><defname>name</defname></param>
+        <param><defname>utf_arg</defname></param>
+        <param><defname>lang_code_arg</defname></param>
+        <param><defname>lang_code_len_arg</defname></param>
+        <param><defname>data_arg</defname></param>
+        <param><defname>data_len_arg</defname></param>
+        <initializer>	struct <ref refid="structnfc__ndef__text__rec__payload" kindref="compound">nfc_ndef_text_rec_payload</ref> name##_nfc_ndef_text_rec_payload =   \
+	{								      \
+		.utf = utf_arg,						      \
+		.lang_code = lang_code_arg,				      \
+		.lang_code_len = lang_code_len_arg,			      \
+		.data = data_arg,					      \
+		.data_len = data_len_arg,				      \
+	};								      \
+	<ref refid="group__nfc__ndef__record_ga981ac373f5af603b36c7ab2c488785a6_1ga981ac373f5af603b36c7ab2c488785a6" kindref="member">NFC_NDEF_GENERIC_RECORD_DESC_DEF</ref>(name,				      \
+					 <ref refid="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1gga2091295307fa8161219648a88df172a8ace6c9ee74852eebbdb1421e85c4e0041" kindref="member">TNF_WELL_KNOWN</ref>,		      \
+					 0,				      \
+					 0,				      \
+					 <ref refid="group__nfc__text__rec_ga12ea00af8f4e5ce695640a123765b341_1ga12ea00af8f4e5ce695640a123765b341" kindref="member">nfc_ndef_text_rec_type_field</ref>,	      \
+					 <ref refid="group__nfc__text__rec_ga76f9d049e5fad818817f964d8515f052_1ga76f9d049e5fad818817f964d8515f052" kindref="member">NFC_NDEF_TEXT_REC_TYPE_LENGTH</ref>,	      \
+					 <ref refid="group__nfc__text__rec_gae7cd1970d8fb857dccefe93a4f7c6b3e_1gae7cd1970d8fb857dccefe93a4f7c6b3e" kindref="member">nfc_ndef_text_rec_payload_encode</ref>,    \
+					 &amp;(name##_nfc_ndef_text_rec_payload))</initializer>
+        <briefdescription>
+<para>Macro for creating and initializing an NFC NDEF record descriptor for a Text record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates and initializes an instance of type <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> and an instance of type <ref refid="structnfc__ndef__text__rec__payload" kindref="compound">nfc_ndef_text_rec_payload</ref>, which together constitute an instance of a Text record.</para>
+<para>Use the macro <ref refid="group__nfc__text__rec_ga89d3cdf561211054cfda3c0f4e4094f9_1ga89d3cdf561211054cfda3c0f4e4094f9" kindref="member">NFC_NDEF_TEXT_RECORD_DESC</ref> to access the NDEF Text record descriptor instance.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the created record descriptor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>utf_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Unicode Transformation Format. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>lang_code_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the IANA language code. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>lang_code_len_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the IANA language code. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the user text. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data_len_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the user text. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/text_rec.h" line="110" column="9" bodyfile="include/nfc/ndef/text_rec.h" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__text__rec_ga89d3cdf561211054cfda3c0f4e4094f9_1ga89d3cdf561211054cfda3c0f4e4094f9" prot="public" static="no">
+        <name>NFC_NDEF_TEXT_RECORD_DESC</name>
+        <param><defname>name</defname></param>
+        <initializer><ref refid="group__nfc__ndef__record_ga854ffeb62045f58c823adedf3f0ed615_1ga854ffeb62045f58c823adedf3f0ed615" kindref="member">NFC_NDEF_GENERIC_RECORD_DESC</ref>(name)</initializer>
+        <briefdescription>
+<para>Macro for accessing the NFC NDEF Text record descriptor instance that was created with <ref refid="group__nfc__text__rec_ga76967f47f9f2dac4ebada420a0e1a1e2_1ga76967f47f9f2dac4ebada420a0e1a1e2" kindref="member">NFC_NDEF_TEXT_RECORD_DESC_DEF</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/text_rec.h" line="132" column="9" bodyfile="include/nfc/ndef/text_rec.h" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nfc__text__rec_gab91c41d8bb56d793f6bb21890e1206aa_1gab91c41d8bb56d793f6bb21890e1206aa" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nfc_ndef_text_rec_utf</name>
+        <enumvalue id="group__nfc__text__rec_gab91c41d8bb56d793f6bb21890e1206aa_1ggab91c41d8bb56d793f6bb21890e1206aaa93e8613dae9a76c8d3ec8179ca4d1a79" prot="public">
+          <name>UTF_8</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Unicode Transformation Format 8. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__text__rec_gab91c41d8bb56d793f6bb21890e1206aa_1ggab91c41d8bb56d793f6bb21890e1206aaa4e9ce18ee4b711f2539ac3a8bd08dbfd" prot="public">
+          <name>UTF_16</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Unicode Transformation Format 16. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Type of the Unicode Transformation Format. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Values to specify the type of UTF for an NFC NDEF Text record. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/text_rec.h" line="32" column="1" bodyfile="include/nfc/ndef/text_rec.h" bodystart="32" bodyend="37"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__nfc__text__rec_ga12ea00af8f4e5ce695640a123765b341_1ga12ea00af8f4e5ce695640a123765b341" prot="public" static="no" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t nfc_ndef_text_rec_type_field[]</definition>
+        <argsstring>[]</argsstring>
+        <name>nfc_ndef_text_rec_type_field</name>
+        <briefdescription>
+<para>External reference to the type field of the Text record, defined in the file <computeroutput>text_rec.c</computeroutput>. It is used in the <ref refid="group__nfc__text__rec_ga76967f47f9f2dac4ebada420a0e1a1e2_1ga76967f47f9f2dac4ebada420a0e1a1e2" kindref="member">NFC_NDEF_TEXT_RECORD_DESC_DEF</ref> macro. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/text_rec.h" line="77" column="22" declfile="include/nfc/ndef/text_rec.h" declline="77" declcolumn="22"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__text__rec_gae7cd1970d8fb857dccefe93a4f7c6b3e_1gae7cd1970d8fb857dccefe93a4f7c6b3e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_text_rec_payload_encode</definition>
+        <argsstring>(struct nfc_ndef_text_rec_payload *nfc_rec_text_payload_desc, uint8_t *buff, uint32_t *len)</argsstring>
+        <name>nfc_ndef_text_rec_payload_encode</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__text__rec__payload" kindref="compound">nfc_ndef_text_rec_payload</ref> *</type>
+          <declname>nfc_rec_text_payload_desc</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buff</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Constructor for an NFC NDEF Text record payload. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>nfc_rec_text_payload_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Text record description. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buff</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the payload destination. If NULL, function will calculate the expected size of the Text record payload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the available memory to write as input. Size of the generated record payload as output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/text_rec.h" line="67" column="5" declfile="include/nfc/ndef/text_rec.h" declline="67" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2018<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NFC_NDEF_TEXT_REC_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_NDEF_TEXT_REC_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="record_8h" kindref="compound">nfc/ndef/record.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="group__nfc__text__rec_gab91c41d8bb56d793f6bb21890e1206aa_1gab91c41d8bb56d793f6bb21890e1206aa" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nfc__text__rec_gab91c41d8bb56d793f6bb21890e1206aa_1gab91c41d8bb56d793f6bb21890e1206aa" kindref="member">nfc_ndef_text_rec_utf</ref><sp/>{</highlight></codeline>
+<codeline lineno="34" refid="group__nfc__text__rec_gab91c41d8bb56d793f6bb21890e1206aa_1ggab91c41d8bb56d793f6bb21890e1206aaa93e8613dae9a76c8d3ec8179ca4d1a79" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__text__rec_gab91c41d8bb56d793f6bb21890e1206aa_1ggab91c41d8bb56d793f6bb21890e1206aaa93e8613dae9a76c8d3ec8179ca4d1a79" kindref="member">UTF_8</ref><sp/><sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="36" refid="group__nfc__text__rec_gab91c41d8bb56d793f6bb21890e1206aa_1ggab91c41d8bb56d793f6bb21890e1206aaa4e9ce18ee4b711f2539ac3a8bd08dbfd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__text__rec_gab91c41d8bb56d793f6bb21890e1206aa_1ggab91c41d8bb56d793f6bb21890e1206aaa4e9ce18ee4b711f2539ac3a8bd08dbfd" kindref="member">UTF_16</ref><sp/>=<sp/>1,</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="structnfc__ndef__text__rec__payload" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__ndef__text__rec__payload" kindref="compound">nfc_ndef_text_rec_payload</ref><sp/>{</highlight></codeline>
+<codeline lineno="44" refid="structnfc__ndef__text__rec__payload_ac31cacdfeebf5e843349b1bff2ccebb6_1ac31cacdfeebf5e843349b1bff2ccebb6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nfc__text__rec_gab91c41d8bb56d793f6bb21890e1206aa_1gab91c41d8bb56d793f6bb21890e1206aa" kindref="member">nfc_ndef_text_rec_utf</ref><sp/><ref refid="structnfc__ndef__text__rec__payload_ac31cacdfeebf5e843349b1bff2ccebb6_1ac31cacdfeebf5e843349b1bff2ccebb6" kindref="member">utf</ref>;</highlight></codeline>
+<codeline lineno="46" refid="structnfc__ndef__text__rec__payload_a1a74cebd69ad2a24d99b8b85b9878086_1a1a74cebd69ad2a24d99b8b85b9878086" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>*<ref refid="structnfc__ndef__text__rec__payload_a1a74cebd69ad2a24d99b8b85b9878086_1a1a74cebd69ad2a24d99b8b85b9878086" kindref="member">lang_code</ref>;</highlight></codeline>
+<codeline lineno="48" refid="structnfc__ndef__text__rec__payload_a844040b686c53942d22de890ede3c60c_1a844040b686c53942d22de890ede3c60c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnfc__ndef__text__rec__payload_a844040b686c53942d22de890ede3c60c_1a844040b686c53942d22de890ede3c60c" kindref="member">lang_code_len</ref>;</highlight></codeline>
+<codeline lineno="50" refid="structnfc__ndef__text__rec__payload_aeeb26b85a4d6321fc33130a195c58b5a_1aeeb26b85a4d6321fc33130a195c58b5a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>*<ref refid="structnfc__ndef__text__rec__payload_aeeb26b85a4d6321fc33130a195c58b5a_1aeeb26b85a4d6321fc33130a195c58b5a" kindref="member">data</ref>;</highlight></codeline>
+<codeline lineno="52" refid="structnfc__ndef__text__rec__payload_a8e46beb3c7fbbc42c5e1fe5bea0377be_1a8e46beb3c7fbbc42c5e1fe5bea0377be" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structnfc__ndef__text__rec__payload_a8e46beb3c7fbbc42c5e1fe5bea0377be_1a8e46beb3c7fbbc42c5e1fe5bea0377be" kindref="member">data_len</ref>;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="group__nfc__text__rec_gae7cd1970d8fb857dccefe93a4f7c6b3e_1gae7cd1970d8fb857dccefe93a4f7c6b3e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__text__rec_gae7cd1970d8fb857dccefe93a4f7c6b3e_1gae7cd1970d8fb857dccefe93a4f7c6b3e" kindref="member">nfc_ndef_text_rec_payload_encode</ref>(</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__ndef__text__rec__payload" kindref="compound">nfc_ndef_text_rec_payload</ref><sp/>*nfc_rec_text_payload_desc,</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*buff,</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/>*len);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/><ref refid="group__nfc__text__rec_ga12ea00af8f4e5ce695640a123765b341_1ga12ea00af8f4e5ce695640a123765b341" kindref="member">nfc_ndef_text_rec_type_field</ref>[];</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84" refid="group__nfc__text__rec_ga76f9d049e5fad818817f964d8515f052_1ga76f9d049e5fad818817f964d8515f052" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_NDEF_TEXT_REC_TYPE_LENGTH<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105" refid="group__nfc__text__rec_ga76967f47f9f2dac4ebada420a0e1a1e2_1ga76967f47f9f2dac4ebada420a0e1a1e2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_NDEF_TEXT_RECORD_DESC_DEF(name,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="106"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>utf_arg,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="107"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>lang_code_arg,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="108"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>lang_code_len_arg,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="109"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>data_arg,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="110"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>data_len_arg)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="111"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>struct<sp/>nfc_ndef_text_rec_payload<sp/>name##_nfc_ndef_text_rec_payload<sp/>=<sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="112"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="113"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.utf<sp/>=<sp/>utf_arg,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="114"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.lang_code<sp/>=<sp/>lang_code_arg,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="115"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.lang_code_len<sp/>=<sp/>lang_code_len_arg,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="116"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.data<sp/>=<sp/>data_arg,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="117"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.data_len<sp/>=<sp/>data_len_arg,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="118"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="119"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NFC_NDEF_GENERIC_RECORD_DESC_DEF(name,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="120"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TNF_WELL_KNOWN,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="121"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="122"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="123"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>nfc_ndef_text_rec_type_field,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="124"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NFC_NDEF_TEXT_REC_TYPE_LENGTH,<sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="125"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>nfc_ndef_text_rec_payload_encode,<sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="126"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;(name##_nfc_ndef_text_rec_payload))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132" refid="group__nfc__text__rec_ga89d3cdf561211054cfda3c0f4e4094f9_1ga89d3cdf561211054cfda3c0f4e4094f9" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_NDEF_TEXT_RECORD_DESC(name)<sp/>NFC_NDEF_GENERIC_RECORD_DESC(name)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>NFC_NDEF_TEXT_REC_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/nfc/ndef/text_rec.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,190 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__scene__entry" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_scene_entry</compoundname>
+    <includes refid="scene__srv_8h" local="no">scene_srv.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__scene__entry_abbf3c9d44aa655bd341e5649c2cddf0b_1abbf3c9d44aa655bd341e5649c2cddf0b" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_scene_entry::sig</definition>
+        <argsstring></argsstring>
+        <name>sig</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>SIG model ID </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_srv.h" line="118" column="10" bodyfile="include/bluetooth/mesh/scene_srv.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scene__entry_a105ec567ebbdbd85bade4aeb4599e0d3_1a105ec567ebbdbd85bade4aeb4599e0d3" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_mod_id_vnd</type>
+        <definition>struct bt_mesh_mod_id_vnd bt_mesh_scene_entry::vnd</definition>
+        <argsstring></argsstring>
+        <name>vnd</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Vendor model ID </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_srv.h" line="120" column="25" bodyfile="include/bluetooth/mesh/scene_srv.h" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scene__entry_a83b44a91de77db2373d22e88cdb1a974_1a83b44a91de77db2373d22e88cdb1a974" prot="public" static="no" mutable="no">
+        <type>union bt_mesh_scene_entry::@128</type>
+        <definition>union bt_mesh_scene_entry::@128 bt_mesh_scene_entry::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Model ID </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_srv.h" line="121" column="4"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scene__entry_ac53682711ceeee79772d78c76d602335_1ac53682711ceeee79772d78c76d602335" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t bt_mesh_scene_entry::maxlen</definition>
+        <argsstring></argsstring>
+        <name>maxlen</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Longest scene data </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_srv.h" line="123" column="8" bodyfile="include/bluetooth/mesh/scene_srv.h" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scene__entry_a269933d1289831c7de5ce2262a6fb1e3_1a269933d1289831c7de5ce2262a6fb1e3" prot="public" static="no" mutable="no">
+        <type>ssize_t(*</type>
+        <definition>ssize_t(* bt_mesh_scene_entry::store) (struct bt_mesh_model *model, uint8_t data[])</definition>
+        <argsstring>)(struct bt_mesh_model *model, uint8_t data[])</argsstring>
+        <name>store</name>
+        <briefdescription>
+<para>Store the current state as a scene. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The callback should fill the <computeroutput>data</computeroutput> with the current scene state and return the number of bytes written. <computeroutput>data</computeroutput> is guaranteed to fit <computeroutput>maxlen</computeroutput> number of bytes.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">model</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Model to get the scene data of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene data buffer to fill. Fits <computeroutput>maxlen</computeroutput> bytes.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The number of bytes written to <computeroutput>data</computeroutput> or a negative value on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_srv.h" line="137" column="1" bodyfile="include/bluetooth/mesh/scene_srv.h" bodystart="137" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scene__entry_a259065f1e378ecbd8c134a8409652e89_1a259065f1e378ecbd8c134a8409652e89" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_mesh_scene_entry::recall) (struct bt_mesh_model *model, const uint8_t data[], size_t len, struct bt_mesh_model_transition *transition)</definition>
+        <argsstring>)(struct bt_mesh_model *model, const uint8_t data[], size_t len, struct bt_mesh_model_transition *transition)</argsstring>
+        <name>recall</name>
+        <briefdescription>
+<para>Recall a scene based on the given scene data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When a scene is recalled, the Scene Server calls this callback for every scene entry that has data for the recalled scene. The handler shall start transitioning to the given scene with the given transition parameters. If the transition is non-instantaneious, for example when <ref refid="group__bt__mesh__model__types_gaa845685eb265d1294b17bb80fbde4996_1gaa845685eb265d1294b17bb80fbde4996" kindref="member">bt_mesh_model_transition_time</ref> returns a nonzero value, the handler shall publish a status message at the end of the transition.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">model</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Model to restore the scene of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene data to restore. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene data length. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">transition</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Transition parameters. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_srv.h" line="153" column="1" bodyfile="include/bluetooth/mesh/scene_srv.h" bodystart="153" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scene__entry_ab9b5a145dcc9003e4480cede56aac6b4_1ab9b5a145dcc9003e4480cede56aac6b4" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_mesh_scene_entry::recall_complete) (struct bt_mesh_model *model)</definition>
+        <argsstring>)(struct bt_mesh_model *model)</argsstring>
+        <name>recall_complete</name>
+        <briefdescription>
+<para>Recall a scene is completed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This callback is called for each model that has a scene entry when recalling a scene data is done and <ref refid="structbt__mesh__scene__entry_a259065f1e378ecbd8c134a8409652e89_1a259065f1e378ecbd8c134a8409652e89" kindref="member">bt_mesh_scene_entry::recall</ref> callback has been called for all models. The model can use this callback when it needs to publish its state, which is a composite state and requires all corresponding models to recall their scene data first.</para>
+<para>Can be NULL.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">model</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Model to restore the scene of. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_srv.h" line="169" column="1" bodyfile="include/bluetooth/mesh/scene_srv.h" bodystart="169" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Scene entry type. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/scene_srv.h" line="114" column="1" bodyfile="include/bluetooth/mesh/scene_srv.h" bodystart="114" bodyend="170"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__scene__entry_a83b44a91de77db2373d22e88cdb1a974_1a83b44a91de77db2373d22e88cdb1a974" prot="public" virt="non-virtual"><scope>bt_mesh_scene_entry</scope><name>id</name></member>
+      <member refid="structbt__mesh__scene__entry_ac53682711ceeee79772d78c76d602335_1ac53682711ceeee79772d78c76d602335" prot="public" virt="non-virtual"><scope>bt_mesh_scene_entry</scope><name>maxlen</name></member>
+      <member refid="structbt__mesh__scene__entry_a259065f1e378ecbd8c134a8409652e89_1a259065f1e378ecbd8c134a8409652e89" prot="public" virt="non-virtual"><scope>bt_mesh_scene_entry</scope><name>recall</name></member>
+      <member refid="structbt__mesh__scene__entry_ab9b5a145dcc9003e4480cede56aac6b4_1ab9b5a145dcc9003e4480cede56aac6b4" prot="public" virt="non-virtual"><scope>bt_mesh_scene_entry</scope><name>recall_complete</name></member>
+      <member refid="structbt__mesh__scene__entry_abbf3c9d44aa655bd341e5649c2cddf0b_1abbf3c9d44aa655bd341e5649c2cddf0b" prot="public" virt="non-virtual"><scope>bt_mesh_scene_entry</scope><name>sig</name></member>
+      <member refid="structbt__mesh__scene__entry_a269933d1289831c7de5ce2262a6fb1e3_1a269933d1289831c7de5ce2262a6fb1e3" prot="public" virt="non-virtual"><scope>bt_mesh_scene_entry</scope><name>store</name></member>
+      <member refid="structbt__mesh__scene__entry_a105ec567ebbdbd85bade4aeb4599e0d3_1a105ec567ebbdbd85bade4aeb4599e0d3" prot="public" virt="non-virtual"><scope>bt_mesh_scene_entry</scope><name>vnd</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

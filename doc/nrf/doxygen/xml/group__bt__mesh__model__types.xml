@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__model__types" kind="group">
+    <compoundname>bt_mesh_model_types</compoundname>
+    <title>Common model types</title>
+    <innerclass refid="structbt__mesh__model__transition" prot="public">bt_mesh_model_transition</innerclass>
+    <innerclass refid="structbt__mesh__tid__ctx" prot="public">bt_mesh_tid_ctx</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__mesh__model__types_1ga6fcaf7e02af730b2100af1ef0a01f323" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_model_status</name>
+        <enumvalue id="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1gga6fcaf7e02af730b2100af1ef0a01f323ae5c661b8d6435cc3cb2d0d84acf7d11d" prot="public">
+          <name>BT_MESH_MODEL_SUCCESS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Command successfully processed. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1gga6fcaf7e02af730b2100af1ef0a01f323a5836bb34784906d5804bf1332b76f87a" prot="public">
+          <name>BT_MESH_MODEL_ERROR_INVALID_RANGE_MIN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The provided value for range min cannot be set. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1gga6fcaf7e02af730b2100af1ef0a01f323a10362f4425d41c92c8f327a08adc78d7" prot="public">
+          <name>BT_MESH_MODEL_ERROR_INVALID_RANGE_MAX</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The provided value for range max cannot be set. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1gga6fcaf7e02af730b2100af1ef0a01f323a8edc7a543ace43a3fa456e679b9976f9" prot="public">
+          <name>BT_MESH_MODEL_STATUS_INVALID</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Invalid status code. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Model status values. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/model_types.h" line="53" column="1" bodyfile="include/bluetooth/mesh/model_types.h" bodystart="53" bodyend="62"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__mesh__model__types_1ga66950f368812a669ec1ceb3e3af6a02c" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_rgb_ch</name>
+        <enumvalue id="group__bt__mesh__model__types_ga66950f368812a669ec1ceb3e3af6a02c_1gga66950f368812a669ec1ceb3e3af6a02ca4dd8c5e6a6c522bab806c13df7a621a8" prot="public">
+          <name>BT_MESH_RGB_CH_RED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__model__types_ga66950f368812a669ec1ceb3e3af6a02c_1gga66950f368812a669ec1ceb3e3af6a02ca5c73e4bcb97509a35dfb6a305ee9bfa7" prot="public">
+          <name>BT_MESH_RGB_CH_GREEN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__model__types_ga66950f368812a669ec1ceb3e3af6a02c_1gga66950f368812a669ec1ceb3e3af6a02cac09cde26786b02d6cd3205c2d7a75f8a" prot="public">
+          <name>BT_MESH_RGB_CH_BLUE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__model__types_ga66950f368812a669ec1ceb3e3af6a02c_1gga66950f368812a669ec1ceb3e3af6a02ca5ab3d40b1379586fac806046318c85b2" prot="public">
+          <name>BT_MESH_RGB_CHANNELS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>RGB color channels </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/model_types.h" line="65" column="1" bodyfile="include/bluetooth/mesh/model_types.h" bodystart="65" bodyend="71"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__model__types_1gaa845685eb265d1294b17bb80fbde4996" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t bt_mesh_model_transition_time</definition>
+        <argsstring>(const struct bt_mesh_model_transition *trans)</argsstring>
+        <name>bt_mesh_model_transition_time</name>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref> *</type>
+          <declname>trans</declname>
+        </param>
+        <briefdescription>
+<para>Get the total transition time. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">trans</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Transition time, or NULL.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Total time of the given transition, in milliseconds, or 0 if <computeroutput>trans</computeroutput> is NULL. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/model_types.h" line="81" column="1" bodyfile="include/bluetooth/mesh/model_types.h" bodystart="81" bodyend="88"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__model__types_1ga0683efc6f4d79111c243c62aef62cf7b" prot="public" static="no">
+        <name>BT_MESH_MODEL_TRANSITION_TIME_MAX_MS</name>
+        <initializer>(10 * 60 * MSEC_PER_SEC * 0x3e)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum permissible transition time in milliseconds </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/model_types.h" line="23" column="9" bodyfile="include/bluetooth/mesh/model_types.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__model__types_1gab38f60f7dca4bed43d0d4e69654f6747" prot="public" static="no">
+        <name>BT_MESH_MODEL_DELAY_TIME_STEP_FACTOR_MS</name>
+        <initializer>(5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Delay field step factor in milliseconds </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/model_types.h" line="26" column="9" bodyfile="include/bluetooth/mesh/model_types.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__model__types_1gaf667f5db2d3e71953d6be5d3aebc303e" prot="public" static="no">
+        <name>BT_MESH_MODEL_DELAY_TIME_MAX_MS</name>
+        <initializer>	(UINT8_MAX * <ref refid="group__bt__mesh__model__types_gab38f60f7dca4bed43d0d4e69654f6747_1gab38f60f7dca4bed43d0d4e69654f6747" kindref="member">BT_MESH_MODEL_DELAY_TIME_STEP_FACTOR_MS</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum permissible delay time in milliseconds </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/model_types.h" line="28" column="9" bodyfile="include/bluetooth/mesh/model_types.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Collection of types exposed in the model definitions. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

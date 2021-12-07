@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnrf__cloud__pgps__prediction" kind="struct" language="C++" prot="public">
+    <compoundname>nrf_cloud_pgps_prediction</compoundname>
+    <includes refid="nrf__cloud__pgps_8h" local="no">nrf_cloud_pgps.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnrf__cloud__pgps__prediction_a37e044730c1fa1dfbd88fce3ce54bd7a_1a37e044730c1fa1dfbd88fce3ce54bd7a" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nrf_cloud_pgps_prediction::time_type</definition>
+        <argsstring></argsstring>
+        <name>time_type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set to NRF_CLOUD_AGPS_GPS_SYSTEM_CLOCK. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="52" column="9" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__pgps__prediction_a508bc55d2d48550d8ee77162d0a67b40_1a508bc55d2d48550d8ee77162d0a67b40" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t nrf_cloud_pgps_prediction::time_count</definition>
+        <argsstring></argsstring>
+        <name>time_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Will be 1. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="54" column="10" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__pgps__prediction_a4a4bd288e49543c68cc8ce4c930fe1ff_1a4a4bd288e49543c68cc8ce4c930fe1ff" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structnrf__cloud__pgps__system__time" kindref="compound">nrf_cloud_pgps_system_time</ref></type>
+        <definition>struct nrf_cloud_pgps_system_time nrf_cloud_pgps_prediction::time</definition>
+        <argsstring></argsstring>
+        <name>time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Information about when this prediction is applicable. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="56" column="33" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__pgps__prediction_a7397f1ad6e06d17a7828ac2839e53c20_1a7397f1ad6e06d17a7828ac2839e53c20" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nrf_cloud_pgps_prediction::schema_version</definition>
+        <argsstring></argsstring>
+        <name>schema_version</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Not from cloud; inserted during storage to ease reusing A-GPS code. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="58" column="9" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__pgps__prediction_a622ccf560882f7920d164341abd36bd9_1a622ccf560882f7920d164341abd36bd9" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nrf_cloud_pgps_prediction::ephemeris_type</definition>
+        <argsstring></argsstring>
+        <name>ephemeris_type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set to NRF_CLOUD_AGPS_EPHEMERIDES. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="60" column="9" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__pgps__prediction_a1feb2ffa9db7ec82987429b4dbbe6499_1a1feb2ffa9db7ec82987429b4dbbe6499" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t nrf_cloud_pgps_prediction::ephemeris_count</definition>
+        <argsstring></argsstring>
+        <name>ephemeris_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Usually will be NRF_CLOUD_PGPS_NUM_SV. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="62" column="10" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__pgps__prediction_a071eb8a3737f5cee37930cdb84b73304_1a071eb8a3737f5cee37930cdb84b73304" prot="public" static="no" mutable="no">
+        <type>struct nrf_cloud_agps_ephemeris</type>
+        <definition>struct nrf_cloud_agps_ephemeris nrf_cloud_pgps_prediction::ephemerii[(32U)]</definition>
+        <argsstring>[(32U)]</argsstring>
+        <name>ephemerii</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Array of satellite orbital equation coefficients. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="64" column="31" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__pgps__prediction_afca9f4d9b66200ab71424ab27ecc6cc5_1afca9f4d9b66200ab71424ab27ecc6cc5" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t nrf_cloud_pgps_prediction::sentinel</definition>
+        <argsstring></argsstring>
+        <name>sentinel</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Not from cloud; appended during storage to verify integrity on retrieval. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="66" column="10" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>P-GPS prediction Flash storage format. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>nrf_cloud_pgps_prediction</label>
+        <link refid="structnrf__cloud__pgps__prediction"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>time</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>nrf_cloud_pgps_system_time</label>
+        <link refid="structnrf__cloud__pgps__system__time"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/net/nrf_cloud_pgps.h" line="50" column="1" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="50" bodyend="67"/>
+    <listofallmembers>
+      <member refid="structnrf__cloud__pgps__prediction_a071eb8a3737f5cee37930cdb84b73304_1a071eb8a3737f5cee37930cdb84b73304" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_prediction</scope><name>ephemerii</name></member>
+      <member refid="structnrf__cloud__pgps__prediction_a1feb2ffa9db7ec82987429b4dbbe6499_1a1feb2ffa9db7ec82987429b4dbbe6499" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_prediction</scope><name>ephemeris_count</name></member>
+      <member refid="structnrf__cloud__pgps__prediction_a622ccf560882f7920d164341abd36bd9_1a622ccf560882f7920d164341abd36bd9" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_prediction</scope><name>ephemeris_type</name></member>
+      <member refid="structnrf__cloud__pgps__prediction_a7397f1ad6e06d17a7828ac2839e53c20_1a7397f1ad6e06d17a7828ac2839e53c20" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_prediction</scope><name>schema_version</name></member>
+      <member refid="structnrf__cloud__pgps__prediction_afca9f4d9b66200ab71424ab27ecc6cc5_1afca9f4d9b66200ab71424ab27ecc6cc5" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_prediction</scope><name>sentinel</name></member>
+      <member refid="structnrf__cloud__pgps__prediction_a4a4bd288e49543c68cc8ce4c930fe1ff_1a4a4bd288e49543c68cc8ce4c930fe1ff" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_prediction</scope><name>time</name></member>
+      <member refid="structnrf__cloud__pgps__prediction_a508bc55d2d48550d8ee77162d0a67b40_1a508bc55d2d48550d8ee77162d0a67b40" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_prediction</scope><name>time_count</name></member>
+      <member refid="structnrf__cloud__pgps__prediction_a37e044730c1fa1dfbd88fce3ce54bd7a_1a37e044730c1fa1dfbd88fce3ce54bd7a" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_prediction</scope><name>time_type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

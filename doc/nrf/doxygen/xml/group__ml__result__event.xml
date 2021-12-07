@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__ml__result__event" kind="group">
+    <compoundname>ml_result_event</compoundname>
+    <title>Machine Learning Result Event</title>
+    <innerclass refid="structml__result__event" prot="public">ml_result_event</innerclass>
+    <innerclass refid="structml__result__signin__event" prot="public">ml_result_signin_event</innerclass>
+    <briefdescription>
+<para>Machine Learning Result Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

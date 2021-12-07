@@ -1,0 +1,341 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="lib_2sms_2parser_8h" kind="file" language="C++">
+    <compoundname>parser.h</compoundname>
+    <includes local="no">stdint.h</includes>
+    <includes local="no">stdbool.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>lib/sms/parser.h</label>
+        <link refid="lib_2sms_2parser_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>stdbool.h</label>
+      </node>
+      <node id="2">
+        <label>stdint.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structparser__api" prot="public">parser_api</innerclass>
+    <innerclass refid="structparser" prot="public">parser</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="lib_2sms_2parser_8h_a36e2ba87a78584df65d47cce9f963c88_1a36e2ba87a78584df65d47cce9f963c88" prot="public" static="no">
+        <name>PARSER_BUF_SIZE</name>
+        <initializer>180</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/parser.h" line="24" column="9" bodyfile="lib/sms/parser.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="lib_2sms_2parser_8h_a4ffac12094ed845d4454228c17f83e5a_1a4ffac12094ed845d4454228c17f83e5a" prot="public" static="no">
+        <type>int(*</type>
+        <definition>typedef int(* parser_module) (struct parser *parser, uint8_t *buf)</definition>
+        <argsstring>)(struct parser *parser, uint8_t *buf)</argsstring>
+        <name>parser_module</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/parser.h" line="29" column="9" bodyfile="lib/sms/parser.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="lib_2sms_2parser_8h_aebfe0a49757136587545b72ffeb0972f_1aebfe0a49757136587545b72ffeb0972f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int parser_create</definition>
+        <argsstring>(struct parser *parser, struct parser_api *api)</argsstring>
+        <name>parser_create</name>
+        <param>
+          <type>struct <ref refid="structparser" kindref="compound">parser</ref> *</type>
+          <declname>parser</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structparser__api" kindref="compound">parser_api</ref> *</type>
+          <declname>api</declname>
+        </param>
+        <briefdescription>
+<para>Parser instance creation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">parser</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parser instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">api</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parser API functions.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Zero if successful, negative value in error cases. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/parser.h" line="85" column="5" declfile="lib/sms/parser.h" declline="85" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="lib_2sms_2parser_8h_a1e3bfd6a64234e061caeabb75b1469d8_1a1e3bfd6a64234e061caeabb75b1469d8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int parser_delete</definition>
+        <argsstring>(struct parser *parser)</argsstring>
+        <name>parser_delete</name>
+        <param>
+          <type>struct <ref refid="structparser" kindref="compound">parser</ref> *</type>
+          <declname>parser</declname>
+        </param>
+        <briefdescription>
+<para>Parser instance deletion. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function will destroy a parser instance and free up any memory used.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">parser</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parser instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Zero if successful, negative value in error cases. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/parser.h" line="96" column="5" declfile="lib/sms/parser.h" declline="96" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="lib_2sms_2parser_8h_aeabeeed718b1f58b14187b41b029f368_1aeabeeed718b1f58b14187b41b029f368" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int parser_process_str</definition>
+        <argsstring>(struct parser *parser, const char *data)</argsstring>
+        <name>parser_process_str</name>
+        <param>
+          <type>struct <ref refid="structparser" kindref="compound">parser</ref> *</type>
+          <declname>parser</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Parse ASCII formatted hexadecimal string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The format of the hexadecimal string is defined in 3GPP TS 27.005 Section 4.0 and 3.1. &lt;pdu&gt; definition says the following: &quot;ME/TA converts each octet of TP data unit into two IRA character long hexadecimal number
+   (e.g. octet with integer value 42 is presented to TE as two characters 2A (IRA 50 and 65))&quot;</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">parser</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parser instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ASCII formatted hex string containing the data to be parsed.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Zero if successful, negative value in error cases. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/parser.h" line="111" column="5" declfile="lib/sms/parser.h" declline="111" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="lib_2sms_2parser_8h_a23795339bfd0e5d98c99a3a23a1d01e2_1a23795339bfd0e5d98c99a3a23a1d01e2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int parser_get_payload</definition>
+        <argsstring>(struct parser *parser, char *buf, uint8_t buf_size)</argsstring>
+        <name>parser_get_payload</name>
+        <param>
+          <type>struct <ref refid="structparser" kindref="compound">parser</ref> *</type>
+          <declname>parser</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>buf_size</declname>
+        </param>
+        <briefdescription>
+<para>Get the payload. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function will fill a user supplied buffer with payload data.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">parser</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parser instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A user supplied buffer to put payload data into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">buf_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>How much can be stored in the buffer</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Zero if successful, negative value in error cases. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/parser.h" line="124" column="5" declfile="lib/sms/parser.h" declline="124" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="lib_2sms_2parser_8h_a74e8a83ade9a9c8a29fe3ebda435fb1d_1a74e8a83ade9a9c8a29fe3ebda435fb1d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int parser_get_header</definition>
+        <argsstring>(struct parser *parser, void *header)</argsstring>
+        <name>parser_get_header</name>
+        <param>
+          <type>struct <ref refid="structparser" kindref="compound">parser</ref> *</type>
+          <declname>parser</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>header</declname>
+        </param>
+        <briefdescription>
+<para>Get the header. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function will fill given header buffer with message header information. The header structure is defined in the parser implementation.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">parser</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parser instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">header</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parser specific header structure to be filled.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Zero if successful, negative value in error cases. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/parser.h" line="137" column="5" declfile="lib/sms/parser.h" declline="137" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdint.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdbool.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_PARSER_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_PARSER_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*<sp/>Maximum<sp/>length<sp/>of<sp/>a<sp/>valid<sp/>SMS<sp/>message<sp/>is<sp/>175<sp/>bytes<sp/>so<sp/>we&apos;ll<sp/>reserve<sp/>buffer</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*<sp/>of<sp/>180<sp/>bytes<sp/>to<sp/>be<sp/>safe<sp/>and<sp/>we<sp/>are<sp/>able<sp/>to<sp/>handle<sp/>properly<sp/>few<sp/>extra<sp/>bytes.</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*<sp/>175<sp/>is<sp/>result<sp/>of<sp/>the<sp/>following<sp/>calculation<sp/>of<sp/>maximum<sp/>field<sp/>lengths:</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*<sp/><sp/><sp/>12:<sp/>SMSC<sp/>address</highlight></codeline>
+<codeline lineno="18"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/>4:<sp/>Misc<sp/>bytes<sp/>in<sp/>SMS-DELIVER<sp/>msg:</highlight></codeline>
+<codeline lineno="19"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/>First<sp/>byte<sp/>with<sp/>several<sp/>bit<sp/>fields,<sp/>TP-PID,<sp/>TP-DCS,<sp/>TP-UDL.</highlight></codeline>
+<codeline lineno="20"><highlight class="comment"><sp/>*<sp/><sp/><sp/>12:<sp/>Originating<sp/>address<sp/>(phone<sp/>number)</highlight></codeline>
+<codeline lineno="21"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/>7:<sp/>Timestamp</highlight></codeline>
+<codeline lineno="22"><highlight class="comment"><sp/>*<sp/><sp/>140:<sp/>User<sp/>data</highlight></codeline>
+<codeline lineno="23"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="lib_2sms_2parser_8h_a36e2ba87a78584df65d47cce9f963c88_1a36e2ba87a78584df65d47cce9f963c88" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARSER_BUF_SIZE<sp/>180</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Forward<sp/>declaration<sp/>of<sp/>the<sp/>parser<sp/>struct<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structparser" kindref="compound">parser</ref>;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="lib_2sms_2parser_8h_a4ffac12094ed845d4454228c17f83e5a_1a4ffac12094ed845d4454228c17f83e5a" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>int<sp/>(*<ref refid="lib_2sms_2parser_8h_a4ffac12094ed845d4454228c17f83e5a_1a4ffac12094ed845d4454228c17f83e5a" kindref="member">parser_module</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structparser" kindref="compound">parser</ref><sp/>*<ref refid="structparser" kindref="compound">parser</ref>,<sp/>uint8_t<sp/>*<ref refid="structparser_a728300c75489862dafd817a8c6e7282a_1a728300c75489862dafd817a8c6e7282a" kindref="member">buf</ref>);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="structparser__api" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structparser__api" kindref="compound">parser_api</ref><sp/>{</highlight></codeline>
+<codeline lineno="36" refid="structparser__api_ab05c0036b53555f873d47005fba7431a_1ab05c0036b53555f873d47005fba7431a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/>(*<ref refid="structparser__api_ab05c0036b53555f873d47005fba7431a_1ab05c0036b53555f873d47005fba7431a" kindref="member">data_size</ref>)(void);</highlight></codeline>
+<codeline lineno="38" refid="structparser__api_aa13c0ef22d0e2622c44558142c1ae4e9_1aa13c0ef22d0e2622c44558142c1ae4e9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/><sp/><sp/><sp/>(*get_parsers)(void);</highlight></codeline>
+<codeline lineno="40" refid="structparser__api_a5cf2a0cedfc5d460ccb0718b3f855ef9_1a5cf2a0cedfc5d460ccb0718b3f855ef9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/><sp/><sp/><sp/>(*get_decoder)(void);</highlight></codeline>
+<codeline lineno="42" refid="structparser__api_afaae83a7ff3c491ba9a5ac375bc29554_1afaae83a7ff3c491ba9a5ac375bc29554" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/><sp/><sp/><sp/><sp/><sp/>(*<ref refid="structparser__api_afaae83a7ff3c491ba9a5ac375bc29554_1afaae83a7ff3c491ba9a5ac375bc29554" kindref="member">get_parser_count</ref>)(void);</highlight></codeline>
+<codeline lineno="44" refid="structparser__api_a669d238280c324b614ba2453354946ff_1a669d238280c324b614ba2453354946ff" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/><sp/><sp/><sp/><sp/><sp/>(*<ref refid="structparser__api_a669d238280c324b614ba2453354946ff_1a669d238280c324b614ba2453354946ff" kindref="member">get_header</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structparser" kindref="compound">parser</ref><sp/>*<ref refid="structparser" kindref="compound">parser</ref>,<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*header);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="structparser" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structparser" kindref="compound">parser</ref><sp/>{</highlight></codeline>
+<codeline lineno="57" refid="structparser_ada941225d3bb6165239ceae344705b2e_1ada941225d3bb6165239ceae344705b2e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structparser_ada941225d3bb6165239ceae344705b2e_1ada941225d3bb6165239ceae344705b2e" kindref="member">buf_pos</ref>;</highlight></codeline>
+<codeline lineno="59" refid="structparser_a728300c75489862dafd817a8c6e7282a_1a728300c75489862dafd817a8c6e7282a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structparser_a728300c75489862dafd817a8c6e7282a_1a728300c75489862dafd817a8c6e7282a" kindref="member">buf</ref>[<ref refid="lib_2sms_2parser_8h_a36e2ba87a78584df65d47cce9f963c88_1a36e2ba87a78584df65d47cce9f963c88" kindref="member">PARSER_BUF_SIZE</ref>];</highlight></codeline>
+<codeline lineno="61" refid="structparser_ad4cb32c15f5a8d3075eb98b7169e1e2a_1ad4cb32c15f5a8d3075eb98b7169e1e2a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structparser_ad4cb32c15f5a8d3075eb98b7169e1e2a_1ad4cb32c15f5a8d3075eb98b7169e1e2a" kindref="member">buf_size</ref>;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="structparser_ac18d68c75f1e34d59952a28c9cb324f9_1ac18d68c75f1e34d59952a28c9cb324f9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*<ref refid="structparser_ac18d68c75f1e34d59952a28c9cb324f9_1ac18d68c75f1e34d59952a28c9cb324f9" kindref="member">payload</ref>;</highlight></codeline>
+<codeline lineno="66" refid="structparser_a6c5af311f2a79ba892fed1cb8f5e59f4_1a6c5af311f2a79ba892fed1cb8f5e59f4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structparser_a6c5af311f2a79ba892fed1cb8f5e59f4_1a6c5af311f2a79ba892fed1cb8f5e59f4" kindref="member">payload_buf_size</ref>;</highlight></codeline>
+<codeline lineno="68" refid="structparser_ab1ace0c68e2cd7b0b001b077ba1fbb1a_1ab1ace0c68e2cd7b0b001b077ba1fbb1a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structparser_ab1ace0c68e2cd7b0b001b077ba1fbb1a_1ab1ace0c68e2cd7b0b001b077ba1fbb1a" kindref="member">payload_pos</ref>;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71" refid="structparser_a5a311170a75a0e52a4b731b2cd7a1c06_1a5a311170a75a0e52a4b731b2cd7a1c06" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structparser_a5a311170a75a0e52a4b731b2cd7a1c06_1a5a311170a75a0e52a4b731b2cd7a1c06" kindref="member">data</ref>;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="structparser_a7ba891964f9c3e1891ee17226fcf6f63_1a7ba891964f9c3e1891ee17226fcf6f63" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structparser__api" kindref="compound">parser_api</ref><sp/>*<ref refid="structparser_a7ba891964f9c3e1891ee17226fcf6f63_1a7ba891964f9c3e1891ee17226fcf6f63" kindref="member">api</ref>;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="lib_2sms_2parser_8h_aebfe0a49757136587545b72ffeb0972f_1aebfe0a49757136587545b72ffeb0972f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="lib_2sms_2parser_8h_aebfe0a49757136587545b72ffeb0972f_1aebfe0a49757136587545b72ffeb0972f" kindref="member">parser_create</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structparser" kindref="compound">parser</ref><sp/>*<ref refid="structparser" kindref="compound">parser</ref>,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structparser__api" kindref="compound">parser_api</ref><sp/>*api);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96" refid="lib_2sms_2parser_8h_a1e3bfd6a64234e061caeabb75b1469d8_1a1e3bfd6a64234e061caeabb75b1469d8" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="lib_2sms_2parser_8h_a1e3bfd6a64234e061caeabb75b1469d8_1a1e3bfd6a64234e061caeabb75b1469d8" kindref="member">parser_delete</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structparser" kindref="compound">parser</ref><sp/>*<ref refid="structparser" kindref="compound">parser</ref>);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111" refid="lib_2sms_2parser_8h_aeabeeed718b1f58b14187b41b029f368_1aeabeeed718b1f58b14187b41b029f368" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="lib_2sms_2parser_8h_aeabeeed718b1f58b14187b41b029f368_1aeabeeed718b1f58b14187b41b029f368" kindref="member">parser_process_str</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structparser" kindref="compound">parser</ref><sp/>*<ref refid="structparser" kindref="compound">parser</ref>,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*data);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124" refid="lib_2sms_2parser_8h_a23795339bfd0e5d98c99a3a23a1d01e2_1a23795339bfd0e5d98c99a3a23a1d01e2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="lib_2sms_2parser_8h_a23795339bfd0e5d98c99a3a23a1d01e2_1a23795339bfd0e5d98c99a3a23a1d01e2" kindref="member">parser_get_payload</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structparser" kindref="compound">parser</ref><sp/>*<ref refid="structparser" kindref="compound">parser</ref>,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*buf,<sp/>uint8_t<sp/>buf_size);</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137" refid="lib_2sms_2parser_8h_a74e8a83ade9a9c8a29fe3ebda435fb1d_1a74e8a83ade9a9c8a29fe3ebda435fb1d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="lib_2sms_2parser_8h_a74e8a83ade9a9c8a29fe3ebda435fb1d_1a74e8a83ade9a9c8a29fe3ebda435fb1d" kindref="member">parser_get_header</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structparser" kindref="compound">parser</ref><sp/>*<ref refid="structparser" kindref="compound">parser</ref>,<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*header);</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_PARSER_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="lib/sms/parser.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,267 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="gen__battery__cli_8h" kind="file" language="C++">
+    <compoundname>gen_battery_cli.h</compoundname>
+    <includes refid="gen__battery_8h" local="no">bluetooth/mesh/gen_battery.h</includes>
+    <includes refid="model__types_8h" local="no">bluetooth/mesh/model_types.h</includes>
+    <includedby refid="models_8h" local="no">include/bluetooth/mesh/models.h</includedby>
+    <incdepgraph>
+      <node id="2">
+        <label>bluetooth/mesh/gen_battery.h</label>
+        <link refid="gen__battery_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/mesh/gen_battery_cli.h</label>
+        <link refid="gen__battery__cli_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bluetooth/mesh/model_types.h</label>
+        <link refid="model__types_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/mesh.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>include/bluetooth/mesh/gen_battery_cli.h</label>
+        <link refid="gen__battery__cli_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/bluetooth/mesh/models.h</label>
+        <link refid="models_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>include/bluetooth/mesh/vnd/silvair_enocean_srv.h</label>
+        <link refid="silvair__enocean__srv_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structbt__mesh__battery__cli" prot="public">bt_mesh_battery_cli</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__battery__cli_gafb7aa6ed9f6f0385b3925adc0f33307d_1gafb7aa6ed9f6f0385b3925adc0f33307d" prot="public" static="no">
+        <name>BT_MESH_BATTERY_CLI_INIT</name>
+        <param><defname>_status_handler</defname></param>
+        <initializer>	{                                                                      \
+		.status_handler = _status_handler,                             \
+	}</initializer>
+        <briefdescription>
+<para>Initialization parameters for a <ref refid="group__bt__mesh__battery__cli" kindref="compound">Generic Battery Client model</ref> instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_status_handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional status message handler. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_battery_cli.h" line="32" column="9" bodyfile="include/bluetooth/mesh/gen_battery_cli.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__battery__cli_ga3ffa0ccc34c0f805132a5062112d5a6d_1ga3ffa0ccc34c0f805132a5062112d5a6d" prot="public" static="no">
+        <name>BT_MESH_MODEL_BATTERY_CLI</name>
+        <param><defname>_cli</defname></param>
+        <initializer>	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_BATTERY_CLI,                     \
+			 _bt_mesh_battery_cli_op, &amp;(_cli)-&gt;pub,                \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__battery__cli" kindref="compound">bt_mesh_battery_cli</ref>,   \
+						 _cli),                        \
+			 &amp;_bt_mesh_battery_cli_cb)</initializer>
+        <briefdescription>
+<para>Generic Battery Client model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__battery__cli" kindref="compound">Generic Battery Client model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_battery_cli.h" line="43" column="9" bodyfile="include/bluetooth/mesh/gen_battery_cli.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__battery__cli_gac6c46776de71798614883bf4fee052c4_1gac6c46776de71798614883bf4fee052c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_battery_cli_get</definition>
+        <argsstring>(struct bt_mesh_battery_cli *cli, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_battery_status *rsp)</argsstring>
+        <name>bt_mesh_battery_cli_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__battery__cli" kindref="compound">bt_mesh_battery_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__battery__status" kindref="compound">bt_mesh_battery_status</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Get the status of the bound srv. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__battery__cli_a28f3890c3541b17b3952a01d736dda89_1a28f3890c3541b17b3952a01d736dda89" kindref="member">bt_mesh_battery_cli::status_handler</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Status response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_battery_cli.h" line="98" column="5" declfile="include/bluetooth/mesh/gen_battery_cli.h" declline="98" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_MESH_GEN_BATTERY_CLI_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_GEN_BATTERY_CLI_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="gen__battery_8h" kindref="compound">bluetooth/mesh/gen_battery.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="model__types_8h" kindref="compound">bluetooth/mesh/model_types.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__battery__cli" kindref="compound">bt_mesh_battery_cli</ref>;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="group__bt__mesh__battery__cli_gafb7aa6ed9f6f0385b3925adc0f33307d_1gafb7aa6ed9f6f0385b3925adc0f33307d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_BATTERY_CLI_INIT(_status_handler)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="33"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="34"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.status_handler<sp/>=<sp/>_status_handler,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="35"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="group__bt__mesh__battery__cli_ga3ffa0ccc34c0f805132a5062112d5a6d_1ga3ffa0ccc34c0f805132a5062112d5a6d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_MODEL_BATTERY_CLI(_cli)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="44"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_BATTERY_CLI,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="45"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_bt_mesh_battery_cli_op,<sp/>&amp;(_cli)-&gt;pub,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="46"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_USER_DATA(struct<sp/>bt_mesh_battery_cli,<sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="47"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_cli),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="48"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;_bt_mesh_battery_cli_cb)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="structbt__mesh__battery__cli" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__battery__cli" kindref="compound">bt_mesh_battery_cli</ref><sp/>{</highlight></codeline>
+<codeline lineno="63" refid="structbt__mesh__battery__cli_a28f3890c3541b17b3952a01d736dda89_1a28f3890c3541b17b3952a01d736dda89" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__battery__cli_a28f3890c3541b17b3952a01d736dda89_1a28f3890c3541b17b3952a01d736dda89" kindref="member">status_handler</ref>)(</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__battery__cli" kindref="compound">bt_mesh_battery_cli</ref><sp/>*cli,<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__battery__status" kindref="compound">bt_mesh_battery_status</ref><sp/>*status);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="structbt__mesh__battery__cli_a9023e0f3a88d6391afab0ba3a5b82a2c_1a9023e0f3a88d6391afab0ba3a5b82a2c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ack_ctx<sp/><ref refid="structbt__mesh__battery__cli_a9023e0f3a88d6391afab0ba3a5b82a2c_1a9023e0f3a88d6391afab0ba3a5b82a2c" kindref="member">ack_ctx</ref>;</highlight></codeline>
+<codeline lineno="70" refid="structbt__mesh__battery__cli_a416bdf98d859748bebc198cb5605de71_1a416bdf98d859748bebc198cb5605de71" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_pub<sp/><ref refid="structbt__mesh__battery__cli_a416bdf98d859748bebc198cb5605de71_1a416bdf98d859748bebc198cb5605de71" kindref="member">pub</ref>;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Publication<sp/>buffer<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="structbt__mesh__battery__cli_a726ba971cb1992617b6f5b6f95760706_1a726ba971cb1992617b6f5b6f95760706" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">net_buf_simple<sp/><ref refid="structbt__mesh__battery__cli_a726ba971cb1992617b6f5b6f95760706_1a726ba971cb1992617b6f5b6f95760706" kindref="member">pub_buf</ref>;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Publication<sp/>data<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="structbt__mesh__battery__cli_a83ab3eeb83bc03ef9844d5131da54827_1a83ab3eeb83bc03ef9844d5131da54827" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__battery__cli_a83ab3eeb83bc03ef9844d5131da54827_1a83ab3eeb83bc03ef9844d5131da54827" kindref="member">pub_data</ref>[BT_MESH_MODEL_BUF_LEN(BT_MESH_BATTERY_OP_GET,</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_BATTERY_MSG_LEN_GET)];</highlight></codeline>
+<codeline lineno="77" refid="structbt__mesh__battery__cli_a01bbba114474b22147a579e181c8083f_1a01bbba114474b22147a579e181c8083f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model<sp/>*<ref refid="structbt__mesh__battery__cli_a01bbba114474b22147a579e181c8083f_1a01bbba114474b22147a579e181c8083f" kindref="member">model</ref>;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98" refid="group__bt__mesh__battery__cli_gac6c46776de71798614883bf4fee052c4_1gac6c46776de71798614883bf4fee052c4" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__battery__cli_gac6c46776de71798614883bf4fee052c4_1gac6c46776de71798614883bf4fee052c4" kindref="member">bt_mesh_battery_cli_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__battery__cli" kindref="compound">bt_mesh_battery_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__battery__status" kindref="compound">bt_mesh_battery_status</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_op<sp/>_bt_mesh_battery_cli_op[];</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_cb<sp/>_bt_mesh_battery_cli_cb;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_MESH_GEN_BATTERY_CLI_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/mesh/gen_battery_cli.h"/>
+  </compounddef>
+</doxygen>

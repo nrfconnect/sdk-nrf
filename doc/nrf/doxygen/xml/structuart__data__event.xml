@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structuart__data__event" kind="struct" language="C++" prot="public">
+    <compoundname>uart_data_event</compoundname>
+    <includes refid="uart__data__event_8h" local="no">uart_data_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structuart__data__event_acf9329d7d7528164a4f0c11d321097c6_1acf9329d7d7528164a4f0c11d321097c6" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header uart_data_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/uart_data_event.h" line="28" column="19" bodyfile="applications/connectivity_bridge/src/events/uart_data_event.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structuart__data__event_a85d321f93784b6ab08057b18de213799_1a85d321f93784b6ab08057b18de213799" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t uart_data_event::dev_idx</definition>
+        <argsstring></argsstring>
+        <name>dev_idx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/uart_data_event.h" line="30" column="9" bodyfile="applications/connectivity_bridge/src/events/uart_data_event.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structuart__data__event_a0158d30c037f90036dfc010b4ee922b7_1a0158d30c037f90036dfc010b4ee922b7" prot="public" static="no" mutable="no">
+        <type>uint8_t *</type>
+        <definition>uint8_t* uart_data_event::buf</definition>
+        <argsstring></argsstring>
+        <name>buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/uart_data_event.h" line="31" column="9" bodyfile="applications/connectivity_bridge/src/events/uart_data_event.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structuart__data__event_a2434b392c1e626db1cf0bf826e00dcee_1a2434b392c1e626db1cf0bf826e00dcee" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t uart_data_event::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/uart_data_event.h" line="32" column="8" bodyfile="applications/connectivity_bridge/src/events/uart_data_event.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Peer connection event. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>uart_data_event</label>
+        <link refid="structuart__data__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/connectivity_bridge/src/events/uart_data_event.h" line="27" column="1" bodyfile="applications/connectivity_bridge/src/events/uart_data_event.h" bodystart="27" bodyend="33"/>
+    <listofallmembers>
+      <member refid="structuart__data__event_a0158d30c037f90036dfc010b4ee922b7_1a0158d30c037f90036dfc010b4ee922b7" prot="public" virt="non-virtual"><scope>uart_data_event</scope><name>buf</name></member>
+      <member refid="structuart__data__event_a85d321f93784b6ab08057b18de213799_1a85d321f93784b6ab08057b18de213799" prot="public" virt="non-virtual"><scope>uart_data_event</scope><name>dev_idx</name></member>
+      <member refid="structuart__data__event_acf9329d7d7528164a4f0c11d321097c6_1acf9329d7d7528164a4f0c11d321097c6" prot="public" virt="non-virtual"><scope>uart_data_event</scope><name>header</name></member>
+      <member refid="structuart__data__event_a2434b392c1e626db1cf0bf826e00dcee_1a2434b392c1e626db1cf0bf826e00dcee" prot="public" virt="non-virtual"><scope>uart_data_event</scope><name>len</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

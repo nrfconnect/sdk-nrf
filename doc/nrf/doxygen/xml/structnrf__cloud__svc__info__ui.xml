@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnrf__cloud__svc__info__ui" kind="struct" language="C++" prot="public">
+    <compoundname>nrf_cloud_svc_info_ui</compoundname>
+    <includes refid="nrf__cloud_8h" local="no">nrf_cloud.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnrf__cloud__svc__info__ui_ad7072d112709b4d075218ed08444de05_1ad7072d112709b4d075218ed08444de05" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nrf_cloud_svc_info_ui::temperature</definition>
+        <argsstring></argsstring>
+        <name>temperature</name>
+        <bitfield>1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Items with UI support on nRF Cloud </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="308" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="308" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__svc__info__ui_a14ee0546ab2589ce29cb3c81094beca8_1a14ee0546ab2589ce29cb3c81094beca8" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nrf_cloud_svc_info_ui::gps</definition>
+        <argsstring></argsstring>
+        <name>gps</name>
+        <bitfield>1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="309" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="309" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__svc__info__ui_a7aaf8d5ccac6b14aa4ac4187cddab7f6_1a7aaf8d5ccac6b14aa4ac4187cddab7f6" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nrf_cloud_svc_info_ui::flip</definition>
+        <argsstring></argsstring>
+        <name>flip</name>
+        <bitfield>1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="310" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="310" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__svc__info__ui_a6d81591cef39f8174035fa0b73475d66_1a6d81591cef39f8174035fa0b73475d66" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nrf_cloud_svc_info_ui::humidity</definition>
+        <argsstring></argsstring>
+        <name>humidity</name>
+        <bitfield>1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="311" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="311" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__svc__info__ui_ac1e94ac3e051dffbf9eb55b76189726a_1ac1e94ac3e051dffbf9eb55b76189726a" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nrf_cloud_svc_info_ui::air_pressure</definition>
+        <argsstring></argsstring>
+        <name>air_pressure</name>
+        <bitfield>1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="312" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="312" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__svc__info__ui_ad03551ee949b38dcc4afff095ebdac09_1ad03551ee949b38dcc4afff095ebdac09" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nrf_cloud_svc_info_ui::rsrp</definition>
+        <argsstring></argsstring>
+        <name>rsrp</name>
+        <bitfield>1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="313" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="313" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__svc__info__ui_a1942e23e7c64576c003d1970467fb1da_1a1942e23e7c64576c003d1970467fb1da" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nrf_cloud_svc_info_ui::air_quality</definition>
+        <argsstring></argsstring>
+        <name>air_quality</name>
+        <bitfield>1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Items without UI support on nRF Cloud </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="316" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="316" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__svc__info__ui_a0d9279323f5a6464fe15e62f0ed80c9f_1a0d9279323f5a6464fe15e62f0ed80c9f" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nrf_cloud_svc_info_ui::light_sensor</definition>
+        <argsstring></argsstring>
+        <name>light_sensor</name>
+        <bitfield>1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="317" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="317" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__svc__info__ui_a01bd065e57b6650d1281ff1e33356672_1a01bd065e57b6650d1281ff1e33356672" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nrf_cloud_svc_info_ui::button</definition>
+        <argsstring></argsstring>
+        <name>button</name>
+        <bitfield>1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="318" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="318" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Controls which values are added to the UI array in the &quot;serviceInfo&quot; shadow section. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/nrf_cloud.h" line="306" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="306" bodyend="321"/>
+    <listofallmembers>
+      <member refid="structnrf__cloud__svc__info__ui_ac1e94ac3e051dffbf9eb55b76189726a_1ac1e94ac3e051dffbf9eb55b76189726a" prot="public" virt="non-virtual"><scope>nrf_cloud_svc_info_ui</scope><name>air_pressure</name></member>
+      <member refid="structnrf__cloud__svc__info__ui_a1942e23e7c64576c003d1970467fb1da_1a1942e23e7c64576c003d1970467fb1da" prot="public" virt="non-virtual"><scope>nrf_cloud_svc_info_ui</scope><name>air_quality</name></member>
+      <member refid="structnrf__cloud__svc__info__ui_a01bd065e57b6650d1281ff1e33356672_1a01bd065e57b6650d1281ff1e33356672" prot="public" virt="non-virtual"><scope>nrf_cloud_svc_info_ui</scope><name>button</name></member>
+      <member refid="structnrf__cloud__svc__info__ui_a7aaf8d5ccac6b14aa4ac4187cddab7f6_1a7aaf8d5ccac6b14aa4ac4187cddab7f6" prot="public" virt="non-virtual"><scope>nrf_cloud_svc_info_ui</scope><name>flip</name></member>
+      <member refid="structnrf__cloud__svc__info__ui_a14ee0546ab2589ce29cb3c81094beca8_1a14ee0546ab2589ce29cb3c81094beca8" prot="public" virt="non-virtual"><scope>nrf_cloud_svc_info_ui</scope><name>gps</name></member>
+      <member refid="structnrf__cloud__svc__info__ui_a6d81591cef39f8174035fa0b73475d66_1a6d81591cef39f8174035fa0b73475d66" prot="public" virt="non-virtual"><scope>nrf_cloud_svc_info_ui</scope><name>humidity</name></member>
+      <member refid="structnrf__cloud__svc__info__ui_a0d9279323f5a6464fe15e62f0ed80c9f_1a0d9279323f5a6464fe15e62f0ed80c9f" prot="public" virt="non-virtual"><scope>nrf_cloud_svc_info_ui</scope><name>light_sensor</name></member>
+      <member refid="structnrf__cloud__svc__info__ui_ad03551ee949b38dcc4afff095ebdac09_1ad03551ee949b38dcc4afff095ebdac09" prot="public" virt="non-virtual"><scope>nrf_cloud_svc_info_ui</scope><name>rsrp</name></member>
+      <member refid="structnrf__cloud__svc__info__ui_ad7072d112709b4d075218ed08444de05_1ad7072d112709b4d075218ed08444de05" prot="public" virt="non-virtual"><scope>nrf_cloud_svc_info_ui</scope><name>temperature</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

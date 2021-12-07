@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__scan__manufacturer__data" kind="struct" language="C++" prot="public">
+    <compoundname>bt_scan_manufacturer_data</compoundname>
+    <includes refid="scan_8h" local="no">scan.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__scan__manufacturer__data_a88d08782c038972a41713190838e0406_1a88d08782c038972a41713190838e0406" prot="public" static="no" mutable="no">
+        <type>uint8_t *</type>
+        <definition>uint8_t* bt_scan_manufacturer_data::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the manufacturer data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="162" column="9" bodyfile="include/bluetooth/scan.h" bodystart="162" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__scan__manufacturer__data_a448f8b548da256a8b248418fa0808446_1a448f8b548da256a8b248418fa0808446" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_scan_manufacturer_data::data_len</definition>
+        <argsstring></argsstring>
+        <name>data_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Manufacturer data length. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="165" column="9" bodyfile="include/bluetooth/scan.h" bodystart="165" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A helper structure to set filters for the manufacturer data. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/scan.h" line="160" column="1" bodyfile="include/bluetooth/scan.h" bodystart="160" bodyend="166"/>
+    <listofallmembers>
+      <member refid="structbt__scan__manufacturer__data_a88d08782c038972a41713190838e0406_1a88d08782c038972a41713190838e0406" prot="public" virt="non-virtual"><scope>bt_scan_manufacturer_data</scope><name>data</name></member>
+      <member refid="structbt__scan__manufacturer__data_a448f8b548da256a8b248418fa0808446_1a448f8b548da256a8b248418fa0808446" prot="public" virt="non-virtual"><scope>bt_scan_manufacturer_data</scope><name>data_len</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

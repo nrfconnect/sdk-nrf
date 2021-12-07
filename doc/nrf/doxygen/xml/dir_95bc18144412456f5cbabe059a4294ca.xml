@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_95bc18144412456f5cbabe059a4294ca" kind="dir">
+    <compoundname>lib/location</compoundname>
+    <innerdir refid="dir_ba5758aab75291f21fb5cd8dea84a76e">lib/location/wifi</innerdir>
+    <innerfile refid="location__core_8h">location_core.h</innerfile>
+    <innerfile refid="location__utils_8h">location_utils.h</innerfile>
+    <innerfile refid="method__cellular_8h">method_cellular.h</innerfile>
+    <innerfile refid="method__gnss_8h">method_gnss.h</innerfile>
+    <innerfile refid="method__wifi_8h">method_wifi.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/location/"/>
+  </compounddef>
+</doxygen>

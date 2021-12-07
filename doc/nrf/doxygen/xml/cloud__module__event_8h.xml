@@ -1,0 +1,286 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="cloud__module__event_8h" kind="file" language="C++">
+    <compoundname>cloud_module_event.h</compoundname>
+    <includes refid="event__manager_8h" local="no">event_manager.h</includes>
+    <includes refid="event__manager__profiler_8h" local="no">event_manager_profiler.h</includes>
+    <includes refid="v2_2src_2cloud_2cloud__codec_2cloud__codec_8h" local="yes">cloud/cloud_codec/cloud_codec.h</includes>
+    <incdepgraph>
+      <node id="13">
+        <label>cloud/cloud_codec/cloud_codec.h</label>
+        <link refid="v2_2src_2cloud_2cloud__codec_2cloud__codec_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>applications/asset_tracker_v2/src/events/cloud_module_event.h</label>
+        <link refid="cloud__module__event_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>event_manager.h</label>
+        <link refid="event__manager_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>event_manager_profiler.h</label>
+        <link refid="event__manager__profiler_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>modem/lte_lc.h</label>
+        <link refid="lte__lc_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>profiler.h</label>
+        <link refid="profiler_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>cJSON_os.h</label>
+      </node>
+      <node id="8">
+        <label>event_manager_priv.h</label>
+      </node>
+      <node id="12">
+        <label>event_manager_profiler_priv.h</label>
+      </node>
+      <node id="7">
+        <label>logging/log_ctrl.h</label>
+      </node>
+      <node id="19">
+        <label>net/net_ip.h</label>
+      </node>
+      <node id="21">
+        <label>nrf_modem_gnss.h</label>
+      </node>
+      <node id="14">
+        <label>stdbool.h</label>
+      </node>
+      <node id="15">
+        <label>stdint.h</label>
+      </node>
+      <node id="16">
+        <label>stdio.h</label>
+      </node>
+      <node id="17">
+        <label>stdlib.h</label>
+      </node>
+      <node id="6">
+        <label>sys/__assert.h</label>
+      </node>
+      <node id="5">
+        <label>sys/reboot.h</label>
+      </node>
+      <node id="10">
+        <label>sys/util.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr.h</label>
+      </node>
+      <node id="4">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structcloud__module__event__data" prot="public">cloud_module_event_data</innerclass>
+    <innerclass refid="structcloud__module__data__ack" prot="public">cloud_module_data_ack</innerclass>
+    <innerclass refid="structcloud__module__event" prot="public">cloud_module_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1ga14be80b1af7ae873ef7bc34eba0036ec" prot="public" static="no" strong="no">
+        <type></type>
+        <name>cloud_module_event_type</name>
+        <enumvalue id="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca30bd0a019f29f6dbba94f47e59d459d3" prot="public">
+          <name>CLOUD_EVT_CONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca7f4f61ab1c2141f8c4c5354d914c6473" prot="public">
+          <name>CLOUD_EVT_DISCONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca327335bba4b9dd730ad17bf2a94eddf0" prot="public">
+          <name>CLOUD_EVT_CONNECTING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036ecae5cfd1c7b12f624f4e1f41dd80f28e33" prot="public">
+          <name>CLOUD_EVT_CONNECTION_TIMEOUT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca54f9dd49554ae0855e4c291ba01b714a" prot="public">
+          <name>CLOUD_EVT_CONFIG_RECEIVED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036ecaf9e55b562b4ffd20e490364a813fc929" prot="public">
+          <name>CLOUD_EVT_CONFIG_EMPTY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036ecab341959d608eb475f3b6799c40d8d84f" prot="public">
+          <name>CLOUD_EVT_FOTA_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca8e45fa8a7b8b58c36330bbc21100ca49" prot="public">
+          <name>CLOUD_EVT_DATA_ACK</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036ecae5467f17716324ebd1801a044ca06843" prot="public">
+          <name>CLOUD_EVT_SHUTDOWN_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca8d49eb658f77345c2b65ced6d58fed38" prot="public">
+          <name>CLOUD_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Cloud event types submitted by Cloud module. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/cloud_module_event.h" line="25" column="1" bodyfile="applications/asset_tracker_v2/src/events/cloud_module_event.h" bodystart="25" bodyend="36"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_CLOUD_MODULE_EVENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_CLOUD_MODULE_EVENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="event__manager_8h" kindref="compound">event_manager.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="event__manager__profiler_8h" kindref="compound">event_manager_profiler.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="v2_2src_2cloud_2cloud__codec_2cloud__codec_8h" kindref="compound">cloud/cloud_codec/cloud_codec.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1ga14be80b1af7ae873ef7bc34eba0036ec" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1ga14be80b1af7ae873ef7bc34eba0036ec" kindref="member">cloud_module_event_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="26" refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca30bd0a019f29f6dbba94f47e59d459d3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca30bd0a019f29f6dbba94f47e59d459d3" kindref="member">CLOUD_EVT_CONNECTED</ref>,</highlight></codeline>
+<codeline lineno="27" refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca7f4f61ab1c2141f8c4c5354d914c6473" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca7f4f61ab1c2141f8c4c5354d914c6473" kindref="member">CLOUD_EVT_DISCONNECTED</ref>,</highlight></codeline>
+<codeline lineno="28" refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca327335bba4b9dd730ad17bf2a94eddf0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca327335bba4b9dd730ad17bf2a94eddf0" kindref="member">CLOUD_EVT_CONNECTING</ref>,</highlight></codeline>
+<codeline lineno="29" refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036ecae5cfd1c7b12f624f4e1f41dd80f28e33" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036ecae5cfd1c7b12f624f4e1f41dd80f28e33" kindref="member">CLOUD_EVT_CONNECTION_TIMEOUT</ref>,</highlight></codeline>
+<codeline lineno="30" refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca54f9dd49554ae0855e4c291ba01b714a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca54f9dd49554ae0855e4c291ba01b714a" kindref="member">CLOUD_EVT_CONFIG_RECEIVED</ref>,</highlight></codeline>
+<codeline lineno="31" refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036ecaf9e55b562b4ffd20e490364a813fc929" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036ecaf9e55b562b4ffd20e490364a813fc929" kindref="member">CLOUD_EVT_CONFIG_EMPTY</ref>,</highlight></codeline>
+<codeline lineno="32" refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036ecab341959d608eb475f3b6799c40d8d84f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036ecab341959d608eb475f3b6799c40d8d84f" kindref="member">CLOUD_EVT_FOTA_DONE</ref>,</highlight></codeline>
+<codeline lineno="33" refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca8e45fa8a7b8b58c36330bbc21100ca49" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca8e45fa8a7b8b58c36330bbc21100ca49" kindref="member">CLOUD_EVT_DATA_ACK</ref>,</highlight></codeline>
+<codeline lineno="34" refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036ecae5467f17716324ebd1801a044ca06843" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036ecae5467f17716324ebd1801a044ca06843" kindref="member">CLOUD_EVT_SHUTDOWN_READY</ref>,</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca8d49eb658f77345c2b65ced6d58fed38" kindref="member">CLOUD_EVT_ERROR</ref></highlight></codeline>
+<codeline lineno="36" refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca8d49eb658f77345c2b65ced6d58fed38" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="structcloud__module__event__data" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__module__event__data" kindref="compound">cloud_module_event_data</ref><sp/>{</highlight></codeline>
+<codeline lineno="39" refid="structcloud__module__event__data_a45a6e21fe7d0db5b93cce676d50bb4b5_1a45a6e21fe7d0db5b93cce676d50bb4b5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structcloud__module__event__data_a45a6e21fe7d0db5b93cce676d50bb4b5_1a45a6e21fe7d0db5b93cce676d50bb4b5" kindref="member">buf</ref>;</highlight></codeline>
+<codeline lineno="40" refid="structcloud__module__event__data_ac049e75729243a50b63bc0cdc8a5dc06_1ac049e75729243a50b63bc0cdc8a5dc06" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structcloud__module__event__data_ac049e75729243a50b63bc0cdc8a5dc06_1ac049e75729243a50b63bc0cdc8a5dc06" kindref="member">len</ref>;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="structcloud__module__data__ack" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__module__data__ack" kindref="compound">cloud_module_data_ack</ref><sp/>{</highlight></codeline>
+<codeline lineno="44" refid="structcloud__module__data__ack_aa91994196595778edb4794c092097ed5_1aa91994196595778edb4794c092097ed5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structcloud__module__data__ack_aa91994196595778edb4794c092097ed5_1aa91994196595778edb4794c092097ed5" kindref="member">ptr</ref>;</highlight></codeline>
+<codeline lineno="45" refid="structcloud__module__data__ack_affc6554214ab4261358c79d5987f6548_1affc6554214ab4261358c79d5987f6548" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structcloud__module__data__ack_affc6554214ab4261358c79d5987f6548_1affc6554214ab4261358c79d5987f6548" kindref="member">len</ref>;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Flag<sp/>to<sp/>signify<sp/>if<sp/>the<sp/>data<sp/>was<sp/>sent<sp/>or<sp/>not.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="structcloud__module__data__ack_ad0895ef81749c80e758f8d087ea55571_1ad0895ef81749c80e758f8d087ea55571" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structcloud__module__data__ack_ad0895ef81749c80e758f8d087ea55571_1ad0895ef81749c80e758f8d087ea55571" kindref="member">sent</ref>;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="structcloud__module__event" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__module__event" kindref="compound">cloud_module_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="52" refid="structcloud__module__event_a11610edf4e91900f5cc78697e521016b_1a11610edf4e91900f5cc78697e521016b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structevent__header" kindref="compound">event_header</ref><sp/><ref refid="structcloud__module__event_a11610edf4e91900f5cc78697e521016b_1a11610edf4e91900f5cc78697e521016b" kindref="member">header</ref>;</highlight></codeline>
+<codeline lineno="53" refid="structcloud__module__event_a9641751b516c29d85f1e6e80cbbe9993_1a9641751b516c29d85f1e6e80cbbe9993" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1ga14be80b1af7ae873ef7bc34eba0036ec" kindref="member">cloud_module_event_type</ref><sp/><ref refid="structcloud__module__event_a9641751b516c29d85f1e6e80cbbe9993_1a9641751b516c29d85f1e6e80cbbe9993" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">union<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="56" refid="structcloud__module__event_a4807494e431aa45a15bc4e33cc28386d_1a4807494e431aa45a15bc4e33cc28386d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__data__cfg" kindref="compound">cloud_data_cfg</ref><sp/><ref refid="structcloud__module__event_a4807494e431aa45a15bc4e33cc28386d_1a4807494e431aa45a15bc4e33cc28386d" kindref="member">config</ref>;</highlight></codeline>
+<codeline lineno="57" refid="structcloud__module__event_ae48f26d73cbf59071f57985483f09549_1ae48f26d73cbf59071f57985483f09549" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__module__data__ack" kindref="compound">cloud_module_data_ack</ref><sp/><ref refid="structcloud__module__event_ae48f26d73cbf59071f57985483f09549_1ae48f26d73cbf59071f57985483f09549" kindref="member">ack</ref>;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Module<sp/>ID,<sp/>used<sp/>when<sp/>acknowledging<sp/>shutdown<sp/>requests.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="structcloud__module__event_a7d349466967848baf01e5d97c96f4151_1a7d349466967848baf01e5d97c96f4151" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structcloud__module__event_a7d349466967848baf01e5d97c96f4151_1a7d349466967848baf01e5d97c96f4151" kindref="member">id</ref>;</highlight></codeline>
+<codeline lineno="60" refid="structcloud__module__event_ab3937f843a49a1cd49c2b380d89a0336_1ab3937f843a49a1cd49c2b380d89a0336" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structcloud__module__event_ab3937f843a49a1cd49c2b380d89a0336_1ab3937f843a49a1cd49c2b380d89a0336" kindref="member">err</ref>;</highlight></codeline>
+<codeline lineno="61" refid="structcloud__module__event_ad2e286a1435ca6def72c83cd311b3e69_1ad2e286a1435ca6def72c83cd311b3e69" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/><ref refid="structcloud__module__event_ad2e286a1435ca6def72c83cd311b3e69_1ad2e286a1435ca6def72c83cd311b3e69" kindref="member">data</ref>;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><ref refid="group__event__manager_gade0652b21cddf1a6b4d58e668b402caa_1gade0652b21cddf1a6b4d58e668b402caa" kindref="member">EVENT_TYPE_DECLARE</ref>(<ref refid="structcloud__module__event" kindref="compound">cloud_module_event</ref>);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_CLOUD_MODULE_EVENT_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/asset_tracker_v2/src/events/cloud_module_event.h"/>
+  </compounddef>
+</doxygen>

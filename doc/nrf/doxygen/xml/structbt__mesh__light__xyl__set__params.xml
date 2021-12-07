@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__xyl__set__params" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_xyl_set_params</compoundname>
+    <includes refid="light__xyl_8h" local="no">light_xyl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__set__params_aba6288bb4a1279cc241678ed955e0fe4_1aba6288bb4a1279cc241678ed955e0fe4" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__light__xyl" kindref="compound">bt_mesh_light_xyl</ref></type>
+        <definition>struct bt_mesh_light_xyl bt_mesh_light_xyl_set_params::params</definition>
+        <argsstring></argsstring>
+        <name>params</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>xyL set parameters </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl.h" line="42" column="24" bodyfile="include/bluetooth/mesh/light_xyl.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__set__params_aa143ca904143214f0b02d5ef4b5b755f_1aa143ca904143214f0b02d5ef4b5b755f" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref> *</type>
+        <definition>struct bt_mesh_model_transition* bt_mesh_light_xyl_set_params::transition</definition>
+        <argsstring></argsstring>
+        <name>transition</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transition time parameters for the state change, or NULL.</para>
+<para>When sending, setting the transition to NULL makes the receiver use its default transition time parameters, or 0 if no default transition time is set. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl.h" line="50" column="31" bodyfile="include/bluetooth/mesh/light_xyl.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Light xyL set message parameters. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>bt_mesh_light_xy</label>
+        <link refid="structbt__mesh__light__xy"/>
+      </node>
+      <node id="2">
+        <label>bt_mesh_light_xyl</label>
+        <link refid="structbt__mesh__light__xyl"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>xy</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>bt_mesh_light_xyl_set_params</label>
+        <link refid="structbt__mesh__light__xyl__set__params"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>params</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>transition</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bt_mesh_model_transition</label>
+        <link refid="structbt__mesh__model__transition"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/light_xyl.h" line="40" column="1" bodyfile="include/bluetooth/mesh/light_xyl.h" bodystart="40" bodyend="51"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__xyl__set__params_aba6288bb4a1279cc241678ed955e0fe4_1aba6288bb4a1279cc241678ed955e0fe4" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_set_params</scope><name>params</name></member>
+      <member refid="structbt__mesh__light__xyl__set__params_aa143ca904143214f0b02d5ef4b5b755f_1aa143ca904143214f0b02d5ef4b5b755f" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_set_params</scope><name>transition</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

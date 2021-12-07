@@ -1,0 +1,2592 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__lte__lc" kind="group">
+    <compoundname>lte_lc</compoundname>
+    <title>LTE Link Controller</title>
+    <innerclass refid="structlte__lc__psm__cfg" prot="public">lte_lc_psm_cfg</innerclass>
+    <innerclass refid="structlte__lc__edrx__cfg" prot="public">lte_lc_edrx_cfg</innerclass>
+    <innerclass refid="structlte__lc__cell" prot="public">lte_lc_cell</innerclass>
+    <innerclass refid="structlte__lc__ncell" prot="public">lte_lc_ncell</innerclass>
+    <innerclass refid="structlte__lc__cells__info" prot="public">lte_lc_cells_info</innerclass>
+    <innerclass refid="structlte__lc__modem__sleep" prot="public">lte_lc_modem_sleep</innerclass>
+    <innerclass refid="structlte__lc__conn__eval__params" prot="public">lte_lc_conn_eval_params</innerclass>
+    <innerclass refid="structlte__lc__periodic__search__pattern" prot="public">lte_lc_periodic_search_pattern</innerclass>
+    <innerclass refid="structlte__lc__periodic__search__cfg" prot="public">lte_lc_periodic_search_cfg</innerclass>
+    <innerclass refid="structlte__lc__evt" prot="public">lte_lc_evt</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__lte__lc_1gae2e22418dff8974965840a21f1c49063" prot="public" static="no" strong="no">
+        <type></type>
+        <name>lte_lc_nw_reg_status</name>
+        <enumvalue id="group__lte__lc_gae2e22418dff8974965840a21f1c49063_1ggae2e22418dff8974965840a21f1c49063a9ce9cdb26fa7603d63b513e86ad15b81" prot="public">
+          <name>LTE_LC_NW_REG_NOT_REGISTERED</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_gae2e22418dff8974965840a21f1c49063_1ggae2e22418dff8974965840a21f1c49063a33fe6cd4c819e5201dded14ce6d3ec46" prot="public">
+          <name>LTE_LC_NW_REG_REGISTERED_HOME</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_gae2e22418dff8974965840a21f1c49063_1ggae2e22418dff8974965840a21f1c49063a98f9d3de78d413ab0b2f9773640ee78a" prot="public">
+          <name>LTE_LC_NW_REG_SEARCHING</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_gae2e22418dff8974965840a21f1c49063_1ggae2e22418dff8974965840a21f1c49063a52546c28656950384a8f986b732d97bb" prot="public">
+          <name>LTE_LC_NW_REG_REGISTRATION_DENIED</name>
+          <initializer>= 3</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_gae2e22418dff8974965840a21f1c49063_1ggae2e22418dff8974965840a21f1c49063ad6c97f0181fcaf20fe0b93c4f0329a06" prot="public">
+          <name>LTE_LC_NW_REG_UNKNOWN</name>
+          <initializer>= 4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_gae2e22418dff8974965840a21f1c49063_1ggae2e22418dff8974965840a21f1c49063a9ce67021f119e538fc68189c41cc4f5c" prot="public">
+          <name>LTE_LC_NW_REG_REGISTERED_ROAMING</name>
+          <initializer>= 5</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_gae2e22418dff8974965840a21f1c49063_1ggae2e22418dff8974965840a21f1c49063ade107b53ad1667176b83210cccb891de" prot="public">
+          <name>LTE_LC_NW_REG_REGISTERED_EMERGENCY</name>
+          <initializer>= 8</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_gae2e22418dff8974965840a21f1c49063_1ggae2e22418dff8974965840a21f1c49063a36b7dd2fec22534f4a8f1e5f18e0e5b0" prot="public">
+          <name>LTE_LC_NW_REG_UICC_FAIL</name>
+          <initializer>= 90</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="34" column="1" bodyfile="include/modem/lte_lc.h" bodystart="34" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__lte__lc_1gad2977314d8c063f40c729cd8930cd442" prot="public" static="no" strong="no">
+        <type></type>
+        <name>lte_lc_system_mode</name>
+        <enumvalue id="group__lte__lc_gad2977314d8c063f40c729cd8930cd442_1ggad2977314d8c063f40c729cd8930cd442aa3e56fc3979babcffac64349c5132b64" prot="public">
+          <name>LTE_LC_SYSTEM_MODE_NONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_gad2977314d8c063f40c729cd8930cd442_1ggad2977314d8c063f40c729cd8930cd442ac82eb96ce839e47f48d6f7927928df66" prot="public">
+          <name>LTE_LC_SYSTEM_MODE_LTEM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_gad2977314d8c063f40c729cd8930cd442_1ggad2977314d8c063f40c729cd8930cd442a02fe586e22dabe12dc0812337ef4f4c0" prot="public">
+          <name>LTE_LC_SYSTEM_MODE_NBIOT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_gad2977314d8c063f40c729cd8930cd442_1ggad2977314d8c063f40c729cd8930cd442aac9dd94ebd3313299e29f4218cb91bcf" prot="public">
+          <name>LTE_LC_SYSTEM_MODE_GPS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_gad2977314d8c063f40c729cd8930cd442_1ggad2977314d8c063f40c729cd8930cd442ae8a30958eb03f18df2b1296c740c28c9" prot="public">
+          <name>LTE_LC_SYSTEM_MODE_LTEM_GPS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_gad2977314d8c063f40c729cd8930cd442_1ggad2977314d8c063f40c729cd8930cd442a3808d5e0433fea519bad25725ec554b8" prot="public">
+          <name>LTE_LC_SYSTEM_MODE_NBIOT_GPS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_gad2977314d8c063f40c729cd8930cd442_1ggad2977314d8c063f40c729cd8930cd442a3352622ce74f896e11c6f63f0e6e2411" prot="public">
+          <name>LTE_LC_SYSTEM_MODE_LTEM_NBIOT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_gad2977314d8c063f40c729cd8930cd442_1ggad2977314d8c063f40c729cd8930cd442acea6668d3f6150b92caa6036617da460" prot="public">
+          <name>LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="45" column="1" bodyfile="include/modem/lte_lc.h" bodystart="45" bodyend="54"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__lte__lc_1ga85a1606ed90f717b1c0607ecb0ad88d2" prot="public" static="no" strong="no">
+        <type></type>
+        <name>lte_lc_lte_mode</name>
+        <enumvalue id="group__lte__lc_ga85a1606ed90f717b1c0607ecb0ad88d2_1gga85a1606ed90f717b1c0607ecb0ad88d2a4a604b4811f777f222d9772d211132dd" prot="public">
+          <name>LTE_LC_LTE_MODE_NONE</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga85a1606ed90f717b1c0607ecb0ad88d2_1gga85a1606ed90f717b1c0607ecb0ad88d2ae800c47af7be5f97a0fe11eda7cf9c73" prot="public">
+          <name>LTE_LC_LTE_MODE_LTEM</name>
+          <initializer>= 7</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga85a1606ed90f717b1c0607ecb0ad88d2_1gga85a1606ed90f717b1c0607ecb0ad88d2a0882849a905cfdea505e4a7d36c74d99" prot="public">
+          <name>LTE_LC_LTE_MODE_NBIOT</name>
+          <initializer>= 9</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>LTE mode. The values for LTE-M and NB-IoT correspond to the values for the AcT field in an AT+CEREG response. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="59" column="1" bodyfile="include/modem/lte_lc.h" bodystart="59" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__lte__lc_1gaf8185cb2f2a6c262b1ac870d8a35eabc" prot="public" static="no" strong="no">
+        <type></type>
+        <name>lte_lc_system_mode_preference</name>
+        <enumvalue id="group__lte__lc_gaf8185cb2f2a6c262b1ac870d8a35eabc_1ggaf8185cb2f2a6c262b1ac870d8a35eabcaf17a26017a9224b40f49df55342400ef" prot="public">
+          <name>LTE_LC_SYSTEM_MODE_PREFER_AUTO</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>No LTE preference, automatically selected by the modem. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_gaf8185cb2f2a6c262b1ac870d8a35eabc_1ggaf8185cb2f2a6c262b1ac870d8a35eabcaeaf474c160150b70bec73695aeb298b9" prot="public">
+          <name>LTE_LC_SYSTEM_MODE_PREFER_LTEM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>LTE-M is preferred over PLMN selection. The modem will prioritize to use LTE-M and switch over to a PLMN where LTE-M is available whenever possible. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_gaf8185cb2f2a6c262b1ac870d8a35eabc_1ggaf8185cb2f2a6c262b1ac870d8a35eabca6c4a84a0b63cc61f88ed11728a3ff78e" prot="public">
+          <name>LTE_LC_SYSTEM_MODE_PREFER_NBIOT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>NB-IoT is preferred over PLMN selection. The modem will prioritize to use NB-IoT and switch over to a PLMN where NB-IoT is available whenever possible. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_gaf8185cb2f2a6c262b1ac870d8a35eabc_1ggaf8185cb2f2a6c262b1ac870d8a35eabca8d2b43f9b510e05a45ab027453378a58" prot="public">
+          <name>LTE_LC_SYSTEM_MODE_PREFER_LTEM_PLMN_PRIO</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>LTE-M is preferred, but PLMN selection is more important. The modem will prioritize to stay on home network and switch over to NB-IoT if LTE-M is not available. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_gaf8185cb2f2a6c262b1ac870d8a35eabc_1ggaf8185cb2f2a6c262b1ac870d8a35eabca9302f9d0ab71c5ab00dca10816292620" prot="public">
+          <name>LTE_LC_SYSTEM_MODE_PREFER_NBIOT_PLMN_PRIO</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>NB-IoT is preferred, but PLMN selection is more important. The modem will prioritize to stay on home network and switch over to LTE-M if NB-IoT is not available. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>LTE mode preference. If more than one LTE system mode is enabled, the modem can select the mode that best meets the criteria set by this configuration. The LTE mode preference does not affect the way GPS operates.</para>
+<para>Note that there&apos;s a distinction between preferred and prioritized mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="71" column="1" bodyfile="include/modem/lte_lc.h" bodystart="71" bodyend="98"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__lte__lc_1ga5170c668f1a1f5f52fffe9daf9e2f1e4" prot="public" static="no" strong="no">
+        <type></type>
+        <name>lte_lc_func_mode</name>
+        <enumvalue id="group__lte__lc_ga5170c668f1a1f5f52fffe9daf9e2f1e4_1gga5170c668f1a1f5f52fffe9daf9e2f1e4abcf995fc8334d1373e563713867ac712" prot="public">
+          <name>LTE_LC_FUNC_MODE_POWER_OFF</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga5170c668f1a1f5f52fffe9daf9e2f1e4_1gga5170c668f1a1f5f52fffe9daf9e2f1e4ad2cec2040a07371c8359becb60f82d06" prot="public">
+          <name>LTE_LC_FUNC_MODE_NORMAL</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga5170c668f1a1f5f52fffe9daf9e2f1e4_1gga5170c668f1a1f5f52fffe9daf9e2f1e4a1d6253a4c624c8b02be8fd5a894537a4" prot="public">
+          <name>LTE_LC_FUNC_MODE_RX_ONLY</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga5170c668f1a1f5f52fffe9daf9e2f1e4_1gga5170c668f1a1f5f52fffe9daf9e2f1e4a9ab1736bfbfb870add5090907bbb1cc2" prot="public">
+          <name>LTE_LC_FUNC_MODE_OFFLINE</name>
+          <initializer>= 4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga5170c668f1a1f5f52fffe9daf9e2f1e4_1gga5170c668f1a1f5f52fffe9daf9e2f1e4ac281f8c50e65355a6dc769208e3f18df" prot="public">
+          <name>LTE_LC_FUNC_MODE_DEACTIVATE_LTE</name>
+          <initializer>= 20</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga5170c668f1a1f5f52fffe9daf9e2f1e4_1gga5170c668f1a1f5f52fffe9daf9e2f1e4afcd4b4abe57882b2f19545b707e126cd" prot="public">
+          <name>LTE_LC_FUNC_MODE_ACTIVATE_LTE</name>
+          <initializer>= 21</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga5170c668f1a1f5f52fffe9daf9e2f1e4_1gga5170c668f1a1f5f52fffe9daf9e2f1e4ae84694e7aa468e76ab8d12b4662de52b" prot="public">
+          <name>LTE_LC_FUNC_MODE_DEACTIVATE_GNSS</name>
+          <initializer>= 30</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga5170c668f1a1f5f52fffe9daf9e2f1e4_1gga5170c668f1a1f5f52fffe9daf9e2f1e4ab0cc11075fa9485eae84cf9c35618a90" prot="public">
+          <name>LTE_LC_FUNC_MODE_ACTIVATE_GNSS</name>
+          <initializer>= 31</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga5170c668f1a1f5f52fffe9daf9e2f1e4_1gga5170c668f1a1f5f52fffe9daf9e2f1e4aac3faa744a40d34b51324859d37e8a91" prot="public">
+          <name>LTE_LC_FUNC_MODE_DEACTIVATE_UICC</name>
+          <initializer>= 40</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga5170c668f1a1f5f52fffe9daf9e2f1e4_1gga5170c668f1a1f5f52fffe9daf9e2f1e4adbe1a399a7563c8f5e1d74cef2510722" prot="public">
+          <name>LTE_LC_FUNC_MODE_ACTIVATE_UICC</name>
+          <initializer>= 41</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga5170c668f1a1f5f52fffe9daf9e2f1e4_1gga5170c668f1a1f5f52fffe9daf9e2f1e4a7eeb595b938145bf4b52c72aec80e1de" prot="public">
+          <name>LTE_LC_FUNC_MODE_OFFLINE_UICC_ON</name>
+          <initializer>= 44</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Functional modes, used to control RF functionality in the modem. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>The functional modes map directly to the functional modes as described in &quot;nRF91 AT Commands - Command Reference Guide&quot;. Please refer to the AT command guide to verify if a functional mode is supported by a given modem firmware version. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="107" column="1" bodyfile="include/modem/lte_lc.h" bodystart="107" bodyend="149"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__lte__lc_1ga543eb533d9afb355cb868c192586eccd" prot="public" static="no" strong="no">
+        <type></type>
+        <name>lte_lc_evt_type</name>
+        <enumvalue id="group__lte__lc_ga543eb533d9afb355cb868c192586eccd_1gga543eb533d9afb355cb868c192586eccdadf36c67c58d564bdff87bbe79d624344" prot="public">
+          <name>LTE_LC_EVT_NW_REG_STATUS</name>
+          <briefdescription>
+<para>Event received carrying information about the modems network registration status. The associated payload is the nw_reg_status member of type <ref refid="group__lte__lc_gae2e22418dff8974965840a21f1c49063_1gae2e22418dff8974965840a21f1c49063" kindref="member">lte_lc_nw_reg_status</ref> in the event. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga543eb533d9afb355cb868c192586eccd_1gga543eb533d9afb355cb868c192586eccda79bcfde2d8d9d170254d0946c2cde19e" prot="public">
+          <name>LTE_LC_EVT_PSM_UPDATE</name>
+          <briefdescription>
+<para>Event received carrying information about PSM updates. Contains PSM parameters given by the network. The associated payload is the psm_cfg member of type <ref refid="structlte__lc__psm__cfg" kindref="compound">lte_lc_psm_cfg</ref> in the event. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga543eb533d9afb355cb868c192586eccd_1gga543eb533d9afb355cb868c192586eccda7d96af08476af9054255218129ae2922" prot="public">
+          <name>LTE_LC_EVT_EDRX_UPDATE</name>
+          <briefdescription>
+<para>Event received carrying information about eDRX updates. Contains eDRX parameters given by the network. The associated payload is the edrx_cfg member of type <ref refid="structlte__lc__edrx__cfg" kindref="compound">lte_lc_edrx_cfg</ref> in the event. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga543eb533d9afb355cb868c192586eccd_1gga543eb533d9afb355cb868c192586eccdaa2f24d87651705bf48b1016d791f8902" prot="public">
+          <name>LTE_LC_EVT_RRC_UPDATE</name>
+          <briefdescription>
+<para>Event received carrying information about the modems RRC state. The associated payload is the rrc_mode member of type <ref refid="group__lte__lc_ga91261e353062129cf610715b32e5cd05_1ga91261e353062129cf610715b32e5cd05" kindref="member">lte_lc_rrc_mode</ref> in the event. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga543eb533d9afb355cb868c192586eccd_1gga543eb533d9afb355cb868c192586eccdaa91edc51f02603a195abe9fc84c45e87" prot="public">
+          <name>LTE_LC_EVT_CELL_UPDATE</name>
+          <briefdescription>
+<para>Event received carrying information about the currently connected cell. The associated payload is the cell member of type <ref refid="structlte__lc__cell" kindref="compound">lte_lc_cell</ref> in the event. Note that only the cell.tac and cell.id members are populated in the event payload. The rest are expected to be zero. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga543eb533d9afb355cb868c192586eccd_1gga543eb533d9afb355cb868c192586eccdab9f5f1f7113f400f8103adf6a36afe14" prot="public">
+          <name>LTE_LC_EVT_LTE_MODE_UPDATE</name>
+          <briefdescription>
+<para>The currently active LTE mode is updated. If a system mode that enables both LTE-M and NB-IoT is configured, the modem may change the currently active LTE mode based on the system mode preference and network availability. This event will then indicate which LTE mode is currently used by the modem. The associated payload is the lte_mode member of type <ref refid="group__lte__lc_ga85a1606ed90f717b1c0607ecb0ad88d2_1ga85a1606ed90f717b1c0607ecb0ad88d2" kindref="member">lte_lc_lte_mode</ref> in the event. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga543eb533d9afb355cb868c192586eccd_1gga543eb533d9afb355cb868c192586eccda6304f0b6d4af33b11339cd37166b20b9" prot="public">
+          <name>LTE_LC_EVT_TAU_PRE_WARNING</name>
+          <briefdescription>
+<para>Tracking Area Update pre-warning. This event will be received a configurable amount of time before TAU is scheduled to occur. This gives the application the opportunity to send data over the network before the TAU happens, thus saving power by avoiding sending data and the TAU separately. The associated payload is the time member of type uint64_t in the event. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga543eb533d9afb355cb868c192586eccd_1gga543eb533d9afb355cb868c192586eccda4816d28f0334e544204ae16ba7064ee7" prot="public">
+          <name>LTE_LC_EVT_NEIGHBOR_CELL_MEAS</name>
+          <briefdescription>
+<para>Event containing results from neighbor cell measurements. The associated payload is the cells_info member of type <ref refid="structlte__lc__cells__info" kindref="compound">lte_lc_cells_info</ref> in the event. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga543eb533d9afb355cb868c192586eccd_1gga543eb533d9afb355cb868c192586eccda7fd9c128180930111300f25b8fd06c01" prot="public">
+          <name>LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING</name>
+          <briefdescription>
+<para>Modem sleep pre-warning This event will be received a configurable amount of time before the modem exits sleep. The time parameter associated with this event signifies the time until modem exits sleep. The associated payload is the modem_sleep member of type <ref refid="structlte__lc__modem__sleep" kindref="compound">lte_lc_modem_sleep</ref> in the event. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga543eb533d9afb355cb868c192586eccd_1gga543eb533d9afb355cb868c192586eccdaf0414162caba55c2e9df8e93616d4724" prot="public">
+          <name>LTE_LC_EVT_MODEM_SLEEP_EXIT</name>
+          <briefdescription>
+<para>This event will be received when the modem exits sleep. The associated payload is the modem_sleep member of type <ref refid="structlte__lc__modem__sleep" kindref="compound">lte_lc_modem_sleep</ref> in the event. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga543eb533d9afb355cb868c192586eccd_1gga543eb533d9afb355cb868c192586eccda89fb7da65eccadfdf8784889e4833485" prot="public">
+          <name>LTE_LC_EVT_MODEM_SLEEP_ENTER</name>
+          <briefdescription>
+<para>This event will be received when the modem enters sleep. The time parameter associated with this event signifies the duration of the sleep. The associated payload is the modem_sleep member of type <ref refid="structlte__lc__modem__sleep" kindref="compound">lte_lc_modem_sleep</ref> in the event. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga543eb533d9afb355cb868c192586eccd_1gga543eb533d9afb355cb868c192586eccda6b73ddb27359eb517a4df6647ce9dc88" prot="public">
+          <name>LTE_LC_EVT_MODEM_EVENT</name>
+          <briefdescription>
+<para>Modem domain event carrying information about modem operation. The associated payload is the modem_evt member of type <ref refid="group__lte__lc_ga881d51b5950df07508e70d7d4fa1d031_1ga881d51b5950df07508e70d7d4fa1d031" kindref="member">lte_lc_modem_evt</ref> in the event. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="151" column="1" bodyfile="include/modem/lte_lc.h" bodystart="151" bodyend="239"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__lte__lc_1ga91261e353062129cf610715b32e5cd05" prot="public" static="no" strong="no">
+        <type></type>
+        <name>lte_lc_rrc_mode</name>
+        <enumvalue id="group__lte__lc_ga91261e353062129cf610715b32e5cd05_1gga91261e353062129cf610715b32e5cd05a2baa9909d7b120ebeda9b67a53b320df" prot="public">
+          <name>LTE_LC_RRC_MODE_IDLE</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga91261e353062129cf610715b32e5cd05_1gga91261e353062129cf610715b32e5cd05a48ba613ba6281cd39a3f284a1ac7cfbf" prot="public">
+          <name>LTE_LC_RRC_MODE_CONNECTED</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="241" column="1" bodyfile="include/modem/lte_lc.h" bodystart="241" bodyend="244"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__lte__lc_1ga1fcb5117146bd440555e01baf4270f8c" prot="public" static="no" strong="no">
+        <type></type>
+        <name>lte_lc_modem_sleep_type</name>
+        <enumvalue id="group__lte__lc_ga1fcb5117146bd440555e01baf4270f8c_1gga1fcb5117146bd440555e01baf4270f8cab37e031afcbae8f8f94db0fbe703b5b6" prot="public">
+          <name>LTE_LC_MODEM_SLEEP_PSM</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga1fcb5117146bd440555e01baf4270f8c_1gga1fcb5117146bd440555e01baf4270f8ca5bc6d76dec9d6f047525ace29ce2cb36" prot="public">
+          <name>LTE_LC_MODEM_SLEEP_RF_INACTIVITY</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga1fcb5117146bd440555e01baf4270f8c_1gga1fcb5117146bd440555e01baf4270f8ca7e000f68d196a5d0ec9c97f3eeaa83d0" prot="public">
+          <name>LTE_LC_MODEM_SLEEP_FLIGHT_MODE</name>
+          <initializer>= 4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="390" column="1" bodyfile="include/modem/lte_lc.h" bodystart="390" bodyend="394"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__lte__lc_1ga816742ab87acf8ecbd33c31029b56886" prot="public" static="no" strong="no">
+        <type></type>
+        <name>lte_lc_energy_estimate</name>
+        <enumvalue id="group__lte__lc_ga816742ab87acf8ecbd33c31029b56886_1gga816742ab87acf8ecbd33c31029b56886abfed2de1c232ac5909db94aaaaeaa367" prot="public">
+          <name>LTE_LC_ENERGY_CONSUMPTION_EXCESSIVE</name>
+          <initializer>= 5</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga816742ab87acf8ecbd33c31029b56886_1gga816742ab87acf8ecbd33c31029b56886aa99f0524685dd2c7c5302bdae9685f42" prot="public">
+          <name>LTE_LC_ENERGY_CONSUMPTION_INCREASED</name>
+          <initializer>= 6</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga816742ab87acf8ecbd33c31029b56886_1gga816742ab87acf8ecbd33c31029b56886a667ac66b67aa8c055aa5f5616172123e" prot="public">
+          <name>LTE_LC_ENERGY_CONSUMPTION_NORMAL</name>
+          <initializer>= 7</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga816742ab87acf8ecbd33c31029b56886_1gga816742ab87acf8ecbd33c31029b56886a5eaef93b50331e35b148ce6ea03c0aba" prot="public">
+          <name>LTE_LC_ENERGY_CONSUMPTION_REDUCED</name>
+          <initializer>= 8</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga816742ab87acf8ecbd33c31029b56886_1gga816742ab87acf8ecbd33c31029b56886a0b437f2ea054bf7dec0021f0690da5ff" prot="public">
+          <name>LTE_LC_ENERGY_CONSUMPTION_EFFICIENT</name>
+          <initializer>= 9</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="403" column="1" bodyfile="include/modem/lte_lc.h" bodystart="403" bodyend="409"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__lte__lc_1ga528bc95d77f8c08447ac4ecd99a7ccb3" prot="public" static="no" strong="no">
+        <type></type>
+        <name>lte_lc_tau_triggered</name>
+        <enumvalue id="group__lte__lc_ga528bc95d77f8c08447ac4ecd99a7ccb3_1gga528bc95d77f8c08447ac4ecd99a7ccb3a5b0edd41266d48aed4828a54332f1c48" prot="public">
+          <name>LTE_LC_CELL_IN_TAI_LIST</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The evaluated cell is in the Tracking Area Identifier list. When switching to this cell, a TAU will not be triggered. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga528bc95d77f8c08447ac4ecd99a7ccb3_1gga528bc95d77f8c08447ac4ecd99a7ccb3aad29f2465a3083c3e7f2afdf5e1d770e" prot="public">
+          <name>LTE_LC_CELL_NOT_IN_TAI_LIST</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The evaluated cell is not in the Tracking Area Identifier list. When switching to this cell, a TAU will be triggered. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga528bc95d77f8c08447ac4ecd99a7ccb3_1gga528bc95d77f8c08447ac4ecd99a7ccb3ad81d7d00754ea328fb73fde950fda0d1" prot="public">
+          <name>LTE_LC_CELL_UNKNOWN</name>
+          <initializer>= UINT8_MAX</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="411" column="1" bodyfile="include/modem/lte_lc.h" bodystart="411" bodyend="422"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__lte__lc_1ga1d93115b17f12f4a51f52bb0c6429c5c" prot="public" static="no" strong="no">
+        <type></type>
+        <name>lte_lc_ce_level</name>
+        <enumvalue id="group__lte__lc_ga1d93115b17f12f4a51f52bb0c6429c5c_1gga1d93115b17f12f4a51f52bb0c6429c5ca40bb87bd68669fb6f6aad8478a9f29c7" prot="public">
+          <name>LTE_LC_CE_LEVEL_0_NO_REPETITION</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga1d93115b17f12f4a51f52bb0c6429c5c_1gga1d93115b17f12f4a51f52bb0c6429c5caf2a8f88c1395ca8af09a03c817fef31f" prot="public">
+          <name>LTE_LC_CE_LEVEL_1_LOW_REPETITION</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga1d93115b17f12f4a51f52bb0c6429c5c_1gga1d93115b17f12f4a51f52bb0c6429c5cad860c0dc71c238463de8479ff23a4ca6" prot="public">
+          <name>LTE_LC_CE_LEVEL_2_MEDIUM_REPETITION</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga1d93115b17f12f4a51f52bb0c6429c5c_1gga1d93115b17f12f4a51f52bb0c6429c5ca37a6bcac178fe0f92600eea23a0abd94" prot="public">
+          <name>LTE_LC_CE_LEVEL_3_LARGE_REPETITION</name>
+          <initializer>= 3</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga1d93115b17f12f4a51f52bb0c6429c5c_1gga1d93115b17f12f4a51f52bb0c6429c5ca5dacfceb55faa6edf40e18fe10c5b18c" prot="public">
+          <name>LTE_LC_CE_LEVEL_UNKNOWN</name>
+          <initializer>= UINT8_MAX</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="424" column="1" bodyfile="include/modem/lte_lc.h" bodystart="424" bodyend="430"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__lte__lc_1ga881d51b5950df07508e70d7d4fa1d031" prot="public" static="no" strong="no">
+        <type></type>
+        <name>lte_lc_modem_evt</name>
+        <enumvalue id="group__lte__lc_ga881d51b5950df07508e70d7d4fa1d031_1gga881d51b5950df07508e70d7d4fa1d031a3b990ede15fc37ca3127e5c0c9504049" prot="public">
+          <name>LTE_LC_MODEM_EVT_LIGHT_SEARCH_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Indicates that a light search has been performed. This event gives the application the chance to stop using more power when searching networks in possibly weaker radio conditions. Before sending this event, the modem searches for cells based on previous cell history, measures the radio conditions, and makes assumptions on where networks might be deployed. This event means that the modem has not found a network that it could select based on the 3GPP network selection rules from those locations. It does not mean that there are no networks to be found in the area. The modem continues more thorough searches automatically after sending this status. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga881d51b5950df07508e70d7d4fa1d031_1gga881d51b5950df07508e70d7d4fa1d031a3c38c021f44f41d43f0ce078741b12f3" prot="public">
+          <name>LTE_LC_MODEM_EVT_SEARCH_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Indicates that a network search has been performed. The modem has found a network that it can select according to the 3GPP network selection rules or all frequencies have been scanned and a suitable cell was not found. In the latter case, the modem enters normal limited service state functionality and performs scan for service periodically. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga881d51b5950df07508e70d7d4fa1d031_1gga881d51b5950df07508e70d7d4fa1d031aa9bd080b4041097b91594ec31ab383ee" prot="public">
+          <name>LTE_LC_MODEM_EVT_RESET_LOOP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The modem has detected a reset loop. A reset loop indicates that the modem restricts network attach attempts for the next 30 minutes. The timer does not run when the modem has no power or while it stays in the reset loop. The modem counts all the resets where the modem is not gracefully deinitialized with +CFUN=0 or using an API performing the equivalent operation, such as setting the functional mode to LTE_LC_FUNC_MODE_POWER_OFF. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga881d51b5950df07508e70d7d4fa1d031_1gga881d51b5950df07508e70d7d4fa1d031ad55843c1346ef7d0a8547bc0fa518ccc" prot="public">
+          <name>LTE_LC_MODEM_EVT_BATTERY_LOW</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Battery voltage is low and the modem is therefore deactivated. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga881d51b5950df07508e70d7d4fa1d031_1gga881d51b5950df07508e70d7d4fa1d031aff8156159b793beb276343255545513c" prot="public">
+          <name>LTE_LC_MODEM_EVT_OVERHEATED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The device is overheated and the modem is therefore deactivated. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Modem domain events. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="433" column="1" bodyfile="include/modem/lte_lc.h" bodystart="433" bodyend="469"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__lte__lc_1ga5a47961f67d8c264a41f7bbda3014f9b" prot="public" static="no" strong="no">
+        <type></type>
+        <name>lte_lc_neighbor_search_type</name>
+        <enumvalue id="group__lte__lc_ga5a47961f67d8c264a41f7bbda3014f9b_1gga5a47961f67d8c264a41f7bbda3014f9bad4eacebd32b97cb261a3b74c8d945cd7" prot="public">
+          <name>LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The modem searches the network it is registered to (RPLMN) based on previous cell history. For modem firmware versions &lt; 1.3.1, this is the only valid option. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga5a47961f67d8c264a41f7bbda3014f9b_1gga5a47961f67d8c264a41f7bbda3014f9bae70268872b9dae1c3058bbf39939dc4c" prot="public">
+          <name>LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The modem starts with the same search method as the default type. If needed, it continues to search by measuring the radio conditions and makes assumptions on where networks might be deployed, i.e. a light search. The search is limited to bands that are valid for the area of the current ITU-T region. If RPLMN is not found based on previous cell history, the modem accepts any found PLMN. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lte__lc_ga5a47961f67d8c264a41f7bbda3014f9b_1gga5a47961f67d8c264a41f7bbda3014f9ba82a71d08c01306ffd696e5731e78dd04" prot="public">
+          <name>LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The modem follows the same procedure as for LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT, but will continue to perform a complete search instead of a light search, and the search is performed for all supported bands. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Specifies which type of search the modem should perform when a neighbor cell measurement is started. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="605" column="1" bodyfile="include/modem/lte_lc.h" bodystart="605" bodyend="626"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__lte__lc_1ga89093108c46eeb40fb49f6e8e3e39be0" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* lte_lc_evt_handler_t) (const struct lte_lc_evt *const evt)</definition>
+        <argsstring>)(const struct lte_lc_evt *const evt)</argsstring>
+        <name>lte_lc_evt_handler_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="771" column="9" bodyfile="include/modem/lte_lc.h" bodystart="771" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__lte__lc_1gaaf5e203f845304ed120d647a101f72d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void lte_lc_register_handler</definition>
+        <argsstring>(lte_lc_evt_handler_t handler)</argsstring>
+        <name>lte_lc_register_handler</name>
+        <param>
+          <type><ref refid="group__lte__lc_ga89093108c46eeb40fb49f6e8e3e39be0_1ga89093108c46eeb40fb49f6e8e3e39be0" kindref="member">lte_lc_evt_handler_t</ref></type>
+          <declname>handler</declname>
+        </param>
+        <briefdescription>
+<para>Register event handler for LTE events. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event handler. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="778" column="6" declfile="include/modem/lte_lc.h" declline="778" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1ga87c6ef5732f43291612ca6c376dee13d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_deregister_handler</definition>
+        <argsstring>(lte_lc_evt_handler_t handler)</argsstring>
+        <name>lte_lc_deregister_handler</name>
+        <param>
+          <type><ref refid="group__lte__lc_ga89093108c46eeb40fb49f6e8e3e39be0_1ga89093108c46eeb40fb49f6e8e3e39be0" kindref="member">lte_lc_evt_handler_t</ref></type>
+          <declname>handler</declname>
+        </param>
+        <briefdescription>
+<para>Function to de-register event handler for LTE events. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event handler.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If command execution was successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENXIO</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If handler cannot be found. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If handler is a NULL pointer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="789" column="5" declfile="include/modem/lte_lc.h" declline="789" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1ga4fc0107680cd13002f78b37a95bf7e78" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>lte_lc_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initializes the module and configures the modem. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>a follow-up call to <ref refid="group__lte__lc_ga6752a86d1894ed764c7c94c43b977f5e_1ga6752a86d1894ed764c7c94c43b977f5e" kindref="member">lte_lc_connect()</ref> or <ref refid="group__lte__lc_ga014b26d50065c3054d44679acceb9eda_1ga014b26d50065c3054d44679acceb9eda" kindref="member">lte_lc_connect_async()</ref> must be made to establish an LTE connection. The module can be initialized only once, and subsequent calls will return -EALREADY.</para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if an AT command failed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the library has already been initialized. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="801" column="5" declfile="include/modem/lte_lc.h" declline="801" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1ga6752a86d1894ed764c7c94c43b977f5e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_connect</definition>
+        <argsstring>(void)</argsstring>
+        <name>lte_lc_connect</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function to make a connection with the modem. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Prior to calling this function a call to <ref refid="group__lte__lc_ga4fc0107680cd13002f78b37a95bf7e78_1ga4fc0107680cd13002f78b37a95bf7e78" kindref="member">lte_lc_init</ref> must be made, otherwise -EPERM is returned.</para>
+</simplesect>
+<simplesect kind="note"><para>After initialization, the system mode will be set to the default mode selected with Kconfig and LTE preference set to automatic selection.</para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EPERM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the link controller was not initialized. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if an AT command failed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if a connection attempt timed out before the device was registered to a network. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="817" column="5" declfile="include/modem/lte_lc.h" declline="817" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1ga2b38c725982dbeb9fa786763f2ed8712" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_init_and_connect</definition>
+        <argsstring>(void)</argsstring>
+        <name>lte_lc_init_and_connect</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initializes the LTE module, configures the modem and connects to LTE network. The function blocks until connection is established, or the connection attempt times out. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>The module can be initialized only once, and repeated calls will return -EALREADY. <ref refid="group__lte__lc_ga014b26d50065c3054d44679acceb9eda_1ga014b26d50065c3054d44679acceb9eda" kindref="member">lte_lc_connect_async()</ref> should be used on subsequent calls.</para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the library has already been initialized. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if an AT command failed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if a connection attempt timed out before the device was registered to a network. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="833" column="5" declfile="include/modem/lte_lc.h" declline="833" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1ga014b26d50065c3054d44679acceb9eda" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_connect_async</definition>
+        <argsstring>(lte_lc_evt_handler_t handler)</argsstring>
+        <name>lte_lc_connect_async</name>
+        <param>
+          <type><ref refid="group__lte__lc_ga89093108c46eeb40fb49f6e8e3e39be0_1ga89093108c46eeb40fb49f6e8e3e39be0" kindref="member">lte_lc_evt_handler_t</ref></type>
+          <declname>handler</declname>
+        </param>
+        <briefdescription>
+<para>Connect to LTE network. Non-blocking. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>The module must be initialized before this function is called.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event handler for receiving LTE events. The parameter can be NULL if an event handler is already registered.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if no event handler was registered. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if an AT command failed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="846" column="5" declfile="include/modem/lte_lc.h" declline="846" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1ga3118024b368980d1f6813a9222908864" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_init_and_connect_async</definition>
+        <argsstring>(lte_lc_evt_handler_t handler)</argsstring>
+        <name>lte_lc_init_and_connect_async</name>
+        <param>
+          <type><ref refid="group__lte__lc_ga89093108c46eeb40fb49f6e8e3e39be0_1ga89093108c46eeb40fb49f6e8e3e39be0" kindref="member">lte_lc_evt_handler_t</ref></type>
+          <declname>handler</declname>
+        </param>
+        <briefdescription>
+<para>Initializes the LTE module, configures the modem and connects to LTE network. Non-blocking. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>The module can be initialized only once, and repeated calls will return -EALREADY. <ref refid="group__lte__lc_ga6752a86d1894ed764c7c94c43b977f5e_1ga6752a86d1894ed764c7c94c43b977f5e" kindref="member">lte_lc_connect()</ref> should be used on subsequent calls.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event handler for receiving LTE events. The parameter can be NULL if an event handler is already registered.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the library has already been initialized. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if an AT command failed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if no event handler was registered. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="862" column="5" declfile="include/modem/lte_lc.h" declline="862" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1gaba9b3a725ca5c0c1aff12dd824d1f123" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_deinit</definition>
+        <argsstring>(void)</argsstring>
+        <name>lte_lc_deinit</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Deinitialize the LTE module, powers of the modem. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if an AT command failed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="869" column="5" declfile="include/modem/lte_lc.h" declline="869" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1gad958bf230f01c81464b61468beaf7e0c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_offline</definition>
+        <argsstring>(void)</argsstring>
+        <name>lte_lc_offline</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for sending the modem to offline mode. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the functional mode could not be configured. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="876" column="5" declfile="include/modem/lte_lc.h" declline="876" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1gab8e47e070bc2e0ed617a061b538f4565" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_power_off</definition>
+        <argsstring>(void)</argsstring>
+        <name>lte_lc_power_off</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for sending the modem to power off mode. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the functional mode could not be configured. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="883" column="5" declfile="include/modem/lte_lc.h" declline="883" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1gafb0f682c8aa6dbc62a630ab2aab7659e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_normal</definition>
+        <argsstring>(void)</argsstring>
+        <name>lte_lc_normal</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for sending the modem to normal mode. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the functional mode could not be configured. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="890" column="5" declfile="include/modem/lte_lc.h" declline="890" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1ga424c0a16e44c7f2b8519cd300880beeb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_psm_param_set</definition>
+        <argsstring>(const char *rptau, const char *rat)</argsstring>
+        <name>lte_lc_psm_param_set</name>
+        <param>
+          <type>const char *</type>
+          <declname>rptau</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>rat</declname>
+        </param>
+        <briefdescription>
+<para>Function for setting modem PSM parameters: requested periodic TAU (RPTAU) and requested active time (RAT) to be used when PSM mode is subsequently enabled using <computeroutput>lte_lc_psm_req</computeroutput>. For reference see 3GPP 27.007 Ch. 7.38. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rptau</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Requested periodic TAU as null-terminated string. Set NULL to use manufacturer-specific default value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rat</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Requested active time as null-terminated string. Set NULL to use manufacturer-specific default value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if an input parameter was invalid. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="905" column="5" declfile="include/modem/lte_lc.h" declline="905" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1ga4c137ae6b3b1c7006dd730458958fb77" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_psm_req</definition>
+        <argsstring>(bool enable)</argsstring>
+        <name>lte_lc_psm_req</name>
+        <param>
+          <type>bool</type>
+          <declname>enable</declname>
+        </param>
+        <briefdescription>
+<para>Function for requesting modem to enable or disable power saving mode (PSM) using default Kconfig value or as set using <computeroutput>lte_lc_psm_param_set</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if AT command failed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="914" column="5" declfile="include/modem/lte_lc.h" declline="914" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1ga51f235ae0ba472e31d8b8bbe8abb9882" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_psm_get</definition>
+        <argsstring>(int *tau, int *active_time)</argsstring>
+        <name>lte_lc_psm_get</name>
+        <param>
+          <type>int *</type>
+          <declname>tau</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>active_time</declname>
+        </param>
+        <briefdescription>
+<para>Function for getting the current PSM (Power Saving Mode) configurations for periodic TAU (Tracking Area Update) and active time, both in units of seconds. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>tau</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the variable for parsed periodic TAU interval in seconds. Positive integer, or -1 if timer is deactivated. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>active_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the variable for parsed active time in seconds. Positive integer, or -1 if timer is deactivated.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if input argument was invalid. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if AT command failed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EBADMSG</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if no active time and/or TAU value was received. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="930" column="5" declfile="include/modem/lte_lc.h" declline="930" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1ga1ebba5be09b73b327eb4af0732c1efd4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_ptw_set</definition>
+        <argsstring>(enum lte_lc_lte_mode mode, const char *ptw)</argsstring>
+        <name>lte_lc_ptw_set</name>
+        <param>
+          <type>enum <ref refid="group__lte__lc_ga85a1606ed90f717b1c0607ecb0ad88d2_1ga85a1606ed90f717b1c0607ecb0ad88d2" kindref="member">lte_lc_lte_mode</ref></type>
+          <declname>mode</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>ptw</declname>
+        </param>
+        <briefdescription>
+<para>Function for setting Paging Time Window (PTW) value to be used when eDRX is requested using <computeroutput>lte_lc_edrx_req</computeroutput>. PTW is set individually for LTE-M and NB-IoT. Requesting a specific PTW configuration should be done with caution. The requested value must be compliant with the eDRX value that is configured, and it&apos;s usually best to let the modem use default PTW values. For reference to which values can be set, see subclause 10.5.5.32 of 3GPP TS 24.008. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>mode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>LTE mode to which the PTW value applies. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ptw</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Paging Time Window value as null-terminated string. Set NULL to use manufacturer-specific default value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if an input parameter was invalid. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="948" column="5" declfile="include/modem/lte_lc.h" declline="948" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1gad9689c2d7d4c89141baab307ca0ec2c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_edrx_param_set</definition>
+        <argsstring>(enum lte_lc_lte_mode mode, const char *edrx)</argsstring>
+        <name>lte_lc_edrx_param_set</name>
+        <param>
+          <type>enum <ref refid="group__lte__lc_ga85a1606ed90f717b1c0607ecb0ad88d2_1ga85a1606ed90f717b1c0607ecb0ad88d2" kindref="member">lte_lc_lte_mode</ref></type>
+          <declname>mode</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>edrx</declname>
+        </param>
+        <briefdescription>
+<para>Function for setting modem eDRX value to be used when eDRX is subsequently enabled using <computeroutput>lte_lc_edrx_req</computeroutput>. For reference see 3GPP 27.007 Ch. 7.40. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>mode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>LTE mode to which the eDRX value applies. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>edrx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>eDRX value as null-terminated string. Set NULL to use manufacturer-specific default.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if an input parameter was invalid. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="961" column="5" declfile="include/modem/lte_lc.h" declline="961" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1gaa3aee85e9db505c3c425d9fff270ad0c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_edrx_req</definition>
+        <argsstring>(bool enable)</argsstring>
+        <name>lte_lc_edrx_req</name>
+        <param>
+          <type>bool</type>
+          <declname>enable</declname>
+        </param>
+        <briefdescription>
+<para>Function for requesting modem to enable or disable use of eDRX using values set by <computeroutput>lte_lc_edrx_param_set</computeroutput>. The default values are defined in kconfig. For reference see 3GPP 27.007 Ch. 7.40. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>enable</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Boolean value enabling or disabling the use of eDRX.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if AT command failed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="973" column="5" declfile="include/modem/lte_lc.h" declline="973" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1ga863405792fc51e49c441b11adb5034bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_rai_param_set</definition>
+        <argsstring>(const char *value)</argsstring>
+        <name>lte_lc_rai_param_set</name>
+        <param>
+          <type>const char *</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Function for setting modem RAI value to be used when RAI is subsequently enabled using <computeroutput>lte_lc_rai_req</computeroutput>. For reference see 3GPP 24.301 Ch. 9.9.4.25. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>RAI value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if an input parameter was invalid. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="984" column="5" declfile="include/modem/lte_lc.h" declline="984" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1ga0c1c89a8c45631c55f2ca3f98b4cb6e7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_rai_req</definition>
+        <argsstring>(bool enable)</argsstring>
+        <name>lte_lc_rai_req</name>
+        <param>
+          <type>bool</type>
+          <declname>enable</declname>
+        </param>
+        <briefdescription>
+<para>Function for requesting modem to enable or disable use of RAI using values set by <computeroutput>lte_lc_rai_param_set</computeroutput>. The default values are defined in Kconfig. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>enable</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Boolean value enabling or disabling the use of RAI.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if AT command failed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EOPNOTSUPP</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if RAI is not supported in the current system mode. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="996" column="5" declfile="include/modem/lte_lc.h" declline="996" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1ga9eb3096816958bcc56c06f3a05231b55" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_nw_reg_status_get</definition>
+        <argsstring>(enum lte_lc_nw_reg_status *status)</argsstring>
+        <name>lte_lc_nw_reg_status_get</name>
+        <param>
+          <type>enum <ref refid="group__lte__lc_gae2e22418dff8974965840a21f1c49063_1gae2e22418dff8974965840a21f1c49063" kindref="member">lte_lc_nw_reg_status</ref> *</type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+<para>Get the current network registration status. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer for network registration status.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if input argument was invalid. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the network registration could not be retrieved from the modem. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="1006" column="5" declfile="include/modem/lte_lc.h" declline="1006" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1ga25eae28c0e3bf70bf4ee925ff36abd53" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_system_mode_set</definition>
+        <argsstring>(enum lte_lc_system_mode mode, enum lte_lc_system_mode_preference preference)</argsstring>
+        <name>lte_lc_system_mode_set</name>
+        <param>
+          <type>enum <ref refid="group__lte__lc_gad2977314d8c063f40c729cd8930cd442_1gad2977314d8c063f40c729cd8930cd442" kindref="member">lte_lc_system_mode</ref></type>
+          <declname>mode</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__lte__lc_gaf8185cb2f2a6c262b1ac870d8a35eabc_1gaf8185cb2f2a6c262b1ac870d8a35eabc" kindref="member">lte_lc_system_mode_preference</ref></type>
+          <declname>preference</declname>
+        </param>
+        <briefdescription>
+<para>Set the modem&apos;s system mode and LTE preference. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>mode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>System mode to set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>preference</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>System mode preference.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if input argument was invalid. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the network registration could not be retrieved from the modem. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="1017" column="5" declfile="include/modem/lte_lc.h" declline="1017" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1ga32557ef72271f069e15ab77dcc86c1c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_system_mode_get</definition>
+        <argsstring>(enum lte_lc_system_mode *mode, enum lte_lc_system_mode_preference *preference)</argsstring>
+        <name>lte_lc_system_mode_get</name>
+        <param>
+          <type>enum <ref refid="group__lte__lc_gad2977314d8c063f40c729cd8930cd442_1gad2977314d8c063f40c729cd8930cd442" kindref="member">lte_lc_system_mode</ref> *</type>
+          <declname>mode</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__lte__lc_gaf8185cb2f2a6c262b1ac870d8a35eabc_1gaf8185cb2f2a6c262b1ac870d8a35eabc" kindref="member">lte_lc_system_mode_preference</ref> *</type>
+          <declname>preference</declname>
+        </param>
+        <briefdescription>
+<para>Get the modem&apos;s system mode and LTE preference. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>mode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to system mode variable. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>preference</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to system mode preference variable. Can be NULL.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if input argument was invalid. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the system mode could not be retrieved from the modem. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="1029" column="5" declfile="include/modem/lte_lc.h" declline="1029" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1gacbc003f17e59c3ead5d6f34ef21cecb7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_func_mode_set</definition>
+        <argsstring>(enum lte_lc_func_mode mode)</argsstring>
+        <name>lte_lc_func_mode_set</name>
+        <param>
+          <type>enum <ref refid="group__lte__lc_ga5170c668f1a1f5f52fffe9daf9e2f1e4_1ga5170c668f1a1f5f52fffe9daf9e2f1e4" kindref="member">lte_lc_func_mode</ref></type>
+          <declname>mode</declname>
+        </param>
+        <briefdescription>
+<para>Set the modem&apos;s functional mode. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>mode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Functional mode to set.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if input argument was invalid. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the functional mode could not be retrieved from the modem. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="1040" column="5" declfile="include/modem/lte_lc.h" declline="1040" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1ga6913b19331ca5592f6b68ad8e5fb6f58" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_func_mode_get</definition>
+        <argsstring>(enum lte_lc_func_mode *mode)</argsstring>
+        <name>lte_lc_func_mode_get</name>
+        <param>
+          <type>enum <ref refid="group__lte__lc_ga5170c668f1a1f5f52fffe9daf9e2f1e4_1ga5170c668f1a1f5f52fffe9daf9e2f1e4" kindref="member">lte_lc_func_mode</ref> *</type>
+          <declname>mode</declname>
+        </param>
+        <briefdescription>
+<para>Get the modem&apos;s functional mode. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>mode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to functional mode variable.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if input argument was invalid. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the functional mode could not be retrieved from the modem. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="1050" column="5" declfile="include/modem/lte_lc.h" declline="1050" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1gab10b17ee3586d8f078f47b6ceef7d08b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_lte_mode_get</definition>
+        <argsstring>(enum lte_lc_lte_mode *mode)</argsstring>
+        <name>lte_lc_lte_mode_get</name>
+        <param>
+          <type>enum <ref refid="group__lte__lc_ga85a1606ed90f717b1c0607ecb0ad88d2_1ga85a1606ed90f717b1c0607ecb0ad88d2" kindref="member">lte_lc_lte_mode</ref> *</type>
+          <declname>mode</declname>
+        </param>
+        <briefdescription>
+<para>Get the currently active LTE mode. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>mode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to LTE mode variable.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if input argument was invalid. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the current LTE mode could not be retrieved. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EBADMSG</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the LTE mode was not recognized. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="1061" column="5" declfile="include/modem/lte_lc.h" declline="1061" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1ga258c498d28e62eb2bcfd7ce1535f8f75" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_neighbor_cell_measurement</definition>
+        <argsstring>(enum lte_lc_neighbor_search_type type)</argsstring>
+        <name>lte_lc_neighbor_cell_measurement</name>
+        <param>
+          <type>enum <ref refid="group__lte__lc_ga5a47961f67d8c264a41f7bbda3014f9b_1ga5a47961f67d8c264a41f7bbda3014f9b" kindref="member">lte_lc_neighbor_search_type</ref></type>
+          <declname>type</declname>
+        </param>
+        <briefdescription>
+<para>Initiate a neighbor cell measurement. The result of the measurement is reported back as an event of the type LTE_LC_EVT_NEIGHBOR_CELL_MEAS, meaning that an event handler must be registered to receive the information. Depending on the network conditions and LTE connection state, it may take a while before the measurement result is ready and reported back. After the event is received, the neighbor cell measurements are automatically stopped. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>For modem firmware versions &lt; v1.3.1, LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT is the only accepted type. Other types will result in an error being returned.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Search type, see <computeroutput>enum</computeroutput> lte_lc_neighbor_search_type for more information.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if neighbor cell measurement was successfully initiated. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if AT command failed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="1080" column="5" declfile="include/modem/lte_lc.h" declline="1080" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1gabfcd036be7f29dd9512a1b353dea9ad0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_neighbor_cell_measurement_cancel</definition>
+        <argsstring>(void)</argsstring>
+        <name>lte_lc_neighbor_cell_measurement_cancel</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Cancel an ongoing neighbor cell measurement. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if neighbor cell measurement was cancelled. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if AT command failed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="1088" column="5" declfile="include/modem/lte_lc.h" declline="1088" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1ga695ce816467c642a0ca5a1bfe8cceab8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_conn_eval_params_get</definition>
+        <argsstring>(struct lte_lc_conn_eval_params *params)</argsstring>
+        <name>lte_lc_conn_eval_params_get</name>
+        <param>
+          <type>struct <ref refid="structlte__lc__conn__eval__params" kindref="compound">lte_lc_conn_eval_params</ref> *</type>
+          <declname>params</declname>
+        </param>
+        <briefdescription>
+<para>Get connection evaluation parameters. Connection evaluation parameters can be used to determine the energy efficiency of data transmission prior to the actual data transmission. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to structure to hold connection evaluation parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Zero on success, negative errno code if the API call fails, and a positive error code if the API call succeeds but connection evaluation fails due to modem/network related reasons.</para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Evaluation succeeded. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>1</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Evaluation failed, no cell available. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>2</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Evaluation failed, UICC not available. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>3</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Evaluation failed, only barred cells available. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>4</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Evaluation failed, radio busy (e.g GNSS activity) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>5</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Evaluation failed, aborted due to higher priority operation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>6</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Evaluation failed, UE not registered to network. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>7</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Evaluation failed, Unspecified. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if input argument was invalid. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if AT command failed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EOPNOTSUPP</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if connection evaluation is not available in the current functional mode. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EBADMSG</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if parsing of the AT command response failed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="1113" column="5" declfile="include/modem/lte_lc.h" declline="1113" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1gaf81b4ed883cc34e73b05108b7aa992a3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_modem_events_enable</definition>
+        <argsstring>(void)</argsstring>
+        <name>lte_lc_modem_events_enable</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Enable modem domain events. See <ref refid="group__lte__lc_ga881d51b5950df07508e70d7d4fa1d031_1ga881d51b5950df07508e70d7d4fa1d031" kindref="member">lte_lc_modem_evt</ref> for more information on what events may be received. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This feature is supported for nRF9160 modem firmware v1.3.0 and later versions. Attempting to use this API with older modem versions will result in an error being returned.</para>
+</simplesect>
+<simplesect kind="note"><para>An event handler must be registered in order to receive events.</para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if AT command failed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="1128" column="5" declfile="include/modem/lte_lc.h" declline="1128" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1gaccd82e01361828ac2c6f832de9f58602" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_modem_events_disable</definition>
+        <argsstring>(void)</argsstring>
+        <name>lte_lc_modem_events_disable</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Disable modem domain events. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if AT command failed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="1135" column="5" declfile="include/modem/lte_lc.h" declline="1135" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1ga15ca1a5b8a14a266fbde61e0ff31f67d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_periodic_search_set</definition>
+        <argsstring>(const struct lte_lc_periodic_search_cfg *const cfg)</argsstring>
+        <name>lte_lc_periodic_search_set</name>
+        <param>
+          <type>const struct <ref refid="structlte__lc__periodic__search__cfg" kindref="compound">lte_lc_periodic_search_cfg</ref> *const</type>
+          <declname>cfg</declname>
+        </param>
+        <briefdescription>
+<para>Configure periodic searches. This configuration affects the periodic searches that the modem performs in limited service state to obtain normal service. See <computeroutput>struct</computeroutput> <ref refid="structlte__lc__periodic__search__cfg" kindref="compound">lte_lc_periodic_search_cfg</ref> and &quot;nRF91 AT Commands - Command Reference Guide&quot; for more information and in-depth explanations of periodic search configuration. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the configuration was successfully sent to the modem. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if an input parameter was NULL or contained an invalid pattern count. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if an AT command could not be sent to the modem. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EBADMSG</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the modem responded with an error to an AT command. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="1148" column="5" declfile="include/modem/lte_lc.h" declline="1148" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1gaf2d4b31a17d9945469339a41ef1cfa00" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_periodic_search_get</definition>
+        <argsstring>(struct lte_lc_periodic_search_cfg *const cfg)</argsstring>
+        <name>lte_lc_periodic_search_get</name>
+        <param>
+          <type>struct <ref refid="structlte__lc__periodic__search__cfg" kindref="compound">lte_lc_periodic_search_cfg</ref> *const</type>
+          <declname>cfg</declname>
+        </param>
+        <briefdescription>
+<para>Get the configured periodic search parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if a configuration was found and populated to the provided pointer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if input parameter was NULL. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOENT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if no periodic search was not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if an AT command failed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EBADMSG</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the modem responded with an error to an AT command or the response could not be parsed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="1159" column="5" declfile="include/modem/lte_lc.h" declline="1159" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1ga17902c579460a6ebbf55780b1b56e2cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_periodic_search_clear</definition>
+        <argsstring>(void)</argsstring>
+        <name>lte_lc_periodic_search_clear</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Clear the configured periodic search parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the configuration was cleared. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if an AT command could not be sent to the modem. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EBADMSG</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the modem responded with an error to an AT command. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="1167" column="5" declfile="include/modem/lte_lc.h" declline="1167" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lte__lc_1gac61c37d16e84ce884d6880470cc0c8fe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lte_lc_periodic_search_request</definition>
+        <argsstring>(void)</argsstring>
+        <name>lte_lc_periodic_search_request</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Request an extra search. This can be used for example when modem is in sleep state between periodic searches. The search is performed only when the modem is in sleep state between periodic searches. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the search request was successfully delivered to the modem. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if an AT command could not be sent to the modem. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="1176" column="5" declfile="include/modem/lte_lc.h" declline="1176" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__lte__lc_1gaaf135bb70fdf0c29469f7ddf768eec03" prot="public" static="no">
+        <name>LTE_LC_CELL_TIMING_ADVANCE_MAX</name>
+        <initializer>20512</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="260" column="9" bodyfile="include/modem/lte_lc.h" bodystart="260" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lte__lc_1ga4cef12240755a4f2cd473f3ecc64c1f0" prot="public" static="no">
+        <name>LTE_LC_CELL_TIMING_ADVANCE_INVALID</name>
+        <initializer>65535</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="261" column="9" bodyfile="include/modem/lte_lc.h" bodystart="261" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lte__lc_1ga4015e80cda2c705d037a693cf29d9ef2" prot="public" static="no">
+        <name>LTE_LC_CELL_EARFCN_MAX</name>
+        <initializer>262143</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="262" column="9" bodyfile="include/modem/lte_lc.h" bodystart="262" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lte__lc_1ga5f8bc9c9f2303bb2cbe4036ae5b9b05a" prot="public" static="no">
+        <name>LTE_LC_CELL_RSRP_INVALID</name>
+        <initializer>255</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="263" column="9" bodyfile="include/modem/lte_lc.h" bodystart="263" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lte__lc_1ga4d3b89eb0a8d1590bb253eac35c252c4" prot="public" static="no">
+        <name>LTE_LC_CELL_RSRQ_INVALID</name>
+        <initializer>255</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="264" column="9" bodyfile="include/modem/lte_lc.h" bodystart="264" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lte__lc_1gafdafce4a56c6dd240519272d756b83f4" prot="public" static="no">
+        <name>LTE_LC_CELL_EUTRAN_ID_INVALID</name>
+        <initializer>UINT32_MAX</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="265" column="9" bodyfile="include/modem/lte_lc.h" bodystart="265" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lte__lc_1gad6d87ac78d7a729f43ebe15e44356c66" prot="public" static="no">
+        <name>LTE_LC_CELL_EUTRAN_ID_MAX</name>
+        <initializer>268435455</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="266" column="9" bodyfile="include/modem/lte_lc.h" bodystart="266" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Public APIs for the LTE Link Controller. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__pmw3360" kind="group">
+    <compoundname>pmw3360</compoundname>
+    <title>PMW3360 motion sensor driver</title>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__pmw3360_1gaab336f619c0bb42471895b2a58c4064a" prot="public" static="no" strong="no">
+        <type></type>
+        <name>pmw3360_attribute</name>
+        <enumvalue id="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aae5a6505e20706becaee5ff3f8521edae" prot="public">
+          <name>PMW3360_ATTR_CPI</name>
+          <initializer>= SENSOR_ATTR_PRIV_START</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Sensor CPI for both X and Y axes. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aaa4ecd5bc34adfec5d41f9c49284556f8" prot="public">
+          <name>PMW3360_ATTR_REST_ENABLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Enable or disable sleep modes. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aaf80a9db65e747cc798c7a64963ff02cb" prot="public">
+          <name>PMW3360_ATTR_RUN_DOWNSHIFT_TIME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Entering time from Run mode to REST1 mode [ms]. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aa5e973481bba4c100eac760be1d25be05" prot="public">
+          <name>PMW3360_ATTR_REST1_DOWNSHIFT_TIME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Entering time from REST1 mode to REST2 mode [ms]. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aa3d266229d8466cc26cff0c3292f9c8ef" prot="public">
+          <name>PMW3360_ATTR_REST2_DOWNSHIFT_TIME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Entering time from REST2 mode to REST3 mode [ms]. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aabbbb0a88b8181112790cef373f9fe462" prot="public">
+          <name>PMW3360_ATTR_REST1_SAMPLE_TIME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Sampling frequency time during REST1 mode [ms]. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aa76b82c82fb262a91186d5936acaa9b38" prot="public">
+          <name>PMW3360_ATTR_REST2_SAMPLE_TIME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Sampling frequency time during REST2 mode [ms]. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aa6c3799efb219182633d0dadfbc02b7e2" prot="public">
+          <name>PMW3360_ATTR_REST3_SAMPLE_TIME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Sampling frequency time during REST3 mode [ms]. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Sensor specific attributes of PMW3360. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/sensor/pmw3360.h" line="28" column="1" bodyfile="include/sensor/pmw3360.h" bodystart="28" bodyend="52"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>PMW3360 motion sensor driver. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

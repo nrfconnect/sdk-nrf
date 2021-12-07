@@ -1,0 +1,270 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__light__ctrl" kind="group">
+    <compoundname>bt_mesh_light_ctrl</compoundname>
+    <title>Light Lightness Control common API</title>
+    <innergroup refid="group__bt__mesh__light__ctrl__cli">Light Lightness Control Client</innergroup>
+    <innergroup refid="group__bt__mesh__light__ctrl__srv">Light Lightness Control Server</innergroup>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__mesh__light__ctrl_1ga10519c425d86f6f27012839001e43c7f" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_light_ctrl_prop</name>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa980bf6d45018109e0675407ff065946e" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_ON</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_AMB_LUXLEVEL_ON</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Target ambient illuminance in the On state. <verbatim>    - Unit: Lux
+    - Encoding: 24 bit unsigned scalar (Resolution: 0.01 lx)
+    - Range: 0 to 167772.13
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fad7ca48a46303bb8b9a78b6dbc42f86b0" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_PROLONG</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_AMB_LUXLEVEL_PROLONG</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Target ambient illuminance in the Prolong state. <verbatim>    - Unit: Lux
+    - Encoding: 24 bit unsigned scalar (Resolution: 0.01 lx)
+    - Range: 0 to 167772.13
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa142b1094f5dc6354b2dfee2a31fa2e61" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_STANDBY</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_AMB_LUXLEVEL_STANDBY</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Target ambient illuminance in the Standby state. <verbatim>    - Unit: Lux
+    - Encoding: 24 bit unsigned scalar (Resolution: 0.01 lx)
+    - Range: 0 to 167772.13
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7faa08c2cafb4a9001d5e57145cfceb1743" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_ON</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_LIGHTNESS_ON</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Lightness in the On state. <verbatim>    - Unit: Unitless
+    - Encoding: 16 bit unsigned scalar (Resolution: 1)
+    - Range: 0 to 65535
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa78e15def142d1e34183605009c6d16ea" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_PROLONG</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_LIGHTNESS_PROLONG</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Lightness in the Prolong state. <verbatim>    - Unit: Unitless
+    - Encoding: 16 bit unsigned scalar (Resolution: 1)
+    - Range: 0 to 65535
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa36fb08324319fa1911b0fbbc599ac678" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_STANDBY</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_LIGHTNESS_STANDBY</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Lightness in the Standby state. <verbatim>    - Unit: Unitless
+    - Encoding: 16 bit unsigned scalar (Resolution: 1)
+    - Range: 0 to 65535
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa8e61ff34c8057518e71f77077280293f" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_REG_ACCURACY</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_REG_ACCURACY</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Regulator Accuracy. <verbatim>    - Unit: Percent
+    - Encoding: 8 bit unsigned scalar (Resolution: 0.5 %)
+    - Range: 0 to 100.0
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa8c455f414921809a029ffad78d9db7b0" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_PROLONG</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_TIME_FADE</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Fade time for fading to the Prolong state. <verbatim>    - Unit: Seconds
+    - Encoding: 24 bit unsigned scalar (Resolution: 1 ms)
+    - Range: 0 to 16777.214
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa7223696f5f532e2792c5a5f2dbd7dead" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_ON</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_TIME_FADE_ON</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Fade time for fading to the On state. <verbatim>    - Unit: Seconds
+    - Encoding: 24 bit unsigned scalar (Resolution: 1 ms)
+    - Range: 0 to 16777.214
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fafe256d0611fbde4ba547630675908bd3" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_STANDBY_AUTO</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_TIME_FADE_STANDBY_AUTO</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Fade time for fading to the Standby state (auto mode). <verbatim>    - Unit: Seconds
+    - Encoding: 24 bit unsigned scalar (Resolution: 1 ms)
+    - Range: 0 to 16777.214
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa9e268a9e6c7a4267080cfc8d29111aa6" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_STANDBY_MANUAL</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_TIME_FADE_STANDBY_MANUAL</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Fade time for fading to the Standby state (manual mode). <verbatim>    - Unit: Seconds
+    - Encoding: 24 bit unsigned scalar (Resolution: 1 ms)
+    - Range: 0 to 16777.214
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fabdfc1a624c1dede7f51c4afc2028edfc" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_TIME_OCCUPANCY_DELAY</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_TIME_OCCUPANCY_DELAY</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Delay from Occupancy sensor reports until the light turns on. <verbatim>    - Unit: Seconds
+    - Encoding: 24 bit unsigned scalar (Resolution: 1 ms)
+    - Range: 0 to 16777.214
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fadad1f604f9be4d185632448b4294efc3" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_TIME_PROLONG</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_TIME_PROLONG</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Time to stay in the Prolong state. <verbatim>    *  - Unit: Seconds
+    - Encoding: 24 bit unsigned scalar (Resolution: 1 ms)
+    - Range: 0 to 16777.214
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7faf94be21f54cf77b06b1b81df4e0ba4dd" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_TIME_ON</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_TIME_RUN_ON</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Time to stay in the On state. <verbatim>    - Unit: Seconds
+    - Encoding: 24 bit unsigned scalar (Resolution: 1 ms)
+    - Range: 0 to 16777.214
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light Lightness Control properties </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl.h" line="23" column="1" bodyfile="include/bluetooth/mesh/light_ctrl.h" bodystart="23" bodyend="149"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__mesh__light__ctrl_1ga8a2366f5d561f74e2d58e4010081adeb" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_light_ctrl_coeff</name>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga8a2366f5d561f74e2d58e4010081adeb_1gga8a2366f5d561f74e2d58e4010081adeba8aa156390fd39c0772f66debfc4fb9af" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_COEFF_KID</name>
+          <initializer>= BT_MESH_PROP_ID_LIGHT_CTRL_REG_KID</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Regulator downwards integral coeffient (Kid). <verbatim>    - Unit: Unitless
+    - Encoding: 32 bit floating point.
+    - Range: 0 to 1000.0
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga8a2366f5d561f74e2d58e4010081adeb_1gga8a2366f5d561f74e2d58e4010081adeba7d7604c35d1033ee737106e73fdc6f7f" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_COEFF_KIU</name>
+          <initializer>= BT_MESH_PROP_ID_LIGHT_CTRL_REG_KIU</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Regulator upwards integral coeffient (Kiu). <verbatim>    - Unit: Unitless
+    - Encoding: 32 bit floating point.
+    - Range: 0 to 1000.0
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga8a2366f5d561f74e2d58e4010081adeb_1gga8a2366f5d561f74e2d58e4010081adeba58508f4fff075a4a7a70d6115f877862" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_COEFF_KPD</name>
+          <initializer>= BT_MESH_PROP_ID_LIGHT_CTRL_REG_KPD</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Regulator downwards proportional coeffient (Kpd). <verbatim>    - Unit: Unitless
+    - Encoding: 32 bit floating point.
+    - Range: 0 to 1000.0
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga8a2366f5d561f74e2d58e4010081adeb_1gga8a2366f5d561f74e2d58e4010081adebaa004096a0216ad9c8cbf3d1eb268b967" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_COEFF_KPU</name>
+          <initializer>= BT_MESH_PROP_ID_LIGHT_CTRL_REG_KPU</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Regulator upwards proportional coeffient (Kpu). <verbatim>    - Unit: Unitless
+    - Encoding: 32 bit floating point.
+    - Range: 0 to 1000.0
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light Control Regulator Coefficients </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl.h" line="152" column="1" bodyfile="include/bluetooth/mesh/light_ctrl.h" bodystart="152" bodyend="184"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Common types for the Light Lightness Control models. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__event__manager__profiler" kind="group">
+    <compoundname>event_manager_profiler</compoundname>
+    <title>Event Manager Profiler</title>
+    <innerclass refid="structprofiler__info" prot="public">profiler_info</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__event__manager__profiler_1ga0def2aec07d929152fdef44cf21d0078" prot="public" static="no">
+        <name>ENCODE</name>
+        <param><defname>...</defname></param>
+        <initializer>__VA_ARGS__</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Encode event data types or labels.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data types or labels to be encoded. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager_profiler.h" line="54" column="9" bodyfile="include/event_manager_profiler.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__event__manager__profiler_1gadd4c317f31ca2f1dc1812967d3b9c69b" prot="public" static="no">
+        <name>EVENT_INFO_DEFINE</name>
+        <param><defname>ename</defname></param>
+        <param><defname>types</defname></param>
+        <param><defname>labels</defname></param>
+        <param><defname>profile_func</defname></param>
+        <initializer>	BUILD_ASSERT(profile_func != NULL);			\
+	_EVENT_INFO_DEFINE(ename, <ref refid="group__event__manager__profiler_ga0def2aec07d929152fdef44cf21d0078_1ga0def2aec07d929152fdef44cf21d0078" kindref="member">ENCODE</ref>(types), <ref refid="group__event__manager__profiler_ga0def2aec07d929152fdef44cf21d0078_1ga0def2aec07d929152fdef44cf21d0078" kindref="member">ENCODE</ref>(labels), profile_func)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Define event profiling information.</para>
+<para>This macro provides definitions required for an event to be profiled.</para>
+<para><simplesect kind="note"><para>Types and labels of the profiled values should be wrapped with the <ref refid="group__event__manager__profiler_ga0def2aec07d929152fdef44cf21d0078_1ga0def2aec07d929152fdef44cf21d0078" kindref="member">ENCODE</ref> macro.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ename</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the event. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>types</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Types of values to profile (represented as <ref refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1ga89852e0ad202010e105fec68bcf32b0c" kindref="member">profiler_arg</ref>). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels of values to profile. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>profile_func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Function used to profile event data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager_profiler.h" line="69" column="9" bodyfile="include/event_manager_profiler.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Event Manager Profiler. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

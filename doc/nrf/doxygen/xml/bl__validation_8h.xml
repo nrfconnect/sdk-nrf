@@ -1,0 +1,323 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="bl__validation_8h" kind="file" language="C++">
+    <compoundname>bl_validation.h</compoundname>
+    <includes local="no">stdbool.h</includes>
+    <includes refid="fw__info_8h" local="no">fw_info.h</includes>
+    <includes local="no">zephyr/types.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/bl_validation.h</label>
+        <link refid="bl__validation_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>fw_info.h</label>
+        <link refid="fw__info_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>linker/sections.h</label>
+      </node>
+      <node id="2">
+        <label>stdbool.h</label>
+      </node>
+      <node id="5">
+        <label>stddef.h</label>
+      </node>
+      <node id="10">
+        <label>string.h</label>
+      </node>
+      <node id="8">
+        <label>sys/__assert.h</label>
+      </node>
+      <node id="7">
+        <label>sys/util.h</label>
+      </node>
+      <node id="6">
+        <label>toolchain.h</label>
+      </node>
+      <node id="4">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structbl__validate__fw__ext__api" prot="public">bl_validate_fw_ext_api</innerclass>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__bl__validation_ga69ddf3f49620ef2f8f8e6ca9b67bb1c6_1ga69ddf3f49620ef2f8f8e6ca9b67bb1c6" prot="public" static="no">
+        <type>bool(*</type>
+        <definition>typedef bool(* bl_validate_firmware_t) (uint32_t fw_dst_address, uint32_t fw_src_address)</definition>
+        <argsstring>)(uint32_t fw_dst_address, uint32_t fw_src_address)</argsstring>
+        <name>bl_validate_firmware_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_validation.h" line="38" column="1" bodyfile="include/bl_validation.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bl__validation_ga09f46e652464319a1c099a20f545a531_1ga09f46e652464319a1c099a20f545a531" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool bl_validate_firmware</definition>
+        <argsstring>(uint32_t fw_dst_address, uint32_t fw_src_address)</argsstring>
+        <name>bl_validate_firmware</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>fw_dst_address</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>fw_src_address</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Function for validating firmware.</para>
+<para>This will run a series of checks on the <computeroutput>fw_src_address</computeroutput> contents, then locate the validation info and check the signature of the image.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">fw_dst_address</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Address where the firmware will be written. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">fw_src_address</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Address of the firmware to be validated.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the image is valid </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the image is invalid </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_validation.h" line="34" column="6" declfile="include/bl_validation.h" declline="34" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bl__validation_ga7468eb418cffc6b49fbe61e97ef8376c_1ga7468eb418cffc6b49fbe61e97ef8376c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool bl_validate_firmware_available</definition>
+        <argsstring>(void)</argsstring>
+        <name>bl_validate_firmware_available</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Whether <ref refid="group__bl__validation_ga09f46e652464319a1c099a20f545a531_1ga09f46e652464319a1c099a20f545a531" kindref="member">bl_validate_firmware()</ref> is available.</para>
+<para>This is only relevant when <verbatim>embed:rst:inline :kconfig:`CONFIG_BL_VALIDATE_FW_EXT_API_OPTIONAL` </verbatim> is set.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="group__bl__validation_ga09f46e652464319a1c099a20f545a531_1ga09f46e652464319a1c099a20f545a531" kindref="member">bl_validate_firmware()</ref> can be called and should work correctly. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="group__bl__validation_ga09f46e652464319a1c099a20f545a531_1ga09f46e652464319a1c099a20f545a531" kindref="member">bl_validate_firmware()</ref> is unavailable and will always return false because the undelying EXT_API is unavailable. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_validation.h" line="49" column="6" declfile="include/bl_validation.h" declline="49" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bl__validation_ga732d16cd26eafde1efe00957d5db09d4_1ga732d16cd26eafde1efe00957d5db09d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool bl_validate_firmware_local</definition>
+        <argsstring>(uint32_t fw_address, const struct fw_info *fwinfo)</argsstring>
+        <name>bl_validate_firmware_local</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>fw_address</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structfw__info" kindref="compound">fw_info</ref> *</type>
+          <declname>fwinfo</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Function for validating firmware in place.</para>
+<para><simplesect kind="note"><para>This function is only available to the bootloader.</para>
+</simplesect>
+See <ref refid="group__bl__validation_ga09f46e652464319a1c099a20f545a531_1ga09f46e652464319a1c099a20f545a531" kindref="member">bl_validate_firmware</ref> for more details. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_validation.h" line="57" column="6" declfile="include/bl_validation.h" declline="57" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bl__validation_ga18c145c5c94a7e03f2108bebebd89d57_1ga18c145c5c94a7e03f2108bebebd89d57" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int set_monotonic_version</definition>
+        <argsstring>(uint16_t version, uint16_t slot)</argsstring>
+        <name>set_monotonic_version</name>
+        <param>
+          <type>uint16_t</type>
+          <declname>version</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>slot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Write version and slot to monotonic counter.</para>
+<para>The version is left-shifted 1 bit, and the slot is place as the LSB.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">version</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Firmware version. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">slot</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Slot where firmware is located. Must be 0 or 1.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>See <ref refid="group__bl__storage_ga25942db469f294b46e3344e9efbb83c4_1ga25942db469f294b46e3344e9efbb83c4" kindref="member">set_monotonic_counter</ref>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_validation.h" line="77" column="5" declfile="include/bl_validation.h" declline="77" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bl__validation_ga108d51430b319886e08ec3cdf167f4f9_1ga108d51430b319886e08ec3cdf167f4f9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint16_t</type>
+        <definition>uint16_t get_monotonic_version</definition>
+        <argsstring>(uint16_t *slot_out)</argsstring>
+        <name>get_monotonic_version</name>
+        <param>
+          <type>uint16_t *</type>
+          <declname>slot_out</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Read version and slot from monotonic counter.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">slot_out</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Slot where firmware is located. Can be NULL.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Firmware version </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_validation.h" line="86" column="10" declfile="include/bl_validation.h" declline="86" declcolumn="10"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BL_VALIDATION_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BL_VALIDATION_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdbool.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="fw__info_8h" kindref="compound">fw_info.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="group__bl__validation_ga09f46e652464319a1c099a20f545a531_1ga09f46e652464319a1c099a20f545a531" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__bl__validation_ga09f46e652464319a1c099a20f545a531_1ga09f46e652464319a1c099a20f545a531" kindref="member">bl_validate_firmware</ref>(uint32_t<sp/>fw_dst_address,<sp/>uint32_t<sp/>fw_src_address);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Typedef<sp/>for<sp/>use<sp/>in<sp/>EXT_API<sp/>declaration<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="group__bl__validation_ga69ddf3f49620ef2f8f8e6ca9b67bb1c6_1ga69ddf3f49620ef2f8f8e6ca9b67bb1c6" refkind="member"><highlight class="normal">bool<sp/>(*<ref refid="group__bl__validation_ga69ddf3f49620ef2f8f8e6ca9b67bb1c6_1ga69ddf3f49620ef2f8f8e6ca9b67bb1c6" kindref="member">bl_validate_firmware_t</ref>)(uint32_t<sp/>fw_dst_address,<sp/>uint32_t<sp/>fw_src_address);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="group__bl__validation_ga7468eb418cffc6b49fbe61e97ef8376c_1ga7468eb418cffc6b49fbe61e97ef8376c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__bl__validation_ga7468eb418cffc6b49fbe61e97ef8376c_1ga7468eb418cffc6b49fbe61e97ef8376c" kindref="member">bl_validate_firmware_available</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="group__bl__validation_ga732d16cd26eafde1efe00957d5db09d4_1ga732d16cd26eafde1efe00957d5db09d4" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__bl__validation_ga732d16cd26eafde1efe00957d5db09d4_1ga732d16cd26eafde1efe00957d5db09d4" kindref="member">bl_validate_firmware_local</ref>(uint32_t<sp/>fw_address,</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structfw__info" kindref="compound">fw_info</ref><sp/>*fwinfo);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="structbl__validate__fw__ext__api" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbl__validate__fw__ext__api" kindref="compound">bl_validate_fw_ext_api</ref><sp/>{</highlight></codeline>
+<codeline lineno="65" refid="structbl__validate__fw__ext__api_aa2b7041ca13491a152aa84c77ca5a165_1aa2b7041ca13491a152aa84c77ca5a165" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bl__validation_ga69ddf3f49620ef2f8f8e6ca9b67bb1c6_1ga69ddf3f49620ef2f8f8e6ca9b67bb1c6" kindref="member">bl_validate_firmware_t</ref><sp/><ref refid="structbl__validate__fw__ext__api_aa2b7041ca13491a152aa84c77ca5a165_1aa2b7041ca13491a152aa84c77ca5a165" kindref="member">bl_validate_firmware</ref>;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77" refid="group__bl__validation_ga18c145c5c94a7e03f2108bebebd89d57_1ga18c145c5c94a7e03f2108bebebd89d57" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bl__validation_ga18c145c5c94a7e03f2108bebebd89d57_1ga18c145c5c94a7e03f2108bebebd89d57" kindref="member">set_monotonic_version</ref>(uint16_t<sp/>version,<sp/>uint16_t<sp/>slot);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="group__bl__validation_ga108d51430b319886e08ec3cdf167f4f9_1ga108d51430b319886e08ec3cdf167f4f9" refkind="member"><highlight class="normal">uint16_t<sp/><ref refid="group__bl__validation_ga108d51430b319886e08ec3cdf167f4f9_1ga108d51430b319886e08ec3cdf167f4f9" kindref="member">get_monotonic_version</ref>(uint16_t<sp/>*slot_out);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BL_VALIDATION_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/bl_validation.h"/>
+  </compounddef>
+</doxygen>

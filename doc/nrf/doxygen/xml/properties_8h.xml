@@ -1,0 +1,2416 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="properties_8h" kind="file" language="C++">
+    <compoundname>properties.h</compoundname>
+    <includes local="no">bluetooth/mesh.h</includes>
+    <includedby refid="gen__prop_8h" local="no">include/bluetooth/mesh/gen_prop.h</includedby>
+    <includedby refid="light__ctrl_8h" local="no">include/bluetooth/mesh/light_ctrl.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/bluetooth/mesh/properties.h</label>
+        <link refid="properties_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bluetooth/mesh.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>include/bluetooth/mesh/gen_prop.h</label>
+        <link refid="gen__prop_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>include/bluetooth/mesh/gen_prop_cli.h</label>
+        <link refid="gen__prop__cli_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>include/bluetooth/mesh/gen_prop_srv.h</label>
+        <link refid="gen__prop__srv_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>include/bluetooth/mesh/light_ctrl.h</label>
+        <link refid="light__ctrl_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>include/bluetooth/mesh/light_ctrl_cli.h</label>
+        <link refid="light__ctrl__cli_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>include/bluetooth/mesh/light_ctrl_srv.h</label>
+        <link refid="light__ctrl__srv_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>include/bluetooth/mesh/models.h</label>
+        <link refid="models_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/mesh/properties.h</label>
+        <link refid="properties_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>include/bluetooth/mesh/vnd/silvair_enocean_srv.h</label>
+        <link refid="silvair__enocean__srv_8h"/>
+      </node>
+    </invincdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga413ac9169af1fb0f89e048b75ab642bb_1ga413ac9169af1fb0f89e048b75ab642bb" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PROHIBITED</name>
+        <initializer>0x0000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Prohibited. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="24" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gab3ad1a6d76aa7105091e08d9927a695e_1gab3ad1a6d76aa7105091e08d9927a695e" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_AVG_AMB_TEMP_IN_A_PERIOD_OF_DAY</name>
+        <initializer>0x0001</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Average ambient temperature in a period of day. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="26" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gae92b14b15bb1ce6a013b6303e1b04c2d_1gae92b14b15bb1ce6a013b6303e1b04c2d" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_AVG_INPUT_CURRENT</name>
+        <initializer>0x0002</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Average input current. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="28" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga6e1ffe040ef94503e3b5b89c169940c6_1ga6e1ffe040ef94503e3b5b89c169940c6" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_AVG_INPUT_VOLTAGE</name>
+        <initializer>0x0003</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Average input voltage. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="30" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga2afcc95864a85721e9872859ba2fc682_1ga2afcc95864a85721e9872859ba2fc682" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_AVG_OUTPUT_CURRENT</name>
+        <initializer>0x0004</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Average output current. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="32" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga74be972e6988387239e2949f50cc0b00_1ga74be972e6988387239e2949f50cc0b00" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_AVG_OUTPUT_VOLTAGE</name>
+        <initializer>0x0005</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Average output voltage. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="34" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga2d7f6380b642158d6c0364b4a6da458f_1ga2d7f6380b642158d6c0364b4a6da458f" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_CENTER_BEAM_INTENSITY_AT_FULL_POWER</name>
+        <initializer>0x0006</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Center beam intensity at full power. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="36" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga7c8200a06b7b4da9859f713d7a2243ca_1ga7c8200a06b7b4da9859f713d7a2243ca" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_CHROMATICITY_TOLERANCE</name>
+        <initializer>0x0007</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Chromaticity tolerance. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="38" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga8d2185a746000075740a28c0cae43755_1ga8d2185a746000075740a28c0cae43755" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_COL_RENDERING_INDEX_R9</name>
+        <initializer>0x0008</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Color rendering index R9. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="40" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga14a0b0c40c62e58e9d9f49324d5e6e3d_1ga14a0b0c40c62e58e9d9f49324d5e6e3d" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_COL_RENDERING_INDEX_RA</name>
+        <initializer>0x0009</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Color rendering index RA. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="42" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gacc23ecd2f6aaa9629412fec131d60ca8_1gacc23ecd2f6aaa9629412fec131d60ca8" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_DEV_APPEARANCE</name>
+        <initializer>0x000A</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device appearance. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="44" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gadbb4cc71e09688c11a2d4b64cffd1f48_1gadbb4cc71e09688c11a2d4b64cffd1f48" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_DEV_COUNTRY_OF_ORIGIN</name>
+        <initializer>0x000B</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device country of origin. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="46" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga9b5989a039f8a1008ff40e12c97743b8_1ga9b5989a039f8a1008ff40e12c97743b8" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_DEV_DATE_OF_MANUFACTURE</name>
+        <initializer>0x000C</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device date of manufacture. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="48" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga30431dad49526af808c8cff9a4c6a865_1ga30431dad49526af808c8cff9a4c6a865" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_DEV_ENERGY_USE_SINCE_TURN_ON</name>
+        <initializer>0x000D</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device energy use since turn on. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="50" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaf695fbb90ac1eb68f7806e22b4db56d3_1gaf695fbb90ac1eb68f7806e22b4db56d3" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_DEV_FW_REVISION</name>
+        <initializer>0x000E</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device firmware revision. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="52" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga6b7622200f73c866bec3bf4ea0abdee6_1ga6b7622200f73c866bec3bf4ea0abdee6" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_DEV_GLOBAL_TRADE_ITEM_NUM</name>
+        <initializer>0x000F</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device global trade item number. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="54" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gab25be17e530fb309ae3ea3500462eea9_1gab25be17e530fb309ae3ea3500462eea9" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_DEV_HW_REVISION</name>
+        <initializer>0x0010</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device hardware revision. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="56" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga53ddd34acab609f154dd5b9e3d439434_1ga53ddd34acab609f154dd5b9e3d439434" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_DEV_MFR_NAME</name>
+        <initializer>0x0011</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device manufacturer name. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="58" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaa6f25e673da3aeaadd986d9235bfe5cb_1gaa6f25e673da3aeaadd986d9235bfe5cb" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_DEV_MODEL_NUM</name>
+        <initializer>0x0012</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device model number. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="60" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gafebdb47444cd171afcbdbecea454bc22_1gafebdb47444cd171afcbdbecea454bc22" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_DEV_OP_TEMP_RANGE_SPEC</name>
+        <initializer>0x0013</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device operating temperature range specification. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="62" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga9487500fd3e78def2688420dd6d58662_1ga9487500fd3e78def2688420dd6d58662" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_DEV_OP_TEMP_STAT_VALUES</name>
+        <initializer>0x0014</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device operating temperature statistical values. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="64" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga96c8f8e716428d212638989529726495_1ga96c8f8e716428d212638989529726495" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_DEV_OVER_TEMP_EVT_STAT</name>
+        <initializer>0x0015</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device over temperature event statistics. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="66" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga01ffa45890e53f9a9372f37012971755_1ga01ffa45890e53f9a9372f37012971755" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_DEV_POWER_RANGE_SPEC</name>
+        <initializer>0x0016</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device power range specification. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="68" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaaabad4683974df597bea98d8968dd5ef_1gaaabad4683974df597bea98d8968dd5ef" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_DEV_RUNTIME_SINCE_TURN_ON</name>
+        <initializer>0x0017</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device runtime since turn on. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="70" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga8d9ab7dc00050e0f6772e859736cafa6_1ga8d9ab7dc00050e0f6772e859736cafa6" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_DEV_RUNTIME_WARRANTY</name>
+        <initializer>0x0018</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device runtime warranty. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="72" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga920bbc4a67c8e7f1c35729423d756386_1ga920bbc4a67c8e7f1c35729423d756386" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_DEV_SERIAL_NUM</name>
+        <initializer>0x0019</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device serial number. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="74" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga39421d3aadb6f1273dd33324558636e5_1ga39421d3aadb6f1273dd33324558636e5" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_DEV_SW_REVISION</name>
+        <initializer>0x001A</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device software revision. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="76" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaf536ae24a43f9011daeffc574a3a15be_1gaf536ae24a43f9011daeffc574a3a15be" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_DEV_UNDER_TEMP_EVT_STAT</name>
+        <initializer>0x001B</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device under temperature event statistics. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="78" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga809984c2bff3c6330b5a418fa1ddc8f7_1ga809984c2bff3c6330b5a418fa1ddc8f7" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_INDOOR_AMB_TEMP_STAT_VALUES</name>
+        <initializer>0x001C</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indoor ambient temperature statistical values. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="80" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gae943b5e0ddf25017d99043de41c4b037_1gae943b5e0ddf25017d99043de41c4b037" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_INITIAL_CIE_1931_CHROMATICITY_COORDS</name>
+        <initializer>0x001D</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initial CIE-1931 chromaticity coordinates. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="82" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga929c7002ee395eb26d82b24c480a27a1_1ga929c7002ee395eb26d82b24c480a27a1" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_INITIAL_CORRELATED_COL_TEMP</name>
+        <initializer>0x001E</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initial correlated color temperature. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="84" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga10f1c1e6b4c91096ac8d3809fcddbcec_1ga10f1c1e6b4c91096ac8d3809fcddbcec" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_INITIAL_LUMINOUS_FLUX</name>
+        <initializer>0x001F</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initial luminous flux. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="86" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga41f746abde8b902fa280a0950ab812c0_1ga41f746abde8b902fa280a0950ab812c0" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_INITIAL_PLANCKIAN_DISTANCE</name>
+        <initializer>0x0020</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initial planckian distance. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="88" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaa341aa6edc13f5ec2f5f7ebe55f1fe26_1gaa341aa6edc13f5ec2f5f7ebe55f1fe26" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_INPUT_CURRENT_RANGE_SPEC</name>
+        <initializer>0x0021</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Input current range specification. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="90" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga1f75cfca550b0cfdc40f70bb10d54a8d_1ga1f75cfca550b0cfdc40f70bb10d54a8d" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_INPUT_CURRENT_STAT</name>
+        <initializer>0x0022</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Input current statistics. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="92" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga75d14b7b5789dde1267375cb1481329f_1ga75d14b7b5789dde1267375cb1481329f" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_INPUT_OVER_CURRENT_EVT_STAT</name>
+        <initializer>0x0023</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Input over current event statistics. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="94" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gabcf54b534c38f18ceddeb3995549d6c7_1gabcf54b534c38f18ceddeb3995549d6c7" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_INPUT_OVER_RIPPLE_VOLTAGE_EVT_STAT</name>
+        <initializer>0x0024</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Input over ripple voltage event statistics. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="96" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gada9bd29b44e6db4f20476fa6896167ba_1gada9bd29b44e6db4f20476fa6896167ba" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_INPUT_OVER_VOLTAGE_EVT_STAT</name>
+        <initializer>0x0025</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Input over voltage event statistics. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="98" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gad674c4dcbc207ecc7a304ad904eb1224_1gad674c4dcbc207ecc7a304ad904eb1224" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_INPUT_UNDER_CURRENT_EVT_STAT</name>
+        <initializer>0x0026</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Input under current event statistics. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="100" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga63c97ea25e1516de20a5f501f0e9e5ac_1ga63c97ea25e1516de20a5f501f0e9e5ac" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_INPUT_UNDER_VOLTAGE_EVT_STAT</name>
+        <initializer>0x0027</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Input under voltage event statistics. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="102" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga3b3b7d01fbf65f3115d3459c26e02106_1ga3b3b7d01fbf65f3115d3459c26e02106" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_INPUT_VOLTAGE_RANGE_SPEC</name>
+        <initializer>0x0028</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Input voltage range specification. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="104" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga5739d9f97b447fee79ca196aff6e43ae_1ga5739d9f97b447fee79ca196aff6e43ae" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_INPUT_VOLTAGE_RIPPLE_SPEC</name>
+        <initializer>0x0029</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Input voltage ripple specification. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="106" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga34dfd3d2f425ee4f10e52b3033d31807_1ga34dfd3d2f425ee4f10e52b3033d31807" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_INPUT_VOLTAGE_STAT</name>
+        <initializer>0x002A</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Input voltage statistics. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="108" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga7119b455b742f533b0fc5bc116da7a75_1ga7119b455b742f533b0fc5bc116da7a75" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_CTRL_AMB_LUXLEVEL_ON</name>
+        <initializer>0x002B</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light control ambient luxlevel on. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="110" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gae113de6c8869bd084fe2f03600b54acb_1gae113de6c8869bd084fe2f03600b54acb" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_CTRL_AMB_LUXLEVEL_PROLONG</name>
+        <initializer>0x002C</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light control ambient luxlevel prolong. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="112" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga0fb962e4e51c954d0de1fdb50d77c1bf_1ga0fb962e4e51c954d0de1fdb50d77c1bf" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_CTRL_AMB_LUXLEVEL_STANDBY</name>
+        <initializer>0x002D</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light control ambient luxlevel standby. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="114" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga5838a643e684f9b1d41c9f5cf1c9ad54_1ga5838a643e684f9b1d41c9f5cf1c9ad54" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_CTRL_LIGHTNESS_ON</name>
+        <initializer>0x002E</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light control lightness on. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="116" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gac4d99ccfff3f748303b16bc76e9af980_1gac4d99ccfff3f748303b16bc76e9af980" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_CTRL_LIGHTNESS_PROLONG</name>
+        <initializer>0x002F</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light control lightness prolong. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="118" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaded90aba9e23abaa9b463ddafac1f99c_1gaded90aba9e23abaa9b463ddafac1f99c" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_CTRL_LIGHTNESS_STANDBY</name>
+        <initializer>0x0030</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light control lightness standby. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="120" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga76356105d7ff912ed449017f84c17887_1ga76356105d7ff912ed449017f84c17887" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_CTRL_REG_ACCURACY</name>
+        <initializer>0x0031</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light control regulator accuracy. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="122" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gac3b0fcd3e85445232968197121dc9dd2_1gac3b0fcd3e85445232968197121dc9dd2" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_CTRL_REG_KID</name>
+        <initializer>0x0032</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light control regulator kid. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="124" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga2d84492dba44a008b3e0c7c8def586da_1ga2d84492dba44a008b3e0c7c8def586da" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_CTRL_REG_KIU</name>
+        <initializer>0x0033</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light control regulator kiu. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="126" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaec6e869bfa3875e2d4007417cfc069ac_1gaec6e869bfa3875e2d4007417cfc069ac" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_CTRL_REG_KPD</name>
+        <initializer>0x0034</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light control regulator kpd. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="128" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga1859364e058fa88d8ef5284684cf36e7_1ga1859364e058fa88d8ef5284684cf36e7" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_CTRL_REG_KPU</name>
+        <initializer>0x0035</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light control regulator kpu. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="130" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gae043c924ba24a1af06d00b23fd3ea131_1gae043c924ba24a1af06d00b23fd3ea131" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_CTRL_TIME_FADE</name>
+        <initializer>0x0036</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light control time fade. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="132" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gac26123fd60e32f2d618dc2a89fed261d_1gac26123fd60e32f2d618dc2a89fed261d" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_CTRL_TIME_FADE_ON</name>
+        <initializer>0x0037</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light control time fade on. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="134" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga33b9e8786fe45dba2314118122405331_1ga33b9e8786fe45dba2314118122405331" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_CTRL_TIME_FADE_STANDBY_AUTO</name>
+        <initializer>0x0038</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light control time fade standby auto. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="136" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga74be6ce27323cfbb2eca9d19a6c2fa85_1ga74be6ce27323cfbb2eca9d19a6c2fa85" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_CTRL_TIME_FADE_STANDBY_MANUAL</name>
+        <initializer>0x0039</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light control time fade standby manual. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="138" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gad8bac617b823f2aca5b5352dbb0bf258_1gad8bac617b823f2aca5b5352dbb0bf258" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_CTRL_TIME_OCCUPANCY_DELAY</name>
+        <initializer>0x003A</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light control time occupancy delay. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="140" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="140" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga9f12ab09075515fcfb3b9a48ac7b537d_1ga9f12ab09075515fcfb3b9a48ac7b537d" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_CTRL_TIME_PROLONG</name>
+        <initializer>0x003B</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light control time prolong. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="142" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga4ff767e7fe43fce5080ef8ae45cf713a_1ga4ff767e7fe43fce5080ef8ae45cf713a" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_CTRL_TIME_RUN_ON</name>
+        <initializer>0x003C</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light control time run on. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="144" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="144" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga130fe8d7d96d53c63b229b781a98f9fd_1ga130fe8d7d96d53c63b229b781a98f9fd" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LUMEN_MAINTENANCE_FACTOR</name>
+        <initializer>0x003D</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Lumen maintenance factor. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="146" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="146" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga9f17a15724db561b23ba3412be061832_1ga9f17a15724db561b23ba3412be061832" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LUMINOUS_EFFICACY</name>
+        <initializer>0x003E</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Luminous efficacy. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="148" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga5d46d006f7c939eddf22ec18af3fe76e_1ga5d46d006f7c939eddf22ec18af3fe76e" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LUMINOUS_ENERGY_SINCE_TURN_ON</name>
+        <initializer>0x003F</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Luminous energy since turn on. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="150" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="150" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga34fb44b7e86df21ea190771a0a84cce8_1ga34fb44b7e86df21ea190771a0a84cce8" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LUMINOUS_EXPOSURE</name>
+        <initializer>0x0040</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Luminous exposure. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="152" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="152" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gad2ab12e9d09071a0a8218e083f872f15_1gad2ab12e9d09071a0a8218e083f872f15" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LUMINOUS_FLUX_RANGE</name>
+        <initializer>0x0041</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Luminous flux range. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="154" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaf299bc06e498a43fe5e7a41c90397ac0_1gaf299bc06e498a43fe5e7a41c90397ac0" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_MOTION_SENSED</name>
+        <initializer>0x0042</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Motion sensed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="156" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="156" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga9561edee6d681ce949f823937b9658dd_1ga9561edee6d681ce949f823937b9658dd" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_MOTION_THRESHOLD</name>
+        <initializer>0x0043</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Motion threshold. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="158" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga62c7f0bcd5d8bf634f57c4bf043ab22c_1ga62c7f0bcd5d8bf634f57c4bf043ab22c" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_OPEN_CIRCUIT_EVT_STAT</name>
+        <initializer>0x0044</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Open circuit event statistics. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="160" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="160" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga83cf717821f83cedc5859714396ee8ff_1ga83cf717821f83cedc5859714396ee8ff" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_OUTDOOR_STAT_VALUES</name>
+        <initializer>0x0045</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Outdoor statistical values. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="162" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="162" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga29ace5dcf3f2bd2a94419d0a8d1c1d61_1ga29ace5dcf3f2bd2a94419d0a8d1c1d61" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_OUTPUT_CURRENT_RANGE</name>
+        <initializer>0x0046</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Output current range. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="164" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="164" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga2fdc6a4df11b11c01ea76eaa467915d1_1ga2fdc6a4df11b11c01ea76eaa467915d1" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_OUTPUT_CURRENT_STAT</name>
+        <initializer>0x0047</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Output current statistics. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="166" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="166" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga04ffc7adb227eda7f302182a3f6d54b1_1ga04ffc7adb227eda7f302182a3f6d54b1" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_OUTPUT_RIPPLE_VOLTAGE_SPEC</name>
+        <initializer>0x0048</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Output ripple voltage specification. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="168" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="168" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga39acfa83d9bb76167ecb5d5ad8af5e75_1ga39acfa83d9bb76167ecb5d5ad8af5e75" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_OUTPUT_VOLTAGE_RANGE</name>
+        <initializer>0x0049</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Output voltage range. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="170" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="170" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gabe5ce768831b903adb3c2519bf75dce4_1gabe5ce768831b903adb3c2519bf75dce4" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_OUTPUT_VOLTAGE_STAT</name>
+        <initializer>0x004A</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Output voltage statistics. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="172" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="172" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gae984df16228e6523e9e756496970e262_1gae984df16228e6523e9e756496970e262" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_OVER_OUTPUT_RIPPLE_VOLTAGE_EVT_STAT</name>
+        <initializer>0x004B</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Over output ripple voltage event statistics. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="174" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="174" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaddbb07c18eddb6fa61d919a963dcb2ff_1gaddbb07c18eddb6fa61d919a963dcb2ff" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PEOPLE_COUNT</name>
+        <initializer>0x004C</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>People count. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="176" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="176" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga99c98f0b3598c9c1dacf637089210ac1_1ga99c98f0b3598c9c1dacf637089210ac1" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENCE_DETECTED</name>
+        <initializer>0x004D</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Presence detected. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="178" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="178" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gafe366e56686c222262e806c9ec7d8674_1gafe366e56686c222262e806c9ec7d8674" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_AMB_LIGHT_LEVEL</name>
+        <initializer>0x004E</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present ambient light level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="180" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="180" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gacd1446d4424ab6fb547fd95f268c74f1_1gacd1446d4424ab6fb547fd95f268c74f1" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_AMB_TEMP</name>
+        <initializer>0x004F</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present ambient temperature. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="182" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="182" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga3c5212fcc5b88fc2815ce8743a05f97d_1ga3c5212fcc5b88fc2815ce8743a05f97d" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_CIE_1931_CHROMATICITY_COORDS</name>
+        <initializer>0x0050</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present CIE-1931 chromaticity coordinates. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="184" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="184" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga8e7b122d23f43ea3d1cf70389d74f57e_1ga8e7b122d23f43ea3d1cf70389d74f57e" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_CORRELATED_COL_TEMP</name>
+        <initializer>0x0051</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present correlated color temperature. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="186" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="186" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaa88f30c0d8adb1fbc19bf9a1f1c05b4c_1gaa88f30c0d8adb1fbc19bf9a1f1c05b4c" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_DEV_INPUT_POWER</name>
+        <initializer>0x0052</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present device input power. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="188" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="188" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga6f97aa78b5a8c45cc3ab08c7ccaca35b_1ga6f97aa78b5a8c45cc3ab08c7ccaca35b" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_DEV_OP_EFFICIENCY</name>
+        <initializer>0x0053</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present device operating efficiency. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="190" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="190" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gae78f5b42b9bc0b91c73edbe01019e4fa_1gae78f5b42b9bc0b91c73edbe01019e4fa" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_DEV_OP_TEMP</name>
+        <initializer>0x0054</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present device operating temperature. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="192" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="192" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga024e2cad24b03128b685b832122b1151_1ga024e2cad24b03128b685b832122b1151" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_ILLUMINANCE</name>
+        <initializer>0x0055</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present illuminance. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="194" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="194" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaf24da61516f374af08e56449f5155bbe_1gaf24da61516f374af08e56449f5155bbe" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_INDOOR_AMB_TEMP</name>
+        <initializer>0x0056</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present indoor ambient temperature. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="196" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="196" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaf2040b109d5489a1ab24694e217824f2_1gaf2040b109d5489a1ab24694e217824f2" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_INPUT_CURRENT</name>
+        <initializer>0x0057</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present input current. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="198" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="198" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga932b829a5e76d65021a99a1b8cecf344_1ga932b829a5e76d65021a99a1b8cecf344" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_INPUT_RIPPLE_VOLTAGE</name>
+        <initializer>0x0058</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present input ripple voltage. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="200" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="200" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga5c2cd796cfcff787ba06531ac5e1137e_1ga5c2cd796cfcff787ba06531ac5e1137e" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_INPUT_VOLTAGE</name>
+        <initializer>0x0059</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present input voltage. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="202" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="202" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga3e3afac3f834379178bd6a33b06b94ad_1ga3e3afac3f834379178bd6a33b06b94ad" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_LUMINOUS_FLUX</name>
+        <initializer>0x005A</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present luminous flux. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="204" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="204" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga03d0f1656a130fcb72bc9d886a34856a_1ga03d0f1656a130fcb72bc9d886a34856a" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_OUTDOOR_AMB_TEMP</name>
+        <initializer>0x005B</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present outdoor ambient temperature. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="206" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="206" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaf718b9e7ac6051bc5cd00a625c87d44d_1gaf718b9e7ac6051bc5cd00a625c87d44d" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_OUTPUT_CURRENT</name>
+        <initializer>0x005C</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present output current. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="208" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="208" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga51207a6c5e0bcf5096418985beedb6d8_1ga51207a6c5e0bcf5096418985beedb6d8" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_OUTPUT_VOLTAGE</name>
+        <initializer>0x005D</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present output voltage. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="210" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="210" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga02ed788919d6ae03835e530e7fc7aa8d_1ga02ed788919d6ae03835e530e7fc7aa8d" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_PLANCKIAN_DISTANCE</name>
+        <initializer>0x005E</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present planckian distance. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="212" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="212" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaf3dfd2899421e8c335d88d436229791a_1gaf3dfd2899421e8c335d88d436229791a" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_REL_OUTPUT_RIPPLE_VOLTAGE</name>
+        <initializer>0x005F</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present relative output ripple voltage. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="214" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="214" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga3ed9964ca04c624633b00b080c94eb10_1ga3ed9964ca04c624633b00b080c94eb10" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_REL_DEV_ENERGY_USE_IN_A_PERIOD_OF_DAY</name>
+        <initializer>0x0060</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Relative device energy use in a period of day. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="216" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="216" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga438e01c81adb0e39edf6059a7fb034f8_1ga438e01c81adb0e39edf6059a7fb034f8" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_REL_DEV_RUNTIME_IN_A_GENERIC_LEVEL_RANGE</name>
+        <initializer>0x0061</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Relative device runtime in a generic level range. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="218" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="218" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga06a2255291bc72802ae39fde7d3facb8_1ga06a2255291bc72802ae39fde7d3facb8" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_REL_EXPOSURE_TIME_IN_AN_ILLUMINANCE_RANGE</name>
+        <initializer>0x0062</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Relative exposure time in an illuminance range. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="220" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="220" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gae5263de58eea3a529374de5332c85437_1gae5263de58eea3a529374de5332c85437" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_REL_RUNTIME_IN_A_CORRELATED_COL_TEMP_RANGE</name>
+        <initializer>0x0063</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Relative runtime in a correlated color temperature range. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="222" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="222" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga34530d7f14229871f382e9b3cbb09593_1ga34530d7f14229871f382e9b3cbb09593" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_REL_RUNTIME_IN_A_DEV_OP_TEMP_RANGE</name>
+        <initializer>0x0064</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Relative runtime in a device operating temperature range. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="224" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="224" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga3915f8f205cb8a2f6c1b9fe529090413_1ga3915f8f205cb8a2f6c1b9fe529090413" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_REL_RUNTIME_IN_AN_INPUT_CURRENT_RANGE</name>
+        <initializer>0x0065</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Relative runtime in an input current range. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="226" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="226" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gab500c59eeb4cfbb1867348555fbc0ad0_1gab500c59eeb4cfbb1867348555fbc0ad0" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_REL_RUNTIME_IN_AN_INPUT_VOLTAGE_RANGE</name>
+        <initializer>0x0066</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Relative runtime in an input voltage range. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="228" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="228" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga52dbe6d21ae716d33d11ec8601ac2809_1ga52dbe6d21ae716d33d11ec8601ac2809" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_SHORT_CIRCUIT_EVT_STAT</name>
+        <initializer>0x0067</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Short circuit event statistics. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="230" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="230" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gacf33820cc684937b2eeaaccf6f8e57cf_1gacf33820cc684937b2eeaaccf6f8e57cf" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_TIME_SINCE_MOTION_SENSED</name>
+        <initializer>0x0068</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Time since motion sensed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="232" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="232" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga17d07e9cea4c2d3a9c09833b6f317c54_1ga17d07e9cea4c2d3a9c09833b6f317c54" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_TIME_SINCE_PRESENCE_DETECTED</name>
+        <initializer>0x0069</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Time since presence detected. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="234" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="234" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaa30a6193fdd75e91b1e3fc1292e19390_1gaa30a6193fdd75e91b1e3fc1292e19390" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_TOT_DEV_ENERGY_USE</name>
+        <initializer>0x006A</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Total device energy use. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="236" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="236" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gad0d73d9f069539a4278ed40f60f81810_1gad0d73d9f069539a4278ed40f60f81810" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_TOT_DEV_OFF_ON_CYCLES</name>
+        <initializer>0x006B</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Total device off on cycles. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="238" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="238" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga09011d7e0ae76882bd9f4742381af41d_1ga09011d7e0ae76882bd9f4742381af41d" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_TOT_DEV_POWER_ON_CYCLES</name>
+        <initializer>0x006C</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Total device power on cycles. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="240" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="240" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaa761bef45f08b00b6b402ab4036b3b17_1gaa761bef45f08b00b6b402ab4036b3b17" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_TOT_DEV_POWER_ON_TIME</name>
+        <initializer>0x006D</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Total device power on time. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="242" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="242" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga3e43e6d3c6e4bbc80608b02a1a9a04d4_1ga3e43e6d3c6e4bbc80608b02a1a9a04d4" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_TOT_DEV_RUNTIME</name>
+        <initializer>0x006E</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Total device runtime. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="244" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="244" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaee592be0c2de0e7ff8d6f3e83296da37_1gaee592be0c2de0e7ff8d6f3e83296da37" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_TOT_LIGHT_EXPOSURE_TIME</name>
+        <initializer>0x006F</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Total light exposure time. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="246" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="246" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga0487532044a6704a26d8aaf92d09cb0b_1ga0487532044a6704a26d8aaf92d09cb0b" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_TOT_LUMINOUS_ENERGY</name>
+        <initializer>0x0070</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Total luminous energy. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="248" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="248" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaf8983e94daa6d3b941de0cf8ee96efd9_1gaf8983e94daa6d3b941de0cf8ee96efd9" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_DESIRED_AMB_TEMP</name>
+        <initializer>0x0071</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Desired ambient temperature. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="250" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="250" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga3ec377fa42e8c4e56a7008066e91d91d_1ga3ec377fa42e8c4e56a7008066e91d91d" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRECISE_TOT_DEV_ENERGY_USE</name>
+        <initializer>0x0072</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Precise Total Device Energy Use. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="252" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="252" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga8125017d5eef6b109df0a81a7ab524bf_1ga8125017d5eef6b109df0a81a7ab524bf" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_POWER_FACTOR</name>
+        <initializer>0x0073</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Power Factor. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="254" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="254" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga4078983cd70e8f94ce0a8788daa463e3_1ga4078983cd70e8f94ce0a8788daa463e3" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_SENSOR_GAIN</name>
+        <initializer>0x0074</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sensor Gain. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="256" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="256" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga88b77fd59181697e7eb1628ce899111f_1ga88b77fd59181697e7eb1628ce899111f" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRECISE_PRESENT_AMB_TEMP</name>
+        <initializer>0x0075</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Precise Present Ambient Temperature. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="258" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="258" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga3b7591a75e06ee9b759ad4f2b1ebde46_1ga3b7591a75e06ee9b759ad4f2b1ebde46" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_AMB_REL_HUMIDITY</name>
+        <initializer>0x0076</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present Ambient Relative Humidity. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="260" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="260" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gad6042afd426ee1f6c0bd6899878737ea_1gad6042afd426ee1f6c0bd6899878737ea" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_AMB_CO2_CONCENTRATION</name>
+        <initializer>0x0077</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present Ambient Carbon Dioxide Concentration. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="262" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="262" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaecf5920a6496e95632ae7e8d3122bfbb_1gaecf5920a6496e95632ae7e8d3122bfbb" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_AMB_VOC_CONCENTRATION</name>
+        <initializer>0x0078</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present Ambient Volatile Organic Compounds Concentration. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="264" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="264" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaf116a1e864b6f32dee8ce0eef7f7759d_1gaf116a1e864b6f32dee8ce0eef7f7759d" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_AMB_NOISE</name>
+        <initializer>0x0079</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present Ambient Noise. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="266" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="266" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gade2a0c4283e45b39143e4cc13053abf1_1gade2a0c4283e45b39143e4cc13053abf1" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_ACTIVE_ENERGY_LOADSIDE</name>
+        <initializer>0x0080</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Active Energy Loadside. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="268" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="268" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga5dc984af7e3c35dc2a681fbc2a43d770_1ga5dc984af7e3c35dc2a681fbc2a43d770" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_ACTIVE_POWER_LOADSIDE</name>
+        <initializer>0x0081</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Active Power Loadside. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="270" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="270" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga66f2c30b5826068cd9884f92669dbfdc_1ga66f2c30b5826068cd9884f92669dbfdc" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_AIR_PRESSURE</name>
+        <initializer>0x0082</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Air Pressure. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="272" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="272" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaafa74793f3e9904b612c5faea4d7726b_1gaafa74793f3e9904b612c5faea4d7726b" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_APPARENT_ENERGY</name>
+        <initializer>0x0083</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Apparent Energy. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="274" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="274" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga8132ba4d513403eed1d51748a6d679a2_1ga8132ba4d513403eed1d51748a6d679a2" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_APPARENT_POWER</name>
+        <initializer>0x0084</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Apparent Power. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="276" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="276" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga61c8844b3b96067e944e46ef786da0e8_1ga61c8844b3b96067e944e46ef786da0e8" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_APPARENT_WIND_DIRECTION</name>
+        <initializer>0x0085</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Apparent Wind Direction. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="278" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="278" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga21f88b391e76c3908aaa0ce57eb7af0b_1ga21f88b391e76c3908aaa0ce57eb7af0b" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_APPARENT_WIND_SPEED</name>
+        <initializer>0x0086</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Apparent Wind Speed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="280" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="280" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaad44f961d4ed8aa69318851ac6e4e527_1gaad44f961d4ed8aa69318851ac6e4e527" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_DEW_POINT</name>
+        <initializer>0x0087</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Dew Point. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="282" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="282" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga30fb686e2feb4c01154dbd8b0a726a73_1ga30fb686e2feb4c01154dbd8b0a726a73" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_EXTERNAL_SUPPLY_VOLTAGE</name>
+        <initializer>0x0088</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>External Supply Voltage. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="284" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="284" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaa9836fde97dcb5795037e9ed33e27374_1gaa9836fde97dcb5795037e9ed33e27374" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_EXTERNAL_SUPPLY_VOLTAGE_FREQ</name>
+        <initializer>0x0089</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>External Supply Voltage Frequency. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="286" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="286" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gab6f87f25a0cfc9dd3a1dcaaa60156146_1gab6f87f25a0cfc9dd3a1dcaaa60156146" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_GUST_FACTOR</name>
+        <initializer>0x008A</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Gust Factor. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="288" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="288" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga07286363571fe0a3ec1b79d6c7c3244e_1ga07286363571fe0a3ec1b79d6c7c3244e" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_HEAT_INDEX</name>
+        <initializer>0x008B</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Heat Index. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="290" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="290" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga49c8637759f83604434cf30103a49cc8_1ga49c8637759f83604434cf30103a49cc8" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_DISTRIBUTION</name>
+        <initializer>0x008C</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light Distribution. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="292" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="292" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga3b12941e3f514c855e449e7885bdf245_1ga3b12941e3f514c855e449e7885bdf245" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_SRC_CURRENT</name>
+        <initializer>0x008D</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light Source Current. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="294" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="294" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga297e5cd4c7dbcf69c89a8ef2f39b8d35_1ga297e5cd4c7dbcf69c89a8ef2f39b8d35" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_SRC_ON_TIME_NOT_RESETTABLE</name>
+        <initializer>0x008E</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light Source On Time Not Resettable. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="296" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="296" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga00c8805828964ceace5021e8def286d5_1ga00c8805828964ceace5021e8def286d5" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_SRC_ON_TIME_RESETTABLE</name>
+        <initializer>0x008F</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light Source On Time Resettable. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="298" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="298" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga69bfde7e92188c821328309e5b7f9a98_1ga69bfde7e92188c821328309e5b7f9a98" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_SRC_OPEN_CIRCUIT_STAT</name>
+        <initializer>0x0090</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light Source Open Circuit Statistics. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="300" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="300" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaa93df5172af9b870e7f29d9a7ca3e1ce_1gaa93df5172af9b870e7f29d9a7ca3e1ce" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_SRC_OVERALL_FAILURES_STAT</name>
+        <initializer>0x0091</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light Source Overall Failures Statistics. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="302" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="302" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga6ddcf8f5781d9c2b75d703bdf018e119_1ga6ddcf8f5781d9c2b75d703bdf018e119" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_SRC_SHORT_CIRCUIT_STAT</name>
+        <initializer>0x0092</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light Source Short Circuit Statistics. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="304" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="304" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga47f336d31bb36dec9193bfd6164587aa_1ga47f336d31bb36dec9193bfd6164587aa" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_SRC_START_COUNTER_RESETTABLE</name>
+        <initializer>0x0093</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light Source Start Counter Resettable. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="306" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="306" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga54bae4cd156adcd6e5021e744a9e7e0f_1ga54bae4cd156adcd6e5021e744a9e7e0f" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_SRC_TEMP</name>
+        <initializer>0x0094</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light Source Temperature. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="308" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="308" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga56ec558d195cfc9c08f4a84c1fbd2515_1ga56ec558d195cfc9c08f4a84c1fbd2515" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_SRC_THERMAL_DERATING_STAT</name>
+        <initializer>0x0095</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light Source Thermal Derating Statistics. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="310" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="310" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga600c75329f56e130fe07507eba5b3cfd_1ga600c75329f56e130fe07507eba5b3cfd" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_SRC_THERMAL_SHUTDOWN_STAT</name>
+        <initializer>0x0096</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light Source Thermal Shutdown Statistics. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="312" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="312" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gae0c568c614765b5b6bd1f1a4bde9266e_1gae0c568c614765b5b6bd1f1a4bde9266e" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_SRC_TOTAL_POWER_ON_CYCLES</name>
+        <initializer>0x0097</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light Source Total Power On Cycles. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="314" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="314" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga959d896f5ecb4ba0b954d3d9a3a10ce7_1ga959d896f5ecb4ba0b954d3d9a3a10ce7" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_SRC_VOLTAGE</name>
+        <initializer>0x0098</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light Source Voltage. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="316" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="316" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga2d51ff6fa7928e1f8698a2822a8fd451_1ga2d51ff6fa7928e1f8698a2822a8fd451" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LUMINAIRE_COLOR</name>
+        <initializer>0x0099</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Luminaire Color. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="318" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="318" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gad63ba9538da47be438c53e5d7de48e99_1gad63ba9538da47be438c53e5d7de48e99" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LUMINAIRE_IDENTIFICATION_NUMBER</name>
+        <initializer>0x009A</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Luminaire Identification Number. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="320" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="320" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaa9c563aa6c1091a877c7db80fd5f5b1d_1gaa9c563aa6c1091a877c7db80fd5f5b1d" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LUMINAIRE_MANUFACTURER_GTIN</name>
+        <initializer>0x009B</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Luminaire Manufacturer GTIN. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="322" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="322" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga113640a7890d64d9fdcf9ee375925851_1ga113640a7890d64d9fdcf9ee375925851" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LUMINAIRE_NOMINAL_INPUT_POWER</name>
+        <initializer>0x009C</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Luminaire Nominal Input Power. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="324" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="324" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga26f360c196ea24530aee55fce63eb98a_1ga26f360c196ea24530aee55fce63eb98a" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LUMINAIRE_NOMINAL_MAXIMUM_AC_MAINS_VOLTAGE</name>
+        <initializer>0x009D</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Luminaire Nominal Maximum AC Mains Voltage. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="326" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="326" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga40462917f37c94dfe1e536d07c058d85_1ga40462917f37c94dfe1e536d07c058d85" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LUMINAIRE_NOMINAL_MINIMUM_AC_MAINS_VOLTAGE</name>
+        <initializer>0x009E</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Luminaire Nominal Minimum AC Mains Voltage. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="328" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="328" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gacad906100e50cd60c018a978fce61901_1gacad906100e50cd60c018a978fce61901" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LUMINAIRE_POWER_AT_MINIMUM_DIM_LEVEL</name>
+        <initializer>0x009F</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Luminaire Power At Minimum Dim Level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="330" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="330" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaecc0b39a3186607da2c85464064054bf_1gaecc0b39a3186607da2c85464064054bf" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LUMINAIRE_TIME_OF_MANUFACTURE</name>
+        <initializer>0x00A0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Luminaire Time Of Manufacture. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="332" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="332" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga4b635544c773667ce93e908ec7bf377a_1ga4b635544c773667ce93e908ec7bf377a" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_MAGNETIC_DECLINATION</name>
+        <initializer>0x00A1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Magnetic Declination. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="334" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="334" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaedf91a19d72e6492d442d1df741b04c4_1gaedf91a19d72e6492d442d1df741b04c4" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_MAGNETIC_FLUX_DENSITY_2D</name>
+        <initializer>0x00A2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Magnetic Flux Density - 2D. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="336" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="336" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga627ab6cc765494f524a7bcdd63292413_1ga627ab6cc765494f524a7bcdd63292413" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_MAGNETIC_FLUX_DENSITY_3D</name>
+        <initializer>0x00A3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Magnetic Flux Density - 3D. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="338" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="338" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaaeac383716f31d6586985a62e0254914_1gaaeac383716f31d6586985a62e0254914" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_NOMINAL_LIGHT_OUTPUT</name>
+        <initializer>0x00A4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Nominal Light Output. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="340" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="340" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gadd2a2c07b3dda8b16b20a7b54d86a256_1gadd2a2c07b3dda8b16b20a7b54d86a256" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_OVERALL_FAILURE_CONDITION</name>
+        <initializer>0x00A5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Overall Failure Condition. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="342" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="342" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga4986b1c16a332f2d7026370ed9b9f689_1ga4986b1c16a332f2d7026370ed9b9f689" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_POLLEN_CONCENTRATION</name>
+        <initializer>0x00A6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pollen Concentration. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="344" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="344" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gabd59382514391c3b852eedb3b3ad3808_1gabd59382514391c3b852eedb3b3ad3808" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_INDOOR_RELATIVE_HUMIDITY</name>
+        <initializer>0x00A7</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present Indoor Relative Humidity. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="346" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="346" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gaafcd8455ab6d9b2818ef794813eb8e0e_1gaafcd8455ab6d9b2818ef794813eb8e0e" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESENT_OUTDOOR_RELATIVE_HUMIDITY</name>
+        <initializer>0x00A8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present Outdoor Relative Humidity. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="348" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="348" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga28e5c8a30d77b689f606920b113f5fba_1ga28e5c8a30d77b689f606920b113f5fba" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_PRESSURE</name>
+        <initializer>0x00A9</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pressure. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="350" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="350" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga1bc57ace7c660cc1eef44098637599bc_1ga1bc57ace7c660cc1eef44098637599bc" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_RAINFALL</name>
+        <initializer>0x00AA</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Rainfall. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="352" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="352" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga335a55f71084a4675e67d07cab1781ca_1ga335a55f71084a4675e67d07cab1781ca" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_RATED_MEDIAN_USEFUL_LIFE_OF_LUMINAIRE</name>
+        <initializer>0x00AB</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Rated Median Useful Life Of Luminaire. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="354" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="354" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gae876bd6cff8d9b0bcf2964a15d5203de_1gae876bd6cff8d9b0bcf2964a15d5203de" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_RATED_MEDIAN_USEFUL_LIGHT_SRC_STARTS</name>
+        <initializer>0x00AC</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Rated Median Useful Light Source Starts. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="356" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="356" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga4d43dcc404e0288a809480f34df8aece_1ga4d43dcc404e0288a809480f34df8aece" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_REFERENCE_TEMP</name>
+        <initializer>0x00AD</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Reference Temperature. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="358" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="358" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga379ac334e7aee9fc1add323fc4ae9460_1ga379ac334e7aee9fc1add323fc4ae9460" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_TOTAL_DEVICE_STARTS</name>
+        <initializer>0x00AE</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Total Device Starts. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="360" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="360" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga40bd4006bf5a98789e1495e340d2309d_1ga40bd4006bf5a98789e1495e340d2309d" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_TRUE_WIND_DIRECTION</name>
+        <initializer>0x00AF</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>True Wind Direction. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="362" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="362" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga2bef8af0a1eed71b784b56a0529dae57_1ga2bef8af0a1eed71b784b56a0529dae57" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_TRUE_WIND_SPEED</name>
+        <initializer>0x00B0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>True Wind Speed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="364" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="364" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gafce9465d093e97a0402e61bbb4e16f74_1gafce9465d093e97a0402e61bbb4e16f74" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_UV_INDEX</name>
+        <initializer>0x00B1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>UV Index. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="366" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="366" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga21204a71a502ac292e5b6f31031ee7b0_1ga21204a71a502ac292e5b6f31031ee7b0" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_WIND_CHILL</name>
+        <initializer>0x00B2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Wind Chill. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="368" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="368" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga6a87066d4d3abfe81e79eb9b248ab773_1ga6a87066d4d3abfe81e79eb9b248ab773" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LIGHT_SRC_TYPE</name>
+        <initializer>0x00B3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light Source Type. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="370" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="370" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga2d3c9ced9a56457dddf7807362d60f6f_1ga2d3c9ced9a56457dddf7807362d60f6f" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_LUMINAIRE_IDENTIFICATION_STRING</name>
+        <initializer>0x00B4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Luminaire Identification String. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="372" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="372" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga401011f18667e0867d29dd8e5c34006c_1ga401011f18667e0867d29dd8e5c34006c" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_OUTPUT_POWER_LIMITATION</name>
+        <initializer>0x00B5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Output Power Limitation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="374" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="374" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_gad0849fbc874c47c66647416d84a2aece_1gad0849fbc874c47c66647416d84a2aece" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_THERMAL_DERATING</name>
+        <initializer>0x00B6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Thermal Derating. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="376" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="376" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__property__ids_ga3663266a49729a8dceabf8e0ecea6882_1ga3663266a49729a8dceabf8e0ecea6882" prot="public" static="no">
+        <name>BT_MESH_PROP_ID_OUTPUT_CURRENT_PERCENT</name>
+        <initializer>0x00B7</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Output Current Percent. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/properties.h" line="378" column="9" bodyfile="include/bluetooth/mesh/properties.h" bodystart="378" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_MESH_PROPERTIES_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROPERTIES_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/mesh.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="group__bt__mesh__property__ids_ga413ac9169af1fb0f89e048b75ab642bb_1ga413ac9169af1fb0f89e048b75ab642bb" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PROHIBITED<sp/>0x0000</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="group__bt__mesh__property__ids_gab3ad1a6d76aa7105091e08d9927a695e_1gab3ad1a6d76aa7105091e08d9927a695e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_AVG_AMB_TEMP_IN_A_PERIOD_OF_DAY<sp/>0x0001</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="group__bt__mesh__property__ids_gae92b14b15bb1ce6a013b6303e1b04c2d_1gae92b14b15bb1ce6a013b6303e1b04c2d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_AVG_INPUT_CURRENT<sp/>0x0002</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="group__bt__mesh__property__ids_ga6e1ffe040ef94503e3b5b89c169940c6_1ga6e1ffe040ef94503e3b5b89c169940c6" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_AVG_INPUT_VOLTAGE<sp/>0x0003</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="group__bt__mesh__property__ids_ga2afcc95864a85721e9872859ba2fc682_1ga2afcc95864a85721e9872859ba2fc682" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_AVG_OUTPUT_CURRENT<sp/>0x0004</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="group__bt__mesh__property__ids_ga74be972e6988387239e2949f50cc0b00_1ga74be972e6988387239e2949f50cc0b00" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_AVG_OUTPUT_VOLTAGE<sp/>0x0005</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="group__bt__mesh__property__ids_ga2d7f6380b642158d6c0364b4a6da458f_1ga2d7f6380b642158d6c0364b4a6da458f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_CENTER_BEAM_INTENSITY_AT_FULL_POWER<sp/>0x0006</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="group__bt__mesh__property__ids_ga7c8200a06b7b4da9859f713d7a2243ca_1ga7c8200a06b7b4da9859f713d7a2243ca" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_CHROMATICITY_TOLERANCE<sp/>0x0007</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="group__bt__mesh__property__ids_ga8d2185a746000075740a28c0cae43755_1ga8d2185a746000075740a28c0cae43755" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_COL_RENDERING_INDEX_R9<sp/>0x0008</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="group__bt__mesh__property__ids_ga14a0b0c40c62e58e9d9f49324d5e6e3d_1ga14a0b0c40c62e58e9d9f49324d5e6e3d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_COL_RENDERING_INDEX_RA<sp/>0x0009</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="group__bt__mesh__property__ids_gacc23ecd2f6aaa9629412fec131d60ca8_1gacc23ecd2f6aaa9629412fec131d60ca8" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_DEV_APPEARANCE<sp/>0x000A</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="group__bt__mesh__property__ids_gadbb4cc71e09688c11a2d4b64cffd1f48_1gadbb4cc71e09688c11a2d4b64cffd1f48" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_DEV_COUNTRY_OF_ORIGIN<sp/>0x000B</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="group__bt__mesh__property__ids_ga9b5989a039f8a1008ff40e12c97743b8_1ga9b5989a039f8a1008ff40e12c97743b8" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_DEV_DATE_OF_MANUFACTURE<sp/>0x000C</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="group__bt__mesh__property__ids_ga30431dad49526af808c8cff9a4c6a865_1ga30431dad49526af808c8cff9a4c6a865" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_DEV_ENERGY_USE_SINCE_TURN_ON<sp/>0x000D</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="group__bt__mesh__property__ids_gaf695fbb90ac1eb68f7806e22b4db56d3_1gaf695fbb90ac1eb68f7806e22b4db56d3" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_DEV_FW_REVISION<sp/>0x000E</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="group__bt__mesh__property__ids_ga6b7622200f73c866bec3bf4ea0abdee6_1ga6b7622200f73c866bec3bf4ea0abdee6" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_DEV_GLOBAL_TRADE_ITEM_NUM<sp/>0x000F</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="group__bt__mesh__property__ids_gab25be17e530fb309ae3ea3500462eea9_1gab25be17e530fb309ae3ea3500462eea9" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_DEV_HW_REVISION<sp/>0x0010</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58" refid="group__bt__mesh__property__ids_ga53ddd34acab609f154dd5b9e3d439434_1ga53ddd34acab609f154dd5b9e3d439434" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_DEV_MFR_NAME<sp/>0x0011</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="group__bt__mesh__property__ids_gaa6f25e673da3aeaadd986d9235bfe5cb_1gaa6f25e673da3aeaadd986d9235bfe5cb" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_DEV_MODEL_NUM<sp/>0x0012</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="group__bt__mesh__property__ids_gafebdb47444cd171afcbdbecea454bc22_1gafebdb47444cd171afcbdbecea454bc22" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_DEV_OP_TEMP_RANGE_SPEC<sp/>0x0013</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="group__bt__mesh__property__ids_ga9487500fd3e78def2688420dd6d58662_1ga9487500fd3e78def2688420dd6d58662" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_DEV_OP_TEMP_STAT_VALUES<sp/>0x0014</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="group__bt__mesh__property__ids_ga96c8f8e716428d212638989529726495_1ga96c8f8e716428d212638989529726495" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_DEV_OVER_TEMP_EVT_STAT<sp/>0x0015</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="group__bt__mesh__property__ids_ga01ffa45890e53f9a9372f37012971755_1ga01ffa45890e53f9a9372f37012971755" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_DEV_POWER_RANGE_SPEC<sp/>0x0016</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="group__bt__mesh__property__ids_gaaabad4683974df597bea98d8968dd5ef_1gaaabad4683974df597bea98d8968dd5ef" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_DEV_RUNTIME_SINCE_TURN_ON<sp/>0x0017</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="group__bt__mesh__property__ids_ga8d9ab7dc00050e0f6772e859736cafa6_1ga8d9ab7dc00050e0f6772e859736cafa6" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_DEV_RUNTIME_WARRANTY<sp/>0x0018</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="group__bt__mesh__property__ids_ga920bbc4a67c8e7f1c35729423d756386_1ga920bbc4a67c8e7f1c35729423d756386" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_DEV_SERIAL_NUM<sp/>0x0019</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="group__bt__mesh__property__ids_ga39421d3aadb6f1273dd33324558636e5_1ga39421d3aadb6f1273dd33324558636e5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_DEV_SW_REVISION<sp/>0x001A</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="group__bt__mesh__property__ids_gaf536ae24a43f9011daeffc574a3a15be_1gaf536ae24a43f9011daeffc574a3a15be" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_DEV_UNDER_TEMP_EVT_STAT<sp/>0x001B</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80" refid="group__bt__mesh__property__ids_ga809984c2bff3c6330b5a418fa1ddc8f7_1ga809984c2bff3c6330b5a418fa1ddc8f7" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_INDOOR_AMB_TEMP_STAT_VALUES<sp/>0x001C</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="group__bt__mesh__property__ids_gae943b5e0ddf25017d99043de41c4b037_1gae943b5e0ddf25017d99043de41c4b037" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_INITIAL_CIE_1931_CHROMATICITY_COORDS<sp/>0x001D</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84" refid="group__bt__mesh__property__ids_ga929c7002ee395eb26d82b24c480a27a1_1ga929c7002ee395eb26d82b24c480a27a1" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_INITIAL_CORRELATED_COL_TEMP<sp/>0x001E</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="group__bt__mesh__property__ids_ga10f1c1e6b4c91096ac8d3809fcddbcec_1ga10f1c1e6b4c91096ac8d3809fcddbcec" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_INITIAL_LUMINOUS_FLUX<sp/>0x001F</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="group__bt__mesh__property__ids_ga41f746abde8b902fa280a0950ab812c0_1ga41f746abde8b902fa280a0950ab812c0" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_INITIAL_PLANCKIAN_DISTANCE<sp/>0x0020</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="group__bt__mesh__property__ids_gaa341aa6edc13f5ec2f5f7ebe55f1fe26_1gaa341aa6edc13f5ec2f5f7ebe55f1fe26" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_INPUT_CURRENT_RANGE_SPEC<sp/>0x0021</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="group__bt__mesh__property__ids_ga1f75cfca550b0cfdc40f70bb10d54a8d_1ga1f75cfca550b0cfdc40f70bb10d54a8d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_INPUT_CURRENT_STAT<sp/>0x0022</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94" refid="group__bt__mesh__property__ids_ga75d14b7b5789dde1267375cb1481329f_1ga75d14b7b5789dde1267375cb1481329f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_INPUT_OVER_CURRENT_EVT_STAT<sp/>0x0023</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96" refid="group__bt__mesh__property__ids_gabcf54b534c38f18ceddeb3995549d6c7_1gabcf54b534c38f18ceddeb3995549d6c7" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_INPUT_OVER_RIPPLE_VOLTAGE_EVT_STAT<sp/>0x0024</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98" refid="group__bt__mesh__property__ids_gada9bd29b44e6db4f20476fa6896167ba_1gada9bd29b44e6db4f20476fa6896167ba" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_INPUT_OVER_VOLTAGE_EVT_STAT<sp/>0x0025</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100" refid="group__bt__mesh__property__ids_gad674c4dcbc207ecc7a304ad904eb1224_1gad674c4dcbc207ecc7a304ad904eb1224" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_INPUT_UNDER_CURRENT_EVT_STAT<sp/>0x0026</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102" refid="group__bt__mesh__property__ids_ga63c97ea25e1516de20a5f501f0e9e5ac_1ga63c97ea25e1516de20a5f501f0e9e5ac" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_INPUT_UNDER_VOLTAGE_EVT_STAT<sp/>0x0027</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104" refid="group__bt__mesh__property__ids_ga3b3b7d01fbf65f3115d3459c26e02106_1ga3b3b7d01fbf65f3115d3459c26e02106" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_INPUT_VOLTAGE_RANGE_SPEC<sp/>0x0028</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="106" refid="group__bt__mesh__property__ids_ga5739d9f97b447fee79ca196aff6e43ae_1ga5739d9f97b447fee79ca196aff6e43ae" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_INPUT_VOLTAGE_RIPPLE_SPEC<sp/>0x0029</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="108" refid="group__bt__mesh__property__ids_ga34dfd3d2f425ee4f10e52b3033d31807_1ga34dfd3d2f425ee4f10e52b3033d31807" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_INPUT_VOLTAGE_STAT<sp/>0x002A</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110" refid="group__bt__mesh__property__ids_ga7119b455b742f533b0fc5bc116da7a75_1ga7119b455b742f533b0fc5bc116da7a75" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_CTRL_AMB_LUXLEVEL_ON<sp/>0x002B</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="112" refid="group__bt__mesh__property__ids_gae113de6c8869bd084fe2f03600b54acb_1gae113de6c8869bd084fe2f03600b54acb" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_CTRL_AMB_LUXLEVEL_PROLONG<sp/>0x002C</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114" refid="group__bt__mesh__property__ids_ga0fb962e4e51c954d0de1fdb50d77c1bf_1ga0fb962e4e51c954d0de1fdb50d77c1bf" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_CTRL_AMB_LUXLEVEL_STANDBY<sp/>0x002D</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116" refid="group__bt__mesh__property__ids_ga5838a643e684f9b1d41c9f5cf1c9ad54_1ga5838a643e684f9b1d41c9f5cf1c9ad54" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_CTRL_LIGHTNESS_ON<sp/>0x002E</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118" refid="group__bt__mesh__property__ids_gac4d99ccfff3f748303b16bc76e9af980_1gac4d99ccfff3f748303b16bc76e9af980" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_CTRL_LIGHTNESS_PROLONG<sp/>0x002F</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120" refid="group__bt__mesh__property__ids_gaded90aba9e23abaa9b463ddafac1f99c_1gaded90aba9e23abaa9b463ddafac1f99c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_CTRL_LIGHTNESS_STANDBY<sp/>0x0030</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122" refid="group__bt__mesh__property__ids_ga76356105d7ff912ed449017f84c17887_1ga76356105d7ff912ed449017f84c17887" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_CTRL_REG_ACCURACY<sp/>0x0031</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124" refid="group__bt__mesh__property__ids_gac3b0fcd3e85445232968197121dc9dd2_1gac3b0fcd3e85445232968197121dc9dd2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_CTRL_REG_KID<sp/>0x0032</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126" refid="group__bt__mesh__property__ids_ga2d84492dba44a008b3e0c7c8def586da_1ga2d84492dba44a008b3e0c7c8def586da" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_CTRL_REG_KIU<sp/>0x0033</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128" refid="group__bt__mesh__property__ids_gaec6e869bfa3875e2d4007417cfc069ac_1gaec6e869bfa3875e2d4007417cfc069ac" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_CTRL_REG_KPD<sp/>0x0034</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130" refid="group__bt__mesh__property__ids_ga1859364e058fa88d8ef5284684cf36e7_1ga1859364e058fa88d8ef5284684cf36e7" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_CTRL_REG_KPU<sp/>0x0035</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132" refid="group__bt__mesh__property__ids_gae043c924ba24a1af06d00b23fd3ea131_1gae043c924ba24a1af06d00b23fd3ea131" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_CTRL_TIME_FADE<sp/>0x0036</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134" refid="group__bt__mesh__property__ids_gac26123fd60e32f2d618dc2a89fed261d_1gac26123fd60e32f2d618dc2a89fed261d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_CTRL_TIME_FADE_ON<sp/>0x0037</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136" refid="group__bt__mesh__property__ids_ga33b9e8786fe45dba2314118122405331_1ga33b9e8786fe45dba2314118122405331" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_CTRL_TIME_FADE_STANDBY_AUTO<sp/>0x0038</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138" refid="group__bt__mesh__property__ids_ga74be6ce27323cfbb2eca9d19a6c2fa85_1ga74be6ce27323cfbb2eca9d19a6c2fa85" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_CTRL_TIME_FADE_STANDBY_MANUAL<sp/>0x0039</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="140" refid="group__bt__mesh__property__ids_gad8bac617b823f2aca5b5352dbb0bf258_1gad8bac617b823f2aca5b5352dbb0bf258" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_CTRL_TIME_OCCUPANCY_DELAY<sp/>0x003A</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="142" refid="group__bt__mesh__property__ids_ga9f12ab09075515fcfb3b9a48ac7b537d_1ga9f12ab09075515fcfb3b9a48ac7b537d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_CTRL_TIME_PROLONG<sp/>0x003B</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="144" refid="group__bt__mesh__property__ids_ga4ff767e7fe43fce5080ef8ae45cf713a_1ga4ff767e7fe43fce5080ef8ae45cf713a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_CTRL_TIME_RUN_ON<sp/>0x003C</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146" refid="group__bt__mesh__property__ids_ga130fe8d7d96d53c63b229b781a98f9fd_1ga130fe8d7d96d53c63b229b781a98f9fd" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LUMEN_MAINTENANCE_FACTOR<sp/>0x003D</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="148" refid="group__bt__mesh__property__ids_ga9f17a15724db561b23ba3412be061832_1ga9f17a15724db561b23ba3412be061832" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LUMINOUS_EFFICACY<sp/>0x003E</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="150" refid="group__bt__mesh__property__ids_ga5d46d006f7c939eddf22ec18af3fe76e_1ga5d46d006f7c939eddf22ec18af3fe76e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LUMINOUS_ENERGY_SINCE_TURN_ON<sp/>0x003F</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="152" refid="group__bt__mesh__property__ids_ga34fb44b7e86df21ea190771a0a84cce8_1ga34fb44b7e86df21ea190771a0a84cce8" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LUMINOUS_EXPOSURE<sp/>0x0040</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="154" refid="group__bt__mesh__property__ids_gad2ab12e9d09071a0a8218e083f872f15_1gad2ab12e9d09071a0a8218e083f872f15" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LUMINOUS_FLUX_RANGE<sp/>0x0041</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="156" refid="group__bt__mesh__property__ids_gaf299bc06e498a43fe5e7a41c90397ac0_1gaf299bc06e498a43fe5e7a41c90397ac0" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_MOTION_SENSED<sp/>0x0042</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="158" refid="group__bt__mesh__property__ids_ga9561edee6d681ce949f823937b9658dd_1ga9561edee6d681ce949f823937b9658dd" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_MOTION_THRESHOLD<sp/>0x0043</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="160" refid="group__bt__mesh__property__ids_ga62c7f0bcd5d8bf634f57c4bf043ab22c_1ga62c7f0bcd5d8bf634f57c4bf043ab22c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_OPEN_CIRCUIT_EVT_STAT<sp/>0x0044</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="162" refid="group__bt__mesh__property__ids_ga83cf717821f83cedc5859714396ee8ff_1ga83cf717821f83cedc5859714396ee8ff" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_OUTDOOR_STAT_VALUES<sp/>0x0045</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="164" refid="group__bt__mesh__property__ids_ga29ace5dcf3f2bd2a94419d0a8d1c1d61_1ga29ace5dcf3f2bd2a94419d0a8d1c1d61" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_OUTPUT_CURRENT_RANGE<sp/>0x0046</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="166" refid="group__bt__mesh__property__ids_ga2fdc6a4df11b11c01ea76eaa467915d1_1ga2fdc6a4df11b11c01ea76eaa467915d1" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_OUTPUT_CURRENT_STAT<sp/>0x0047</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="168" refid="group__bt__mesh__property__ids_ga04ffc7adb227eda7f302182a3f6d54b1_1ga04ffc7adb227eda7f302182a3f6d54b1" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_OUTPUT_RIPPLE_VOLTAGE_SPEC<sp/>0x0048</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="170" refid="group__bt__mesh__property__ids_ga39acfa83d9bb76167ecb5d5ad8af5e75_1ga39acfa83d9bb76167ecb5d5ad8af5e75" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_OUTPUT_VOLTAGE_RANGE<sp/>0x0049</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172" refid="group__bt__mesh__property__ids_gabe5ce768831b903adb3c2519bf75dce4_1gabe5ce768831b903adb3c2519bf75dce4" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_OUTPUT_VOLTAGE_STAT<sp/>0x004A</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="174" refid="group__bt__mesh__property__ids_gae984df16228e6523e9e756496970e262_1gae984df16228e6523e9e756496970e262" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_OVER_OUTPUT_RIPPLE_VOLTAGE_EVT_STAT<sp/>0x004B</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="176" refid="group__bt__mesh__property__ids_gaddbb07c18eddb6fa61d919a963dcb2ff_1gaddbb07c18eddb6fa61d919a963dcb2ff" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PEOPLE_COUNT<sp/>0x004C</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="178" refid="group__bt__mesh__property__ids_ga99c98f0b3598c9c1dacf637089210ac1_1ga99c98f0b3598c9c1dacf637089210ac1" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENCE_DETECTED<sp/>0x004D</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="180" refid="group__bt__mesh__property__ids_gafe366e56686c222262e806c9ec7d8674_1gafe366e56686c222262e806c9ec7d8674" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_AMB_LIGHT_LEVEL<sp/>0x004E</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="182" refid="group__bt__mesh__property__ids_gacd1446d4424ab6fb547fd95f268c74f1_1gacd1446d4424ab6fb547fd95f268c74f1" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_AMB_TEMP<sp/>0x004F</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="184" refid="group__bt__mesh__property__ids_ga3c5212fcc5b88fc2815ce8743a05f97d_1ga3c5212fcc5b88fc2815ce8743a05f97d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_CIE_1931_CHROMATICITY_COORDS<sp/>0x0050</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="186" refid="group__bt__mesh__property__ids_ga8e7b122d23f43ea3d1cf70389d74f57e_1ga8e7b122d23f43ea3d1cf70389d74f57e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_CORRELATED_COL_TEMP<sp/>0x0051</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="188" refid="group__bt__mesh__property__ids_gaa88f30c0d8adb1fbc19bf9a1f1c05b4c_1gaa88f30c0d8adb1fbc19bf9a1f1c05b4c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_DEV_INPUT_POWER<sp/>0x0052</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="190" refid="group__bt__mesh__property__ids_ga6f97aa78b5a8c45cc3ab08c7ccaca35b_1ga6f97aa78b5a8c45cc3ab08c7ccaca35b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_DEV_OP_EFFICIENCY<sp/>0x0053</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="192" refid="group__bt__mesh__property__ids_gae78f5b42b9bc0b91c73edbe01019e4fa_1gae78f5b42b9bc0b91c73edbe01019e4fa" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_DEV_OP_TEMP<sp/>0x0054</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="194" refid="group__bt__mesh__property__ids_ga024e2cad24b03128b685b832122b1151_1ga024e2cad24b03128b685b832122b1151" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_ILLUMINANCE<sp/>0x0055</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="196" refid="group__bt__mesh__property__ids_gaf24da61516f374af08e56449f5155bbe_1gaf24da61516f374af08e56449f5155bbe" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_INDOOR_AMB_TEMP<sp/>0x0056</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="198" refid="group__bt__mesh__property__ids_gaf2040b109d5489a1ab24694e217824f2_1gaf2040b109d5489a1ab24694e217824f2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_INPUT_CURRENT<sp/>0x0057</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="200" refid="group__bt__mesh__property__ids_ga932b829a5e76d65021a99a1b8cecf344_1ga932b829a5e76d65021a99a1b8cecf344" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_INPUT_RIPPLE_VOLTAGE<sp/>0x0058</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="202" refid="group__bt__mesh__property__ids_ga5c2cd796cfcff787ba06531ac5e1137e_1ga5c2cd796cfcff787ba06531ac5e1137e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_INPUT_VOLTAGE<sp/>0x0059</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="204" refid="group__bt__mesh__property__ids_ga3e3afac3f834379178bd6a33b06b94ad_1ga3e3afac3f834379178bd6a33b06b94ad" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_LUMINOUS_FLUX<sp/>0x005A</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="206" refid="group__bt__mesh__property__ids_ga03d0f1656a130fcb72bc9d886a34856a_1ga03d0f1656a130fcb72bc9d886a34856a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_OUTDOOR_AMB_TEMP<sp/>0x005B</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="208" refid="group__bt__mesh__property__ids_gaf718b9e7ac6051bc5cd00a625c87d44d_1gaf718b9e7ac6051bc5cd00a625c87d44d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_OUTPUT_CURRENT<sp/>0x005C</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="210" refid="group__bt__mesh__property__ids_ga51207a6c5e0bcf5096418985beedb6d8_1ga51207a6c5e0bcf5096418985beedb6d8" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_OUTPUT_VOLTAGE<sp/>0x005D</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="212" refid="group__bt__mesh__property__ids_ga02ed788919d6ae03835e530e7fc7aa8d_1ga02ed788919d6ae03835e530e7fc7aa8d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_PLANCKIAN_DISTANCE<sp/>0x005E</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="214" refid="group__bt__mesh__property__ids_gaf3dfd2899421e8c335d88d436229791a_1gaf3dfd2899421e8c335d88d436229791a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_REL_OUTPUT_RIPPLE_VOLTAGE<sp/>0x005F</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="216" refid="group__bt__mesh__property__ids_ga3ed9964ca04c624633b00b080c94eb10_1ga3ed9964ca04c624633b00b080c94eb10" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_REL_DEV_ENERGY_USE_IN_A_PERIOD_OF_DAY<sp/>0x0060</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="218" refid="group__bt__mesh__property__ids_ga438e01c81adb0e39edf6059a7fb034f8_1ga438e01c81adb0e39edf6059a7fb034f8" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_REL_DEV_RUNTIME_IN_A_GENERIC_LEVEL_RANGE<sp/>0x0061</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="220" refid="group__bt__mesh__property__ids_ga06a2255291bc72802ae39fde7d3facb8_1ga06a2255291bc72802ae39fde7d3facb8" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_REL_EXPOSURE_TIME_IN_AN_ILLUMINANCE_RANGE<sp/>0x0062</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="222" refid="group__bt__mesh__property__ids_gae5263de58eea3a529374de5332c85437_1gae5263de58eea3a529374de5332c85437" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_REL_RUNTIME_IN_A_CORRELATED_COL_TEMP_RANGE<sp/>0x0063</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="224" refid="group__bt__mesh__property__ids_ga34530d7f14229871f382e9b3cbb09593_1ga34530d7f14229871f382e9b3cbb09593" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_REL_RUNTIME_IN_A_DEV_OP_TEMP_RANGE<sp/>0x0064</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="226" refid="group__bt__mesh__property__ids_ga3915f8f205cb8a2f6c1b9fe529090413_1ga3915f8f205cb8a2f6c1b9fe529090413" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_REL_RUNTIME_IN_AN_INPUT_CURRENT_RANGE<sp/>0x0065</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="228" refid="group__bt__mesh__property__ids_gab500c59eeb4cfbb1867348555fbc0ad0_1gab500c59eeb4cfbb1867348555fbc0ad0" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_REL_RUNTIME_IN_AN_INPUT_VOLTAGE_RANGE<sp/>0x0066</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="230" refid="group__bt__mesh__property__ids_ga52dbe6d21ae716d33d11ec8601ac2809_1ga52dbe6d21ae716d33d11ec8601ac2809" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_SHORT_CIRCUIT_EVT_STAT<sp/>0x0067</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="232" refid="group__bt__mesh__property__ids_gacf33820cc684937b2eeaaccf6f8e57cf_1gacf33820cc684937b2eeaaccf6f8e57cf" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_TIME_SINCE_MOTION_SENSED<sp/>0x0068</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="234" refid="group__bt__mesh__property__ids_ga17d07e9cea4c2d3a9c09833b6f317c54_1ga17d07e9cea4c2d3a9c09833b6f317c54" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_TIME_SINCE_PRESENCE_DETECTED<sp/>0x0069</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="236" refid="group__bt__mesh__property__ids_gaa30a6193fdd75e91b1e3fc1292e19390_1gaa30a6193fdd75e91b1e3fc1292e19390" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_TOT_DEV_ENERGY_USE<sp/>0x006A</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="238" refid="group__bt__mesh__property__ids_gad0d73d9f069539a4278ed40f60f81810_1gad0d73d9f069539a4278ed40f60f81810" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_TOT_DEV_OFF_ON_CYCLES<sp/>0x006B</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="240" refid="group__bt__mesh__property__ids_ga09011d7e0ae76882bd9f4742381af41d_1ga09011d7e0ae76882bd9f4742381af41d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_TOT_DEV_POWER_ON_CYCLES<sp/>0x006C</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="242" refid="group__bt__mesh__property__ids_gaa761bef45f08b00b6b402ab4036b3b17_1gaa761bef45f08b00b6b402ab4036b3b17" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_TOT_DEV_POWER_ON_TIME<sp/>0x006D</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="244" refid="group__bt__mesh__property__ids_ga3e43e6d3c6e4bbc80608b02a1a9a04d4_1ga3e43e6d3c6e4bbc80608b02a1a9a04d4" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_TOT_DEV_RUNTIME<sp/>0x006E</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="246" refid="group__bt__mesh__property__ids_gaee592be0c2de0e7ff8d6f3e83296da37_1gaee592be0c2de0e7ff8d6f3e83296da37" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_TOT_LIGHT_EXPOSURE_TIME<sp/>0x006F</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="248" refid="group__bt__mesh__property__ids_ga0487532044a6704a26d8aaf92d09cb0b_1ga0487532044a6704a26d8aaf92d09cb0b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_TOT_LUMINOUS_ENERGY<sp/>0x0070</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="250" refid="group__bt__mesh__property__ids_gaf8983e94daa6d3b941de0cf8ee96efd9_1gaf8983e94daa6d3b941de0cf8ee96efd9" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_DESIRED_AMB_TEMP<sp/>0x0071</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="252" refid="group__bt__mesh__property__ids_ga3ec377fa42e8c4e56a7008066e91d91d_1ga3ec377fa42e8c4e56a7008066e91d91d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRECISE_TOT_DEV_ENERGY_USE<sp/>0x0072</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="254" refid="group__bt__mesh__property__ids_ga8125017d5eef6b109df0a81a7ab524bf_1ga8125017d5eef6b109df0a81a7ab524bf" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_POWER_FACTOR<sp/>0x0073</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="256" refid="group__bt__mesh__property__ids_ga4078983cd70e8f94ce0a8788daa463e3_1ga4078983cd70e8f94ce0a8788daa463e3" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_SENSOR_GAIN<sp/>0x0074</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="258" refid="group__bt__mesh__property__ids_ga88b77fd59181697e7eb1628ce899111f_1ga88b77fd59181697e7eb1628ce899111f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRECISE_PRESENT_AMB_TEMP<sp/>0x0075</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="260" refid="group__bt__mesh__property__ids_ga3b7591a75e06ee9b759ad4f2b1ebde46_1ga3b7591a75e06ee9b759ad4f2b1ebde46" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_AMB_REL_HUMIDITY<sp/>0x0076</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="262" refid="group__bt__mesh__property__ids_gad6042afd426ee1f6c0bd6899878737ea_1gad6042afd426ee1f6c0bd6899878737ea" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_AMB_CO2_CONCENTRATION<sp/>0x0077</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="264" refid="group__bt__mesh__property__ids_gaecf5920a6496e95632ae7e8d3122bfbb_1gaecf5920a6496e95632ae7e8d3122bfbb" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_AMB_VOC_CONCENTRATION<sp/>0x0078</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="266" refid="group__bt__mesh__property__ids_gaf116a1e864b6f32dee8ce0eef7f7759d_1gaf116a1e864b6f32dee8ce0eef7f7759d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_AMB_NOISE<sp/>0x0079</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="268" refid="group__bt__mesh__property__ids_gade2a0c4283e45b39143e4cc13053abf1_1gade2a0c4283e45b39143e4cc13053abf1" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_ACTIVE_ENERGY_LOADSIDE<sp/>0x0080</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="270" refid="group__bt__mesh__property__ids_ga5dc984af7e3c35dc2a681fbc2a43d770_1ga5dc984af7e3c35dc2a681fbc2a43d770" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_ACTIVE_POWER_LOADSIDE<sp/>0x0081</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="272" refid="group__bt__mesh__property__ids_ga66f2c30b5826068cd9884f92669dbfdc_1ga66f2c30b5826068cd9884f92669dbfdc" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_AIR_PRESSURE<sp/>0x0082</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="274" refid="group__bt__mesh__property__ids_gaafa74793f3e9904b612c5faea4d7726b_1gaafa74793f3e9904b612c5faea4d7726b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_APPARENT_ENERGY<sp/>0x0083</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="276" refid="group__bt__mesh__property__ids_ga8132ba4d513403eed1d51748a6d679a2_1ga8132ba4d513403eed1d51748a6d679a2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_APPARENT_POWER<sp/>0x0084</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="278" refid="group__bt__mesh__property__ids_ga61c8844b3b96067e944e46ef786da0e8_1ga61c8844b3b96067e944e46ef786da0e8" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_APPARENT_WIND_DIRECTION<sp/>0x0085</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="280" refid="group__bt__mesh__property__ids_ga21f88b391e76c3908aaa0ce57eb7af0b_1ga21f88b391e76c3908aaa0ce57eb7af0b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_APPARENT_WIND_SPEED<sp/>0x0086</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="282" refid="group__bt__mesh__property__ids_gaad44f961d4ed8aa69318851ac6e4e527_1gaad44f961d4ed8aa69318851ac6e4e527" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_DEW_POINT<sp/>0x0087</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="284" refid="group__bt__mesh__property__ids_ga30fb686e2feb4c01154dbd8b0a726a73_1ga30fb686e2feb4c01154dbd8b0a726a73" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_EXTERNAL_SUPPLY_VOLTAGE<sp/>0x0088</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="286" refid="group__bt__mesh__property__ids_gaa9836fde97dcb5795037e9ed33e27374_1gaa9836fde97dcb5795037e9ed33e27374" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_EXTERNAL_SUPPLY_VOLTAGE_FREQ<sp/>0x0089</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="288" refid="group__bt__mesh__property__ids_gab6f87f25a0cfc9dd3a1dcaaa60156146_1gab6f87f25a0cfc9dd3a1dcaaa60156146" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_GUST_FACTOR<sp/>0x008A</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="290" refid="group__bt__mesh__property__ids_ga07286363571fe0a3ec1b79d6c7c3244e_1ga07286363571fe0a3ec1b79d6c7c3244e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_HEAT_INDEX<sp/>0x008B</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="292" refid="group__bt__mesh__property__ids_ga49c8637759f83604434cf30103a49cc8_1ga49c8637759f83604434cf30103a49cc8" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_DISTRIBUTION<sp/>0x008C</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="294" refid="group__bt__mesh__property__ids_ga3b12941e3f514c855e449e7885bdf245_1ga3b12941e3f514c855e449e7885bdf245" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_SRC_CURRENT<sp/>0x008D</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="296" refid="group__bt__mesh__property__ids_ga297e5cd4c7dbcf69c89a8ef2f39b8d35_1ga297e5cd4c7dbcf69c89a8ef2f39b8d35" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_SRC_ON_TIME_NOT_RESETTABLE<sp/>0x008E</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="298" refid="group__bt__mesh__property__ids_ga00c8805828964ceace5021e8def286d5_1ga00c8805828964ceace5021e8def286d5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_SRC_ON_TIME_RESETTABLE<sp/>0x008F</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="300" refid="group__bt__mesh__property__ids_ga69bfde7e92188c821328309e5b7f9a98_1ga69bfde7e92188c821328309e5b7f9a98" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_SRC_OPEN_CIRCUIT_STAT<sp/>0x0090</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="302" refid="group__bt__mesh__property__ids_gaa93df5172af9b870e7f29d9a7ca3e1ce_1gaa93df5172af9b870e7f29d9a7ca3e1ce" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_SRC_OVERALL_FAILURES_STAT<sp/>0x0091</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="304" refid="group__bt__mesh__property__ids_ga6ddcf8f5781d9c2b75d703bdf018e119_1ga6ddcf8f5781d9c2b75d703bdf018e119" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_SRC_SHORT_CIRCUIT_STAT<sp/>0x0092</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="306" refid="group__bt__mesh__property__ids_ga47f336d31bb36dec9193bfd6164587aa_1ga47f336d31bb36dec9193bfd6164587aa" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_SRC_START_COUNTER_RESETTABLE<sp/>0x0093</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="308" refid="group__bt__mesh__property__ids_ga54bae4cd156adcd6e5021e744a9e7e0f_1ga54bae4cd156adcd6e5021e744a9e7e0f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_SRC_TEMP<sp/>0x0094</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="310" refid="group__bt__mesh__property__ids_ga56ec558d195cfc9c08f4a84c1fbd2515_1ga56ec558d195cfc9c08f4a84c1fbd2515" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_SRC_THERMAL_DERATING_STAT<sp/>0x0095</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="312" refid="group__bt__mesh__property__ids_ga600c75329f56e130fe07507eba5b3cfd_1ga600c75329f56e130fe07507eba5b3cfd" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_SRC_THERMAL_SHUTDOWN_STAT<sp/>0x0096</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="314" refid="group__bt__mesh__property__ids_gae0c568c614765b5b6bd1f1a4bde9266e_1gae0c568c614765b5b6bd1f1a4bde9266e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_SRC_TOTAL_POWER_ON_CYCLES<sp/>0x0097</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="316" refid="group__bt__mesh__property__ids_ga959d896f5ecb4ba0b954d3d9a3a10ce7_1ga959d896f5ecb4ba0b954d3d9a3a10ce7" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_SRC_VOLTAGE<sp/>0x0098</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="318" refid="group__bt__mesh__property__ids_ga2d51ff6fa7928e1f8698a2822a8fd451_1ga2d51ff6fa7928e1f8698a2822a8fd451" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LUMINAIRE_COLOR<sp/>0x0099</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="320" refid="group__bt__mesh__property__ids_gad63ba9538da47be438c53e5d7de48e99_1gad63ba9538da47be438c53e5d7de48e99" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LUMINAIRE_IDENTIFICATION_NUMBER<sp/>0x009A</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="322" refid="group__bt__mesh__property__ids_gaa9c563aa6c1091a877c7db80fd5f5b1d_1gaa9c563aa6c1091a877c7db80fd5f5b1d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LUMINAIRE_MANUFACTURER_GTIN<sp/>0x009B</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="324" refid="group__bt__mesh__property__ids_ga113640a7890d64d9fdcf9ee375925851_1ga113640a7890d64d9fdcf9ee375925851" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LUMINAIRE_NOMINAL_INPUT_POWER<sp/>0x009C</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="326" refid="group__bt__mesh__property__ids_ga26f360c196ea24530aee55fce63eb98a_1ga26f360c196ea24530aee55fce63eb98a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LUMINAIRE_NOMINAL_MAXIMUM_AC_MAINS_VOLTAGE<sp/>0x009D</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="328" refid="group__bt__mesh__property__ids_ga40462917f37c94dfe1e536d07c058d85_1ga40462917f37c94dfe1e536d07c058d85" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LUMINAIRE_NOMINAL_MINIMUM_AC_MAINS_VOLTAGE<sp/>0x009E</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="330" refid="group__bt__mesh__property__ids_gacad906100e50cd60c018a978fce61901_1gacad906100e50cd60c018a978fce61901" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LUMINAIRE_POWER_AT_MINIMUM_DIM_LEVEL<sp/>0x009F</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="332" refid="group__bt__mesh__property__ids_gaecc0b39a3186607da2c85464064054bf_1gaecc0b39a3186607da2c85464064054bf" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LUMINAIRE_TIME_OF_MANUFACTURE<sp/>0x00A0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="334" refid="group__bt__mesh__property__ids_ga4b635544c773667ce93e908ec7bf377a_1ga4b635544c773667ce93e908ec7bf377a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_MAGNETIC_DECLINATION<sp/>0x00A1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="336" refid="group__bt__mesh__property__ids_gaedf91a19d72e6492d442d1df741b04c4_1gaedf91a19d72e6492d442d1df741b04c4" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_MAGNETIC_FLUX_DENSITY_2D<sp/>0x00A2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="338" refid="group__bt__mesh__property__ids_ga627ab6cc765494f524a7bcdd63292413_1ga627ab6cc765494f524a7bcdd63292413" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_MAGNETIC_FLUX_DENSITY_3D<sp/>0x00A3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="340" refid="group__bt__mesh__property__ids_gaaeac383716f31d6586985a62e0254914_1gaaeac383716f31d6586985a62e0254914" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_NOMINAL_LIGHT_OUTPUT<sp/>0x00A4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="342" refid="group__bt__mesh__property__ids_gadd2a2c07b3dda8b16b20a7b54d86a256_1gadd2a2c07b3dda8b16b20a7b54d86a256" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_OVERALL_FAILURE_CONDITION<sp/>0x00A5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="344" refid="group__bt__mesh__property__ids_ga4986b1c16a332f2d7026370ed9b9f689_1ga4986b1c16a332f2d7026370ed9b9f689" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_POLLEN_CONCENTRATION<sp/>0x00A6</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="346" refid="group__bt__mesh__property__ids_gabd59382514391c3b852eedb3b3ad3808_1gabd59382514391c3b852eedb3b3ad3808" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_INDOOR_RELATIVE_HUMIDITY<sp/>0x00A7</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="348" refid="group__bt__mesh__property__ids_gaafcd8455ab6d9b2818ef794813eb8e0e_1gaafcd8455ab6d9b2818ef794813eb8e0e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESENT_OUTDOOR_RELATIVE_HUMIDITY<sp/>0x00A8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="350" refid="group__bt__mesh__property__ids_ga28e5c8a30d77b689f606920b113f5fba_1ga28e5c8a30d77b689f606920b113f5fba" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_PRESSURE<sp/>0x00A9</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="352" refid="group__bt__mesh__property__ids_ga1bc57ace7c660cc1eef44098637599bc_1ga1bc57ace7c660cc1eef44098637599bc" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_RAINFALL<sp/>0x00AA</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="354" refid="group__bt__mesh__property__ids_ga335a55f71084a4675e67d07cab1781ca_1ga335a55f71084a4675e67d07cab1781ca" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_RATED_MEDIAN_USEFUL_LIFE_OF_LUMINAIRE<sp/>0x00AB</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="356" refid="group__bt__mesh__property__ids_gae876bd6cff8d9b0bcf2964a15d5203de_1gae876bd6cff8d9b0bcf2964a15d5203de" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_RATED_MEDIAN_USEFUL_LIGHT_SRC_STARTS<sp/>0x00AC</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="358" refid="group__bt__mesh__property__ids_ga4d43dcc404e0288a809480f34df8aece_1ga4d43dcc404e0288a809480f34df8aece" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_REFERENCE_TEMP<sp/>0x00AD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="360" refid="group__bt__mesh__property__ids_ga379ac334e7aee9fc1add323fc4ae9460_1ga379ac334e7aee9fc1add323fc4ae9460" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_TOTAL_DEVICE_STARTS<sp/>0x00AE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="362" refid="group__bt__mesh__property__ids_ga40bd4006bf5a98789e1495e340d2309d_1ga40bd4006bf5a98789e1495e340d2309d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_TRUE_WIND_DIRECTION<sp/>0x00AF</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="364" refid="group__bt__mesh__property__ids_ga2bef8af0a1eed71b784b56a0529dae57_1ga2bef8af0a1eed71b784b56a0529dae57" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_TRUE_WIND_SPEED<sp/>0x00B0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="366" refid="group__bt__mesh__property__ids_gafce9465d093e97a0402e61bbb4e16f74_1gafce9465d093e97a0402e61bbb4e16f74" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_UV_INDEX<sp/>0x00B1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="368" refid="group__bt__mesh__property__ids_ga21204a71a502ac292e5b6f31031ee7b0_1ga21204a71a502ac292e5b6f31031ee7b0" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_WIND_CHILL<sp/>0x00B2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="370" refid="group__bt__mesh__property__ids_ga6a87066d4d3abfe81e79eb9b248ab773_1ga6a87066d4d3abfe81e79eb9b248ab773" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LIGHT_SRC_TYPE<sp/>0x00B3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="372" refid="group__bt__mesh__property__ids_ga2d3c9ced9a56457dddf7807362d60f6f_1ga2d3c9ced9a56457dddf7807362d60f6f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_LUMINAIRE_IDENTIFICATION_STRING<sp/>0x00B4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="374" refid="group__bt__mesh__property__ids_ga401011f18667e0867d29dd8e5c34006c_1ga401011f18667e0867d29dd8e5c34006c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_OUTPUT_POWER_LIMITATION<sp/>0x00B5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="376" refid="group__bt__mesh__property__ids_gad0849fbc874c47c66647416d84a2aece_1gad0849fbc874c47c66647416d84a2aece" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_THERMAL_DERATING<sp/>0x00B6</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="378" refid="group__bt__mesh__property__ids_ga3663266a49729a8dceabf8e0ecea6882_1ga3663266a49729a8dceabf8e0ecea6882" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_ID_OUTPUT_CURRENT_PERCENT<sp/>0x00B7</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="379"><highlight class="normal"></highlight></codeline>
+<codeline lineno="382"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_MESH_PROPERTIES_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="383"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/mesh/properties.h"/>
+  </compounddef>
+</doxygen>

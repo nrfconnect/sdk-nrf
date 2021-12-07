@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structazure__iot__hub__method" kind="struct" language="C++" prot="public">
+    <compoundname>azure_iot_hub_method</compoundname>
+    <includes refid="azure__iot__hub_8h" local="no">azure_iot_hub.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structazure__iot__hub__method_ab061dc8310398ebc9cba1b2abf47fe70_1ab061dc8310398ebc9cba1b2abf47fe70" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* azure_iot_hub_method::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Method name, null-terminated string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="164" column="12" bodyfile="include/net/azure_iot_hub.h" bodystart="164" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structazure__iot__hub__method_a45ae882e5e322deedbc9ea316366731a_1a45ae882e5e322deedbc9ea316366731a" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* azure_iot_hub_method::rid</definition>
+        <argsstring></argsstring>
+        <name>rid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Method request ID, null-terminated string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="166" column="6" bodyfile="include/net/azure_iot_hub.h" bodystart="166" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structazure__iot__hub__method_af24a9dd2a4c133e71c85e9c73e06e194_1af24a9dd2a4c133e71c85e9c73e06e194" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* azure_iot_hub_method::payload</definition>
+        <argsstring></argsstring>
+        <name>payload</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Method payload. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="168" column="12" bodyfile="include/net/azure_iot_hub.h" bodystart="168" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structazure__iot__hub__method_acabc6ec55121a05f5fb9524e0b3eb470_1acabc6ec55121a05f5fb9524e0b3eb470" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t azure_iot_hub_method::payload_len</definition>
+        <argsstring></argsstring>
+        <name>payload_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Method payload length. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="170" column="8" bodyfile="include/net/azure_iot_hub.h" bodystart="170" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Azure IoT Hub direct method data. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/azure_iot_hub.h" line="162" column="1" bodyfile="include/net/azure_iot_hub.h" bodystart="162" bodyend="171"/>
+    <listofallmembers>
+      <member refid="structazure__iot__hub__method_ab061dc8310398ebc9cba1b2abf47fe70_1ab061dc8310398ebc9cba1b2abf47fe70" prot="public" virt="non-virtual"><scope>azure_iot_hub_method</scope><name>name</name></member>
+      <member refid="structazure__iot__hub__method_af24a9dd2a4c133e71c85e9c73e06e194_1af24a9dd2a4c133e71c85e9c73e06e194" prot="public" virt="non-virtual"><scope>azure_iot_hub_method</scope><name>payload</name></member>
+      <member refid="structazure__iot__hub__method_acabc6ec55121a05f5fb9524e0b3eb470_1acabc6ec55121a05f5fb9524e0b3eb470" prot="public" virt="non-virtual"><scope>azure_iot_hub_method</scope><name>payload_len</name></member>
+      <member refid="structazure__iot__hub__method_a45ae882e5e322deedbc9ea316366731a_1a45ae882e5e322deedbc9ea316366731a" prot="public" virt="non-virtual"><scope>azure_iot_hub_method</scope><name>rid</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

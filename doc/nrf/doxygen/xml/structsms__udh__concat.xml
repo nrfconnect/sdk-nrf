@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structsms__udh__concat" kind="struct" language="C++" prot="public">
+    <compoundname>sms_udh_concat</compoundname>
+    <includes refid="sms_8h" local="no">sms.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structsms__udh__concat_a20015bfd6eeff5eb14e51f9227f1591e_1a20015bfd6eeff5eb14e51f9227f1591e" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool sms_udh_concat::present</definition>
+        <argsstring></argsstring>
+        <name>present</name>
+        <briefdescription>
+<para>Indicates whether this field is present in the SMS message. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="84" column="6" bodyfile="include/modem/sms.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsms__udh__concat_a7ad83de17f6f5e3c951cd0cc21e27da1_1a7ad83de17f6f5e3c951cd0cc21e27da1" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t sms_udh_concat::ref_number</definition>
+        <argsstring></argsstring>
+        <name>ref_number</name>
+        <briefdescription>
+<para>Concatenated short message reference number. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="86" column="10" bodyfile="include/modem/sms.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsms__udh__concat_a49bed9faf1f20dc07192fb11e573df67_1a49bed9faf1f20dc07192fb11e573df67" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t sms_udh_concat::total_msgs</definition>
+        <argsstring></argsstring>
+        <name>total_msgs</name>
+        <briefdescription>
+<para>Maximum number of short messages in the concatenated short message. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="88" column="9" bodyfile="include/modem/sms.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsms__udh__concat_a974b5d6b8a8ccbee45ed365c577280ec_1a974b5d6b8a8ccbee45ed365c577280ec" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t sms_udh_concat::seq_number</definition>
+        <argsstring></argsstring>
+        <name>seq_number</name>
+        <briefdescription>
+<para>Sequence number of the current short message. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="90" column="9" bodyfile="include/modem/sms.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>SMS concatenated short message information. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This is specified in 3GPP TS 23.040 Section 9.2.3.24.1 and 9.2.3.24.8. </para>
+    </detaileddescription>
+    <location file="include/modem/sms.h" line="82" column="1" bodyfile="include/modem/sms.h" bodystart="82" bodyend="91"/>
+    <listofallmembers>
+      <member refid="structsms__udh__concat_a20015bfd6eeff5eb14e51f9227f1591e_1a20015bfd6eeff5eb14e51f9227f1591e" prot="public" virt="non-virtual"><scope>sms_udh_concat</scope><name>present</name></member>
+      <member refid="structsms__udh__concat_a7ad83de17f6f5e3c951cd0cc21e27da1_1a7ad83de17f6f5e3c951cd0cc21e27da1" prot="public" virt="non-virtual"><scope>sms_udh_concat</scope><name>ref_number</name></member>
+      <member refid="structsms__udh__concat_a974b5d6b8a8ccbee45ed365c577280ec_1a974b5d6b8a8ccbee45ed365c577280ec" prot="public" virt="non-virtual"><scope>sms_udh_concat</scope><name>seq_number</name></member>
+      <member refid="structsms__udh__concat_a49bed9faf1f20dc07192fb11e573df67_1a49bed9faf1f20dc07192fb11e573df67" prot="public" virt="non-virtual"><scope>sms_udh_concat</scope><name>total_msgs</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

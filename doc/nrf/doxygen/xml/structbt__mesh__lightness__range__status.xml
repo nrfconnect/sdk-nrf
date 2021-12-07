@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__lightness__range__status" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_lightness_range_status</compoundname>
+    <includes refid="lightness_8h" local="no">lightness.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__lightness__range__status_ad27543909dc7cb19bf075430b5bc7f68_1ad27543909dc7cb19bf075430b5bc7f68" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1ga6fcaf7e02af730b2100af1ef0a01f323" kindref="member">bt_mesh_model_status</ref></type>
+        <definition>enum bt_mesh_model_status bt_mesh_lightness_range_status::status</definition>
+        <argsstring></argsstring>
+        <name>status</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Status of the previous operation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness.h" line="66" column="26" bodyfile="include/bluetooth/mesh/lightness.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__range__status_a4aab154f515d0d20c548607c620212f3_1a4aab154f515d0d20c548607c620212f3" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__lightness__range" kindref="compound">bt_mesh_lightness_range</ref></type>
+        <definition>struct bt_mesh_lightness_range bt_mesh_lightness_range_status::range</definition>
+        <argsstring></argsstring>
+        <name>range</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current Lightness range. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness.h" line="68" column="30" bodyfile="include/bluetooth/mesh/lightness.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Lightness range message parameters. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_mesh_lightness_range</label>
+        <link refid="structbt__mesh__lightness__range"/>
+      </node>
+      <node id="1">
+        <label>bt_mesh_lightness_range_status</label>
+        <link refid="structbt__mesh__lightness__range__status"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>range</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/lightness.h" line="64" column="1" bodyfile="include/bluetooth/mesh/lightness.h" bodystart="64" bodyend="69"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__lightness__range__status_a4aab154f515d0d20c548607c620212f3_1a4aab154f515d0d20c548607c620212f3" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_range_status</scope><name>range</name></member>
+      <member refid="structbt__mesh__lightness__range__status_ad27543909dc7cb19bf075430b5bc7f68_1ad27543909dc7cb19bf075430b5bc7f68" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_range_status</scope><name>status</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

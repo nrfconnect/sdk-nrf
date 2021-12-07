@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structca__cert__tags__t" kind="struct" language="C++" prot="public">
+    <compoundname>ca_cert_tags_t</compoundname>
+    <includes refid="lwm2m__carrier_8h" local="no">lwm2m_carrier.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structca__cert__tags__t_a4e6a5f0e5a7fe441c617efdfbda2890c_1a4e6a5f0e5a7fe441c617efdfbda2890c" prot="public" static="no" mutable="no">
+        <type>int *</type>
+        <definition>int* ca_cert_tags_t::tags</definition>
+        <argsstring></argsstring>
+        <name>tags</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to static array of available security tags </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="195" column="5" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="195" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structca__cert__tags__t_a199f21eff5ecbb00ea1fcd217d47f941_1a199f21eff5ecbb00ea1fcd217d47f941" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int ca_cert_tags_t::count</definition>
+        <argsstring></argsstring>
+        <name>count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of available security tags </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="197" column="5" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="197" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Structure holding security tags for CA certificates to be applied by the LwM2M carrier library. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="193" column="1" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="193" bodyend="198"/>
+    <listofallmembers>
+      <member refid="structca__cert__tags__t_a199f21eff5ecbb00ea1fcd217d47f941_1a199f21eff5ecbb00ea1fcd217d47f941" prot="public" virt="non-virtual"><scope>ca_cert_tags_t</scope><name>count</name></member>
+      <member refid="structca__cert__tags__t_a4e6a5f0e5a7fe441c617efdfbda2890c_1a4e6a5f0e5a7fe441c617efdfbda2890c" prot="public" virt="non-virtual"><scope>ca_cert_tags_t</scope><name>tags</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__ancs__attr" kind="struct" language="C++" prot="public">
+    <compoundname>bt_ancs_attr</compoundname>
+    <includes refid="ancs__client_8h" local="no">ancs_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__ancs__attr_afbd32d89d0c4138ee0bcc40a41367b31_1afbd32d89d0c4138ee0bcc40a41367b31" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_ancs_attr::attr_len</definition>
+        <argsstring></argsstring>
+        <name>attr_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of the received attribute data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="254" column="10" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="254" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__ancs__attr_a10a13e571e473866a4be881be4e984d3_1a10a13e571e473866a4be881be4e984d3" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_ancs_attr::attr_id</definition>
+        <argsstring></argsstring>
+        <name>attr_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Classification of the attribute type. For example, &quot;Title&quot; or &quot;Date&quot;. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="256" column="10" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="256" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__ancs__attr_a3f22c12f870b768f1dc4acb63eb98426_1a3f22c12f870b768f1dc4acb63eb98426" prot="public" static="no" mutable="no">
+        <type>uint8_t *</type>
+        <definition>uint8_t* bt_ancs_attr::attr_data</definition>
+        <argsstring></argsstring>
+        <name>attr_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to where the memory is allocated for storing incoming attributes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="258" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="258" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>iOS attribute structure. This type is used for both notification attributes and app attributes. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/ancs_client.h" line="252" column="1" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="252" bodyend="259"/>
+    <listofallmembers>
+      <member refid="structbt__ancs__attr_a3f22c12f870b768f1dc4acb63eb98426_1a3f22c12f870b768f1dc4acb63eb98426" prot="public" virt="non-virtual"><scope>bt_ancs_attr</scope><name>attr_data</name></member>
+      <member refid="structbt__ancs__attr_a10a13e571e473866a4be881be4e984d3_1a10a13e571e473866a4be881be4e984d3" prot="public" virt="non-virtual"><scope>bt_ancs_attr</scope><name>attr_id</name></member>
+      <member refid="structbt__ancs__attr_afbd32d89d0c4138ee0bcc40a41367b31_1afbd32d89d0c4138ee0bcc40a41367b31" prot="public" virt="non-virtual"><scope>bt_ancs_attr</scope><name>attr_len</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

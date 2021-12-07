@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbl__secp256r1__ext__api" kind="struct" language="C++" prot="public">
+    <compoundname>bl_secp256r1_ext_api</compoundname>
+    <includes refid="bl__crypto_8h" local="no">bl_crypto.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbl__secp256r1__ext__api_a62f0a8eccf416bdd6b2478d1c08409ab_1a62f0a8eccf416bdd6b2478d1c08409ab" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bl__crypto_ga1ecd7e46b7de7eea0f72fdcd3631dd96_1ga1ecd7e46b7de7eea0f72fdcd3631dd96" kindref="member">bl_secp256r1_validate_t</ref></type>
+        <definition>bl_secp256r1_validate_t bl_secp256r1_ext_api::bl_secp256r1_validate</definition>
+        <argsstring></argsstring>
+        <name>bl_secp256r1_validate</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="221" column="25" bodyfile="include/bl_crypto.h" bodystart="221" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Structure describing the BL_SECP256R1 EXT_API. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bl_crypto.h" line="220" column="1" bodyfile="include/bl_crypto.h" bodystart="220" bodyend="222"/>
+    <listofallmembers>
+      <member refid="structbl__secp256r1__ext__api_a62f0a8eccf416bdd6b2478d1c08409ab_1a62f0a8eccf416bdd6b2478d1c08409ab" prot="public" virt="non-virtual"><scope>bl_secp256r1_ext_api</scope><name>bl_secp256r1_validate</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

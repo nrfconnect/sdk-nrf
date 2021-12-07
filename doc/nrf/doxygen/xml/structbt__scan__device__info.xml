@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__scan__device__info" kind="struct" language="C++" prot="public">
+    <compoundname>bt_scan_device_info</compoundname>
+    <includes refid="scan_8h" local="no">scan.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__scan__device__info_a61783c6607da7f33f1f91624efa4f140_1a61783c6607da7f33f1f91624efa4f140" prot="public" static="no" mutable="no">
+        <type>const struct bt_le_scan_recv_info *</type>
+        <definition>const struct bt_le_scan_recv_info* bt_scan_device_info::recv_info</definition>
+        <argsstring></argsstring>
+        <name>recv_info</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Received advertising packet information </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="286" column="33" bodyfile="include/bluetooth/scan.h" bodystart="286" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__scan__device__info_aaadb32a7185c95a4256a3239712e7ce4_1aaadb32a7185c95a4256a3239712e7ce4" prot="public" static="no" mutable="no">
+        <type>const struct bt_le_conn_param *</type>
+        <definition>const struct bt_le_conn_param* bt_scan_device_info::conn_param</definition>
+        <argsstring></argsstring>
+        <name>conn_param</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Connection parameters for LE connection. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="289" column="29" bodyfile="include/bluetooth/scan.h" bodystart="289" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__scan__device__info_a33a3d469a9f7da41f7bad8770ad1b0a4_1a33a3d469a9f7da41f7bad8770ad1b0a4" prot="public" static="no" mutable="no">
+        <type>struct net_buf_simple *</type>
+        <definition>struct net_buf_simple* bt_scan_device_info::adv_data</definition>
+        <argsstring></argsstring>
+        <name>adv_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Received advertising data. If further data processing is needed, you should use <emphasis>bt_data_parse()</emphasis> to get specific advertising data type. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="296" column="21" bodyfile="include/bluetooth/scan.h" bodystart="296" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Structure containing device data needed to establish connection and advertising information. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/scan.h" line="284" column="1" bodyfile="include/bluetooth/scan.h" bodystart="284" bodyend="297"/>
+    <listofallmembers>
+      <member refid="structbt__scan__device__info_a33a3d469a9f7da41f7bad8770ad1b0a4_1a33a3d469a9f7da41f7bad8770ad1b0a4" prot="public" virt="non-virtual"><scope>bt_scan_device_info</scope><name>adv_data</name></member>
+      <member refid="structbt__scan__device__info_aaadb32a7185c95a4256a3239712e7ce4_1aaadb32a7185c95a4256a3239712e7ce4" prot="public" virt="non-virtual"><scope>bt_scan_device_info</scope><name>conn_param</name></member>
+      <member refid="structbt__scan__device__info_a61783c6607da7f33f1f91624efa4f140_1a61783c6607da7f33f1f91624efa4f140" prot="public" virt="non-virtual"><scope>bt_scan_device_info</scope><name>recv_info</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,265 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__aws__fota" kind="group">
+    <compoundname>aws_fota</compoundname>
+    <title>AWS FOTA library</title>
+    <innerclass refid="structaws__fota__event__dl" prot="public">aws_fota_event_dl</innerclass>
+    <innerclass refid="structaws__fota__event" prot="public">aws_fota_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__aws__fota_1ga4bb9f4422a0afdde491fbff5192268f2" prot="public" static="no" strong="no">
+        <type></type>
+        <name>aws_fota_evt_id</name>
+        <enumvalue id="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2a1c51e5d693324bb64806be46fc1ee78d" prot="public">
+          <name>AWS_FOTA_EVT_START</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>AWS FOTA has started </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2a77b7621f99dea675ec3c6075f394aa1e" prot="public">
+          <name>AWS_FOTA_EVT_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>AWS FOTA complete and status reported to job document </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2a9b60a771ee0cb0c60daccd0d22f0e711" prot="public">
+          <name>AWS_FOTA_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>AWS FOTA error </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2a74c4ff6e691bae197bfccc0cb0755b2a" prot="public">
+          <name>AWS_FOTA_EVT_ERASE_PENDING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>AWS FOTA Erase pending </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2a26d49a1561516d2ea4e4948bcff3837c" prot="public">
+          <name>AWS_FOTA_EVT_ERASE_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>AWS FOTA Erase done </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2abe2b358f3ae77a3cf44320260823f55a" prot="public">
+          <name>AWS_FOTA_EVT_DL_PROGRESS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>AWS FOTA download progress </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_fota.h" line="24" column="1" bodyfile="include/net/aws_fota.h" bodystart="24" bodyend="37"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__aws__fota_1ga0d9062c79a48da7eeaada60ad2fecfe6" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* aws_fota_callback_t) (struct aws_fota_event *fota_evt)</definition>
+        <argsstring>)(struct aws_fota_event *fota_evt)</argsstring>
+        <name>aws_fota_callback_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_fota.h" line="51" column="9" bodyfile="include/net/aws_fota.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__aws__fota_1ga1a5c24999628fb00e893f934ef1d3ed5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_fota_init</definition>
+        <argsstring>(struct mqtt_client *const client, aws_fota_callback_t evt_handler)</argsstring>
+        <name>aws_fota_init</name>
+        <param>
+          <type>struct mqtt_client *const</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type><ref refid="group__aws__fota_ga0d9062c79a48da7eeaada60ad2fecfe6_1ga0d9062c79a48da7eeaada60ad2fecfe6" kindref="member">aws_fota_callback_t</ref></type>
+          <declname>evt_handler</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the AWS Firmware Over the Air library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to an initialized MQTT instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>evt_handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback function for events emitted by the aws_fota library.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successfully initialized. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If any of the input values are invalid. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Negative value on error. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_fota.h" line="63" column="5" declfile="include/net/aws_fota.h" declline="63" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__fota_1ga269f36510e8058c5630cce854498ec16" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_fota_mqtt_evt_handler</definition>
+        <argsstring>(struct mqtt_client *const client, const struct mqtt_evt *evt)</argsstring>
+        <name>aws_fota_mqtt_evt_handler</name>
+        <param>
+          <type>struct mqtt_client *const</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type>const struct mqtt_evt *</type>
+          <declname>evt</declname>
+        </param>
+        <briefdescription>
+<para>AWS Firmware over the air mqtt event handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the mqtt_client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the recived mqtt_evt.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful and the application can skip handling this event. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>1</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful but wants the application to handle the event. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A negative value on error. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_fota.h" line="75" column="5" declfile="include/net/aws_fota.h" declline="75" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__fota_1ga0eef68dff4dddaf56c42caaa55904bb8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_fota_get_job_id</definition>
+        <argsstring>(uint8_t *const job_id_buf, size_t buf_size)</argsstring>
+        <name>aws_fota_get_job_id</name>
+        <param>
+          <type>uint8_t *const</type>
+          <declname>job_id_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buf_size</declname>
+        </param>
+        <briefdescription>
+<para>Get the null-terminated job id string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>job_id_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to which the job id will be copied. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buf_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Length of the job id string (not counting the terminating null character) or a negative value on error. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_fota.h" line="86" column="5" declfile="include/net/aws_fota.h" declline="86" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__aws__fota_1ga6f52a7a6f1a1ef80325c53df9c70cd2e" prot="public" static="no">
+        <name>AWS_FOTA_EVT_DL_COMPLETE_VAL</name>
+        <initializer>100</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_fota.h" line="39" column="9" bodyfile="include/net/aws_fota.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Library for performing FOTA with MQTT and HTTP. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

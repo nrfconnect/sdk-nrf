@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structcloud__data__cfg" kind="struct" language="C++" prot="public">
+    <compoundname>cloud_data_cfg</compoundname>
+    <includes refid="v2_2src_2cloud_2cloud__codec_2cloud__codec_8h" local="no">cloud_codec.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structcloud__data__cfg_a12639181d2fa320be3a0ee730450ebd9_1a12639181d2fa320be3a0ee730450ebd9" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool cloud_data_cfg::active_mode</definition>
+        <argsstring></argsstring>
+        <name>active_mode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="97" column="6" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__cfg_a65eb73845752604f441e81ab126dc084_1a65eb73845752604f441e81ab126dc084" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int cloud_data_cfg::gps_timeout</definition>
+        <argsstring></argsstring>
+        <name>gps_timeout</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>GPS search timeout. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="99" column="5" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__cfg_aba318e358cdd6bafc3356c1e182b9e24_1aba318e358cdd6bafc3356c1e182b9e24" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int cloud_data_cfg::active_wait_timeout</definition>
+        <argsstring></argsstring>
+        <name>active_wait_timeout</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Time between cloud publications in Active mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="101" column="5" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__cfg_a039418e59727ce4d2a651619743f772d_1a039418e59727ce4d2a651619743f772d" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int cloud_data_cfg::movement_resolution</definition>
+        <argsstring></argsstring>
+        <name>movement_resolution</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Time between cloud publications in Passive mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="103" column="5" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__cfg_af7b0dfaa0aae30d4ec3e02242a8281e5_1af7b0dfaa0aae30d4ec3e02242a8281e5" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int cloud_data_cfg::movement_timeout</definition>
+        <argsstring></argsstring>
+        <name>movement_timeout</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Time between cloud publications regardless of movement in Passive mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="107" column="5" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__cfg_a0f989b2696a9a62c969b41044440031e_1a0f989b2696a9a62c969b41044440031e" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double cloud_data_cfg::accelerometer_threshold</definition>
+        <argsstring></argsstring>
+        <name>accelerometer_threshold</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Accelerometer trigger threshold value in m/s2. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="109" column="8" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="109" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__cfg_acfedae06b199896b3f5ab3fd87800d12_1acfedae06b199896b3f5ab3fd87800d12" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structcloud__data__no__data" kindref="compound">cloud_data_no_data</ref></type>
+        <definition>struct cloud_data_no_data cloud_data_cfg::no_data</definition>
+        <argsstring></argsstring>
+        <name>no_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Variable used to govern what data types are requested by the application. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="111" column="25" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>cloud_data_cfg</label>
+        <link refid="structcloud__data__cfg"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>no_data</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>cloud_data_no_data</label>
+        <link refid="structcloud__data__no__data"/>
+      </node>
+    </collaborationgraph>
+    <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="95" column="1" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="95" bodyend="112"/>
+    <listofallmembers>
+      <member refid="structcloud__data__cfg_a0f989b2696a9a62c969b41044440031e_1a0f989b2696a9a62c969b41044440031e" prot="public" virt="non-virtual"><scope>cloud_data_cfg</scope><name>accelerometer_threshold</name></member>
+      <member refid="structcloud__data__cfg_a12639181d2fa320be3a0ee730450ebd9_1a12639181d2fa320be3a0ee730450ebd9" prot="public" virt="non-virtual"><scope>cloud_data_cfg</scope><name>active_mode</name></member>
+      <member refid="structcloud__data__cfg_aba318e358cdd6bafc3356c1e182b9e24_1aba318e358cdd6bafc3356c1e182b9e24" prot="public" virt="non-virtual"><scope>cloud_data_cfg</scope><name>active_wait_timeout</name></member>
+      <member refid="structcloud__data__cfg_a65eb73845752604f441e81ab126dc084_1a65eb73845752604f441e81ab126dc084" prot="public" virt="non-virtual"><scope>cloud_data_cfg</scope><name>gps_timeout</name></member>
+      <member refid="structcloud__data__cfg_a039418e59727ce4d2a651619743f772d_1a039418e59727ce4d2a651619743f772d" prot="public" virt="non-virtual"><scope>cloud_data_cfg</scope><name>movement_resolution</name></member>
+      <member refid="structcloud__data__cfg_af7b0dfaa0aae30d4ec3e02242a8281e5_1af7b0dfaa0aae30d4ec3e02242a8281e5" prot="public" virt="non-virtual"><scope>cloud_data_cfg</scope><name>movement_timeout</name></member>
+      <member refid="structcloud__data__cfg_acfedae06b199896b3f5ab3fd87800d12_1acfedae06b199896b3f5ab3fd87800d12" prot="public" virt="non-virtual"><scope>cloud_data_cfg</scope><name>no_data</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

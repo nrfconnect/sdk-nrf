@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structst25r3911b__nfca__tag__info" kind="struct" language="C++" prot="public">
+    <compoundname>st25r3911b_nfca_tag_info</compoundname>
+    <includes refid="st25r3911b__nfca_8h" local="no">st25r3911b_nfca.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structst25r3911b__nfca__tag__info_a3bd549f0998e8e56e9415d95e1b24622_1a3bd549f0998e8e56e9415d95e1b24622" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1gaf280d5487f8a7a46504caa9e4f6390be" kindref="member">st25r3911b_nfca_tag_type</ref></type>
+        <definition>enum st25r3911b_nfca_tag_type st25r3911b_nfca_tag_info::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Tag type. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="91" column="30" bodyfile="include/st25r3911b_nfca.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structst25r3911b__nfca__tag__info_a6988c6076eab29180c3a7cb868aa4de9_1a6988c6076eab29180c3a7cb868aa4de9" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structst25r3911b__nfca__sens__resp" kindref="compound">st25r3911b_nfca_sens_resp</ref></type>
+        <definition>struct st25r3911b_nfca_sens_resp st25r3911b_nfca_tag_info::sens_resp</definition>
+        <argsstring></argsstring>
+        <name>sens_resp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>SENS response. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="94" column="32" bodyfile="include/st25r3911b_nfca.h" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structst25r3911b__nfca__tag__info_aa35b442ee457a7e49771e962669bef5d_1aa35b442ee457a7e49771e962669bef5d" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t st25r3911b_nfca_tag_info::sel_resp</definition>
+        <argsstring></argsstring>
+        <name>sel_resp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>SEL response. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="97" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structst25r3911b__nfca__tag__info_a7e7f32c43e4d01aa570c19bbe6eb8590_1a7e7f32c43e4d01aa570c19bbe6eb8590" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t st25r3911b_nfca_tag_info::nfcid1_len</definition>
+        <argsstring></argsstring>
+        <name>nfcid1_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>NFCID1 length. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="100" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structst25r3911b__nfca__tag__info_a624abd96bb1428442e918cf06e56e5ee_1a624abd96bb1428442e918cf06e56e5ee" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t st25r3911b_nfca_tag_info::nfcid1[10]</definition>
+        <argsstring>[10]</argsstring>
+        <name>nfcid1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>NFCID1. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="103" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structst25r3911b__nfca__tag__info_ae11ce3796fd61da57907fbf72d39673e_1ae11ce3796fd61da57907fbf72d39673e" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool st25r3911b_nfca_tag_info::sleep</definition>
+        <argsstring></argsstring>
+        <name>sleep</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Tag sleep. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="106" column="6" bodyfile="include/st25r3911b_nfca.h" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>NFC-A Tag information. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>st25r3911b_nfca_sens_resp</label>
+        <link refid="structst25r3911b__nfca__sens__resp"/>
+      </node>
+      <node id="1">
+        <label>st25r3911b_nfca_tag_info</label>
+        <link refid="structst25r3911b__nfca__tag__info"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>sens_resp</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/st25r3911b_nfca.h" line="89" column="1" bodyfile="include/st25r3911b_nfca.h" bodystart="89" bodyend="107"/>
+    <listofallmembers>
+      <member refid="structst25r3911b__nfca__tag__info_a624abd96bb1428442e918cf06e56e5ee_1a624abd96bb1428442e918cf06e56e5ee" prot="public" virt="non-virtual"><scope>st25r3911b_nfca_tag_info</scope><name>nfcid1</name></member>
+      <member refid="structst25r3911b__nfca__tag__info_a7e7f32c43e4d01aa570c19bbe6eb8590_1a7e7f32c43e4d01aa570c19bbe6eb8590" prot="public" virt="non-virtual"><scope>st25r3911b_nfca_tag_info</scope><name>nfcid1_len</name></member>
+      <member refid="structst25r3911b__nfca__tag__info_aa35b442ee457a7e49771e962669bef5d_1aa35b442ee457a7e49771e962669bef5d" prot="public" virt="non-virtual"><scope>st25r3911b_nfca_tag_info</scope><name>sel_resp</name></member>
+      <member refid="structst25r3911b__nfca__tag__info_a6988c6076eab29180c3a7cb868aa4de9_1a6988c6076eab29180c3a7cb868aa4de9" prot="public" virt="non-virtual"><scope>st25r3911b_nfca_tag_info</scope><name>sens_resp</name></member>
+      <member refid="structst25r3911b__nfca__tag__info_ae11ce3796fd61da57907fbf72d39673e_1ae11ce3796fd61da57907fbf72d39673e" prot="public" virt="non-virtual"><scope>st25r3911b_nfca_tag_info</scope><name>sleep</name></member>
+      <member refid="structst25r3911b__nfca__tag__info_a3bd549f0998e8e56e9415d95e1b24622_1a3bd549f0998e8e56e9415d95e1b24622" prot="public" virt="non-virtual"><scope>st25r3911b_nfca_tag_info</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

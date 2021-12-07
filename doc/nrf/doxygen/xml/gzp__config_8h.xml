@@ -1,0 +1,277 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="gzp__config_8h" kind="file" language="C++">
+    <compoundname>gzp_config.h</compoundname>
+    <includedby refid="gzp_8h" local="yes">include/gzp.h</includedby>
+    <invincdepgraph>
+      <node id="2">
+        <label>include/gzp.h</label>
+        <link refid="gzp_8h"/>
+      </node>
+      <node id="1">
+        <label>include/gzp_config.h</label>
+        <link refid="gzp__config_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="gzp__config_8h_aeaf80afbd53542fc66060b99c5908228_1aeaf80afbd53542fc66060b99c5908228" prot="public" static="no">
+        <name>GZP_SECRET_KEY</name>
+        <initializer>{1, 23, 45, 57, 26, 68, 12, 64, 13, 73, 13, 62, 26, 45, 12, 77}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Definition of &quot;secret key&quot; used during &quot;Host ID exchange&quot;. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/gzp_config.h" line="19" column="9" bodyfile="include/gzp_config.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="gzp__config_8h_aff185d8a8c83358b63f208b773ec21b1_1aff185d8a8c83358b63f208b773ec21b1" prot="public" static="no">
+        <name>GZP_CHANNEL_LOW</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Definition of the first static selected pairing channel. Should be located in the lower Nth of the channel range, where N is the size if the channel subset selected by the application. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/gzp_config.h" line="28" column="9" bodyfile="include/gzp_config.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="gzp__config_8h_a9188be32704b9e26c74a2d629be85181_1a9188be32704b9e26c74a2d629be85181" prot="public" static="no">
+        <name>GZP_CHANNEL_HIGH</name>
+        <initializer>79</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Definition of the second static selected pairing channel. Should be located in the upper Nth of the channel range, where N is the size if the channel subset selected by the application. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/gzp_config.h" line="35" column="9" bodyfile="include/gzp_config.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="gzp__config_8h_a246d0586694a069a9898b3c8610ec16a_1a246d0586694a069a9898b3c8610ec16a" prot="public" static="no">
+        <name>GZP_ADDRESS</name>
+        <initializer>{4, 6, 8, 10}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Definition of the static &quot;global&quot; pairing address. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/gzp_config.h" line="40" column="9" bodyfile="include/gzp_config.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="gzp__config_8h_a37093aab999529bab65784e4f6d3afb5_1a37093aab999529bab65784e4f6d3afb5" prot="public" static="no">
+        <name>GZP_POWER</name>
+        <initializer>NRF_GZLL_TX_POWER_N16_DBM</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Reduced TX power for use during close proximity pairing. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/gzp_config.h" line="45" column="9" bodyfile="include/gzp_config.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="gzp__config_8h_a2ad1f0c81a2124bc210271dfe87d97fc_1a2ad1f0c81a2124bc210271dfe87d97fc" prot="public" static="no">
+        <name>GZP_REQ_TX_TIMEOUT</name>
+        <initializer>200</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Definition of pairing request timeout. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/gzp_config.h" line="50" column="9" bodyfile="include/gzp_config.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="gzp__config_8h_ad62be2ef7bb014f062414d45f3c8b4e6_1ad62be2ef7bb014f062414d45f3c8b4e6" prot="public" static="no">
+        <name>GZP_MAX_BACKOFF_PACKETS</name>
+        <initializer>100</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Definition of the maximimum number of &quot;backoff&quot; packets (step 0) to be transmitted. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/gzp_config.h" line="55" column="9" bodyfile="include/gzp_config.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="gzp__config_8h_a2e4c3768f612e828fad292d3e9dbb65b_1a2e4c3768f612e828fad292d3e9dbb65b" prot="public" static="no">
+        <name>GZP_TX_ACK_WAIT_TIMEOUT</name>
+        <initializer>(<ref refid="gzp__config_8h_a27b8ebed93688f6827864ad342aeb36f_1a27b8ebed93688f6827864ad342aeb36f" kindref="member">GZP_CLOSE_PROXIMITY_BACKOFF_RX_TIMEOUT</ref> + 50)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Definition of the period a device shall wait before attempting to send the packet for fetching the pairing response (step 1). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/gzp_config.h" line="61" column="9" bodyfile="include/gzp_config.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="gzp__config_8h_a27b8ebed93688f6827864ad342aeb36f_1a27b8ebed93688f6827864ad342aeb36f" prot="public" static="no">
+        <name>GZP_CLOSE_PROXIMITY_BACKOFF_RX_TIMEOUT</name>
+        <initializer>((<ref refid="gzp__config_8h_a2ad1f0c81a2124bc210271dfe87d97fc_1a2ad1f0c81a2124bc210271dfe87d97fc" kindref="member">GZP_REQ_TX_TIMEOUT</ref> / 2) + 50)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Definition of the period a device in close proximity shall back off on the pairing address after a backoff packet has been received. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/gzp_config.h" line="67" column="9" bodyfile="include/gzp_config.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="gzp__config_8h_a896351bce1f29d58c802eba3c9546eda_1a896351bce1f29d58c802eba3c9546eda" prot="public" static="no">
+        <name>GZP_NOT_PROXIMITY_BACKOFF_RX_TIMEOUT</name>
+        <initializer>					      (<ref refid="gzp__config_8h_a27b8ebed93688f6827864ad342aeb36f_1a27b8ebed93688f6827864ad342aeb36f" kindref="member">GZP_CLOSE_PROXIMITY_BACKOFF_RX_TIMEOUT</ref> + \
+					      <ref refid="gzp__config_8h_a4a4bff4a88abee71036ef3ade905913d_1a4a4bff4a88abee71036ef3ade905913d" kindref="member">GZP_STEP1_RX_TIMEOUT</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Definition of the period a device NOT in close proximity shall back off on the pairing address after a backoff packet has been received. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/gzp_config.h" line="73" column="9" bodyfile="include/gzp_config.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="gzp__config_8h_a4a4bff4a88abee71036ef3ade905913d_1a4a4bff4a88abee71036ef3ade905913d" prot="public" static="no">
+        <name>GZP_STEP1_RX_TIMEOUT</name>
+        <initializer>(((<ref refid="gzp__config_8h_a2ad1f0c81a2124bc210271dfe87d97fc_1a2ad1f0c81a2124bc210271dfe87d97fc" kindref="member">GZP_REQ_TX_TIMEOUT</ref> / 2) + <ref refid="gzp__config_8h_a2e4c3768f612e828fad292d3e9dbb65b_1a2e4c3768f612e828fad292d3e9dbb65b" kindref="member">GZP_TX_ACK_WAIT_TIMEOUT</ref>) + 50)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Definition of the time the host waits for a device to complete transmission of the pairing request step 1 packet. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/gzp_config.h" line="80" column="9" bodyfile="include/gzp_config.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="gzp__config_8h_a2139d756ef114acc917fc56c36b4c54b_1a2139d756ef114acc917fc56c36b4c54b" prot="public" static="no">
+        <name>GZP_CHANNEL_MIN</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Definition of the lowest boundary for the channel range to be used. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/gzp_config.h" line="85" column="9" bodyfile="include/gzp_config.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="gzp__config_8h_a78ad56d6c04926e65a87af36dcd9e6c8_1a78ad56d6c04926e65a87af36dcd9e6c8" prot="public" static="no">
+        <name>GZP_CHANNEL_MAX</name>
+        <initializer>80</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Definition of the upper boundary for the channel range to be used. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/gzp_config.h" line="90" column="9" bodyfile="include/gzp_config.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="gzp__config_8h_ad9414c5c424f0b385dffb0866a62b55d_1ad9414c5c424f0b385dffb0866a62b55d" prot="public" static="no">
+        <name>GZP_CHANNEL_SPACING_MIN</name>
+        <initializer>5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Definition of the minimum channel spacing for the channel subset generated during pairing. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/gzp_config.h" line="96" column="9" bodyfile="include/gzp_config.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="gzp__config_8h_a9dcae42c5c98263c78b8e5ac8c86e0ba_1a9dcae42c5c98263c78b8e5ac8c86e0ba" prot="public" static="no">
+        <name>GZP_MAX_FW_PAYLOAD_LENGTH</name>
+        <initializer>17</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum Device TX payload length [bytes]. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/gzp_config.h" line="101" column="9" bodyfile="include/gzp_config.h" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="gzp__config_8h_a612676a61a59d3e7cf56b497af7ea15f_1a612676a61a59d3e7cf56b497af7ea15f" prot="public" static="no">
+        <name>GZP_MAX_ACK_PAYLOAD_LENGTH</name>
+        <initializer>10</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum Host ACK payload length [bytes]. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/gzp_config.h" line="106" column="9" bodyfile="include/gzp_config.h" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>__GZP_CONFIG_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>__GZP_CONFIG_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="gzp__config_8h_aeaf80afbd53542fc66060b99c5908228_1aeaf80afbd53542fc66060b99c5908228" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>GZP_SECRET_KEY<sp/>{1,<sp/>23,<sp/>45,<sp/>57,<sp/>26,<sp/>68,<sp/>12,<sp/>64,<sp/>13,<sp/>73,<sp/>13,<sp/>62,<sp/>26,<sp/>45,<sp/>12,<sp/>77}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="comment">/*---------------------------------------------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="gzp__config_8h_aff185d8a8c83358b63f208b773ec21b1_1aff185d8a8c83358b63f208b773ec21b1" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>GZP_CHANNEL_LOW<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="gzp__config_8h_a9188be32704b9e26c74a2d629be85181_1a9188be32704b9e26c74a2d629be85181" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>GZP_CHANNEL_HIGH<sp/>79</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="gzp__config_8h_a246d0586694a069a9898b3c8610ec16a_1a246d0586694a069a9898b3c8610ec16a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>GZP_ADDRESS<sp/>{4,<sp/>6,<sp/>8,<sp/>10}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="gzp__config_8h_a37093aab999529bab65784e4f6d3afb5_1a37093aab999529bab65784e4f6d3afb5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>GZP_POWER<sp/>NRF_GZLL_TX_POWER_N16_DBM</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="gzp__config_8h_a2ad1f0c81a2124bc210271dfe87d97fc_1a2ad1f0c81a2124bc210271dfe87d97fc" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>GZP_REQ_TX_TIMEOUT<sp/>200</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="gzp__config_8h_ad62be2ef7bb014f062414d45f3c8b4e6_1ad62be2ef7bb014f062414d45f3c8b4e6" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>GZP_MAX_BACKOFF_PACKETS<sp/>100</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="gzp__config_8h_a2e4c3768f612e828fad292d3e9dbb65b_1a2e4c3768f612e828fad292d3e9dbb65b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>GZP_TX_ACK_WAIT_TIMEOUT<sp/>(GZP_CLOSE_PROXIMITY_BACKOFF_RX_TIMEOUT<sp/>+<sp/>50)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="gzp__config_8h_a27b8ebed93688f6827864ad342aeb36f_1a27b8ebed93688f6827864ad342aeb36f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>GZP_CLOSE_PROXIMITY_BACKOFF_RX_TIMEOUT<sp/>((GZP_REQ_TX_TIMEOUT<sp/>/<sp/>2)<sp/>+<sp/>50)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="gzp__config_8h_a896351bce1f29d58c802eba3c9546eda_1a896351bce1f29d58c802eba3c9546eda" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>GZP_NOT_PROXIMITY_BACKOFF_RX_TIMEOUT<sp/>(GZP_CLOSE_PROXIMITY_BACKOFF_RX_TIMEOUT<sp/>+<sp/>\</highlight></codeline>
+<codeline lineno="74"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>GZP_STEP1_RX_TIMEOUT)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80" refid="gzp__config_8h_a4a4bff4a88abee71036ef3ade905913d_1a4a4bff4a88abee71036ef3ade905913d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>GZP_STEP1_RX_TIMEOUT<sp/>(((GZP_REQ_TX_TIMEOUT<sp/>/<sp/>2)<sp/>+<sp/>GZP_TX_ACK_WAIT_TIMEOUT)<sp/>+<sp/>50)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="gzp__config_8h_a2139d756ef114acc917fc56c36b4c54b_1a2139d756ef114acc917fc56c36b4c54b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>GZP_CHANNEL_MIN<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="gzp__config_8h_a78ad56d6c04926e65a87af36dcd9e6c8_1a78ad56d6c04926e65a87af36dcd9e6c8" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>GZP_CHANNEL_MAX<sp/>80</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96" refid="gzp__config_8h_ad9414c5c424f0b385dffb0866a62b55d_1ad9414c5c424f0b385dffb0866a62b55d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>GZP_CHANNEL_SPACING_MIN<sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101" refid="gzp__config_8h_a9dcae42c5c98263c78b8e5ac8c86e0ba_1a9dcae42c5c98263c78b8e5ac8c86e0ba" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>GZP_MAX_FW_PAYLOAD_LENGTH<sp/>17</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106" refid="gzp__config_8h_a612676a61a59d3e7cf56b497af7ea15f_1a612676a61a59d3e7cf56b497af7ea15f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>GZP_MAX_ACK_PAYLOAD_LENGTH<sp/>10</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>__GZP_CONFIG_H<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/gzp_config.h"/>
+  </compounddef>
+</doxygen>

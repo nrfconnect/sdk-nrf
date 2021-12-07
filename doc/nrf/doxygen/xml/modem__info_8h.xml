@@ -1,0 +1,750 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="modem__info_8h" kind="file" language="C++">
+    <compoundname>modem_info.h</compoundname>
+    <includes refid="at__params_8h" local="no">modem/at_params.h</includes>
+    <incdepgraph>
+      <node id="2">
+        <label>modem/at_params.h</label>
+        <link refid="at__params_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/modem/modem_info.h</label>
+        <link refid="modem__info_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structlte__param" prot="public">lte_param</innerclass>
+    <innerclass refid="structnetwork__param" prot="public">network_param</innerclass>
+    <innerclass refid="structsim__param" prot="public">sim_param</innerclass>
+    <innerclass refid="structdevice__param" prot="public">device_param</innerclass>
+    <innerclass refid="structmodem__param__info" prot="public">modem_param_info</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__modem__info_ga21bf71eadbca700449a9fe6caffefd53_1ga21bf71eadbca700449a9fe6caffefd53" prot="public" static="no">
+        <name>MODEM_INFO_MAX_RESPONSE_SIZE</name>
+        <initializer>100</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Largest expected parameter response size. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="29" column="9" bodyfile="include/modem/modem_info.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__modem__info_ga6afdc36292e46bc4bdce5e6f549fd722_1ga6afdc36292e46bc4bdce5e6f549fd722" prot="public" static="no">
+        <name>MODEM_INFO_JSON_STRING_SIZE</name>
+        <initializer>512</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of the JSON string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="32" column="9" bodyfile="include/modem/modem_info.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__modem__info_ga6337208751d0e6410b4a194fb385eed5_1ga6337208751d0e6410b4a194fb385eed5" prot="public" static="no">
+        <name>MODEM_INFO_RSRP_OFFSET_VAL</name>
+        <initializer>141</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>RSRP offset value. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="35" column="9" bodyfile="include/modem/modem_info.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__modem__info_ga92fa1a93b7fc074e65cffd74f1b14e2c_1ga92fa1a93b7fc074e65cffd74f1b14e2c" prot="public" static="no">
+        <name>MODEM_INFO_NETWORK_MODE_MAX_SIZE</name>
+        <initializer>12</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum string size of the network mode string </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="38" column="9" bodyfile="include/modem/modem_info.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1gab0ea94d2aa315f7a7fc9ececee2419c5" prot="public" static="no" strong="no">
+        <type></type>
+        <name>modem_info</name>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a48daf43c555c47d9536c3acee0b19db3" prot="public">
+          <name>MODEM_INFO_RSRP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Signal strength. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a2672f717f998733ac78695c8515f183c" prot="public">
+          <name>MODEM_INFO_CUR_BAND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Current LTE band. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a8f6f89ecbfccb28d85348b0cac760732" prot="public">
+          <name>MODEM_INFO_SUP_BAND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Supported LTE bands. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a080b9e4edd82fce464fceec7ea02e372" prot="public">
+          <name>MODEM_INFO_AREA_CODE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Tracking area code. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a366b7a5f07a5608dffff134fea291bb5" prot="public">
+          <name>MODEM_INFO_UE_MODE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Current mode. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5ae7851420ec5326a2dac93189de14e923" prot="public">
+          <name>MODEM_INFO_OPERATOR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Current operator name. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a24de707977ddc8fb9705e9af0d440377" prot="public">
+          <name>MODEM_INFO_MCC</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Mobile country code. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5afd7edfaf0c12f1aa2033fc21c4506a89" prot="public">
+          <name>MODEM_INFO_MNC</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Mobile network code. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a956c70b885de62bd5a6d284225bcbf7a" prot="public">
+          <name>MODEM_INFO_CELLID</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Cell ID of the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a6caaf105e97da173aa5d852687375403" prot="public">
+          <name>MODEM_INFO_IP_ADDRESS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>IP address of the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5abb14f9c6228a692d69330a73f485c311" prot="public">
+          <name>MODEM_INFO_UICC</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>UICC state. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a4470be866ac414dc49d47521e205fa8e" prot="public">
+          <name>MODEM_INFO_BATTERY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Battery voltage. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5ada17cf27e72d5670bb8c546c85a9df17" prot="public">
+          <name>MODEM_INFO_TEMP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Temperature level. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a464543f63c0d8ad186a7d1c3d41212cf" prot="public">
+          <name>MODEM_INFO_FW_VERSION</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Modem firmware version. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5acbed6589b15d9bca1e21d4555aaeda42" prot="public">
+          <name>MODEM_INFO_ICCID</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>SIM ICCID. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5af376213876e07031d96e0f8c4e621d59" prot="public">
+          <name>MODEM_INFO_LTE_MODE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>LTE-M support mode. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a38ce7b8f1e0d906db747d8be4e0e15cd" prot="public">
+          <name>MODEM_INFO_NBIOT_MODE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>NB-IoT support mode. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a1c72b53f7262b26066fd2081542d19b0" prot="public">
+          <name>MODEM_INFO_GPS_MODE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>GPS support mode. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a069e9fd0de322009b661013b7eb3349a" prot="public">
+          <name>MODEM_INFO_IMSI</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Mobile subscriber identity. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a3d4eb73cc82150cacfc03f5e5407ce1c" prot="public">
+          <name>MODEM_INFO_IMEI</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Modem serial number. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a2c153c5623499818f9db9e796e467ec6" prot="public">
+          <name>MODEM_INFO_DATE_TIME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Mobile network time and date </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5ab690b120ade9831ff5498103480545a4" prot="public">
+          <name>MODEM_INFO_APN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Access point name. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a4c87b7defac3d799bdd1626ed1459107" prot="public">
+          <name>MODEM_INFO_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Number of legal elements in the enum. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>LTE link information data. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="44" column="1" bodyfile="include/modem/modem_info.h" bodystart="44" bodyend="68"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__modem__info_gace4181b12b02f5b203f6701cfdab8b04_1gace4181b12b02f5b203f6701cfdab8b04" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* rsrp_cb_t) (char rsrp_value)</definition>
+        <argsstring>)(char rsrp_value)</argsstring>
+        <name>rsrp_cb_t</name>
+        <briefdescription>
+<para>RSRP event handler function protoype. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="41" column="9" bodyfile="include/modem/modem_info.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__modem__info_ga9ec9d909d57c909228d5a8a582d3e6bf_1ga9ec9d909d57c909228d5a8a582d3e6bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_info_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>modem_info_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize the modem information module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="129" column="5" declfile="include/modem/modem_info.h" declline="129" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__modem__info_ga7cbc32cfd40efdc5c3cfa03498a08864_1ga7cbc32cfd40efdc5c3cfa03498a08864" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_info_params_init</definition>
+        <argsstring>(struct modem_param_info *modem_param)</argsstring>
+        <name>modem_info_params_init</name>
+        <param>
+          <type>struct <ref refid="structmodem__param__info" kindref="compound">modem_param_info</ref> *</type>
+          <declname>modem_param</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the structure that stores modem information. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>modem_param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the modem parameter structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="139" column="5" declfile="include/modem/modem_info.h" declline="139" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__modem__info_ga7816fb2f525c980ecc016accd46d114a_1ga7816fb2f525c980ecc016accd46d114a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_info_rsrp_register</definition>
+        <argsstring>(rsrp_cb_t cb)</argsstring>
+        <name>modem_info_rsrp_register</name>
+        <param>
+          <type><ref refid="group__modem__info_gace4181b12b02f5b203f6701cfdab8b04_1gace4181b12b02f5b203f6701cfdab8b04" kindref="member">rsrp_cb_t</ref></type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the subscription of RSRP values. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback function.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="148" column="5" declfile="include/modem/modem_info.h" declline="148" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__modem__info_gae9ca1fe6b902242c46a000abc6924b2e_1gae9ca1fe6b902242c46a000abc6924b2e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_info_string_get</definition>
+        <argsstring>(enum modem_info info, char *buf, const size_t buf_size)</argsstring>
+        <name>modem_info_string_get</name>
+        <param>
+          <type>enum <ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1gab0ea94d2aa315f7a7fc9ececee2419c5" kindref="member">modem_info</ref></type>
+          <declname>info</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>buf_size</declname>
+        </param>
+        <briefdescription>
+<para>Request the current modem status of any predefined information value as a string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If the data parameter returned by the modem is originally a short, it is still returned as a string.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>info</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The requested information type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The buffer to store the null-terminated string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buf_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Length of received data if the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="163" column="5" declfile="include/modem/modem_info.h" declline="163" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__modem__info_gaae2ddb4e87dcc8272568189a5a620ae0_1gaae2ddb4e87dcc8272568189a5a620ae0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_info_short_get</definition>
+        <argsstring>(enum modem_info info, uint16_t *buf)</argsstring>
+        <name>modem_info_short_get</name>
+        <param>
+          <type>enum <ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1gab0ea94d2aa315f7a7fc9ececee2419c5" kindref="member">modem_info</ref></type>
+          <declname>info</declname>
+        </param>
+        <param>
+          <type>uint16_t *</type>
+          <declname>buf</declname>
+        </param>
+        <briefdescription>
+<para>Request the current modem status of any predefined information value as a short. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If the data parameter returned by the modem is originally a string, this function fails.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>info</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The requested information type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The short where to store the information.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Length of received data if the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="177" column="5" declfile="include/modem/modem_info.h" declline="177" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__modem__info_ga51cf22560784c67419538b67a6055a9f_1ga51cf22560784c67419538b67a6055a9f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_info_name_get</definition>
+        <argsstring>(enum modem_info info, char *name)</argsstring>
+        <name>modem_info_name_get</name>
+        <param>
+          <type>enum <ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1gab0ea94d2aa315f7a7fc9ececee2419c5" kindref="member">modem_info</ref></type>
+          <declname>info</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+<para>Request the name of a modem information data type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>info</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The requested information type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The string where to store the name.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Length of received data if the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="187" column="5" declfile="include/modem/modem_info.h" declline="187" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__modem__info_gaeccc3d1f3dc687bb00996a3005bb5d92_1gaeccc3d1f3dc687bb00996a3005bb5d92" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>enum <ref refid="group__at__params_gaa0448600e795221ad6b218cf40329c8b_1gaa0448600e795221ad6b218cf40329c8b" kindref="member">at_param_type</ref></type>
+        <definition>enum at_param_type modem_info_type_get</definition>
+        <argsstring>(enum modem_info info)</argsstring>
+        <name>modem_info_type_get</name>
+        <param>
+          <type>enum <ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1gab0ea94d2aa315f7a7fc9ececee2419c5" kindref="member">modem_info</ref></type>
+          <declname>info</declname>
+        </param>
+        <briefdescription>
+<para>Request the data type of the current modem information type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>info</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The requested information type.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The data type of the requested modem information data. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="197" column="19" declfile="include/modem/modem_info.h" declline="197" declcolumn="19"/>
+      </memberdef>
+      <memberdef kind="function" id="group__modem__info_ga7285eb835bb1d1398bd151310ed506a0_1ga7285eb835bb1d1398bd151310ed506a0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_info_params_get</definition>
+        <argsstring>(struct modem_param_info *modem_param)</argsstring>
+        <name>modem_info_params_get</name>
+        <param>
+          <type>struct <ref refid="structmodem__param__info" kindref="compound">modem_param_info</ref> *</type>
+          <declname>modem_param</declname>
+        </param>
+        <briefdescription>
+<para>Obtain the modem parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The data is stored in the provided info structure.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>modem_param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the storage parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="243" column="5" declfile="include/modem/modem_info.h" declline="243" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for retrieving modem information. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>ZEPHYR_INCLUDE_MODEM_INFO_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ZEPHYR_INCLUDE_MODEM_INFO_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_CJSON_LIB</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cJSON.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="at__params_8h" kindref="compound">modem/at_params.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="group__modem__info_ga21bf71eadbca700449a9fe6caffefd53_1ga21bf71eadbca700449a9fe6caffefd53" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_INFO_MAX_RESPONSE_SIZE<sp/>100</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="group__modem__info_ga6afdc36292e46bc4bdce5e6f549fd722_1ga6afdc36292e46bc4bdce5e6f549fd722" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_INFO_JSON_STRING_SIZE<sp/>512</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="group__modem__info_ga6337208751d0e6410b4a194fb385eed5_1ga6337208751d0e6410b4a194fb385eed5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_INFO_RSRP_OFFSET_VAL<sp/>141</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="group__modem__info_ga92fa1a93b7fc074e65cffd74f1b14e2c_1ga92fa1a93b7fc074e65cffd74f1b14e2c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_INFO_NETWORK_MODE_MAX_SIZE<sp/>12</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="group__modem__info_gace4181b12b02f5b203f6701cfdab8b04_1gace4181b12b02f5b203f6701cfdab8b04" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__modem__info_gace4181b12b02f5b203f6701cfdab8b04_1gace4181b12b02f5b203f6701cfdab8b04" kindref="member">rsrp_cb_t</ref>)(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>rsrp_value);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1gab0ea94d2aa315f7a7fc9ececee2419c5" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1gab0ea94d2aa315f7a7fc9ececee2419c5" kindref="member">modem_info</ref><sp/>{</highlight></codeline>
+<codeline lineno="45" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a48daf43c555c47d9536c3acee0b19db3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a48daf43c555c47d9536c3acee0b19db3" kindref="member">MODEM_INFO_RSRP</ref>,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="46" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a2672f717f998733ac78695c8515f183c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a2672f717f998733ac78695c8515f183c" kindref="member">MODEM_INFO_CUR_BAND</ref>,<sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="47" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a8f6f89ecbfccb28d85348b0cac760732" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a8f6f89ecbfccb28d85348b0cac760732" kindref="member">MODEM_INFO_SUP_BAND</ref>,<sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="48" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a080b9e4edd82fce464fceec7ea02e372" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a080b9e4edd82fce464fceec7ea02e372" kindref="member">MODEM_INFO_AREA_CODE</ref>,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="49" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a366b7a5f07a5608dffff134fea291bb5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a366b7a5f07a5608dffff134fea291bb5" kindref="member">MODEM_INFO_UE_MODE</ref>,<sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="50" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5ae7851420ec5326a2dac93189de14e923" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5ae7851420ec5326a2dac93189de14e923" kindref="member">MODEM_INFO_OPERATOR</ref>,<sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="51" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a24de707977ddc8fb9705e9af0d440377" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a24de707977ddc8fb9705e9af0d440377" kindref="member">MODEM_INFO_MCC</ref>,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="52" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5afd7edfaf0c12f1aa2033fc21c4506a89" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5afd7edfaf0c12f1aa2033fc21c4506a89" kindref="member">MODEM_INFO_MNC</ref>,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="53" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a956c70b885de62bd5a6d284225bcbf7a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a956c70b885de62bd5a6d284225bcbf7a" kindref="member">MODEM_INFO_CELLID</ref>,<sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="54" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a6caaf105e97da173aa5d852687375403" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a6caaf105e97da173aa5d852687375403" kindref="member">MODEM_INFO_IP_ADDRESS</ref>,<sp/><sp/></highlight></codeline>
+<codeline lineno="55" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5abb14f9c6228a692d69330a73f485c311" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5abb14f9c6228a692d69330a73f485c311" kindref="member">MODEM_INFO_UICC</ref>,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="56" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a4470be866ac414dc49d47521e205fa8e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a4470be866ac414dc49d47521e205fa8e" kindref="member">MODEM_INFO_BATTERY</ref>,<sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="57" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5ada17cf27e72d5670bb8c546c85a9df17" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5ada17cf27e72d5670bb8c546c85a9df17" kindref="member">MODEM_INFO_TEMP</ref>,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="58" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a464543f63c0d8ad186a7d1c3d41212cf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a464543f63c0d8ad186a7d1c3d41212cf" kindref="member">MODEM_INFO_FW_VERSION</ref>,<sp/><sp/></highlight></codeline>
+<codeline lineno="59" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5acbed6589b15d9bca1e21d4555aaeda42" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5acbed6589b15d9bca1e21d4555aaeda42" kindref="member">MODEM_INFO_ICCID</ref>,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="60" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5af376213876e07031d96e0f8c4e621d59" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5af376213876e07031d96e0f8c4e621d59" kindref="member">MODEM_INFO_LTE_MODE</ref>,<sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="61" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a38ce7b8f1e0d906db747d8be4e0e15cd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a38ce7b8f1e0d906db747d8be4e0e15cd" kindref="member">MODEM_INFO_NBIOT_MODE</ref>,<sp/><sp/></highlight></codeline>
+<codeline lineno="62" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a1c72b53f7262b26066fd2081542d19b0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a1c72b53f7262b26066fd2081542d19b0" kindref="member">MODEM_INFO_GPS_MODE</ref>,<sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="63" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a069e9fd0de322009b661013b7eb3349a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a069e9fd0de322009b661013b7eb3349a" kindref="member">MODEM_INFO_IMSI</ref>,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="64" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a3d4eb73cc82150cacfc03f5e5407ce1c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a3d4eb73cc82150cacfc03f5e5407ce1c" kindref="member">MODEM_INFO_IMEI</ref>,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="65" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a2c153c5623499818f9db9e796e467ec6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a2c153c5623499818f9db9e796e467ec6" kindref="member">MODEM_INFO_DATE_TIME</ref>,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="66" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5ab690b120ade9831ff5498103480545a4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5ab690b120ade9831ff5498103480545a4" kindref="member">MODEM_INFO_APN</ref>,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="67" refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a4c87b7defac3d799bdd1626ed1459107" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1ggab0ea94d2aa315f7a7fc9ececee2419c5a4c87b7defac3d799bdd1626ed1459107" kindref="member">MODEM_INFO_COUNT</ref>,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="68"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71" refid="structlte__param" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__param" kindref="compound">lte_param</ref><sp/>{</highlight></codeline>
+<codeline lineno="72" refid="structlte__param_a071b8949a6cd3cec6b454004ddedb55c_1a071b8949a6cd3cec6b454004ddedb55c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structlte__param_a071b8949a6cd3cec6b454004ddedb55c_1a071b8949a6cd3cec6b454004ddedb55c" kindref="member">value</ref>;<sp/></highlight></codeline>
+<codeline lineno="73" refid="structlte__param_a6cc2ab2985ad7762e5156ba8a7b67c45_1a6cc2ab2985ad7762e5156ba8a7b67c45" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structlte__param_a6cc2ab2985ad7762e5156ba8a7b67c45_1a6cc2ab2985ad7762e5156ba8a7b67c45" kindref="member">value_string</ref>[<ref refid="group__modem__info_ga21bf71eadbca700449a9fe6caffefd53_1ga21bf71eadbca700449a9fe6caffefd53" kindref="member">MODEM_INFO_MAX_RESPONSE_SIZE</ref>];<sp/></highlight></codeline>
+<codeline lineno="74" refid="structlte__param_afb9661be827808cffbb1e75aff4303bf_1afb9661be827808cffbb1e75aff4303bf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structlte__param_afb9661be827808cffbb1e75aff4303bf_1afb9661be827808cffbb1e75aff4303bf" kindref="member">data_name</ref>;<sp/></highlight></codeline>
+<codeline lineno="75" refid="structlte__param_aef4e6b09704498c2f554f92de54c7b53_1aef4e6b09704498c2f554f92de54c7b53" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1gab0ea94d2aa315f7a7fc9ececee2419c5" kindref="member">modem_info</ref><sp/><ref refid="structlte__param_aef4e6b09704498c2f554f92de54c7b53_1aef4e6b09704498c2f554f92de54c7b53" kindref="member">type</ref>;<sp/></highlight></codeline>
+<codeline lineno="76"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="structnetwork__param" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnetwork__param" kindref="compound">network_param</ref><sp/>{</highlight></codeline>
+<codeline lineno="80" refid="structnetwork__param_a09c7e516ea0eb0588a15a401f2f109a4_1a09c7e516ea0eb0588a15a401f2f109a4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__param" kindref="compound">lte_param</ref><sp/><ref refid="structnetwork__param_a09c7e516ea0eb0588a15a401f2f109a4_1a09c7e516ea0eb0588a15a401f2f109a4" kindref="member">current_band</ref>;<sp/></highlight></codeline>
+<codeline lineno="81" refid="structnetwork__param_afbf2aee7833635a5dde3f0a7805e959a_1afbf2aee7833635a5dde3f0a7805e959a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__param" kindref="compound">lte_param</ref><sp/><ref refid="structnetwork__param_afbf2aee7833635a5dde3f0a7805e959a_1afbf2aee7833635a5dde3f0a7805e959a" kindref="member">sup_band</ref>;<sp/></highlight></codeline>
+<codeline lineno="82" refid="structnetwork__param_a276b282f7096b62b005442b75bd81d19_1a276b282f7096b62b005442b75bd81d19" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__param" kindref="compound">lte_param</ref><sp/><ref refid="structnetwork__param_a276b282f7096b62b005442b75bd81d19_1a276b282f7096b62b005442b75bd81d19" kindref="member">area_code</ref>;<sp/></highlight></codeline>
+<codeline lineno="83" refid="structnetwork__param_a83fb8a8582a81400ba87bf2aa38c7a43_1a83fb8a8582a81400ba87bf2aa38c7a43" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__param" kindref="compound">lte_param</ref><sp/><ref refid="structnetwork__param_a83fb8a8582a81400ba87bf2aa38c7a43_1a83fb8a8582a81400ba87bf2aa38c7a43" kindref="member">current_operator</ref>;<sp/></highlight></codeline>
+<codeline lineno="84" refid="structnetwork__param_a6487e63431a0ab4df1d9fa05dbc5a1bf_1a6487e63431a0ab4df1d9fa05dbc5a1bf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__param" kindref="compound">lte_param</ref><sp/><ref refid="structnetwork__param_a6487e63431a0ab4df1d9fa05dbc5a1bf_1a6487e63431a0ab4df1d9fa05dbc5a1bf" kindref="member">mcc</ref>;<sp/></highlight></codeline>
+<codeline lineno="85" refid="structnetwork__param_a78ab9ab7f4ca449dee55f8fa04b499db_1a78ab9ab7f4ca449dee55f8fa04b499db" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__param" kindref="compound">lte_param</ref><sp/><ref refid="structnetwork__param_a78ab9ab7f4ca449dee55f8fa04b499db_1a78ab9ab7f4ca449dee55f8fa04b499db" kindref="member">mnc</ref>;<sp/></highlight></codeline>
+<codeline lineno="86" refid="structnetwork__param_a83f79fbf2db4aa31c9bd38017d09f272_1a83f79fbf2db4aa31c9bd38017d09f272" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__param" kindref="compound">lte_param</ref><sp/><ref refid="structnetwork__param_a83f79fbf2db4aa31c9bd38017d09f272_1a83f79fbf2db4aa31c9bd38017d09f272" kindref="member">cellid_hex</ref>;<sp/></highlight></codeline>
+<codeline lineno="87" refid="structnetwork__param_a6c73857cef3b77b11834cd14a8051eab_1a6c73857cef3b77b11834cd14a8051eab" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__param" kindref="compound">lte_param</ref><sp/><ref refid="structnetwork__param_a6c73857cef3b77b11834cd14a8051eab_1a6c73857cef3b77b11834cd14a8051eab" kindref="member">ip_address</ref>;<sp/></highlight></codeline>
+<codeline lineno="88" refid="structnetwork__param_a4b284b81d9903bd03dce9e58d54f89b8_1a4b284b81d9903bd03dce9e58d54f89b8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__param" kindref="compound">lte_param</ref><sp/><ref refid="structnetwork__param_a4b284b81d9903bd03dce9e58d54f89b8_1a4b284b81d9903bd03dce9e58d54f89b8" kindref="member">ue_mode</ref>;<sp/></highlight></codeline>
+<codeline lineno="89" refid="structnetwork__param_a1e78208b2128cdea818c71af4d27c30f_1a1e78208b2128cdea818c71af4d27c30f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__param" kindref="compound">lte_param</ref><sp/><ref refid="structnetwork__param_a1e78208b2128cdea818c71af4d27c30f_1a1e78208b2128cdea818c71af4d27c30f" kindref="member">lte_mode</ref>;<sp/></highlight></codeline>
+<codeline lineno="90" refid="structnetwork__param_a5cc4c822aade24e900357e9e10762fd2_1a5cc4c822aade24e900357e9e10762fd2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__param" kindref="compound">lte_param</ref><sp/><ref refid="structnetwork__param_a5cc4c822aade24e900357e9e10762fd2_1a5cc4c822aade24e900357e9e10762fd2" kindref="member">nbiot_mode</ref>;<sp/></highlight></codeline>
+<codeline lineno="91" refid="structnetwork__param_af801ee43d4b73cee6c27ae1fe78c7df9_1af801ee43d4b73cee6c27ae1fe78c7df9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__param" kindref="compound">lte_param</ref><sp/><ref refid="structnetwork__param_af801ee43d4b73cee6c27ae1fe78c7df9_1af801ee43d4b73cee6c27ae1fe78c7df9" kindref="member">gps_mode</ref>;<sp/></highlight></codeline>
+<codeline lineno="92" refid="structnetwork__param_a09f0ae7ba7653458cf390f56f67becda_1a09f0ae7ba7653458cf390f56f67becda" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__param" kindref="compound">lte_param</ref><sp/><ref refid="structnetwork__param_a09f0ae7ba7653458cf390f56f67becda_1a09f0ae7ba7653458cf390f56f67becda" kindref="member">date_time</ref>;<sp/></highlight></codeline>
+<codeline lineno="93" refid="structnetwork__param_a67e0f2f106f7b9e3248081f00d13e5f1_1a67e0f2f106f7b9e3248081f00d13e5f1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__param" kindref="compound">lte_param</ref><sp/><ref refid="structnetwork__param_a67e0f2f106f7b9e3248081f00d13e5f1_1a67e0f2f106f7b9e3248081f00d13e5f1" kindref="member">apn</ref>;<sp/></highlight></codeline>
+<codeline lineno="94" refid="structnetwork__param_ab56910155b8444c2fbe82035630dbd2c_1ab56910155b8444c2fbe82035630dbd2c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__param" kindref="compound">lte_param</ref><sp/><ref refid="structnetwork__param_ab56910155b8444c2fbe82035630dbd2c_1ab56910155b8444c2fbe82035630dbd2c" kindref="member">rsrp</ref>;<sp/></highlight></codeline>
+<codeline lineno="96" refid="structnetwork__param_ad2baff59ef4a55743131b570c04762ac_1ad2baff59ef4a55743131b570c04762ac" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structnetwork__param_ad2baff59ef4a55743131b570c04762ac_1ad2baff59ef4a55743131b570c04762ac" kindref="member">cellid_dec</ref>;<sp/></highlight></codeline>
+<codeline lineno="97" refid="structnetwork__param_ad40f5bb5c97b3b47ae282bf6e1077c6a_1ad40f5bb5c97b3b47ae282bf6e1077c6a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structnetwork__param_ad40f5bb5c97b3b47ae282bf6e1077c6a_1ad40f5bb5c97b3b47ae282bf6e1077c6a" kindref="member">network_mode</ref>[<ref refid="group__modem__info_ga92fa1a93b7fc074e65cffd74f1b14e2c_1ga92fa1a93b7fc074e65cffd74f1b14e2c" kindref="member">MODEM_INFO_NETWORK_MODE_MAX_SIZE</ref>];</highlight></codeline>
+<codeline lineno="98"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101" refid="structsim__param" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structsim__param" kindref="compound">sim_param</ref><sp/>{</highlight></codeline>
+<codeline lineno="102" refid="structsim__param_a549f183659230cf2cfce3281f600fad0_1a549f183659230cf2cfce3281f600fad0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__param" kindref="compound">lte_param</ref><sp/><ref refid="structsim__param_a549f183659230cf2cfce3281f600fad0_1a549f183659230cf2cfce3281f600fad0" kindref="member">uicc</ref>;<sp/></highlight></codeline>
+<codeline lineno="103" refid="structsim__param_ac14bd50cfbdc3f936c4a05ec273437f0_1ac14bd50cfbdc3f936c4a05ec273437f0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__param" kindref="compound">lte_param</ref><sp/><ref refid="structsim__param_ac14bd50cfbdc3f936c4a05ec273437f0_1ac14bd50cfbdc3f936c4a05ec273437f0" kindref="member">iccid</ref>;<sp/></highlight></codeline>
+<codeline lineno="104" refid="structsim__param_a30cda7169b6f252e93086d54d40943a0_1a30cda7169b6f252e93086d54d40943a0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__param" kindref="compound">lte_param</ref><sp/><ref refid="structsim__param_a30cda7169b6f252e93086d54d40943a0_1a30cda7169b6f252e93086d54d40943a0" kindref="member">imsi</ref>;<sp/></highlight></codeline>
+<codeline lineno="105"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108" refid="structdevice__param" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structdevice__param" kindref="compound">device_param</ref><sp/>{</highlight></codeline>
+<codeline lineno="109" refid="structdevice__param_a557b140e84947f4a89a1949991d33fa5_1a557b140e84947f4a89a1949991d33fa5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__param" kindref="compound">lte_param</ref><sp/><ref refid="structdevice__param_a557b140e84947f4a89a1949991d33fa5_1a557b140e84947f4a89a1949991d33fa5" kindref="member">modem_fw</ref>;<sp/></highlight></codeline>
+<codeline lineno="110" refid="structdevice__param_a2a237542299071c5b6ce3aa824fcab1e_1a2a237542299071c5b6ce3aa824fcab1e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__param" kindref="compound">lte_param</ref><sp/><ref refid="structdevice__param_a2a237542299071c5b6ce3aa824fcab1e_1a2a237542299071c5b6ce3aa824fcab1e" kindref="member">battery</ref>;<sp/></highlight></codeline>
+<codeline lineno="111" refid="structdevice__param_aded860b69128d04965a168b9e0a28c75_1aded860b69128d04965a168b9e0a28c75" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__param" kindref="compound">lte_param</ref><sp/><ref refid="structdevice__param_aded860b69128d04965a168b9e0a28c75_1aded860b69128d04965a168b9e0a28c75" kindref="member">imei</ref>;<sp/></highlight></codeline>
+<codeline lineno="112" refid="structdevice__param_aea2948aed837a13d94b02bd5fd5a3837_1aea2948aed837a13d94b02bd5fd5a3837" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structdevice__param_aea2948aed837a13d94b02bd5fd5a3837_1aea2948aed837a13d94b02bd5fd5a3837" kindref="member">board</ref>;<sp/></highlight></codeline>
+<codeline lineno="113" refid="structdevice__param_a1c361020fc4bd984d03a80955801d4ac_1a1c361020fc4bd984d03a80955801d4ac" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structdevice__param_a1c361020fc4bd984d03a80955801d4ac_1a1c361020fc4bd984d03a80955801d4ac" kindref="member">app_version</ref>;<sp/></highlight></codeline>
+<codeline lineno="114" refid="structdevice__param_a2798e272b8ecf40ed4efb75ca62f62f7_1a2798e272b8ecf40ed4efb75ca62f62f7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structdevice__param_a2798e272b8ecf40ed4efb75ca62f62f7_1a2798e272b8ecf40ed4efb75ca62f62f7" kindref="member">app_name</ref>;<sp/></highlight></codeline>
+<codeline lineno="115"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118" refid="structmodem__param__info" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmodem__param__info" kindref="compound">modem_param_info</ref><sp/>{</highlight></codeline>
+<codeline lineno="119" refid="structmodem__param__info_a82053e362d484a93c6b54fcc2cce8572_1a82053e362d484a93c6b54fcc2cce8572" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnetwork__param" kindref="compound">network_param</ref><sp/><ref refid="structmodem__param__info_a82053e362d484a93c6b54fcc2cce8572_1a82053e362d484a93c6b54fcc2cce8572" kindref="member">network</ref>;<sp/></highlight></codeline>
+<codeline lineno="120" refid="structmodem__param__info_ab21eef1822ababe31ff142e6606a60be_1ab21eef1822ababe31ff142e6606a60be" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structsim__param" kindref="compound">sim_param</ref><sp/><sp/><sp/><sp/><sp/><ref refid="structmodem__param__info_ab21eef1822ababe31ff142e6606a60be_1ab21eef1822ababe31ff142e6606a60be" kindref="member">sim</ref>;<sp/></highlight></codeline>
+<codeline lineno="121" refid="structmodem__param__info_a2b90dca0becd916bbbc7b1e7f75de098_1a2b90dca0becd916bbbc7b1e7f75de098" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structdevice__param" kindref="compound">device_param</ref><sp/><sp/><ref refid="structmodem__param__info_a2b90dca0becd916bbbc7b1e7f75de098_1a2b90dca0becd916bbbc7b1e7f75de098" kindref="member">device</ref>;</highlight></codeline>
+<codeline lineno="122"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129" refid="group__modem__info_ga9ec9d909d57c909228d5a8a582d3e6bf_1ga9ec9d909d57c909228d5a8a582d3e6bf" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__modem__info_ga9ec9d909d57c909228d5a8a582d3e6bf_1ga9ec9d909d57c909228d5a8a582d3e6bf" kindref="member">modem_info_init</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139" refid="group__modem__info_ga7cbc32cfd40efdc5c3cfa03498a08864_1ga7cbc32cfd40efdc5c3cfa03498a08864" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__modem__info_ga7cbc32cfd40efdc5c3cfa03498a08864_1ga7cbc32cfd40efdc5c3cfa03498a08864" kindref="member">modem_info_params_init</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structmodem__param__info" kindref="compound">modem_param_info</ref><sp/>*modem_param);</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148" refid="group__modem__info_ga7816fb2f525c980ecc016accd46d114a_1ga7816fb2f525c980ecc016accd46d114a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__modem__info_ga7816fb2f525c980ecc016accd46d114a_1ga7816fb2f525c980ecc016accd46d114a" kindref="member">modem_info_rsrp_register</ref>(<ref refid="group__modem__info_gace4181b12b02f5b203f6701cfdab8b04_1gace4181b12b02f5b203f6701cfdab8b04" kindref="member">rsrp_cb_t</ref><sp/>cb);</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163" refid="group__modem__info_gae9ca1fe6b902242c46a000abc6924b2e_1gae9ca1fe6b902242c46a000abc6924b2e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__modem__info_gae9ca1fe6b902242c46a000abc6924b2e_1gae9ca1fe6b902242c46a000abc6924b2e" kindref="member">modem_info_string_get</ref>(</highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1gab0ea94d2aa315f7a7fc9ececee2419c5" kindref="member">modem_info</ref><sp/>info,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*buf,</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>buf_size);</highlight></codeline>
+<codeline lineno="177" refid="group__modem__info_gaae2ddb4e87dcc8272568189a5a620ae0_1gaae2ddb4e87dcc8272568189a5a620ae0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__modem__info_gaae2ddb4e87dcc8272568189a5a620ae0_1gaae2ddb4e87dcc8272568189a5a620ae0" kindref="member">modem_info_short_get</ref>(</highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1gab0ea94d2aa315f7a7fc9ececee2419c5" kindref="member">modem_info</ref><sp/>info,<sp/>uint16_t<sp/>*buf);</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187" refid="group__modem__info_ga51cf22560784c67419538b67a6055a9f_1ga51cf22560784c67419538b67a6055a9f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__modem__info_ga51cf22560784c67419538b67a6055a9f_1ga51cf22560784c67419538b67a6055a9f" kindref="member">modem_info_name_get</ref>(</highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1gab0ea94d2aa315f7a7fc9ececee2419c5" kindref="member">modem_info</ref><sp/>info,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*name);</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197" refid="group__modem__info_gaeccc3d1f3dc687bb00996a3005bb5d92_1gaeccc3d1f3dc687bb00996a3005bb5d92" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__at__params_gaa0448600e795221ad6b218cf40329c8b_1gaa0448600e795221ad6b218cf40329c8b" kindref="member">at_param_type</ref><sp/><ref refid="group__modem__info_gaeccc3d1f3dc687bb00996a3005bb5d92_1gaeccc3d1f3dc687bb00996a3005bb5d92" kindref="member">modem_info_type_get</ref>(</highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1gab0ea94d2aa315f7a7fc9ececee2419c5" kindref="member">modem_info</ref><sp/>info);</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"></highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_CJSON_LIB</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_INFO_JSON_KEY_NET_INF<sp/><sp/><sp/><sp/><sp/>&quot;networkInfo&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="201"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_INFO_JSON_KEY_SIM_INF<sp/><sp/><sp/><sp/><sp/>&quot;simInfo&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_INFO_JSON_KEY_DEV_INF<sp/><sp/><sp/><sp/><sp/>&quot;deviceInfo&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>modem_info_json_string_encode(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structmodem__param__info" kindref="compound">modem_param_info</ref><sp/>*modem_param,</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*buf);</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"></highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>modem_info_json_object_encode(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structmodem__param__info" kindref="compound">modem_param_info</ref><sp/>*modem,</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>cJSON<sp/>*root_obj);</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight></codeline>
+<codeline lineno="243" refid="group__modem__info_ga7285eb835bb1d1398bd151310ed506a0_1ga7285eb835bb1d1398bd151310ed506a0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__modem__info_ga7285eb835bb1d1398bd151310ed506a0_1ga7285eb835bb1d1398bd151310ed506a0" kindref="member">modem_info_params_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structmodem__param__info" kindref="compound">modem_param_info</ref><sp/>*modem_param);</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"></highlight></codeline>
+<codeline lineno="247"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="248"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="250"><highlight class="normal"></highlight></codeline>
+<codeline lineno="251"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>ZEPHYR_INCLUDE_MODEM_INFO_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/modem/modem_info.h"/>
+  </compounddef>
+</doxygen>

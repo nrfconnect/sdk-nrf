@@ -1,0 +1,432 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="rscs_8h" kind="file" language="C++">
+    <compoundname>rscs.h</compoundname>
+    <includes local="no">stdlib.h</includes>
+    <includes local="no">zephyr/types.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/bluetooth/services/rscs.h</label>
+        <link refid="rscs_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stdlib.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structbt__rsc__supported__loc" prot="public">bt_rsc_supported_loc</innerclass>
+    <innerclass refid="structbt__rscs__features" prot="public">bt_rscs_features</innerclass>
+    <innerclass refid="structbt__rscs__cp__cb" prot="public">bt_rscs_cp_cb</innerclass>
+    <innerclass refid="structbt__rscs__init__params" prot="public">bt_rscs_init_params</innerclass>
+    <innerclass refid="structbt__rscs__measurement" prot="public">bt_rscs_measurement</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1gaedd524a7087566075a8d47508f5f8645" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_rscs_location</name>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a743948513d40304b9c690618bebc029c" prot="public">
+          <name>RSC_LOC_OTHER</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a05c08d84fae4c56f1f968ffb3451d631" prot="public">
+          <name>RSC_LOC_TOP_OF_SHOE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a9298d37a233d428dfa04e6c10527af4f" prot="public">
+          <name>RSC_LOC_IN_SHOE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a7f199ecf093b52e7595e06eca1cd3a43" prot="public">
+          <name>RSC_LOC_HIP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a062a8744c16ea6691dd2177c8736e87e" prot="public">
+          <name>RSC_LOC_FRONT_WHEEL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645aaebf1ceeafed3b3aad188dd5dbe8455f" prot="public">
+          <name>RSC_LOC_LEFT_CRANK</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645ae6c6db4f211637dd63902ce33dfc732d" prot="public">
+          <name>RSC_LOC_RIGHT_CRANK</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a7b22e23c0753c4ad5883177428cc714f" prot="public">
+          <name>RSC_LOC_LEFT_PEDAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645ae0c0bd423dfafe52e6e2ae8572badef5" prot="public">
+          <name>RSC_LOC_RIGHT_PEDAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a1ae3582e7d9910fdfa2065ff90df4cbf" prot="public">
+          <name>RSC_LOC_FRONT_HUB</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a8f8253bfa68630814280942f247a746d" prot="public">
+          <name>RSC_LOC_REAR_DROPOUT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645ab86edc46702bd808f3080d5a48ff502f" prot="public">
+          <name>RSC_LOC_CHAINSTAY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a5ac49d2b0cbd1219cd0474508cac01d6" prot="public">
+          <name>RSC_LOC_REAR_WHEEL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a0b22ae994fdcb38d63047fe183349984" prot="public">
+          <name>RSC_LOC_REAR_HUB</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a1a1ab499a21bda8c0e777bfeaeaa6cb6" prot="public">
+          <name>RSC_LOC_CHEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645af55424e4bd122586468d0ce3e9337faf" prot="public">
+          <name>RSC_LOC_SPIDER</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a730916c6ec1ce05f6a094f5af31ac952" prot="public">
+          <name>RSC_LOC_CHAIN_RING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645ac8cacbae8b08bb65a565e9874236c79f" prot="public">
+          <name>RSC_LOC_AMT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>RSC Sensor Locations. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="24" column="1" bodyfile="include/bluetooth/services/rscs.h" bodystart="24" bodyend="44"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__rscs_ga3f78bfa4c6d97a8205b22ac795620f57_1ga3f78bfa4c6d97a8205b22ac795620f57" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_rscs_evt</name>
+        <enumvalue id="group__bt__rscs_ga3f78bfa4c6d97a8205b22ac795620f57_1gga3f78bfa4c6d97a8205b22ac795620f57a9097216795b86beb1ce49df006239955" prot="public">
+          <name>RSCS_EVT_MEAS_NOTIFY_ENABLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Measurement notification enable. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_ga3f78bfa4c6d97a8205b22ac795620f57_1gga3f78bfa4c6d97a8205b22ac795620f57a0d3d10eb136c3337364f59a9f6c43141" prot="public">
+          <name>RSCS_EVT_MEAS_NOTIFY_DISABLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Measurement notification disable. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Running Speed and Cadence Service events. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="86" column="1" bodyfile="include/bluetooth/services/rscs.h" bodystart="86" bodyend="92"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__bt__rscs_gac831ad9ae949de8a046921a7a4361f99_1gac831ad9ae949de8a046921a7a4361f99" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_rscs_evt_handler) (enum bt_rscs_evt evt)</definition>
+        <argsstring>)(enum bt_rscs_evt evt)</argsstring>
+        <name>bt_rscs_evt_handler</name>
+        <briefdescription>
+<para>Running Speed and Cadence Service event handler type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="95" column="9" bodyfile="include/bluetooth/services/rscs.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__rscs_ga81abdb2482f79c331c32807dc9b2eaab_1ga81abdb2482f79c331c32807dc9b2eaab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_rscs_measurement_send</definition>
+        <argsstring>(struct bt_conn *conn, const struct bt_rscs_measurement *measurement)</argsstring>
+        <name>bt_rscs_measurement_send</name>
+        <param>
+          <type>struct bt_conn *</type>
+          <declname>conn</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__rscs__measurement" kindref="compound">bt_rscs_measurement</ref> *</type>
+          <declname>measurement</declname>
+        </param>
+        <briefdescription>
+<para>Function for sending Running Speed and Cadence measurement. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The application calls this function after having performed a Running Speed and Cadence measurement. If notification has been enabled, the measurement data is encoded and sent to the client.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to connection object, or NULL if sent to all connected peers. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>measurement</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to new running speed and cadence measurement.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="175" column="5" declfile="include/bluetooth/services/rscs.h" declline="175" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__rscs_ga3cc2e68c47512445505ca17f5811a12f_1ga3cc2e68c47512445505ca17f5811a12f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_rscs_init</definition>
+        <argsstring>(const struct bt_rscs_init_params *init)</argsstring>
+        <name>bt_rscs_init</name>
+        <param>
+          <type>const struct <ref refid="structbt__rscs__init__params" kindref="compound">bt_rscs_init_params</ref> *</type>
+          <declname>init</declname>
+        </param>
+        <briefdescription>
+<para>Function for initializing the Running Speed and Cadence Service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>init</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Initialization parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="184" column="5" declfile="include/bluetooth/services/rscs.h" declline="184" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_RSCS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_RSCS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdlib.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1gaedd524a7087566075a8d47508f5f8645" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1gaedd524a7087566075a8d47508f5f8645" kindref="member">bt_rscs_location</ref><sp/>{</highlight></codeline>
+<codeline lineno="25" refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a743948513d40304b9c690618bebc029c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a743948513d40304b9c690618bebc029c" kindref="member">RSC_LOC_OTHER</ref>,</highlight></codeline>
+<codeline lineno="26" refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a05c08d84fae4c56f1f968ffb3451d631" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a05c08d84fae4c56f1f968ffb3451d631" kindref="member">RSC_LOC_TOP_OF_SHOE</ref>,</highlight></codeline>
+<codeline lineno="27" refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a9298d37a233d428dfa04e6c10527af4f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a9298d37a233d428dfa04e6c10527af4f" kindref="member">RSC_LOC_IN_SHOE</ref>,</highlight></codeline>
+<codeline lineno="28" refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a7f199ecf093b52e7595e06eca1cd3a43" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a7f199ecf093b52e7595e06eca1cd3a43" kindref="member">RSC_LOC_HIP</ref>,</highlight></codeline>
+<codeline lineno="29" refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a062a8744c16ea6691dd2177c8736e87e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a062a8744c16ea6691dd2177c8736e87e" kindref="member">RSC_LOC_FRONT_WHEEL</ref>,</highlight></codeline>
+<codeline lineno="30" refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645aaebf1ceeafed3b3aad188dd5dbe8455f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645aaebf1ceeafed3b3aad188dd5dbe8455f" kindref="member">RSC_LOC_LEFT_CRANK</ref>,</highlight></codeline>
+<codeline lineno="31" refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645ae6c6db4f211637dd63902ce33dfc732d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645ae6c6db4f211637dd63902ce33dfc732d" kindref="member">RSC_LOC_RIGHT_CRANK</ref>,</highlight></codeline>
+<codeline lineno="32" refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a7b22e23c0753c4ad5883177428cc714f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a7b22e23c0753c4ad5883177428cc714f" kindref="member">RSC_LOC_LEFT_PEDAL</ref>,</highlight></codeline>
+<codeline lineno="33" refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645ae0c0bd423dfafe52e6e2ae8572badef5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645ae0c0bd423dfafe52e6e2ae8572badef5" kindref="member">RSC_LOC_RIGHT_PEDAL</ref>,</highlight></codeline>
+<codeline lineno="34" refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a1ae3582e7d9910fdfa2065ff90df4cbf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a1ae3582e7d9910fdfa2065ff90df4cbf" kindref="member">RSC_LOC_FRONT_HUB</ref>,</highlight></codeline>
+<codeline lineno="35" refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a8f8253bfa68630814280942f247a746d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a8f8253bfa68630814280942f247a746d" kindref="member">RSC_LOC_REAR_DROPOUT</ref>,</highlight></codeline>
+<codeline lineno="36" refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645ab86edc46702bd808f3080d5a48ff502f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645ab86edc46702bd808f3080d5a48ff502f" kindref="member">RSC_LOC_CHAINSTAY</ref>,</highlight></codeline>
+<codeline lineno="37" refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a5ac49d2b0cbd1219cd0474508cac01d6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a5ac49d2b0cbd1219cd0474508cac01d6" kindref="member">RSC_LOC_REAR_WHEEL</ref>,</highlight></codeline>
+<codeline lineno="38" refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a0b22ae994fdcb38d63047fe183349984" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a0b22ae994fdcb38d63047fe183349984" kindref="member">RSC_LOC_REAR_HUB</ref>,</highlight></codeline>
+<codeline lineno="39" refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a1a1ab499a21bda8c0e777bfeaeaa6cb6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a1a1ab499a21bda8c0e777bfeaeaa6cb6" kindref="member">RSC_LOC_CHEST</ref>,</highlight></codeline>
+<codeline lineno="40" refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645af55424e4bd122586468d0ce3e9337faf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645af55424e4bd122586468d0ce3e9337faf" kindref="member">RSC_LOC_SPIDER</ref>,</highlight></codeline>
+<codeline lineno="41" refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a730916c6ec1ce05f6a094f5af31ac952" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a730916c6ec1ce05f6a094f5af31ac952" kindref="member">RSC_LOC_CHAIN_RING</ref>,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645ac8cacbae8b08bb65a565e9874236c79f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645ac8cacbae8b08bb65a565e9874236c79f" kindref="member">RSC_LOC_AMT</ref>,</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="structbt__rsc__supported__loc" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__rsc__supported__loc" kindref="compound">bt_rsc_supported_loc</ref><sp/>{</highlight></codeline>
+<codeline lineno="48" refid="structbt__rsc__supported__loc_aea76c843cbafd5ed4a82fa31b815eda4_1aea76c843cbafd5ed4a82fa31b815eda4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__rsc__supported__loc_aea76c843cbafd5ed4a82fa31b815eda4_1aea76c843cbafd5ed4a82fa31b815eda4" kindref="member">other</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="49" refid="structbt__rsc__supported__loc_a28520213dc6e582d09dfd61fedb41011_1a28520213dc6e582d09dfd61fedb41011" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__rsc__supported__loc_a28520213dc6e582d09dfd61fedb41011_1a28520213dc6e582d09dfd61fedb41011" kindref="member">top_of_shoe</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="50" refid="structbt__rsc__supported__loc_a935ffda793b0563fc68086f93760ef10_1a935ffda793b0563fc68086f93760ef10" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__rsc__supported__loc_a935ffda793b0563fc68086f93760ef10_1a935ffda793b0563fc68086f93760ef10" kindref="member">in_shoe</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="51" refid="structbt__rsc__supported__loc_aabdff780caa51afcb4fb924b411a56a8_1aabdff780caa51afcb4fb924b411a56a8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__rsc__supported__loc_aabdff780caa51afcb4fb924b411a56a8_1aabdff780caa51afcb4fb924b411a56a8" kindref="member">hip</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="52" refid="structbt__rsc__supported__loc_a1a48fee74e24d9aede1c3e54ff33144c_1a1a48fee74e24d9aede1c3e54ff33144c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__rsc__supported__loc_a1a48fee74e24d9aede1c3e54ff33144c_1a1a48fee74e24d9aede1c3e54ff33144c" kindref="member">front_wheel</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="53" refid="structbt__rsc__supported__loc_a3e15d284629fac8f35b78be1efdd33ab_1a3e15d284629fac8f35b78be1efdd33ab" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__rsc__supported__loc_a3e15d284629fac8f35b78be1efdd33ab_1a3e15d284629fac8f35b78be1efdd33ab" kindref="member">left_crank</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="54" refid="structbt__rsc__supported__loc_a51d1acb06d7e2dffaf6795e54e19c1ff_1a51d1acb06d7e2dffaf6795e54e19c1ff" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__rsc__supported__loc_a51d1acb06d7e2dffaf6795e54e19c1ff_1a51d1acb06d7e2dffaf6795e54e19c1ff" kindref="member">right_crank</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="55" refid="structbt__rsc__supported__loc_ad9c2c4466b4d0c3d23db14e7136596a8_1ad9c2c4466b4d0c3d23db14e7136596a8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__rsc__supported__loc_ad9c2c4466b4d0c3d23db14e7136596a8_1ad9c2c4466b4d0c3d23db14e7136596a8" kindref="member">left_pedal</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="56" refid="structbt__rsc__supported__loc_a7dfdbea9f8773592b3c29409d62c33b7_1a7dfdbea9f8773592b3c29409d62c33b7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__rsc__supported__loc_a7dfdbea9f8773592b3c29409d62c33b7_1a7dfdbea9f8773592b3c29409d62c33b7" kindref="member">right_pedal</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="57" refid="structbt__rsc__supported__loc_a173a29045deff95deadc58b1d129155f_1a173a29045deff95deadc58b1d129155f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__rsc__supported__loc_a173a29045deff95deadc58b1d129155f_1a173a29045deff95deadc58b1d129155f" kindref="member">front_hub</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="58" refid="structbt__rsc__supported__loc_aabb858cfe429937258468f72f543a26a_1aabb858cfe429937258468f72f543a26a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__rsc__supported__loc_aabb858cfe429937258468f72f543a26a_1aabb858cfe429937258468f72f543a26a" kindref="member">rear_dropout</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="59" refid="structbt__rsc__supported__loc_ac04abc55aa8730be0371cbc91830ca9c_1ac04abc55aa8730be0371cbc91830ca9c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__rsc__supported__loc_ac04abc55aa8730be0371cbc91830ca9c_1ac04abc55aa8730be0371cbc91830ca9c" kindref="member">chainstay</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="60" refid="structbt__rsc__supported__loc_a0b0839e930142c3b04c8d59684706d86_1a0b0839e930142c3b04c8d59684706d86" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__rsc__supported__loc_a0b0839e930142c3b04c8d59684706d86_1a0b0839e930142c3b04c8d59684706d86" kindref="member">rear_wheel</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="61" refid="structbt__rsc__supported__loc_af7d554c9e66640182bd6cebc12d789d4_1af7d554c9e66640182bd6cebc12d789d4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__rsc__supported__loc_af7d554c9e66640182bd6cebc12d789d4_1af7d554c9e66640182bd6cebc12d789d4" kindref="member">rear_hub</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="62" refid="structbt__rsc__supported__loc_ab842a6510d75a8493e33cef0d22834a9_1ab842a6510d75a8493e33cef0d22834a9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__rsc__supported__loc_ab842a6510d75a8493e33cef0d22834a9_1ab842a6510d75a8493e33cef0d22834a9" kindref="member">chest</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="63" refid="structbt__rsc__supported__loc_af9bf2efad58bbb9a5fb72f2289924e02_1af9bf2efad58bbb9a5fb72f2289924e02" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__rsc__supported__loc_af9bf2efad58bbb9a5fb72f2289924e02_1af9bf2efad58bbb9a5fb72f2289924e02" kindref="member">spider</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="64" refid="structbt__rsc__supported__loc_a55f1e6b563010c6abb3f7de22612a106_1a55f1e6b563010c6abb3f7de22612a106" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__rsc__supported__loc_a55f1e6b563010c6abb3f7de22612a106_1a55f1e6b563010c6abb3f7de22612a106" kindref="member">chain_ring</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="structbt__rscs__features" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__rscs__features" kindref="compound">bt_rscs_features</ref><sp/>{</highlight></codeline>
+<codeline lineno="70" refid="structbt__rscs__features_a19b179f39499e63143ab355796d6b873_1a19b179f39499e63143ab355796d6b873" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__rscs__features_a19b179f39499e63143ab355796d6b873_1a19b179f39499e63143ab355796d6b873" kindref="member">inst_stride_len</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="structbt__rscs__features_aa80053dec139a41f4c134d7c7ef76581_1aa80053dec139a41f4c134d7c7ef76581" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__rscs__features_aa80053dec139a41f4c134d7c7ef76581_1aa80053dec139a41f4c134d7c7ef76581" kindref="member">total_distance</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="structbt__rscs__features_aba250abfb79dbc8a5018103f5294a573_1aba250abfb79dbc8a5018103f5294a573" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__rscs__features_aba250abfb79dbc8a5018103f5294a573_1aba250abfb79dbc8a5018103f5294a573" kindref="member">walking_or_running</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="structbt__rscs__features_ad966fc36e3cb4026d749506d7b04c6a0_1ad966fc36e3cb4026d749506d7b04c6a0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__rscs__features_ad966fc36e3cb4026d749506d7b04c6a0_1ad966fc36e3cb4026d749506d7b04c6a0" kindref="member">sensor_calib_proc</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="structbt__rscs__features_abe73749bdaf57f83794bb801081a9848_1abe73749bdaf57f83794bb801081a9848" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__rscs__features_abe73749bdaf57f83794bb801081a9848_1abe73749bdaf57f83794bb801081a9848" kindref="member">multi_sensor_loc</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="group__bt__rscs_ga3f78bfa4c6d97a8205b22ac795620f57_1ga3f78bfa4c6d97a8205b22ac795620f57" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__rscs_ga3f78bfa4c6d97a8205b22ac795620f57_1ga3f78bfa4c6d97a8205b22ac795620f57" kindref="member">bt_rscs_evt</ref><sp/>{</highlight></codeline>
+<codeline lineno="88" refid="group__bt__rscs_ga3f78bfa4c6d97a8205b22ac795620f57_1gga3f78bfa4c6d97a8205b22ac795620f57a9097216795b86beb1ce49df006239955" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__rscs_ga3f78bfa4c6d97a8205b22ac795620f57_1gga3f78bfa4c6d97a8205b22ac795620f57a9097216795b86beb1ce49df006239955" kindref="member">RSCS_EVT_MEAS_NOTIFY_ENABLE</ref>,</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91" refid="group__bt__rscs_ga3f78bfa4c6d97a8205b22ac795620f57_1gga3f78bfa4c6d97a8205b22ac795620f57a0d3d10eb136c3337364f59a9f6c43141" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__rscs_ga3f78bfa4c6d97a8205b22ac795620f57_1gga3f78bfa4c6d97a8205b22ac795620f57a0d3d10eb136c3337364f59a9f6c43141" kindref="member">RSCS_EVT_MEAS_NOTIFY_DISABLE</ref>,</highlight></codeline>
+<codeline lineno="92"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="group__bt__rscs_gac831ad9ae949de8a046921a7a4361f99_1gac831ad9ae949de8a046921a7a4361f99" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__bt__rscs_gac831ad9ae949de8a046921a7a4361f99_1gac831ad9ae949de8a046921a7a4361f99" kindref="member">bt_rscs_evt_handler</ref>)<sp/>(</highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__rscs_ga3f78bfa4c6d97a8205b22ac795620f57_1ga3f78bfa4c6d97a8205b22ac795620f57" kindref="member">bt_rscs_evt</ref><sp/>evt);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98" refid="structbt__rscs__cp__cb" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__rscs__cp__cb" kindref="compound">bt_rscs_cp_cb</ref><sp/>{</highlight></codeline>
+<codeline lineno="105" refid="structbt__rscs__cp__cb_a3af1667b2d50f693bfcbc7b22a8ccbd0_1a3af1667b2d50f693bfcbc7b22a8ccbd0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>(*<ref refid="structbt__rscs__cp__cb_a3af1667b2d50f693bfcbc7b22a8ccbd0_1a3af1667b2d50f693bfcbc7b22a8ccbd0" kindref="member">set_cumulative</ref>)(uint32_t<sp/>total_distance);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112" refid="structbt__rscs__cp__cb_a22f92117038dfeb0ec2b44d812ed1380_1a22f92117038dfeb0ec2b44d812ed1380" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>(*<ref refid="structbt__rscs__cp__cb_a22f92117038dfeb0ec2b44d812ed1380_1a22f92117038dfeb0ec2b44d812ed1380" kindref="member">calibrarion</ref>)(void);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118" refid="structbt__rscs__cp__cb_a0cad73ce18458d821451713cdf50423a_1a0cad73ce18458d821451713cdf50423a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structbt__rscs__cp__cb_a0cad73ce18458d821451713cdf50423a_1a0cad73ce18458d821451713cdf50423a" kindref="member">update_loc</ref>)(uint8_t<sp/>location);</highlight></codeline>
+<codeline lineno="119"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122" refid="structbt__rscs__init__params" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__rscs__init__params" kindref="compound">bt_rscs_init_params</ref><sp/>{</highlight></codeline>
+<codeline lineno="124" refid="structbt__rscs__init__params_afde1ddb33ab0fbe205e96f4ba060f393_1afde1ddb33ab0fbe205e96f4ba060f393" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__rscs__features" kindref="compound">bt_rscs_features</ref><sp/><ref refid="structbt__rscs__init__params_afde1ddb33ab0fbe205e96f4ba060f393_1afde1ddb33ab0fbe205e96f4ba060f393" kindref="member">features</ref>;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127" refid="structbt__rscs__init__params_a0eb39cb65a57df9e668a3a0d94fa798e_1a0eb39cb65a57df9e668a3a0d94fa798e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__rsc__supported__loc" kindref="compound">bt_rsc_supported_loc</ref><sp/><ref refid="structbt__rscs__init__params_a0eb39cb65a57df9e668a3a0d94fa798e_1a0eb39cb65a57df9e668a3a0d94fa798e" kindref="member">supported_locations</ref>;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130" refid="structbt__rscs__init__params_accad317155d1a93601e4e5dd140bf298_1accad317155d1a93601e4e5dd140bf298" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1gaedd524a7087566075a8d47508f5f8645" kindref="member">bt_rscs_location</ref><sp/><ref refid="structbt__rscs__init__params_accad317155d1a93601e4e5dd140bf298_1accad317155d1a93601e4e5dd140bf298" kindref="member">location</ref>;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133" refid="structbt__rscs__init__params_a57766db34f71d23edd161a5cd2094326_1a57766db34f71d23edd161a5cd2094326" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__rscs_gac831ad9ae949de8a046921a7a4361f99_1gac831ad9ae949de8a046921a7a4361f99" kindref="member">bt_rscs_evt_handler</ref><sp/><ref refid="structbt__rscs__init__params_a57766db34f71d23edd161a5cd2094326_1a57766db34f71d23edd161a5cd2094326" kindref="member">evt_handler</ref>;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136" refid="structbt__rscs__init__params_a4a81220ee6852e912ad2e3357a4e66ad_1a4a81220ee6852e912ad2e3357a4e66ad" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__rscs__cp__cb" kindref="compound">bt_rscs_cp_cb</ref><sp/>*<ref refid="structbt__rscs__init__params_a4a81220ee6852e912ad2e3357a4e66ad_1a4a81220ee6852e912ad2e3357a4e66ad" kindref="member">cp_cb</ref>;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140" refid="structbt__rscs__measurement" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__rscs__measurement" kindref="compound">bt_rscs_measurement</ref><sp/>{</highlight></codeline>
+<codeline lineno="142" refid="structbt__rscs__measurement_a4518d0c3c61877f8d7aabe1c6b39a2a7_1a4518d0c3c61877f8d7aabe1c6b39a2a7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structbt__rscs__measurement_a4518d0c3c61877f8d7aabe1c6b39a2a7_1a4518d0c3c61877f8d7aabe1c6b39a2a7" kindref="member">is_inst_stride_len</ref>;</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145" refid="structbt__rscs__measurement_a2020caa23eec5436ea3480f8bcc52fea_1a2020caa23eec5436ea3480f8bcc52fea" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structbt__rscs__measurement_a2020caa23eec5436ea3480f8bcc52fea_1a2020caa23eec5436ea3480f8bcc52fea" kindref="member">is_total_distance</ref>;</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148" refid="structbt__rscs__measurement_a7d2c444642077daf21206b6860207dae_1a7d2c444642077daf21206b6860207dae" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structbt__rscs__measurement_a7d2c444642077daf21206b6860207dae_1a7d2c444642077daf21206b6860207dae" kindref="member">is_running</ref>;</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="151" refid="structbt__rscs__measurement_a87ae0e05a8a824a1a853d27854945a66_1a87ae0e05a8a824a1a853d27854945a66" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__rscs__measurement_a87ae0e05a8a824a1a853d27854945a66_1a87ae0e05a8a824a1a853d27854945a66" kindref="member">inst_speed</ref>;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154" refid="structbt__rscs__measurement_a4e233a735f9a06a2f88638263b1285e6_1a4e233a735f9a06a2f88638263b1285e6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__rscs__measurement_a4e233a735f9a06a2f88638263b1285e6_1a4e233a735f9a06a2f88638263b1285e6" kindref="member">inst_cadence</ref>;</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157" refid="structbt__rscs__measurement_a3b404a23ea93ca48fb02959e416e6d99_1a3b404a23ea93ca48fb02959e416e6d99" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__rscs__measurement_a3b404a23ea93ca48fb02959e416e6d99_1a3b404a23ea93ca48fb02959e416e6d99" kindref="member">inst_stride_length</ref>;</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160" refid="structbt__rscs__measurement_a582b2b920adc14945d43a7cfe57496ce_1a582b2b920adc14945d43a7cfe57496ce" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__rscs__measurement_a582b2b920adc14945d43a7cfe57496ce_1a582b2b920adc14945d43a7cfe57496ce" kindref="member">total_distance</ref>;</highlight></codeline>
+<codeline lineno="161"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175" refid="group__bt__rscs_ga81abdb2482f79c331c32807dc9b2eaab_1ga81abdb2482f79c331c32807dc9b2eaab" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__rscs_ga81abdb2482f79c331c32807dc9b2eaab_1ga81abdb2482f79c331c32807dc9b2eaab" kindref="member">bt_rscs_measurement_send</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_conn<sp/>*conn,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__rscs__measurement" kindref="compound">bt_rscs_measurement</ref><sp/>*measurement);</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight></codeline>
+<codeline lineno="184" refid="group__bt__rscs_ga3cc2e68c47512445505ca17f5811a12f_1ga3cc2e68c47512445505ca17f5811a12f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__rscs_ga3cc2e68c47512445505ca17f5811a12f_1ga3cc2e68c47512445505ca17f5811a12f" kindref="member">bt_rscs_init</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__rscs__init__params" kindref="compound">bt_rscs_init_params</ref><sp/>*init);</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_RSCS_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/services/rscs.h"/>
+  </compounddef>
+</doxygen>

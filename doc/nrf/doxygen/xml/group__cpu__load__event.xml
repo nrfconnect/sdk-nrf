@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__cpu__load__event" kind="group">
+    <compoundname>cpu_load_event</compoundname>
+    <title>CPU Load Event</title>
+    <innerclass refid="structcpu__load__event" prot="public">cpu_load_event</innerclass>
+    <briefdescription>
+<para>CPU Load Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

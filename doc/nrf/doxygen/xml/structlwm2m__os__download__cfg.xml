@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlwm2m__os__download__cfg" kind="struct" language="C++" prot="public">
+    <compoundname>lwm2m_os_download_cfg</compoundname>
+    <includes refid="lwm2m__os_8h" local="no">lwm2m_os.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlwm2m__os__download__cfg_a755ea9bd366e3d771db8e66b584ac903_1a755ea9bd366e3d771db8e66b584ac903" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int lwm2m_os_download_cfg::sec_tag</definition>
+        <argsstring></argsstring>
+        <name>sec_tag</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="144" column="5" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="144" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlwm2m__os__download__cfg_a58b79183b959dcb7e0d6e175c4f7dab7_1a58b79183b959dcb7e0d6e175c4f7dab7" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int lwm2m_os_download_cfg::port</definition>
+        <argsstring></argsstring>
+        <name>port</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="145" column="5" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlwm2m__os__download__cfg_aa50e8dd59547dc8baff44b7265431f97_1aa50e8dd59547dc8baff44b7265431f97" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int lwm2m_os_download_cfg::pdn_id</definition>
+        <argsstring></argsstring>
+        <name>pdn_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="146" column="5" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="146" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Download client configuration options. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="143" column="1" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="143" bodyend="147"/>
+    <listofallmembers>
+      <member refid="structlwm2m__os__download__cfg_aa50e8dd59547dc8baff44b7265431f97_1aa50e8dd59547dc8baff44b7265431f97" prot="public" virt="non-virtual"><scope>lwm2m_os_download_cfg</scope><name>pdn_id</name></member>
+      <member refid="structlwm2m__os__download__cfg_a58b79183b959dcb7e0d6e175c4f7dab7_1a58b79183b959dcb7e0d6e175c4f7dab7" prot="public" virt="non-virtual"><scope>lwm2m_os_download_cfg</scope><name>port</name></member>
+      <member refid="structlwm2m__os__download__cfg_a755ea9bd366e3d771db8e66b584ac903_1a755ea9bd366e3d771db8e66b584ac903" prot="public" virt="non-virtual"><scope>lwm2m_os_download_cfg</scope><name>sec_tag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

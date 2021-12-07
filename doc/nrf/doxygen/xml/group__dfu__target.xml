@@ -1,0 +1,318 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__dfu__target" kind="group">
+    <compoundname>dfu_target</compoundname>
+    <title>DFU Target</title>
+    <innerclass refid="structdfu__target" prot="public">dfu_target</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__dfu__target_1gad3de6472dd7ff6c41abd911a16b67a79" prot="public" static="no" strong="no">
+        <type></type>
+        <name>dfu_target_image_type</name>
+        <enumvalue id="group__dfu__target_gad3de6472dd7ff6c41abd911a16b67a79_1ggad3de6472dd7ff6c41abd911a16b67a79a29662e95b0547c1870d583d441c4aa9d" prot="public">
+          <name>DFU_TARGET_IMAGE_TYPE_ANY</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__dfu__target_gad3de6472dd7ff6c41abd911a16b67a79_1ggad3de6472dd7ff6c41abd911a16b67a79a971e80b0ea81a9d208e46aef4dd4d5f2" prot="public">
+          <name>DFU_TARGET_IMAGE_TYPE_MCUBOOT</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__dfu__target_gad3de6472dd7ff6c41abd911a16b67a79_1ggad3de6472dd7ff6c41abd911a16b67a79aa7f0de8d6936c577ba3c983d9edf38fd" prot="public">
+          <name>DFU_TARGET_IMAGE_TYPE_MODEM_DELTA</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__dfu__target_gad3de6472dd7ff6c41abd911a16b67a79_1ggad3de6472dd7ff6c41abd911a16b67a79a62e2ebd66c771dca682dd941b0b0dd35" prot="public">
+          <name>DFU_TARGET_IMAGE_TYPE_FULL_MODEM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target.h" line="23" column="1" bodyfile="include/dfu/dfu_target.h" bodystart="23" bodyend="28"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__dfu__target_1ga9206912ee74cd457d34f3d717793a709" prot="public" static="no" strong="no">
+        <type></type>
+        <name>dfu_target_evt_id</name>
+        <enumvalue id="group__dfu__target_ga9206912ee74cd457d34f3d717793a709_1gga9206912ee74cd457d34f3d717793a709a9f71f6924ab2990963b50dd6f7da831e" prot="public">
+          <name>DFU_TARGET_EVT_TIMEOUT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__dfu__target_ga9206912ee74cd457d34f3d717793a709_1gga9206912ee74cd457d34f3d717793a709a30ecc081254e15d567a5e831264e2b2a" prot="public">
+          <name>DFU_TARGET_EVT_ERASE_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target.h" line="30" column="1" bodyfile="include/dfu/dfu_target.h" bodystart="30" bodyend="33"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__dfu__target_1gaa44ceb54189d4c0dba08f4e8044a5981" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* dfu_target_callback_t) (enum dfu_target_evt_id evt_id)</definition>
+        <argsstring>)(enum dfu_target_evt_id evt_id)</argsstring>
+        <name>dfu_target_callback_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target.h" line="35" column="9" bodyfile="include/dfu/dfu_target.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__dfu__target_1gae956a4e556d1d8bdbad65cc0c0510eb0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_img_type</definition>
+        <argsstring>(const void *const buf, size_t len)</argsstring>
+        <name>dfu_target_img_type</name>
+        <param>
+          <type>const void *const</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Find the image type for the buffer of bytes recived. Used to determine what dfu target to initialize. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A buffer of bytes which are the start of an binary firmware image. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The length of the provided buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Positive identifier for a supported image type or a negative error code identicating reason of failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target.h" line="57" column="5" declfile="include/dfu/dfu_target.h" declline="57" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target_1ga5d7377dcbd6de232152ce92c2318b200" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_init</definition>
+        <argsstring>(int img_type, size_t file_size, dfu_target_callback_t cb)</argsstring>
+        <name>dfu_target_init</name>
+        <param>
+          <type>int</type>
+          <declname>img_type</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>file_size</declname>
+        </param>
+        <param>
+          <type><ref refid="group__dfu__target_gaa44ceb54189d4c0dba08f4e8044a5981_1gaa44ceb54189d4c0dba08f4e8044a5981" kindref="member">dfu_target_callback_t</ref></type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the resources needed for the specific image type DFU target. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If a target update is in progress, and the same target is given as input, then calling the &apos;init()&apos; function of that target is skipped.</para>
+<para>To allow continuation of an aborted DFU procedure, call the &apos;dfu_target_offset_get&apos; function after invoking this function.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">img_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Image type identifier. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">file_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the current file being downloaded. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback function in case the DFU operation requires additional proceedures to be called.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 for a supported image type or a negative error code identicating reason of failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target.h" line="79" column="5" declfile="include/dfu/dfu_target.h" declline="79" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target_1gab4b88b8b9da5954ea84bda8c48ab5f7c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_offset_get</definition>
+        <argsstring>(size_t *offset)</argsstring>
+        <name>dfu_target_offset_get</name>
+        <param>
+          <type>size_t *</type>
+          <declname>offset</declname>
+        </param>
+        <briefdescription>
+<para>Get offset of the firmware upgrade. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">offset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Returns the offset of the firmware upgrade.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if success, otherwise negative value if unable to get the offset </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target.h" line="88" column="5" declfile="include/dfu/dfu_target.h" declline="88" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target_1gaa03afef7cf2545969f6e1ef55cd211f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_write</definition>
+        <argsstring>(const void *const buf, size_t len)</argsstring>
+        <name>dfu_target_write</name>
+        <param>
+          <type>const void *const</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Write the given buffer to the initialized DFU target. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A buffer of bytes which contains part of an binary firmware image. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The length of the provided buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Positive identifier for a supported image type or a negative error code identicating reason of failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target.h" line="100" column="5" declfile="include/dfu/dfu_target.h" declline="100" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target_1ga0017dc97c4e8e9a00be3c2a06977cbef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_done</definition>
+        <argsstring>(bool successful)</argsstring>
+        <name>dfu_target_done</name>
+        <param>
+          <type>bool</type>
+          <declname>successful</declname>
+        </param>
+        <briefdescription>
+<para>Deinitialize the resources that were needed for the current DFU target. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">successful</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Indicate whether the process completed successfully or was aborted.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 for an successful deinitialization or a negative error code identicating reason of failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target.h" line="112" column="5" declfile="include/dfu/dfu_target.h" declline="112" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target_1ga41a02c7f06085a9cbade90d76672a6ac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_reset</definition>
+        <argsstring>(void)</argsstring>
+        <name>dfu_target_reset</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Deinitialize the resources that were needed for the current DFU target if any and resets the current dfu target. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>0 for an successful deinitialization and reset or a negative error code identicating reason of failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target.h" line="121" column="5" declfile="include/dfu/dfu_target.h" declline="121" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>DFU Target. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

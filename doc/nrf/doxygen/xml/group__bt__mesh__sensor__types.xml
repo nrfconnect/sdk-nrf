@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__sensor__types" kind="group">
+    <compoundname>bt_mesh_sensor_types</compoundname>
+    <title>Sensor types</title>
+    <innergroup refid="group__bt__mesh__sensor__types__ambient__temperature">Ambient temperature</innergroup>
+    <innergroup refid="group__bt__mesh__sensor__types__device__operating__temperature">Device operating</innergroup>
+    <innergroup refid="group__bt__mesh__sensor__types__electrical__input">Electrical input sensor</innergroup>
+    <innergroup refid="group__bt__mesh__sensor__types__energy__management">Energy management sensor</innergroup>
+    <innergroup refid="group__bt__mesh__sensor__types__environmental">Environmental sensor types</innergroup>
+    <innergroup refid="group__bt__mesh__sensor__types__occupancy">Occupancy sensor types</innergroup>
+    <innergroup refid="group__bt__mesh__sensor__types__photometry">Photometry sensor types</innergroup>
+    <innergroup refid="group__bt__mesh__sensor__types__power__supply__output">Power supply output</innergroup>
+    <innergroup refid="group__bt__mesh__sensor__types__warranty__and__service">Warranty and service</innergroup>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__sensor__types_1ga893f0d9a210214e652163fe54ad78601" prot="public" static="no">
+        <name>BT_MESH_SENSOR_TYPE_FORCE</name>
+        <param><defname>_type</defname></param>
+        <initializer>	{                                                                      \
+		const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref> *volatile __unused val =      \
+			&amp;_type;                                                \
+	}</initializer>
+        <briefdescription>
+<para>Force the given sensor type to be included in the build. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If <emphasis>CONFIG_BT_MESH_SENSOR_FORCE_ALL</emphasis> is disabled, only referenced sensor types will be included in the build, and the node will be unable to interpret the rest. Use this macro inside a function to force the type to be included in the build:</para>
+<para><programlisting filename=".c"><codeline><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>some_function(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__sensor__types_ga893f0d9a210214e652163fe54ad78601_1ga893f0d9a210214e652163fe54ad78601" kindref="member">BT_MESH_SENSOR_TYPE_FORCE</ref>(<ref refid="group__bt__mesh__sensor__types__occupancy_ga6be82842961237743ea1b549c0c0b594_1ga6be82842961237743ea1b549c0c0b594" kindref="member">bt_mesh_sensor_time_since_motion_sensed</ref>);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__sensor__types_ga893f0d9a210214e652163fe54ad78601_1ga893f0d9a210214e652163fe54ad78601" kindref="member">BT_MESH_SENSOR_TYPE_FORCE</ref>(<ref refid="group__bt__mesh__sensor__types__occupancy_ga9ee53c69c31336eee6cb0424e4e8a41e_1ga9ee53c69c31336eee6cb0424e4e8a41e" kindref="member">bt_mesh_sensor_motion_threshold</ref>);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor type to force into the build. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="42" column="9" bodyfile="include/bluetooth/mesh/sensor_types.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>All available sensor types from the mesh device properties specification. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

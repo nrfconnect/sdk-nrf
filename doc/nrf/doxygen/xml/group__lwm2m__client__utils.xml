@@ -1,0 +1,190 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__lwm2m__client__utils" kind="group">
+    <compoundname>lwm2m_client_utils</compoundname>
+    <title>LwM2M client utilities</title>
+    <innergroup refid="group__lwm2m__client__utils__fota">LwM2M FOTA</innergroup>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__lwm2m__client__utils_1ga6e75f9942413c96b18a5553f32537fd1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_init_security</definition>
+        <argsstring>(struct lwm2m_ctx *ctx, char *endpoint)</argsstring>
+        <name>lwm2m_init_security</name>
+        <param>
+          <type>struct lwm2m_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>endpoint</declname>
+        </param>
+        <briefdescription>
+<para>Initialize Security object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils.h" line="37" column="5" declfile="include/net/lwm2m_client_utils.h" declline="37" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__client__utils_1gacb6ce473dfbd63ddc60c156d9d1cfd27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_init_device</definition>
+        <argsstring>(void)</argsstring>
+        <name>lwm2m_init_device</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize Device object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils.h" line="44" column="5" declfile="include/net/lwm2m_client_utils.h" declline="44" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__client__utils_1ga08f5415bca44f63bf9d251106be2da16" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_init_location</definition>
+        <argsstring>(void)</argsstring>
+        <name>lwm2m_init_location</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize Location object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils.h" line="51" column="5" declfile="include/net/lwm2m_client_utils.h" declline="51" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__client__utils_1ga5396dd581765661205d40a8ea452976a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void * firmware_read_cb</definition>
+        <argsstring>(uint16_t obj_inst_id, size_t *data_len)</argsstring>
+        <name>firmware_read_cb</name>
+        <param>
+          <type>uint16_t</type>
+          <declname>obj_inst_id</declname>
+        </param>
+        <param>
+          <type>size_t *</type>
+          <declname>data_len</declname>
+        </param>
+        <briefdescription>
+<para>Firmware read callback. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils.h" line="58" column="6" declfile="include/net/lwm2m_client_utils.h" declline="58" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__client__utils_1ga58fe38f3eb0d30fa83eacc741d60b5c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_init_firmware</definition>
+        <argsstring>(void)</argsstring>
+        <name>lwm2m_init_firmware</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Verify active firmware image. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils.h" line="62" column="5" declfile="include/net/lwm2m_client_utils.h" declline="62" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__client__utils_1gaeb623e112d5fc6a15ed8d805fb35d96d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_init_image</definition>
+        <argsstring>(void)</argsstring>
+        <name>lwm2m_init_image</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize Image Update object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils.h" line="67" column="5" declfile="include/net/lwm2m_client_utils.h" declline="67" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__client__utils_1gae09b195b7ab21d4def2e4dc3f2711834" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void lwm2m_verify_modem_fw_update</definition>
+        <argsstring>(void)</argsstring>
+        <name>lwm2m_verify_modem_fw_update</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Verifies modem firmware update. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils.h" line="72" column="6" declfile="include/net/lwm2m_client_utils.h" declline="72" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__client__utils_1ga7e84e9a83ff879192112f8430ad3603b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_init_connmon</definition>
+        <argsstring>(void)</argsstring>
+        <name>lwm2m_init_connmon</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize Connectivity Monitoring object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils.h" line="79" column="5" declfile="include/net/lwm2m_client_utils.h" declline="79" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__client__utils_1gae3d32f0d053b6d4876479bd6ba414b52" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_update_connmon</definition>
+        <argsstring>(void)</argsstring>
+        <name>lwm2m_update_connmon</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Update Connectivity Monitoring object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils.h" line="84" column="5" declfile="include/net/lwm2m_client_utils.h" declline="84" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>LwM2M Client utilities to build an application. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The client provides APIs for:<itemizedlist>
+<listitem><para>connecting to a remote server</para>
+</listitem><listitem><para>setting up default resources<itemizedlist>
+<listitem><para>Firmware</para>
+</listitem><listitem><para>Connection monitoring</para>
+</listitem><listitem><para>Device</para>
+</listitem><listitem><para>Location</para>
+</listitem><listitem><para>Security </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

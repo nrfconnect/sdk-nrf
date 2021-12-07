@@ -1,0 +1,744 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="light__ctrl__srv_8h" kind="file" language="C++">
+    <compoundname>light_ctrl_srv.h</compoundname>
+    <includes local="no">bluetooth/mesh.h</includes>
+    <includes refid="light__ctrl_8h" local="no">bluetooth/mesh/light_ctrl.h</includes>
+    <includes refid="sensor_8h" local="no">bluetooth/mesh/sensor.h</includes>
+    <includes refid="gen__onoff__srv_8h" local="no">bluetooth/mesh/gen_onoff_srv.h</includes>
+    <includes refid="lightness__srv_8h" local="no">bluetooth/mesh/lightness_srv.h</includes>
+    <includes refid="model__types_8h" local="no">bluetooth/mesh/model_types.h</includes>
+    <includedby refid="models_8h" local="no">include/bluetooth/mesh/models.h</includedby>
+    <incdepgraph>
+      <node id="23">
+        <label>bluetooth/mesh/gen_dtt.h</label>
+        <link refid="gen__dtt_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>bluetooth/mesh/gen_dtt_srv.h</label>
+        <link refid="gen__dtt__srv_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>bluetooth/mesh/gen_lvl.h</label>
+        <link refid="gen__lvl_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>bluetooth/mesh/gen_lvl_srv.h</label>
+        <link refid="gen__lvl__srv_8h"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>bluetooth/mesh/gen_onoff.h</label>
+        <link refid="gen__onoff_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>bluetooth/mesh/gen_onoff_srv.h</label>
+        <link refid="gen__onoff__srv_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>bluetooth/mesh/gen_ponoff.h</label>
+        <link refid="gen__ponoff_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>bluetooth/mesh/gen_ponoff_srv.h</label>
+        <link refid="gen__ponoff__srv_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/mesh/light_ctrl.h</label>
+        <link refid="light__ctrl_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/mesh/light_ctrl_srv.h</label>
+        <link refid="light__ctrl__srv_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>bluetooth/mesh/lightness.h</label>
+        <link refid="lightness_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>bluetooth/mesh/lightness_srv.h</label>
+        <link refid="lightness__srv_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>bluetooth/mesh/model_types.h</label>
+        <link refid="model__types_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bluetooth/mesh/properties.h</label>
+        <link refid="properties_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>bluetooth/mesh/scene.h</label>
+        <link refid="scene_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>bluetooth/mesh/scene_srv.h</label>
+        <link refid="scene__srv_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>bluetooth/mesh/sensor.h</label>
+        <link refid="sensor_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bluetooth/mesh.h</label>
+      </node>
+      <node id="7">
+        <label>drivers/sensor.h</label>
+      </node>
+      <node id="13">
+        <label>settings/settings.h</label>
+      </node>
+      <node id="8">
+        <label>stdlib.h</label>
+      </node>
+      <node id="15">
+        <label>sys/slist.h</label>
+      </node>
+      <node id="14">
+        <label>toolchain/common.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>include/bluetooth/mesh/light_ctrl_srv.h</label>
+        <link refid="light__ctrl__srv_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/bluetooth/mesh/models.h</label>
+        <link refid="models_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>include/bluetooth/mesh/vnd/silvair_enocean_srv.h</label>
+        <link refid="silvair__enocean__srv_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structbt__mesh__light__ctrl__srv__cfg" prot="public">bt_mesh_light_ctrl_srv_cfg</innerclass>
+    <innerclass refid="structbt__mesh__light__ctrl__srv__reg__cfg" prot="public">bt_mesh_light_ctrl_srv_reg_cfg</innerclass>
+    <innerclass refid="structbt__mesh__light__ctrl__srv__reg" prot="public">bt_mesh_light_ctrl_srv_reg</innerclass>
+    <innerclass refid="structbt__mesh__light__ctrl__srv" prot="public">bt_mesh_light_ctrl_srv</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__light__ctrl__srv_ga3f8a8e78a86277a5a98eb288b54e081b_1ga3f8a8e78a86277a5a98eb288b54e081b" prot="public" static="no">
+        <name>BT_MESH_LIGHT_CTRL_SRV_INIT</name>
+        <param><defname>_lightness_srv</defname></param>
+        <initializer>	{                                                                      \
+		.cfg = BT_MESH_LIGHT_CTRL_SRV_CFG_INIT,                        \
+		.onoff = <ref refid="group__bt__mesh__onoff__srv_ga2740ed46b33f82bea0a7c95fbed91719_1ga2740ed46b33f82bea0a7c95fbed91719" kindref="member">BT_MESH_ONOFF_SRV_INIT</ref>(                               \
+			&amp;_bt_mesh_light_ctrl_srv_onoff),                       \
+		.lightness = _lightness_srv,                                   \
+		BT_MESH_LIGHT_CTRL_SRV_REG_INIT                                \
+	}</initializer>
+        <briefdescription>
+<para>Initialization parameters for <ref refid="group__bt__mesh__light__ctrl__srv" kindref="compound">Light Lightness Control Server</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_lightness_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the <ref refid="group__bt__mesh__lightness__srv" kindref="compound">Light Lightness Server model</ref> this server controls. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="37" column="9" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__light__ctrl__srv_ga58a880f2c9085debeadec225a7a19da3_1ga58a880f2c9085debeadec225a7a19da3" prot="public" static="no">
+        <name>BT_MESH_MODEL_LIGHT_CTRL_SRV</name>
+        <param><defname>_srv</defname></param>
+        <initializer>	<ref refid="group__bt__mesh__onoff__srv_ga54dd5c38b8014b3cc42f2ea68cda40d8_1ga54dd5c38b8014b3cc42f2ea68cda40d8" kindref="member">BT_MESH_MODEL_ONOFF_SRV</ref>(&amp;(_srv)-&gt;onoff),                               \
+	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_LC_SRV,                        \
+			 _bt_mesh_light_ctrl_srv_op, &amp;(_srv)-&gt;pub,             \
+			 BT_MESH_MODEL_USER_DATA(                              \
+				 struct <ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref>, _srv),         \
+			 &amp;_bt_mesh_light_ctrl_srv_cb),                         \
+	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_LC_SETUPSRV,                   \
+			 _bt_mesh_light_ctrl_setup_srv_op,                     \
+			 &amp;(_srv)-&gt;setup_pub,                                   \
+			 BT_MESH_MODEL_USER_DATA(                              \
+				 struct <ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref>, _srv),         \
+			 &amp;_bt_mesh_light_ctrl_setup_srv_cb)</initializer>
+        <briefdescription>
+<para>Light Lightness model entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__light__ctrl__srv" kindref="compound">Light Lightness Control Server</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="52" column="9" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__mesh__light__ctrl__srv_ga5ab0fe016100e77a9caafbbb18912c7d_1ga5ab0fe016100e77a9caafbbb18912c7d" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_light_ctrl_srv_state</name>
+        <enumvalue id="group__bt__mesh__light__ctrl__srv_ga5ab0fe016100e77a9caafbbb18912c7d_1gga5ab0fe016100e77a9caafbbb18912c7dabbdce276617ba2641d56b7a54a8982a1" prot="public">
+          <name>LIGHT_CTRL_STATE_STANDBY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Standby state </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl__srv_ga5ab0fe016100e77a9caafbbb18912c7d_1gga5ab0fe016100e77a9caafbbb18912c7da9b97b8aaf64f0411de2cba1c803c5588" prot="public">
+          <name>LIGHT_CTRL_STATE_ON</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>On state </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl__srv_ga5ab0fe016100e77a9caafbbb18912c7d_1gga5ab0fe016100e77a9caafbbb18912c7da95bacece9b3421a815649e0c2e1e771e" prot="public">
+          <name>LIGHT_CTRL_STATE_PROLONG</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Prolong state </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl__srv_ga5ab0fe016100e77a9caafbbb18912c7d_1gga5ab0fe016100e77a9caafbbb18912c7da1b949044bccfe035bd40661aab31d279" prot="public">
+          <name>LIGHT_CTRL_STATE_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The number of states. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light Lightness Control Server state </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="67" column="1" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="67" bodyend="77"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__srv_ga22e6434414814fcb0ee469f41caf275d_1ga22e6434414814fcb0ee469f41caf275d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_srv_on</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_srv *srv)</argsstring>
+        <name>bt_mesh_light_ctrl_srv_on</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <briefdescription>
+<para>Turn the light on. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Instructs the controlled Lightness Server to turn the light on. If the light was already on, the dimming timeout is reset. If the light was in the Prolong state, it&apos;s moved back into the On state.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Lightness Control Server instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Light Lightness Control Server was successfully turned on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EBUSY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Light Lightness Control Server is disabled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="205" column="5" declfile="include/bluetooth/mesh/light_ctrl_srv.h" declline="205" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__srv_ga3224811b702ef0b6066b5d5e529cdeb6_1ga3224811b702ef0b6066b5d5e529cdeb6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_srv_off</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_srv *srv)</argsstring>
+        <name>bt_mesh_light_ctrl_srv_off</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <briefdescription>
+<para>Manually turn the light off. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Instructs the controlled Lightness Server to turn the light off (Standby state). Calling this function temporarily disables occupancy sensor triggering (referred to as &quot;manual mode&quot; in the documentation). The server will remain in manual mode until the manual mode timer expires, see <verbatim>embed:rst:inline :kconfig:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_MANUAL` </verbatim>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Lightness Control Server instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Light Lightness Control Server was successfully turned off. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EBUSY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Light Lightness Control Server is disabled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="221" column="5" declfile="include/bluetooth/mesh/light_ctrl_srv.h" declline="221" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__srv_gaa454c6cd9e77aeb1fc8b18ce3a180889_1gaa454c6cd9e77aeb1fc8b18ce3a180889" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_srv_enable</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_srv *srv)</argsstring>
+        <name>bt_mesh_light_ctrl_srv_enable</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <briefdescription>
+<para>Enable the Light Lightness Control Server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The Server must be enabled to take control of the Lightness Server.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Lightness Control Server instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Light Lightness Control Server was successfully enabled. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Light Lightness Control Server was already enabled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="233" column="5" declfile="include/bluetooth/mesh/light_ctrl_srv.h" declline="233" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__srv_ga91a8835348034a260a76d74a77a8fe63_1ga91a8835348034a260a76d74a77a8fe63" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_srv_disable</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_srv *srv)</argsstring>
+        <name>bt_mesh_light_ctrl_srv_disable</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <briefdescription>
+<para>Disable the Light Lightness Control Server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The server must be enabled to take control of the Lightness Server. Disabling the server disengages the control over the Lightness Server, which will start running as an independent model.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Lightness Control Server instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Light Lightness Control Server was successfully enabled. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Light Lightness Control Server was already enabled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="247" column="5" declfile="include/bluetooth/mesh/light_ctrl_srv.h" declline="247" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__srv_gad2e284e80e64856ca36a8947dd965bc3_1gad2e284e80e64856ca36a8947dd965bc3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool bt_mesh_light_ctrl_srv_is_on</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_srv *srv)</argsstring>
+        <name>bt_mesh_light_ctrl_srv_is_on</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <briefdescription>
+<para>Check if the Light Lightness Control Server has turned the light on. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Lightness Control Server instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the Lightness Server&apos;s light is on because of its binding with the Light Lightness Control Server, false otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="256" column="6" declfile="include/bluetooth/mesh/light_ctrl_srv.h" declline="256" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__srv_gaaf1177482eba55c8fe4c0cf495598b30_1gaaf1177482eba55c8fe4c0cf495598b30" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_srv_pub</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_srv *srv, struct bt_mesh_msg_ctx *ctx)</argsstring>
+        <name>bt_mesh_light_ctrl_srv_pub</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <briefdescription>
+<para>Publish the current OnOff state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Lightness Control Server instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to publish with the configured parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 Successfully published the current Light state. </para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="269" column="5" declfile="include/bluetooth/mesh/light_ctrl_srv.h" declline="269" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_MESH_LIGHT_CTRL_SRV_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_SRV_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/mesh.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="light__ctrl_8h" kindref="compound">bluetooth/mesh/light_ctrl.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="sensor_8h" kindref="compound">bluetooth/mesh/sensor.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="gen__onoff__srv_8h" kindref="compound">bluetooth/mesh/gen_onoff_srv.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="lightness__srv_8h" kindref="compound">bluetooth/mesh/lightness_srv.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="model__types_8h" kindref="compound">bluetooth/mesh/model_types.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref>;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="group__bt__mesh__light__ctrl__srv_ga3f8a8e78a86277a5a98eb288b54e081b_1ga3f8a8e78a86277a5a98eb288b54e081b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_SRV_INIT(_lightness_srv)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="38"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="39"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.cfg<sp/>=<sp/>BT_MESH_LIGHT_CTRL_SRV_CFG_INIT,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="40"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.onoff<sp/>=<sp/>BT_MESH_ONOFF_SRV_INIT(<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="41"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;_bt_mesh_light_ctrl_srv_onoff),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="42"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.lightness<sp/>=<sp/>_lightness_srv,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="43"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_LIGHT_CTRL_SRV_REG_INIT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="44"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="group__bt__mesh__light__ctrl__srv_ga58a880f2c9085debeadec225a7a19da3_1ga58a880f2c9085debeadec225a7a19da3" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_MODEL_LIGHT_CTRL_SRV(_srv)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="53"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_ONOFF_SRV(&amp;(_srv)-&gt;onoff),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="54"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_LC_SRV,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="55"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_bt_mesh_light_ctrl_srv_op,<sp/>&amp;(_srv)-&gt;pub,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="56"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_USER_DATA(<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="57"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>struct<sp/>bt_mesh_light_ctrl_srv,<sp/>_srv),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="58"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;_bt_mesh_light_ctrl_srv_cb),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="59"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_LC_SETUPSRV,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="60"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_bt_mesh_light_ctrl_setup_srv_op,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="61"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;(_srv)-&gt;setup_pub,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="62"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_USER_DATA(<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="63"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>struct<sp/>bt_mesh_light_ctrl_srv,<sp/>_srv),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="64"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;_bt_mesh_light_ctrl_setup_srv_cb)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="group__bt__mesh__light__ctrl__srv_ga5ab0fe016100e77a9caafbbb18912c7d_1ga5ab0fe016100e77a9caafbbb18912c7d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__ctrl__srv_ga5ab0fe016100e77a9caafbbb18912c7d_1ga5ab0fe016100e77a9caafbbb18912c7d" kindref="member">bt_mesh_light_ctrl_srv_state</ref><sp/>{</highlight></codeline>
+<codeline lineno="69" refid="group__bt__mesh__light__ctrl__srv_ga5ab0fe016100e77a9caafbbb18912c7d_1gga5ab0fe016100e77a9caafbbb18912c7dabbdce276617ba2641d56b7a54a8982a1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__light__ctrl__srv_ga5ab0fe016100e77a9caafbbb18912c7d_1gga5ab0fe016100e77a9caafbbb18912c7dabbdce276617ba2641d56b7a54a8982a1" kindref="member">LIGHT_CTRL_STATE_STANDBY</ref>,</highlight></codeline>
+<codeline lineno="71" refid="group__bt__mesh__light__ctrl__srv_ga5ab0fe016100e77a9caafbbb18912c7d_1gga5ab0fe016100e77a9caafbbb18912c7da9b97b8aaf64f0411de2cba1c803c5588" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__light__ctrl__srv_ga5ab0fe016100e77a9caafbbb18912c7d_1gga5ab0fe016100e77a9caafbbb18912c7da9b97b8aaf64f0411de2cba1c803c5588" kindref="member">LIGHT_CTRL_STATE_ON</ref>,</highlight></codeline>
+<codeline lineno="73" refid="group__bt__mesh__light__ctrl__srv_ga5ab0fe016100e77a9caafbbb18912c7d_1gga5ab0fe016100e77a9caafbbb18912c7da95bacece9b3421a815649e0c2e1e771e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__light__ctrl__srv_ga5ab0fe016100e77a9caafbbb18912c7d_1gga5ab0fe016100e77a9caafbbb18912c7da95bacece9b3421a815649e0c2e1e771e" kindref="member">LIGHT_CTRL_STATE_PROLONG</ref>,</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="group__bt__mesh__light__ctrl__srv_ga5ab0fe016100e77a9caafbbb18912c7d_1gga5ab0fe016100e77a9caafbbb18912c7da1b949044bccfe035bd40661aab31d279" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__light__ctrl__srv_ga5ab0fe016100e77a9caafbbb18912c7d_1gga5ab0fe016100e77a9caafbbb18912c7da1b949044bccfe035bd40661aab31d279" kindref="member">LIGHT_CTRL_STATE_COUNT</ref>,</highlight></codeline>
+<codeline lineno="77"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80" refid="structbt__mesh__light__ctrl__srv__cfg" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__ctrl__srv__cfg" kindref="compound">bt_mesh_light_ctrl_srv_cfg</ref><sp/>{</highlight></codeline>
+<codeline lineno="82" refid="structbt__mesh__light__ctrl__srv__cfg_ab4f9bbaad222c3d5d13badc18b839a02_1ab4f9bbaad222c3d5d13badc18b839a02" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__mesh__light__ctrl__srv__cfg_ab4f9bbaad222c3d5d13badc18b839a02_1ab4f9bbaad222c3d5d13badc18b839a02" kindref="member">occupancy_delay</ref>;</highlight></codeline>
+<codeline lineno="84" refid="structbt__mesh__light__ctrl__srv__cfg_a6704b5e114bc6f8ac1c335c0b8fcb494_1a6704b5e114bc6f8ac1c335c0b8fcb494" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__mesh__light__ctrl__srv__cfg_a6704b5e114bc6f8ac1c335c0b8fcb494_1a6704b5e114bc6f8ac1c335c0b8fcb494" kindref="member">fade_on</ref>;</highlight></codeline>
+<codeline lineno="86" refid="structbt__mesh__light__ctrl__srv__cfg_aea90a818998b74508e2eea077a50151a_1aea90a818998b74508e2eea077a50151a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__mesh__light__ctrl__srv__cfg_aea90a818998b74508e2eea077a50151a_1aea90a818998b74508e2eea077a50151a" kindref="member">on</ref>;</highlight></codeline>
+<codeline lineno="88" refid="structbt__mesh__light__ctrl__srv__cfg_a0d486330c60fdf4acff7afd41b6c6edc_1a0d486330c60fdf4acff7afd41b6c6edc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__mesh__light__ctrl__srv__cfg_a0d486330c60fdf4acff7afd41b6c6edc_1a0d486330c60fdf4acff7afd41b6c6edc" kindref="member">fade_prolong</ref>;</highlight></codeline>
+<codeline lineno="90" refid="structbt__mesh__light__ctrl__srv__cfg_a1c0b3e89b341b21016918025a838b772_1a1c0b3e89b341b21016918025a838b772" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__mesh__light__ctrl__srv__cfg_a1c0b3e89b341b21016918025a838b772_1a1c0b3e89b341b21016918025a838b772" kindref="member">prolong</ref>;</highlight></codeline>
+<codeline lineno="92" refid="structbt__mesh__light__ctrl__srv__cfg_a02f1e69f39109ec5e14adb07aab3c3e4_1a02f1e69f39109ec5e14adb07aab3c3e4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__mesh__light__ctrl__srv__cfg_a02f1e69f39109ec5e14adb07aab3c3e4_1a02f1e69f39109ec5e14adb07aab3c3e4" kindref="member">fade_standby_auto</ref>;</highlight></codeline>
+<codeline lineno="94" refid="structbt__mesh__light__ctrl__srv__cfg_a8ca9a4034e61dba8fcb0b765e357ca83_1a8ca9a4034e61dba8fcb0b765e357ca83" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__mesh__light__ctrl__srv__cfg_a8ca9a4034e61dba8fcb0b765e357ca83_1a8ca9a4034e61dba8fcb0b765e357ca83" kindref="member">fade_standby_manual</ref>;</highlight></codeline>
+<codeline lineno="96" refid="structbt__mesh__light__ctrl__srv__cfg_af55b5c1be98a4ca4c400cde65167a05b_1af55b5c1be98a4ca4c400cde65167a05b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__mesh__light__ctrl__srv__cfg_af55b5c1be98a4ca4c400cde65167a05b_1af55b5c1be98a4ca4c400cde65167a05b" kindref="member">light</ref>[<ref refid="group__bt__mesh__light__ctrl__srv_ga5ab0fe016100e77a9caafbbb18912c7d_1gga5ab0fe016100e77a9caafbbb18912c7da1b949044bccfe035bd40661aab31d279" kindref="member">LIGHT_CTRL_STATE_COUNT</ref>];</highlight></codeline>
+<codeline lineno="97"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100" refid="structbt__mesh__light__ctrl__srv__reg__cfg" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__ctrl__srv__reg__cfg" kindref="compound">bt_mesh_light_ctrl_srv_reg_cfg</ref><sp/>{</highlight></codeline>
+<codeline lineno="102" refid="structbt__mesh__light__ctrl__srv__reg__cfg_a5f98e64ad5fcf3ba9a92e86c23a6c925_1a5f98e64ad5fcf3ba9a92e86c23a6c925" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">sensor_value<sp/><ref refid="structbt__mesh__light__ctrl__srv__reg__cfg_a5f98e64ad5fcf3ba9a92e86c23a6c925_1a5f98e64ad5fcf3ba9a92e86c23a6c925" kindref="member">lux</ref>[<ref refid="group__bt__mesh__light__ctrl__srv_ga5ab0fe016100e77a9caafbbb18912c7d_1gga5ab0fe016100e77a9caafbbb18912c7da1b949044bccfe035bd40661aab31d279" kindref="member">LIGHT_CTRL_STATE_COUNT</ref>];</highlight></codeline>
+<codeline lineno="104" refid="structbt__mesh__light__ctrl__srv__reg__cfg_a25bfa7eec43231236743deceecfba97d_1a25bfa7eec43231236743deceecfba97d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctrl__srv__reg__cfg_a25bfa7eec43231236743deceecfba97d_1a25bfa7eec43231236743deceecfba97d" kindref="member">kiu</ref>;</highlight></codeline>
+<codeline lineno="106" refid="structbt__mesh__light__ctrl__srv__reg__cfg_a20098f140da7eea09841b74657acf1c8_1a20098f140da7eea09841b74657acf1c8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctrl__srv__reg__cfg_a20098f140da7eea09841b74657acf1c8_1a20098f140da7eea09841b74657acf1c8" kindref="member">kid</ref>;</highlight></codeline>
+<codeline lineno="108" refid="structbt__mesh__light__ctrl__srv__reg__cfg_ac4850f1dee7b562b8295f8db5d1f835e_1ac4850f1dee7b562b8295f8db5d1f835e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctrl__srv__reg__cfg_ac4850f1dee7b562b8295f8db5d1f835e_1ac4850f1dee7b562b8295f8db5d1f835e" kindref="member">kpu</ref>;</highlight></codeline>
+<codeline lineno="110" refid="structbt__mesh__light__ctrl__srv__reg__cfg_ad5230d300ec8ea1a7ab94976d6a1c3ef_1ad5230d300ec8ea1a7ab94976d6a1c3ef" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctrl__srv__reg__cfg_ad5230d300ec8ea1a7ab94976d6a1c3ef_1ad5230d300ec8ea1a7ab94976d6a1c3ef" kindref="member">kpd</ref>;</highlight></codeline>
+<codeline lineno="112" refid="structbt__mesh__light__ctrl__srv__reg__cfg_a5ae814741a8d598fbc424c793920b6ec_1a5ae814741a8d598fbc424c793920b6ec" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__light__ctrl__srv__reg__cfg_a5ae814741a8d598fbc424c793920b6ec_1a5ae814741a8d598fbc424c793920b6ec" kindref="member">accuracy</ref>;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116" refid="structbt__mesh__light__ctrl__srv__reg" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__ctrl__srv__reg" kindref="compound">bt_mesh_light_ctrl_srv_reg</ref><sp/>{</highlight></codeline>
+<codeline lineno="118" refid="structbt__mesh__light__ctrl__srv__reg_a4827edd66e35e9eb916cc563b5a2f281_1a4827edd66e35e9eb916cc563b5a2f281" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">k_work_delayable<sp/><ref refid="structbt__mesh__light__ctrl__srv__reg_a4827edd66e35e9eb916cc563b5a2f281_1a4827edd66e35e9eb916cc563b5a2f281" kindref="member">timer</ref>;</highlight></codeline>
+<codeline lineno="120" refid="structbt__mesh__light__ctrl__srv__reg_a5008c68a8dde858c7f22764c2578de11_1a5008c68a8dde858c7f22764c2578de11" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctrl__srv__reg_a5008c68a8dde858c7f22764c2578de11_1a5008c68a8dde858c7f22764c2578de11" kindref="member">i</ref>;</highlight></codeline>
+<codeline lineno="122" refid="structbt__mesh__light__ctrl__srv__reg_a73528da0e96edf97ddf19d08cea3ef2b_1a73528da0e96edf97ddf19d08cea3ef2b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__mesh__light__ctrl__srv__reg_a73528da0e96edf97ddf19d08cea3ef2b_1a73528da0e96edf97ddf19d08cea3ef2b" kindref="member">prev</ref>;</highlight></codeline>
+<codeline lineno="124" refid="structbt__mesh__light__ctrl__srv__reg_a53016b4a6567f319d798ffae88d172e3_1a53016b4a6567f319d798ffae88d172e3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__ctrl__srv__reg__cfg" kindref="compound">bt_mesh_light_ctrl_srv_reg_cfg</ref><sp/><ref refid="structbt__mesh__light__ctrl__srv__reg_a53016b4a6567f319d798ffae88d172e3_1a53016b4a6567f319d798ffae88d172e3" kindref="member">cfg</ref>;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131" refid="structbt__mesh__light__ctrl__srv" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref><sp/>{</highlight></codeline>
+<codeline lineno="133" refid="structbt__mesh__light__ctrl__srv_a104871501b1b9f87a99de69834119386_1a104871501b1b9f87a99de69834119386" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__ctrl__srv_ga5ab0fe016100e77a9caafbbb18912c7d_1ga5ab0fe016100e77a9caafbbb18912c7d" kindref="member">bt_mesh_light_ctrl_srv_state</ref><sp/><ref refid="structbt__mesh__light__ctrl__srv_a104871501b1b9f87a99de69834119386_1a104871501b1b9f87a99de69834119386" kindref="member">state</ref>;</highlight></codeline>
+<codeline lineno="135" refid="structbt__mesh__light__ctrl__srv_a661ce8fefeef0709ba3e8efa496da2e8_1a661ce8fefeef0709ba3e8efa496da2e8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>atomic_t<sp/><ref refid="structbt__mesh__light__ctrl__srv_a661ce8fefeef0709ba3e8efa496da2e8_1a661ce8fefeef0709ba3e8efa496da2e8" kindref="member">flags</ref>;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="139" refid="structbt__mesh__light__ctrl__srv_a407c350e27e248f1131ea4cef4009575_1a407c350e27e248f1131ea4cef4009575" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__mesh__light__ctrl__srv_a407c350e27e248f1131ea4cef4009575_1a407c350e27e248f1131ea4cef4009575" kindref="member">initial_light</ref>;</highlight></codeline>
+<codeline lineno="141" refid="structbt__mesh__light__ctrl__srv_a14422600e565bc0e3cd7e6e32236695b_1a14422600e565bc0e3cd7e6e32236695b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">sensor_value<sp/><ref refid="structbt__mesh__light__ctrl__srv_a14422600e565bc0e3cd7e6e32236695b_1a14422600e565bc0e3cd7e6e32236695b" kindref="member">initial_lux</ref>;</highlight></codeline>
+<codeline lineno="143" refid="structbt__mesh__light__ctrl__srv_a28ada13234b9ec583f580ee32ca27471_1a28ada13234b9ec583f580ee32ca27471" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__mesh__light__ctrl__srv_a28ada13234b9ec583f580ee32ca27471_1a28ada13234b9ec583f580ee32ca27471" kindref="member">duration</ref>;</highlight></codeline>
+<codeline lineno="144" refid="structbt__mesh__light__ctrl__srv_adcc76bd0174e04282768f1deb0fa0e14_1adcc76bd0174e04282768f1deb0fa0e14" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/><ref refid="structbt__mesh__light__ctrl__srv_adcc76bd0174e04282768f1deb0fa0e14_1adcc76bd0174e04282768f1deb0fa0e14" kindref="member">fade</ref>;</highlight></codeline>
+<codeline lineno="146" refid="structbt__mesh__light__ctrl__srv_a5446d2580fc5c3d1dea0355d852ccf4e_1a5446d2580fc5c3d1dea0355d852ccf4e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">sensor_value<sp/><ref refid="structbt__mesh__light__ctrl__srv_a5446d2580fc5c3d1dea0355d852ccf4e_1a5446d2580fc5c3d1dea0355d852ccf4e" kindref="member">ambient_lux</ref>;</highlight></codeline>
+<codeline lineno="148" refid="structbt__mesh__light__ctrl__srv_ae6315aee743a701603a72e841810365a_1ae6315aee743a701603a72e841810365a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">k_work_delayable<sp/><ref refid="structbt__mesh__light__ctrl__srv_ae6315aee743a701603a72e841810365a_1ae6315aee743a701603a72e841810365a" kindref="member">timer</ref>;</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>CONFIG_BT_SETTINGS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">k_work_delayable<sp/>store_timer;</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="155" refid="structbt__mesh__light__ctrl__srv_a4c26c1fe67a97162330493f1363d3994_1a4c26c1fe67a97162330493f1363d3994" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">k_work_delayable<sp/><ref refid="structbt__mesh__light__ctrl__srv_a4c26c1fe67a97162330493f1363d3994_1a4c26c1fe67a97162330493f1363d3994" kindref="member">action_delay</ref>;</highlight></codeline>
+<codeline lineno="157" refid="structbt__mesh__light__ctrl__srv_ad35c3c58d3575c1cc70b5b41aadfe8ee_1ad35c3c58d3575c1cc70b5b41aadfe8ee" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__ctrl__srv__cfg" kindref="compound">bt_mesh_light_ctrl_srv_cfg</ref><sp/><ref refid="structbt__mesh__light__ctrl__srv_ad35c3c58d3575c1cc70b5b41aadfe8ee_1ad35c3c58d3575c1cc70b5b41aadfe8ee" kindref="member">cfg</ref>;</highlight></codeline>
+<codeline lineno="159" refid="structbt__mesh__light__ctrl__srv_abc539627609ba280825ea1691a26bca8_1abc539627609ba280825ea1691a26bca8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_pub<sp/><ref refid="structbt__mesh__light__ctrl__srv_abc539627609ba280825ea1691a26bca8_1abc539627609ba280825ea1691a26bca8" kindref="member">pub</ref>;</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Publication<sp/>buffer<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="161" refid="structbt__mesh__light__ctrl__srv_ad87fbe813bb663793332f55d9e316bbb_1ad87fbe813bb663793332f55d9e316bbb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">net_buf_simple<sp/><ref refid="structbt__mesh__light__ctrl__srv_ad87fbe813bb663793332f55d9e316bbb_1ad87fbe813bb663793332f55d9e316bbb" kindref="member">pub_buf</ref>;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Publication<sp/>data<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="163" refid="structbt__mesh__light__ctrl__srv_ac1c905b1556faf792e11323db9584377_1ac1c905b1556faf792e11323db9584377" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__light__ctrl__srv_ac1c905b1556faf792e11323db9584377_1ac1c905b1556faf792e11323db9584377" kindref="member">pub_data</ref>[BT_MESH_MODEL_BUF_LEN(</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS,<sp/>3)];</highlight></codeline>
+<codeline lineno="166" refid="structbt__mesh__light__ctrl__srv_aa40a05a4b993bc989d61f75939585e9e_1aa40a05a4b993bc989d61f75939585e9e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__mesh__light__ctrl__srv_aa40a05a4b993bc989d61f75939585e9e_1aa40a05a4b993bc989d61f75939585e9e" kindref="member">resume</ref>;</highlight></codeline>
+<codeline lineno="168" refid="structbt__mesh__light__ctrl__srv_a4c344ee7944123cae10a05ecf1df4637_1a4c344ee7944123cae10a05ecf1df4637" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_pub<sp/><ref refid="structbt__mesh__light__ctrl__srv_a4c344ee7944123cae10a05ecf1df4637_1a4c344ee7944123cae10a05ecf1df4637" kindref="member">setup_pub</ref>;</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Publication<sp/>buffer<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="170" refid="structbt__mesh__light__ctrl__srv_a5f9f48be76b7abf9a12c9daa92c64f66_1a5f9f48be76b7abf9a12c9daa92c64f66" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">net_buf_simple<sp/><ref refid="structbt__mesh__light__ctrl__srv_a5f9f48be76b7abf9a12c9daa92c64f66_1a5f9f48be76b7abf9a12c9daa92c64f66" kindref="member">setup_pub_buf</ref>;</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Publication<sp/>data<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172" refid="structbt__mesh__light__ctrl__srv_abe30a8ce029e61eb0e1eaa729462111e_1abe30a8ce029e61eb0e1eaa729462111e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__light__ctrl__srv_abe30a8ce029e61eb0e1eaa729462111e_1abe30a8ce029e61eb0e1eaa729462111e" kindref="member">setup_pub_data</ref>[BT_MESH_MODEL_BUF_LEN(</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_LIGHT_CTRL_OP_PROP_STATUS,</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2<sp/>+<sp/>CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX)];</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__ctrl__srv__reg" kindref="compound">bt_mesh_light_ctrl_srv_reg</ref><sp/>reg;</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="182" refid="structbt__mesh__light__ctrl__srv_a9b988c131bffcc32fe0c82be09fd7f68_1a9b988c131bffcc32fe0c82be09fd7f68" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__lightness__srv" kindref="compound">bt_mesh_lightness_srv</ref><sp/>*<ref refid="structbt__mesh__light__ctrl__srv_a9b988c131bffcc32fe0c82be09fd7f68_1a9b988c131bffcc32fe0c82be09fd7f68" kindref="member">lightness</ref>;</highlight></codeline>
+<codeline lineno="184" refid="structbt__mesh__light__ctrl__srv_a3b20163d2ded5efdd011d3cb96cc38cf_1a3b20163d2ded5efdd011d3cb96cc38cf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__onoff__srv" kindref="compound">bt_mesh_onoff_srv</ref><sp/><ref refid="structbt__mesh__light__ctrl__srv_a3b20163d2ded5efdd011d3cb96cc38cf_1a3b20163d2ded5efdd011d3cb96cc38cf" kindref="member">onoff</ref>;</highlight></codeline>
+<codeline lineno="186" refid="structbt__mesh__light__ctrl__srv_a566d25d7381c32cd8b254ca80f688d38_1a566d25d7381c32cd8b254ca80f688d38" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__tid__ctx" kindref="compound">bt_mesh_tid_ctx</ref><sp/><ref refid="structbt__mesh__light__ctrl__srv_a566d25d7381c32cd8b254ca80f688d38_1a566d25d7381c32cd8b254ca80f688d38" kindref="member">tid</ref>;</highlight></codeline>
+<codeline lineno="188" refid="structbt__mesh__light__ctrl__srv_a584ad009a765f5be270164cd1eab4ba8_1a584ad009a765f5be270164cd1eab4ba8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model<sp/>*<ref refid="structbt__mesh__light__ctrl__srv_a584ad009a765f5be270164cd1eab4ba8_1a584ad009a765f5be270164cd1eab4ba8" kindref="member">model</ref>;</highlight></codeline>
+<codeline lineno="190" refid="structbt__mesh__light__ctrl__srv_a2418a130dd666d7c9de3384859ddbd59_1a2418a130dd666d7c9de3384859ddbd59" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model<sp/>*<ref refid="structbt__mesh__light__ctrl__srv_a2418a130dd666d7c9de3384859ddbd59_1a2418a130dd666d7c9de3384859ddbd59" kindref="member">setup_srv</ref>;</highlight></codeline>
+<codeline lineno="191"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205" refid="group__bt__mesh__light__ctrl__srv_ga22e6434414814fcb0ee469f41caf275d_1ga22e6434414814fcb0ee469f41caf275d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__ctrl__srv_ga22e6434414814fcb0ee469f41caf275d_1ga22e6434414814fcb0ee469f41caf275d" kindref="member">bt_mesh_light_ctrl_srv_on</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref><sp/>*srv);</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight></codeline>
+<codeline lineno="221" refid="group__bt__mesh__light__ctrl__srv_ga3224811b702ef0b6066b5d5e529cdeb6_1ga3224811b702ef0b6066b5d5e529cdeb6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__ctrl__srv_ga3224811b702ef0b6066b5d5e529cdeb6_1ga3224811b702ef0b6066b5d5e529cdeb6" kindref="member">bt_mesh_light_ctrl_srv_off</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref><sp/>*srv);</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight></codeline>
+<codeline lineno="233" refid="group__bt__mesh__light__ctrl__srv_gaa454c6cd9e77aeb1fc8b18ce3a180889_1gaa454c6cd9e77aeb1fc8b18ce3a180889" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__ctrl__srv_gaa454c6cd9e77aeb1fc8b18ce3a180889_1gaa454c6cd9e77aeb1fc8b18ce3a180889" kindref="member">bt_mesh_light_ctrl_srv_enable</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref><sp/>*srv);</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"></highlight></codeline>
+<codeline lineno="247" refid="group__bt__mesh__light__ctrl__srv_ga91a8835348034a260a76d74a77a8fe63_1ga91a8835348034a260a76d74a77a8fe63" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__ctrl__srv_ga91a8835348034a260a76d74a77a8fe63_1ga91a8835348034a260a76d74a77a8fe63" kindref="member">bt_mesh_light_ctrl_srv_disable</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref><sp/>*srv);</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"></highlight></codeline>
+<codeline lineno="256" refid="group__bt__mesh__light__ctrl__srv_gad2e284e80e64856ca36a8947dd965bc3_1gad2e284e80e64856ca36a8947dd965bc3" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__ctrl__srv_gad2e284e80e64856ca36a8947dd965bc3_1gad2e284e80e64856ca36a8947dd965bc3" kindref="member">bt_mesh_light_ctrl_srv_is_on</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref><sp/>*srv);</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"></highlight></codeline>
+<codeline lineno="269" refid="group__bt__mesh__light__ctrl__srv_gaaf1177482eba55c8fe4c0cf495598b30_1gaaf1177482eba55c8fe4c0cf495598b30" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__ctrl__srv_gaaf1177482eba55c8fe4c0cf495598b30_1gaaf1177482eba55c8fe4c0cf495598b30" kindref="member">bt_mesh_light_ctrl_srv_pub</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref><sp/>*srv,</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx);</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"></highlight></codeline>
+<codeline lineno="273"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_cb<sp/>_bt_mesh_light_ctrl_srv_cb;</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_op<sp/>_bt_mesh_light_ctrl_srv_op[];</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_cb<sp/>_bt_mesh_light_ctrl_setup_srv_cb;</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_op<sp/>_bt_mesh_light_ctrl_setup_srv_op[];</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__onoff__srv__handlers" kindref="compound">bt_mesh_onoff_srv_handlers</ref><sp/>_bt_mesh_light_ctrl_srv_onoff;</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="281"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="283"><highlight class="normal"></highlight></codeline>
+<codeline lineno="284"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_MESH_LIGHT_CTRL_SRV_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="285"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/mesh/light_ctrl_srv.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,259 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="gen__prop_8h" kind="file" language="C++">
+    <compoundname>gen_prop.h</compoundname>
+    <includes local="no">bluetooth/mesh.h</includes>
+    <includes refid="properties_8h" local="no">bluetooth/mesh/properties.h</includes>
+    <includedby refid="gen__prop__cli_8h" local="no">include/bluetooth/mesh/gen_prop_cli.h</includedby>
+    <includedby refid="gen__prop__srv_8h" local="no">include/bluetooth/mesh/gen_prop_srv.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/bluetooth/mesh/gen_prop.h</label>
+        <link refid="gen__prop_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/mesh/properties.h</label>
+        <link refid="properties_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bluetooth/mesh.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>include/bluetooth/mesh/gen_prop.h</label>
+        <link refid="gen__prop_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/bluetooth/mesh/gen_prop_cli.h</label>
+        <link refid="gen__prop__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>include/bluetooth/mesh/gen_prop_srv.h</label>
+        <link refid="gen__prop__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>include/bluetooth/mesh/models.h</label>
+        <link refid="models_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>include/bluetooth/mesh/vnd/silvair_enocean_srv.h</label>
+        <link refid="silvair__enocean__srv_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structbt__mesh__prop" prot="public">bt_mesh_prop</innerclass>
+    <innerclass refid="structbt__mesh__prop__val" prot="public">bt_mesh_prop_val</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1ga79ad26ae27108b0b537be96f2349bf3b" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_prop_access</name>
+        <enumvalue id="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1gga79ad26ae27108b0b537be96f2349bf3ba06ee096b5eed4e97ece966cf8153e8df" prot="public">
+          <name>BT_MESH_PROP_ACCESS_PROHIBITED</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Access to the property is prohibited. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1gga79ad26ae27108b0b537be96f2349bf3ba0a7216d4c01c0560f0b17dfd1cb2d9f5" prot="public">
+          <name>BT_MESH_PROP_ACCESS_READ</name>
+          <initializer>= BIT(0)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Property may be read. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1gga79ad26ae27108b0b537be96f2349bf3ba061f36866bf2708e058afcbd71aa8f83" prot="public">
+          <name>BT_MESH_PROP_ACCESS_WRITE</name>
+          <initializer>= BIT(1)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Property may be written. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1gga79ad26ae27108b0b537be96f2349bf3baf6c82b60777445ad5cbd1171399e5ea9" prot="public">
+          <name>BT_MESH_PROP_ACCESS_READ_WRITE</name>
+          <initializer>=
+		(BT_MESH_PROP_ACCESS_READ | BT_MESH_PROP_ACCESS_WRITE)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Property may be read or written. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Access flags for properties </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop.h" line="25" column="1" bodyfile="include/bluetooth/mesh/gen_prop.h" bodystart="25" bodyend="35"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__mesh__prop_gac34d580cb712d2f85859e2108f1ccbbc_1gac34d580cb712d2f85859e2108f1ccbbc" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_prop_srv_kind</name>
+        <enumvalue id="group__bt__mesh__prop_gac34d580cb712d2f85859e2108f1ccbbc_1ggac34d580cb712d2f85859e2108f1ccbbcab727ea0eebc2ce1d9bea7be92647c7f5" prot="public">
+          <name>BT_MESH_PROP_SRV_KIND_MFR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Manufacturer property server. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__prop_gac34d580cb712d2f85859e2108f1ccbbc_1ggac34d580cb712d2f85859e2108f1ccbbca9b439eb94191f4ef50a124c7adcf3d70" prot="public">
+          <name>BT_MESH_PROP_SRV_KIND_ADMIN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Admin property server. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__prop_gac34d580cb712d2f85859e2108f1ccbbc_1ggac34d580cb712d2f85859e2108f1ccbbca95919081f188837278e3edcc6b03d556" prot="public">
+          <name>BT_MESH_PROP_SRV_KIND_USER</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>User property server. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__prop_gac34d580cb712d2f85859e2108f1ccbbc_1ggac34d580cb712d2f85859e2108f1ccbbca7ef76e26a89e28527ea93f9373f488c6" prot="public">
+          <name>BT_MESH_PROP_SRV_KIND_CLIENT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Client property server. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Property Server kinds. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop.h" line="38" column="1" bodyfile="include/bluetooth/mesh/gen_prop.h" bodystart="38" bodyend="47"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_MESH_GEN_PROP_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_GEN_PROP_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/mesh.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="properties_8h" kindref="compound">bluetooth/mesh/properties.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1ga79ad26ae27108b0b537be96f2349bf3b" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1ga79ad26ae27108b0b537be96f2349bf3b" kindref="member">bt_mesh_prop_access</ref><sp/>{</highlight></codeline>
+<codeline lineno="27" refid="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1gga79ad26ae27108b0b537be96f2349bf3ba06ee096b5eed4e97ece966cf8153e8df" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1gga79ad26ae27108b0b537be96f2349bf3ba06ee096b5eed4e97ece966cf8153e8df" kindref="member">BT_MESH_PROP_ACCESS_PROHIBITED</ref><sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="29" refid="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1gga79ad26ae27108b0b537be96f2349bf3ba0a7216d4c01c0560f0b17dfd1cb2d9f5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1gga79ad26ae27108b0b537be96f2349bf3ba0a7216d4c01c0560f0b17dfd1cb2d9f5" kindref="member">BT_MESH_PROP_ACCESS_READ</ref><sp/>=<sp/>BIT(0),</highlight></codeline>
+<codeline lineno="31" refid="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1gga79ad26ae27108b0b537be96f2349bf3ba061f36866bf2708e058afcbd71aa8f83" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1gga79ad26ae27108b0b537be96f2349bf3ba061f36866bf2708e058afcbd71aa8f83" kindref="member">BT_MESH_PROP_ACCESS_WRITE</ref><sp/>=<sp/>BIT(1),</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1gga79ad26ae27108b0b537be96f2349bf3baf6c82b60777445ad5cbd1171399e5ea9" kindref="member">BT_MESH_PROP_ACCESS_READ_WRITE</ref><sp/>=</highlight></codeline>
+<codeline lineno="34" refid="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1gga79ad26ae27108b0b537be96f2349bf3baf6c82b60777445ad5cbd1171399e5ea9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<ref refid="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1gga79ad26ae27108b0b537be96f2349bf3ba0a7216d4c01c0560f0b17dfd1cb2d9f5" kindref="member">BT_MESH_PROP_ACCESS_READ</ref><sp/>|<sp/><ref refid="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1gga79ad26ae27108b0b537be96f2349bf3ba061f36866bf2708e058afcbd71aa8f83" kindref="member">BT_MESH_PROP_ACCESS_WRITE</ref>),</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="group__bt__mesh__prop_gac34d580cb712d2f85859e2108f1ccbbc_1gac34d580cb712d2f85859e2108f1ccbbc" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__prop_gac34d580cb712d2f85859e2108f1ccbbc_1gac34d580cb712d2f85859e2108f1ccbbc" kindref="member">bt_mesh_prop_srv_kind</ref><sp/>{</highlight></codeline>
+<codeline lineno="40" refid="group__bt__mesh__prop_gac34d580cb712d2f85859e2108f1ccbbc_1ggac34d580cb712d2f85859e2108f1ccbbcab727ea0eebc2ce1d9bea7be92647c7f5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__prop_gac34d580cb712d2f85859e2108f1ccbbc_1ggac34d580cb712d2f85859e2108f1ccbbcab727ea0eebc2ce1d9bea7be92647c7f5" kindref="member">BT_MESH_PROP_SRV_KIND_MFR</ref>,</highlight></codeline>
+<codeline lineno="42" refid="group__bt__mesh__prop_gac34d580cb712d2f85859e2108f1ccbbc_1ggac34d580cb712d2f85859e2108f1ccbbca9b439eb94191f4ef50a124c7adcf3d70" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__prop_gac34d580cb712d2f85859e2108f1ccbbc_1ggac34d580cb712d2f85859e2108f1ccbbca9b439eb94191f4ef50a124c7adcf3d70" kindref="member">BT_MESH_PROP_SRV_KIND_ADMIN</ref>,</highlight></codeline>
+<codeline lineno="44" refid="group__bt__mesh__prop_gac34d580cb712d2f85859e2108f1ccbbc_1ggac34d580cb712d2f85859e2108f1ccbbca95919081f188837278e3edcc6b03d556" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__prop_gac34d580cb712d2f85859e2108f1ccbbc_1ggac34d580cb712d2f85859e2108f1ccbbca95919081f188837278e3edcc6b03d556" kindref="member">BT_MESH_PROP_SRV_KIND_USER</ref>,</highlight></codeline>
+<codeline lineno="46" refid="group__bt__mesh__prop_gac34d580cb712d2f85859e2108f1ccbbc_1ggac34d580cb712d2f85859e2108f1ccbbca7ef76e26a89e28527ea93f9373f488c6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__prop_gac34d580cb712d2f85859e2108f1ccbbc_1ggac34d580cb712d2f85859e2108f1ccbbca7ef76e26a89e28527ea93f9373f488c6" kindref="member">BT_MESH_PROP_SRV_KIND_CLIENT</ref>,</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="structbt__mesh__prop" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__prop" kindref="compound">bt_mesh_prop</ref><sp/>{</highlight></codeline>
+<codeline lineno="52" refid="structbt__mesh__prop_a2dc5c80066ef92d5aacaa9c3cc8d79c5_1a2dc5c80066ef92d5aacaa9c3cc8d79c5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__mesh__prop_a2dc5c80066ef92d5aacaa9c3cc8d79c5_1a2dc5c80066ef92d5aacaa9c3cc8d79c5" kindref="member">id</ref>;</highlight></codeline>
+<codeline lineno="54" refid="structbt__mesh__prop_a85b13d8e600d2674581896944fd6cffa_1a85b13d8e600d2674581896944fd6cffa" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1ga79ad26ae27108b0b537be96f2349bf3b" kindref="member">bt_mesh_prop_access</ref><sp/><ref refid="structbt__mesh__prop_a85b13d8e600d2674581896944fd6cffa_1a85b13d8e600d2674581896944fd6cffa" kindref="member">user_access</ref>;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58" refid="structbt__mesh__prop__val" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__prop__val" kindref="compound">bt_mesh_prop_val</ref><sp/>{</highlight></codeline>
+<codeline lineno="59" refid="structbt__mesh__prop__val_a90ea9b88afe9e5c2defeaa6759d20a6e_1a90ea9b88afe9e5c2defeaa6759d20a6e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__prop" kindref="compound">bt_mesh_prop</ref><sp/><ref refid="structbt__mesh__prop__val_a90ea9b88afe9e5c2defeaa6759d20a6e_1a90ea9b88afe9e5c2defeaa6759d20a6e" kindref="member">meta</ref>;<sp/></highlight></codeline>
+<codeline lineno="60" refid="structbt__mesh__prop__val_ab70971d2539ef1671ed880b734769812_1ab70971d2539ef1671ed880b734769812" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__prop__val_ab70971d2539ef1671ed880b734769812_1ab70971d2539ef1671ed880b734769812" kindref="member">size</ref>;<sp/></highlight></codeline>
+<codeline lineno="61" refid="structbt__mesh__prop__val_a2d0b3085409881c8ed93e76123325358_1a2d0b3085409881c8ed93e76123325358" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*<ref refid="structbt__mesh__prop__val_a2d0b3085409881c8ed93e76123325358_1a2d0b3085409881c8ed93e76123325358" kindref="member">value</ref>;<sp/></highlight></codeline>
+<codeline lineno="62"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_OP_MFR_PROPS_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x2A)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_OP_MFR_PROPS_STATUS<sp/>BT_MESH_MODEL_OP_1(0x43)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_OP_MFR_PROP_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x2B)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_OP_MFR_PROP_SET<sp/>BT_MESH_MODEL_OP_1(0x44)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_OP_MFR_PROP_SET_UNACK<sp/>BT_MESH_MODEL_OP_1(0x45)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_OP_MFR_PROP_STATUS<sp/>BT_MESH_MODEL_OP_1(0x46)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_OP_ADMIN_PROPS_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x2C)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_OP_ADMIN_PROPS_STATUS<sp/>BT_MESH_MODEL_OP_1(0x47)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_OP_ADMIN_PROP_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x2D)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_OP_ADMIN_PROP_SET<sp/>BT_MESH_MODEL_OP_1(0x48)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_OP_ADMIN_PROP_SET_UNACK<sp/>BT_MESH_MODEL_OP_1(0x49)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_OP_ADMIN_PROP_STATUS<sp/>BT_MESH_MODEL_OP_1(0x4A)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_OP_USER_PROPS_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x2E)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_OP_USER_PROPS_STATUS<sp/>BT_MESH_MODEL_OP_1(0x4B)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_OP_USER_PROP_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x2F)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_OP_USER_PROP_SET<sp/>BT_MESH_MODEL_OP_1(0x4C)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_OP_USER_PROP_SET_UNACK<sp/>BT_MESH_MODEL_OP_1(0x4D)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_OP_USER_PROP_STATUS<sp/>BT_MESH_MODEL_OP_1(0x4E)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_OP_CLIENT_PROPS_GET<sp/>BT_MESH_MODEL_OP_1(0x4F)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_OP_CLIENT_PROPS_STATUS<sp/>BT_MESH_MODEL_OP_1(0x50)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>CONFIG_BT_MESH_PROP_MAXSIZE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CONFIG_BT_MESH_PROP_MAXSIZE<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>CONFIG_BT_MESH_PROP_MAXCOUNT</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CONFIG_BT_MESH_PROP_MAXCOUNT<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_MSG_LEN_PROPS_GET<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_MSG_LEN_CLIENT_PROPS_GET<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_MSG_MINLEN_PROPS_STATUS<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_MSG_MAXLEN_PROPS_STATUS<sp/>(2<sp/>*<sp/>CONFIG_BT_MESH_PROP_MAXCOUNT)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_MSG_LEN_PROP_GET<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_MSG_MINLEN_PROP_STATUS<sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_MSG_MAXLEN_PROP_STATUS<sp/>(3<sp/>+<sp/>CONFIG_BT_MESH_PROP_MAXSIZE)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_MSG_LEN_MFR_PROP_SET<sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_MSG_MINLEN_ADMIN_PROP_SET<sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_MSG_MAXLEN_ADMIN_PROP_SET<sp/>(3<sp/>+<sp/>CONFIG_BT_MESH_PROP_MAXSIZE)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_MSG_MINLEN_USER_PROP_SET<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_MSG_MAXLEN_USER_PROP_SET<sp/>(2<sp/>+<sp/>CONFIG_BT_MESH_PROP_MAXSIZE)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_PROP_MSG_MAXLEN(_prop_cnt)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="107"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MAX(BT_MESH_MODEL_BUF_LEN(BT_MESH_PROP_OP_MFR_PROP_STATUS,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="108"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_PROP_MSG_MAXLEN_PROP_STATUS),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="109"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_BUF_LEN(BT_MESH_PROP_OP_MFR_PROPS_STATUS,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="110"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2<sp/>*<sp/>(_prop_cnt)))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_MESH_GEN_PROP_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/mesh/gen_prop.h"/>
+  </compounddef>
+</doxygen>

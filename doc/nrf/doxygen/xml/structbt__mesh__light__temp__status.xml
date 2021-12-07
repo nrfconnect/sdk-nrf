@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__temp__status" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_temp_status</compoundname>
+    <includes refid="light__ctl_8h" local="no">light_ctl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__temp__status_a55043599226ca8bfe1efaa9dca810ac1_1a55043599226ca8bfe1efaa9dca810ac1" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__light__temp" kindref="compound">bt_mesh_light_temp</ref></type>
+        <definition>struct bt_mesh_light_temp bt_mesh_light_temp_status::current</definition>
+        <argsstring></argsstring>
+        <name>current</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current light temperature parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl.h" line="91" column="25" bodyfile="include/bluetooth/mesh/light_ctl.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__temp__status_abada7fb7b5eb77c906e5cf32afa02790_1abada7fb7b5eb77c906e5cf32afa02790" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__light__temp" kindref="compound">bt_mesh_light_temp</ref></type>
+        <definition>struct bt_mesh_light_temp bt_mesh_light_temp_status::target</definition>
+        <argsstring></argsstring>
+        <name>target</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Target light temperature parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl.h" line="93" column="25" bodyfile="include/bluetooth/mesh/light_ctl.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__temp__status_a88a52ecc5555c66c6c34686275e77911_1a88a52ecc5555c66c6c34686275e77911" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_mesh_light_temp_status::remaining_time</definition>
+        <argsstring></argsstring>
+        <name>remaining_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Remaining time for the state change (ms). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl.h" line="95" column="10" bodyfile="include/bluetooth/mesh/light_ctl.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Light temperature status. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_mesh_light_temp</label>
+        <link refid="structbt__mesh__light__temp"/>
+      </node>
+      <node id="1">
+        <label>bt_mesh_light_temp_status</label>
+        <link refid="structbt__mesh__light__temp__status"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>current</edgelabel>
+          <edgelabel>target</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/light_ctl.h" line="89" column="1" bodyfile="include/bluetooth/mesh/light_ctl.h" bodystart="89" bodyend="96"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__temp__status_a55043599226ca8bfe1efaa9dca810ac1_1a55043599226ca8bfe1efaa9dca810ac1" prot="public" virt="non-virtual"><scope>bt_mesh_light_temp_status</scope><name>current</name></member>
+      <member refid="structbt__mesh__light__temp__status_a88a52ecc5555c66c6c34686275e77911_1a88a52ecc5555c66c6c34686275e77911" prot="public" virt="non-virtual"><scope>bt_mesh_light_temp_status</scope><name>remaining_time</name></member>
+      <member refid="structbt__mesh__light__temp__status_abada7fb7b5eb77c906e5cf32afa02790_1abada7fb7b5eb77c906e5cf32afa02790" prot="public" virt="non-virtual"><scope>bt_mesh_light_temp_status</scope><name>target</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

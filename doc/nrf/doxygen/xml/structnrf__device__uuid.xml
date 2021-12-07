@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnrf__device__uuid" kind="struct" language="C++" prot="public">
+    <compoundname>nrf_device_uuid</compoundname>
+    <includes refid="modem__attest__token_8h" local="no">modem_attest_token.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnrf__device__uuid_a4f3c32b8e4101ef93c0bbe996e0d5ad8_1a4f3c32b8e4101ef93c0bbe996e0d5ad8" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char nrf_device_uuid::str[((16 *2)+4)+1]</definition>
+        <argsstring>[((16 *2)+4)+1]</argsstring>
+        <name>str</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_attest_token.h" line="74" column="6" bodyfile="include/modem/modem_attest_token.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Device UUID v4 string. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/modem/modem_attest_token.h" line="73" column="1" bodyfile="include/modem/modem_attest_token.h" bodystart="73" bodyend="75"/>
+    <listofallmembers>
+      <member refid="structnrf__device__uuid_a4f3c32b8e4101ef93c0bbe996e0d5ad8_1a4f3c32b8e4101ef93c0bbe996e0d5ad8" prot="public" virt="non-virtual"><scope>nrf_device_uuid</scope><name>str</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

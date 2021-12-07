@@ -1,0 +1,291 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="zigbee__fota_8h" kind="file" language="C++">
+    <compoundname>zigbee_fota.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <includes local="no">zboss_api.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/zigbee/zigbee_fota.h</label>
+        <link refid="zigbee__fota_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>zboss_api.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structzigbee__fota__event__dl" prot="public">zigbee_fota_event_dl</innerclass>
+    <innerclass refid="structzigbee__fota__evt" prot="public">zigbee_fota_evt</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__zigbee__fota_ga175a4030fd25787ddbf5115a5ff87632_1ga175a4030fd25787ddbf5115a5ff87632" prot="public" static="no">
+        <name>ZIGBEE_FOTA_EVT_DL_COMPLETE_VAL</name>
+        <initializer>100</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_fota.h" line="25" column="9" bodyfile="include/zigbee/zigbee_fota.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1gafd8525bbd00bfa2c4822013981b5fee9" prot="public" static="no" strong="no">
+        <type></type>
+        <name>zigbee_fota_evt_id</name>
+        <enumvalue id="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1ggafd8525bbd00bfa2c4822013981b5fee9a0716cee7150151519ace7a48b26466ad" prot="public">
+          <name>ZIGBEE_FOTA_EVT_PROGRESS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Zigbee FOTA download progress report. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1ggafd8525bbd00bfa2c4822013981b5fee9a7b5f8e0a035506ef9111735ab4539dfb" prot="public">
+          <name>ZIGBEE_FOTA_EVT_FINISHED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Zigbee FOTA download finished. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1ggafd8525bbd00bfa2c4822013981b5fee9a6f48b326608f44a1fe42e7270f37b461" prot="public">
+          <name>ZIGBEE_FOTA_EVT_ERASE_PENDING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Zigbee FOTA download erase pending. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1ggafd8525bbd00bfa2c4822013981b5fee9a06931999f7a16cab760b3ad16c4d5d43" prot="public">
+          <name>ZIGBEE_FOTA_EVT_ERASE_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Zigbee FOTA download erase done. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1ggafd8525bbd00bfa2c4822013981b5fee9a034b60c65ad56b72c04cc0a45b9b9313" prot="public">
+          <name>ZIGBEE_FOTA_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Zigbee FOTA download error. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Zigbee FOTA download event IDs. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_fota.h" line="34" column="1" bodyfile="include/zigbee/zigbee_fota.h" bodystart="34" bodyend="45"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__zigbee__fota_ga0d48ab776d6ced05f1cb8046449968f2_1ga0d48ab776d6ced05f1cb8046449968f2" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* zigbee_fota_callback_t) (const struct zigbee_fota_evt *evt)</definition>
+        <argsstring>)(const struct zigbee_fota_evt *evt)</argsstring>
+        <name>zigbee_fota_callback_t</name>
+        <briefdescription>
+<para>Zigbee FOTA download asynchronous callback function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_fota.h" line="70" column="9" bodyfile="include/zigbee/zigbee_fota.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__zigbee__fota_ga5d567b47db2bbf2f916768e6fbcf2178_1ga5d567b47db2bbf2f916768e6fbcf2178" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int zigbee_fota_init</definition>
+        <argsstring>(zigbee_fota_callback_t client_callback)</argsstring>
+        <name>zigbee_fota_init</name>
+        <param>
+          <type><ref refid="group__zigbee__fota_ga0d48ab776d6ced05f1cb8046449968f2_1ga0d48ab776d6ced05f1cb8046449968f2" kindref="member">zigbee_fota_callback_t</ref></type>
+          <declname>client_callback</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the Zigbee firmware over-the-air download library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>client_callback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback for the generated events.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successfully initialized. Otherwise, a negative value is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_fota.h" line="80" column="5" declfile="include/zigbee/zigbee_fota.h" declline="80" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__fota_gacc5777c2513d7d252fdb0443458dec7b_1gacc5777c2513d7d252fdb0443458dec7b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void zigbee_fota_abort</definition>
+        <argsstring>(void)</argsstring>
+        <name>zigbee_fota_abort</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Abort all pending updates performed via Zigbee network. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_fota.h" line="85" column="6" declfile="include/zigbee/zigbee_fota.h" declline="85" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__fota_ga48706ce2edcc58b54631614c9ed8227f_1ga48706ce2edcc58b54631614c9ed8227f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void zigbee_fota_signal_handler</definition>
+        <argsstring>(zb_bufid_t bufid)</argsstring>
+        <name>zigbee_fota_signal_handler</name>
+        <param>
+          <type>zb_bufid_t</type>
+          <declname>bufid</declname>
+        </param>
+        <briefdescription>
+<para>Function for passing Zigbee stack signals to the Zigbee FOTA logic. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">bufid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Reference to the Zigbee stack buffer used to pass signal. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_fota.h" line="92" column="6" declfile="include/zigbee/zigbee_fota.h" declline="92" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__fota_ga990eee6d329a3329c7b2a491589713d2_1ga990eee6d329a3329c7b2a491589713d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void zigbee_fota_zcl_cb</definition>
+        <argsstring>(zb_bufid_t bufid)</argsstring>
+        <name>zigbee_fota_zcl_cb</name>
+        <param>
+          <type>zb_bufid_t</type>
+          <declname>bufid</declname>
+        </param>
+        <briefdescription>
+<para>Function for passing ZCL callback events to the Zigbee FOTA logic. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">bufid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Reference to the Zigbee stack buffer used to pass event. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_fota.h" line="99" column="6" declfile="include/zigbee/zigbee_fota.h" declline="99" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>ZIGBEE_FOTA_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ZIGBEE_FOTA_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zboss_api.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="group__zigbee__fota_ga175a4030fd25787ddbf5115a5ff87632_1ga175a4030fd25787ddbf5115a5ff87632" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ZIGBEE_FOTA_EVT_DL_COMPLETE_VAL<sp/>100</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1gafd8525bbd00bfa2c4822013981b5fee9" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1gafd8525bbd00bfa2c4822013981b5fee9" kindref="member">zigbee_fota_evt_id</ref><sp/>{</highlight></codeline>
+<codeline lineno="36" refid="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1ggafd8525bbd00bfa2c4822013981b5fee9a0716cee7150151519ace7a48b26466ad" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1ggafd8525bbd00bfa2c4822013981b5fee9a0716cee7150151519ace7a48b26466ad" kindref="member">ZIGBEE_FOTA_EVT_PROGRESS</ref>,</highlight></codeline>
+<codeline lineno="38" refid="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1ggafd8525bbd00bfa2c4822013981b5fee9a7b5f8e0a035506ef9111735ab4539dfb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1ggafd8525bbd00bfa2c4822013981b5fee9a7b5f8e0a035506ef9111735ab4539dfb" kindref="member">ZIGBEE_FOTA_EVT_FINISHED</ref>,</highlight></codeline>
+<codeline lineno="40" refid="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1ggafd8525bbd00bfa2c4822013981b5fee9a6f48b326608f44a1fe42e7270f37b461" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1ggafd8525bbd00bfa2c4822013981b5fee9a6f48b326608f44a1fe42e7270f37b461" kindref="member">ZIGBEE_FOTA_EVT_ERASE_PENDING</ref>,</highlight></codeline>
+<codeline lineno="42" refid="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1ggafd8525bbd00bfa2c4822013981b5fee9a06931999f7a16cab760b3ad16c4d5d43" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1ggafd8525bbd00bfa2c4822013981b5fee9a06931999f7a16cab760b3ad16c4d5d43" kindref="member">ZIGBEE_FOTA_EVT_ERASE_DONE</ref>,</highlight></codeline>
+<codeline lineno="44" refid="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1ggafd8525bbd00bfa2c4822013981b5fee9a034b60c65ad56b72c04cc0a45b9b9313" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1ggafd8525bbd00bfa2c4822013981b5fee9a034b60c65ad56b72c04cc0a45b9b9313" kindref="member">ZIGBEE_FOTA_EVT_ERROR</ref>,</highlight></codeline>
+<codeline lineno="45"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="structzigbee__fota__event__dl" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structzigbee__fota__event__dl" kindref="compound">zigbee_fota_event_dl</ref><sp/>{</highlight></codeline>
+<codeline lineno="51" refid="structzigbee__fota__event__dl_a7056c59ed66dec6dc377f5406e8ae84a_1a7056c59ed66dec6dc377f5406e8ae84a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structzigbee__fota__event__dl_a7056c59ed66dec6dc377f5406e8ae84a_1a7056c59ed66dec6dc377f5406e8ae84a" kindref="member">progress</ref>;<sp/></highlight><highlight class="comment">/*<sp/>Download<sp/>progress<sp/>percent,<sp/>0-100<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="structzigbee__fota__evt" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structzigbee__fota__evt" kindref="compound">zigbee_fota_evt</ref><sp/>{</highlight></codeline>
+<codeline lineno="58" refid="structzigbee__fota__evt_af72aa4ab3292c5c9187a178205f29f11_1af72aa4ab3292c5c9187a178205f29f11" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1gafd8525bbd00bfa2c4822013981b5fee9" kindref="member">zigbee_fota_evt_id</ref><sp/><ref refid="structzigbee__fota__evt_af72aa4ab3292c5c9187a178205f29f11_1af72aa4ab3292c5c9187a178205f29f11" kindref="member">id</ref>;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">union<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="60" refid="structzigbee__fota__evt_a46e8259d811d79eb3fb71413d7cd76b2_1a46e8259d811d79eb3fb71413d7cd76b2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structzigbee__fota__event__dl" kindref="compound">zigbee_fota_event_dl</ref><sp/><ref refid="structzigbee__fota__evt_a46e8259d811d79eb3fb71413d7cd76b2_1a46e8259d811d79eb3fb71413d7cd76b2" kindref="member">dl</ref>;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="62"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="group__zigbee__fota_ga0d48ab776d6ced05f1cb8046449968f2_1ga0d48ab776d6ced05f1cb8046449968f2" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__zigbee__fota_ga0d48ab776d6ced05f1cb8046449968f2_1ga0d48ab776d6ced05f1cb8046449968f2" kindref="member">zigbee_fota_callback_t</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structzigbee__fota__evt" kindref="compound">zigbee_fota_evt</ref><sp/>*evt);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80" refid="group__zigbee__fota_ga5d567b47db2bbf2f916768e6fbcf2178_1ga5d567b47db2bbf2f916768e6fbcf2178" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__zigbee__fota_ga5d567b47db2bbf2f916768e6fbcf2178_1ga5d567b47db2bbf2f916768e6fbcf2178" kindref="member">zigbee_fota_init</ref>(<ref refid="group__zigbee__fota_ga0d48ab776d6ced05f1cb8046449968f2_1ga0d48ab776d6ced05f1cb8046449968f2" kindref="member">zigbee_fota_callback_t</ref><sp/>client_callback);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="group__zigbee__fota_gacc5777c2513d7d252fdb0443458dec7b_1gacc5777c2513d7d252fdb0443458dec7b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__zigbee__fota_gacc5777c2513d7d252fdb0443458dec7b_1gacc5777c2513d7d252fdb0443458dec7b" kindref="member">zigbee_fota_abort</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="group__zigbee__fota_ga48706ce2edcc58b54631614c9ed8227f_1ga48706ce2edcc58b54631614c9ed8227f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__zigbee__fota_ga48706ce2edcc58b54631614c9ed8227f_1ga48706ce2edcc58b54631614c9ed8227f" kindref="member">zigbee_fota_signal_handler</ref>(zb_bufid_t<sp/>bufid);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99" refid="group__zigbee__fota_ga990eee6d329a3329c7b2a491589713d2_1ga990eee6d329a3329c7b2a491589713d2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__zigbee__fota_ga990eee6d329a3329c7b2a491589713d2_1ga990eee6d329a3329c7b2a491589713d2" kindref="member">zigbee_fota_zcl_cb</ref>(zb_bufid_t<sp/>bufid);</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>ZIGBEE_FOTA_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/zigbee/zigbee_fota.h"/>
+  </compounddef>
+</doxygen>

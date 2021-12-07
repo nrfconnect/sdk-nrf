@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlwm2m__os__sms__udh__app__port" kind="struct" language="C++" prot="public">
+    <compoundname>lwm2m_os_sms_udh_app_port</compoundname>
+    <includes refid="lwm2m__os_8h" local="no">lwm2m_os.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlwm2m__os__sms__udh__app__port_a2aa1f94dc0999a842b81ed7543e19155_1a2aa1f94dc0999a842b81ed7543e19155" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool lwm2m_os_sms_udh_app_port::present</definition>
+        <argsstring></argsstring>
+        <name>present</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="72" column="6" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlwm2m__os__sms__udh__app__port_a36bb43a42e6d2c58b0c1d650e4e3bd0a_1a36bb43a42e6d2c58b0c1d650e4e3bd0a" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t lwm2m_os_sms_udh_app_port::dest_port</definition>
+        <argsstring></argsstring>
+        <name>dest_port</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="73" column="10" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlwm2m__os__sms__udh__app__port_a2af1aa629735db20e73a393304528bd1_1a2af1aa629735db20e73a393304528bd1" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t lwm2m_os_sms_udh_app_port::src_port</definition>
+        <argsstring></argsstring>
+        <name>src_port</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="74" column="10" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="71" column="1" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="71" bodyend="75"/>
+    <listofallmembers>
+      <member refid="structlwm2m__os__sms__udh__app__port_a36bb43a42e6d2c58b0c1d650e4e3bd0a_1a36bb43a42e6d2c58b0c1d650e4e3bd0a" prot="public" virt="non-virtual"><scope>lwm2m_os_sms_udh_app_port</scope><name>dest_port</name></member>
+      <member refid="structlwm2m__os__sms__udh__app__port_a2aa1f94dc0999a842b81ed7543e19155_1a2aa1f94dc0999a842b81ed7543e19155" prot="public" virt="non-virtual"><scope>lwm2m_os_sms_udh_app_port</scope><name>present</name></member>
+      <member refid="structlwm2m__os__sms__udh__app__port_a2af1aa629735db20e73a393304528bd1_1a2af1aa629735db20e73a393304528bd1" prot="public" virt="non-virtual"><scope>lwm2m_os_sms_udh_app_port</scope><name>src_port</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,279 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__xyl__srv" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_xyl_srv</compoundname>
+    <includes refid="light__xyl__srv_8h" local="no">light_xyl_srv.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__srv_ad6a8e7a3fe8f41a3212d197014b9e634_1ad6a8e7a3fe8f41a3212d197014b9e634" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model *</type>
+        <definition>struct bt_mesh_model* bt_mesh_light_xyl_srv::model</definition>
+        <argsstring></argsstring>
+        <name>model</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Model entry. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_srv.h" line="151" column="20" bodyfile="include/bluetooth/mesh/light_xyl_srv.h" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__srv_a2a77c2d08caa9836d599aabce761650b_1a2a77c2d08caa9836d599aabce761650b" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__lightness__srv" kindref="compound">bt_mesh_lightness_srv</ref> *</type>
+        <definition>struct bt_mesh_lightness_srv* bt_mesh_light_xyl_srv::lightness_srv</definition>
+        <argsstring></argsstring>
+        <name>lightness_srv</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to Lightness Server instance. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_srv.h" line="153" column="28" bodyfile="include/bluetooth/mesh/light_xyl_srv.h" bodystart="153" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__srv_ace16da3a59afc5aceed221fd74f47b39_1ace16da3a59afc5aceed221fd74f47b39" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model_pub</type>
+        <definition>struct bt_mesh_model_pub bt_mesh_light_xyl_srv::pub</definition>
+        <argsstring></argsstring>
+        <name>pub</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Publish parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_srv.h" line="155" column="24" bodyfile="include/bluetooth/mesh/light_xyl_srv.h" bodystart="155" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__srv_a821b912e9478f9ab3d0a8d11b5b438a8_1a821b912e9478f9ab3d0a8d11b5b438a8" prot="public" static="no" mutable="no">
+        <type>struct net_buf_simple</type>
+        <definition>struct net_buf_simple bt_mesh_light_xyl_srv::pub_buf</definition>
+        <argsstring></argsstring>
+        <name>pub_buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_srv.h" line="157" column="21" bodyfile="include/bluetooth/mesh/light_xyl_srv.h" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__srv_a168ae8c2c9cff4392d94ad0e4ddd01b4_1a168ae8c2c9cff4392d94ad0e4ddd01b4" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_light_xyl_srv::pub_data[BT_MESH_MODEL_BUF_LEN( BT_MESH_LIGHT_XYL_OP_RANGE_STATUS, BT_MESH_LIGHT_XYL_MSG_LEN_RANGE_STATUS)]</definition>
+        <argsstring>[BT_MESH_MODEL_BUF_LEN(BT_MESH_LIGHT_XYL_OP_RANGE_STATUS, BT_MESH_LIGHT_XYL_MSG_LEN_RANGE_STATUS)]</argsstring>
+        <name>pub_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_srv.h" line="159" column="9" bodyfile="include/bluetooth/mesh/light_xyl_srv.h" bodystart="161" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__srv_ae9ec981399b3f51a5f698da2dcef8805_1ae9ec981399b3f51a5f698da2dcef8805" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__tid__ctx" kindref="compound">bt_mesh_tid_ctx</ref></type>
+        <definition>struct bt_mesh_tid_ctx bt_mesh_light_xyl_srv::prev_transaction</definition>
+        <argsstring></argsstring>
+        <name>prev_transaction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transaction ID tracker for the set messages. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_srv.h" line="163" column="22" bodyfile="include/bluetooth/mesh/light_xyl_srv.h" bodystart="163" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__srv_ad6403503f136a8156d558e44b26fb405_1ad6403503f136a8156d558e44b26fb405" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__light__xy__range" kindref="compound">bt_mesh_light_xy_range</ref></type>
+        <definition>struct bt_mesh_light_xy_range bt_mesh_light_xyl_srv::range</definition>
+        <argsstring></argsstring>
+        <name>range</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current range parameters </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_srv.h" line="170" column="29" bodyfile="include/bluetooth/mesh/light_xyl_srv.h" bodystart="170" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__srv_ab6d134ba2e50a1957e86bad76b32d200_1ab6d134ba2e50a1957e86bad76b32d200" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__light__xyl__srv__handlers" kindref="compound">bt_mesh_light_xyl_srv_handlers</ref> *</type>
+        <definition>const struct bt_mesh_light_xyl_srv_handlers* bt_mesh_light_xyl_srv::handlers</definition>
+        <argsstring></argsstring>
+        <name>handlers</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler function structure. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_srv.h" line="172" column="43" bodyfile="include/bluetooth/mesh/light_xyl_srv.h" bodystart="172" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__srv_a78e5c0c74d28fd35a00f7b1f34ed8463_1a78e5c0c74d28fd35a00f7b1f34ed8463" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__light__xy" kindref="compound">bt_mesh_light_xy</ref></type>
+        <definition>struct bt_mesh_light_xy bt_mesh_light_xyl_srv::xy_last</definition>
+        <argsstring></argsstring>
+        <name>xy_last</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The last known xy Level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_srv.h" line="175" column="23" bodyfile="include/bluetooth/mesh/light_xyl_srv.h" bodystart="175" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__srv_aead7eb2f9cdf25c64d47cbeed48e0be1_1aead7eb2f9cdf25c64d47cbeed48e0be1" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__light__xy" kindref="compound">bt_mesh_light_xy</ref></type>
+        <definition>struct bt_mesh_light_xy bt_mesh_light_xyl_srv::xy_default</definition>
+        <argsstring></argsstring>
+        <name>xy_default</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The default xy Level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_srv.h" line="177" column="23" bodyfile="include/bluetooth/mesh/light_xyl_srv.h" bodystart="177" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Light xyL Server instance. Should be initialized with <ref refid="group__bt__mesh__light__xyl__srv_ga4e8b3a998505e12ed2077cdbe2958d0c_1ga4e8b3a998505e12ed2077cdbe2958d0c" kindref="member">BT_MESH_LIGHT_XYL_SRV_INIT</ref>. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="9">
+        <label>bt_mesh_dtt_srv</label>
+        <link refid="structbt__mesh__dtt__srv"/>
+      </node>
+      <node id="13">
+        <label>bt_mesh_light_xy</label>
+        <link refid="structbt__mesh__light__xy"/>
+      </node>
+      <node id="12">
+        <label>bt_mesh_light_xy_range</label>
+        <link refid="structbt__mesh__light__xy__range"/>
+        <childnode refid="13" relation="usage">
+          <edgelabel>max</edgelabel>
+          <edgelabel>min</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>bt_mesh_light_xyl_srv</label>
+        <link refid="structbt__mesh__light__xyl__srv"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>lightness_srv</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>prev_transaction</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>range</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>handlers</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>xy_default</edgelabel>
+          <edgelabel>xy_last</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>bt_mesh_light_xyl_srv_handlers</label>
+        <link refid="structbt__mesh__light__xyl__srv__handlers"/>
+      </node>
+      <node id="11">
+        <label>bt_mesh_lightness_range</label>
+        <link refid="structbt__mesh__lightness__range"/>
+      </node>
+      <node id="2">
+        <label>bt_mesh_lightness_srv</label>
+        <link refid="structbt__mesh__lightness__srv"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>lvl</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>ponoff</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>tid</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>handlers</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>range</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>bt_mesh_lightness_srv_handlers</label>
+        <link refid="structbt__mesh__lightness__srv__handlers"/>
+      </node>
+      <node id="3">
+        <label>bt_mesh_lvl_srv</label>
+        <link refid="structbt__mesh__lvl__srv"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>handlers</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>tid</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bt_mesh_lvl_srv_handlers</label>
+        <link refid="structbt__mesh__lvl__srv__handlers"/>
+      </node>
+      <node id="7">
+        <label>bt_mesh_onoff_srv</label>
+        <link refid="structbt__mesh__onoff__srv"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>prev_transaction</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>handlers</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>bt_mesh_onoff_srv_handlers</label>
+        <link refid="structbt__mesh__onoff__srv__handlers"/>
+      </node>
+      <node id="6">
+        <label>bt_mesh_ponoff_srv</label>
+        <link refid="structbt__mesh__ponoff__srv"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>onoff</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>dtt</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>onoff_handlers</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>bt_mesh_tid_ctx</label>
+        <link refid="structbt__mesh__tid__ctx"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/light_xyl_srv.h" line="149" column="1" bodyfile="include/bluetooth/mesh/light_xyl_srv.h" bodystart="149" bodyend="178"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__xyl__srv_ab6d134ba2e50a1957e86bad76b32d200_1ab6d134ba2e50a1957e86bad76b32d200" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_srv</scope><name>handlers</name></member>
+      <member refid="structbt__mesh__light__xyl__srv_a2a77c2d08caa9836d599aabce761650b_1a2a77c2d08caa9836d599aabce761650b" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_srv</scope><name>lightness_srv</name></member>
+      <member refid="structbt__mesh__light__xyl__srv_ad6a8e7a3fe8f41a3212d197014b9e634_1ad6a8e7a3fe8f41a3212d197014b9e634" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_srv</scope><name>model</name></member>
+      <member refid="structbt__mesh__light__xyl__srv_ae9ec981399b3f51a5f698da2dcef8805_1ae9ec981399b3f51a5f698da2dcef8805" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_srv</scope><name>prev_transaction</name></member>
+      <member refid="structbt__mesh__light__xyl__srv_ace16da3a59afc5aceed221fd74f47b39_1ace16da3a59afc5aceed221fd74f47b39" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_srv</scope><name>pub</name></member>
+      <member refid="structbt__mesh__light__xyl__srv_a821b912e9478f9ab3d0a8d11b5b438a8_1a821b912e9478f9ab3d0a8d11b5b438a8" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_srv</scope><name>pub_buf</name></member>
+      <member refid="structbt__mesh__light__xyl__srv_a168ae8c2c9cff4392d94ad0e4ddd01b4_1a168ae8c2c9cff4392d94ad0e4ddd01b4" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_srv</scope><name>pub_data</name></member>
+      <member refid="structbt__mesh__light__xyl__srv_ad6403503f136a8156d558e44b26fb405_1ad6403503f136a8156d558e44b26fb405" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_srv</scope><name>range</name></member>
+      <member refid="structbt__mesh__light__xyl__srv_aead7eb2f9cdf25c64d47cbeed48e0be1_1aead7eb2f9cdf25c64d47cbeed48e0be1" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_srv</scope><name>xy_default</name></member>
+      <member refid="structbt__mesh__light__xyl__srv_a78e5c0c74d28fd35a00f7b1f34ed8463_1a78e5c0c74d28fd35a00f7b1f34ed8463" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_srv</scope><name>xy_last</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

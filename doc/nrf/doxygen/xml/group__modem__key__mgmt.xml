@@ -1,0 +1,556 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__modem__key__mgmt" kind="group">
+    <compoundname>modem_key_mgmt</compoundname>
+    <title>nRF91 Modem Key Management</title>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__modem__key__mgmt_1gaf6e72956fd99711667f2492b33ab526f" prot="public" static="no" strong="no">
+        <type></type>
+        <name>modem_key_mgmt_cred_type</name>
+        <enumvalue id="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1ggaf6e72956fd99711667f2492b33ab526fa5232c3f37f6c44e78f71fc690fe08efd" prot="public">
+          <name>MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1ggaf6e72956fd99711667f2492b33ab526fafc0b09c63c516de185a32b96dac81777" prot="public">
+          <name>MODEM_KEY_MGMT_CRED_TYPE_PUBLIC_CERT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1ggaf6e72956fd99711667f2492b33ab526fa32f4ba1007a51230d87c036c91069040" prot="public">
+          <name>MODEM_KEY_MGMT_CRED_TYPE_PRIVATE_CERT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1ggaf6e72956fd99711667f2492b33ab526faf09cbe94d7d2141448faee917e9cfda6" prot="public">
+          <name>MODEM_KEY_MGMT_CRED_TYPE_PSK</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1ggaf6e72956fd99711667f2492b33ab526fa45d1c7eb2517277046e52b1f1e35eb4f" prot="public">
+          <name>MODEM_KEY_MGMT_CRED_TYPE_IDENTITY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Credential types. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_key_mgmt.h" line="21" column="1" bodyfile="include/modem/modem_key_mgmt.h" bodystart="21" bodyend="27"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__modem__key__mgmt_1ga0372fdc1948100f00bdf26593c2a1698" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_key_mgmt_write</definition>
+        <argsstring>(nrf_sec_tag_t sec_tag, enum modem_key_mgmt_cred_type cred_type, const void *buf, size_t len)</argsstring>
+        <name>modem_key_mgmt_write</name>
+        <param>
+          <type>nrf_sec_tag_t</type>
+          <declname>sec_tag</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1gaf6e72956fd99711667f2492b33ab526f" kindref="member">modem_key_mgmt_cred_type</ref></type>
+          <declname>cred_type</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Write or update a credential in persistent storage. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Store the credential and associate it with the given security tag, which can later be used to access it.</para>
+<para><simplesect kind="note"><para>If used when the LTE link is active, the function will return an error and the key will not be written.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">sec_tag</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Security tag to associate with this credential. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cred_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The credential type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer containing the credential data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>On success. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOBUFS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Internal buffer is too small. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Not enough memory to store the credential. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EACCES</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Th operation failed because the LTE link is active. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOENT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The security tag could not be written. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EPERM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Insufficient permissions. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_key_mgmt.h" line="51" column="5" declfile="include/modem/modem_key_mgmt.h" declline="51" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__modem__key__mgmt_1ga1df7971042abd9226ee5860e0e478df9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_key_mgmt_read</definition>
+        <argsstring>(nrf_sec_tag_t sec_tag, enum modem_key_mgmt_cred_type cred_type, void *buf, size_t *len)</argsstring>
+        <name>modem_key_mgmt_read</name>
+        <param>
+          <type>nrf_sec_tag_t</type>
+          <declname>sec_tag</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1gaf6e72956fd99711667f2492b33ab526f" kindref="member">modem_key_mgmt_cred_type</ref></type>
+          <declname>cred_type</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Read a credential from persistent storage. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">sec_tag</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The security tag of the credential. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cred_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The credential type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to read the credential into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the buffer, length of the credential.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>On success. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOBUFS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Internal buffer is too small. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If provided buffer is too small for result data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOENT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>No credential associated with the given <computeroutput>sec_tag</computeroutput> and <computeroutput>cred_type</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EPERM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Insufficient permissions. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_key_mgmt.h" line="71" column="5" declfile="include/modem/modem_key_mgmt.h" declline="71" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__modem__key__mgmt_1gaa9da12e30f10b3e0847cdaec5f631759" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_key_mgmt_cmp</definition>
+        <argsstring>(nrf_sec_tag_t sec_tag, enum modem_key_mgmt_cred_type cred_type, const void *buf, size_t len)</argsstring>
+        <name>modem_key_mgmt_cmp</name>
+        <param>
+          <type>nrf_sec_tag_t</type>
+          <declname>sec_tag</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1gaf6e72956fd99711667f2492b33ab526f" kindref="member">modem_key_mgmt_cred_type</ref></type>
+          <declname>cred_type</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Compare a credential with a credential in persistent storage. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">sec_tag</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The security tag of the credential. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cred_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The credential type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to compare the credential to. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the credentials match. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>1</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the credentials do not match. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOBUFS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Internal buffer is too small. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOENT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>No credential associated with the given <computeroutput>sec_tag</computeroutput> and <computeroutput>cred_type</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EPERM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Insufficient permissions. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_key_mgmt.h" line="90" column="5" declfile="include/modem/modem_key_mgmt.h" declline="90" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__modem__key__mgmt_1ga72d113685d117a2a83540412c7cd4dab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_key_mgmt_delete</definition>
+        <argsstring>(nrf_sec_tag_t sec_tag, enum modem_key_mgmt_cred_type cred_type)</argsstring>
+        <name>modem_key_mgmt_delete</name>
+        <param>
+          <type>nrf_sec_tag_t</type>
+          <declname>sec_tag</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1gaf6e72956fd99711667f2492b33ab526f" kindref="member">modem_key_mgmt_cred_type</ref></type>
+          <declname>cred_type</declname>
+        </param>
+        <briefdescription>
+<para>Delete a credential from persistent storage. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>If used when the LTE link is active, the function will return an error and the key will not be written.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">sec_tag</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The security tag of the credential. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cred_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The credential type.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>On success. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOBUFS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Internal buffer is too small. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EACCES</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The operation failed because the LTE link is active. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOENT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>No credential associated with the given <computeroutput>sec_tag</computeroutput> and <computeroutput>cred_type</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EPERM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Insufficient permissions. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_key_mgmt.h" line="110" column="5" declfile="include/modem/modem_key_mgmt.h" declline="110" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__modem__key__mgmt_1gaaf87a50b8a27306ae76ae42cef45b5fb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_key_mgmt_exists</definition>
+        <argsstring>(nrf_sec_tag_t sec_tag, enum modem_key_mgmt_cred_type cred_type, bool *exists)</argsstring>
+        <name>modem_key_mgmt_exists</name>
+        <param>
+          <type>nrf_sec_tag_t</type>
+          <declname>sec_tag</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1gaf6e72956fd99711667f2492b33ab526f" kindref="member">modem_key_mgmt_cred_type</ref></type>
+          <declname>cred_type</declname>
+        </param>
+        <param>
+          <type>bool *</type>
+          <declname>exists</declname>
+        </param>
+        <briefdescription>
+<para>Check if a credential exists in persistent storage. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">sec_tag</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The security tag to search for. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cred_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The credential type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">exists</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether the credential exists. Only valid if the operation is successful.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>On success. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOBUFS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Internal buffer is too small. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EPERM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Insufficient permissions. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_key_mgmt.h" line="125" column="5" declfile="include/modem/modem_key_mgmt.h" declline="125" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

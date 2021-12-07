@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__ndef__ch__cr__rec" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_ndef_ch_cr_rec</compoundname>
+    <includes refid="ndef_2ch_8h" local="no">ch.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__ndef__ch__cr__rec_a6fcc1263b89683bad1994a397df88972_1a6fcc1263b89683bad1994a397df88972" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t nfc_ndef_ch_cr_rec::random</definition>
+        <argsstring></argsstring>
+        <name>random</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Randomly generated number. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="131" column="10" bodyfile="include/nfc/ndef/ch.h" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Collision Resolution record payload descriptor. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/nfc/ndef/ch.h" line="129" column="1" bodyfile="include/nfc/ndef/ch.h" bodystart="129" bodyend="132"/>
+    <listofallmembers>
+      <member refid="structnfc__ndef__ch__cr__rec_a6fcc1263b89683bad1994a397df88972_1a6fcc1263b89683bad1994a397df88972" prot="public" virt="non-virtual"><scope>nfc_ndef_ch_cr_rec</scope><name>random</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

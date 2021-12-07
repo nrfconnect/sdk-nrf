@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__stream__mode__reg" kind="group">
+    <compoundname>st25r3911b_stream_mode_reg</compoundname>
+    <title>Stream Mode Definition</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__stream__mode__reg_1gaa568b142d542e71f81a9aa2d0a1f5820" prot="public" static="no">
+        <name>ST25R3911B_REG_STREAM_MODE_STX0</name>
+        <initializer>BIT(0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="271" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="271" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__stream__mode__reg_1ga05532b8a10d2ef750b94caf76368e485" prot="public" static="no">
+        <name>ST25R3911B_REG_STREAM_MODE_STX1</name>
+        <initializer>BIT(1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="272" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="272" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__stream__mode__reg_1gaf8bf4a7666f1f1de2fa773ea436efa64" prot="public" static="no">
+        <name>ST25R3911B_REG_STREAM_MODE_STX2</name>
+        <initializer>BIT(2)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="273" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="273" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__stream__mode__reg_1gaec780622e79a632cfe790a40e1d0aa54" prot="public" static="no">
+        <name>ST25R3911B_REG_STREAM_MODE_STX3</name>
+        <initializer>BIT(3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="274" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="274" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__stream__mode__reg_1ga4498359057568bcfd808e2d6f1a6d0b4" prot="public" static="no">
+        <name>ST25R3911B_REG_STREAM_MODE_SCP0</name>
+        <initializer>BIT(4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="275" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="275" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__stream__mode__reg_1ga8440dad81bb2d11c7eb84600fefbd49a" prot="public" static="no">
+        <name>ST25R3911B_REG_STREAM_MODE_SCP1</name>
+        <initializer>BIT(5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="276" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="276" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__stream__mode__reg_1gab1001b6c3a604baee95aafb75d4a1f92" prot="public" static="no">
+        <name>ST25R3911B_REG_STREAM_MODE_SCF0</name>
+        <initializer>BIT(6)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="277" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="277" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__stream__mode__reg_1gacdb69d48b2cdd69b3f4cd7bab1db2fbf" prot="public" static="no">
+        <name>ST25R3911B_REG_STREAM_MODE_SCF1</name>
+        <initializer>BIT(7)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="278" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="278" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Register bits </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

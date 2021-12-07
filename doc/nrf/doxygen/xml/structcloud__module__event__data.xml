@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structcloud__module__event__data" kind="struct" language="C++" prot="public">
+    <compoundname>cloud_module_event_data</compoundname>
+    <includes refid="cloud__module__event_8h" local="no">cloud_module_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structcloud__module__event__data_a45a6e21fe7d0db5b93cce676d50bb4b5_1a45a6e21fe7d0db5b93cce676d50bb4b5" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* cloud_module_event_data::buf</definition>
+        <argsstring></argsstring>
+        <name>buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/cloud_module_event.h" line="39" column="6" bodyfile="applications/asset_tracker_v2/src/events/cloud_module_event.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__module__event__data_ac049e75729243a50b63bc0cdc8a5dc06_1ac049e75729243a50b63bc0cdc8a5dc06" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t cloud_module_event_data::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/cloud_module_event.h" line="40" column="8" bodyfile="applications/asset_tracker_v2/src/events/cloud_module_event.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/events/cloud_module_event.h" line="38" column="1" bodyfile="applications/asset_tracker_v2/src/events/cloud_module_event.h" bodystart="38" bodyend="41"/>
+    <listofallmembers>
+      <member refid="structcloud__module__event__data_a45a6e21fe7d0db5b93cce676d50bb4b5_1a45a6e21fe7d0db5b93cce676d50bb4b5" prot="public" virt="non-virtual"><scope>cloud_module_event_data</scope><name>buf</name></member>
+      <member refid="structcloud__module__event__data_ac049e75729243a50b63bc0cdc8a5dc06_1ac049e75729243a50b63bc0cdc8a5dc06" prot="public" virt="non-virtual"><scope>cloud_module_event_data</scope><name>len</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

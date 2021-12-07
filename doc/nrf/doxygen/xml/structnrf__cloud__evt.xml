@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnrf__cloud__evt" kind="struct" language="C++" prot="public">
+    <compoundname>nrf_cloud_evt</compoundname>
+    <includes refid="nrf__cloud_8h" local="no">nrf_cloud.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnrf__cloud__evt_a0c977f3e0d6f6e6eb7a9d906d56612cd_1a0c977f3e0d6f6e6eb7a9d906d56612cd" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1gabfa69ba752561f778c2f055e1ef7c46f" kindref="member">nrf_cloud_evt_type</ref></type>
+        <definition>enum nrf_cloud_evt_type nrf_cloud_evt::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The event that occurred. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="277" column="24" bodyfile="include/net/nrf_cloud.h" bodystart="277" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__evt_a157c32c44a9acf388bfc2b11408819ae_1a157c32c44a9acf388bfc2b11408819ae" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t nrf_cloud_evt::status</definition>
+        <argsstring></argsstring>
+        <name>status</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Any status associated with the event. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="279" column="10" bodyfile="include/net/nrf_cloud.h" bodystart="279" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__evt_a962a865d46e6d3e0484e2022593b2219_1a962a865d46e6d3e0484e2022593b2219" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structnrf__cloud__data" kindref="compound">nrf_cloud_data</ref></type>
+        <definition>struct nrf_cloud_data nrf_cloud_evt::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Received data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="281" column="21" bodyfile="include/net/nrf_cloud.h" bodystart="281" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__evt_a57e97f54ce650d3596d307196b1c0e00_1a57e97f54ce650d3596d307196b1c0e00" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structnrf__cloud__topic" kindref="compound">nrf_cloud_topic</ref></type>
+        <definition>struct nrf_cloud_topic nrf_cloud_evt::topic</definition>
+        <argsstring></argsstring>
+        <name>topic</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Topic on which data was received. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="283" column="22" bodyfile="include/net/nrf_cloud.h" bodystart="283" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Asynchronous events received from the module. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>nrf_cloud_data</label>
+        <link refid="structnrf__cloud__data"/>
+      </node>
+      <node id="1">
+        <label>nrf_cloud_evt</label>
+        <link refid="structnrf__cloud__evt"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>data</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>topic</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>nrf_cloud_topic</label>
+        <link refid="structnrf__cloud__topic"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/net/nrf_cloud.h" line="275" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="275" bodyend="284"/>
+    <listofallmembers>
+      <member refid="structnrf__cloud__evt_a962a865d46e6d3e0484e2022593b2219_1a962a865d46e6d3e0484e2022593b2219" prot="public" virt="non-virtual"><scope>nrf_cloud_evt</scope><name>data</name></member>
+      <member refid="structnrf__cloud__evt_a157c32c44a9acf388bfc2b11408819ae_1a157c32c44a9acf388bfc2b11408819ae" prot="public" virt="non-virtual"><scope>nrf_cloud_evt</scope><name>status</name></member>
+      <member refid="structnrf__cloud__evt_a57e97f54ce650d3596d307196b1c0e00_1a57e97f54ce650d3596d307196b1c0e00" prot="public" virt="non-virtual"><scope>nrf_cloud_evt</scope><name>topic</name></member>
+      <member refid="structnrf__cloud__evt_a0c977f3e0d6f6e6eb7a9d906d56612cd_1a0c977f3e0d6f6e6eb7a9d906d56612cd" prot="public" virt="non-virtual"><scope>nrf_cloud_evt</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

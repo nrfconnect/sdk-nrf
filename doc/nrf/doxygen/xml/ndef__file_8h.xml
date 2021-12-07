@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="ndef__file_8h" kind="file" language="C++">
+    <compoundname>ndef_file.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/nfc/t4t/ndef_file.h</label>
+        <link refid="ndef__file_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__t4t__ndef__file_ga02958c58818c6e1a5308018910bd4d01_1ga02958c58818c6e1a5308018910bd4d01" prot="public" static="no">
+        <name>NFC_NDEF_FILE_NLEN_FIELD_SIZE</name>
+        <initializer>2U</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of NLEN field, used to encode NDEF message for Type 4 Tag. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/ndef_file.h" line="25" column="9" bodyfile="include/nfc/t4t/ndef_file.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t4t__ndef__file_ga2746844ecbcd3d34ba21e2642c0c17d2_1ga2746844ecbcd3d34ba21e2642c0c17d2" prot="public" static="no">
+        <name>nfc_t4t_ndef_file_msg_size_get</name>
+        <param><defname>_file_buf_size</defname></param>
+        <initializer>	((_file_buf_size) - <ref refid="group__nfc__t4t__ndef__file_ga02958c58818c6e1a5308018910bd4d01_1ga02958c58818c6e1a5308018910bd4d01" kindref="member">NFC_NDEF_FILE_NLEN_FIELD_SIZE</ref>)</initializer>
+        <briefdescription>
+<para>Get the available size for the NDEF message into the NDEF File. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_file_buf_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the NDEF File buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Maximum size of the NDEF Message which can be encoded into the buffer. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/ndef_file.h" line="34" column="9" bodyfile="include/nfc/t4t/ndef_file.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t4t__ndef__file_gab7c5cc1afebdb5b7c095060107020c79_1gab7c5cc1afebdb5b7c095060107020c79" prot="public" static="no">
+        <name>nfc_t4t_ndef_file_msg_get</name>
+        <param><defname>_file_buf</defname></param>
+        <initializer>	((uint8_t *)((_file_buf) + <ref refid="group__nfc__t4t__ndef__file_ga02958c58818c6e1a5308018910bd4d01_1ga02958c58818c6e1a5308018910bd4d01" kindref="member">NFC_NDEF_FILE_NLEN_FIELD_SIZE</ref>))</initializer>
+        <briefdescription>
+<para>Get the NDEF Message from NFC NDEF File. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_file_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to buffer which stores the NDEF file.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Pointer to the NDEF Message. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/ndef_file.h" line="43" column="9" bodyfile="include/nfc/t4t/ndef_file.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__t4t__ndef__file_gad5dd425413573531c6c4d496068eada8_1gad5dd425413573531c6c4d496068eada8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_ndef_file_encode</definition>
+        <argsstring>(uint8_t *file_buf, uint32_t *size)</argsstring>
+        <name>nfc_t4t_ndef_file_encode</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>file_buf</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+<para>Encode the NFC NDEF File. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">file_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the NFC NDEF File destination. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the encoded NDEF Message as input. Size of the generated NDEF file as output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/ndef_file.h" line="55" column="5" declfile="include/nfc/t4t/ndef_file.h" declline="55" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NFC_T4T_NDEF_FILE_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T4T_NDEF_FILE_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="group__nfc__t4t__ndef__file_ga02958c58818c6e1a5308018910bd4d01_1ga02958c58818c6e1a5308018910bd4d01" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_NDEF_FILE_NLEN_FIELD_SIZE<sp/>2U</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="group__nfc__t4t__ndef__file_ga2746844ecbcd3d34ba21e2642c0c17d2_1ga2746844ecbcd3d34ba21e2642c0c17d2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>nfc_t4t_ndef_file_msg_size_get(_file_buf_size)<sp/>\</highlight></codeline>
+<codeline lineno="35"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>((_file_buf_size)<sp/>-<sp/>NFC_NDEF_FILE_NLEN_FIELD_SIZE)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="group__nfc__t4t__ndef__file_gab7c5cc1afebdb5b7c095060107020c79_1gab7c5cc1afebdb5b7c095060107020c79" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>nfc_t4t_ndef_file_msg_get(_file_buf)<sp/>\</highlight></codeline>
+<codeline lineno="44"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>((uint8_t<sp/>*)((_file_buf)<sp/>+<sp/>NFC_NDEF_FILE_NLEN_FIELD_SIZE))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="group__nfc__t4t__ndef__file_gad5dd425413573531c6c4d496068eada8_1gad5dd425413573531c6c4d496068eada8" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__ndef__file_gad5dd425413573531c6c4d496068eada8_1gad5dd425413573531c6c4d496068eada8" kindref="member">nfc_t4t_ndef_file_encode</ref>(uint8_t<sp/>*file_buf,<sp/>uint32_t<sp/>*size);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>NFC_T4T_NDEF_FILE_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/nfc/t4t/ndef_file.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnrf__attestation__token" kind="struct" language="C++" prot="public">
+    <compoundname>nrf_attestation_token</compoundname>
+    <includes refid="modem__attest__token_8h" local="no">modem_attest_token.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnrf__attestation__token_a11c114cd35b7ea6ef45026f1ac43fbcf_1a11c114cd35b7ea6ef45026f1ac43fbcf" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* nrf_attestation_token::attest</definition>
+        <argsstring></argsstring>
+        <name>attest</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>NULL terminated base64url attestation string buffer </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_attest_token.h" line="27" column="6" bodyfile="include/modem/modem_attest_token.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__attestation__token_a26ecb12fee91a88481a7fd9342ace157_1a26ecb12fee91a88481a7fd9342ace157" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t nrf_attestation_token::attest_sz</definition>
+        <argsstring></argsstring>
+        <name>attest_sz</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of the attestation buffer </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_attest_token.h" line="29" column="8" bodyfile="include/modem/modem_attest_token.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__attestation__token_aacd3229f8a53a090a493ce0317eca57a_1aacd3229f8a53a090a493ce0317eca57a" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* nrf_attestation_token::cose</definition>
+        <argsstring></argsstring>
+        <name>cose</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>NULL terminated base64url COSE string buffer </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_attest_token.h" line="32" column="6" bodyfile="include/modem/modem_attest_token.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__attestation__token_a840184360f58aba80148c2e66cec96ea_1a840184360f58aba80148c2e66cec96ea" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t nrf_attestation_token::cose_sz</definition>
+        <argsstring></argsstring>
+        <name>cose_sz</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of the COSE buffer </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_attest_token.h" line="34" column="8" bodyfile="include/modem/modem_attest_token.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Base64url attestation and COSE strings. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/modem/modem_attest_token.h" line="25" column="1" bodyfile="include/modem/modem_attest_token.h" bodystart="25" bodyend="35"/>
+    <listofallmembers>
+      <member refid="structnrf__attestation__token_a11c114cd35b7ea6ef45026f1ac43fbcf_1a11c114cd35b7ea6ef45026f1ac43fbcf" prot="public" virt="non-virtual"><scope>nrf_attestation_token</scope><name>attest</name></member>
+      <member refid="structnrf__attestation__token_a26ecb12fee91a88481a7fd9342ace157_1a26ecb12fee91a88481a7fd9342ace157" prot="public" virt="non-virtual"><scope>nrf_attestation_token</scope><name>attest_sz</name></member>
+      <member refid="structnrf__attestation__token_aacd3229f8a53a090a493ce0317eca57a_1aacd3229f8a53a090a493ce0317eca57a" prot="public" virt="non-virtual"><scope>nrf_attestation_token</scope><name>cose</name></member>
+      <member refid="structnrf__attestation__token_a840184360f58aba80148c2e66cec96ea_1a840184360f58aba80148c2e66cec96ea" prot="public" virt="non-virtual"><scope>nrf_attestation_token</scope><name>cose_sz</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

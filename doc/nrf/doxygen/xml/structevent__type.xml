@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structevent__type" kind="struct" language="C++" prot="public">
+    <compoundname>event_type</compoundname>
+    <includes refid="event__manager_8h" local="no">event_manager.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structevent__type_a2948710edb41ebda00a49d0b63411fda_1a2948710edb41ebda00a49d0b63411fda" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* event_type::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event name. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="111" column="11" bodyfile="include/event_manager.h" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structevent__type_aef2442966c62fef3f3c946ac99b4247b_1aef2442966c62fef3f3c946ac99b4247b" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structevent__subscriber" kindref="compound">event_subscriber</ref> *</type>
+        <definition>const struct event_subscriber* event_type::subs_start[(_SUBS_PRIO_FINAL - _SUBS_PRIO_FIRST+1)]</definition>
+        <argsstring>[(_SUBS_PRIO_FINAL - _SUBS_PRIO_FIRST+1)]</argsstring>
+        <name>subs_start</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Array of pointers to the array of subscribers. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="114" column="29" bodyfile="include/event_manager.h" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structevent__type_a5c9bf36e8b95bc1c8c877de772ab118d_1a5c9bf36e8b95bc1c8c877de772ab118d" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structevent__subscriber" kindref="compound">event_subscriber</ref> *</type>
+        <definition>const struct event_subscriber* event_type::subs_stop[(_SUBS_PRIO_FINAL - _SUBS_PRIO_FIRST+1)]</definition>
+        <argsstring>[(_SUBS_PRIO_FINAL - _SUBS_PRIO_FIRST+1)]</argsstring>
+        <name>subs_stop</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Array of pointers to the element directly after the array of subscribers. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="118" column="29" bodyfile="include/event_manager.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structevent__type_a02923fceb1348c2d42d8cdce1633adf5_1a02923fceb1348c2d42d8cdce1633adf5" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool event_type::init_log_enable</definition>
+        <argsstring></argsstring>
+        <name>init_log_enable</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Bool indicating if the event is logged by default. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="121" column="6" bodyfile="include/event_manager.h" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structevent__type_a51eff00293c5020f1d65126d3ade6910_1a51eff00293c5020f1d65126d3ade6910" prot="public" static="no" mutable="no">
+        <type>int(*</type>
+        <definition>int(* event_type::log_event) (const struct event_header *eh, char *buf, size_t buf_len)</definition>
+        <argsstring>)(const struct event_header *eh, char *buf, size_t buf_len)</argsstring>
+        <name>log_event</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Function to log data from this event. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="124" column="1" bodyfile="include/event_manager.h" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structevent__type_ab599e3aa5deb44b4c18930762d793b19_1ab599e3aa5deb44b4c18930762d793b19" prot="public" static="no" mutable="no">
+        <type>const void *</type>
+        <definition>const void* event_type::trace_data</definition>
+        <argsstring></argsstring>
+        <name>trace_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Custom data related to tracking. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="128" column="12" bodyfile="include/event_manager.h" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Event type. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="2">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/event_manager.h" line="109" column="1" bodyfile="include/event_manager.h" bodystart="109" bodyend="129"/>
+    <listofallmembers>
+      <member refid="structevent__type_a02923fceb1348c2d42d8cdce1633adf5_1a02923fceb1348c2d42d8cdce1633adf5" prot="public" virt="non-virtual"><scope>event_type</scope><name>init_log_enable</name></member>
+      <member refid="structevent__type_a51eff00293c5020f1d65126d3ade6910_1a51eff00293c5020f1d65126d3ade6910" prot="public" virt="non-virtual"><scope>event_type</scope><name>log_event</name></member>
+      <member refid="structevent__type_a2948710edb41ebda00a49d0b63411fda_1a2948710edb41ebda00a49d0b63411fda" prot="public" virt="non-virtual"><scope>event_type</scope><name>name</name></member>
+      <member refid="structevent__type_aef2442966c62fef3f3c946ac99b4247b_1aef2442966c62fef3f3c946ac99b4247b" prot="public" virt="non-virtual"><scope>event_type</scope><name>subs_start</name></member>
+      <member refid="structevent__type_a5c9bf36e8b95bc1c8c877de772ab118d_1a5c9bf36e8b95bc1c8c877de772ab118d" prot="public" virt="non-virtual"><scope>event_type</scope><name>subs_stop</name></member>
+      <member refid="structevent__type_ab599e3aa5deb44b4c18930762d793b19_1ab599e3aa5deb44b4c18930762d793b19" prot="public" virt="non-virtual"><scope>event_type</scope><name>trace_data</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

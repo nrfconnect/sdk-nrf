@@ -1,0 +1,1344 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="light__ctl__cli_8h" kind="file" language="C++">
+    <compoundname>light_ctl_cli.h</compoundname>
+    <includes refid="light__ctl_8h" local="no">bluetooth/mesh/light_ctl.h</includes>
+    <includes refid="model__types_8h" local="no">bluetooth/mesh/model_types.h</includes>
+    <includedby refid="models_8h" local="no">include/bluetooth/mesh/models.h</includedby>
+    <incdepgraph>
+      <node id="2">
+        <label>bluetooth/mesh/light_ctl.h</label>
+        <link refid="light__ctl_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/mesh/light_ctl_cli.h</label>
+        <link refid="light__ctl__cli_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bluetooth/mesh/model_types.h</label>
+        <link refid="model__types_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/mesh.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>include/bluetooth/mesh/light_ctl_cli.h</label>
+        <link refid="light__ctl__cli_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/bluetooth/mesh/models.h</label>
+        <link refid="models_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>include/bluetooth/mesh/vnd/silvair_enocean_srv.h</label>
+        <link refid="silvair__enocean__srv_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structbt__mesh__light__ctl__cli__handlers" prot="public">bt_mesh_light_ctl_cli_handlers</innerclass>
+    <innerclass refid="structbt__mesh__light__ctl__cli" prot="public">bt_mesh_light_ctl_cli</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__light__ctl__cli_ga7b0cd3c59728b5d1cf0f269d9b9c9102_1ga7b0cd3c59728b5d1cf0f269d9b9c9102" prot="public" static="no">
+        <name>BT_MESH_LIGHT_CTL_CLI_INIT</name>
+        <param><defname>_handlers</defname></param>
+        <initializer>	{                                                                      \
+		.handlers = _handlers,                                         \
+	}</initializer>
+        <briefdescription>
+<para>Initialization parameters for a <ref refid="group__bt__mesh__light__ctl__cli" kindref="compound">Light CTL Client model</ref> instance. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl_cli.h" line="30" column="9" bodyfile="include/bluetooth/mesh/light_ctl_cli.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__light__ctl__cli_gaf4395f1b21b92e8ad183baadd954ef3d_1gaf4395f1b21b92e8ad183baadd954ef3d" prot="public" static="no">
+        <name>BT_MESH_MODEL_LIGHT_CTL_CLI</name>
+        <param><defname>_cli</defname></param>
+        <initializer>	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_CTL_CLI,                       \
+			 _bt_mesh_light_ctl_cli_op, &amp;(_cli)-&gt;pub,              \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref>, \
+						 _cli),                        \
+			 &amp;_bt_mesh_light_ctl_cli_cb)</initializer>
+        <briefdescription>
+<para>Light CTL Client model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__light__ctl__cli" kindref="compound">Light CTL Client model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl_cli.h" line="41" column="9" bodyfile="include/bluetooth/mesh/light_ctl_cli.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__light__ctl__cli_ga59570be79641131237802978ece7dbc7_1ga59570be79641131237802978ece7dbc7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctl_get</definition>
+        <argsstring>(struct bt_mesh_light_ctl_cli *cli, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_light_ctl_status *rsp)</argsstring>
+        <name>bt_mesh_light_ctl_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctl__status" kindref="compound">bt_mesh_light_ctl_status</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Get the Light CTL state of the bound server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Status response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl_cli.h" line="132" column="5" declfile="include/bluetooth/mesh/light_ctl_cli.h" declline="132" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctl__cli_ga1d133a264bf131682ad8a9390b4f57d3_1ga1d133a264bf131682ad8a9390b4f57d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctl_set</definition>
+        <argsstring>(struct bt_mesh_light_ctl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_ctl_set *set, struct bt_mesh_light_ctl_status *rsp)</argsstring>
+        <name>bt_mesh_light_ctl_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__light__ctl__set" kindref="compound">bt_mesh_light_ctl_set</ref> *</type>
+          <declname>set</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctl__status" kindref="compound">bt_mesh_light_ctl_status</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Set the CTL state of the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>CTL state to set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response status buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl_cli.h" line="154" column="5" declfile="include/bluetooth/mesh/light_ctl_cli.h" declline="154" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctl__cli_ga868f29b75a3e1acad0faf3012c8ac479_1ga868f29b75a3e1acad0faf3012c8ac479" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctl_set_unack</definition>
+        <argsstring>(struct bt_mesh_light_ctl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_ctl_set *set)</argsstring>
+        <name>bt_mesh_light_ctl_set_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__light__ctl__set" kindref="compound">bt_mesh_light_ctl_set</ref> *</type>
+          <declname>set</declname>
+        </param>
+        <briefdescription>
+<para>Set the CTL state of the server without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>CTL state to set.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl_cli.h" line="171" column="5" declfile="include/bluetooth/mesh/light_ctl_cli.h" declline="171" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctl__cli_gac04a092b22a954bd3413843346ed9c49_1gac04a092b22a954bd3413843346ed9c49" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_temp_get</definition>
+        <argsstring>(struct bt_mesh_light_ctl_cli *cli, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_light_temp_status *rsp)</argsstring>
+        <name>bt_mesh_light_temp_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__temp__status" kindref="compound">bt_mesh_light_temp_status</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Get the Light CTL Temperature state of the bound server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return.</para>
+<para><simplesect kind="note"><para>In order to use this call, the user must ensure that the client instance is set to publish messages to the Light Temperature associated with the target Light CTL server. This server will be located in another element than the Light CTL server.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Status response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl_cli.h" line="197" column="5" declfile="include/bluetooth/mesh/light_ctl_cli.h" declline="197" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctl__cli_gaa11d60b58e5b799e9cc5a3a909b4e8a7_1gaa11d60b58e5b799e9cc5a3a909b4e8a7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_temp_set</definition>
+        <argsstring>(struct bt_mesh_light_ctl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_temp_set *set, struct bt_mesh_light_temp_status *rsp)</argsstring>
+        <name>bt_mesh_light_temp_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__light__temp__set" kindref="compound">bt_mesh_light_temp_set</ref> *</type>
+          <declname>set</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__temp__status" kindref="compound">bt_mesh_light_temp_status</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Set the CTL Temperature state of the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return.</para>
+<para><simplesect kind="note"><para>In order to use this call, the user must ensure that the client instance is set to publish messages to the Light Temperature associated with the target Light CTL server. This server will be located in another element than the Light CTL server.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>CTL Temperature state to set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response status buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl_cli.h" line="224" column="5" declfile="include/bluetooth/mesh/light_ctl_cli.h" declline="224" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctl__cli_ga78946f1b1755bceaf572903e67e42e84_1ga78946f1b1755bceaf572903e67e42e84" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_temp_set_unack</definition>
+        <argsstring>(struct bt_mesh_light_ctl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_temp_set *set)</argsstring>
+        <name>bt_mesh_light_temp_set_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__light__temp__set" kindref="compound">bt_mesh_light_temp_set</ref> *</type>
+          <declname>set</declname>
+        </param>
+        <briefdescription>
+<para>Set the CTL Temperature state of the server without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>In order to use this call, the user must ensure that the client instance is set to publish messages to the Light Temperature associated with the target Light CTL server. This server will be located in another element than the Light CTL server.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>CTL Temperature state to set.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl_cli.h" line="247" column="5" declfile="include/bluetooth/mesh/light_ctl_cli.h" declline="247" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctl__cli_gaa767c612d6f8052561179dd02f827aac_1gaa767c612d6f8052561179dd02f827aac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctl_default_get</definition>
+        <argsstring>(struct bt_mesh_light_ctl_cli *cli, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_light_ctl *rsp)</argsstring>
+        <name>bt_mesh_light_ctl_default_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctl" kindref="compound">bt_mesh_light_ctl</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Get the default CTL value of the bound server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Status response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl_cli.h" line="268" column="5" declfile="include/bluetooth/mesh/light_ctl_cli.h" declline="268" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctl__cli_ga2d273b45bde5733c1a60f8f95f257c0b_1ga2d273b45bde5733c1a60f8f95f257c0b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctl_default_set</definition>
+        <argsstring>(struct bt_mesh_light_ctl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_ctl *set, struct bt_mesh_light_ctl *rsp)</argsstring>
+        <name>bt_mesh_light_ctl_default_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__light__ctl" kindref="compound">bt_mesh_light_ctl</ref> *</type>
+          <declname>set</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctl" kindref="compound">bt_mesh_light_ctl</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Set the default CTL value of the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Default CTL value to set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response status buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl_cli.h" line="290" column="5" declfile="include/bluetooth/mesh/light_ctl_cli.h" declline="290" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctl__cli_ga6550bec4009f58e28570e42d739e9b30_1ga6550bec4009f58e28570e42d739e9b30" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctl_default_set_unack</definition>
+        <argsstring>(struct bt_mesh_light_ctl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_ctl *set)</argsstring>
+        <name>bt_mesh_light_ctl_default_set_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__light__ctl" kindref="compound">bt_mesh_light_ctl</ref> *</type>
+          <declname>set</declname>
+        </param>
+        <briefdescription>
+<para>Set the default CTL value of the server without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Default CTL value to set.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl_cli.h" line="308" column="5" declfile="include/bluetooth/mesh/light_ctl_cli.h" declline="308" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctl__cli_ga6b0fa8af9dc4705bbe21265ac69493db_1ga6b0fa8af9dc4705bbe21265ac69493db" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_temp_range_get</definition>
+        <argsstring>(struct bt_mesh_light_ctl_cli *cli, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_light_temp_range_status *rsp)</argsstring>
+        <name>bt_mesh_light_temp_range_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__temp__range__status" kindref="compound">bt_mesh_light_temp_range_status</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Get the Light CTL Range state of the bound server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Status response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl_cli.h" line="329" column="5" declfile="include/bluetooth/mesh/light_ctl_cli.h" declline="329" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctl__cli_ga8ebc77bd16725820c6f1ce3bf805e193_1ga8ebc77bd16725820c6f1ce3bf805e193" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_temp_range_set</definition>
+        <argsstring>(struct bt_mesh_light_ctl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_temp_range *set, struct bt_mesh_light_temp_range_status *rsp)</argsstring>
+        <name>bt_mesh_light_temp_range_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__light__temp__range" kindref="compound">bt_mesh_light_temp_range</ref> *</type>
+          <declname>set</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__temp__range__status" kindref="compound">bt_mesh_light_temp_range_status</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Set the CTL Range of the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Range to set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response status buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl_cli.h" line="351" column="5" declfile="include/bluetooth/mesh/light_ctl_cli.h" declline="351" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctl__cli_ga6e3445116a43cee8e2f1ec05eb4dfb64_1ga6e3445116a43cee8e2f1ec05eb4dfb64" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_temp_range_set_unack</definition>
+        <argsstring>(struct bt_mesh_light_ctl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_temp_range *set)</argsstring>
+        <name>bt_mesh_light_temp_range_set_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__light__temp__range" kindref="compound">bt_mesh_light_temp_range</ref> *</type>
+          <declname>set</declname>
+        </param>
+        <briefdescription>
+<para>Set the CTL Range of the server without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Range state to set.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl_cli.h" line="369" column="5" declfile="include/bluetooth/mesh/light_ctl_cli.h" declline="369" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_MESH_LIGHT_CTL_CLI_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_CLI_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="light__ctl_8h" kindref="compound">bluetooth/mesh/light_ctl.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="model__types_8h" kindref="compound">bluetooth/mesh/model_types.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref>;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="group__bt__mesh__light__ctl__cli_ga7b0cd3c59728b5d1cf0f269d9b9c9102_1ga7b0cd3c59728b5d1cf0f269d9b9c9102" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_CLI_INIT(_handlers)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="31"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="32"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.handlers<sp/>=<sp/>_handlers,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="33"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="group__bt__mesh__light__ctl__cli_gaf4395f1b21b92e8ad183baadd954ef3d_1gaf4395f1b21b92e8ad183baadd954ef3d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_MODEL_LIGHT_CTL_CLI(_cli)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="42"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_CTL_CLI,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="43"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_bt_mesh_light_ctl_cli_op,<sp/>&amp;(_cli)-&gt;pub,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="44"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_USER_DATA(struct<sp/>bt_mesh_light_ctl_cli,<sp/>\</highlight></codeline>
+<codeline lineno="45"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_cli),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="46"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;_bt_mesh_light_ctl_cli_cb)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="structbt__mesh__light__ctl__cli__handlers" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__ctl__cli__handlers" kindref="compound">bt_mesh_light_ctl_cli_handlers</ref><sp/>{</highlight></codeline>
+<codeline lineno="57" refid="structbt__mesh__light__ctl__cli__handlers_a8d18f036a93327254bb9326475888d8c_1a8d18f036a93327254bb9326475888d8c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl__cli__handlers_a8d18f036a93327254bb9326475888d8c_1a8d18f036a93327254bb9326475888d8c" kindref="member">ctl_status</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__ctl__status" kindref="compound">bt_mesh_light_ctl_status</ref><sp/>*status);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="structbt__mesh__light__ctl__cli__handlers_a959525b944bead432e948745c45d3556_1a959525b944bead432e948745c45d3556" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl__cli__handlers_a959525b944bead432e948745c45d3556_1a959525b944bead432e948745c45d3556" kindref="member">temp_status</ref>)(</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref><sp/>*cli,<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__temp__status" kindref="compound">bt_mesh_light_temp_status</ref><sp/>*status);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="structbt__mesh__light__ctl__cli__handlers_a86ee61f200c8e3bcf1e699a29360ff72_1a86ee61f200c8e3bcf1e699a29360ff72" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl__cli__handlers_a86ee61f200c8e3bcf1e699a29360ff72_1a86ee61f200c8e3bcf1e699a29360ff72" kindref="member">default_status</ref>)(</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref><sp/>*cli,<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__ctl" kindref="compound">bt_mesh_light_ctl</ref><sp/>*status);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="structbt__mesh__light__ctl__cli__handlers_a51faa4d00b794300c57b0b87f297d79b_1a51faa4d00b794300c57b0b87f297d79b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl__cli__handlers_a51faa4d00b794300c57b0b87f297d79b_1a51faa4d00b794300c57b0b87f297d79b" kindref="member">temp_range_status</ref>)(</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref><sp/>*cli,<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__temp__range__status" kindref="compound">bt_mesh_light_temp_range_status</ref><sp/>*<ref refid="structbt__mesh__light__temp__range__status_aba61af5577a866eee593d04bdb9b15c4_1aba61af5577a866eee593d04bdb9b15c4" kindref="member">status</ref>);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97" refid="structbt__mesh__light__ctl__cli" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref><sp/>{</highlight></codeline>
+<codeline lineno="99" refid="structbt__mesh__light__ctl__cli_a58994d79a1f3133eddff292d30383f6c_1a58994d79a1f3133eddff292d30383f6c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model<sp/>*<ref refid="structbt__mesh__light__ctl__cli_a58994d79a1f3133eddff292d30383f6c_1a58994d79a1f3133eddff292d30383f6c" kindref="member">model</ref>;</highlight></codeline>
+<codeline lineno="101" refid="structbt__mesh__light__ctl__cli_a8332f3196267003fd05e966f01ad7587_1a8332f3196267003fd05e966f01ad7587" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_pub<sp/><ref refid="structbt__mesh__light__ctl__cli_a8332f3196267003fd05e966f01ad7587_1a8332f3196267003fd05e966f01ad7587" kindref="member">pub</ref>;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Publication<sp/>buffer<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103" refid="structbt__mesh__light__ctl__cli_a806f5c65181ec0669d86e0af40c12fba_1a806f5c65181ec0669d86e0af40c12fba" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">net_buf_simple<sp/><ref refid="structbt__mesh__light__ctl__cli_a806f5c65181ec0669d86e0af40c12fba_1a806f5c65181ec0669d86e0af40c12fba" kindref="member">pub_buf</ref>;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Publication<sp/>data<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105" refid="structbt__mesh__light__ctl__cli_a6d66b622860de326590deeba2828c995_1a6d66b622860de326590deeba2828c995" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__light__ctl__cli_a6d66b622860de326590deeba2828c995_1a6d66b622860de326590deeba2828c995" kindref="member">pub_data</ref>[BT_MESH_MODEL_BUF_LEN(</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_LIGHT_CTL_SET,<sp/>BT_MESH_LIGHT_CTL_MSG_MAXLEN_SET)];</highlight></codeline>
+<codeline lineno="108" refid="structbt__mesh__light__ctl__cli_a2d07fb993ddb3d0abc6ea182d09ecefd_1a2d07fb993ddb3d0abc6ea182d09ecefd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ack_ctx<sp/><ref refid="structbt__mesh__light__ctl__cli_a2d07fb993ddb3d0abc6ea182d09ecefd_1a2d07fb993ddb3d0abc6ea182d09ecefd" kindref="member">ack_ctx</ref>;</highlight></codeline>
+<codeline lineno="110" refid="structbt__mesh__light__ctl__cli_a1eb4e8f638750f582754927a2af468ba_1a1eb4e8f638750f582754927a2af468ba" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__light__ctl__cli_a1eb4e8f638750f582754927a2af468ba_1a1eb4e8f638750f582754927a2af468ba" kindref="member">tid</ref>;</highlight></codeline>
+<codeline lineno="112" refid="structbt__mesh__light__ctl__cli_adf06d9a96d1fa1f55882d1385869cacb_1adf06d9a96d1fa1f55882d1385869cacb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__ctl__cli__handlers" kindref="compound">bt_mesh_light_ctl_cli_handlers</ref><sp/>*<ref refid="structbt__mesh__light__ctl__cli_adf06d9a96d1fa1f55882d1385869cacb_1adf06d9a96d1fa1f55882d1385869cacb" kindref="member">handlers</ref>;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132" refid="group__bt__mesh__light__ctl__cli_ga59570be79641131237802978ece7dbc7_1ga59570be79641131237802978ece7dbc7" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__ctl__cli_ga59570be79641131237802978ece7dbc7_1ga59570be79641131237802978ece7dbc7" kindref="member">bt_mesh_light_ctl_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl__status" kindref="compound">bt_mesh_light_ctl_status</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154" refid="group__bt__mesh__light__ctl__cli_ga1d133a264bf131682ad8a9390b4f57d3_1ga1d133a264bf131682ad8a9390b4f57d3" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__ctl__cli_ga1d133a264bf131682ad8a9390b4f57d3_1ga1d133a264bf131682ad8a9390b4f57d3" kindref="member">bt_mesh_light_ctl_set</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl__set" kindref="compound">bt_mesh_light_ctl_set</ref><sp/>*set,</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl__status" kindref="compound">bt_mesh_light_ctl_status</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171" refid="group__bt__mesh__light__ctl__cli_ga868f29b75a3e1acad0faf3012c8ac479_1ga868f29b75a3e1acad0faf3012c8ac479" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__ctl__cli_ga868f29b75a3e1acad0faf3012c8ac479_1ga868f29b75a3e1acad0faf3012c8ac479" kindref="member">bt_mesh_light_ctl_set_unack</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl__set" kindref="compound">bt_mesh_light_ctl_set</ref><sp/>*set);</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197" refid="group__bt__mesh__light__ctl__cli_gac04a092b22a954bd3413843346ed9c49_1gac04a092b22a954bd3413843346ed9c49" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__ctl__cli_gac04a092b22a954bd3413843346ed9c49_1gac04a092b22a954bd3413843346ed9c49" kindref="member">bt_mesh_light_temp_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__temp__status" kindref="compound">bt_mesh_light_temp_status</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight></codeline>
+<codeline lineno="224" refid="group__bt__mesh__light__ctl__cli_gaa11d60b58e5b799e9cc5a3a909b4e8a7_1gaa11d60b58e5b799e9cc5a3a909b4e8a7" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__ctl__cli_gaa11d60b58e5b799e9cc5a3a909b4e8a7_1gaa11d60b58e5b799e9cc5a3a909b4e8a7" kindref="member">bt_mesh_light_temp_set</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__temp__set" kindref="compound">bt_mesh_light_temp_set</ref><sp/>*set,</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__temp__status" kindref="compound">bt_mesh_light_temp_status</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight></codeline>
+<codeline lineno="247" refid="group__bt__mesh__light__ctl__cli_ga78946f1b1755bceaf572903e67e42e84_1ga78946f1b1755bceaf572903e67e42e84" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__ctl__cli_ga78946f1b1755bceaf572903e67e42e84_1ga78946f1b1755bceaf572903e67e42e84" kindref="member">bt_mesh_light_temp_set_unack</ref>(</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref><sp/>*cli,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__temp__set" kindref="compound">bt_mesh_light_temp_set</ref><sp/>*set);</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"></highlight></codeline>
+<codeline lineno="268" refid="group__bt__mesh__light__ctl__cli_gaa767c612d6f8052561179dd02f827aac_1gaa767c612d6f8052561179dd02f827aac" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__ctl__cli_gaa767c612d6f8052561179dd02f827aac_1gaa767c612d6f8052561179dd02f827aac" kindref="member">bt_mesh_light_ctl_default_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl" kindref="compound">bt_mesh_light_ctl</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"></highlight></codeline>
+<codeline lineno="290" refid="group__bt__mesh__light__ctl__cli_ga2d273b45bde5733c1a60f8f95f257c0b_1ga2d273b45bde5733c1a60f8f95f257c0b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__ctl__cli_ga2d273b45bde5733c1a60f8f95f257c0b_1ga2d273b45bde5733c1a60f8f95f257c0b" kindref="member">bt_mesh_light_ctl_default_set</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl" kindref="compound">bt_mesh_light_ctl</ref><sp/>*set,</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl" kindref="compound">bt_mesh_light_ctl</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"></highlight></codeline>
+<codeline lineno="308" refid="group__bt__mesh__light__ctl__cli_ga6550bec4009f58e28570e42d739e9b30_1ga6550bec4009f58e28570e42d739e9b30" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__ctl__cli_ga6550bec4009f58e28570e42d739e9b30_1ga6550bec4009f58e28570e42d739e9b30" kindref="member">bt_mesh_light_ctl_default_set_unack</ref>(</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref><sp/>*cli,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="310"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl" kindref="compound">bt_mesh_light_ctl</ref><sp/>*set);</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"></highlight></codeline>
+<codeline lineno="329" refid="group__bt__mesh__light__ctl__cli_ga6b0fa8af9dc4705bbe21265ac69493db_1ga6b0fa8af9dc4705bbe21265ac69493db" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__ctl__cli_ga6b0fa8af9dc4705bbe21265ac69493db_1ga6b0fa8af9dc4705bbe21265ac69493db" kindref="member">bt_mesh_light_temp_range_get</ref>(</highlight></codeline>
+<codeline lineno="330"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref><sp/>*cli,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="331"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__temp__range__status" kindref="compound">bt_mesh_light_temp_range_status</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="332"><highlight class="normal"></highlight></codeline>
+<codeline lineno="351" refid="group__bt__mesh__light__ctl__cli_ga8ebc77bd16725820c6f1ce3bf805e193_1ga8ebc77bd16725820c6f1ce3bf805e193" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__ctl__cli_ga8ebc77bd16725820c6f1ce3bf805e193_1ga8ebc77bd16725820c6f1ce3bf805e193" kindref="member">bt_mesh_light_temp_range_set</ref>(</highlight></codeline>
+<codeline lineno="352"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref><sp/>*cli,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="353"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__temp__range" kindref="compound">bt_mesh_light_temp_range</ref><sp/>*set,</highlight></codeline>
+<codeline lineno="354"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__temp__range__status" kindref="compound">bt_mesh_light_temp_range_status</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="355"><highlight class="normal"></highlight></codeline>
+<codeline lineno="369" refid="group__bt__mesh__light__ctl__cli_ga6e3445116a43cee8e2f1ec05eb4dfb64_1ga6e3445116a43cee8e2f1ec05eb4dfb64" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__ctl__cli_ga6e3445116a43cee8e2f1ec05eb4dfb64_1ga6e3445116a43cee8e2f1ec05eb4dfb64" kindref="member">bt_mesh_light_temp_range_set_unack</ref>(</highlight></codeline>
+<codeline lineno="370"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__ctl__cli" kindref="compound">bt_mesh_light_ctl_cli</ref><sp/>*cli,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="371"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__temp__range" kindref="compound">bt_mesh_light_temp_range</ref><sp/>*set);</highlight></codeline>
+<codeline lineno="372"><highlight class="normal"></highlight></codeline>
+<codeline lineno="374"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_op<sp/>_bt_mesh_light_ctl_cli_op[];</highlight></codeline>
+<codeline lineno="375"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_cb<sp/>_bt_mesh_light_ctl_cli_cb;</highlight></codeline>
+<codeline lineno="378"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="379"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="380"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="381"><highlight class="normal"></highlight></codeline>
+<codeline lineno="382"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_MESH_LIGHT_CTL_CLI_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="383"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/mesh/light_ctl_cli.h"/>
+  </compounddef>
+</doxygen>

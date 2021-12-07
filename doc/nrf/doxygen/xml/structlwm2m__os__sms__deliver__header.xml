@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlwm2m__os__sms__deliver__header" kind="struct" language="C++" prot="public">
+    <compoundname>lwm2m_os_sms_deliver_header</compoundname>
+    <includes refid="lwm2m__os_8h" local="no">lwm2m_os.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlwm2m__os__sms__deliver__header_a71c74673d08d593d85f020801db6ee04_1a71c74673d08d593d85f020801db6ee04" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlwm2m__os__sms__deliver__address" kindref="compound">lwm2m_os_sms_deliver_address</ref></type>
+        <definition>struct lwm2m_os_sms_deliver_address lwm2m_os_sms_deliver_header::originating_address</definition>
+        <argsstring></argsstring>
+        <name>originating_address</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="78" column="35" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlwm2m__os__sms__deliver__header_a887ad4c4f89934f3a18f89485faaef3a_1a887ad4c4f89934f3a18f89485faaef3a" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlwm2m__os__sms__udh__app__port" kindref="compound">lwm2m_os_sms_udh_app_port</ref></type>
+        <definition>struct lwm2m_os_sms_udh_app_port lwm2m_os_sms_deliver_header::app_port</definition>
+        <argsstring></argsstring>
+        <name>app_port</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="79" column="32" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>lwm2m_os_sms_deliver_address</label>
+        <link refid="structlwm2m__os__sms__deliver__address"/>
+      </node>
+      <node id="1">
+        <label>lwm2m_os_sms_deliver_header</label>
+        <link refid="structlwm2m__os__sms__deliver__header"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>originating_address</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>app_port</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>lwm2m_os_sms_udh_app_port</label>
+        <link refid="structlwm2m__os__sms__udh__app__port"/>
+      </node>
+    </collaborationgraph>
+    <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="77" column="1" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="77" bodyend="80"/>
+    <listofallmembers>
+      <member refid="structlwm2m__os__sms__deliver__header_a887ad4c4f89934f3a18f89485faaef3a_1a887ad4c4f89934f3a18f89485faaef3a" prot="public" virt="non-virtual"><scope>lwm2m_os_sms_deliver_header</scope><name>app_port</name></member>
+      <member refid="structlwm2m__os__sms__deliver__header_a71c74673d08d593d85f020801db6ee04_1a71c74673d08d593d85f020801db6ee04" prot="public" virt="non-virtual"><scope>lwm2m_os_sms_deliver_header</scope><name>originating_address</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

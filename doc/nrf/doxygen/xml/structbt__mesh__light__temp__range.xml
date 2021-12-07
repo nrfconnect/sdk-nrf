@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__temp__range" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_temp_range</compoundname>
+    <includes refid="light__ctl_8h" local="no">light_ctl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__temp__range_a6622b1b5824fa8f8986d6d3182aa19bf_1a6622b1b5824fa8f8986d6d3182aa19bf" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_light_temp_range::min</definition>
+        <argsstring></argsstring>
+        <name>min</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Minimum light temperature. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl.h" line="101" column="10" bodyfile="include/bluetooth/mesh/light_ctl.h" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__temp__range_a62fb9902ac550ec1cb1311b927efbb3d_1a62fb9902ac550ec1cb1311b927efbb3d" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_light_temp_range::max</definition>
+        <argsstring></argsstring>
+        <name>max</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum light temperature. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl.h" line="103" column="10" bodyfile="include/bluetooth/mesh/light_ctl.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Light temperature range parameters. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/light_ctl.h" line="99" column="1" bodyfile="include/bluetooth/mesh/light_ctl.h" bodystart="99" bodyend="104"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__temp__range_a62fb9902ac550ec1cb1311b927efbb3d_1a62fb9902ac550ec1cb1311b927efbb3d" prot="public" virt="non-virtual"><scope>bt_mesh_light_temp_range</scope><name>max</name></member>
+      <member refid="structbt__mesh__light__temp__range_a6622b1b5824fa8f8986d6d3182aa19bf_1a6622b1b5824fa8f8986d6d3182aa19bf" prot="public" virt="non-virtual"><scope>bt_mesh_light_temp_range</scope><name>min</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

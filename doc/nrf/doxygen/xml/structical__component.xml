@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structical__component" kind="struct" language="C++" prot="public">
+    <compoundname>ical_component</compoundname>
+    <includes refid="icalendar__parser_8h" local="no">icalendar_parser.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structical__component_a57c33af8bed4bad50d4eb3dcab9a7ff6_1a57c33af8bed4bad50d4eb3dcab9a7ff6" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char ical_component::summary[CONFIG_ICAL_PARSER_SUMMARY_SIZE+1]</definition>
+        <argsstring>[CONFIG_ICAL_PARSER_SUMMARY_SIZE+1]</argsstring>
+        <name>summary</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>SUMMARY property </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/icalendar_parser.h" line="66" column="6" bodyfile="include/net/icalendar_parser.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structical__component_a8917eb2784692503be0d0dfb18aadd5d_1a8917eb2784692503be0d0dfb18aadd5d" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char ical_component::location[CONFIG_ICAL_PARSER_LOCATION_SIZE+1]</definition>
+        <argsstring>[CONFIG_ICAL_PARSER_LOCATION_SIZE+1]</argsstring>
+        <name>location</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>LOCATION property buffer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/icalendar_parser.h" line="68" column="6" bodyfile="include/net/icalendar_parser.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structical__component_a1f6e9b148850064c336634b8e6cb2d5f_1a1f6e9b148850064c336634b8e6cb2d5f" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char ical_component::description[CONFIG_ICAL_PARSER_DESCRIPTION_SIZE+1]</definition>
+        <argsstring>[CONFIG_ICAL_PARSER_DESCRIPTION_SIZE+1]</argsstring>
+        <name>description</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>DESCRIPTION property buffer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/icalendar_parser.h" line="70" column="6" bodyfile="include/net/icalendar_parser.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structical__component_a4e0497135b8df08dadb12b7601684769_1a4e0497135b8df08dadb12b7601684769" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char ical_component::dtstart[CONFIG_ICAL_PARSER_DTSTART_SIZE+1]</definition>
+        <argsstring>[CONFIG_ICAL_PARSER_DTSTART_SIZE+1]</argsstring>
+        <name>dtstart</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>DTSTART property. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/icalendar_parser.h" line="72" column="6" bodyfile="include/net/icalendar_parser.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structical__component_acb140108169358ca04abec7cf8a19a96_1acb140108169358ca04abec7cf8a19a96" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char ical_component::dtend[CONFIG_ICAL_PARSER_DTEND_SIZE+1]</definition>
+        <argsstring>[CONFIG_ICAL_PARSER_DTEND_SIZE+1]</argsstring>
+        <name>dtend</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>DTEND property buffer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/icalendar_parser.h" line="74" column="6" bodyfile="include/net/icalendar_parser.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>iCalendar component. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/icalendar_parser.h" line="64" column="1" bodyfile="include/net/icalendar_parser.h" bodystart="64" bodyend="75"/>
+    <listofallmembers>
+      <member refid="structical__component_a1f6e9b148850064c336634b8e6cb2d5f_1a1f6e9b148850064c336634b8e6cb2d5f" prot="public" virt="non-virtual"><scope>ical_component</scope><name>description</name></member>
+      <member refid="structical__component_acb140108169358ca04abec7cf8a19a96_1acb140108169358ca04abec7cf8a19a96" prot="public" virt="non-virtual"><scope>ical_component</scope><name>dtend</name></member>
+      <member refid="structical__component_a4e0497135b8df08dadb12b7601684769_1a4e0497135b8df08dadb12b7601684769" prot="public" virt="non-virtual"><scope>ical_component</scope><name>dtstart</name></member>
+      <member refid="structical__component_a8917eb2784692503be0d0dfb18aadd5d_1a8917eb2784692503be0d0dfb18aadd5d" prot="public" virt="non-virtual"><scope>ical_component</scope><name>location</name></member>
+      <member refid="structical__component_a57c33af8bed4bad50d4eb3dcab9a7ff6_1a57c33af8bed4bad50d4eb3dcab9a7ff6" prot="public" virt="non-virtual"><scope>ical_component</scope><name>summary</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

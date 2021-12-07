@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__tnep__buf" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_tnep_buf</compoundname>
+    <includes refid="poller_8h" local="no">poller.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__tnep__buf_a833edf53ebbd7bda98fc0274b80a840d_1a833edf53ebbd7bda98fc0274b80a840d" prot="public" static="no" mutable="no">
+        <type>uint8_t *</type>
+        <definition>uint8_t* nfc_tnep_buf::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="160" column="9" bodyfile="include/nfc/tnep/poller.h" bodystart="160" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__buf_a33547a013cb7420b2665aedf5037966d_1a33547a013cb7420b2665aedf5037966d" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t nfc_tnep_buf::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Buffer size. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="163" column="8" bodyfile="include/nfc/tnep/poller.h" bodystart="163" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>TNEP Poller buffer structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/nfc/tnep/poller.h" line="158" column="1" bodyfile="include/nfc/tnep/poller.h" bodystart="158" bodyend="164"/>
+    <listofallmembers>
+      <member refid="structnfc__tnep__buf_a833edf53ebbd7bda98fc0274b80a840d_1a833edf53ebbd7bda98fc0274b80a840d" prot="public" virt="non-virtual"><scope>nfc_tnep_buf</scope><name>data</name></member>
+      <member refid="structnfc__tnep__buf_a33547a013cb7420b2665aedf5037966d_1a33547a013cb7420b2665aedf5037966d" prot="public" virt="non-virtual"><scope>nfc_tnep_buf</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

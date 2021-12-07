@@ -1,0 +1,368 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="zb__nrf__platform_8h" kind="file" language="C++">
+    <compoundname>zb_nrf_platform.h</compoundname>
+    <includes local="no">zboss_api.h</includes>
+    <includes local="no">kernel.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>subsys/zigbee/osif/zb_nrf_platform.h</label>
+        <link refid="zb__nrf__platform_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>kernel.h</label>
+      </node>
+      <node id="2">
+        <label>zboss_api.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="zb__nrf__platform_8h_a4901be5fa8f3a7bfdf7b5274e80024e8_1a4901be5fa8f3a7bfdf7b5274e80024e8" prot="public" static="no" strong="no">
+        <type></type>
+        <name>zigbee_event_t</name>
+        <enumvalue id="zb__nrf__platform_8h_a4901be5fa8f3a7bfdf7b5274e80024e8_1a4901be5fa8f3a7bfdf7b5274e80024e8a00fce938be2b429a761196e2511026ea" prot="public">
+          <name>ZIGBEE_EVENT_TX_FAILED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="zb__nrf__platform_8h_a4901be5fa8f3a7bfdf7b5274e80024e8_1a4901be5fa8f3a7bfdf7b5274e80024e8a383efab073734b1fd85df6f9d2eff6b2" prot="public">
+          <name>ZIGBEE_EVENT_TX_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="zb__nrf__platform_8h_a4901be5fa8f3a7bfdf7b5274e80024e8_1a4901be5fa8f3a7bfdf7b5274e80024e8a695698db2872fd8f91da1855ffec50f0" prot="public">
+          <name>ZIGBEE_EVENT_RX_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="zb__nrf__platform_8h_a4901be5fa8f3a7bfdf7b5274e80024e8_1a4901be5fa8f3a7bfdf7b5274e80024e8a16745cfb117ddb1271db5abc85718c57" prot="public">
+          <name>ZIGBEE_EVENT_APP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="subsys/zigbee/osif/zb_nrf_platform.h" line="17" column="1" bodyfile="subsys/zigbee/osif/zb_nrf_platform.h" bodystart="17" bodyend="22"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__zigbee__zboss__osif_ga93888a9afc51070be450daf8a3fc1330_1ga93888a9afc51070be450daf8a3fc1330" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool zigbee_is_stack_started</definition>
+        <argsstring>(void)</argsstring>
+        <name>zigbee_is_stack_started</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for checking if the Zigbee stack has been started. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zigbee stack has been started. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zigbee stack has not been started yet. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="subsys/zigbee/osif/zb_nrf_platform.h" line="35" column="6" declfile="subsys/zigbee/osif/zb_nrf_platform.h" declline="35" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__zboss__osif_gac932f42488c4ae48dd48a299ac589b30_1gac932f42488c4ae48dd48a299ac589b30" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void zigbee_enable</definition>
+        <argsstring>(void)</argsstring>
+        <name>zigbee_enable</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for starting the Zigbee thread. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="subsys/zigbee/osif/zb_nrf_platform.h" line="38" column="6" declfile="subsys/zigbee/osif/zb_nrf_platform.h" declline="38" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__zboss__osif_ga18cb00aba821ea83a945fd832caec29b_1ga18cb00aba821ea83a945fd832caec29b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool zigbee_debug_zboss_thread_is_created</definition>
+        <argsstring>(void)</argsstring>
+        <name>zigbee_debug_zboss_thread_is_created</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for checking if the ZBOSS thread has been created. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="subsys/zigbee/osif/zb_nrf_platform.h" line="43" column="6" declfile="subsys/zigbee/osif/zb_nrf_platform.h" declline="43" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__zboss__osif_ga84c9c7ea52bae3af4cb267f7e73bf948_1ga84c9c7ea52bae3af4cb267f7e73bf948" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void zigbee_debug_suspend_zboss_thread</definition>
+        <argsstring>(void)</argsstring>
+        <name>zigbee_debug_suspend_zboss_thread</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for suspending the ZBOSS thread. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="subsys/zigbee/osif/zb_nrf_platform.h" line="47" column="6" declfile="subsys/zigbee/osif/zb_nrf_platform.h" declline="47" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__zboss__osif_gae603cff252fc753b9e75e056af5327b7_1gae603cff252fc753b9e75e056af5327b7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void zigbee_debug_resume_zboss_thread</definition>
+        <argsstring>(void)</argsstring>
+        <name>zigbee_debug_resume_zboss_thread</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for resuming the ZBOSS thread. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="subsys/zigbee/osif/zb_nrf_platform.h" line="51" column="6" declfile="subsys/zigbee/osif/zb_nrf_platform.h" declline="51" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__zboss__osif_ga5464d18bec23101086de1425c820ebe6_1ga5464d18bec23101086de1425c820ebe6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool zigbee_is_zboss_thread_suspended</definition>
+        <argsstring>(void)</argsstring>
+        <name>zigbee_is_zboss_thread_suspended</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for getting the state of the Zigbee stack thread processing suspension. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scheduler processing is suspended or the ZBOSS thread is not yet created. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scheduler processing is not suspended and the ZBOSS thread is created. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="subsys/zigbee/osif/zb_nrf_platform.h" line="61" column="6" declfile="subsys/zigbee/osif/zb_nrf_platform.h" declline="61" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="zb__nrf__platform_8h_ae8df1a96797f8b1a1080a10553d8ddd0_1ae8df1a96797f8b1a1080a10553d8ddd0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int zigbee_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>zigbee_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for Zigbee stack initialization. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>0 if success </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="subsys/zigbee/osif/zb_nrf_platform.h" line="72" column="5" declfile="subsys/zigbee/osif/zb_nrf_platform.h" declline="72" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="zb__nrf__platform_8h_ab92ae8de7b4e322d6df90d051795ec7f_1ab92ae8de7b4e322d6df90d051795ec7f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void zigbee_event_notify</definition>
+        <argsstring>(zigbee_event_t event)</argsstring>
+        <name>zigbee_event_notify</name>
+        <param>
+          <type><ref refid="zb__nrf__platform_8h_a4901be5fa8f3a7bfdf7b5274e80024e8_1a4901be5fa8f3a7bfdf7b5274e80024e8" kindref="member">zigbee_event_t</ref></type>
+          <declname>event</declname>
+        </param>
+        <briefdescription>
+<para>Notify the ZBOSS thread about a new event. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">event</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event to notify. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="subsys/zigbee/osif/zb_nrf_platform.h" line="78" column="6" declfile="subsys/zigbee/osif/zb_nrf_platform.h" declline="78" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="zb__nrf__platform_8h_a3a3aac2495a5bb5c93ca428adfe15a06_1a3a3aac2495a5bb5c93ca428adfe15a06" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint32_t</type>
+        <definition>uint32_t zigbee_event_poll</definition>
+        <argsstring>(uint32_t timeout_us)</argsstring>
+        <name>zigbee_event_poll</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>timeout_us</declname>
+        </param>
+        <briefdescription>
+<para>Function which waits for event in case of empty Zigbee stack scheduler queue. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">timeout_us</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum amount of time, in microseconds for which the ZBOSS task processing may be blocked.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The amount of microseconds that the ZBOSS task was blocked. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="subsys/zigbee/osif/zb_nrf_platform.h" line="88" column="10" declfile="subsys/zigbee/osif/zb_nrf_platform.h" declline="88" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="zb__nrf__platform_8h_a0693a396ec9209f51908c52c09bfbe15_1a0693a396ec9209f51908c52c09bfbe15" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>zb_bool_t</type>
+        <definition>zb_bool_t zigbee_is_nvram_initialised</definition>
+        <argsstring>(void)</argsstring>
+        <name>zigbee_is_nvram_initialised</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for checking if the Zigbee NVRAM has been initialised. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>ZB_TRUE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zigbee NVRAM is initialised. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ZB_FALSE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zigbee NVRAM is not initialised </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="subsys/zigbee/osif/zb_nrf_platform.h" line="95" column="11" declfile="subsys/zigbee/osif/zb_nrf_platform.h" declline="95" declcolumn="11"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Zigbee ZBOSS OSIF layer API header. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>ZB_NRF_PLATFORM_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ZB_NRF_PLATFORM_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zboss_api.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;kernel.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17" refid="zb__nrf__platform_8h_a4901be5fa8f3a7bfdf7b5274e80024e8_1a4901be5fa8f3a7bfdf7b5274e80024e8" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="18" refid="zb__nrf__platform_8h_a4901be5fa8f3a7bfdf7b5274e80024e8_1a4901be5fa8f3a7bfdf7b5274e80024e8a00fce938be2b429a761196e2511026ea" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="zb__nrf__platform_8h_a4901be5fa8f3a7bfdf7b5274e80024e8_1a4901be5fa8f3a7bfdf7b5274e80024e8a00fce938be2b429a761196e2511026ea" kindref="member">ZIGBEE_EVENT_TX_FAILED</ref>,</highlight></codeline>
+<codeline lineno="19" refid="zb__nrf__platform_8h_a4901be5fa8f3a7bfdf7b5274e80024e8_1a4901be5fa8f3a7bfdf7b5274e80024e8a383efab073734b1fd85df6f9d2eff6b2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="zb__nrf__platform_8h_a4901be5fa8f3a7bfdf7b5274e80024e8_1a4901be5fa8f3a7bfdf7b5274e80024e8a383efab073734b1fd85df6f9d2eff6b2" kindref="member">ZIGBEE_EVENT_TX_DONE</ref>,</highlight></codeline>
+<codeline lineno="20" refid="zb__nrf__platform_8h_a4901be5fa8f3a7bfdf7b5274e80024e8_1a4901be5fa8f3a7bfdf7b5274e80024e8a695698db2872fd8f91da1855ffec50f0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="zb__nrf__platform_8h_a4901be5fa8f3a7bfdf7b5274e80024e8_1a4901be5fa8f3a7bfdf7b5274e80024e8a695698db2872fd8f91da1855ffec50f0" kindref="member">ZIGBEE_EVENT_RX_DONE</ref>,</highlight></codeline>
+<codeline lineno="21" refid="zb__nrf__platform_8h_a4901be5fa8f3a7bfdf7b5274e80024e8_1a4901be5fa8f3a7bfdf7b5274e80024e8a16745cfb117ddb1271db5abc85718c57" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="zb__nrf__platform_8h_a4901be5fa8f3a7bfdf7b5274e80024e8_1a4901be5fa8f3a7bfdf7b5274e80024e8a16745cfb117ddb1271db5abc85718c57" kindref="member">ZIGBEE_EVENT_APP</ref>,</highlight></codeline>
+<codeline lineno="22"><highlight class="normal">}<sp/><ref refid="zb__nrf__platform_8h_a4901be5fa8f3a7bfdf7b5274e80024e8_1a4901be5fa8f3a7bfdf7b5274e80024e8" kindref="member">zigbee_event_t</ref>;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="group__zigbee__zboss__osif_ga93888a9afc51070be450daf8a3fc1330_1ga93888a9afc51070be450daf8a3fc1330" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__zigbee__zboss__osif_ga93888a9afc51070be450daf8a3fc1330_1ga93888a9afc51070be450daf8a3fc1330" kindref="member">zigbee_is_stack_started</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="group__zigbee__zboss__osif_gac932f42488c4ae48dd48a299ac589b30_1gac932f42488c4ae48dd48a299ac589b30" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__zigbee__zboss__osif_gac932f42488c4ae48dd48a299ac589b30_1gac932f42488c4ae48dd48a299ac589b30" kindref="member">zigbee_enable</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_ZIGBEE_DEBUG_FUNCTIONS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="group__zigbee__zboss__osif_ga18cb00aba821ea83a945fd832caec29b_1ga18cb00aba821ea83a945fd832caec29b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__zigbee__zboss__osif_ga18cb00aba821ea83a945fd832caec29b_1ga18cb00aba821ea83a945fd832caec29b" kindref="member">zigbee_debug_zboss_thread_is_created</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="group__zigbee__zboss__osif_ga84c9c7ea52bae3af4cb267f7e73bf948_1ga84c9c7ea52bae3af4cb267f7e73bf948" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__zigbee__zboss__osif_ga84c9c7ea52bae3af4cb267f7e73bf948_1ga84c9c7ea52bae3af4cb267f7e73bf948" kindref="member">zigbee_debug_suspend_zboss_thread</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="group__zigbee__zboss__osif_gae603cff252fc753b9e75e056af5327b7_1gae603cff252fc753b9e75e056af5327b7" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__zigbee__zboss__osif_gae603cff252fc753b9e75e056af5327b7_1gae603cff252fc753b9e75e056af5327b7" kindref="member">zigbee_debug_resume_zboss_thread</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="group__zigbee__zboss__osif_ga5464d18bec23101086de1425c820ebe6_1ga5464d18bec23101086de1425c820ebe6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__zigbee__zboss__osif_ga5464d18bec23101086de1425c820ebe6_1ga5464d18bec23101086de1425c820ebe6" kindref="member">zigbee_is_zboss_thread_suspended</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>defined(CONFIG_ZIGBEE_DEBUG_FUNCTIONS)<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="zb__nrf__platform_8h_ae8df1a96797f8b1a1080a10553d8ddd0_1ae8df1a96797f8b1a1080a10553d8ddd0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="zb__nrf__platform_8h_ae8df1a96797f8b1a1080a10553d8ddd0_1ae8df1a96797f8b1a1080a10553d8ddd0" kindref="member">zigbee_init</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="zb__nrf__platform_8h_ab92ae8de7b4e322d6df90d051795ec7f_1ab92ae8de7b4e322d6df90d051795ec7f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="zb__nrf__platform_8h_ab92ae8de7b4e322d6df90d051795ec7f_1ab92ae8de7b4e322d6df90d051795ec7f" kindref="member">zigbee_event_notify</ref>(<ref refid="zb__nrf__platform_8h_a4901be5fa8f3a7bfdf7b5274e80024e8_1a4901be5fa8f3a7bfdf7b5274e80024e8" kindref="member">zigbee_event_t</ref><sp/>event);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="zb__nrf__platform_8h_a3a3aac2495a5bb5c93ca428adfe15a06_1a3a3aac2495a5bb5c93ca428adfe15a06" refkind="member"><highlight class="normal">uint32_t<sp/><ref refid="zb__nrf__platform_8h_a3a3aac2495a5bb5c93ca428adfe15a06_1a3a3aac2495a5bb5c93ca428adfe15a06" kindref="member">zigbee_event_poll</ref>(uint32_t<sp/>timeout_us);</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="zb__nrf__platform_8h_a0693a396ec9209f51908c52c09bfbe15_1a0693a396ec9209f51908c52c09bfbe15" refkind="member"><highlight class="normal">zb_bool_t<sp/><ref refid="zb__nrf__platform_8h_a0693a396ec9209f51908c52c09bfbe15_1a0693a396ec9209f51908c52c09bfbe15" kindref="member">zigbee_is_nvram_initialised</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>ZB_NRF_PLATFORM_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="subsys/zigbee/osif/zb_nrf_platform.h"/>
+  </compounddef>
+</doxygen>

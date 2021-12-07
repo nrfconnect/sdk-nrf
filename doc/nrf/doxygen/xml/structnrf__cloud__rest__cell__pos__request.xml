@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnrf__cloud__rest__cell__pos__request" kind="struct" language="C++" prot="public">
+    <compoundname>nrf_cloud_rest_cell_pos_request</compoundname>
+    <includes refid="nrf__cloud__rest_8h" local="no">nrf_cloud_rest.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnrf__cloud__rest__cell__pos__request_ac4b4f6ae3c2318018af778523fd0fd6a_1ac4b4f6ae3c2318018af778523fd0fd6a" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__lc__cells__info" kindref="compound">lte_lc_cells_info</ref> *</type>
+        <definition>struct lte_lc_cells_info* nrf_cloud_rest_cell_pos_request::net_info</definition>
+        <argsstring></argsstring>
+        <name>net_info</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Network information used in request </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="111" column="24" bodyfile="include/net/nrf_cloud_rest.h" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Data required for nRF Cloud cellular positioning request. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>lte_lc_cell</label>
+        <link refid="structlte__lc__cell"/>
+      </node>
+      <node id="2">
+        <label>lte_lc_cells_info</label>
+        <link refid="structlte__lc__cells__info"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>current_cell</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>neighbor_cells</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>lte_lc_ncell</label>
+        <link refid="structlte__lc__ncell"/>
+      </node>
+      <node id="1">
+        <label>nrf_cloud_rest_cell_pos_request</label>
+        <link refid="structnrf__cloud__rest__cell__pos__request"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>net_info</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/net/nrf_cloud_rest.h" line="109" column="1" bodyfile="include/net/nrf_cloud_rest.h" bodystart="109" bodyend="112"/>
+    <listofallmembers>
+      <member refid="structnrf__cloud__rest__cell__pos__request_ac4b4f6ae3c2318018af778523fd0fd6a_1ac4b4f6ae3c2318018af778523fd0fd6a" prot="public" virt="non-virtual"><scope>nrf_cloud_rest_cell_pos_request</scope><name>net_info</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

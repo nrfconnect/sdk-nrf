@@ -1,0 +1,853 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="gen__lvl__cli_8h" kind="file" language="C++">
+    <compoundname>gen_lvl_cli.h</compoundname>
+    <includes refid="gen__lvl_8h" local="no">bluetooth/mesh/gen_lvl.h</includes>
+    <includedby refid="models_8h" local="no">include/bluetooth/mesh/models.h</includedby>
+    <incdepgraph>
+      <node id="2">
+        <label>bluetooth/mesh/gen_lvl.h</label>
+        <link refid="gen__lvl_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/mesh/gen_lvl_cli.h</label>
+        <link refid="gen__lvl__cli_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bluetooth/mesh/model_types.h</label>
+        <link refid="model__types_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/mesh.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>include/bluetooth/mesh/gen_lvl_cli.h</label>
+        <link refid="gen__lvl__cli_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/bluetooth/mesh/models.h</label>
+        <link refid="models_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>include/bluetooth/mesh/vnd/silvair_enocean_srv.h</label>
+        <link refid="silvair__enocean__srv_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structbt__mesh__lvl__cli" prot="public">bt_mesh_lvl_cli</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__lvl__cli_ga36f410389af9e9d57e313640c49ea2e6_1ga36f410389af9e9d57e313640c49ea2e6" prot="public" static="no">
+        <name>BT_MESH_LVL_CLI_INIT</name>
+        <param><defname>_status_handler</defname></param>
+        <initializer>	{                                                                      \
+		.status_handler = _status_handler,                             \
+	}</initializer>
+        <briefdescription>
+<para>Initialization parameters for the <ref refid="group__bt__mesh__lvl__cli" kindref="compound">Generic Level Client model</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_status_handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional status message handler. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="structbt__mesh__lvl__cli_a786e07f031ed0812c243853057035b2a_1a786e07f031ed0812c243853057035b2a" kindref="member">bt_mesh_lvl_cli::status_handler</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl_cli.h" line="30" column="9" bodyfile="include/bluetooth/mesh/gen_lvl_cli.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__lvl__cli_ga3f0e23dded46fae30198c83f456ab7ee_1ga3f0e23dded46fae30198c83f456ab7ee" prot="public" static="no">
+        <name>BT_MESH_MODEL_LVL_CLI</name>
+        <param><defname>_cli</defname></param>
+        <initializer>	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_LEVEL_CLI, _bt_mesh_lvl_cli_op,  \
+			 &amp;(_cli)-&gt;pub,                                         \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__lvl__cli" kindref="compound">bt_mesh_lvl_cli</ref>,       \
+						 _cli),                        \
+			 &amp;_bt_mesh_lvl_cli_cb)</initializer>
+        <briefdescription>
+<para>Generic Level Client model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__lvl__cli" kindref="compound">Generic Level Client model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl_cli.h" line="41" column="9" bodyfile="include/bluetooth/mesh/gen_lvl_cli.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__lvl__cli_ga58177d13dd73dc5e5989e831aa18b422_1ga58177d13dd73dc5e5989e831aa18b422" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_lvl_cli_get</definition>
+        <argsstring>(struct bt_mesh_lvl_cli *cli, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_lvl_status *rsp)</argsstring>
+        <name>bt_mesh_lvl_cli_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__lvl__cli" kindref="compound">bt_mesh_lvl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__lvl__status" kindref="compound">bt_mesh_lvl_status</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Get the status of the bound server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__lvl__cli_a786e07f031ed0812c243853057035b2a_1a786e07f031ed0812c243853057035b2a" kindref="member">bt_mesh_lvl_cli::status_handler</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Status response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl_cli.h" line="97" column="5" declfile="include/bluetooth/mesh/gen_lvl_cli.h" declline="97" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__lvl__cli_gacc598660f57c2e01dd365924d9d0cebe_1gacc598660f57c2e01dd365924d9d0cebe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_lvl_cli_set</definition>
+        <argsstring>(struct bt_mesh_lvl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_lvl_set *set, struct bt_mesh_lvl_status *rsp)</argsstring>
+        <name>bt_mesh_lvl_cli_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__lvl__cli" kindref="compound">bt_mesh_lvl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__lvl__set" kindref="compound">bt_mesh_lvl_set</ref> *</type>
+          <declname>set</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__lvl__status" kindref="compound">bt_mesh_lvl_status</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Set the level state in the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__lvl__cli_a786e07f031ed0812c243853057035b2a_1a786e07f031ed0812c243853057035b2a" kindref="member">bt_mesh_lvl_cli::status_handler</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New level value to set. Set <computeroutput>set::transition</computeroutput> to NULL to use the server&apos;s default transition parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response status buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl_cli.h" line="121" column="5" declfile="include/bluetooth/mesh/gen_lvl_cli.h" declline="121" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__lvl__cli_gacd13f337bf48c9cc466066a7b7a82613_1gacd13f337bf48c9cc466066a7b7a82613" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_lvl_cli_set_unack</definition>
+        <argsstring>(struct bt_mesh_lvl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_lvl_set *set)</argsstring>
+        <name>bt_mesh_lvl_cli_set_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__lvl__cli" kindref="compound">bt_mesh_lvl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__lvl__set" kindref="compound">bt_mesh_lvl_set</ref> *</type>
+          <declname>set</declname>
+        </param>
+        <briefdescription>
+<para>Set the level state in the server without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New level value to set. Set <computeroutput>set::transition</computeroutput> to NULL to use the server&apos;s default transition parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl_cli.h" line="139" column="5" declfile="include/bluetooth/mesh/gen_lvl_cli.h" declline="139" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__lvl__cli_gac2aa3c00944a08145e2041d386008201_1gac2aa3c00944a08145e2041d386008201" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_lvl_cli_delta_set</definition>
+        <argsstring>(struct bt_mesh_lvl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_lvl_delta_set *delta_set, struct bt_mesh_lvl_status *rsp)</argsstring>
+        <name>bt_mesh_lvl_cli_delta_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__lvl__cli" kindref="compound">bt_mesh_lvl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__lvl__delta__set" kindref="compound">bt_mesh_lvl_delta_set</ref> *</type>
+          <declname>delta_set</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__lvl__status" kindref="compound">bt_mesh_lvl_status</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Trigger a differential level state change in the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Makes the server move its level state by some delta value. If multiple delta_set messages are sent in a row (with less than 6 seconds interval), and <computeroutput>delta_set::new_transaction</computeroutput> is set to false, the server will continue using the same base value for its delta as in the first message, unless some other client made changes to the server.</para>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__lvl__cli_a786e07f031ed0812c243853057035b2a_1a786e07f031ed0812c243853057035b2a" kindref="member">bt_mesh_lvl_cli::status_handler</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">delta_set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>State change to make. Set <computeroutput>set::transition</computeroutput> to NULL to use the server&apos;s default transition parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response status buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl_cli.h" line="169" column="5" declfile="include/bluetooth/mesh/gen_lvl_cli.h" declline="169" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__lvl__cli_ga7c1c36d92aac76e96743fe3e57a5f09f_1ga7c1c36d92aac76e96743fe3e57a5f09f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_lvl_cli_delta_set_unack</definition>
+        <argsstring>(struct bt_mesh_lvl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_lvl_delta_set *delta_set)</argsstring>
+        <name>bt_mesh_lvl_cli_delta_set_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__lvl__cli" kindref="compound">bt_mesh_lvl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__lvl__delta__set" kindref="compound">bt_mesh_lvl_delta_set</ref> *</type>
+          <declname>delta_set</declname>
+        </param>
+        <briefdescription>
+<para>Trigger a differential level state change in the server without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Makes the server move its level state by some delta value. If multiple delta_set messages are sent in a row (with less than 6 seconds interval), and <computeroutput>delta_set::new_transaction</computeroutput> is set to false, the server will continue using the same base value for its delta as in the first message, unless some other client made changes to the server.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">delta_set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>State change to make. Set <computeroutput>set::transition</computeroutput> to NULL to use the server&apos;s default transition parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl_cli.h" line="194" column="5" declfile="include/bluetooth/mesh/gen_lvl_cli.h" declline="194" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__lvl__cli_gaf54351a40f31e5b1075f57cc87b4be24_1gaf54351a40f31e5b1075f57cc87b4be24" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_lvl_cli_move_set</definition>
+        <argsstring>(struct bt_mesh_lvl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_lvl_move_set *move_set, struct bt_mesh_lvl_status *rsp)</argsstring>
+        <name>bt_mesh_lvl_cli_move_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__lvl__cli" kindref="compound">bt_mesh_lvl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__lvl__move__set" kindref="compound">bt_mesh_lvl_move_set</ref> *</type>
+          <declname>move_set</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__lvl__status" kindref="compound">bt_mesh_lvl_status</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Trigger a continuous level change in the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Makes the server continuously move its level state by the set rate:</para>
+<para><programlisting><codeline><highlight class="normal">rate_of_change<sp/>=<sp/>move_set-&gt;delta<sp/>/<sp/>move_set-&gt;transition-&gt;time</highlight></codeline>
+</programlisting></para>
+<para>The server will continue moving its level until it is told to stop, or until it reaches some application specific boundary value. The server may choose to wrap around the level value, depending on its usage. The move can be stopped by sending a new move message with a delta value of 0.</para>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__lvl__cli_a786e07f031ed0812c243853057035b2a_1a786e07f031ed0812c243853057035b2a" kindref="member">bt_mesh_lvl_cli::status_handler</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">move_set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>State change to make. Set <computeroutput>set::transition</computeroutput> to NULL to use the server&apos;s default transition parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response status buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl_cli.h" line="229" column="5" declfile="include/bluetooth/mesh/gen_lvl_cli.h" declline="229" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__lvl__cli_ga5179c9e1a8e4765375c29da7fa1c244c_1ga5179c9e1a8e4765375c29da7fa1c244c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_lvl_cli_move_set_unack</definition>
+        <argsstring>(struct bt_mesh_lvl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_lvl_move_set *move_set)</argsstring>
+        <name>bt_mesh_lvl_cli_move_set_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__lvl__cli" kindref="compound">bt_mesh_lvl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__lvl__move__set" kindref="compound">bt_mesh_lvl_move_set</ref> *</type>
+          <declname>move_set</declname>
+        </param>
+        <briefdescription>
+<para>Trigger a continuous level change in the server without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Makes the server continuously move its level state by the set rate:</para>
+<para><programlisting><codeline><highlight class="normal">rate_of_change<sp/>=<sp/>move_set-&gt;delta<sp/>/<sp/>move_set-&gt;transition-&gt;time</highlight></codeline>
+</programlisting></para>
+<para>The server will continue moving its level until it is told to stop, or until it reaches some application specific boundary value. The server may choose to wrap around the level value, depending on its usage. The move can be stopped by sending a new move message with a delta value of 0.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">move_set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>State change to make. Set <computeroutput>set::transition</computeroutput> to NULL to use the server&apos;s default transition parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl_cli.h" line="259" column="5" declfile="include/bluetooth/mesh/gen_lvl_cli.h" declline="259" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_MESH_GEN_LVL_CLI_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_GEN_LVL_CLI_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="gen__lvl_8h" kindref="compound">bluetooth/mesh/gen_lvl.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__lvl__cli" kindref="compound">bt_mesh_lvl_cli</ref>;</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="group__bt__mesh__lvl__cli_ga36f410389af9e9d57e313640c49ea2e6_1ga36f410389af9e9d57e313640c49ea2e6" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LVL_CLI_INIT(_status_handler)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="31"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="32"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.status_handler<sp/>=<sp/>_status_handler,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="33"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="group__bt__mesh__lvl__cli_ga3f0e23dded46fae30198c83f456ab7ee_1ga3f0e23dded46fae30198c83f456ab7ee" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_MODEL_LVL_CLI(_cli)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="42"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_LEVEL_CLI,<sp/>_bt_mesh_lvl_cli_op,<sp/><sp/>\</highlight></codeline>
+<codeline lineno="43"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;(_cli)-&gt;pub,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="44"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_USER_DATA(struct<sp/>bt_mesh_lvl_cli,<sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="45"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_cli),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="46"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;_bt_mesh_lvl_cli_cb)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="structbt__mesh__lvl__cli" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__lvl__cli" kindref="compound">bt_mesh_lvl_cli</ref><sp/>{</highlight></codeline>
+<codeline lineno="55" refid="structbt__mesh__lvl__cli_a14f091d5bf6a2de1d6c5dbca00ff4ed2_1a14f091d5bf6a2de1d6c5dbca00ff4ed2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model<sp/>*<ref refid="structbt__mesh__lvl__cli_a14f091d5bf6a2de1d6c5dbca00ff4ed2_1a14f091d5bf6a2de1d6c5dbca00ff4ed2" kindref="member">model</ref>;</highlight></codeline>
+<codeline lineno="57" refid="structbt__mesh__lvl__cli_a92ad8f8b9c1d13c0f75e69b5a022f701_1a92ad8f8b9c1d13c0f75e69b5a022f701" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_pub<sp/><ref refid="structbt__mesh__lvl__cli_a92ad8f8b9c1d13c0f75e69b5a022f701_1a92ad8f8b9c1d13c0f75e69b5a022f701" kindref="member">pub</ref>;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Publication<sp/>buffer<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="structbt__mesh__lvl__cli_a4333646cb30ff39bff609018c182f754_1a4333646cb30ff39bff609018c182f754" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">net_buf_simple<sp/><ref refid="structbt__mesh__lvl__cli_a4333646cb30ff39bff609018c182f754_1a4333646cb30ff39bff609018c182f754" kindref="member">pub_buf</ref>;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Publication<sp/>data<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="structbt__mesh__lvl__cli_a8116de2a542ea280020ba45d17090471_1a8116de2a542ea280020ba45d17090471" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__lvl__cli_a8116de2a542ea280020ba45d17090471_1a8116de2a542ea280020ba45d17090471" kindref="member">pub_data</ref>[BT_MESH_MODEL_BUF_LEN(</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_LVL_OP_DELTA_SET,<sp/>BT_MESH_LVL_MSG_MAXLEN_DELTA_SET)];</highlight></codeline>
+<codeline lineno="64" refid="structbt__mesh__lvl__cli_a826d9955f256a8835daaaa51d046ea07_1a826d9955f256a8835daaaa51d046ea07" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ack_ctx<sp/><ref refid="structbt__mesh__lvl__cli_a826d9955f256a8835daaaa51d046ea07_1a826d9955f256a8835daaaa51d046ea07" kindref="member">ack_ctx</ref>;</highlight></codeline>
+<codeline lineno="66" refid="structbt__mesh__lvl__cli_aef7325e6e5f1cbfefa080b1cc2fdc9cb_1aef7325e6e5f1cbfefa080b1cc2fdc9cb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__lvl__cli_aef7325e6e5f1cbfefa080b1cc2fdc9cb_1aef7325e6e5f1cbfefa080b1cc2fdc9cb" kindref="member">tid</ref>;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="structbt__mesh__lvl__cli_a786e07f031ed0812c243853057035b2a_1a786e07f031ed0812c243853057035b2a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__lvl__cli_a786e07f031ed0812c243853057035b2a_1a786e07f031ed0812c243853057035b2a" kindref="member">status_handler</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__lvl__cli" kindref="compound">bt_mesh_lvl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__lvl__status" kindref="compound">bt_mesh_lvl_status</ref><sp/>*status);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97" refid="group__bt__mesh__lvl__cli_ga58177d13dd73dc5e5989e831aa18b422_1ga58177d13dd73dc5e5989e831aa18b422" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__lvl__cli_ga58177d13dd73dc5e5989e831aa18b422_1ga58177d13dd73dc5e5989e831aa18b422" kindref="member">bt_mesh_lvl_cli_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__lvl__cli" kindref="compound">bt_mesh_lvl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__lvl__status" kindref="compound">bt_mesh_lvl_status</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121" refid="group__bt__mesh__lvl__cli_gacc598660f57c2e01dd365924d9d0cebe_1gacc598660f57c2e01dd365924d9d0cebe" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__lvl__cli_gacc598660f57c2e01dd365924d9d0cebe_1gacc598660f57c2e01dd365924d9d0cebe" kindref="member">bt_mesh_lvl_cli_set</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__lvl__cli" kindref="compound">bt_mesh_lvl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__lvl__set" kindref="compound">bt_mesh_lvl_set</ref><sp/>*set,</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__lvl__status" kindref="compound">bt_mesh_lvl_status</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139" refid="group__bt__mesh__lvl__cli_gacd13f337bf48c9cc466066a7b7a82613_1gacd13f337bf48c9cc466066a7b7a82613" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__lvl__cli_gacd13f337bf48c9cc466066a7b7a82613_1gacd13f337bf48c9cc466066a7b7a82613" kindref="member">bt_mesh_lvl_cli_set_unack</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__lvl__cli" kindref="compound">bt_mesh_lvl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__lvl__set" kindref="compound">bt_mesh_lvl_set</ref><sp/>*set);</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="169" refid="group__bt__mesh__lvl__cli_gac2aa3c00944a08145e2041d386008201_1gac2aa3c00944a08145e2041d386008201" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__lvl__cli_gac2aa3c00944a08145e2041d386008201_1gac2aa3c00944a08145e2041d386008201" kindref="member">bt_mesh_lvl_cli_delta_set</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__lvl__cli" kindref="compound">bt_mesh_lvl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__lvl__delta__set" kindref="compound">bt_mesh_lvl_delta_set</ref><sp/>*delta_set,</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__lvl__status" kindref="compound">bt_mesh_lvl_status</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
+<codeline lineno="194" refid="group__bt__mesh__lvl__cli_ga7c1c36d92aac76e96743fe3e57a5f09f_1ga7c1c36d92aac76e96743fe3e57a5f09f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__lvl__cli_ga7c1c36d92aac76e96743fe3e57a5f09f_1ga7c1c36d92aac76e96743fe3e57a5f09f" kindref="member">bt_mesh_lvl_cli_delta_set_unack</ref>(</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__lvl__cli" kindref="compound">bt_mesh_lvl_cli</ref><sp/>*cli,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__lvl__delta__set" kindref="compound">bt_mesh_lvl_delta_set</ref><sp/>*delta_set);</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight></codeline>
+<codeline lineno="229" refid="group__bt__mesh__lvl__cli_gaf54351a40f31e5b1075f57cc87b4be24_1gaf54351a40f31e5b1075f57cc87b4be24" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__lvl__cli_gaf54351a40f31e5b1075f57cc87b4be24_1gaf54351a40f31e5b1075f57cc87b4be24" kindref="member">bt_mesh_lvl_cli_move_set</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__lvl__cli" kindref="compound">bt_mesh_lvl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__lvl__move__set" kindref="compound">bt_mesh_lvl_move_set</ref><sp/>*move_set,</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__lvl__status" kindref="compound">bt_mesh_lvl_status</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight></codeline>
+<codeline lineno="259" refid="group__bt__mesh__lvl__cli_ga5179c9e1a8e4765375c29da7fa1c244c_1ga5179c9e1a8e4765375c29da7fa1c244c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__lvl__cli_ga5179c9e1a8e4765375c29da7fa1c244c_1ga5179c9e1a8e4765375c29da7fa1c244c" kindref="member">bt_mesh_lvl_cli_move_set_unack</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__lvl__cli" kindref="compound">bt_mesh_lvl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__lvl__move__set" kindref="compound">bt_mesh_lvl_move_set</ref><sp/>*move_set);</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"></highlight></codeline>
+<codeline lineno="264"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_op<sp/>_bt_mesh_lvl_cli_op[];</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_cb<sp/>_bt_mesh_lvl_cli_cb;</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="269"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="271"><highlight class="normal"></highlight></codeline>
+<codeline lineno="272"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_MESH_GEN_LVL_CLI_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="273"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/mesh/gen_lvl_cli.h"/>
+  </compounddef>
+</doxygen>

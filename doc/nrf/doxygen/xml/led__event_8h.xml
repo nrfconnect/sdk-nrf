@@ -1,0 +1,161 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="led__event_8h" kind="file" language="C++">
+    <compoundname>led_event.h</compoundname>
+    <includes refid="event__manager_8h" local="no">event_manager.h</includes>
+    <includes refid="event__manager__profiler_8h" local="no">event_manager_profiler.h</includes>
+    <includes refid="include_2caf_2led__effect_8h" local="no">caf/led_effect.h</includes>
+    <includedby refid="nrf__desktop_2configuration_2common_2led__state_8h" local="no">applications/nrf_desktop/configuration/common/led_state.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/caf/events/led_event.h</label>
+        <link refid="led__event_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>caf/led_effect.h</label>
+        <link refid="include_2caf_2led__effect_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>event_manager.h</label>
+        <link refid="event__manager_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>event_manager_profiler.h</label>
+        <link refid="event__manager__profiler_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>profiler.h</label>
+        <link refid="profiler_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>event_manager_priv.h</label>
+      </node>
+      <node id="12">
+        <label>event_manager_profiler_priv.h</label>
+      </node>
+      <node id="7">
+        <label>logging/log_ctrl.h</label>
+      </node>
+      <node id="6">
+        <label>sys/__assert.h</label>
+      </node>
+      <node id="5">
+        <label>sys/reboot.h</label>
+      </node>
+      <node id="10">
+        <label>sys/util.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr.h</label>
+      </node>
+      <node id="4">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>applications/nrf_desktop/configuration/common/led_state.h</label>
+        <link refid="nrf__desktop_2configuration_2common_2led__state_8h"/>
+      </node>
+      <node id="1">
+        <label>include/caf/events/led_event.h</label>
+        <link refid="led__event_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structled__event" prot="public">led_event</innerclass>
+    <innerclass refid="structled__ready__event" prot="public">led_ready_event</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2018-2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_LED_EVENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_LED_EVENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="event__manager_8h" kindref="compound">event_manager.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="event__manager__profiler_8h" kindref="compound">event_manager_profiler.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="include_2caf_2led__effect_8h" kindref="compound">caf/led_effect.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="structled__event" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structled__event" kindref="compound">led_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="33" refid="structled__event_a585964b43e56df02b05f849266a62c3d_1a585964b43e56df02b05f849266a62c3d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structevent__header" kindref="compound">event_header</ref><sp/><ref refid="structled__event_a585964b43e56df02b05f849266a62c3d_1a585964b43e56df02b05f849266a62c3d" kindref="member">header</ref>;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="structled__event_aa44bb4bf60f980d3b1a0a34645437a74_1aa44bb4bf60f980d3b1a0a34645437a74" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structled__event_aa44bb4bf60f980d3b1a0a34645437a74_1aa44bb4bf60f980d3b1a0a34645437a74" kindref="member">led_id</ref>;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="structled__event_aedcee8ea76f55c8f9102ec03757ef4d4_1aedcee8ea76f55c8f9102ec03757ef4d4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structled__effect" kindref="compound">led_effect</ref><sp/>*<ref refid="structled__event_aedcee8ea76f55c8f9102ec03757ef4d4_1aedcee8ea76f55c8f9102ec03757ef4d4" kindref="member">led_effect</ref>;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="structled__ready__event" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structled__ready__event" kindref="compound">led_ready_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="53" refid="structled__ready__event_a542aca31f214373bcafb59ab8ff658d5_1a542aca31f214373bcafb59ab8ff658d5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structevent__header" kindref="compound">event_header</ref><sp/><ref refid="structled__ready__event_a542aca31f214373bcafb59ab8ff658d5_1a542aca31f214373bcafb59ab8ff658d5" kindref="member">header</ref>;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="structled__ready__event_a4339803f807d8186da4efd1014ef1d8a_1a4339803f807d8186da4efd1014ef1d8a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structled__ready__event_a4339803f807d8186da4efd1014ef1d8a_1a4339803f807d8186da4efd1014ef1d8a" kindref="member">led_id</ref>;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="structled__ready__event_a60e68524bc41dc9923cc5dbfb56caf0b_1a60e68524bc41dc9923cc5dbfb56caf0b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structled__effect" kindref="compound">led_effect</ref><sp/>*<ref refid="structled__ready__event_a60e68524bc41dc9923cc5dbfb56caf0b_1a60e68524bc41dc9923cc5dbfb56caf0b" kindref="member">led_effect</ref>;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><ref refid="group__event__manager_gade0652b21cddf1a6b4d58e668b402caa_1gade0652b21cddf1a6b4d58e668b402caa" kindref="member">EVENT_TYPE_DECLARE</ref>(<ref refid="structled__event" kindref="compound">led_event</ref>);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><ref refid="group__event__manager_gade0652b21cddf1a6b4d58e668b402caa_1gade0652b21cddf1a6b4d58e668b402caa" kindref="member">EVENT_TYPE_DECLARE</ref>(<ref refid="structled__ready__event" kindref="compound">led_ready_event</ref>);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_LED_EVENT_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/caf/events/led_event.h"/>
+  </compounddef>
+</doxygen>

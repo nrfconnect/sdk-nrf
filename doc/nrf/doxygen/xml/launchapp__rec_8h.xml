@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="launchapp__rec_8h" kind="file" language="C++">
+    <compoundname>launchapp_rec.h</compoundname>
+    <includes local="no">stdint.h</includes>
+    <includes refid="record_8h" local="no">nfc/ndef/record.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/nfc/ndef/launchapp_rec.h</label>
+        <link refid="launchapp__rec_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>nfc/ndef/record.h</label>
+        <link refid="record_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stdint.h</label>
+      </node>
+      <node id="4">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__launchapp__rec_gad54f7048905f67c5c529dc8074cb381c_1gad54f7048905f67c5c529dc8074cb381c" prot="public" static="no">
+        <name>NFC_ANDROID_REC_TYPE_LENGTH</name>
+        <initializer>15</initializer>
+        <briefdescription>
+<para>Size of the type field of the Android Application Record, defined in the file <computeroutput>launchapp_rec.c</computeroutput>. It is used in the <ref refid="group__nfc__launchapp__rec_gab11bdadfdc3d6b6199842f80d6de52d6_1gab11bdadfdc3d6b6199842f80d6de52d6" kindref="member">NFC_NDEF_ANDROID_LAUNCHAPP_RECORD_DESC</ref> macro. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/launchapp_rec.h" line="31" column="9" bodyfile="include/nfc/ndef/launchapp_rec.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__launchapp__rec_ga9ff2bf240d27b8b62a8bcf1ed785f4ac_1ga9ff2bf240d27b8b62a8bcf1ed785f4ac" prot="public" static="no">
+        <name>NFC_NDEF_ANDROID_LAUNCHAPP_RECORD_DESC_DEF</name>
+        <param><defname>name</defname></param>
+        <param><defname>package_name</defname></param>
+        <param><defname>package_name_length</defname></param>
+        <initializer>	<ref refid="group__nfc__ndef__record_ga1ba7c60df67955d44ad65e8b50581d02_1ga1ba7c60df67955d44ad65e8b50581d02" kindref="member">NFC_NDEF_RECORD_BIN_DATA_DEF</ref>(name,					\
+				     <ref refid="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1gga2091295307fa8161219648a88df172a8af0c50a342dab3f03c386ab05f93e3920" kindref="member">TNF_EXTERNAL_TYPE</ref>,				\
+				     NULL,					\
+				     0,						\
+				     <ref refid="group__nfc__launchapp__rec_gadc1507d1b8ecf4e6b5fd2387bcfaf3f1_1gadc1507d1b8ecf4e6b5fd2387bcfaf3f1" kindref="member">ndef_android_launchapp_rec_type</ref>,		\
+				     sizeof(<ref refid="group__nfc__launchapp__rec_gadc1507d1b8ecf4e6b5fd2387bcfaf3f1_1gadc1507d1b8ecf4e6b5fd2387bcfaf3f1" kindref="member">ndef_android_launchapp_rec_type</ref>),	\
+				     (package_name),				\
+				     (package_name_length))</initializer>
+        <briefdescription>
+<para>Macro for generating a description of an NFC NDEF Android Application Record (AAR). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro declares and initializes an instance of an NFC NDEF record description of an Android Application Record (AAR).</para>
+<para><simplesect kind="note"><para>The record descriptor is declared as an automatic variable, which implies that the NDEF message encoding (see <ref refid="group__nfc__launchapp__msg_ga72a2f1a1faca0c21ef11289af00b2c8d_1ga72a2f1a1faca0c21ef11289af00b2c8d" kindref="member">nfc_launchapp_msg_encode</ref>) must be done in the same variable scope.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name for accessing the record descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">package_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Android package name string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">package_name_length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the Android package name. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/launchapp_rec.h" line="55" column="9" bodyfile="include/nfc/ndef/launchapp_rec.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__launchapp__rec_gab11bdadfdc3d6b6199842f80d6de52d6_1gab11bdadfdc3d6b6199842f80d6de52d6" prot="public" static="no">
+        <name>NFC_NDEF_ANDROID_LAUNCHAPP_RECORD_DESC</name>
+        <param><defname>name</defname></param>
+        <initializer><ref refid="group__nfc__ndef__record_ga9f7681ee4be16d8f3711d81e1068875d_1ga9f7681ee4be16d8f3711d81e1068875d" kindref="member">NFC_NDEF_RECORD_BIN_DATA</ref>(name)</initializer>
+        <briefdescription>
+<para>Macro for accessing the NFC NDEF Android Application Record descriptor instance that was created with <ref refid="group__nfc__launchapp__rec_ga9ff2bf240d27b8b62a8bcf1ed785f4ac_1ga9ff2bf240d27b8b62a8bcf1ed785f4ac" kindref="member">NFC_NDEF_ANDROID_LAUNCHAPP_RECORD_DESC_DEF</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/launchapp_rec.h" line="69" column="9" bodyfile="include/nfc/ndef/launchapp_rec.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__nfc__launchapp__rec_gadc1507d1b8ecf4e6b5fd2387bcfaf3f1_1gadc1507d1b8ecf4e6b5fd2387bcfaf3f1" prot="public" static="no" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t ndef_android_launchapp_rec_type[15]</definition>
+        <argsstring>[15]</argsstring>
+        <name>ndef_android_launchapp_rec_type</name>
+        <briefdescription>
+<para>External reference to the type field of the NFC NDEF Android Application Record, defined in the file <computeroutput>launchapp_rec.c</computeroutput>. It is used in the <ref refid="group__nfc__launchapp__rec_ga9ff2bf240d27b8b62a8bcf1ed785f4ac_1ga9ff2bf240d27b8b62a8bcf1ed785f4ac" kindref="member">NFC_NDEF_ANDROID_LAUNCHAPP_RECORD_DESC_DEF</ref> macro. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/launchapp_rec.h" line="38" column="22" declfile="include/nfc/ndef/launchapp_rec.h" declline="38" declcolumn="22"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NFC_LAUNCHAPP_REC_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_LAUNCHAPP_REC_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdint.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="record_8h" kindref="compound">nfc/ndef/record.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="group__nfc__launchapp__rec_gad54f7048905f67c5c529dc8074cb381c_1gad54f7048905f67c5c529dc8074cb381c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_ANDROID_REC_TYPE_LENGTH<sp/>15</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/><ref refid="group__nfc__launchapp__rec_gadc1507d1b8ecf4e6b5fd2387bcfaf3f1_1gadc1507d1b8ecf4e6b5fd2387bcfaf3f1" kindref="member">ndef_android_launchapp_rec_type</ref>[<ref refid="group__nfc__launchapp__rec_gad54f7048905f67c5c529dc8074cb381c_1gad54f7048905f67c5c529dc8074cb381c" kindref="member">NFC_ANDROID_REC_TYPE_LENGTH</ref>];</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="group__nfc__launchapp__rec_ga9ff2bf240d27b8b62a8bcf1ed785f4ac_1ga9ff2bf240d27b8b62a8bcf1ed785f4ac" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_NDEF_ANDROID_LAUNCHAPP_RECORD_DESC_DEF(name,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="54"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>package_name,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="55"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>package_name_length)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="56"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NFC_NDEF_RECORD_BIN_DATA_DEF(name,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="57"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TNF_EXTERNAL_TYPE,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="58"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="59"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="60"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ndef_android_launchapp_rec_type,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="61"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sizeof(ndef_android_launchapp_rec_type),<sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="62"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(package_name),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="63"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(package_name_length))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="group__nfc__launchapp__rec_gab11bdadfdc3d6b6199842f80d6de52d6_1gab11bdadfdc3d6b6199842f80d6de52d6" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_NDEF_ANDROID_LAUNCHAPP_RECORD_DESC(name)<sp/>NFC_NDEF_RECORD_BIN_DATA(name)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>NFC_LAUNCHAPP_REC</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/nfc/ndef/launchapp_rec.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="pmw3360_8h" kind="file" language="C++">
+    <compoundname>pmw3360.h</compoundname>
+    <includes local="no">drivers/sensor.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/sensor/pmw3360.h</label>
+        <link refid="pmw3360_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>drivers/sensor.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1gaab336f619c0bb42471895b2a58c4064a" prot="public" static="no" strong="no">
+        <type></type>
+        <name>pmw3360_attribute</name>
+        <enumvalue id="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aae5a6505e20706becaee5ff3f8521edae" prot="public">
+          <name>PMW3360_ATTR_CPI</name>
+          <initializer>= SENSOR_ATTR_PRIV_START</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Sensor CPI for both X and Y axes. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aaa4ecd5bc34adfec5d41f9c49284556f8" prot="public">
+          <name>PMW3360_ATTR_REST_ENABLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Enable or disable sleep modes. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aaf80a9db65e747cc798c7a64963ff02cb" prot="public">
+          <name>PMW3360_ATTR_RUN_DOWNSHIFT_TIME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Entering time from Run mode to REST1 mode [ms]. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aa5e973481bba4c100eac760be1d25be05" prot="public">
+          <name>PMW3360_ATTR_REST1_DOWNSHIFT_TIME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Entering time from REST1 mode to REST2 mode [ms]. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aa3d266229d8466cc26cff0c3292f9c8ef" prot="public">
+          <name>PMW3360_ATTR_REST2_DOWNSHIFT_TIME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Entering time from REST2 mode to REST3 mode [ms]. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aabbbb0a88b8181112790cef373f9fe462" prot="public">
+          <name>PMW3360_ATTR_REST1_SAMPLE_TIME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Sampling frequency time during REST1 mode [ms]. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aa76b82c82fb262a91186d5936acaa9b38" prot="public">
+          <name>PMW3360_ATTR_REST2_SAMPLE_TIME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Sampling frequency time during REST2 mode [ms]. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aa6c3799efb219182633d0dadfbc02b7e2" prot="public">
+          <name>PMW3360_ATTR_REST3_SAMPLE_TIME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Sampling frequency time during REST3 mode [ms]. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Sensor specific attributes of PMW3360. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/sensor/pmw3360.h" line="28" column="1" bodyfile="include/sensor/pmw3360.h" bodystart="28" bodyend="52"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Header file for the pmw3360 driver. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>ZEPHYR_INCLUDE_PMW3360_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ZEPHYR_INCLUDE_PMW3360_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;drivers/sensor.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1gaab336f619c0bb42471895b2a58c4064a" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1gaab336f619c0bb42471895b2a58c4064a" kindref="member">pmw3360_attribute</ref><sp/>{</highlight></codeline>
+<codeline lineno="30" refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aae5a6505e20706becaee5ff3f8521edae" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aae5a6505e20706becaee5ff3f8521edae" kindref="member">PMW3360_ATTR_CPI</ref><sp/>=<sp/>SENSOR_ATTR_PRIV_START,</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aaa4ecd5bc34adfec5d41f9c49284556f8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aaa4ecd5bc34adfec5d41f9c49284556f8" kindref="member">PMW3360_ATTR_REST_ENABLE</ref>,</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aaf80a9db65e747cc798c7a64963ff02cb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aaf80a9db65e747cc798c7a64963ff02cb" kindref="member">PMW3360_ATTR_RUN_DOWNSHIFT_TIME</ref>,</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aa5e973481bba4c100eac760be1d25be05" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aa5e973481bba4c100eac760be1d25be05" kindref="member">PMW3360_ATTR_REST1_DOWNSHIFT_TIME</ref>,</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aa3d266229d8466cc26cff0c3292f9c8ef" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aa3d266229d8466cc26cff0c3292f9c8ef" kindref="member">PMW3360_ATTR_REST2_DOWNSHIFT_TIME</ref>,</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aabbbb0a88b8181112790cef373f9fe462" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aabbbb0a88b8181112790cef373f9fe462" kindref="member">PMW3360_ATTR_REST1_SAMPLE_TIME</ref>,</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aa76b82c82fb262a91186d5936acaa9b38" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aa76b82c82fb262a91186d5936acaa9b38" kindref="member">PMW3360_ATTR_REST2_SAMPLE_TIME</ref>,</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aa6c3799efb219182633d0dadfbc02b7e2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aa6c3799efb219182633d0dadfbc02b7e2" kindref="member">PMW3360_ATTR_REST3_SAMPLE_TIME</ref>,</highlight></codeline>
+<codeline lineno="52"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>ZEPHYR_INCLUDE_PMW3360_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/sensor/pmw3360.h"/>
+  </compounddef>
+</doxygen>

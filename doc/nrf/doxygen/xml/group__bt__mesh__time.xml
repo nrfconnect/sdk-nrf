@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__time" kind="group">
+    <compoundname>bt_mesh_time</compoundname>
+    <title>Time Models</title>
+    <innerclass refid="structbt__mesh__time__tai" prot="public">bt_mesh_time_tai</innerclass>
+    <innerclass refid="structbt__mesh__time__status" prot="public">bt_mesh_time_status</innerclass>
+    <innerclass refid="structbt__mesh__time__zone__change" prot="public">bt_mesh_time_zone_change</innerclass>
+    <innerclass refid="structbt__mesh__time__zone__status" prot="public">bt_mesh_time_zone_status</innerclass>
+    <innerclass refid="structbt__mesh__time__tai__utc__change" prot="public">bt_mesh_time_tai_utc_change</innerclass>
+    <innerclass refid="structbt__mesh__time__tai__utc__delta__status" prot="public">bt_mesh_time_tai_utc_delta_status</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__mesh__time_1ga1952fe4bd180eb64253acb1f7deb00a4" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_time_role</name>
+        <enumvalue id="group__bt__mesh__time_ga1952fe4bd180eb64253acb1f7deb00a4_1gga1952fe4bd180eb64253acb1f7deb00a4ae160336ff70dafd1f07a9af8331d3ebd" prot="public">
+          <name>BT_MESH_TIME_NONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Does not participate in propagation of time information. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__time_ga1952fe4bd180eb64253acb1f7deb00a4_1gga1952fe4bd180eb64253acb1f7deb00a4a4be06ab4ddcd932520ae569285dfad5b" prot="public">
+          <name>BT_MESH_TIME_AUTHORITY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Publishes Time Status messages but does not process received Time Status messages. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__time_ga1952fe4bd180eb64253acb1f7deb00a4_1gga1952fe4bd180eb64253acb1f7deb00a4a409b8f9683b261858fe7ef923158e3db" prot="public">
+          <name>BT_MESH_TIME_RELAY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Processes received and publishes Time Status messages. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__time_ga1952fe4bd180eb64253acb1f7deb00a4_1gga1952fe4bd180eb64253acb1f7deb00a4afbc49635d6a2c0f73dc2887ebb975cd3" prot="public">
+          <name>BT_MESH_TIME_CLIENT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Does not publish but processes received Time Status messages. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Time Role states </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time.h" line="24" column="1" bodyfile="include/bluetooth/mesh/time.h" bodystart="24" bodyend="35"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Time models. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

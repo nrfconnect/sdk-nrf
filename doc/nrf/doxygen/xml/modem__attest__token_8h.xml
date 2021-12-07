@@ -1,0 +1,463 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="modem__attest__token_8h" kind="file" language="C++">
+    <compoundname>modem_attest_token.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <includedby refid="modem__jwt_8h" local="no">include/modem/modem_jwt.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/modem/modem_attest_token.h</label>
+        <link refid="modem__attest__token_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>include/modem/modem_attest_token.h</label>
+        <link refid="modem__attest__token_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/modem/modem_jwt.h</label>
+        <link refid="modem__jwt_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structnrf__attestation__token" prot="public">nrf_attestation_token</innerclass>
+    <innerclass refid="structnrf__attestation__data" prot="public">nrf_attestation_data</innerclass>
+    <innerclass refid="structnrf__device__uuid" prot="public">nrf_device_uuid</innerclass>
+    <innerclass refid="structnrf__modem__fw__uuid" prot="public">nrf_modem_fw_uuid</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__modem__attest__token_gaf1d4195c63dbc78cd529aadd9e7d82ae_1gaf1d4195c63dbc78cd529aadd9e7d82ae" prot="public" static="no">
+        <name>NRF_UUID_BYTE_SZ</name>
+        <initializer>16</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_attest_token.h" line="52" column="9" bodyfile="include/modem/modem_attest_token.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__modem__attest__token_ga0eedca5b6db979140bc8165902f7963b_1ga0eedca5b6db979140bc8165902f7963b" prot="public" static="no">
+        <name>NRF_DEVICE_UUID_SZ</name>
+        <initializer><ref refid="group__modem__attest__token_gaf1d4195c63dbc78cd529aadd9e7d82ae_1gaf1d4195c63dbc78cd529aadd9e7d82ae" kindref="member">NRF_UUID_BYTE_SZ</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_attest_token.h" line="53" column="9" bodyfile="include/modem/modem_attest_token.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__modem__attest__token_ga23153cc9b15210c4870511e2433696da_1ga23153cc9b15210c4870511e2433696da" prot="public" static="no">
+        <name>NRF_MODEM_FW_UUID_SZ</name>
+        <initializer><ref refid="group__modem__attest__token_gaf1d4195c63dbc78cd529aadd9e7d82ae_1gaf1d4195c63dbc78cd529aadd9e7d82ae" kindref="member">NRF_UUID_BYTE_SZ</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_attest_token.h" line="54" column="9" bodyfile="include/modem/modem_attest_token.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__modem__attest__token_gae794a8071e45d3f8a18cdd6139fbd734_1gae794a8071e45d3f8a18cdd6139fbd734" prot="public" static="no">
+        <name>NRF_ATTEST_NONCE_SZ</name>
+        <initializer>16</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_attest_token.h" line="55" column="9" bodyfile="include/modem/modem_attest_token.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__modem__attest__token_gaecbbce231d1b9a6a3503ea26e2752223_1gaecbbce231d1b9a6a3503ea26e2752223" prot="public" static="no">
+        <name>NRF_UUID_V4_STR_LEN</name>
+        <initializer>((<ref refid="group__modem__attest__token_gaf1d4195c63dbc78cd529aadd9e7d82ae_1gaf1d4195c63dbc78cd529aadd9e7d82ae" kindref="member">NRF_UUID_BYTE_SZ</ref> * 2) + 4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_attest_token.h" line="58" column="9" bodyfile="include/modem/modem_attest_token.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__modem__attest__token_gabd1040b13b2ab420805fbac81f89ef9c_1gabd1040b13b2ab420805fbac81f89ef9c" prot="public" static="no">
+        <name>NRF_DEVICE_UUID_STR_LEN</name>
+        <initializer><ref refid="group__modem__attest__token_gaecbbce231d1b9a6a3503ea26e2752223_1gaecbbce231d1b9a6a3503ea26e2752223" kindref="member">NRF_UUID_V4_STR_LEN</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_attest_token.h" line="59" column="9" bodyfile="include/modem/modem_attest_token.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__modem__attest__token_gad4dee3ed708a721451853e7b6f035163_1gad4dee3ed708a721451853e7b6f035163" prot="public" static="no">
+        <name>NRF_MODEM_FW_UUID_STR_LEN</name>
+        <initializer><ref refid="group__modem__attest__token_gaecbbce231d1b9a6a3503ea26e2752223_1gaecbbce231d1b9a6a3503ea26e2752223" kindref="member">NRF_UUID_V4_STR_LEN</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_attest_token.h" line="60" column="9" bodyfile="include/modem/modem_attest_token.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__modem__attest__token_ga6ecc908d88bf9dadfbf328c520accbbb_1ga6ecc908d88bf9dadfbf328c520accbbb" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_id_srvc_msg_type</name>
+        <enumvalue id="group__modem__attest__token_ga6ecc908d88bf9dadfbf328c520accbbb_1gga6ecc908d88bf9dadfbf328c520accbbbae4d18a6ea77819a3501aa3c8bd14c845" prot="public">
+          <name>NRF_ID_SRVC_MSG_TYPE_INVALID</name>
+          <initializer>= -1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__attest__token_ga6ecc908d88bf9dadfbf328c520accbbb_1gga6ecc908d88bf9dadfbf328c520accbbba40b40189e87af1216d85a6e2f2ec95ab" prot="public">
+          <name>NRF_ID_SRVC_MSG_TYPE_ID_V1</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__attest__token_ga6ecc908d88bf9dadfbf328c520accbbb_1gga6ecc908d88bf9dadfbf328c520accbbba819fba983374630ef759e73cef54c396" prot="public">
+          <name>NRF_ID_SRVC_MSG_TYPE_PROV_RESP_V1</name>
+          <initializer>= 5</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__attest__token_ga6ecc908d88bf9dadfbf328c520accbbb_1gga6ecc908d88bf9dadfbf328c520accbbba174b7dd0f70a526a653321842a1138ac" prot="public">
+          <name>NRF_ID_SRVC_MSG_TYPE_PUB_KEY_V2</name>
+          <initializer>= 8</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__attest__token_ga6ecc908d88bf9dadfbf328c520accbbb_1gga6ecc908d88bf9dadfbf328c520accbbbade9f72d20195c0272cba1a248413bfb6" prot="public">
+          <name>NRF_ID_SRVC_MSG_TYPE_CSR_V2</name>
+          <initializer>= 9</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_attest_token.h" line="37" column="1" bodyfile="include/modem/modem_attest_token.h" bodystart="37" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__modem__attest__token_gac5350fd92a3f5db56d85d0d90425f34d_1gac5350fd92a3f5db56d85d0d90425f34d" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_device_type</name>
+        <enumvalue id="group__modem__attest__token_gac5350fd92a3f5db56d85d0d90425f34d_1ggac5350fd92a3f5db56d85d0d90425f34da15c7f69869f921ac0147b26f0613d883" prot="public">
+          <name>NRF_DEVICE_TYPE_INVALID</name>
+          <initializer>= -1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__attest__token_gac5350fd92a3f5db56d85d0d90425f34d_1ggac5350fd92a3f5db56d85d0d90425f34da764ddb2116ff4d7fe2d4a4f87e45531b" prot="public">
+          <name>NRF_DEVICE_TYPE_9160_SIAA</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__attest__token_gac5350fd92a3f5db56d85d0d90425f34d_1ggac5350fd92a3f5db56d85d0d90425f34da68bc77f41ec5adcf32f544185e8a7b1d" prot="public">
+          <name>NRF_DEVICE_TYPE_9160_SIBA</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__attest__token_gac5350fd92a3f5db56d85d0d90425f34d_1ggac5350fd92a3f5db56d85d0d90425f34daac5328b198724d0618f556e1801bacad" prot="public">
+          <name>NRF_DEVICE_TYPE_9160_SICA</name>
+          <initializer>= 3</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_attest_token.h" line="45" column="1" bodyfile="include/modem/modem_attest_token.h" bodystart="45" bodyend="50"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__modem__attest__token_gadcef1681985230996157f2b9489ca98c_1gadcef1681985230996157f2b9489ca98c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_attest_token_get</definition>
+        <argsstring>(struct nrf_attestation_token *const token)</argsstring>
+        <name>modem_attest_token_get</name>
+        <param>
+          <type>struct <ref refid="structnrf__attestation__token" kindref="compound">nrf_attestation_token</ref> *const</type>
+          <declname>token</declname>
+        </param>
+        <briefdescription>
+<para>Gets the device attestation token from the modem. If successful, the base64url attestation string and base64url COSE string will be stored in the supplied struct. This function will allocate memory for the strings if buffers are not provided by the user. In that case, the user is responsible for freeing the memory by calling <ref refid="group__modem__attest__token_ga9aa172510da6aa66dc676747e326d7ad_1ga9aa172510da6aa66dc676747e326d7ad" kindref="member">modem_attest_token_free</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">token</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to struct containing attestation token strings.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_attest_token.h" line="95" column="5" declfile="include/modem/modem_attest_token.h" declline="95" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__modem__attest__token_ga9aa172510da6aa66dc676747e326d7ad_1ga9aa172510da6aa66dc676747e326d7ad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void modem_attest_token_free</definition>
+        <argsstring>(struct nrf_attestation_token *const token)</argsstring>
+        <name>modem_attest_token_free</name>
+        <param>
+          <type>struct <ref refid="structnrf__attestation__token" kindref="compound">nrf_attestation_token</ref> *const</type>
+          <declname>token</declname>
+        </param>
+        <briefdescription>
+<para>Frees the memory allocated by <ref refid="group__modem__attest__token_gadcef1681985230996157f2b9489ca98c_1gadcef1681985230996157f2b9489ca98c" kindref="member">modem_attest_token_get</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">token</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to attestation token. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_attest_token.h" line="102" column="6" declfile="include/modem/modem_attest_token.h" declline="102" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__modem__attest__token_ga52cabfe26aa03fb426f652c6bff87412_1ga52cabfe26aa03fb426f652c6bff87412" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_attest_token_parse</definition>
+        <argsstring>(struct nrf_attestation_token const *const token_in, struct nrf_attestation_data *const data_out)</argsstring>
+        <name>modem_attest_token_parse</name>
+        <param>
+          <type>struct <ref refid="structnrf__attestation__token" kindref="compound">nrf_attestation_token</ref> const *const</type>
+          <declname>token_in</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnrf__attestation__data" kindref="compound">nrf_attestation_data</ref> *const</type>
+          <declname>data_out</declname>
+        </param>
+        <briefdescription>
+<para>Parses attestation token. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">token_in</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to struct containing attestation token strings. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">data_out</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to struct containing parsed attestation data.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_attest_token.h" line="113" column="5" declfile="include/modem/modem_attest_token.h" declline="113" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__modem__attest__token_ga05ebac76a65fb35feb309735c102a812_1ga05ebac76a65fb35feb309735c102a812" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_attest_token_get_uuids</definition>
+        <argsstring>(struct nrf_device_uuid *dev, struct nrf_modem_fw_uuid *mfw)</argsstring>
+        <name>modem_attest_token_get_uuids</name>
+        <param>
+          <type>struct <ref refid="structnrf__device__uuid" kindref="compound">nrf_device_uuid</ref> *</type>
+          <declname>dev</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnrf__modem__fw__uuid" kindref="compound">nrf_modem_fw_uuid</ref> *</type>
+          <declname>mfw</declname>
+        </param>
+        <briefdescription>
+<para>Gets the device and/or modem firmware UUID from the modem and returns it as a NULL terminated string in the supplied struct(s). </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">dev</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to struct containing device UUID string. Can be NULL if UUID is not wanted. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">mfw</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to struct containing modem fw UUID string. Can be NULL if UUID is not wanted.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_attest_token.h" line="128" column="5" declfile="include/modem/modem_attest_token.h" declline="128" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Modem attestation token and parsing. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MODEM_ATTEST_TOKEN_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_ATTEST_TOKEN_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="structnrf__attestation__token" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__attestation__token" kindref="compound">nrf_attestation_token</ref><sp/>{</highlight></codeline>
+<codeline lineno="27" refid="structnrf__attestation__token_a11c114cd35b7ea6ef45026f1ac43fbcf_1a11c114cd35b7ea6ef45026f1ac43fbcf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structnrf__attestation__token_a11c114cd35b7ea6ef45026f1ac43fbcf_1a11c114cd35b7ea6ef45026f1ac43fbcf" kindref="member">attest</ref>;</highlight></codeline>
+<codeline lineno="29" refid="structnrf__attestation__token_a26ecb12fee91a88481a7fd9342ace157_1a26ecb12fee91a88481a7fd9342ace157" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structnrf__attestation__token_a26ecb12fee91a88481a7fd9342ace157_1a26ecb12fee91a88481a7fd9342ace157" kindref="member">attest_sz</ref>;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="structnrf__attestation__token_aacd3229f8a53a090a493ce0317eca57a_1aacd3229f8a53a090a493ce0317eca57a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structnrf__attestation__token_aacd3229f8a53a090a493ce0317eca57a_1aacd3229f8a53a090a493ce0317eca57a" kindref="member">cose</ref>;</highlight></codeline>
+<codeline lineno="34" refid="structnrf__attestation__token_a840184360f58aba80148c2e66cec96ea_1a840184360f58aba80148c2e66cec96ea" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structnrf__attestation__token_a840184360f58aba80148c2e66cec96ea_1a840184360f58aba80148c2e66cec96ea" kindref="member">cose_sz</ref>;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="group__modem__attest__token_ga6ecc908d88bf9dadfbf328c520accbbb_1ga6ecc908d88bf9dadfbf328c520accbbb" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__modem__attest__token_ga6ecc908d88bf9dadfbf328c520accbbb_1ga6ecc908d88bf9dadfbf328c520accbbb" kindref="member">nrf_id_srvc_msg_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="38" refid="group__modem__attest__token_ga6ecc908d88bf9dadfbf328c520accbbb_1gga6ecc908d88bf9dadfbf328c520accbbbae4d18a6ea77819a3501aa3c8bd14c845" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__attest__token_ga6ecc908d88bf9dadfbf328c520accbbb_1gga6ecc908d88bf9dadfbf328c520accbbbae4d18a6ea77819a3501aa3c8bd14c845" kindref="member">NRF_ID_SRVC_MSG_TYPE_INVALID</ref><sp/>=<sp/>-1,</highlight></codeline>
+<codeline lineno="39" refid="group__modem__attest__token_ga6ecc908d88bf9dadfbf328c520accbbb_1gga6ecc908d88bf9dadfbf328c520accbbba40b40189e87af1216d85a6e2f2ec95ab" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__attest__token_ga6ecc908d88bf9dadfbf328c520accbbb_1gga6ecc908d88bf9dadfbf328c520accbbba40b40189e87af1216d85a6e2f2ec95ab" kindref="member">NRF_ID_SRVC_MSG_TYPE_ID_V1</ref><sp/>=<sp/>1,</highlight></codeline>
+<codeline lineno="40" refid="group__modem__attest__token_ga6ecc908d88bf9dadfbf328c520accbbb_1gga6ecc908d88bf9dadfbf328c520accbbba819fba983374630ef759e73cef54c396" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__attest__token_ga6ecc908d88bf9dadfbf328c520accbbb_1gga6ecc908d88bf9dadfbf328c520accbbba819fba983374630ef759e73cef54c396" kindref="member">NRF_ID_SRVC_MSG_TYPE_PROV_RESP_V1</ref><sp/>=<sp/>5,</highlight></codeline>
+<codeline lineno="41" refid="group__modem__attest__token_ga6ecc908d88bf9dadfbf328c520accbbb_1gga6ecc908d88bf9dadfbf328c520accbbba174b7dd0f70a526a653321842a1138ac" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__attest__token_ga6ecc908d88bf9dadfbf328c520accbbb_1gga6ecc908d88bf9dadfbf328c520accbbba174b7dd0f70a526a653321842a1138ac" kindref="member">NRF_ID_SRVC_MSG_TYPE_PUB_KEY_V2</ref><sp/>=<sp/>8,</highlight></codeline>
+<codeline lineno="42" refid="group__modem__attest__token_ga6ecc908d88bf9dadfbf328c520accbbb_1gga6ecc908d88bf9dadfbf328c520accbbbade9f72d20195c0272cba1a248413bfb6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__attest__token_ga6ecc908d88bf9dadfbf328c520accbbb_1gga6ecc908d88bf9dadfbf328c520accbbbade9f72d20195c0272cba1a248413bfb6" kindref="member">NRF_ID_SRVC_MSG_TYPE_CSR_V2</ref><sp/>=<sp/>9,</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="group__modem__attest__token_gac5350fd92a3f5db56d85d0d90425f34d_1gac5350fd92a3f5db56d85d0d90425f34d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__modem__attest__token_gac5350fd92a3f5db56d85d0d90425f34d_1gac5350fd92a3f5db56d85d0d90425f34d" kindref="member">nrf_device_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="46" refid="group__modem__attest__token_gac5350fd92a3f5db56d85d0d90425f34d_1ggac5350fd92a3f5db56d85d0d90425f34da15c7f69869f921ac0147b26f0613d883" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__attest__token_gac5350fd92a3f5db56d85d0d90425f34d_1ggac5350fd92a3f5db56d85d0d90425f34da15c7f69869f921ac0147b26f0613d883" kindref="member">NRF_DEVICE_TYPE_INVALID</ref><sp/>=<sp/>-1,</highlight></codeline>
+<codeline lineno="47" refid="group__modem__attest__token_gac5350fd92a3f5db56d85d0d90425f34d_1ggac5350fd92a3f5db56d85d0d90425f34da764ddb2116ff4d7fe2d4a4f87e45531b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__attest__token_gac5350fd92a3f5db56d85d0d90425f34d_1ggac5350fd92a3f5db56d85d0d90425f34da764ddb2116ff4d7fe2d4a4f87e45531b" kindref="member">NRF_DEVICE_TYPE_9160_SIAA</ref><sp/>=<sp/>1,</highlight></codeline>
+<codeline lineno="48" refid="group__modem__attest__token_gac5350fd92a3f5db56d85d0d90425f34d_1ggac5350fd92a3f5db56d85d0d90425f34da68bc77f41ec5adcf32f544185e8a7b1d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__attest__token_gac5350fd92a3f5db56d85d0d90425f34d_1ggac5350fd92a3f5db56d85d0d90425f34da68bc77f41ec5adcf32f544185e8a7b1d" kindref="member">NRF_DEVICE_TYPE_9160_SIBA</ref><sp/>=<sp/>2,</highlight></codeline>
+<codeline lineno="49" refid="group__modem__attest__token_gac5350fd92a3f5db56d85d0d90425f34d_1ggac5350fd92a3f5db56d85d0d90425f34daac5328b198724d0618f556e1801bacad" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__attest__token_gac5350fd92a3f5db56d85d0d90425f34d_1ggac5350fd92a3f5db56d85d0d90425f34daac5328b198724d0618f556e1801bacad" kindref="member">NRF_DEVICE_TYPE_9160_SICA</ref><sp/>=<sp/>3,</highlight></codeline>
+<codeline lineno="50"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="group__modem__attest__token_gaf1d4195c63dbc78cd529aadd9e7d82ae_1gaf1d4195c63dbc78cd529aadd9e7d82ae" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_UUID_BYTE_SZ<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>16</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="group__modem__attest__token_ga0eedca5b6db979140bc8165902f7963b_1ga0eedca5b6db979140bc8165902f7963b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_DEVICE_UUID_SZ<sp/><sp/><sp/><sp/><sp/><sp/>NRF_UUID_BYTE_SZ</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="group__modem__attest__token_ga23153cc9b15210c4870511e2433696da_1ga23153cc9b15210c4870511e2433696da" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_MODEM_FW_UUID_SZ<sp/><sp/><sp/><sp/>NRF_UUID_BYTE_SZ</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="group__modem__attest__token_gae794a8071e45d3f8a18cdd6139fbd734_1gae794a8071e45d3f8a18cdd6139fbd734" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_ATTEST_NONCE_SZ<sp/><sp/><sp/><sp/><sp/>16</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>UUID<sp/>v4<sp/>format:<sp/>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58" refid="group__modem__attest__token_gaecbbce231d1b9a6a3503ea26e2752223_1gaecbbce231d1b9a6a3503ea26e2752223" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_UUID_V4_STR_LEN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>((NRF_UUID_BYTE_SZ<sp/>*<sp/>2)<sp/>+<sp/>4)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="group__modem__attest__token_gabd1040b13b2ab420805fbac81f89ef9c_1gabd1040b13b2ab420805fbac81f89ef9c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_DEVICE_UUID_STR_LEN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NRF_UUID_V4_STR_LEN</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="group__modem__attest__token_gad4dee3ed708a721451853e7b6f035163_1gad4dee3ed708a721451853e7b6f035163" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_MODEM_FW_UUID_STR_LEN<sp/><sp/><sp/><sp/><sp/><sp/><sp/>NRF_UUID_V4_STR_LEN</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63" refid="structnrf__attestation__data" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__attestation__data" kindref="compound">nrf_attestation_data</ref><sp/>{</highlight></codeline>
+<codeline lineno="64" refid="structnrf__attestation__data_a0a9e44047192cdc27f4be06bcfdf12ba_1a0a9e44047192cdc27f4be06bcfdf12ba" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__modem__attest__token_ga6ecc908d88bf9dadfbf328c520accbbb_1ga6ecc908d88bf9dadfbf328c520accbbb" kindref="member">nrf_id_srvc_msg_type</ref><sp/><ref refid="structnrf__attestation__data_a0a9e44047192cdc27f4be06bcfdf12ba_1a0a9e44047192cdc27f4be06bcfdf12ba" kindref="member">msg_type</ref>;</highlight></codeline>
+<codeline lineno="65" refid="structnrf__attestation__data_a21e9796d9c546c5b15b09ad46eeec93d_1a21e9796d9c546c5b15b09ad46eeec93d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__modem__attest__token_gac5350fd92a3f5db56d85d0d90425f34d_1gac5350fd92a3f5db56d85d0d90425f34d" kindref="member">nrf_device_type</ref><sp/><ref refid="structnrf__attestation__data_a21e9796d9c546c5b15b09ad46eeec93d_1a21e9796d9c546c5b15b09ad46eeec93d" kindref="member">dev_type</ref>;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="structnrf__attestation__data_af54f9b026c8741d5641e2a857c749597_1af54f9b026c8741d5641e2a857c749597" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structnrf__attestation__data_af54f9b026c8741d5641e2a857c749597_1af54f9b026c8741d5641e2a857c749597" kindref="member">device_uuid</ref>[<ref refid="group__modem__attest__token_ga0eedca5b6db979140bc8165902f7963b_1ga0eedca5b6db979140bc8165902f7963b" kindref="member">NRF_DEVICE_UUID_SZ</ref>];</highlight></codeline>
+<codeline lineno="68" refid="structnrf__attestation__data_af59e741a888b309bf33ae8f0e0b83c77_1af59e741a888b309bf33ae8f0e0b83c77" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structnrf__attestation__data_af59e741a888b309bf33ae8f0e0b83c77_1af59e741a888b309bf33ae8f0e0b83c77" kindref="member">fw_uuid</ref>[<ref refid="group__modem__attest__token_ga23153cc9b15210c4870511e2433696da_1ga23153cc9b15210c4870511e2433696da" kindref="member">NRF_MODEM_FW_UUID_SZ</ref>];</highlight></codeline>
+<codeline lineno="69" refid="structnrf__attestation__data_ade0d2a049fa0f0a47cf60f4ccd0a978f_1ade0d2a049fa0f0a47cf60f4ccd0a978f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structnrf__attestation__data_ade0d2a049fa0f0a47cf60f4ccd0a978f_1ade0d2a049fa0f0a47cf60f4ccd0a978f" kindref="member">nonce</ref>[<ref refid="group__modem__attest__token_gae794a8071e45d3f8a18cdd6139fbd734_1gae794a8071e45d3f8a18cdd6139fbd734" kindref="member">NRF_ATTEST_NONCE_SZ</ref>];</highlight></codeline>
+<codeline lineno="70"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="structnrf__device__uuid" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__device__uuid" kindref="compound">nrf_device_uuid</ref><sp/>{</highlight></codeline>
+<codeline lineno="74" refid="structnrf__device__uuid_a4f3c32b8e4101ef93c0bbe996e0d5ad8_1a4f3c32b8e4101ef93c0bbe996e0d5ad8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structnrf__device__uuid_a4f3c32b8e4101ef93c0bbe996e0d5ad8_1a4f3c32b8e4101ef93c0bbe996e0d5ad8" kindref="member">str</ref>[<ref refid="group__modem__attest__token_gabd1040b13b2ab420805fbac81f89ef9c_1gabd1040b13b2ab420805fbac81f89ef9c" kindref="member">NRF_DEVICE_UUID_STR_LEN</ref><sp/>+<sp/>1];</highlight></codeline>
+<codeline lineno="75"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="structnrf__modem__fw__uuid" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__modem__fw__uuid" kindref="compound">nrf_modem_fw_uuid</ref><sp/>{</highlight></codeline>
+<codeline lineno="79" refid="structnrf__modem__fw__uuid_aea19349c263fd328b0e5860679a04956_1aea19349c263fd328b0e5860679a04956" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structnrf__modem__fw__uuid_aea19349c263fd328b0e5860679a04956_1aea19349c263fd328b0e5860679a04956" kindref="member">str</ref>[<ref refid="group__modem__attest__token_gad4dee3ed708a721451853e7b6f035163_1gad4dee3ed708a721451853e7b6f035163" kindref="member">NRF_MODEM_FW_UUID_STR_LEN</ref><sp/>+<sp/>1];</highlight></codeline>
+<codeline lineno="80"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="group__modem__attest__token_gadcef1681985230996157f2b9489ca98c_1gadcef1681985230996157f2b9489ca98c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__modem__attest__token_gadcef1681985230996157f2b9489ca98c_1gadcef1681985230996157f2b9489ca98c" kindref="member">modem_attest_token_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__attestation__token" kindref="compound">nrf_attestation_token</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>token);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102" refid="group__modem__attest__token_ga9aa172510da6aa66dc676747e326d7ad_1ga9aa172510da6aa66dc676747e326d7ad" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__modem__attest__token_ga9aa172510da6aa66dc676747e326d7ad_1ga9aa172510da6aa66dc676747e326d7ad" kindref="member">modem_attest_token_free</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__attestation__token" kindref="compound">nrf_attestation_token</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>token);</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113" refid="group__modem__attest__token_ga52cabfe26aa03fb426f652c6bff87412_1ga52cabfe26aa03fb426f652c6bff87412" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__modem__attest__token_ga52cabfe26aa03fb426f652c6bff87412_1ga52cabfe26aa03fb426f652c6bff87412" kindref="member">modem_attest_token_parse</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__attestation__token" kindref="compound">nrf_attestation_token</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>token_in,</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__attestation__data" kindref="compound">nrf_attestation_data</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>data_out);</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128" refid="group__modem__attest__token_ga05ebac76a65fb35feb309735c102a812_1ga05ebac76a65fb35feb309735c102a812" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__modem__attest__token_ga05ebac76a65fb35feb309735c102a812_1ga05ebac76a65fb35feb309735c102a812" kindref="member">modem_attest_token_get_uuids</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__device__uuid" kindref="compound">nrf_device_uuid</ref><sp/>*dev,</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__modem__fw__uuid" kindref="compound">nrf_modem_fw_uuid</ref><sp/>*mfw);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>MODEM_ATTEST_TOKEN_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/modem/modem_attest_token.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structdata__module__data__buffers" kind="struct" language="C++" prot="public">
+    <compoundname>data_module_data_buffers</compoundname>
+    <includes refid="data__module__event_8h" local="no">data_module_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structdata__module__data__buffers_a1e10aa6c22c336435236caef76a7b523_1a1e10aa6c22c336435236caef76a7b523" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* data_module_data_buffers::buf</definition>
+        <argsstring></argsstring>
+        <name>buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/data_module_event.h" line="44" column="6" bodyfile="applications/asset_tracker_v2/src/events/data_module_event.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdata__module__data__buffers_a3cf003a8267aced01a26acbcbcf9b804_1a3cf003a8267aced01a26acbcbcf9b804" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t data_module_data_buffers::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/data_module_event.h" line="45" column="8" bodyfile="applications/asset_tracker_v2/src/events/data_module_event.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Struct containing pointer to array of data elements. </para>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/events/data_module_event.h" line="43" column="1" bodyfile="applications/asset_tracker_v2/src/events/data_module_event.h" bodystart="43" bodyend="46"/>
+    <listofallmembers>
+      <member refid="structdata__module__data__buffers_a1e10aa6c22c336435236caef76a7b523_1a1e10aa6c22c336435236caef76a7b523" prot="public" virt="non-virtual"><scope>data_module_data_buffers</scope><name>buf</name></member>
+      <member refid="structdata__module__data__buffers_a3cf003a8267aced01a26acbcbcf9b804_1a3cf003a8267aced01a26acbcbcf9b804" prot="public" virt="non-virtual"><scope>data_module_data_buffers</scope><name>len</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

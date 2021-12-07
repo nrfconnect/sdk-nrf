@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__t4t__ndef__file" kind="group">
+    <compoundname>nfc_t4t_ndef_file</compoundname>
+    <title>NFC NDEF File</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__t4t__ndef__file_1gad5dd425413573531c6c4d496068eada8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_ndef_file_encode</definition>
+        <argsstring>(uint8_t *file_buf, uint32_t *size)</argsstring>
+        <name>nfc_t4t_ndef_file_encode</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>file_buf</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+<para>Encode the NFC NDEF File. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">file_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the NFC NDEF File destination. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the encoded NDEF Message as input. Size of the generated NDEF file as output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/ndef_file.h" line="55" column="5" declfile="include/nfc/t4t/ndef_file.h" declline="55" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__t4t__ndef__file_1ga02958c58818c6e1a5308018910bd4d01" prot="public" static="no">
+        <name>NFC_NDEF_FILE_NLEN_FIELD_SIZE</name>
+        <initializer>2U</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of NLEN field, used to encode NDEF message for Type 4 Tag. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/ndef_file.h" line="25" column="9" bodyfile="include/nfc/t4t/ndef_file.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t4t__ndef__file_1ga2746844ecbcd3d34ba21e2642c0c17d2" prot="public" static="no">
+        <name>nfc_t4t_ndef_file_msg_size_get</name>
+        <param><defname>_file_buf_size</defname></param>
+        <initializer>	((_file_buf_size) - <ref refid="group__nfc__t4t__ndef__file_ga02958c58818c6e1a5308018910bd4d01_1ga02958c58818c6e1a5308018910bd4d01" kindref="member">NFC_NDEF_FILE_NLEN_FIELD_SIZE</ref>)</initializer>
+        <briefdescription>
+<para>Get the available size for the NDEF message into the NDEF File. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_file_buf_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the NDEF File buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Maximum size of the NDEF Message which can be encoded into the buffer. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/ndef_file.h" line="34" column="9" bodyfile="include/nfc/t4t/ndef_file.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t4t__ndef__file_1gab7c5cc1afebdb5b7c095060107020c79" prot="public" static="no">
+        <name>nfc_t4t_ndef_file_msg_get</name>
+        <param><defname>_file_buf</defname></param>
+        <initializer>	((uint8_t *)((_file_buf) + <ref refid="group__nfc__t4t__ndef__file_ga02958c58818c6e1a5308018910bd4d01_1ga02958c58818c6e1a5308018910bd4d01" kindref="member">NFC_NDEF_FILE_NLEN_FIELD_SIZE</ref>))</initializer>
+        <briefdescription>
+<para>Get the NDEF Message from NFC NDEF File. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_file_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to buffer which stores the NDEF file.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Pointer to the NDEF Message. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/ndef_file.h" line="43" column="9" bodyfile="include/nfc/t4t/ndef_file.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Generation of NFC NDEF File for the NFC Type 4 Tag. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

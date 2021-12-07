@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structmodem__module__static__modem__data" kind="struct" language="C++" prot="public">
+    <compoundname>modem_module_static_modem_data</compoundname>
+    <includes refid="modem__module__event_8h" local="no">modem_module_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmodem__module__static__modem__data_a96b8e485db5f04e69d67fb96354a7fb8_1a96b8e485db5f04e69d67fb96354a7fb8" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t modem_module_static_modem_data::timestamp</definition>
+        <argsstring></argsstring>
+        <name>timestamp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="93" column="9" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__static__modem__data_a722886744ace53a832450250c2d4c821_1a722886744ace53a832450250c2d4c821" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t modem_module_static_modem_data::band</definition>
+        <argsstring></argsstring>
+        <name>band</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="94" column="10" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__static__modem__data_a788606271f703a5bb748e12940bcb879_1a788606271f703a5bb748e12940bcb879" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t modem_module_static_modem_data::nw_mode_gps</definition>
+        <argsstring></argsstring>
+        <name>nw_mode_gps</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="95" column="10" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__static__modem__data_ac4674de0e1485bc4adbd13b4e7f293f1_1ac4674de0e1485bc4adbd13b4e7f293f1" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t modem_module_static_modem_data::nw_mode_ltem</definition>
+        <argsstring></argsstring>
+        <name>nw_mode_ltem</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="96" column="10" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__static__modem__data_a8caac7b7b1af341b065223ad865969e5_1a8caac7b7b1af341b065223ad865969e5" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t modem_module_static_modem_data::nw_mode_nbiot</definition>
+        <argsstring></argsstring>
+        <name>nw_mode_nbiot</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="97" column="10" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__static__modem__data_af653ebbd838cb770c470bed68d0a6e08_1af653ebbd838cb770c470bed68d0a6e08" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char modem_module_static_modem_data::iccid[23]</definition>
+        <argsstring>[23]</argsstring>
+        <name>iccid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="98" column="6" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__static__modem__data_a892da5f15ce8df2f8df76d600955da4f_1a892da5f15ce8df2f8df76d600955da4f" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char modem_module_static_modem_data::app_version[CONFIG_ASSET_TRACKER_V2_APP_VERSION_MAX_LEN]</definition>
+        <argsstring>[CONFIG_ASSET_TRACKER_V2_APP_VERSION_MAX_LEN]</argsstring>
+        <name>app_version</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="99" column="6" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__static__modem__data_ae08f2d2e9513da02598451dd48e994b3_1ae08f2d2e9513da02598451dd48e994b3" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char modem_module_static_modem_data::board_version[30]</definition>
+        <argsstring>[30]</argsstring>
+        <name>board_version</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="100" column="6" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__static__modem__data_a548418fc4b52d2a8f3b5f27894274b5a_1a548418fc4b52d2a8f3b5f27894274b5a" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char modem_module_static_modem_data::modem_fw[40]</definition>
+        <argsstring>[40]</argsstring>
+        <name>modem_fw</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="101" column="6" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="92" column="1" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="92" bodyend="102"/>
+    <listofallmembers>
+      <member refid="structmodem__module__static__modem__data_a892da5f15ce8df2f8df76d600955da4f_1a892da5f15ce8df2f8df76d600955da4f" prot="public" virt="non-virtual"><scope>modem_module_static_modem_data</scope><name>app_version</name></member>
+      <member refid="structmodem__module__static__modem__data_a722886744ace53a832450250c2d4c821_1a722886744ace53a832450250c2d4c821" prot="public" virt="non-virtual"><scope>modem_module_static_modem_data</scope><name>band</name></member>
+      <member refid="structmodem__module__static__modem__data_ae08f2d2e9513da02598451dd48e994b3_1ae08f2d2e9513da02598451dd48e994b3" prot="public" virt="non-virtual"><scope>modem_module_static_modem_data</scope><name>board_version</name></member>
+      <member refid="structmodem__module__static__modem__data_af653ebbd838cb770c470bed68d0a6e08_1af653ebbd838cb770c470bed68d0a6e08" prot="public" virt="non-virtual"><scope>modem_module_static_modem_data</scope><name>iccid</name></member>
+      <member refid="structmodem__module__static__modem__data_a548418fc4b52d2a8f3b5f27894274b5a_1a548418fc4b52d2a8f3b5f27894274b5a" prot="public" virt="non-virtual"><scope>modem_module_static_modem_data</scope><name>modem_fw</name></member>
+      <member refid="structmodem__module__static__modem__data_a788606271f703a5bb748e12940bcb879_1a788606271f703a5bb748e12940bcb879" prot="public" virt="non-virtual"><scope>modem_module_static_modem_data</scope><name>nw_mode_gps</name></member>
+      <member refid="structmodem__module__static__modem__data_ac4674de0e1485bc4adbd13b4e7f293f1_1ac4674de0e1485bc4adbd13b4e7f293f1" prot="public" virt="non-virtual"><scope>modem_module_static_modem_data</scope><name>nw_mode_ltem</name></member>
+      <member refid="structmodem__module__static__modem__data_a8caac7b7b1af341b065223ad865969e5_1a8caac7b7b1af341b065223ad865969e5" prot="public" virt="non-virtual"><scope>modem_module_static_modem_data</scope><name>nw_mode_nbiot</name></member>
+      <member refid="structmodem__module__static__modem__data_a96b8e485db5f04e69d67fb96354a7fb8_1a96b8e485db5f04e69d67fb96354a7fb8" prot="public" virt="non-virtual"><scope>modem_module_static_modem_data</scope><name>timestamp</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

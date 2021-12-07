@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_9c48bc33daa2c96c03ada53c4d368684" kind="dir">
+    <compoundname>applications/serial_lte_modem/src/gnss</compoundname>
+    <innerfile refid="slm__at__gnss_8h">slm_at_gnss.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/serial_lte_modem/src/gnss/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__dfu__smp__rsp__state" kind="struct" language="C++" prot="public">
+    <compoundname>bt_dfu_smp_rsp_state</compoundname>
+    <includes refid="dfu__smp_8h" local="no">dfu_smp.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__dfu__smp__rsp__state_a9e9d3254f0f03c61dedccc3120e42b36_1a9e9d3254f0f03c61dedccc3120e42b36" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t bt_dfu_smp_rsp_state::total_size</definition>
+        <argsstring></argsstring>
+        <name>total_size</name>
+        <briefdescription>
+<para>Total size of the response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Total expected size of the response. This value is retrieved from the first part of the response, where the SMP header is located. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="80" column="8" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__dfu__smp__rsp__state_ab664dd366c38b72903624a47a75cb8df_1ab664dd366c38b72903624a47a75cb8df" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t bt_dfu_smp_rsp_state::offset</definition>
+        <argsstring></argsstring>
+        <name>offset</name>
+        <briefdescription>
+<para>Current data chunk offset. <linebreak/>
+ </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="82" column="8" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__dfu__smp__rsp__state_ac183ff5aed7a43a2aa36aa1688b1f31d_1ac183ff5aed7a43a2aa36aa1688b1f31d" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t bt_dfu_smp_rsp_state::chunk_size</definition>
+        <argsstring></argsstring>
+        <name>chunk_size</name>
+        <briefdescription>
+<para>The size of the data chunk. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="84" column="8" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__dfu__smp__rsp__state_aea9b468e08d717f9dca22d9c8820167e_1aea9b468e08d717f9dca22d9c8820167e" prot="public" static="no" mutable="no">
+        <type>const uint8_t *</type>
+        <definition>const uint8_t* bt_dfu_smp_rsp_state::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+<para>Pointer to the data. <linebreak/>
+ </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="86" column="15" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Current response state. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/dfu_smp.h" line="73" column="1" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="73" bodyend="87"/>
+    <listofallmembers>
+      <member refid="structbt__dfu__smp__rsp__state_ac183ff5aed7a43a2aa36aa1688b1f31d_1ac183ff5aed7a43a2aa36aa1688b1f31d" prot="public" virt="non-virtual"><scope>bt_dfu_smp_rsp_state</scope><name>chunk_size</name></member>
+      <member refid="structbt__dfu__smp__rsp__state_aea9b468e08d717f9dca22d9c8820167e_1aea9b468e08d717f9dca22d9c8820167e" prot="public" virt="non-virtual"><scope>bt_dfu_smp_rsp_state</scope><name>data</name></member>
+      <member refid="structbt__dfu__smp__rsp__state_ab664dd366c38b72903624a47a75cb8df_1ab664dd366c38b72903624a47a75cb8df" prot="public" virt="non-virtual"><scope>bt_dfu_smp_rsp_state</scope><name>offset</name></member>
+      <member refid="structbt__dfu__smp__rsp__state_a9e9d3254f0f03c61dedccc3120e42b36_1a9e9d3254f0f03c61dedccc3120e42b36" prot="public" virt="non-virtual"><scope>bt_dfu_smp_rsp_state</scope><name>total_size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

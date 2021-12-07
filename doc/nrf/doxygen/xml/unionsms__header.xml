@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="unionsms__header" kind="union" language="C++" prot="public">
+    <compoundname>sms_header</compoundname>
+    <includes refid="sms_8h" local="no">sms.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="unionsms__header_a0b6b77a712c3f1a252c727d388eca1ce_1a0b6b77a712c3f1a252c727d388eca1ce" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structsms__deliver__header" kindref="compound">sms_deliver_header</ref></type>
+        <definition>struct sms_deliver_header sms_header::deliver</definition>
+        <argsstring></argsstring>
+        <name>deliver</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="130" column="25" bodyfile="include/modem/sms.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>SMS header. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This can easily be extended to support additional message types. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>sms_address</label>
+        <link refid="structsms__address"/>
+      </node>
+      <node id="2">
+        <label>sms_deliver_header</label>
+        <link refid="structsms__deliver__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>time</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>originating_address</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>app_port</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>concatenated</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>sms_header</label>
+        <link refid="unionsms__header"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>deliver</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>sms_time</label>
+        <link refid="structsms__time"/>
+      </node>
+      <node id="5">
+        <label>sms_udh_app_port</label>
+        <link refid="structsms__udh__app__port"/>
+      </node>
+      <node id="6">
+        <label>sms_udh_concat</label>
+        <link refid="structsms__udh__concat"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/modem/sms.h" line="129" column="1" bodyfile="include/modem/sms.h" bodystart="129" bodyend="131"/>
+    <listofallmembers>
+      <member refid="unionsms__header_a0b6b77a712c3f1a252c727d388eca1ce_1a0b6b77a712c3f1a252c727d388eca1ce" prot="public" virt="non-virtual"><scope>sms_header</scope><name>deliver</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,316 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__hue__srv__handlers" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_hue_srv_handlers</compoundname>
+    <includes refid="light__hue__srv_8h" local="no">light_hue_srv.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__hue__srv__handlers_a9afa3fea1b9485585a4f8628393de87e_1a9afa3fea1b9485585a4f8628393de87e" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_light_hue_srv_handlers::set) (struct bt_mesh_light_hue_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_hue *set, struct bt_mesh_light_hue_status *rsp)</definition>
+        <argsstring>)(struct bt_mesh_light_hue_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_hue *set, struct bt_mesh_light_hue_status *rsp)</argsstring>
+        <name>set</name>
+        <briefdescription>
+<para>Set the Hue state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When a set message is received, the model publishes a status message, with the response set to <computeroutput>rsp</computeroutput>. When an acknowledged set message is received, the model also sends a response back to a client. If a state change is non-instantaneous, for example when <ref refid="group__bt__mesh__model__types_gaa845685eb265d1294b17bb80fbde4996_1gaa845685eb265d1294b17bb80fbde4996" kindref="member">bt_mesh_model_transition_time</ref> returns a nonzero value, the application is responsible for publishing a value of the Hue state at the end of the transition.</para>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server to set the Hue state of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters of the state change. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response structure to be filled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hue_srv.h" line="73" column="1" bodyfile="include/bluetooth/mesh/light_hue_srv.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__hue__srv__handlers_a7634a2517b195e170cc9e24ccf15446a_1a7634a2517b195e170cc9e24ccf15446a" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_light_hue_srv_handlers::delta_set) (struct bt_mesh_light_hue_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_hue_delta *delta_set, struct bt_mesh_light_hue_status *rsp)</definition>
+        <argsstring>)(struct bt_mesh_light_hue_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_hue_delta *delta_set, struct bt_mesh_light_hue_status *rsp)</argsstring>
+        <name>delta_set</name>
+        <briefdescription>
+<para>Change the hue relative to its current value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If <computeroutput>delta_set::new_transaction</computeroutput> is false, the state transition should use the same start point as the previous delta_set message, effectively overriding the previous message. If it&apos;s true, the level transition should start from the current level, stopping any ongoing transitions.</para>
+<para>When reaching the border values for the state, the value should wrap around. While the server is executing a move command, it should report its <computeroutput>target</computeroutput> value as <ref refid="group__bt__mesh__light__hsl_ga90792694de7a358fd1efa17abd86ee5e_1ga90792694de7a358fd1efa17abd86ee5e" kindref="member">BT_MESH_LIGHT_HSL_MIN</ref> or <ref refid="group__bt__mesh__light__hsl_ga8d238b6f6d899eea4a6a36a86fd13438_1ga8d238b6f6d899eea4a6a36a86fd13438" kindref="member">BT_MESH_LIGHT_HSL_MAX</ref>, depending on whether it&apos;s moving up or down.</para>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Hue server. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL if the callback was not triggered by a mesh message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">delta_set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters of the state change. Note that the transition will always be non-NULL. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response structure to be filled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hue_srv.h" line="102" column="1" bodyfile="include/bluetooth/mesh/light_hue_srv.h" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__hue__srv__handlers_a57e4a47f1025283837d9154774698186_1a57e4a47f1025283837d9154774698186" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_light_hue_srv_handlers::move_set) (struct bt_mesh_light_hue_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_hue_move *move, struct bt_mesh_light_hue_status *rsp)</definition>
+        <argsstring>)(struct bt_mesh_light_hue_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_hue_move *move, struct bt_mesh_light_hue_status *rsp)</argsstring>
+        <name>move_set</name>
+        <briefdescription>
+<para>Move the hue continuously at a certain rate. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The hue state should move <computeroutput>move_set::delta</computeroutput> units for every <computeroutput>move_set::transition::time</computeroutput> milliseconds. For instance, if delta is 5 and the transition time is 100ms, the state should move at a rate of 50 per second.</para>
+<para>When reaching the border values for the state, the value should wrap around. While the server is executing a move command, it should report its <computeroutput>target</computeroutput> value as <ref refid="group__bt__mesh__light__hsl_ga90792694de7a358fd1efa17abd86ee5e_1ga90792694de7a358fd1efa17abd86ee5e" kindref="member">BT_MESH_LIGHT_HSL_MIN</ref> or <ref refid="group__bt__mesh__light__hsl_ga8d238b6f6d899eea4a6a36a86fd13438_1ga8d238b6f6d899eea4a6a36a86fd13438" kindref="member">BT_MESH_LIGHT_HSL_MAX</ref>, depending on whether it&apos;s moving up or down.</para>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server to set the Hue state of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">move</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters of the state change. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response structure to be filled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hue_srv.h" line="128" column="1" bodyfile="include/bluetooth/mesh/light_hue_srv.h" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__hue__srv__handlers_abef3cca0a1dde98737f745305a7e8ee0_1abef3cca0a1dde98737f745305a7e8ee0" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_light_hue_srv_handlers::get) (struct bt_mesh_light_hue_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_light_hue_status *rsp)</definition>
+        <argsstring>)(struct bt_mesh_light_hue_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_light_hue_status *rsp)</argsstring>
+        <name>get</name>
+        <briefdescription>
+<para>Get the Hue state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server to get the CTL state of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response structure to be filled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hue_srv.h" line="141" column="1" bodyfile="include/bluetooth/mesh/light_hue_srv.h" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__hue__srv__handlers_a1897d5a65617b4fa4a1afbeb570bda00_1a1897d5a65617b4fa4a1afbeb570bda00" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_light_hue_srv_handlers::default_update) (struct bt_mesh_light_hue_srv *srv, struct bt_mesh_msg_ctx *ctx, uint16_t old_default, uint16_t new_default)</definition>
+        <argsstring>)(struct bt_mesh_light_hue_srv *srv, struct bt_mesh_msg_ctx *ctx, uint16_t old_default, uint16_t new_default)</argsstring>
+        <name>default_update</name>
+        <briefdescription>
+<para>The default hue has been updated. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Hue server. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL if the callback was not triggered by a mesh message </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">old_default</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Default value before the update. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">new_default</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Default value after the update. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hue_srv.h" line="153" column="1" bodyfile="include/bluetooth/mesh/light_hue_srv.h" bodystart="153" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__hue__srv__handlers_a6a69a767a3f96574d1253c4967be8f0b_1a6a69a767a3f96574d1253c4967be8f0b" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_light_hue_srv_handlers::range_update) (struct bt_mesh_light_hue_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_hsl_range *old_range, const struct bt_mesh_light_hsl_range *new_range)</definition>
+        <argsstring>)(struct bt_mesh_light_hue_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_hsl_range *old_range, const struct bt_mesh_light_hsl_range *new_range)</argsstring>
+        <name>range_update</name>
+        <briefdescription>
+<para>The valid hue range has been updated. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Hue server. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL if the callback was not triggered by a mesh message </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">old_range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Range before the update. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">new_range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Range after the update. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hue_srv.h" line="166" column="1" bodyfile="include/bluetooth/mesh/light_hue_srv.h" bodystart="166" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>HSL Hue Server state access handlers. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/light_hue_srv.h" line="57" column="1" bodyfile="include/bluetooth/mesh/light_hue_srv.h" bodystart="57" bodyend="171"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__hue__srv__handlers_a1897d5a65617b4fa4a1afbeb570bda00_1a1897d5a65617b4fa4a1afbeb570bda00" prot="public" virt="non-virtual"><scope>bt_mesh_light_hue_srv_handlers</scope><name>default_update</name></member>
+      <member refid="structbt__mesh__light__hue__srv__handlers_a7634a2517b195e170cc9e24ccf15446a_1a7634a2517b195e170cc9e24ccf15446a" prot="public" virt="non-virtual"><scope>bt_mesh_light_hue_srv_handlers</scope><name>delta_set</name></member>
+      <member refid="structbt__mesh__light__hue__srv__handlers_abef3cca0a1dde98737f745305a7e8ee0_1abef3cca0a1dde98737f745305a7e8ee0" prot="public" virt="non-virtual"><scope>bt_mesh_light_hue_srv_handlers</scope><name>get</name></member>
+      <member refid="structbt__mesh__light__hue__srv__handlers_a57e4a47f1025283837d9154774698186_1a57e4a47f1025283837d9154774698186" prot="public" virt="non-virtual"><scope>bt_mesh_light_hue_srv_handlers</scope><name>move_set</name></member>
+      <member refid="structbt__mesh__light__hue__srv__handlers_a6a69a767a3f96574d1253c4967be8f0b_1a6a69a767a3f96574d1253c4967be8f0b" prot="public" virt="non-virtual"><scope>bt_mesh_light_hue_srv_handlers</scope><name>range_update</name></member>
+      <member refid="structbt__mesh__light__hue__srv__handlers_a9afa3fea1b9485585a4f8628393de87e_1a9afa3fea1b9485585a4f8628393de87e" prot="public" virt="non-virtual"><scope>bt_mesh_light_hue_srv_handlers</scope><name>set</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

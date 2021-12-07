@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="nrf__desktop_2configuration_2common_2ble__adv__def_8h" kind="file" language="C++">
+    <compoundname>ble_adv_def.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <includes local="no">bluetooth/bluetooth.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/common/ble_adv_def.h</label>
+        <link refid="nrf__desktop_2configuration_2common_2ble__adv__def_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/bluetooth.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="nrf__desktop_2configuration_2common_2ble__adv__def_8h_a413d5e9fe5891e03f40efbfde11b35f1_1a413d5e9fe5891e03f40efbfde11b35f1" prot="public" static="no" mutable="no">
+        <type>const struct @45</type>
+        <definition>const struct @45 ble_adv_def_include_once</definition>
+        <argsstring></argsstring>
+        <name>ble_adv_def_include_once</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/ble_adv_def.h" line="18" column="38"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf__desktop_2configuration_2common_2ble__adv__def_8h_a513bfadea082fa5537c1d3ba82af3238_1a513bfadea082fa5537c1d3ba82af3238" prot="public" static="yes" mutable="no">
+        <type>const struct bt_data</type>
+        <definition>const struct bt_data ad_unbonded[]</definition>
+        <argsstring>[]</argsstring>
+        <name>ad_unbonded</name>
+        <initializer>= {
+	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
+	BT_DATA_BYTES(BT_DATA_UUID16_ALL,
+
+
+
+
+
+
+	),
+
+
+
+
+
+
+
+
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/ble_adv_def.h" line="20" column="27" bodyfile="applications/nrf_desktop/configuration/common/ble_adv_def.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf__desktop_2configuration_2common_2ble__adv__def_8h_a470356caca887feefa8856ae5c94392c_1a470356caca887feefa8856ae5c94392c" prot="public" static="yes" mutable="no">
+        <type>const struct bt_data</type>
+        <definition>const struct bt_data ad_bonded[]</definition>
+        <argsstring>[]</argsstring>
+        <name>ad_bonded</name>
+        <initializer>= {
+	BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_NO_BREDR),
+	BT_DATA_BYTES(BT_DATA_UUID16_ALL,
+
+
+
+
+
+
+	),
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/ble_adv_def.h" line="40" column="27" bodyfile="applications/nrf_desktop/configuration/common/ble_adv_def.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf__desktop_2configuration_2common_2ble__adv__def_8h_ac776101884c489a373ee71098062097f_1ac776101884c489a373ee71098062097f" prot="public" static="yes" mutable="no">
+        <type>const struct bt_data</type>
+        <definition>const struct bt_data sd[]</definition>
+        <argsstring>[]</argsstring>
+        <name>sd</name>
+        <initializer>= {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/ble_adv_def.h" line="55" column="27" bodyfile="applications/nrf_desktop/configuration/common/ble_adv_def.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/bluetooth.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>configuration<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>from<sp/>ble_adv<sp/>module<sp/>and<sp/>holds</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*<sp/>information<sp/>about<sp/>advertising<sp/>packets.</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>structure<sp/>enforces<sp/>the<sp/>header<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>in<sp/>the<sp/>build.</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*<sp/>Violating<sp/>this<sp/>requirement<sp/>triggers<sp/>a<sp/>multiple<sp/>definition<sp/>error<sp/>at<sp/>link<sp/>time.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="nrf__desktop_2configuration_2common_2ble__adv__def_8h_a413d5e9fe5891e03f40efbfde11b35f1_1a413d5e9fe5891e03f40efbfde11b35f1" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{}<sp/><ref refid="machine__learning_2configuration_2common_2ble__adv__def_8h_ab038b8836cbb426795f2ff517e7a9d24_1ab038b8836cbb426795f2ff517e7a9d24" kindref="member">ble_adv_def_include_once</ref>;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20" refid="nrf__desktop_2configuration_2common_2ble__adv__def_8h_a513bfadea082fa5537c1d3ba82af3238_1a513bfadea082fa5537c1d3ba82af3238" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_data<sp/><ref refid="nrf__desktop_2configuration_2common_2ble__adv__def_8h_a513bfadea082fa5537c1d3ba82af3238_1a513bfadea082fa5537c1d3ba82af3238" kindref="member">ad_unbonded</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_DATA_BYTES(BT_DATA_FLAGS,<sp/>(BT_LE_AD_GENERAL<sp/>|<sp/>BT_LE_AD_NO_BREDR)),</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_DATA_BYTES(BT_DATA_UUID16_ALL,</highlight></codeline>
+<codeline lineno="23"><highlight class="normal">#</highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>CONFIG_DESKTOP_HIDS_ENABLE</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x12,<sp/>0x18,<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>HID<sp/>Service<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal">#endif</highlight></codeline>
+<codeline lineno="26"><highlight class="normal">#</highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>CONFIG_DESKTOP_BAS_ENABLE</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x0f,<sp/>0x18,<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Battery<sp/>Service<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal">#endif</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>),</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>CONFIG_CAF_BLE_ADV_SWIFT_PAIR</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_DATA_BYTES(BT_DATA_MANUFACTURER_DATA,</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x06,<sp/>0x00,<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Microsoft<sp/>Vendor<sp/>ID<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x03,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Microsoft<sp/>Beacon<sp/>ID<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x00,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Microsoft<sp/>Beacon<sp/>Sub<sp/>Scenario<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x80),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Reserved<sp/>RSSI<sp/>Byte<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="nrf__desktop_2configuration_2common_2ble__adv__def_8h_a470356caca887feefa8856ae5c94392c_1a470356caca887feefa8856ae5c94392c" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_data<sp/><ref refid="nrf__desktop_2configuration_2common_2ble__adv__def_8h_a470356caca887feefa8856ae5c94392c_1a470356caca887feefa8856ae5c94392c" kindref="member">ad_bonded</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_DATA_BYTES(BT_DATA_FLAGS,<sp/>BT_LE_AD_NO_BREDR),</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_DATA_BYTES(BT_DATA_UUID16_ALL,</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">#</highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>CONFIG_DESKTOP_HIDS_ENABLE</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x12,<sp/>0x18,<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>HID<sp/>Service<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal">#endif</highlight></codeline>
+<codeline lineno="46"><highlight class="normal">#</highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>CONFIG_DESKTOP_BAS_ENABLE</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x0f,<sp/>0x18,<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Battery<sp/>Service<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal">#endif</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>),</highlight></codeline>
+<codeline lineno="50"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>When<sp/>using<sp/>BT_LE_ADV_OPT_USE_NAME,<sp/>device<sp/>name<sp/>is<sp/>added<sp/>to<sp/>scan<sp/>response</highlight></codeline>
+<codeline lineno="53"><highlight class="comment"><sp/>*<sp/>data<sp/>by<sp/>controller.</highlight></codeline>
+<codeline lineno="54"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="nrf__desktop_2configuration_2common_2ble__adv__def_8h_ac776101884c489a373ee71098062097f_1ac776101884c489a373ee71098062097f" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_data<sp/><ref refid="nrf__desktop_2configuration_2common_2ble__adv__def_8h_ac776101884c489a373ee71098062097f_1ac776101884c489a373ee71098062097f" kindref="member">sd</ref>[]<sp/>=<sp/>{};</highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/common/ble_adv_def.h"/>
+  </compounddef>
+</doxygen>

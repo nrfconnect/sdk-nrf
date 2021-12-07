@@ -1,0 +1,241 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlte__lc__periodic__search__pattern" kind="struct" language="C++" prot="public">
+    <compoundname>lte_lc_periodic_search_pattern</compoundname>
+    <includes refid="lte__lc_8h" local="no">lte_lc.h</includes>
+      <sectiondef kind="public-type">
+      <memberdef kind="enum" id="structlte__lc__periodic__search__pattern_aa72424954b852b243f1a5ce1479a0296_1aa72424954b852b243f1a5ce1479a0296" prot="public" static="no" strong="no">
+        <type></type>
+        <name>lte_lc_periodic_search_pattern_type</name>
+        <enumvalue id="structlte__lc__periodic__search__pattern_aa72424954b852b243f1a5ce1479a0296_1aa72424954b852b243f1a5ce1479a0296a39c106837fb10513562bd6b06f07c192" prot="public">
+          <name>LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="structlte__lc__periodic__search__pattern_aa72424954b852b243f1a5ce1479a0296_1aa72424954b852b243f1a5ce1479a0296a5c180ece523ca9eb17bd3836ac80454e" prot="public">
+          <name>LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="632" column="1" bodyfile="include/modem/lte_lc.h" bodystart="632" bodyend="635"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlte__lc__periodic__search__pattern_adf94d1d534262fd61363d8ef42f3898c_1adf94d1d534262fd61363d8ef42f3898c" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="structlte__lc__periodic__search__pattern_aa72424954b852b243f1a5ce1479a0296_1aa72424954b852b243f1a5ce1479a0296" kindref="member">lte_lc_periodic_search_pattern::lte_lc_periodic_search_pattern_type</ref></type>
+        <definition>enum lte_lc_periodic_search_pattern::lte_lc_periodic_search_pattern_type lte_lc_periodic_search_pattern::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="635" column="6"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__periodic__search__pattern_a92bff4d155b2e90f4c3ee8b4a04f26b4_1a92bff4d155b2e90f4c3ee8b4a04f26b4" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t lte_lc_periodic_search_pattern::initial_sleep</definition>
+        <argsstring></argsstring>
+        <name>initial_sleep</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sleep time in seconds between searches in the beginning of the range. Allowed values: 0 - 65535 seconds. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="644" column="10" bodyfile="include/modem/lte_lc.h" bodystart="644" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__periodic__search__pattern_a8d2a5d6a142371178e04338470dca928_1a8d2a5d6a142371178e04338470dca928" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t lte_lc_periodic_search_pattern::final_sleep</definition>
+        <argsstring></argsstring>
+        <name>final_sleep</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sleep time in seconds between searches in the end of the range. Allowed values: 0 - 65535 seconds. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="649" column="10" bodyfile="include/modem/lte_lc.h" bodystart="649" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__periodic__search__pattern_a17743ca0afbdc661cff2d9911b5c33ad_1a17743ca0afbdc661cff2d9911b5c33ad" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t lte_lc_periodic_search_pattern::time_to_final_sleep</definition>
+        <argsstring></argsstring>
+        <name>time_to_final_sleep</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Optional target time in minutes for achieving the <computeroutput>final_sleep</computeroutput> value. This can be used to determine angle factor between the initial and final sleep times. The timeline for the <computeroutput>time_to_final_sleep</computeroutput> starts from the beginning of the search pattern. If given, the value cannot be greater than the value of the <computeroutput>pattern_end_point</computeroutput> value in the same search pattern. If not given, the angle factor is calculated by using the <computeroutput>pattern_end_point</computeroutput> value so that the <computeroutput>final_sleep</computeroutput> value is reached at the point of <computeroutput>pattern_end_point</computeroutput>.</para>
+<para>Allowed values: -1: Not used 0 - 1080 minutes </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="665" column="9" bodyfile="include/modem/lte_lc.h" bodystart="665" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__periodic__search__pattern_a8c53259cee5eabcd5e92f29523edbe98_1a8c53259cee5eabcd5e92f29523edbe98" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t lte_lc_periodic_search_pattern::pattern_end_point</definition>
+        <argsstring></argsstring>
+        <name>pattern_end_point</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Time in minutes that must elapse before entering the next search pattern. The timeline for <computeroutput>pattern_end_point</computeroutput> starts from the beginning of the limited service starting point, which is the moment when the first sleep period started.</para>
+<para>Allowed values: 0 - 1080 minutes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="674" column="9" bodyfile="include/modem/lte_lc.h" bodystart="674" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__periodic__search__pattern_a234e4c12687c7802c25c871c8a7cee22_1a234e4c12687c7802c25c871c8a7cee22" prot="public" static="no" mutable="no">
+        <type>struct lte_lc_periodic_search_pattern::@147::lte_lc_periodic_search_range_cfg</type>
+        <definition>struct lte_lc_periodic_search_pattern::@147::lte_lc_periodic_search_range_cfg lte_lc_periodic_search_pattern::range</definition>
+        <argsstring></argsstring>
+        <name>range</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="675" column="7"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__periodic__search__pattern_a0cc3ed0cf019fd15f581d7f6a1ec970e_1a0cc3ed0cf019fd15f581d7f6a1ec970e" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int lte_lc_periodic_search_pattern::val_1</definition>
+        <argsstring></argsstring>
+        <name>val_1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Mandatory when LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE is used. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="691" column="5" bodyfile="include/modem/lte_lc.h" bodystart="691" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__periodic__search__pattern_ab09e5f7070eb647fb0281c07faabf1a1_1ab09e5f7070eb647fb0281c07faabf1a1" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int lte_lc_periodic_search_pattern::val_2</definition>
+        <argsstring></argsstring>
+        <name>val_2</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Optional sleep time. Must be set to -1 if not used. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="696" column="5" bodyfile="include/modem/lte_lc.h" bodystart="696" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__periodic__search__pattern_a2d5f89ddad75d2976932c81263d75832_1a2d5f89ddad75d2976932c81263d75832" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int lte_lc_periodic_search_pattern::val_3</definition>
+        <argsstring></argsstring>
+        <name>val_3</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Optional sleep time. <computeroutput>val_2</computeroutput> must be configured for this parameter to have effect. Must be set to -1 if not used. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="702" column="5" bodyfile="include/modem/lte_lc.h" bodystart="702" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__periodic__search__pattern_a3e63866cc1eb1bc47be73e184c06edb1_1a3e63866cc1eb1bc47be73e184c06edb1" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int lte_lc_periodic_search_pattern::val_4</definition>
+        <argsstring></argsstring>
+        <name>val_4</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Optional sleep time. <computeroutput>val_3</computeroutput> must be configured for this parameter to have effect. Must be set to -1 if not used. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="708" column="5" bodyfile="include/modem/lte_lc.h" bodystart="708" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__periodic__search__pattern_ad9405419030129103e333c55e5cf905f_1ad9405419030129103e333c55e5cf905f" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int lte_lc_periodic_search_pattern::val_5</definition>
+        <argsstring></argsstring>
+        <name>val_5</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Optional sleep time. <computeroutput>val_4</computeroutput> must be configured for this parameter to have effect. Must be set to -1 if not used. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="714" column="5" bodyfile="include/modem/lte_lc.h" bodystart="714" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__periodic__search__pattern_ae53122063e54c84ab4068575f008e0d6_1ae53122063e54c84ab4068575f008e0d6" prot="public" static="no" mutable="no">
+        <type>struct lte_lc_periodic_search_pattern::@147::lte_lc_periodic_search_table_cfg</type>
+        <definition>struct lte_lc_periodic_search_pattern::@147::lte_lc_periodic_search_table_cfg lte_lc_periodic_search_pattern::table</definition>
+        <argsstring></argsstring>
+        <name>table</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="715" column="7"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__periodic__search__pattern_aba9911f0e399b6ead74aa57878a5bd8c_1aba9911f0e399b6ead74aa57878a5bd8c" prot="public" static="no" mutable="no">
+        <type>union lte_lc_periodic_search_pattern::@147</type>
+        <definition>union lte_lc_periodic_search_pattern::@147 lte_lc_periodic_search_pattern::@148</definition>
+        <argsstring></argsstring>
+        <name>@148</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="716" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Periodic search pattern. A search pattern may be of either &apos;range&apos; or &apos;table&apos; type. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/modem/lte_lc.h" line="631" column="1" bodyfile="include/modem/lte_lc.h" bodystart="631" bodyend="717"/>
+    <listofallmembers>
+      <member refid="structlte__lc__periodic__search__pattern_a8d2a5d6a142371178e04338470dca928_1a8d2a5d6a142371178e04338470dca928" prot="public" virt="non-virtual"><scope>lte_lc_periodic_search_pattern</scope><name>final_sleep</name></member>
+      <member refid="structlte__lc__periodic__search__pattern_a92bff4d155b2e90f4c3ee8b4a04f26b4_1a92bff4d155b2e90f4c3ee8b4a04f26b4" prot="public" virt="non-virtual"><scope>lte_lc_periodic_search_pattern</scope><name>initial_sleep</name></member>
+      <member refid="structlte__lc__periodic__search__pattern_aa72424954b852b243f1a5ce1479a0296_1aa72424954b852b243f1a5ce1479a0296a39c106837fb10513562bd6b06f07c192" prot="public" virt="non-virtual"><scope>lte_lc_periodic_search_pattern</scope><name>LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE</name></member>
+      <member refid="structlte__lc__periodic__search__pattern_aa72424954b852b243f1a5ce1479a0296_1aa72424954b852b243f1a5ce1479a0296a5c180ece523ca9eb17bd3836ac80454e" prot="public" virt="non-virtual"><scope>lte_lc_periodic_search_pattern</scope><name>LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE</name></member>
+      <member refid="structlte__lc__periodic__search__pattern_aa72424954b852b243f1a5ce1479a0296_1aa72424954b852b243f1a5ce1479a0296" prot="public" virt="non-virtual"><scope>lte_lc_periodic_search_pattern</scope><name>lte_lc_periodic_search_pattern_type</name></member>
+      <member refid="structlte__lc__periodic__search__pattern_a8c53259cee5eabcd5e92f29523edbe98_1a8c53259cee5eabcd5e92f29523edbe98" prot="public" virt="non-virtual"><scope>lte_lc_periodic_search_pattern</scope><name>pattern_end_point</name></member>
+      <member refid="structlte__lc__periodic__search__pattern_a234e4c12687c7802c25c871c8a7cee22_1a234e4c12687c7802c25c871c8a7cee22" prot="public" virt="non-virtual"><scope>lte_lc_periodic_search_pattern</scope><name>range</name></member>
+      <member refid="structlte__lc__periodic__search__pattern_ae53122063e54c84ab4068575f008e0d6_1ae53122063e54c84ab4068575f008e0d6" prot="public" virt="non-virtual"><scope>lte_lc_periodic_search_pattern</scope><name>table</name></member>
+      <member refid="structlte__lc__periodic__search__pattern_a17743ca0afbdc661cff2d9911b5c33ad_1a17743ca0afbdc661cff2d9911b5c33ad" prot="public" virt="non-virtual"><scope>lte_lc_periodic_search_pattern</scope><name>time_to_final_sleep</name></member>
+      <member refid="structlte__lc__periodic__search__pattern_adf94d1d534262fd61363d8ef42f3898c_1adf94d1d534262fd61363d8ef42f3898c" prot="public" virt="non-virtual"><scope>lte_lc_periodic_search_pattern</scope><name>type</name></member>
+      <member refid="structlte__lc__periodic__search__pattern_a0cc3ed0cf019fd15f581d7f6a1ec970e_1a0cc3ed0cf019fd15f581d7f6a1ec970e" prot="public" virt="non-virtual"><scope>lte_lc_periodic_search_pattern</scope><name>val_1</name></member>
+      <member refid="structlte__lc__periodic__search__pattern_ab09e5f7070eb647fb0281c07faabf1a1_1ab09e5f7070eb647fb0281c07faabf1a1" prot="public" virt="non-virtual"><scope>lte_lc_periodic_search_pattern</scope><name>val_2</name></member>
+      <member refid="structlte__lc__periodic__search__pattern_a2d5f89ddad75d2976932c81263d75832_1a2d5f89ddad75d2976932c81263d75832" prot="public" virt="non-virtual"><scope>lte_lc_periodic_search_pattern</scope><name>val_3</name></member>
+      <member refid="structlte__lc__periodic__search__pattern_a3e63866cc1eb1bc47be73e184c06edb1_1a3e63866cc1eb1bc47be73e184c06edb1" prot="public" virt="non-virtual"><scope>lte_lc_periodic_search_pattern</scope><name>val_4</name></member>
+      <member refid="structlte__lc__periodic__search__pattern_ad9405419030129103e333c55e5cf905f_1ad9405419030129103e333c55e5cf905f" prot="public" virt="non-virtual"><scope>lte_lc_periodic_search_pattern</scope><name>val_5</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

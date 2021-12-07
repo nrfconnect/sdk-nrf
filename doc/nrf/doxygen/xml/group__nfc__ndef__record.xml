@@ -1,0 +1,671 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__ndef__record" kind="group">
+    <compoundname>nfc_ndef_record</compoundname>
+    <title>Custom NDEF records</title>
+    <innerclass refid="structnfc__ndef__record__desc" prot="public">nfc_ndef_record_desc</innerclass>
+    <innerclass refid="structnfc__ndef__bin__payload__desc" prot="public">nfc_ndef_bin_payload_desc</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nfc__ndef__record_1ga2091295307fa8161219648a88df172a8" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nfc_ndef_record_tnf</name>
+        <enumvalue id="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1gga2091295307fa8161219648a88df172a8a9c9fab478288c0e5e258810700e6587b" prot="public">
+          <name>TNF_EMPTY</name>
+          <initializer>= 0x00</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The value indicates that there is no type or payload associated with this record. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1gga2091295307fa8161219648a88df172a8ace6c9ee74852eebbdb1421e85c4e0041" prot="public">
+          <name>TNF_WELL_KNOWN</name>
+          <initializer>= 0x01</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>NFC Forum well-known type [NFC RTD]. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1gga2091295307fa8161219648a88df172a8a9d676957a80c77376f83d75a0bf65c9a" prot="public">
+          <name>TNF_MEDIA_TYPE</name>
+          <initializer>= 0x02</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Media-type as defined in RFC 2046 [RFC 2046]. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1gga2091295307fa8161219648a88df172a8a5208d444121ba6ad53188f6f800206ef" prot="public">
+          <name>TNF_ABSOLUTE_URI</name>
+          <initializer>= 0x03</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Absolute URI as defined in RFC 3986 [RFC 3986]. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1gga2091295307fa8161219648a88df172a8af0c50a342dab3f03c386ab05f93e3920" prot="public">
+          <name>TNF_EXTERNAL_TYPE</name>
+          <initializer>= 0x04</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>NFC Forum external type [NFC RTD]. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1gga2091295307fa8161219648a88df172a8a041c63e1db6a345367a6de594deb035e" prot="public">
+          <name>TNF_UNKNOWN_TYPE</name>
+          <initializer>= 0x05</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The value indicates that there is no type associated with this record. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1gga2091295307fa8161219648a88df172a8aa2a5fd421cf5d772fc4fc6af2495ceeb" prot="public">
+          <name>TNF_UNCHANGED</name>
+          <initializer>= 0x06</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The value is used for the record chunks used in chunked payload. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1gga2091295307fa8161219648a88df172a8a598ebd78cd6a8f15dd2b4c34beed3285" prot="public">
+          <name>TNF_RESERVED</name>
+          <initializer>= 0x07</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The value is reserved for future use. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Type Name Format (TNF) Field Values. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Values to specify the TNF of a record. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="65" column="1" bodyfile="include/nfc/ndef/record.h" bodystart="65" bodyend="86"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__nfc__ndef__record_1ga75fb331c1fa9fea07d96d9cbe0112dcb" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nfc_ndef_record_location</name>
+        <enumvalue id="group__nfc__ndef__record_ga75fb331c1fa9fea07d96d9cbe0112dcb_1gga75fb331c1fa9fea07d96d9cbe0112dcba53d16688bd0e9895fc03cab5ba001b2d" prot="public">
+          <name>NDEF_FIRST_RECORD</name>
+          <initializer>= 0x80</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>First record. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__ndef__record_ga75fb331c1fa9fea07d96d9cbe0112dcb_1gga75fb331c1fa9fea07d96d9cbe0112dcbad56f488e8dd34241202825a074db8664" prot="public">
+          <name>NDEF_MIDDLE_RECORD</name>
+          <initializer>= 0x00</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Middle record. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__ndef__record_ga75fb331c1fa9fea07d96d9cbe0112dcb_1gga75fb331c1fa9fea07d96d9cbe0112dcbafc232dec0a475e3fddbca83b87489632" prot="public">
+          <name>NDEF_LAST_RECORD</name>
+          <initializer>= 0x40</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Last record. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__ndef__record_ga75fb331c1fa9fea07d96d9cbe0112dcb_1gga75fb331c1fa9fea07d96d9cbe0112dcba30180651d275209d9f2cfb03f02584b9" prot="public">
+          <name>NDEF_LONE_RECORD</name>
+          <initializer>= 0xC0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Only one record in the message. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Record position within the NDEF message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Values to specify the location of a record within the NDEF message. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="115" column="1" bodyfile="include/nfc/ndef/record.h" bodystart="115" bodyend="120"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__nfc__ndef__record_1ga1ccae5f0330b1b9b31af6efd37a8aeb8" prot="public" static="no">
+        <type>int(*</type>
+        <definition>typedef int(* payload_constructor_t) (void *payload_descriptor, uint8_t *buffer, uint32_t *len)</definition>
+        <argsstring>)(void *payload_descriptor, uint8_t *buffer, uint32_t *len)</argsstring>
+        <name>payload_constructor_t</name>
+        <briefdescription>
+<para>Payload constructor type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A payload constructor is a function for constructing the payload of an NDEF record.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>payload_descriptor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the input data for the constructor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the payload destination. If NULL, function will calculate the expected size of the record payload. * </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the available memory to write as input. Size of the generated record payload as output. The implementation must check if the payload will fit in the provided buffer. This must be checked by the caller function.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="57" column="9" bodyfile="include/nfc/ndef/record.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__ndef__record_1gad36d1f1b46035dfc7ccaf56aaaf93ba2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_record_encode</definition>
+        <argsstring>(struct nfc_ndef_record_desc const *ndef_record_desc, enum nfc_ndef_record_location const record_location, uint8_t *record_buffer, uint32_t *record_len)</argsstring>
+        <name>nfc_ndef_record_encode</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> const *</type>
+          <declname>ndef_record_desc</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__nfc__ndef__record_ga75fb331c1fa9fea07d96d9cbe0112dcb_1ga75fb331c1fa9fea07d96d9cbe0112dcb" kindref="member">nfc_ndef_record_location</ref> const</type>
+          <declname>record_location</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>record_buffer</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>record_len</declname>
+        </param>
+        <briefdescription>
+<para>Encode an NDEF record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function encodes an NDEF record according to the provided record descriptor.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ndef_record_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the record descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>record_location</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Location of the record within the NDEF message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>record_buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the record destination. If NULL, function will calculate the expected size of the record. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>record_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the available memory for the record as input. Size of the generated record as output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="259" column="5" declfile="include/nfc/ndef/record.h" declline="259" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__record_1ga5e431ee7ca37f0447e87bf1c3b9e8551" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_bin_payload_memcopy</definition>
+        <argsstring>(struct nfc_ndef_bin_payload_desc *payload_descriptor, uint8_t *buffer, uint32_t *len)</argsstring>
+        <name>nfc_ndef_bin_payload_memcopy</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__bin__payload__desc" kindref="compound">nfc_ndef_bin_payload_desc</ref> *</type>
+          <declname>payload_descriptor</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Construct the payload for an NFC NDEF record from binary data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function copies data from a binary buffer to the payload field of the NFC NDEF record.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>payload_descriptor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the descriptor of the binary data location and size. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the payload destination. If NULL, function will calculate the expected size of the record payload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the available memory for the payload as input. Size of the copied payload as output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="280" column="5" declfile="include/nfc/ndef/record.h" declline="280" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__ndef__record_1ga85da5b6d20a70fc85e1dfb6411125806" prot="public" static="no">
+        <name>NDEF_RECORD_IL_MASK</name>
+        <initializer>0x08</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Mask of the ID field presence bit in the flags byte of an NDEF record. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="27" column="9" bodyfile="include/nfc/ndef/record.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__record_1gac6c6cf0a4cb3fe58100813d1a8882ae7" prot="public" static="no">
+        <name>NDEF_RECORD_TNF_MASK</name>
+        <initializer>0x07</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Mask of the TNF value field in the first byte of an NDEF record. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="29" column="9" bodyfile="include/nfc/ndef/record.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__record_1ga91fb4f493cf756160ba48b69b1cbce8a" prot="public" static="no">
+        <name>NDEF_RECORD_SR_MASK</name>
+        <initializer>0x10</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Mask of the SR flag. If set, this flag indicates that the PAYLOAD_LENGTH field has a size of 1 byte. Otherwise, PAYLOAD_LENGTH has 4 bytes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="33" column="9" bodyfile="include/nfc/ndef/record.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__record_1ga6ac8bca72eed1e6fe27105fa9f678f13" prot="public" static="no">
+        <name>NDEF_RECORD_PAYLOAD_LEN_LONG_SIZE</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of the Payload Length field in a long NDEF record. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="35" column="9" bodyfile="include/nfc/ndef/record.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__record_1ga5d60bf1cdad42a605290bc12e90b53c4" prot="public" static="no">
+        <name>NDEF_RECORD_PAYLOAD_LEN_SHORT_SIZE</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of the Payload Length field in a short NDEF record. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="37" column="9" bodyfile="include/nfc/ndef/record.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__record_1gaccbbdb3ee12c2950b0300f7c8bafe09c" prot="public" static="no">
+        <name>NDEF_RECORD_ID_LEN_SIZE</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="38" column="9" bodyfile="include/nfc/ndef/record.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__record_1ga2d466aa0f04d1d0505609107c6efd9c8" prot="public" static="no">
+        <name>NDEF_RECORD_LOCATION_MASK</name>
+        <initializer>(<ref refid="group__nfc__ndef__record_ga75fb331c1fa9fea07d96d9cbe0112dcb_1gga75fb331c1fa9fea07d96d9cbe0112dcba30180651d275209d9f2cfb03f02584b9" kindref="member">NDEF_LONE_RECORD</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Mask of the Record Location bits in the NDEF record&apos;s flags byte. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="123" column="9" bodyfile="include/nfc/ndef/record.h" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__record_1ga981ac373f5af603b36c7ab2c488785a6" prot="public" static="no">
+        <name>NFC_NDEF_GENERIC_RECORD_DESC_DEF</name>
+        <param><defname>name</defname></param>
+        <param><defname>tnf_arg</defname></param>
+        <param><defname>id_arg</defname></param>
+        <param><defname>id_len</defname></param>
+        <param><defname>type_arg</defname></param>
+        <param><defname>type_len</defname></param>
+        <param><defname>payload_constructor_arg</defname></param>
+        <param><defname>payload_descriptor_arg</defname></param>
+        <initializer>	struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> name##_ndef_generic_record_desc =	    \
+	{								    \
+		.tnf = tnf_arg,						    \
+		.id_length = id_len,					    \
+		.id = id_arg,						    \
+		.type_length = type_len,				    \
+		.type = type_arg,					    \
+		.payload_constructor  =					    \
+			(<ref refid="group__nfc__ndef__record_ga1ccae5f0330b1b9b31af6efd37a8aeb8_1ga1ccae5f0330b1b9b31af6efd37a8aeb8" kindref="member">payload_constructor_t</ref>)payload_constructor_arg,	    \
+		.payload_descriptor = (void *) payload_descriptor_arg	    \
+	}</initializer>
+        <briefdescription>
+<para>Macro for creating and initializing an NFC NDEF record descriptor for a generic record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates and initializes an instance of type <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref>.</para>
+<para>Use the macro <ref refid="group__nfc__ndef__record_ga854ffeb62045f58c823adedf3f0ed615_1ga854ffeb62045f58c823adedf3f0ed615" kindref="member">NFC_NDEF_GENERIC_RECORD_DESC</ref> to access the NDEF record descriptor instance.</para>
+<para><simplesect kind="note"><para>The record descriptor is declared as automatic variable, which implies that the NDEF record encoding must be done in the same variable scope.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the created descriptor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>tnf_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type Name Format (TNF) value for the record. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>id_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the ID string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>id_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the ID string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>type_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the type string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>type_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the type string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>payload_constructor_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the payload constructor function. The constructor must be of type <ref refid="group__nfc__ndef__record_ga1ccae5f0330b1b9b31af6efd37a8aeb8_1ga1ccae5f0330b1b9b31af6efd37a8aeb8" kindref="member">payload_constructor_t</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>payload_descriptor_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data for the payload constructor. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="164" column="9" bodyfile="include/nfc/ndef/record.h" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__record_1ga854ffeb62045f58c823adedf3f0ed615" prot="public" static="no">
+        <name>NFC_NDEF_GENERIC_RECORD_DESC</name>
+        <param><defname>name</defname></param>
+        <initializer>(name##_ndef_generic_record_desc)</initializer>
+        <briefdescription>
+<para>Macro for accessing the NFC NDEF record descriptor instance that you created with <ref refid="group__nfc__ndef__record_ga981ac373f5af603b36c7ab2c488785a6_1ga981ac373f5af603b36c7ab2c488785a6" kindref="member">NFC_NDEF_GENERIC_RECORD_DESC_DEF</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="180" column="9" bodyfile="include/nfc/ndef/record.h" bodystart="180" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__record_1ga1ba7c60df67955d44ad65e8b50581d02" prot="public" static="no">
+        <name>NFC_NDEF_RECORD_BIN_DATA_DEF</name>
+        <param><defname>name</defname></param>
+        <param><defname>tnf_arg</defname></param>
+        <param><defname>id_arg</defname></param>
+        <param><defname>id_len</defname></param>
+        <param><defname>type_arg</defname></param>
+        <param><defname>type_len</defname></param>
+        <param><defname>payload_arg</defname></param>
+        <param><defname>payload_len</defname></param>
+        <initializer>	struct <ref refid="structnfc__ndef__bin__payload__desc" kindref="compound">nfc_ndef_bin_payload_desc</ref> name##_nfc_ndef_bin_payload_desc = \
+	{								    \
+		.payload  = payload_arg,				    \
+		.payload_length = payload_len				    \
+	};								    \
+									    \
+	struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> name##_nfc_ndef_bin_record_desc =	    \
+	{								    \
+		.tnf = tnf_arg,						    \
+		.id_length = id_len,					    \
+		.id = id_arg,						    \
+		.type_length = type_len,				    \
+		.type = type_arg,					    \
+		.payload_constructor  =					    \
+		    (<ref refid="group__nfc__ndef__record_ga1ccae5f0330b1b9b31af6efd37a8aeb8_1ga1ccae5f0330b1b9b31af6efd37a8aeb8" kindref="member">payload_constructor_t</ref>) <ref refid="group__nfc__ndef__record_ga5e431ee7ca37f0447e87bf1c3b9e8551_1ga5e431ee7ca37f0447e87bf1c3b9e8551" kindref="member">nfc_ndef_bin_payload_memcopy</ref>,   \
+		.payload_descriptor =					    \
+		    (void *) &amp;name##_nfc_ndef_bin_payload_desc		    \
+	}</initializer>
+        <briefdescription>
+<para>Macro for creating and initializing an NFC NDEF record descriptor for a record with binary payload. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates and initializes an instance of type <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> and a binary data descriptor containing the payload data.</para>
+<para>Use the macro <ref refid="group__nfc__ndef__record_ga9f7681ee4be16d8f3711d81e1068875d_1ga9f7681ee4be16d8f3711d81e1068875d" kindref="member">NFC_NDEF_RECORD_BIN_DATA</ref> to access the NDEF record descriptor instance.</para>
+<para><simplesect kind="note"><para>The record descriptor is declared as automatic variable, which implies that the NDEF record encoding must be done in the same variable scope.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the created descriptor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>tnf_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type Name Format (TNF) value for the record. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>id_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the ID string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>id_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the ID string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>type_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the type string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>type_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the type string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>payload_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the payload data that will be copied to the payload field. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>payload_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the payload. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="212" column="9" bodyfile="include/nfc/ndef/record.h" bodystart="205" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__record_1ga9f7681ee4be16d8f3711d81e1068875d" prot="public" static="no">
+        <name>NFC_NDEF_RECORD_BIN_DATA</name>
+        <param><defname>name</defname></param>
+        <initializer>(name##_nfc_ndef_bin_record_desc)</initializer>
+        <briefdescription>
+<para>Macro for accessing the NFC NDEF record descriptor instance that you created with <ref refid="group__nfc__ndef__record_ga1ba7c60df67955d44ad65e8b50581d02_1ga1ba7c60df67955d44ad65e8b50581d02" kindref="member">NFC_NDEF_RECORD_BIN_DATA_DEF</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="235" column="9" bodyfile="include/nfc/ndef/record.h" bodystart="235" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__record_1gad72964ba783c31065f42d82af2838cf3" prot="public" static="no">
+        <name>NFC_NDEF_BIN_PAYLOAD_DESC</name>
+        <param><defname>name</defname></param>
+        <initializer>(name##_nfc_ndef_bin_payload_desc)</initializer>
+        <briefdescription>
+<para>Macro for accessing the binary data descriptor that contains the payload of the record that you created with <ref refid="group__nfc__ndef__record_ga1ba7c60df67955d44ad65e8b50581d02_1ga1ba7c60df67955d44ad65e8b50581d02" kindref="member">NFC_NDEF_RECORD_BIN_DATA_DEF</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="241" column="9" bodyfile="include/nfc/ndef/record.h" bodystart="241" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Generation of NFC NDEF records for NFC messages. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

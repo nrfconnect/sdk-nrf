@@ -1,0 +1,468 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="light__ctrl_8h" kind="file" language="C++">
+    <compoundname>light_ctrl.h</compoundname>
+    <includes refid="properties_8h" local="no">bluetooth/mesh/properties.h</includes>
+    <includedby refid="light__ctrl__cli_8h" local="no">include/bluetooth/mesh/light_ctrl_cli.h</includedby>
+    <includedby refid="light__ctrl__srv_8h" local="no">include/bluetooth/mesh/light_ctrl_srv.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/bluetooth/mesh/light_ctrl.h</label>
+        <link refid="light__ctrl_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bluetooth/mesh/properties.h</label>
+        <link refid="properties_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/mesh.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>include/bluetooth/mesh/light_ctrl.h</label>
+        <link refid="light__ctrl_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/bluetooth/mesh/light_ctrl_cli.h</label>
+        <link refid="light__ctrl__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>include/bluetooth/mesh/light_ctrl_srv.h</label>
+        <link refid="light__ctrl__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>include/bluetooth/mesh/models.h</label>
+        <link refid="models_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>include/bluetooth/mesh/vnd/silvair_enocean_srv.h</label>
+        <link refid="silvair__enocean__srv_8h"/>
+      </node>
+    </invincdepgraph>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1ga10519c425d86f6f27012839001e43c7f" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_light_ctrl_prop</name>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa980bf6d45018109e0675407ff065946e" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_ON</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_AMB_LUXLEVEL_ON</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Target ambient illuminance in the On state. <verbatim>    - Unit: Lux
+    - Encoding: 24 bit unsigned scalar (Resolution: 0.01 lx)
+    - Range: 0 to 167772.13
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fad7ca48a46303bb8b9a78b6dbc42f86b0" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_PROLONG</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_AMB_LUXLEVEL_PROLONG</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Target ambient illuminance in the Prolong state. <verbatim>    - Unit: Lux
+    - Encoding: 24 bit unsigned scalar (Resolution: 0.01 lx)
+    - Range: 0 to 167772.13
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa142b1094f5dc6354b2dfee2a31fa2e61" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_STANDBY</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_AMB_LUXLEVEL_STANDBY</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Target ambient illuminance in the Standby state. <verbatim>    - Unit: Lux
+    - Encoding: 24 bit unsigned scalar (Resolution: 0.01 lx)
+    - Range: 0 to 167772.13
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7faa08c2cafb4a9001d5e57145cfceb1743" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_ON</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_LIGHTNESS_ON</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Lightness in the On state. <verbatim>    - Unit: Unitless
+    - Encoding: 16 bit unsigned scalar (Resolution: 1)
+    - Range: 0 to 65535
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa78e15def142d1e34183605009c6d16ea" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_PROLONG</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_LIGHTNESS_PROLONG</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Lightness in the Prolong state. <verbatim>    - Unit: Unitless
+    - Encoding: 16 bit unsigned scalar (Resolution: 1)
+    - Range: 0 to 65535
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa36fb08324319fa1911b0fbbc599ac678" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_STANDBY</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_LIGHTNESS_STANDBY</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Lightness in the Standby state. <verbatim>    - Unit: Unitless
+    - Encoding: 16 bit unsigned scalar (Resolution: 1)
+    - Range: 0 to 65535
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa8e61ff34c8057518e71f77077280293f" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_REG_ACCURACY</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_REG_ACCURACY</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Regulator Accuracy. <verbatim>    - Unit: Percent
+    - Encoding: 8 bit unsigned scalar (Resolution: 0.5 %)
+    - Range: 0 to 100.0
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa8c455f414921809a029ffad78d9db7b0" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_PROLONG</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_TIME_FADE</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Fade time for fading to the Prolong state. <verbatim>    - Unit: Seconds
+    - Encoding: 24 bit unsigned scalar (Resolution: 1 ms)
+    - Range: 0 to 16777.214
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa7223696f5f532e2792c5a5f2dbd7dead" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_ON</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_TIME_FADE_ON</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Fade time for fading to the On state. <verbatim>    - Unit: Seconds
+    - Encoding: 24 bit unsigned scalar (Resolution: 1 ms)
+    - Range: 0 to 16777.214
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fafe256d0611fbde4ba547630675908bd3" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_STANDBY_AUTO</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_TIME_FADE_STANDBY_AUTO</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Fade time for fading to the Standby state (auto mode). <verbatim>    - Unit: Seconds
+    - Encoding: 24 bit unsigned scalar (Resolution: 1 ms)
+    - Range: 0 to 16777.214
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa9e268a9e6c7a4267080cfc8d29111aa6" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_STANDBY_MANUAL</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_TIME_FADE_STANDBY_MANUAL</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Fade time for fading to the Standby state (manual mode). <verbatim>    - Unit: Seconds
+    - Encoding: 24 bit unsigned scalar (Resolution: 1 ms)
+    - Range: 0 to 16777.214
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fabdfc1a624c1dede7f51c4afc2028edfc" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_TIME_OCCUPANCY_DELAY</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_TIME_OCCUPANCY_DELAY</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Delay from Occupancy sensor reports until the light turns on. <verbatim>    - Unit: Seconds
+    - Encoding: 24 bit unsigned scalar (Resolution: 1 ms)
+    - Range: 0 to 16777.214
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fadad1f604f9be4d185632448b4294efc3" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_TIME_PROLONG</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_TIME_PROLONG</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Time to stay in the Prolong state. <verbatim>    *  - Unit: Seconds
+    - Encoding: 24 bit unsigned scalar (Resolution: 1 ms)
+    - Range: 0 to 16777.214
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7faf94be21f54cf77b06b1b81df4e0ba4dd" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_PROP_TIME_ON</name>
+          <initializer>=
+		BT_MESH_PROP_ID_LIGHT_CTRL_TIME_RUN_ON</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Time to stay in the On state. <verbatim>    - Unit: Seconds
+    - Encoding: 24 bit unsigned scalar (Resolution: 1 ms)
+    - Range: 0 to 16777.214
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light Lightness Control properties </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl.h" line="23" column="1" bodyfile="include/bluetooth/mesh/light_ctrl.h" bodystart="23" bodyend="149"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__mesh__light__ctrl_ga8a2366f5d561f74e2d58e4010081adeb_1ga8a2366f5d561f74e2d58e4010081adeb" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_light_ctrl_coeff</name>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga8a2366f5d561f74e2d58e4010081adeb_1gga8a2366f5d561f74e2d58e4010081adeba8aa156390fd39c0772f66debfc4fb9af" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_COEFF_KID</name>
+          <initializer>= BT_MESH_PROP_ID_LIGHT_CTRL_REG_KID</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Regulator downwards integral coeffient (Kid). <verbatim>    - Unit: Unitless
+    - Encoding: 32 bit floating point.
+    - Range: 0 to 1000.0
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga8a2366f5d561f74e2d58e4010081adeb_1gga8a2366f5d561f74e2d58e4010081adeba7d7604c35d1033ee737106e73fdc6f7f" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_COEFF_KIU</name>
+          <initializer>= BT_MESH_PROP_ID_LIGHT_CTRL_REG_KIU</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Regulator upwards integral coeffient (Kiu). <verbatim>    - Unit: Unitless
+    - Encoding: 32 bit floating point.
+    - Range: 0 to 1000.0
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga8a2366f5d561f74e2d58e4010081adeb_1gga8a2366f5d561f74e2d58e4010081adeba58508f4fff075a4a7a70d6115f877862" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_COEFF_KPD</name>
+          <initializer>= BT_MESH_PROP_ID_LIGHT_CTRL_REG_KPD</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Regulator downwards proportional coeffient (Kpd). <verbatim>    - Unit: Unitless
+    - Encoding: 32 bit floating point.
+    - Range: 0 to 1000.0
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl_ga8a2366f5d561f74e2d58e4010081adeb_1gga8a2366f5d561f74e2d58e4010081adebaa004096a0216ad9c8cbf3d1eb268b967" prot="public">
+          <name>BT_MESH_LIGHT_CTRL_COEFF_KPU</name>
+          <initializer>= BT_MESH_PROP_ID_LIGHT_CTRL_REG_KPU</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Regulator upwards proportional coeffient (Kpu). <verbatim>    - Unit: Unitless
+    - Encoding: 32 bit floating point.
+    - Range: 0 to 1000.0
+</verbatim> </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light Control Regulator Coefficients </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl.h" line="152" column="1" bodyfile="include/bluetooth/mesh/light_ctrl.h" bodystart="152" bodyend="184"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_MESH_LIGHT_CTRL_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="properties_8h" kindref="compound">bluetooth/mesh/properties.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1ga10519c425d86f6f27012839001e43c7f" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1ga10519c425d86f6f27012839001e43c7f" kindref="member">bt_mesh_light_ctrl_prop</ref><sp/>{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa980bf6d45018109e0675407ff065946e" kindref="member">BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_ON</ref><sp/>=</highlight></codeline>
+<codeline lineno="31" refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa980bf6d45018109e0675407ff065946e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__property__ids_ga7119b455b742f533b0fc5bc116da7a75_1ga7119b455b742f533b0fc5bc116da7a75" kindref="member">BT_MESH_PROP_ID_LIGHT_CTRL_AMB_LUXLEVEL_ON</ref>,</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fad7ca48a46303bb8b9a78b6dbc42f86b0" kindref="member">BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_PROLONG</ref><sp/>=</highlight></codeline>
+<codeline lineno="40" refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fad7ca48a46303bb8b9a78b6dbc42f86b0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__property__ids_gae113de6c8869bd084fe2f03600b54acb_1gae113de6c8869bd084fe2f03600b54acb" kindref="member">BT_MESH_PROP_ID_LIGHT_CTRL_AMB_LUXLEVEL_PROLONG</ref>,</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa142b1094f5dc6354b2dfee2a31fa2e61" kindref="member">BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_STANDBY</ref><sp/>=</highlight></codeline>
+<codeline lineno="49" refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa142b1094f5dc6354b2dfee2a31fa2e61" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__property__ids_ga0fb962e4e51c954d0de1fdb50d77c1bf_1ga0fb962e4e51c954d0de1fdb50d77c1bf" kindref="member">BT_MESH_PROP_ID_LIGHT_CTRL_AMB_LUXLEVEL_STANDBY</ref>,</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7faa08c2cafb4a9001d5e57145cfceb1743" kindref="member">BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_ON</ref><sp/>=</highlight></codeline>
+<codeline lineno="58" refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7faa08c2cafb4a9001d5e57145cfceb1743" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__property__ids_ga5838a643e684f9b1d41c9f5cf1c9ad54_1ga5838a643e684f9b1d41c9f5cf1c9ad54" kindref="member">BT_MESH_PROP_ID_LIGHT_CTRL_LIGHTNESS_ON</ref>,</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa78e15def142d1e34183605009c6d16ea" kindref="member">BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_PROLONG</ref><sp/>=</highlight></codeline>
+<codeline lineno="67" refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa78e15def142d1e34183605009c6d16ea" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__property__ids_gac4d99ccfff3f748303b16bc76e9af980_1gac4d99ccfff3f748303b16bc76e9af980" kindref="member">BT_MESH_PROP_ID_LIGHT_CTRL_LIGHTNESS_PROLONG</ref>,</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa36fb08324319fa1911b0fbbc599ac678" kindref="member">BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_STANDBY</ref><sp/>=</highlight></codeline>
+<codeline lineno="76" refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa36fb08324319fa1911b0fbbc599ac678" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__property__ids_gaded90aba9e23abaa9b463ddafac1f99c_1gaded90aba9e23abaa9b463ddafac1f99c" kindref="member">BT_MESH_PROP_ID_LIGHT_CTRL_LIGHTNESS_STANDBY</ref>,</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa8e61ff34c8057518e71f77077280293f" kindref="member">BT_MESH_LIGHT_CTRL_PROP_REG_ACCURACY</ref><sp/>=</highlight></codeline>
+<codeline lineno="85" refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa8e61ff34c8057518e71f77077280293f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__property__ids_ga76356105d7ff912ed449017f84c17887_1ga76356105d7ff912ed449017f84c17887" kindref="member">BT_MESH_PROP_ID_LIGHT_CTRL_REG_ACCURACY</ref>,</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa8c455f414921809a029ffad78d9db7b0" kindref="member">BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_PROLONG</ref><sp/>=</highlight></codeline>
+<codeline lineno="94" refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa8c455f414921809a029ffad78d9db7b0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__property__ids_gae043c924ba24a1af06d00b23fd3ea131_1gae043c924ba24a1af06d00b23fd3ea131" kindref="member">BT_MESH_PROP_ID_LIGHT_CTRL_TIME_FADE</ref>,</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa7223696f5f532e2792c5a5f2dbd7dead" kindref="member">BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_ON</ref><sp/>=</highlight></codeline>
+<codeline lineno="103" refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa7223696f5f532e2792c5a5f2dbd7dead" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__property__ids_gac26123fd60e32f2d618dc2a89fed261d_1gac26123fd60e32f2d618dc2a89fed261d" kindref="member">BT_MESH_PROP_ID_LIGHT_CTRL_TIME_FADE_ON</ref>,</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fafe256d0611fbde4ba547630675908bd3" kindref="member">BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_STANDBY_AUTO</ref><sp/>=</highlight></codeline>
+<codeline lineno="112" refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fafe256d0611fbde4ba547630675908bd3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__property__ids_ga33b9e8786fe45dba2314118122405331_1ga33b9e8786fe45dba2314118122405331" kindref="member">BT_MESH_PROP_ID_LIGHT_CTRL_TIME_FADE_STANDBY_AUTO</ref>,</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa9e268a9e6c7a4267080cfc8d29111aa6" kindref="member">BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_STANDBY_MANUAL</ref><sp/>=</highlight></codeline>
+<codeline lineno="121" refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fa9e268a9e6c7a4267080cfc8d29111aa6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__property__ids_ga74be6ce27323cfbb2eca9d19a6c2fa85_1ga74be6ce27323cfbb2eca9d19a6c2fa85" kindref="member">BT_MESH_PROP_ID_LIGHT_CTRL_TIME_FADE_STANDBY_MANUAL</ref>,</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fabdfc1a624c1dede7f51c4afc2028edfc" kindref="member">BT_MESH_LIGHT_CTRL_PROP_TIME_OCCUPANCY_DELAY</ref><sp/>=</highlight></codeline>
+<codeline lineno="130" refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fabdfc1a624c1dede7f51c4afc2028edfc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__property__ids_gad8bac617b823f2aca5b5352dbb0bf258_1gad8bac617b823f2aca5b5352dbb0bf258" kindref="member">BT_MESH_PROP_ID_LIGHT_CTRL_TIME_OCCUPANCY_DELAY</ref>,</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fadad1f604f9be4d185632448b4294efc3" kindref="member">BT_MESH_LIGHT_CTRL_PROP_TIME_PROLONG</ref><sp/>=</highlight></codeline>
+<codeline lineno="139" refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7fadad1f604f9be4d185632448b4294efc3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__property__ids_ga9f12ab09075515fcfb3b9a48ac7b537d_1ga9f12ab09075515fcfb3b9a48ac7b537d" kindref="member">BT_MESH_PROP_ID_LIGHT_CTRL_TIME_PROLONG</ref>,</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7faf94be21f54cf77b06b1b81df4e0ba4dd" kindref="member">BT_MESH_LIGHT_CTRL_PROP_TIME_ON</ref><sp/>=</highlight></codeline>
+<codeline lineno="148" refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1gga10519c425d86f6f27012839001e43c7faf94be21f54cf77b06b1b81df4e0ba4dd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__property__ids_ga4ff767e7fe43fce5080ef8ae45cf713a_1ga4ff767e7fe43fce5080ef8ae45cf713a" kindref="member">BT_MESH_PROP_ID_LIGHT_CTRL_TIME_RUN_ON</ref>,</highlight></codeline>
+<codeline lineno="149"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight></codeline>
+<codeline lineno="152" refid="group__bt__mesh__light__ctrl_ga8a2366f5d561f74e2d58e4010081adeb_1ga8a2366f5d561f74e2d58e4010081adeb" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__ctrl_ga8a2366f5d561f74e2d58e4010081adeb_1ga8a2366f5d561f74e2d58e4010081adeb" kindref="member">bt_mesh_light_ctrl_coeff</ref><sp/>{</highlight></codeline>
+<codeline lineno="159" refid="group__bt__mesh__light__ctrl_ga8a2366f5d561f74e2d58e4010081adeb_1gga8a2366f5d561f74e2d58e4010081adeba8aa156390fd39c0772f66debfc4fb9af" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__light__ctrl_ga8a2366f5d561f74e2d58e4010081adeb_1gga8a2366f5d561f74e2d58e4010081adeba8aa156390fd39c0772f66debfc4fb9af" kindref="member">BT_MESH_LIGHT_CTRL_COEFF_KID</ref><sp/>=<sp/><ref refid="group__bt__mesh__property__ids_gac3b0fcd3e85445232968197121dc9dd2_1gac3b0fcd3e85445232968197121dc9dd2" kindref="member">BT_MESH_PROP_ID_LIGHT_CTRL_REG_KID</ref>,</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="167" refid="group__bt__mesh__light__ctrl_ga8a2366f5d561f74e2d58e4010081adeb_1gga8a2366f5d561f74e2d58e4010081adeba7d7604c35d1033ee737106e73fdc6f7f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__light__ctrl_ga8a2366f5d561f74e2d58e4010081adeb_1gga8a2366f5d561f74e2d58e4010081adeba7d7604c35d1033ee737106e73fdc6f7f" kindref="member">BT_MESH_LIGHT_CTRL_COEFF_KIU</ref><sp/>=<sp/><ref refid="group__bt__mesh__property__ids_ga2d84492dba44a008b3e0c7c8def586da_1ga2d84492dba44a008b3e0c7c8def586da" kindref="member">BT_MESH_PROP_ID_LIGHT_CTRL_REG_KIU</ref>,</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175" refid="group__bt__mesh__light__ctrl_ga8a2366f5d561f74e2d58e4010081adeb_1gga8a2366f5d561f74e2d58e4010081adeba58508f4fff075a4a7a70d6115f877862" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__light__ctrl_ga8a2366f5d561f74e2d58e4010081adeb_1gga8a2366f5d561f74e2d58e4010081adeba58508f4fff075a4a7a70d6115f877862" kindref="member">BT_MESH_LIGHT_CTRL_COEFF_KPD</ref><sp/>=<sp/><ref refid="group__bt__mesh__property__ids_gaec6e869bfa3875e2d4007417cfc069ac_1gaec6e869bfa3875e2d4007417cfc069ac" kindref="member">BT_MESH_PROP_ID_LIGHT_CTRL_REG_KPD</ref>,</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight></codeline>
+<codeline lineno="183" refid="group__bt__mesh__light__ctrl_ga8a2366f5d561f74e2d58e4010081adeb_1gga8a2366f5d561f74e2d58e4010081adebaa004096a0216ad9c8cbf3d1eb268b967" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__light__ctrl_ga8a2366f5d561f74e2d58e4010081adeb_1gga8a2366f5d561f74e2d58e4010081adebaa004096a0216ad9c8cbf3d1eb268b967" kindref="member">BT_MESH_LIGHT_CTRL_COEFF_KPU</ref><sp/>=<sp/><ref refid="group__bt__mesh__property__ids_ga1859364e058fa88d8ef5284684cf36e7_1ga1859364e058fa88d8ef5284684cf36e7" kindref="member">BT_MESH_PROP_ID_LIGHT_CTRL_REG_KPU</ref>,</highlight></codeline>
+<codeline lineno="184"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_OP_MODE_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x91)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_OP_MODE_SET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x92)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_OP_MODE_SET_UNACK<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x93)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_OP_MODE_STATUS<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x94)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_OP_OM_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x95)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_OP_OM_SET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x96)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_OP_OM_SET_UNACK<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x97)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_OP_OM_STATUS<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x98)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x99)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_SET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x9A)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_SET_UNACK<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="198"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x9B)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x9C)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_OP_PROP_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x9D)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="201"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_OP_PROP_SET<sp/>BT_MESH_MODEL_OP_1(0x62)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_OP_PROP_SET_UNACK<sp/>BT_MESH_MODEL_OP_1(0x63)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_OP_PROP_STATUS<sp/>BT_MESH_MODEL_OP_1(0x64)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_MSG_LEN_MODE_GET<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_MSG_LEN_MODE_SET<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_MSG_LEN_MODE_STATUS<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_MSG_LEN_OM_GET<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_MSG_LEN_OM_SET<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_MSG_LEN_OM_STATUS<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_MSG_LEN_LIGHT_ONOFF_GET<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_MSG_MINLEN_LIGHT_ONOFF_SET<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_MSG_MINLEN_LIGHT_ONOFF_STATUS<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_MSG_LEN_PROP_GET<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_MSG_MINLEN_PROP_SET<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="216"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_MSG_MINLEN_PROP_STATUS<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="219"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_SRV_REG_CFG_INIT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="220"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="221"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.lux<sp/>=<sp/>{<sp/>{<sp/>CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_STANDBY<sp/>},<sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="222"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON<sp/>},<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="223"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_PROLONG<sp/>}<sp/>},<sp/><sp/>\</highlight></codeline>
+<codeline lineno="224"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.kiu<sp/>=<sp/>CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_KIU,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="225"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.kid<sp/>=<sp/>CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_KID,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="226"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.kpu<sp/>=<sp/>CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_KPU,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="227"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.kpd<sp/>=<sp/>CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_KPD,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="228"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.accuracy<sp/>=<sp/>CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_ACCURACY,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="229"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight></codeline>
+<codeline lineno="231"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_SRV_REG_INIT<sp/>.reg<sp/>=<sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="232"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.cfg<sp/>=<sp/>BT_MESH_LIGHT_CTRL_SRV_REG_CFG_INIT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="233"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="234"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="235"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_SRV_REG_INIT</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="236"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="237"><highlight class="normal"></highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTRL_SRV_CFG_INIT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="239"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="240"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.occupancy_delay<sp/>=<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="241"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>CONFIG_BT_MESH_LIGHT_CTRL_SRV_OCCUPANCY_DELAY,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="242"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.fade_on<sp/>=<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="243"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_FADE_ON,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="244"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.on<sp/>=<sp/>(MSEC_PER_SEC<sp/>*<sp/>CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_ON),<sp/><sp/>\</highlight></codeline>
+<codeline lineno="245"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.fade_prolong<sp/>=<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="246"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_FADE_PROLONG,<sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="247"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.prolong<sp/>=<sp/>(MSEC_PER_SEC<sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="248"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_PROLONG),<sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="249"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.fade_standby_auto<sp/>=<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="250"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_FADE_STANDBY_AUTO,<sp/><sp/>\</highlight></codeline>
+<codeline lineno="251"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.fade_standby_manual<sp/>=<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="252"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_FADE_STANDBY_MANUAL,\</highlight></codeline>
+<codeline lineno="253"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.light<sp/>=<sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="254"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_STANDBY,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="255"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_ON,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="256"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="257"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="258"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="261"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="262"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="264"><highlight class="normal"></highlight></codeline>
+<codeline lineno="265"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_MESH_LIGHT_CTRL_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="266"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/mesh/light_ctrl.h"/>
+  </compounddef>
+</doxygen>

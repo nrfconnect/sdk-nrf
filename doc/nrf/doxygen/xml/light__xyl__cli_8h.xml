@@ -1,0 +1,1143 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="light__xyl__cli_8h" kind="file" language="C++">
+    <compoundname>light_xyl_cli.h</compoundname>
+    <includes refid="light__xyl_8h" local="no">bluetooth/mesh/light_xyl.h</includes>
+    <includes refid="model__types_8h" local="no">bluetooth/mesh/model_types.h</includes>
+    <includedby refid="models_8h" local="no">include/bluetooth/mesh/models.h</includedby>
+    <incdepgraph>
+      <node id="2">
+        <label>bluetooth/mesh/light_xyl.h</label>
+        <link refid="light__xyl_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/mesh/light_xyl_cli.h</label>
+        <link refid="light__xyl__cli_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bluetooth/mesh/model_types.h</label>
+        <link refid="model__types_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/mesh.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>include/bluetooth/mesh/light_xyl_cli.h</label>
+        <link refid="light__xyl__cli_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/bluetooth/mesh/models.h</label>
+        <link refid="models_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>include/bluetooth/mesh/vnd/silvair_enocean_srv.h</label>
+        <link refid="silvair__enocean__srv_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structbt__mesh__light__xyl__cli__handlers" prot="public">bt_mesh_light_xyl_cli_handlers</innerclass>
+    <innerclass refid="structbt__mesh__light__xyl__cli" prot="public">bt_mesh_light_xyl_cli</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__light__xyl__cli_gad693c4875c4b68d2e7d8320e98d785a2_1gad693c4875c4b68d2e7d8320e98d785a2" prot="public" static="no">
+        <name>BT_MESH_MODEL_LIGHT_XYL_CLI</name>
+        <param><defname>_cli</defname></param>
+        <initializer>	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_XYL_CLI,                       \
+			 _bt_mesh_light_xyl_cli_op, &amp;(_cli)-&gt;pub,              \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref>, \
+						 _cli),                        \
+			 &amp;_bt_mesh_light_xyl_cli_cb)</initializer>
+        <briefdescription>
+<para>Light XYL Client model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__light__xyl__cli" kindref="compound">Light xyL Client model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_cli.h" line="32" column="9" bodyfile="include/bluetooth/mesh/light_xyl_cli.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__light__xyl__cli_gad246406db0888325d911d2a05f996b69_1gad246406db0888325d911d2a05f996b69" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_xyl_get</definition>
+        <argsstring>(struct bt_mesh_light_xyl_cli *cli, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_light_xyl_status *rsp)</argsstring>
+        <name>bt_mesh_light_xyl_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl__status" kindref="compound">bt_mesh_light_xyl_status</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Get the Light xyL state of the bound server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Status response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_cli.h" line="121" column="5" declfile="include/bluetooth/mesh/light_xyl_cli.h" declline="121" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__xyl__cli_ga8eb2168cc71333f101ef5c8362b16f0a_1ga8eb2168cc71333f101ef5c8362b16f0a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_xyl_set</definition>
+        <argsstring>(struct bt_mesh_light_xyl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_xyl_set_params *set, struct bt_mesh_light_xyl_status *rsp)</argsstring>
+        <name>bt_mesh_light_xyl_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__light__xyl__set__params" kindref="compound">bt_mesh_light_xyl_set_params</ref> *</type>
+          <declname>set</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl__status" kindref="compound">bt_mesh_light_xyl_status</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Set the xyL state of the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>xyL state to set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response status buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_cli.h" line="143" column="5" declfile="include/bluetooth/mesh/light_xyl_cli.h" declline="143" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__xyl__cli_gaa99a27d4c82f111284fdcb5bb31f9567_1gaa99a27d4c82f111284fdcb5bb31f9567" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_xyl_set_unack</definition>
+        <argsstring>(struct bt_mesh_light_xyl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_xyl_set_params *set)</argsstring>
+        <name>bt_mesh_light_xyl_set_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__light__xyl__set__params" kindref="compound">bt_mesh_light_xyl_set_params</ref> *</type>
+          <declname>set</declname>
+        </param>
+        <briefdescription>
+<para>Set the xyL state of the server without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>xyL state to set.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_cli.h" line="160" column="5" declfile="include/bluetooth/mesh/light_xyl_cli.h" declline="160" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__xyl__cli_gab58ab94c99eebfacd4f1e8c2af825cfb_1gab58ab94c99eebfacd4f1e8c2af825cfb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_xyl_target_get</definition>
+        <argsstring>(struct bt_mesh_light_xyl_cli *cli, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_light_xyl_status *rsp)</argsstring>
+        <name>bt_mesh_light_xyl_target_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl__status" kindref="compound">bt_mesh_light_xyl_status</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Get the Light xyL target state of the bound server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Status response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_cli.h" line="181" column="5" declfile="include/bluetooth/mesh/light_xyl_cli.h" declline="181" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__xyl__cli_gaca05bdc9abe90044649a3b91991a2bd8_1gaca05bdc9abe90044649a3b91991a2bd8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_xyl_default_get</definition>
+        <argsstring>(struct bt_mesh_light_xyl_cli *cli, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_light_xyl *rsp)</argsstring>
+        <name>bt_mesh_light_xyl_default_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl" kindref="compound">bt_mesh_light_xyl</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Get the Light xyL default state of the bound server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Status response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_cli.h" line="202" column="5" declfile="include/bluetooth/mesh/light_xyl_cli.h" declline="202" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__xyl__cli_ga2451d60edc1be0143dc5b21cdb4e8b22_1ga2451d60edc1be0143dc5b21cdb4e8b22" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_xyl_default_set</definition>
+        <argsstring>(struct bt_mesh_light_xyl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_xyl *set, struct bt_mesh_light_xyl *rsp)</argsstring>
+        <name>bt_mesh_light_xyl_default_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__light__xyl" kindref="compound">bt_mesh_light_xyl</ref> *</type>
+          <declname>set</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl" kindref="compound">bt_mesh_light_xyl</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Set the default xyL value of the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Default xyL value to set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response status buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_cli.h" line="224" column="5" declfile="include/bluetooth/mesh/light_xyl_cli.h" declline="224" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__xyl__cli_ga8114cb62be9b81e1baaaf40d41a25f93_1ga8114cb62be9b81e1baaaf40d41a25f93" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_xyl_default_set_unack</definition>
+        <argsstring>(struct bt_mesh_light_xyl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_xyl *set)</argsstring>
+        <name>bt_mesh_light_xyl_default_set_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__light__xyl" kindref="compound">bt_mesh_light_xyl</ref> *</type>
+          <declname>set</declname>
+        </param>
+        <briefdescription>
+<para>Set the default xyL value of the server without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Default xyL value to set.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_cli.h" line="242" column="5" declfile="include/bluetooth/mesh/light_xyl_cli.h" declline="242" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__xyl__cli_gaa8c16dd979f26a0ba51335f0c8e0ff14_1gaa8c16dd979f26a0ba51335f0c8e0ff14" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_xyl_range_get</definition>
+        <argsstring>(struct bt_mesh_light_xyl_cli *cli, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_light_xyl_range_status *rsp)</argsstring>
+        <name>bt_mesh_light_xyl_range_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl__range__status" kindref="compound">bt_mesh_light_xyl_range_status</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Get the Light xyL state of the bound server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Status response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_cli.h" line="263" column="5" declfile="include/bluetooth/mesh/light_xyl_cli.h" declline="263" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__xyl__cli_gad22f1037b5d94a72d8da5b3556993948_1gad22f1037b5d94a72d8da5b3556993948" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_xyl_range_set</definition>
+        <argsstring>(struct bt_mesh_light_xyl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_xy_range *set, struct bt_mesh_light_xyl_range_status *rsp)</argsstring>
+        <name>bt_mesh_light_xyl_range_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__light__xy__range" kindref="compound">bt_mesh_light_xy_range</ref> *</type>
+          <declname>set</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl__range__status" kindref="compound">bt_mesh_light_xyl_range_status</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Set the xyL Range of the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Range to set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response status buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid input range. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_cli.h" line="287" column="5" declfile="include/bluetooth/mesh/light_xyl_cli.h" declline="287" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__xyl__cli_ga3f3fcd8d1a0c6a81ef0abde829c8753b_1ga3f3fcd8d1a0c6a81ef0abde829c8753b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_xyl_range_set_unack</definition>
+        <argsstring>(struct bt_mesh_light_xyl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_xy_range *set)</argsstring>
+        <name>bt_mesh_light_xyl_range_set_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__light__xy__range" kindref="compound">bt_mesh_light_xy_range</ref> *</type>
+          <declname>set</declname>
+        </param>
+        <briefdescription>
+<para>Set the xyL Range of the server without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Range state to set.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid input range. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_cli.h" line="306" column="5" declfile="include/bluetooth/mesh/light_xyl_cli.h" declline="306" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_MESH_LIGHT_XYL_CLI_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_XYL_CLI_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="light__xyl_8h" kindref="compound">bluetooth/mesh/light_xyl.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="model__types_8h" kindref="compound">bluetooth/mesh/model_types.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref>;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="group__bt__mesh__light__xyl__cli_gad693c4875c4b68d2e7d8320e98d785a2_1gad693c4875c4b68d2e7d8320e98d785a2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_MODEL_LIGHT_XYL_CLI(_cli)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="33"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_XYL_CLI,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="34"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_bt_mesh_light_xyl_cli_op,<sp/>&amp;(_cli)-&gt;pub,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="35"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_USER_DATA(struct<sp/>bt_mesh_light_xyl_cli,<sp/>\</highlight></codeline>
+<codeline lineno="36"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_cli),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="37"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;_bt_mesh_light_xyl_cli_cb)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="structbt__mesh__light__xyl__cli__handlers" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__xyl__cli__handlers" kindref="compound">bt_mesh_light_xyl_cli_handlers</ref><sp/>{</highlight></codeline>
+<codeline lineno="48" refid="structbt__mesh__light__xyl__cli__handlers_a38c28522e979a3c403dbb7be9f9ba1e0_1a38c28522e979a3c403dbb7be9f9ba1e0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl__cli__handlers_a38c28522e979a3c403dbb7be9f9ba1e0_1a38c28522e979a3c403dbb7be9f9ba1e0" kindref="member">xyl_status</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__xyl__status" kindref="compound">bt_mesh_light_xyl_status</ref><sp/>*status);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="structbt__mesh__light__xyl__cli__handlers_abf1e318ea01f0db41845d737f0164cb4_1abf1e318ea01f0db41845d737f0164cb4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl__cli__handlers_abf1e318ea01f0db41845d737f0164cb4_1abf1e318ea01f0db41845d737f0164cb4" kindref="member">target_status</ref>)(</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref><sp/>*cli,<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__xyl__status" kindref="compound">bt_mesh_light_xyl_status</ref><sp/>*status);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="structbt__mesh__light__xyl__cli__handlers_ab878a87b0d038fa40c6fa2fb50fe2bd1_1ab878a87b0d038fa40c6fa2fb50fe2bd1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl__cli__handlers_ab878a87b0d038fa40c6fa2fb50fe2bd1_1ab878a87b0d038fa40c6fa2fb50fe2bd1" kindref="member">range_status</ref>)(</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref><sp/>*cli,<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__xyl__range__status" kindref="compound">bt_mesh_light_xyl_range_status</ref><sp/>*status);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="structbt__mesh__light__xyl__cli__handlers_aa7a94ef77dd2f03b920aeda849235c26_1aa7a94ef77dd2f03b920aeda849235c26" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl__cli__handlers_aa7a94ef77dd2f03b920aeda849235c26_1aa7a94ef77dd2f03b920aeda849235c26" kindref="member">default_status</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__xyl" kindref="compound">bt_mesh_light_xyl</ref><sp/>*status);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="structbt__mesh__light__xyl__cli" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref><sp/>{</highlight></codeline>
+<codeline lineno="87" refid="structbt__mesh__light__xyl__cli_ab77d99f2c2eee819fd6198d565917e3e_1ab77d99f2c2eee819fd6198d565917e3e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model<sp/>*<ref refid="structbt__mesh__light__xyl__cli_ab77d99f2c2eee819fd6198d565917e3e_1ab77d99f2c2eee819fd6198d565917e3e" kindref="member">model</ref>;</highlight></codeline>
+<codeline lineno="89" refid="structbt__mesh__light__xyl__cli_a9297248dbc1b35dfd3f28106f5423ecf_1a9297248dbc1b35dfd3f28106f5423ecf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_pub<sp/><ref refid="structbt__mesh__light__xyl__cli_a9297248dbc1b35dfd3f28106f5423ecf_1a9297248dbc1b35dfd3f28106f5423ecf" kindref="member">pub</ref>;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Publication<sp/>message<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91" refid="structbt__mesh__light__xyl__cli_abb14d1fdef576b2e127371273bf0a99d_1abb14d1fdef576b2e127371273bf0a99d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">net_buf_simple<sp/><ref refid="structbt__mesh__light__xyl__cli_abb14d1fdef576b2e127371273bf0a99d_1abb14d1fdef576b2e127371273bf0a99d" kindref="member">pub_msg</ref>;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Publication<sp/>message<sp/>buffer.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="structbt__mesh__light__xyl__cli_a6a1ec309363d8dd766f221735e8b40f8_1a6a1ec309363d8dd766f221735e8b40f8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__light__xyl__cli_a6a1ec309363d8dd766f221735e8b40f8_1a6a1ec309363d8dd766f221735e8b40f8" kindref="member">buf</ref>[BT_MESH_MODEL_BUF_LEN(BT_MESH_LIGHT_XYL_OP_SET,</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_LIGHT_XYL_MSG_MAXLEN_SET)];</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97" refid="structbt__mesh__light__xyl__cli_a315921765110ee01c024340af2befc16_1a315921765110ee01c024340af2befc16" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ack_ctx<sp/><ref refid="structbt__mesh__light__xyl__cli_a315921765110ee01c024340af2befc16_1a315921765110ee01c024340af2befc16" kindref="member">ack_ctx</ref>;</highlight></codeline>
+<codeline lineno="99" refid="structbt__mesh__light__xyl__cli_a4443def834d998ffa6d901cc9fd79e56_1a4443def834d998ffa6d901cc9fd79e56" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__light__xyl__cli_a4443def834d998ffa6d901cc9fd79e56_1a4443def834d998ffa6d901cc9fd79e56" kindref="member">tid</ref>;</highlight></codeline>
+<codeline lineno="101" refid="structbt__mesh__light__xyl__cli_ae69eef89748a3cfa18dc43dedb89e0ef_1ae69eef89748a3cfa18dc43dedb89e0ef" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__xyl__cli__handlers" kindref="compound">bt_mesh_light_xyl_cli_handlers</ref><sp/>*<ref refid="structbt__mesh__light__xyl__cli_ae69eef89748a3cfa18dc43dedb89e0ef_1ae69eef89748a3cfa18dc43dedb89e0ef" kindref="member">handlers</ref>;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121" refid="group__bt__mesh__light__xyl__cli_gad246406db0888325d911d2a05f996b69_1gad246406db0888325d911d2a05f996b69" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__xyl__cli_gad246406db0888325d911d2a05f996b69_1gad246406db0888325d911d2a05f996b69" kindref="member">bt_mesh_light_xyl_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl__status" kindref="compound">bt_mesh_light_xyl_status</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143" refid="group__bt__mesh__light__xyl__cli_ga8eb2168cc71333f101ef5c8362b16f0a_1ga8eb2168cc71333f101ef5c8362b16f0a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__xyl__cli_ga8eb2168cc71333f101ef5c8362b16f0a_1ga8eb2168cc71333f101ef5c8362b16f0a" kindref="member">bt_mesh_light_xyl_set</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl__set__params" kindref="compound">bt_mesh_light_xyl_set_params</ref><sp/>*set,</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl__status" kindref="compound">bt_mesh_light_xyl_status</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160" refid="group__bt__mesh__light__xyl__cli_gaa99a27d4c82f111284fdcb5bb31f9567_1gaa99a27d4c82f111284fdcb5bb31f9567" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__xyl__cli_gaa99a27d4c82f111284fdcb5bb31f9567_1gaa99a27d4c82f111284fdcb5bb31f9567" kindref="member">bt_mesh_light_xyl_set_unack</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl__set__params" kindref="compound">bt_mesh_light_xyl_set_params</ref><sp/>*set);</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181" refid="group__bt__mesh__light__xyl__cli_gab58ab94c99eebfacd4f1e8c2af825cfb_1gab58ab94c99eebfacd4f1e8c2af825cfb" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__xyl__cli_gab58ab94c99eebfacd4f1e8c2af825cfb_1gab58ab94c99eebfacd4f1e8c2af825cfb" kindref="member">bt_mesh_light_xyl_target_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl__status" kindref="compound">bt_mesh_light_xyl_status</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight></codeline>
+<codeline lineno="202" refid="group__bt__mesh__light__xyl__cli_gaca05bdc9abe90044649a3b91991a2bd8_1gaca05bdc9abe90044649a3b91991a2bd8" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__xyl__cli_gaca05bdc9abe90044649a3b91991a2bd8_1gaca05bdc9abe90044649a3b91991a2bd8" kindref="member">bt_mesh_light_xyl_default_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl" kindref="compound">bt_mesh_light_xyl</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight></codeline>
+<codeline lineno="224" refid="group__bt__mesh__light__xyl__cli_ga2451d60edc1be0143dc5b21cdb4e8b22_1ga2451d60edc1be0143dc5b21cdb4e8b22" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__xyl__cli_ga2451d60edc1be0143dc5b21cdb4e8b22_1ga2451d60edc1be0143dc5b21cdb4e8b22" kindref="member">bt_mesh_light_xyl_default_set</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl" kindref="compound">bt_mesh_light_xyl</ref><sp/>*set,</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl" kindref="compound">bt_mesh_light_xyl</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight></codeline>
+<codeline lineno="242" refid="group__bt__mesh__light__xyl__cli_ga8114cb62be9b81e1baaaf40d41a25f93_1ga8114cb62be9b81e1baaaf40d41a25f93" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__xyl__cli_ga8114cb62be9b81e1baaaf40d41a25f93_1ga8114cb62be9b81e1baaaf40d41a25f93" kindref="member">bt_mesh_light_xyl_default_set_unack</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl" kindref="compound">bt_mesh_light_xyl</ref><sp/>*set);</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"></highlight></codeline>
+<codeline lineno="263" refid="group__bt__mesh__light__xyl__cli_gaa8c16dd979f26a0ba51335f0c8e0ff14_1gaa8c16dd979f26a0ba51335f0c8e0ff14" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__xyl__cli_gaa8c16dd979f26a0ba51335f0c8e0ff14_1gaa8c16dd979f26a0ba51335f0c8e0ff14" kindref="member">bt_mesh_light_xyl_range_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl__range__status" kindref="compound">bt_mesh_light_xyl_range_status</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"></highlight></codeline>
+<codeline lineno="287" refid="group__bt__mesh__light__xyl__cli_gad22f1037b5d94a72d8da5b3556993948_1gad22f1037b5d94a72d8da5b3556993948" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__xyl__cli_gad22f1037b5d94a72d8da5b3556993948_1gad22f1037b5d94a72d8da5b3556993948" kindref="member">bt_mesh_light_xyl_range_set</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xy__range" kindref="compound">bt_mesh_light_xy_range</ref><sp/>*set,</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl__range__status" kindref="compound">bt_mesh_light_xyl_range_status</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"></highlight></codeline>
+<codeline lineno="306" refid="group__bt__mesh__light__xyl__cli_ga3f3fcd8d1a0c6a81ef0abde829c8753b_1ga3f3fcd8d1a0c6a81ef0abde829c8753b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__xyl__cli_ga3f3fcd8d1a0c6a81ef0abde829c8753b_1ga3f3fcd8d1a0c6a81ef0abde829c8753b" kindref="member">bt_mesh_light_xyl_range_set_unack</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xyl__cli" kindref="compound">bt_mesh_light_xyl_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="307"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__xy__range" kindref="compound">bt_mesh_light_xy_range</ref><sp/>*set);</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"></highlight></codeline>
+<codeline lineno="311"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_op<sp/>_bt_mesh_light_xyl_cli_op[];</highlight></codeline>
+<codeline lineno="312"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_cb<sp/>_bt_mesh_light_xyl_cli_cb;</highlight></codeline>
+<codeline lineno="315"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="316"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="317"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="318"><highlight class="normal"></highlight></codeline>
+<codeline lineno="319"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_MESH_LIGHT_XYL_CLI_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="320"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/mesh/light_xyl_cli.h"/>
+  </compounddef>
+</doxygen>

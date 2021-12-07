@@ -1,0 +1,165 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structapp__module__event" kind="struct" language="C++" prot="public">
+    <compoundname>app_module_event</compoundname>
+    <includes refid="app__module__event_8h" local="no">app_module_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structapp__module__event_a9d4c3e9f4c08ee905295567a8e5f5370_1a9d4c3e9f4c08ee905295567a8e5f5370" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header app_module_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/app_module_event.h" line="89" column="19" bodyfile="applications/asset_tracker_v2/src/events/app_module_event.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structapp__module__event_ab6884aeec5d58def60a8191cf4df7cf2_1ab6884aeec5d58def60a8191cf4df7cf2" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1ga826859b7de896e4cb94a4bd90ca5577c" kindref="member">app_module_event_type</ref></type>
+        <definition>enum app_module_event_type app_module_event::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/app_module_event.h" line="90" column="27" bodyfile="applications/asset_tracker_v2/src/events/app_module_event.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structapp__module__event_a9f288e6624c4b8b02d583377f802e1e1_1a9f288e6624c4b8b02d583377f802e1e1" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1gad84e82af763a7e80908bd0ba0fdd5e00" kindref="member">app_module_data_type</ref></type>
+        <definition>enum app_module_data_type app_module_event::data_list[APP_DATA_COUNT]</definition>
+        <argsstring>[APP_DATA_COUNT]</argsstring>
+        <name>data_list</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/app_module_event.h" line="91" column="26" bodyfile="applications/asset_tracker_v2/src/events/app_module_event.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structapp__module__event_a849781330a57eae4d552892fbdaa58ba_1a849781330a57eae4d552892fbdaa58ba" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int app_module_event::err</definition>
+        <argsstring></argsstring>
+        <name>err</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/app_module_event.h" line="94" column="5" bodyfile="applications/asset_tracker_v2/src/events/app_module_event.h" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structapp__module__event_abfdb8fa4e9a80c67c29d0407fd88ff3f_1abfdb8fa4e9a80c67c29d0407fd88ff3f" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t app_module_event::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/app_module_event.h" line="96" column="10" bodyfile="applications/asset_tracker_v2/src/events/app_module_event.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structapp__module__event_ad639d195abb07a5b2d19076d3718d808_1ad639d195abb07a5b2d19076d3718d808" prot="public" static="no" mutable="no">
+        <type>union app_module_event::@9</type>
+        <definition>union app_module_event::@9 app_module_event::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/app_module_event.h" line="97" column="6"/>
+      </memberdef>
+      <memberdef kind="variable" id="structapp__module__event_af52207e9176686843ef260829ff30939_1af52207e9176686843ef260829ff30939" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t app_module_event::count</definition>
+        <argsstring></argsstring>
+        <name>count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/app_module_event.h" line="99" column="8" bodyfile="applications/asset_tracker_v2/src/events/app_module_event.h" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structapp__module__event_a1ae07cc32b3089342d3058313c59604b_1a1ae07cc32b3089342d3058313c59604b" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int app_module_event::timeout</definition>
+        <argsstring></argsstring>
+        <name>timeout</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The time each module has to fetch data before what is available is transmitted. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/app_module_event.h" line="104" column="5" bodyfile="applications/asset_tracker_v2/src/events/app_module_event.h" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Application module event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>app_module_event</label>
+        <link refid="structapp__module__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/asset_tracker_v2/src/events/app_module_event.h" line="88" column="1" bodyfile="applications/asset_tracker_v2/src/events/app_module_event.h" bodystart="88" bodyend="105"/>
+    <listofallmembers>
+      <member refid="structapp__module__event_af52207e9176686843ef260829ff30939_1af52207e9176686843ef260829ff30939" prot="public" virt="non-virtual"><scope>app_module_event</scope><name>count</name></member>
+      <member refid="structapp__module__event_ad639d195abb07a5b2d19076d3718d808_1ad639d195abb07a5b2d19076d3718d808" prot="public" virt="non-virtual"><scope>app_module_event</scope><name>data</name></member>
+      <member refid="structapp__module__event_a9f288e6624c4b8b02d583377f802e1e1_1a9f288e6624c4b8b02d583377f802e1e1" prot="public" virt="non-virtual"><scope>app_module_event</scope><name>data_list</name></member>
+      <member refid="structapp__module__event_a849781330a57eae4d552892fbdaa58ba_1a849781330a57eae4d552892fbdaa58ba" prot="public" virt="non-virtual"><scope>app_module_event</scope><name>err</name></member>
+      <member refid="structapp__module__event_a9d4c3e9f4c08ee905295567a8e5f5370_1a9d4c3e9f4c08ee905295567a8e5f5370" prot="public" virt="non-virtual"><scope>app_module_event</scope><name>header</name></member>
+      <member refid="structapp__module__event_abfdb8fa4e9a80c67c29d0407fd88ff3f_1abfdb8fa4e9a80c67c29d0407fd88ff3f" prot="public" virt="non-virtual"><scope>app_module_event</scope><name>id</name></member>
+      <member refid="structapp__module__event_a1ae07cc32b3089342d3058313c59604b_1a1ae07cc32b3089342d3058313c59604b" prot="public" virt="non-virtual"><scope>app_module_event</scope><name>timeout</name></member>
+      <member refid="structapp__module__event_ab6884aeec5d58def60a8191cf4df7cf2_1ab6884aeec5d58def60a8191cf4df7cf2" prot="public" virt="non-virtual"><scope>app_module_event</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

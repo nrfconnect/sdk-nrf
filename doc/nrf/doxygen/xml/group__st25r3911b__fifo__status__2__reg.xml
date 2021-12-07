@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__fifo__status__2__reg" kind="group">
+    <compoundname>st25r3911b_fifo_status_2_reg</compoundname>
+    <title>FIFO Status</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__fifo__status__2__reg_1gae4ff5f680b40e3c45071e5f18c8578bb" prot="public" static="no">
+        <name>ST25R3911B_REG_FIFO_STATUS_2_NP_LB</name>
+        <initializer>BIT(0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="385" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="385" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__fifo__status__2__reg_1ga74a5152019a2d8ce7dbbafb9bf91ec39" prot="public" static="no">
+        <name>ST25R3911B_REG_FIFO_STATUS_2_FIFO_LB0</name>
+        <initializer>BIT(1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="386" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="386" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__fifo__status__2__reg_1ga2b82053ffb2460fc3a4004d5b4bcf4b3" prot="public" static="no">
+        <name>ST25R3911B_REG_FIFO_STATUS_2_FIFO_LB1</name>
+        <initializer>BIT(2)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="387" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="387" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__fifo__status__2__reg_1ga08b21fd0d1c229ae9a6a2105cf3b2485" prot="public" static="no">
+        <name>ST25R3911B_REG_FIFO_STATUS_2_FIFO_LB2</name>
+        <initializer>BIT(3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="388" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="388" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__fifo__status__2__reg_1ga2b5b6b604fb87152f57a53c67217352e" prot="public" static="no">
+        <name>ST25R3911B_REG_FIFO_STATUS_2_FIFO_NCP</name>
+        <initializer>BIT(4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="389" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="389" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__fifo__status__2__reg_1ga0534fe0ebfdcab039a6147a659631a54" prot="public" static="no">
+        <name>ST25R3911B_REG_FIFO_STATUS_2_FIFO_OVR</name>
+        <initializer>BIT(5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="390" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="390" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__fifo__status__2__reg_1gab0dbe2a734cd743a19b0854f93074cae" prot="public" static="no">
+        <name>ST25R3911B_REG_FIFO_STATUS_2_FIFO_UNF</name>
+        <initializer>BIT(6)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="391" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="391" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__fifo__status__2__reg_1ga2dcdf2946022f53f5fc46ece74c11cb0" prot="public" static="no">
+        <name>ST25R3911B_REG_FIFO_STATUS_2_FIFO_LB_MASK</name>
+        <initializer>(0x0E)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="393" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="393" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Register 2 bits </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structshell__bt__nus__ctrl__blk" kind="struct" language="C++" prot="public">
+    <compoundname>shell_bt_nus_ctrl_blk</compoundname>
+    <includes refid="shell__bt__nus_8h" local="no">shell_bt_nus.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structshell__bt__nus__ctrl__blk_a3e550d58a1a466bb281ab81699ca319d_1a3e550d58a1a466bb281ab81699ca319d" prot="public" static="no" mutable="no">
+        <type>struct bt_conn *</type>
+        <definition>struct bt_conn* shell_bt_nus_ctrl_blk::conn</definition>
+        <argsstring></argsstring>
+        <name>conn</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/shell/shell_bt_nus.h" line="30" column="14" bodyfile="include/shell/shell_bt_nus.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structshell__bt__nus__ctrl__blk_a55899761d2385c739b4fc2385be3cd3b_1a55899761d2385c739b4fc2385be3cd3b" prot="public" static="no" mutable="no">
+        <type>atomic_t</type>
+        <definition>atomic_t shell_bt_nus_ctrl_blk::tx_busy</definition>
+        <argsstring></argsstring>
+        <name>tx_busy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/shell/shell_bt_nus.h" line="31" column="10" bodyfile="include/shell/shell_bt_nus.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structshell__bt__nus__ctrl__blk_ae9e8136937977f3d8be9b4b591cc4d14_1ae9e8136937977f3d8be9b4b591cc4d14" prot="public" static="no" mutable="no">
+        <type>shell_transport_handler_t</type>
+        <definition>shell_transport_handler_t shell_bt_nus_ctrl_blk::handler</definition>
+        <argsstring></argsstring>
+        <name>handler</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/shell/shell_bt_nus.h" line="32" column="27" bodyfile="include/shell/shell_bt_nus.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structshell__bt__nus__ctrl__blk_acaa0c730e79e51adbb1b8d8045197a0d_1acaa0c730e79e51adbb1b8d8045197a0d" prot="public" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* shell_bt_nus_ctrl_blk::context</definition>
+        <argsstring></argsstring>
+        <name>context</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/shell/shell_bt_nus.h" line="33" column="6" bodyfile="include/shell/shell_bt_nus.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Instance control block (RW data). </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/shell/shell_bt_nus.h" line="29" column="1" bodyfile="include/shell/shell_bt_nus.h" bodystart="29" bodyend="34"/>
+    <listofallmembers>
+      <member refid="structshell__bt__nus__ctrl__blk_a3e550d58a1a466bb281ab81699ca319d_1a3e550d58a1a466bb281ab81699ca319d" prot="public" virt="non-virtual"><scope>shell_bt_nus_ctrl_blk</scope><name>conn</name></member>
+      <member refid="structshell__bt__nus__ctrl__blk_acaa0c730e79e51adbb1b8d8045197a0d_1acaa0c730e79e51adbb1b8d8045197a0d" prot="public" virt="non-virtual"><scope>shell_bt_nus_ctrl_blk</scope><name>context</name></member>
+      <member refid="structshell__bt__nus__ctrl__blk_ae9e8136937977f3d8be9b4b591cc4d14_1ae9e8136937977f3d8be9b4b591cc4d14" prot="public" virt="non-virtual"><scope>shell_bt_nus_ctrl_blk</scope><name>handler</name></member>
+      <member refid="structshell__bt__nus__ctrl__blk_a55899761d2385c739b4fc2385be3cd3b_1a55899761d2385c739b4fc2385be3cd3b" prot="public" virt="non-virtual"><scope>shell_bt_nus_ctrl_blk</scope><name>tx_busy</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,185 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structfw__info" kind="struct" language="C++" prot="public">
+    <compoundname>fw_info</compoundname>
+    <includes refid="fw__info_8h" local="no">fw_info.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structfw__info_a18e88a48449ef52b75e21d4221e9f9a5_1a18e88a48449ef52b75e21d4221e9f9a5" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t fw_info::magic[(CONFIG_FW_INFO_MAGIC_LEN/sizeof(uint32_t))]</definition>
+        <argsstring>[(CONFIG_FW_INFO_MAGIC_LEN/sizeof(uint32_t))]</argsstring>
+        <name>magic</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="211" column="10" bodyfile="include/fw_info.h" bodystart="211" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structfw__info_ab618abfff92f3a4388941798bedb6167_1ab618abfff92f3a4388941798bedb6167" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t fw_info::total_size</definition>
+        <argsstring></argsstring>
+        <name>total_size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="214" column="10" bodyfile="include/fw_info.h" bodystart="214" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structfw__info_aa1217e6419e685236aba845203ca44e5_1aa1217e6419e685236aba845203ca44e5" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t fw_info::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="217" column="10" bodyfile="include/fw_info.h" bodystart="217" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structfw__info_a41e6ae97618240abd68cd4c20f39c622_1a41e6ae97618240abd68cd4c20f39c622" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t fw_info::version</definition>
+        <argsstring></argsstring>
+        <name>version</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="220" column="10" bodyfile="include/fw_info.h" bodystart="220" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structfw__info_aed3c79b2e6602a638acc005793645e71_1aed3c79b2e6602a638acc005793645e71" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t fw_info::address</definition>
+        <argsstring></argsstring>
+        <name>address</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="223" column="10" bodyfile="include/fw_info.h" bodystart="223" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structfw__info_a5f7cbe27106d03e05c23d333b50877ca_1a5f7cbe27106d03e05c23d333b50877ca" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t fw_info::boot_address</definition>
+        <argsstring></argsstring>
+        <name>boot_address</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="226" column="10" bodyfile="include/fw_info.h" bodystart="226" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structfw__info_a080aaeb01f92541aaa491d1d0eca3368_1a080aaeb01f92541aaa491d1d0eca3368" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t fw_info::valid</definition>
+        <argsstring></argsstring>
+        <name>valid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="231" column="10" bodyfile="include/fw_info.h" bodystart="231" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structfw__info_a457aa31ebd5e1fbf68bbc7dc47405406_1a457aa31ebd5e1fbf68bbc7dc47405406" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t fw_info::reserved[4]</definition>
+        <argsstring>[4]</argsstring>
+        <name>reserved</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="234" column="10" bodyfile="include/fw_info.h" bodystart="234" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structfw__info_a117d8f9a33ce0a8e6e01db4e9d14292f_1a117d8f9a33ce0a8e6e01db4e9d14292f" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t fw_info::ext_api_num</definition>
+        <argsstring></argsstring>
+        <name>ext_api_num</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="237" column="10" bodyfile="include/fw_info.h" bodystart="237" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structfw__info_acf2ab574181f077c45696978bc6ad1f5_1acf2ab574181f077c45696978bc6ad1f5" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t fw_info::ext_api_request_num</definition>
+        <argsstring></argsstring>
+        <name>ext_api_request_num</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="240" column="10" bodyfile="include/fw_info.h" bodystart="240" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structfw__info_a167648e1c05b0b5fd32391a9dfa5fd0e_1a167648e1c05b0b5fd32391a9dfa5fd0e" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structfw__info__ext__api" kindref="compound">fw_info_ext_api</ref></type>
+        <definition>const struct fw_info_ext_api fw_info::ext_apis[]</definition>
+        <argsstring>[]</argsstring>
+        <name>ext_apis</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="248" column="28" bodyfile="include/fw_info.h" bodystart="248" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>The top level firmware info struct.</para>
+<para>This is a data structure that is placed at a specific offset inside a firmware image so it can be consistently read by external parties. The specific offset makes it easy to find, and the magic value at the start guarantees that it contains data of a specific format. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>fw_info</label>
+        <link refid="structfw__info"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>ext_apis</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>fw_info_ext_api</label>
+        <link refid="structfw__info__ext__api"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/fw_info.h" line="207" column="1" bodyfile="include/fw_info.h" bodystart="207" bodyend="249"/>
+    <listofallmembers>
+      <member refid="structfw__info_aed3c79b2e6602a638acc005793645e71_1aed3c79b2e6602a638acc005793645e71" prot="public" virt="non-virtual"><scope>fw_info</scope><name>address</name></member>
+      <member refid="structfw__info_a5f7cbe27106d03e05c23d333b50877ca_1a5f7cbe27106d03e05c23d333b50877ca" prot="public" virt="non-virtual"><scope>fw_info</scope><name>boot_address</name></member>
+      <member refid="structfw__info_a117d8f9a33ce0a8e6e01db4e9d14292f_1a117d8f9a33ce0a8e6e01db4e9d14292f" prot="public" virt="non-virtual"><scope>fw_info</scope><name>ext_api_num</name></member>
+      <member refid="structfw__info_acf2ab574181f077c45696978bc6ad1f5_1acf2ab574181f077c45696978bc6ad1f5" prot="public" virt="non-virtual"><scope>fw_info</scope><name>ext_api_request_num</name></member>
+      <member refid="structfw__info_a167648e1c05b0b5fd32391a9dfa5fd0e_1a167648e1c05b0b5fd32391a9dfa5fd0e" prot="public" virt="non-virtual"><scope>fw_info</scope><name>ext_apis</name></member>
+      <member refid="structfw__info_a18e88a48449ef52b75e21d4221e9f9a5_1a18e88a48449ef52b75e21d4221e9f9a5" prot="public" virt="non-virtual"><scope>fw_info</scope><name>magic</name></member>
+      <member refid="structfw__info_a457aa31ebd5e1fbf68bbc7dc47405406_1a457aa31ebd5e1fbf68bbc7dc47405406" prot="public" virt="non-virtual"><scope>fw_info</scope><name>reserved</name></member>
+      <member refid="structfw__info_aa1217e6419e685236aba845203ca44e5_1aa1217e6419e685236aba845203ca44e5" prot="public" virt="non-virtual"><scope>fw_info</scope><name>size</name></member>
+      <member refid="structfw__info_ab618abfff92f3a4388941798bedb6167_1ab618abfff92f3a4388941798bedb6167" prot="public" virt="non-virtual"><scope>fw_info</scope><name>total_size</name></member>
+      <member refid="structfw__info_a080aaeb01f92541aaa491d1d0eca3368_1a080aaeb01f92541aaa491d1d0eca3368" prot="public" virt="non-virtual"><scope>fw_info</scope><name>valid</name></member>
+      <member refid="structfw__info_a41e6ae97618240abd68cd4c20f39c622_1a41e6ae97618240abd68cd4c20f39c622" prot="public" virt="non-virtual"><scope>fw_info</scope><name>version</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

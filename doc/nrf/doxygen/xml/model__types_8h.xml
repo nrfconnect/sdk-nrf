@@ -1,0 +1,718 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="model__types_8h" kind="file" language="C++">
+    <compoundname>model_types.h</compoundname>
+    <includes local="no">bluetooth/mesh.h</includes>
+    <includedby refid="gen__battery__cli_8h" local="no">include/bluetooth/mesh/gen_battery_cli.h</includedby>
+    <includedby refid="gen__dtt__cli_8h" local="no">include/bluetooth/mesh/gen_dtt_cli.h</includedby>
+    <includedby refid="gen__dtt__srv_8h" local="no">include/bluetooth/mesh/gen_dtt_srv.h</includedby>
+    <includedby refid="gen__loc__cli_8h" local="no">include/bluetooth/mesh/gen_loc_cli.h</includedby>
+    <includedby refid="gen__lvl_8h" local="no">include/bluetooth/mesh/gen_lvl.h</includedby>
+    <includedby refid="gen__onoff_8h" local="no">include/bluetooth/mesh/gen_onoff.h</includedby>
+    <includedby refid="gen__plvl_8h" local="no">include/bluetooth/mesh/gen_plvl.h</includedby>
+    <includedby refid="gen__plvl__srv_8h" local="no">include/bluetooth/mesh/gen_plvl_srv.h</includedby>
+    <includedby refid="gen__ponoff__cli_8h" local="no">include/bluetooth/mesh/gen_ponoff_cli.h</includedby>
+    <includedby refid="gen__prop__cli_8h" local="no">include/bluetooth/mesh/gen_prop_cli.h</includedby>
+    <includedby refid="gen__prop__srv_8h" local="no">include/bluetooth/mesh/gen_prop_srv.h</includedby>
+    <includedby refid="light__ctl_8h" local="no">include/bluetooth/mesh/light_ctl.h</includedby>
+    <includedby refid="light__ctl__cli_8h" local="no">include/bluetooth/mesh/light_ctl_cli.h</includedby>
+    <includedby refid="light__ctl__srv_8h" local="no">include/bluetooth/mesh/light_ctl_srv.h</includedby>
+    <includedby refid="light__ctrl__cli_8h" local="no">include/bluetooth/mesh/light_ctrl_cli.h</includedby>
+    <includedby refid="light__ctrl__srv_8h" local="no">include/bluetooth/mesh/light_ctrl_srv.h</includedby>
+    <includedby refid="light__hsl_8h" local="no">include/bluetooth/mesh/light_hsl.h</includedby>
+    <includedby refid="light__hsl__cli_8h" local="no">include/bluetooth/mesh/light_hsl_cli.h</includedby>
+    <includedby refid="light__hsl__srv_8h" local="no">include/bluetooth/mesh/light_hsl_srv.h</includedby>
+    <includedby refid="light__hue__srv_8h" local="no">include/bluetooth/mesh/light_hue_srv.h</includedby>
+    <includedby refid="light__sat__srv_8h" local="no">include/bluetooth/mesh/light_sat_srv.h</includedby>
+    <includedby refid="light__temp__srv_8h" local="no">include/bluetooth/mesh/light_temp_srv.h</includedby>
+    <includedby refid="light__xyl_8h" local="no">include/bluetooth/mesh/light_xyl.h</includedby>
+    <includedby refid="light__xyl__cli_8h" local="no">include/bluetooth/mesh/light_xyl_cli.h</includedby>
+    <includedby refid="light__xyl__srv_8h" local="no">include/bluetooth/mesh/light_xyl_srv.h</includedby>
+    <includedby refid="lightness_8h" local="no">include/bluetooth/mesh/lightness.h</includedby>
+    <includedby refid="lightness__srv_8h" local="no">include/bluetooth/mesh/lightness_srv.h</includedby>
+    <includedby refid="models_8h" local="no">include/bluetooth/mesh/models.h</includedby>
+    <includedby refid="scene_8h" local="no">include/bluetooth/mesh/scene.h</includedby>
+    <includedby refid="scheduler_8h" local="no">include/bluetooth/mesh/scheduler.h</includedby>
+    <includedby refid="sensor_8h" local="no">include/bluetooth/mesh/sensor.h</includedby>
+    <includedby refid="sensor__cli_8h" local="no">include/bluetooth/mesh/sensor_cli.h</includedby>
+    <includedby refid="time__cli_8h" local="no">include/bluetooth/mesh/time_cli.h</includedby>
+    <includedby refid="time__srv_8h" local="no">include/bluetooth/mesh/time_srv.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/bluetooth/mesh/model_types.h</label>
+        <link refid="model__types_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bluetooth/mesh.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>include/bluetooth/mesh/gen_battery_cli.h</label>
+        <link refid="gen__battery__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>include/bluetooth/mesh/gen_dtt_cli.h</label>
+        <link refid="gen__dtt__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>include/bluetooth/mesh/gen_dtt_srv.h</label>
+        <link refid="gen__dtt__srv_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>include/bluetooth/mesh/gen_loc_cli.h</label>
+        <link refid="gen__loc__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>include/bluetooth/mesh/gen_lvl.h</label>
+        <link refid="gen__lvl_8h"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>include/bluetooth/mesh/gen_lvl_cli.h</label>
+        <link refid="gen__lvl__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>include/bluetooth/mesh/gen_lvl_srv.h</label>
+        <link refid="gen__lvl__srv_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>include/bluetooth/mesh/gen_onoff.h</label>
+        <link refid="gen__onoff_8h"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>include/bluetooth/mesh/gen_onoff_cli.h</label>
+        <link refid="gen__onoff__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>include/bluetooth/mesh/gen_onoff_srv.h</label>
+        <link refid="gen__onoff__srv_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>include/bluetooth/mesh/gen_plvl.h</label>
+        <link refid="gen__plvl_8h"/>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>include/bluetooth/mesh/gen_plvl_cli.h</label>
+        <link refid="gen__plvl__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>include/bluetooth/mesh/gen_plvl_srv.h</label>
+        <link refid="gen__plvl__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>include/bluetooth/mesh/gen_ponoff_cli.h</label>
+        <link refid="gen__ponoff__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>include/bluetooth/mesh/gen_ponoff_srv.h</label>
+        <link refid="gen__ponoff__srv_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>include/bluetooth/mesh/gen_prop_cli.h</label>
+        <link refid="gen__prop__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>include/bluetooth/mesh/gen_prop_srv.h</label>
+        <link refid="gen__prop__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>include/bluetooth/mesh/light_ctl.h</label>
+        <link refid="light__ctl_8h"/>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>include/bluetooth/mesh/light_ctl_cli.h</label>
+        <link refid="light__ctl__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>include/bluetooth/mesh/light_ctl_srv.h</label>
+        <link refid="light__ctl__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>include/bluetooth/mesh/light_ctrl_cli.h</label>
+        <link refid="light__ctrl__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>include/bluetooth/mesh/light_ctrl_srv.h</label>
+        <link refid="light__ctrl__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>include/bluetooth/mesh/light_hsl.h</label>
+        <link refid="light__hsl_8h"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>include/bluetooth/mesh/light_hsl_cli.h</label>
+        <link refid="light__hsl__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>include/bluetooth/mesh/light_hsl_srv.h</label>
+        <link refid="light__hsl__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>include/bluetooth/mesh/light_hue_srv.h</label>
+        <link refid="light__hue__srv_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>include/bluetooth/mesh/light_sat_srv.h</label>
+        <link refid="light__sat__srv_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>include/bluetooth/mesh/light_temp_srv.h</label>
+        <link refid="light__temp__srv_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>include/bluetooth/mesh/light_xyl.h</label>
+        <link refid="light__xyl_8h"/>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>include/bluetooth/mesh/light_xyl_cli.h</label>
+        <link refid="light__xyl__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>include/bluetooth/mesh/light_xyl_srv.h</label>
+        <link refid="light__xyl__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>include/bluetooth/mesh/lightness.h</label>
+        <link refid="lightness_8h"/>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>include/bluetooth/mesh/lightness_cli.h</label>
+        <link refid="lightness__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>include/bluetooth/mesh/lightness_srv.h</label>
+        <link refid="lightness__srv_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/mesh/model_types.h</label>
+        <link refid="model__types_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>include/bluetooth/mesh/models.h</label>
+        <link refid="models_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>include/bluetooth/mesh/scene.h</label>
+        <link refid="scene_8h"/>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>include/bluetooth/mesh/scene_cli.h</label>
+        <link refid="scene__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>include/bluetooth/mesh/scene_srv.h</label>
+        <link refid="scene__srv_8h"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>include/bluetooth/mesh/scheduler.h</label>
+        <link refid="scheduler_8h"/>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>include/bluetooth/mesh/scheduler_cli.h</label>
+        <link refid="scheduler__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>include/bluetooth/mesh/scheduler_srv.h</label>
+        <link refid="scheduler__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>include/bluetooth/mesh/sensor.h</label>
+        <link refid="sensor_8h"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>include/bluetooth/mesh/sensor_cli.h</label>
+        <link refid="sensor__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>include/bluetooth/mesh/sensor_srv.h</label>
+        <link refid="sensor__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>include/bluetooth/mesh/sensor_types.h</label>
+        <link refid="sensor__types_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>include/bluetooth/mesh/time_cli.h</label>
+        <link refid="time__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>include/bluetooth/mesh/time_srv.h</label>
+        <link refid="time__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>include/bluetooth/mesh/vnd/silvair_enocean_srv.h</label>
+        <link refid="silvair__enocean__srv_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structbt__mesh__model__transition" prot="public">bt_mesh_model_transition</innerclass>
+    <innerclass refid="structbt__mesh__tid__ctx" prot="public">bt_mesh_tid_ctx</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__model__types_ga0683efc6f4d79111c243c62aef62cf7b_1ga0683efc6f4d79111c243c62aef62cf7b" prot="public" static="no">
+        <name>BT_MESH_MODEL_TRANSITION_TIME_MAX_MS</name>
+        <initializer>(10 * 60 * MSEC_PER_SEC * 0x3e)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum permissible transition time in milliseconds </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/model_types.h" line="23" column="9" bodyfile="include/bluetooth/mesh/model_types.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__model__types_gab38f60f7dca4bed43d0d4e69654f6747_1gab38f60f7dca4bed43d0d4e69654f6747" prot="public" static="no">
+        <name>BT_MESH_MODEL_DELAY_TIME_STEP_FACTOR_MS</name>
+        <initializer>(5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Delay field step factor in milliseconds </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/model_types.h" line="26" column="9" bodyfile="include/bluetooth/mesh/model_types.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__model__types_gaf667f5db2d3e71953d6be5d3aebc303e_1gaf667f5db2d3e71953d6be5d3aebc303e" prot="public" static="no">
+        <name>BT_MESH_MODEL_DELAY_TIME_MAX_MS</name>
+        <initializer>	(UINT8_MAX * <ref refid="group__bt__mesh__model__types_gab38f60f7dca4bed43d0d4e69654f6747_1gab38f60f7dca4bed43d0d4e69654f6747" kindref="member">BT_MESH_MODEL_DELAY_TIME_STEP_FACTOR_MS</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum permissible delay time in milliseconds </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/model_types.h" line="28" column="9" bodyfile="include/bluetooth/mesh/model_types.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1ga6fcaf7e02af730b2100af1ef0a01f323" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_model_status</name>
+        <enumvalue id="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1gga6fcaf7e02af730b2100af1ef0a01f323ae5c661b8d6435cc3cb2d0d84acf7d11d" prot="public">
+          <name>BT_MESH_MODEL_SUCCESS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Command successfully processed. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1gga6fcaf7e02af730b2100af1ef0a01f323a5836bb34784906d5804bf1332b76f87a" prot="public">
+          <name>BT_MESH_MODEL_ERROR_INVALID_RANGE_MIN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The provided value for range min cannot be set. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1gga6fcaf7e02af730b2100af1ef0a01f323a10362f4425d41c92c8f327a08adc78d7" prot="public">
+          <name>BT_MESH_MODEL_ERROR_INVALID_RANGE_MAX</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The provided value for range max cannot be set. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1gga6fcaf7e02af730b2100af1ef0a01f323a8edc7a543ace43a3fa456e679b9976f9" prot="public">
+          <name>BT_MESH_MODEL_STATUS_INVALID</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Invalid status code. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Model status values. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/model_types.h" line="53" column="1" bodyfile="include/bluetooth/mesh/model_types.h" bodystart="53" bodyend="62"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__mesh__model__types_ga66950f368812a669ec1ceb3e3af6a02c_1ga66950f368812a669ec1ceb3e3af6a02c" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_rgb_ch</name>
+        <enumvalue id="group__bt__mesh__model__types_ga66950f368812a669ec1ceb3e3af6a02c_1gga66950f368812a669ec1ceb3e3af6a02ca4dd8c5e6a6c522bab806c13df7a621a8" prot="public">
+          <name>BT_MESH_RGB_CH_RED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__model__types_ga66950f368812a669ec1ceb3e3af6a02c_1gga66950f368812a669ec1ceb3e3af6a02ca5c73e4bcb97509a35dfb6a305ee9bfa7" prot="public">
+          <name>BT_MESH_RGB_CH_GREEN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__model__types_ga66950f368812a669ec1ceb3e3af6a02c_1gga66950f368812a669ec1ceb3e3af6a02cac09cde26786b02d6cd3205c2d7a75f8a" prot="public">
+          <name>BT_MESH_RGB_CH_BLUE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__model__types_ga66950f368812a669ec1ceb3e3af6a02c_1gga66950f368812a669ec1ceb3e3af6a02ca5ab3d40b1379586fac806046318c85b2" prot="public">
+          <name>BT_MESH_RGB_CHANNELS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>RGB color channels </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/model_types.h" line="65" column="1" bodyfile="include/bluetooth/mesh/model_types.h" bodystart="65" bodyend="71"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__model__types_gaa845685eb265d1294b17bb80fbde4996_1gaa845685eb265d1294b17bb80fbde4996" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t bt_mesh_model_transition_time</definition>
+        <argsstring>(const struct bt_mesh_model_transition *trans)</argsstring>
+        <name>bt_mesh_model_transition_time</name>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref> *</type>
+          <declname>trans</declname>
+        </param>
+        <briefdescription>
+<para>Get the total transition time. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">trans</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Transition time, or NULL.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Total time of the given transition, in milliseconds, or 0 if <computeroutput>trans</computeroutput> is NULL. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/model_types.h" line="81" column="1" bodyfile="include/bluetooth/mesh/model_types.h" bodystart="81" bodyend="88"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_MESH_MODEL_TYPES_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_MODEL_TYPES_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/mesh.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="group__bt__mesh__model__types_ga0683efc6f4d79111c243c62aef62cf7b_1ga0683efc6f4d79111c243c62aef62cf7b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_MODEL_TRANSITION_TIME_MAX_MS<sp/>(10<sp/>*<sp/>60<sp/>*<sp/>MSEC_PER_SEC<sp/>*<sp/>0x3e)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="group__bt__mesh__model__types_gab38f60f7dca4bed43d0d4e69654f6747_1gab38f60f7dca4bed43d0d4e69654f6747" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_MODEL_DELAY_TIME_STEP_FACTOR_MS<sp/>(5)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="group__bt__mesh__model__types_gaf667f5db2d3e71953d6be5d3aebc303e_1gaf667f5db2d3e71953d6be5d3aebc303e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_MODEL_DELAY_TIME_MAX_MS<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="29"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(UINT8_MAX<sp/>*<sp/>BT_MESH_MODEL_DELAY_TIME_STEP_FACTOR_MS)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="structbt__mesh__model__transition" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref><sp/>{</highlight></codeline>
+<codeline lineno="37" refid="structbt__mesh__model__transition_a379edf32df457ab3dd9cd8ac1a66f051_1a379edf32df457ab3dd9cd8ac1a66f051" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__mesh__model__transition_a379edf32df457ab3dd9cd8ac1a66f051_1a379edf32df457ab3dd9cd8ac1a66f051" kindref="member">time</ref>;<sp/></highlight></codeline>
+<codeline lineno="38" refid="structbt__mesh__model__transition_a22e05787d6336fee5b171126bda4400c_1a22e05787d6336fee5b171126bda4400c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__mesh__model__transition_a22e05787d6336fee5b171126bda4400c_1a22e05787d6336fee5b171126bda4400c" kindref="member">delay</ref>;<sp/></highlight></codeline>
+<codeline lineno="39"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="structbt__mesh__tid__ctx" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__tid__ctx" kindref="compound">bt_mesh_tid_ctx</ref><sp/>{</highlight></codeline>
+<codeline lineno="46" refid="structbt__mesh__tid__ctx_ad217f7ef826645c7d935b65cd840dd20_1ad217f7ef826645c7d935b65cd840dd20" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__mesh__tid__ctx_ad217f7ef826645c7d935b65cd840dd20_1ad217f7ef826645c7d935b65cd840dd20" kindref="member">src</ref>;<sp/></highlight></codeline>
+<codeline lineno="47" refid="structbt__mesh__tid__ctx_a61767216a8940cbd4e0da9063f835185_1a61767216a8940cbd4e0da9063f835185" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__mesh__tid__ctx_a61767216a8940cbd4e0da9063f835185_1a61767216a8940cbd4e0da9063f835185" kindref="member">dst</ref>;<sp/></highlight></codeline>
+<codeline lineno="48" refid="structbt__mesh__tid__ctx_a3a05464742972a13182e4f17e0ab93ec_1a3a05464742972a13182e4f17e0ab93ec" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/><ref refid="structbt__mesh__tid__ctx_a3a05464742972a13182e4f17e0ab93ec_1a3a05464742972a13182e4f17e0ab93ec" kindref="member">timestamp</ref>;<sp/></highlight></codeline>
+<codeline lineno="49" refid="structbt__mesh__tid__ctx_ad0414fccbccdee445b3554d9f3a8fb5f_1ad0414fccbccdee445b3554d9f3a8fb5f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__tid__ctx_ad0414fccbccdee445b3554d9f3a8fb5f_1ad0414fccbccdee445b3554d9f3a8fb5f" kindref="member">tid</ref>;<sp/></highlight></codeline>
+<codeline lineno="50"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1ga6fcaf7e02af730b2100af1ef0a01f323" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1ga6fcaf7e02af730b2100af1ef0a01f323" kindref="member">bt_mesh_model_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="55" refid="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1gga6fcaf7e02af730b2100af1ef0a01f323ae5c661b8d6435cc3cb2d0d84acf7d11d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1gga6fcaf7e02af730b2100af1ef0a01f323ae5c661b8d6435cc3cb2d0d84acf7d11d" kindref="member">BT_MESH_MODEL_SUCCESS</ref>,</highlight></codeline>
+<codeline lineno="57" refid="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1gga6fcaf7e02af730b2100af1ef0a01f323a5836bb34784906d5804bf1332b76f87a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1gga6fcaf7e02af730b2100af1ef0a01f323a5836bb34784906d5804bf1332b76f87a" kindref="member">BT_MESH_MODEL_ERROR_INVALID_RANGE_MIN</ref>,</highlight></codeline>
+<codeline lineno="59" refid="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1gga6fcaf7e02af730b2100af1ef0a01f323a10362f4425d41c92c8f327a08adc78d7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1gga6fcaf7e02af730b2100af1ef0a01f323a10362f4425d41c92c8f327a08adc78d7" kindref="member">BT_MESH_MODEL_ERROR_INVALID_RANGE_MAX</ref>,</highlight></codeline>
+<codeline lineno="61" refid="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1gga6fcaf7e02af730b2100af1ef0a01f323a8edc7a543ace43a3fa456e679b9976f9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1gga6fcaf7e02af730b2100af1ef0a01f323a8edc7a543ace43a3fa456e679b9976f9" kindref="member">BT_MESH_MODEL_STATUS_INVALID</ref>,</highlight></codeline>
+<codeline lineno="62"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65" refid="group__bt__mesh__model__types_ga66950f368812a669ec1ceb3e3af6a02c_1ga66950f368812a669ec1ceb3e3af6a02c" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__model__types_ga66950f368812a669ec1ceb3e3af6a02c_1ga66950f368812a669ec1ceb3e3af6a02c" kindref="member">bt_mesh_rgb_ch</ref><sp/>{</highlight></codeline>
+<codeline lineno="66" refid="group__bt__mesh__model__types_ga66950f368812a669ec1ceb3e3af6a02c_1gga66950f368812a669ec1ceb3e3af6a02ca4dd8c5e6a6c522bab806c13df7a621a8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__model__types_ga66950f368812a669ec1ceb3e3af6a02c_1gga66950f368812a669ec1ceb3e3af6a02ca4dd8c5e6a6c522bab806c13df7a621a8" kindref="member">BT_MESH_RGB_CH_RED</ref>,</highlight></codeline>
+<codeline lineno="67" refid="group__bt__mesh__model__types_ga66950f368812a669ec1ceb3e3af6a02c_1gga66950f368812a669ec1ceb3e3af6a02ca5c73e4bcb97509a35dfb6a305ee9bfa7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__model__types_ga66950f368812a669ec1ceb3e3af6a02c_1gga66950f368812a669ec1ceb3e3af6a02ca5c73e4bcb97509a35dfb6a305ee9bfa7" kindref="member">BT_MESH_RGB_CH_GREEN</ref>,</highlight></codeline>
+<codeline lineno="68" refid="group__bt__mesh__model__types_ga66950f368812a669ec1ceb3e3af6a02c_1gga66950f368812a669ec1ceb3e3af6a02cac09cde26786b02d6cd3205c2d7a75f8a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__model__types_ga66950f368812a669ec1ceb3e3af6a02c_1gga66950f368812a669ec1ceb3e3af6a02cac09cde26786b02d6cd3205c2d7a75f8a" kindref="member">BT_MESH_RGB_CH_BLUE</ref>,</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="group__bt__mesh__model__types_ga66950f368812a669ec1ceb3e3af6a02c_1gga66950f368812a669ec1ceb3e3af6a02ca5ab3d40b1379586fac806046318c85b2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__model__types_ga66950f368812a669ec1ceb3e3af6a02c_1gga66950f368812a669ec1ceb3e3af6a02ca5ab3d40b1379586fac806046318c85b2" kindref="member">BT_MESH_RGB_CHANNELS</ref>,</highlight></codeline>
+<codeline lineno="71"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>int32_t</highlight></codeline>
+<codeline lineno="81" refid="group__bt__mesh__model__types_gaa845685eb265d1294b17bb80fbde4996_1gaa845685eb265d1294b17bb80fbde4996" refkind="member"><highlight class="normal"><ref refid="group__bt__mesh__model__types_gaa845685eb265d1294b17bb80fbde4996_1gaa845685eb265d1294b17bb80fbde4996" kindref="member">bt_mesh_model_transition_time</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref><sp/>*trans)</highlight></codeline>
+<codeline lineno="82"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!trans)<sp/>{</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>trans-&gt;<ref refid="structbt__mesh__model__transition_a22e05787d6336fee5b171126bda4400c_1a22e05787d6336fee5b171126bda4400c" kindref="member">delay</ref><sp/>+<sp/>trans-&gt;<ref refid="structbt__mesh__model__transition_a379edf32df457ab3dd9cd8ac1a66f051_1a379edf32df457ab3dd9cd8ac1a66f051" kindref="member">time</ref>;</highlight></codeline>
+<codeline lineno="88"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_MODEL_USER_DATA(_type,<sp/>_user_data)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="114"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(((_user_data)<sp/>==<sp/>(_type<sp/>*)0)<sp/>?<sp/>NULL<sp/>:<sp/>(_user_data))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_MESH_MODEL_TYPES_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/mesh/model_types.h"/>
+  </compounddef>
+</doxygen>

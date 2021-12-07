@@ -1,0 +1,261 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__throughput" kind="group">
+    <compoundname>bt_throughput</compoundname>
+    <title>Bluetooth LE GATT Throughput Service API</title>
+    <innerclass refid="structbt__throughput__metrics" prot="public">bt_throughput_metrics</innerclass>
+    <innerclass refid="structbt__throughput__cb" prot="public">bt_throughput_cb</innerclass>
+    <innerclass refid="structbt__throughput" prot="public">bt_throughput</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__throughput_1gabfc3460b865c543868d0175233abb034" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_throughput_init</definition>
+        <argsstring>(struct bt_throughput *throughput, const struct bt_throughput_cb *cb)</argsstring>
+        <name>bt_throughput_init</name>
+        <param>
+          <type>struct <ref refid="structbt__throughput" kindref="compound">bt_throughput</ref> *</type>
+          <declname>throughput</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__throughput__cb" kindref="compound">bt_throughput_cb</ref> *</type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the GATT Throughput Service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">throughput</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Throughput Service instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callbacks.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="104" column="5" declfile="include/bluetooth/services/throughput.h" declline="104" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__throughput_1gaa046d42f46309608f286d92fed48d75e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_throughput_handles_assign</definition>
+        <argsstring>(struct bt_gatt_dm *dm, struct bt_throughput *throughput)</argsstring>
+        <name>bt_throughput_handles_assign</name>
+        <param>
+          <type>struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__throughput" kindref="compound">bt_throughput</ref> *</type>
+          <declname>throughput</declname>
+        </param>
+        <briefdescription>
+<para>Assign handles to the Throughput Service instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function should be called when a link with a peer has been established, to associate the link to this instance of the module. This makes it possible to handle several links and associate each link to a particular instance of this module. The GATT attribute handles are provided by the GATT Discovery Manager.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">throughput</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Throughput Service instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>(-ENOTSUP)</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Special error code used when the UUID of the service does not match the expected UUID. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="123" column="5" declfile="include/bluetooth/services/throughput.h" declline="123" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__throughput_1ga1d89f749dcd282a71f5b00f8a6991c78" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_throughput_read</definition>
+        <argsstring>(struct bt_throughput *throughput)</argsstring>
+        <name>bt_throughput_read</name>
+        <param>
+          <type>struct <ref refid="structbt__throughput" kindref="compound">bt_throughput</ref> *</type>
+          <declname>throughput</declname>
+        </param>
+        <briefdescription>
+<para>Read data from the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This procedure is asynchronous.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">throughput</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Throughput Service instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="135" column="5" declfile="include/bluetooth/services/throughput.h" declline="135" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__throughput_1ga9b1a986f13a950bac84cfbc5d5a31c5e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_throughput_write</definition>
+        <argsstring>(struct bt_throughput *throughput, const uint8_t *data, uint16_t len)</argsstring>
+        <name>bt_throughput_write</name>
+        <param>
+          <type>struct <ref refid="structbt__throughput" kindref="compound">bt_throughput</ref> *</type>
+          <declname>throughput</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Write data to the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">throughput</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Throughput Service instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data length.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="146" column="5" declfile="include/bluetooth/services/throughput.h" declline="146" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__throughput_1ga7187672ced825954bb12354076c8ef51" prot="public" static="no">
+        <name>BT_UUID_THROUGHPUT_CHAR</name>
+        <initializer>BT_UUID_DECLARE_16(0x1524)</initializer>
+        <briefdescription>
+<para>Throughput Characteristic UUID. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="87" column="9" bodyfile="include/bluetooth/services/throughput.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__throughput_1ga68b3d45d886052165552639fd1ab553f" prot="public" static="no">
+        <name>BT_UUID_THROUGHPUT_VAL</name>
+        <initializer>	BT_UUID_128_ENCODE(0x0483dadd, 0x6c9d, 0x6ca9, 0x5d41, 0x03ad4fff4abb)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="89" column="9" bodyfile="include/bluetooth/services/throughput.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__throughput_1ga28a47872e339bafe35f0813f7cc0a9c1" prot="public" static="no">
+        <name>BT_UUID_THROUGHPUT</name>
+        <initializer>	BT_UUID_DECLARE_128(<ref refid="group__bt__throughput_ga68b3d45d886052165552639fd1ab553f_1ga68b3d45d886052165552639fd1ab553f" kindref="member">BT_UUID_THROUGHPUT_VAL</ref>)</initializer>
+        <briefdescription>
+<para>Throughput Service UUID. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="93" column="9" bodyfile="include/bluetooth/services/throughput.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Bluetooth LE GATT Throughput Service. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

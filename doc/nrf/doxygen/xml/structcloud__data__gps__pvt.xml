@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structcloud__data__gps__pvt" kind="struct" language="C++" prot="public">
+    <compoundname>cloud_data_gps_pvt</compoundname>
+    <includes refid="v2_2src_2cloud_2cloud__codec_2cloud__codec_8h" local="no">cloud_codec.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structcloud__data__gps__pvt_a7563c585f3388808a47804702d8a1c2f_1a7563c585f3388808a47804702d8a1c2f" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double cloud_data_gps_pvt::longi</definition>
+        <argsstring></argsstring>
+        <name>longi</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Longitude </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="43" column="8" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__gps__pvt_a157cf210ac8015a97d6cfb6c08f8c974_1a157cf210ac8015a97d6cfb6c08f8c974" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double cloud_data_gps_pvt::lat</definition>
+        <argsstring></argsstring>
+        <name>lat</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Latitude </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="45" column="8" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__gps__pvt_a4bf09fa0fd8092eb5de4a92b119b3d5c_1a4bf09fa0fd8092eb5de4a92b119b3d5c" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float cloud_data_gps_pvt::alt</definition>
+        <argsstring></argsstring>
+        <name>alt</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Altitude above WGS-84 ellipsoid in meters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="47" column="7" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__gps__pvt_a04496dae5e6123f0834af8da03ee32f2_1a04496dae5e6123f0834af8da03ee32f2" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float cloud_data_gps_pvt::acc</definition>
+        <argsstring></argsstring>
+        <name>acc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Accuracy in (2D 1-sigma) in meters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="49" column="7" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__gps__pvt_a43f2faeba5c8abd9537f693b45c2834f_1a43f2faeba5c8abd9537f693b45c2834f" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float cloud_data_gps_pvt::spd</definition>
+        <argsstring></argsstring>
+        <name>spd</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Horizontal speed in meters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="51" column="7" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__gps__pvt_a5214d895aa3633b6a81206637ac50172_1a5214d895aa3633b6a81206637ac50172" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float cloud_data_gps_pvt::hdg</definition>
+        <argsstring></argsstring>
+        <name>hdg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Heading of movement in degrees. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="53" column="7" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="41" column="1" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="41" bodyend="54"/>
+    <listofallmembers>
+      <member refid="structcloud__data__gps__pvt_a04496dae5e6123f0834af8da03ee32f2_1a04496dae5e6123f0834af8da03ee32f2" prot="public" virt="non-virtual"><scope>cloud_data_gps_pvt</scope><name>acc</name></member>
+      <member refid="structcloud__data__gps__pvt_a4bf09fa0fd8092eb5de4a92b119b3d5c_1a4bf09fa0fd8092eb5de4a92b119b3d5c" prot="public" virt="non-virtual"><scope>cloud_data_gps_pvt</scope><name>alt</name></member>
+      <member refid="structcloud__data__gps__pvt_a5214d895aa3633b6a81206637ac50172_1a5214d895aa3633b6a81206637ac50172" prot="public" virt="non-virtual"><scope>cloud_data_gps_pvt</scope><name>hdg</name></member>
+      <member refid="structcloud__data__gps__pvt_a157cf210ac8015a97d6cfb6c08f8c974_1a157cf210ac8015a97d6cfb6c08f8c974" prot="public" virt="non-virtual"><scope>cloud_data_gps_pvt</scope><name>lat</name></member>
+      <member refid="structcloud__data__gps__pvt_a7563c585f3388808a47804702d8a1c2f_1a7563c585f3388808a47804702d8a1c2f" prot="public" virt="non-virtual"><scope>cloud_data_gps_pvt</scope><name>longi</name></member>
+      <member refid="structcloud__data__gps__pvt_a43f2faeba5c8abd9537f693b45c2834f_1a43f2faeba5c8abd9537f693b45c2834f" prot="public" virt="non-virtual"><scope>cloud_data_gps_pvt</scope><name>spd</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

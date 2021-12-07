@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structext__sensor__evt" kind="struct" language="C++" prot="public">
+    <compoundname>ext_sensor_evt</compoundname>
+    <includes refid="ext__sensors_8h" local="no">ext_sensors.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structext__sensor__evt_adec83ab7433b573f81a12d4aff7e7b5d_1adec83ab7433b573f81a12d4aff7e7b5d" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__External_gaceacf77b0bc9c42e726792ee4743c8fa_1gaceacf77b0bc9c42e726792ee4743c8fa" kindref="member">ext_sensor_evt_type</ref></type>
+        <definition>enum ext_sensor_evt_type ext_sensor_evt::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sensor type. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" line="41" column="25" bodyfile="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structext__sensor__evt_a071254851d3d38b295f6084651cda404_1a071254851d3d38b295f6084651cda404" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double ext_sensor_evt::value_array[3]</definition>
+        <argsstring>[3]</argsstring>
+        <name>value_array</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Array of external sensor values. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" line="45" column="8" bodyfile="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structext__sensor__evt_a1bfa50634a7d31c3c5de8508250ecca6_1a1bfa50634a7d31c3c5de8508250ecca6" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double ext_sensor_evt::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Single external sensor value. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" line="47" column="8" bodyfile="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structext__sensor__evt_a3b4f7095c26e0b4fa45e1b7b37933617_1a3b4f7095c26e0b4fa45e1b7b37933617" prot="public" static="no" mutable="no">
+        <type>union ext_sensor_evt::@19</type>
+        <definition>union ext_sensor_evt::@19 ext_sensor_evt::@20</definition>
+        <argsstring></argsstring>
+        <name>@20</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" line="48" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Structure containing external sensor data. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" line="39" column="1" bodyfile="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" bodystart="39" bodyend="49"/>
+    <listofallmembers>
+      <member refid="structext__sensor__evt_adec83ab7433b573f81a12d4aff7e7b5d_1adec83ab7433b573f81a12d4aff7e7b5d" prot="public" virt="non-virtual"><scope>ext_sensor_evt</scope><name>type</name></member>
+      <member refid="structext__sensor__evt_a1bfa50634a7d31c3c5de8508250ecca6_1a1bfa50634a7d31c3c5de8508250ecca6" prot="public" virt="non-virtual"><scope>ext_sensor_evt</scope><name>value</name></member>
+      <member refid="structext__sensor__evt_a071254851d3d38b295f6084651cda404_1a071254851d3d38b295f6084651cda404" prot="public" virt="non-virtual"><scope>ext_sensor_evt</scope><name>value_array</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

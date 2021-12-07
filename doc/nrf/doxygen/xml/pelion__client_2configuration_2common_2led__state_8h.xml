@@ -1,0 +1,242 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="pelion__client_2configuration_2common_2led__state_8h" kind="file" language="C++">
+    <compoundname>led_state.h</compoundname>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__led__state_gadc8c409756ef96aeb3ef4db80c3f7e71_1gadc8c409756ef96aeb3ef4db80c3f7e71" prot="public" static="no">
+        <name>LED_UNAVAILABLE</name>
+        <initializer>0xFF</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/pelion_client/configuration/common/led_state.h" line="27" column="9" bodyfile="applications/pelion_client/configuration/common/led_state.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1gacb7e9e867e9fca70f6201b3c5c6a71ea" prot="public" static="no" strong="no">
+        <type></type>
+        <name>led_id</name>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa651e0c5e43d0152c8c0b15a25e4d8680" prot="public">
+          <name>LED_ID_1</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa32c22eac06eacdd0c5894a843035a54c" prot="public">
+          <name>LED_ID_2</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa55ab5c87a8274df9cf3d9be0bd925666" prot="public">
+          <name>LED_ID_3</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa07e0545f50f8dc52af5d8322e90db366" prot="public">
+          <name>LED_ID_4</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa02b155ecc1a1d4083c058aa46d6c4446" prot="public">
+          <name>LED_ID_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa4e8e600211b6c2b4a6a46c90fb88fdeb" prot="public">
+          <name>LED_ID_CONNECTING</name>
+          <initializer>= LED_ID_1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaaa212679aa1fcf3396a3fd818157bf32c" prot="public">
+          <name>LED_ID_SEARCHING</name>
+          <initializer>= LED_ID_2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa9e0359cfa1d45e2d105253d7becf1b69" prot="public">
+          <name>LED_ID_PUBLISHING</name>
+          <initializer>= LED_ID_3</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa0d159f1ef41a84e5fee297bd334aa731" prot="public">
+          <name>LED_ID_MODE</name>
+          <initializer>= LED_ID_4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa651e0c5e43d0152c8c0b15a25e4d8680" prot="public">
+          <name>LED_ID_1</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa02b155ecc1a1d4083c058aa46d6c4446" prot="public">
+          <name>LED_ID_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa4e8e600211b6c2b4a6a46c90fb88fdeb" prot="public">
+          <name>LED_ID_CONNECTING</name>
+          <initializer>= LED_ID_1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaaa212679aa1fcf3396a3fd818157bf32c" prot="public">
+          <name>LED_ID_SEARCHING</name>
+          <initializer>= LED_ID_1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa9e0359cfa1d45e2d105253d7becf1b69" prot="public">
+          <name>LED_ID_PUBLISHING</name>
+          <initializer>= LED_ID_1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa0d159f1ef41a84e5fee297bd334aa731" prot="public">
+          <name>LED_ID_MODE</name>
+          <initializer>= LED_ID_1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaaa19d31747d4684387c87bac64aa61fc7" prot="public">
+          <name>LED_ID_ML_STATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa1046499c4127379d00588563f8b39df3" prot="public">
+          <name>LED_ID_SENSOR_SIM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa02b155ecc1a1d4083c058aa46d6c4446" prot="public">
+          <name>LED_ID_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa5e7b8915c50a0d7770d8c875e69e8ad4" prot="public">
+          <name>LED_ID_SYSTEM_STATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaab2123c9f2b5f8c768197c2d492b13421" prot="public">
+          <name>LED_ID_PEER_STATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa02b155ecc1a1d4083c058aa46d6c4446" prot="public">
+          <name>LED_ID_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa0a63ae12524c4a6186bdef8291bc0480" prot="public">
+          <name>LED_ID_NET_STATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa1f8a672ec7ce72465525bfbca246be82" prot="public">
+          <name>LED_ID_PELION_STATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa02b155ecc1a1d4083c058aa46d6c4446" prot="public">
+          <name>LED_ID_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/pelion_client/configuration/common/led_state.h" line="20" column="1" bodyfile="applications/pelion_client/configuration/common/led_state.h" bodystart="20" bodyend="25"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_LED_STATE_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_LED_STATE_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20" refid="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1gacb7e9e867e9fca70f6201b3c5c6a71ea" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="asset__tracker__v2_2include_2nrf9160dk__nrf9160__ns_2led__state__def_8h_acb7e9e867e9fca70f6201b3c5c6a71ea_1acb7e9e867e9fca70f6201b3c5c6a71ea" kindref="member">led_id</ref><sp/>{</highlight></codeline>
+<codeline lineno="21" refid="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa0a63ae12524c4a6186bdef8291bc0480" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa0a63ae12524c4a6186bdef8291bc0480" kindref="member">LED_ID_NET_STATE</ref>,</highlight></codeline>
+<codeline lineno="22" refid="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa1f8a672ec7ce72465525bfbca246be82" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa1f8a672ec7ce72465525bfbca246be82" kindref="member">LED_ID_PELION_STATE</ref>,</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa02b155ecc1a1d4083c058aa46d6c4446" kindref="member">LED_ID_COUNT</ref></highlight></codeline>
+<codeline lineno="25" refid="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa02b155ecc1a1d4083c058aa46d6c4446" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="group__led__state_gadc8c409756ef96aeb3ef4db80c3f7e71_1gadc8c409756ef96aeb3ef4db80c3f7e71" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LED_UNAVAILABLE<sp/>0xFF</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_LED_STATE_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/pelion_client/configuration/common/led_state.h"/>
+  </compounddef>
+</doxygen>

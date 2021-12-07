@@ -1,0 +1,434 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="light__hsl__srv_8h" kind="file" language="C++">
+    <compoundname>light_hsl_srv.h</compoundname>
+    <includes refid="light__hsl_8h" local="no">bluetooth/mesh/light_hsl.h</includes>
+    <includes refid="light__sat__srv_8h" local="no">bluetooth/mesh/light_sat_srv.h</includes>
+    <includes refid="light__hue__srv_8h" local="no">bluetooth/mesh/light_hue_srv.h</includes>
+    <includes refid="lightness__srv_8h" local="no">bluetooth/mesh/lightness_srv.h</includes>
+    <includes refid="model__types_8h" local="no">bluetooth/mesh/model_types.h</includes>
+    <includedby refid="models_8h" local="no">include/bluetooth/mesh/models.h</includedby>
+    <incdepgraph>
+      <node id="21">
+        <label>bluetooth/mesh/gen_dtt.h</label>
+        <link refid="gen__dtt_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>bluetooth/mesh/gen_dtt_srv.h</label>
+        <link refid="gen__dtt__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>bluetooth/mesh/gen_lvl.h</label>
+        <link refid="gen__lvl_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>bluetooth/mesh/gen_lvl_srv.h</label>
+        <link refid="gen__lvl__srv_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>bluetooth/mesh/gen_onoff.h</label>
+        <link refid="gen__onoff_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>bluetooth/mesh/gen_onoff_srv.h</label>
+        <link refid="gen__onoff__srv_8h"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>bluetooth/mesh/gen_ponoff.h</label>
+        <link refid="gen__ponoff_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>bluetooth/mesh/gen_ponoff_srv.h</label>
+        <link refid="gen__ponoff__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bluetooth/mesh/light_hsl.h</label>
+        <link refid="light__hsl_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/mesh/light_hsl_srv.h</label>
+        <link refid="light__hsl__srv_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>bluetooth/mesh/light_hue_srv.h</label>
+        <link refid="light__hue__srv_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>bluetooth/mesh/light_sat_srv.h</label>
+        <link refid="light__sat__srv_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>bluetooth/mesh/lightness.h</label>
+        <link refid="lightness_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>bluetooth/mesh/lightness_srv.h</label>
+        <link refid="lightness__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bluetooth/mesh/model_types.h</label>
+        <link refid="model__types_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>bluetooth/mesh/scene.h</label>
+        <link refid="scene_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>bluetooth/mesh/scene_srv.h</label>
+        <link refid="scene__srv_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/mesh.h</label>
+      </node>
+      <node id="10">
+        <label>settings/settings.h</label>
+      </node>
+      <node id="12">
+        <label>sys/slist.h</label>
+      </node>
+      <node id="11">
+        <label>toolchain/common.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>include/bluetooth/mesh/light_hsl_srv.h</label>
+        <link refid="light__hsl__srv_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/bluetooth/mesh/models.h</label>
+        <link refid="models_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>include/bluetooth/mesh/vnd/silvair_enocean_srv.h</label>
+        <link refid="silvair__enocean__srv_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structbt__mesh__light__hsl__srv" prot="public">bt_mesh_light_hsl_srv</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__light__hsl__srv_gad8712bba4f5a213056b511eed063b26f_1gad8712bba4f5a213056b511eed063b26f" prot="public" static="no">
+        <name>BT_MESH_LIGHT_HSL_SRV_INIT</name>
+        <param><defname>_lightness_srv</defname></param>
+        <param><defname>_hue_handlers</defname></param>
+        <param><defname>_sat_handlers</defname></param>
+        <initializer>	{                                                                                          \
+		.lightness = _lightness_srv,                          \
+		.hue = <ref refid="group__bt__mesh__light__hue__srv_ga667fdc6e1bea532655cfdca13f5c3c08_1ga667fdc6e1bea532655cfdca13f5c3c08" kindref="member">BT_MESH_LIGHT_HUE_SRV_INIT</ref>(_hue_handlers),                                  \
+		.sat = <ref refid="group__bt__mesh__light__sat__srv_gad610b512e40be7a4a020f61c58356387_1gad610b512e40be7a4a020f61c58356387" kindref="member">BT_MESH_LIGHT_SAT_SRV_INIT</ref>(_sat_handlers),                                  \
+	}</initializer>
+        <briefdescription>
+<para>Initialization parameters for a <ref refid="group__bt__mesh__light__hsl__srv" kindref="compound">Light HSL Server model</ref> instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_lightness_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Lightness Server instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_hue_handlers</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Hue Server model handlers. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_sat_handlers</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Saturation Server model handlers. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl_srv.h" line="37" column="9" bodyfile="include/bluetooth/mesh/light_hsl_srv.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__light__hsl__srv_gae6cb958e72a573ba347d30b7eaf65003_1gae6cb958e72a573ba347d30b7eaf65003" prot="public" static="no">
+        <name>BT_MESH_MODEL_LIGHT_HSL_SRV</name>
+        <param><defname>_srv</defname></param>
+        <initializer>	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_HSL_SRV,                       \
+			 _bt_mesh_light_hsl_srv_op, &amp;(_srv)-&gt;pub,              \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__light__hsl__srv" kindref="compound">bt_mesh_light_hsl_srv</ref>, \
+						 _srv),                        \
+			 &amp;_bt_mesh_light_hsl_srv_cb),                          \
+	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_HSL_SETUP_SRV,                 \
+			 _bt_mesh_light_hsl_setup_srv_op, NULL,                \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__light__hsl__srv" kindref="compound">bt_mesh_light_hsl_srv</ref>, \
+						 _srv),                        \
+			 &amp;_bt_mesh_light_hsl_setup_srv_cb)</initializer>
+        <briefdescription>
+<para>Light HSL Server model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__light__hsl__srv" kindref="compound">Light HSL Server model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl_srv.h" line="50" column="9" bodyfile="include/bluetooth/mesh/light_hsl_srv.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__light__hsl__srv_ga2a66827c74a41dc8a5ca42a9c3db53ad_1ga2a66827c74a41dc8a5ca42a9c3db53ad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_hsl_srv_pub</definition>
+        <argsstring>(struct bt_mesh_light_hsl_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_hsl_status *status)</argsstring>
+        <name>bt_mesh_light_hsl_srv_pub</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__hsl__srv" kindref="compound">bt_mesh_light_hsl_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__light__hsl__status" kindref="compound">bt_mesh_light_hsl_status</ref> *</type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+<para>Publish the current HSL status. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Asynchronously publishes a HSL status message with the configured publish parameters.</para>
+<para><simplesect kind="note"><para>This API is only used publishing unprompted status messages. Response messages for get and set messages are handled internally.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server instance to publish on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to send with the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Status parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl_srv.h" line="110" column="5" declfile="include/bluetooth/mesh/light_hsl_srv.h" declline="110" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_MESH_LIGHT_HSL_SRV_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_HSL_SRV_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="light__hsl_8h" kindref="compound">bluetooth/mesh/light_hsl.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="light__sat__srv_8h" kindref="compound">bluetooth/mesh/light_sat_srv.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="light__hue__srv_8h" kindref="compound">bluetooth/mesh/light_hue_srv.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="lightness__srv_8h" kindref="compound">bluetooth/mesh/lightness_srv.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="model__types_8h" kindref="compound">bluetooth/mesh/model_types.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__hsl__srv" kindref="compound">bt_mesh_light_hsl_srv</ref>;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="group__bt__mesh__light__hsl__srv_gad8712bba4f5a213056b511eed063b26f_1gad8712bba4f5a213056b511eed063b26f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_HSL_SRV_INIT(_lightness_srv,<sp/>_hue_handlers,<sp/>_sat_handlers)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="38"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="39"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.lightness<sp/>=<sp/>_lightness_srv,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="40"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.hue<sp/>=<sp/>BT_MESH_LIGHT_HUE_SRV_INIT(_hue_handlers),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="41"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.sat<sp/>=<sp/>BT_MESH_LIGHT_SAT_SRV_INIT(_sat_handlers),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="42"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="group__bt__mesh__light__hsl__srv_gae6cb958e72a573ba347d30b7eaf65003_1gae6cb958e72a573ba347d30b7eaf65003" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_MODEL_LIGHT_HSL_SRV(_srv)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="51"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_HSL_SRV,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="52"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_bt_mesh_light_hsl_srv_op,<sp/>&amp;(_srv)-&gt;pub,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="53"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_USER_DATA(struct<sp/>bt_mesh_light_hsl_srv,<sp/>\</highlight></codeline>
+<codeline lineno="54"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_srv),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="55"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;_bt_mesh_light_hsl_srv_cb),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="56"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_HSL_SETUP_SRV,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="57"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_bt_mesh_light_hsl_setup_srv_op,<sp/>NULL,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="58"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_USER_DATA(struct<sp/>bt_mesh_light_hsl_srv,<sp/>\</highlight></codeline>
+<codeline lineno="59"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_srv),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="60"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;_bt_mesh_light_hsl_setup_srv_cb)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65" refid="structbt__mesh__light__hsl__srv" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__hsl__srv" kindref="compound">bt_mesh_light_hsl_srv</ref><sp/>{</highlight></codeline>
+<codeline lineno="67" refid="structbt__mesh__light__hsl__srv_a3798a7726a76fe412397d8e184311a3d_1a3798a7726a76fe412397d8e184311a3d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__hue__srv" kindref="compound">bt_mesh_light_hue_srv</ref><sp/><ref refid="structbt__mesh__light__hsl__srv_a3798a7726a76fe412397d8e184311a3d_1a3798a7726a76fe412397d8e184311a3d" kindref="member">hue</ref>;</highlight></codeline>
+<codeline lineno="69" refid="structbt__mesh__light__hsl__srv_a023bfe22b0fba77e691d9668b976453b_1a023bfe22b0fba77e691d9668b976453b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__sat__srv" kindref="compound">bt_mesh_light_sat_srv</ref><sp/><ref refid="structbt__mesh__light__hsl__srv_a023bfe22b0fba77e691d9668b976453b_1a023bfe22b0fba77e691d9668b976453b" kindref="member">sat</ref>;</highlight></codeline>
+<codeline lineno="71" refid="structbt__mesh__light__hsl__srv_ac560bc7d415814546c6383879835c23a_1ac560bc7d415814546c6383879835c23a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__lightness__srv" kindref="compound">bt_mesh_lightness_srv</ref><sp/>*<ref refid="structbt__mesh__light__hsl__srv_ac560bc7d415814546c6383879835c23a_1ac560bc7d415814546c6383879835c23a" kindref="member">lightness</ref>;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="structbt__mesh__light__hsl__srv_ad6e6562b48258d1564eba49ced2ca6b9_1ad6e6562b48258d1564eba49ced2ca6b9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model<sp/>*<ref refid="structbt__mesh__light__hsl__srv_ad6e6562b48258d1564eba49ced2ca6b9_1ad6e6562b48258d1564eba49ced2ca6b9" kindref="member">model</ref>;</highlight></codeline>
+<codeline lineno="76" refid="structbt__mesh__light__hsl__srv_a137869ce45362e713d490a8e22cdb81d_1a137869ce45362e713d490a8e22cdb81d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_pub<sp/><ref refid="structbt__mesh__light__hsl__srv_a137869ce45362e713d490a8e22cdb81d_1a137869ce45362e713d490a8e22cdb81d" kindref="member">pub</ref>;</highlight></codeline>
+<codeline lineno="78" refid="structbt__mesh__light__hsl__srv_aafd2fed224e96a1228ec7c75ed51f7e1_1aafd2fed224e96a1228ec7c75ed51f7e1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">net_buf_simple<sp/><ref refid="structbt__mesh__light__hsl__srv_aafd2fed224e96a1228ec7c75ed51f7e1_1aafd2fed224e96a1228ec7c75ed51f7e1" kindref="member">buf</ref>;</highlight></codeline>
+<codeline lineno="80" refid="structbt__mesh__light__hsl__srv_ad93c1306808013d8d943e932c1da9afe_1ad93c1306808013d8d943e932c1da9afe" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__light__hsl__srv_ad93c1306808013d8d943e932c1da9afe_1ad93c1306808013d8d943e932c1da9afe" kindref="member">pub_data</ref>[BT_MESH_MODEL_BUF_LEN(</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_LIGHT_HSL_OP_STATUS,</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_LIGHT_HSL_MSG_MAXLEN_STATUS)];</highlight></codeline>
+<codeline lineno="87" refid="structbt__mesh__light__hsl__srv_aed56f64e4e6d52ec3efc8506e7f2e9e7_1aed56f64e4e6d52ec3efc8506e7f2e9e7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__hsl__srv_aed56f64e4e6d52ec3efc8506e7f2e9e7_1aed56f64e4e6d52ec3efc8506e7f2e9e7" kindref="member">pub_pending</ref>;</highlight></codeline>
+<codeline lineno="89" refid="structbt__mesh__light__hsl__srv_a68fa67ca7c128c6c72a71e54b9c986d2_1a68fa67ca7c128c6c72a71e54b9c986d2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__tid__ctx" kindref="compound">bt_mesh_tid_ctx</ref><sp/><ref refid="structbt__mesh__light__hsl__srv_a68fa67ca7c128c6c72a71e54b9c986d2_1a68fa67ca7c128c6c72a71e54b9c986d2" kindref="member">prev_transaction</ref>;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110" refid="group__bt__mesh__light__hsl__srv_ga2a66827c74a41dc8a5ca42a9c3db53ad_1ga2a66827c74a41dc8a5ca42a9c3db53ad" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__light__hsl__srv_ga2a66827c74a41dc8a5ca42a9c3db53ad_1ga2a66827c74a41dc8a5ca42a9c3db53ad" kindref="member">bt_mesh_light_hsl_srv_pub</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__hsl__srv" kindref="compound">bt_mesh_light_hsl_srv</ref><sp/>*srv,</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__light__hsl__status" kindref="compound">bt_mesh_light_hsl_status</ref><sp/>*status);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_op<sp/>_bt_mesh_light_hsl_srv_op[];</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_op<sp/>_bt_mesh_light_hsl_setup_srv_op[];</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_cb<sp/>_bt_mesh_light_hsl_srv_cb;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_cb<sp/>_bt_mesh_light_hsl_setup_srv_cb;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_MESH_LIGHT_HSL_SRV_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/mesh/light_hsl_srv.h"/>
+  </compounddef>
+</doxygen>

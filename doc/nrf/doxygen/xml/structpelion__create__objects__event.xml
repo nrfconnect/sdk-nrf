@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structpelion__create__objects__event" kind="struct" language="C++" prot="public">
+    <compoundname>pelion_create_objects_event</compoundname>
+    <includes refid="pelion__event_8h" local="no">pelion_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structpelion__create__objects__event_a065d7f1e2023c87916e112ad6db1f356_1a065d7f1e2023c87916e112ad6db1f356" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header pelion_create_objects_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/pelion_client/src/events/pelion_event.h" line="46" column="19" bodyfile="applications/pelion_client/src/events/pelion_event.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structpelion__create__objects__event_a21086412ac386678115a1b8889ebd52c_1a21086412ac386678115a1b8889ebd52c" prot="public" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* pelion_create_objects_event::object_list</definition>
+        <argsstring></argsstring>
+        <name>object_list</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/pelion_client/src/events/pelion_event.h" line="48" column="6" bodyfile="applications/pelion_client/src/events/pelion_event.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Create pelion objects event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>pelion_create_objects_event</label>
+        <link refid="structpelion__create__objects__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/pelion_client/src/events/pelion_event.h" line="45" column="1" bodyfile="applications/pelion_client/src/events/pelion_event.h" bodystart="45" bodyend="49"/>
+    <listofallmembers>
+      <member refid="structpelion__create__objects__event_a065d7f1e2023c87916e112ad6db1f356_1a065d7f1e2023c87916e112ad6db1f356" prot="public" virt="non-virtual"><scope>pelion_create_objects_event</scope><name>header</name></member>
+      <member refid="structpelion__create__objects__event_a21086412ac386678115a1b8889ebd52c_1a21086412ac386678115a1b8889ebd52c" prot="public" virt="non-virtual"><scope>pelion_create_objects_event</scope><name>object_list</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

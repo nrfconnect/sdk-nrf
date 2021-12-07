@@ -1,0 +1,205 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="slm__native__tls_8h" kind="file" language="C++">
+    <compoundname>slm_native_tls.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <includes local="no">net/tls_credentials.h</includes>
+    <includes refid="modem__key__mgmt_8h" local="no">modem/modem_key_mgmt.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/serial_lte_modem/src/slm_native_tls.h</label>
+        <link refid="slm__native__tls_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>modem/modem_key_mgmt.h</label>
+        <link refid="modem__key__mgmt_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>net/tls_credentials.h</label>
+      </node>
+      <node id="7">
+        <label>nrf_socket.h</label>
+      </node>
+      <node id="5">
+        <label>stdbool.h</label>
+      </node>
+      <node id="6">
+        <label>stdint.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="user-defined">
+      <memberdef kind="define" id="slm__native__tls_8h_a61aab2f76b80078d41fbe406f00ff391_1a61aab2f76b80078d41fbe406f00ff391" prot="public" static="no">
+        <name>MAX_SLM_SEC_TAG</name>
+        <initializer>(INT_MAX/10)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_native_tls.h" line="20" column="9" bodyfile="applications/serial_lte_modem/src/slm_native_tls.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slm__native__tls_8h_a27b65c7521281a3c639bb3b4dcabe8c4_1a27b65c7521281a3c639bb3b4dcabe8c4" prot="public" static="no">
+        <name>MIN_SLM_SEC_TAG</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_native_tls.h" line="21" column="9" bodyfile="applications/serial_lte_modem/src/slm_native_tls.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="function" id="slm__native__tls_8h_a2b7ce319b9f64c9cf6b40c3777b4e8f3_1a2b7ce319b9f64c9cf6b40c3777b4e8f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nrf_sec_tag_t</type>
+        <definition>nrf_sec_tag_t slm_tls_map_sectag</definition>
+        <argsstring>(sec_tag_t sec_tag, uint16_t type)</argsstring>
+        <name>slm_tls_map_sectag</name>
+        <param>
+          <type>sec_tag_t</type>
+          <declname>sec_tag</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>type</declname>
+        </param>
+        <briefdescription>
+<para>Map SLM security tag to nRF security tag When SLM native TLS is enabled, the credentials are mapped to continuous security tags in modem and stored as Root CA certificate so that the credentials can be read from modem. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The available sec_tag in modem (0 – 2147483647) are divided by 10 to store mapped credentials: Root CA certificate (ASCII text) at sec_tag*10 + 0 Client/Server certificate (ASCII text) at sec_tag*10 + 1 Client/Server private key (ASCII text) at sec_tag*10 + 2 Pre-shared Key (PSK) at sec_tag*10 + 3 PSK identity (ASCII text) at sec_tag*10 + 4 Public Key (ASCII text) at sec_tag*10 + 5</para>
+<para>Currently PSK, PSK identity and Public Key are not supported.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">sec_tag</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>SLM security tag of the credential </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>TLS credential types</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Non-negative nRF security tag if successful, negative error code if failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_native_tls.h" line="46" column="15" declfile="applications/serial_lte_modem/src/slm_native_tls.h" declline="46" declcolumn="15"/>
+      </memberdef>
+      <memberdef kind="function" id="slm__native__tls_8h_a88eba904d412f183ee658ef185d588a1_1a88eba904d412f183ee658ef185d588a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int slm_tls_loadcrdl</definition>
+        <argsstring>(sec_tag_t sec_tag)</argsstring>
+        <name>slm_tls_loadcrdl</name>
+        <param>
+          <type>sec_tag_t</type>
+          <declname>sec_tag</declname>
+        </param>
+        <briefdescription>
+<para>Load credential. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">sec_tag</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>TLS reference</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if successful, negative error code if failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_native_tls.h" line="55" column="5" declfile="applications/serial_lte_modem/src/slm_native_tls.h" declline="55" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="slm__native__tls_8h_a38e2cea241c8da9e5243d459bc66fbf5_1a38e2cea241c8da9e5243d459bc66fbf5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int slm_tls_unloadcrdl</definition>
+        <argsstring>(sec_tag_t sec_tag)</argsstring>
+        <name>slm_tls_unloadcrdl</name>
+        <param>
+          <type>sec_tag_t</type>
+          <declname>sec_tag</declname>
+        </param>
+        <briefdescription>
+<para>Unload credential. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">sec_tag</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>TLS reference</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if successful, negative error code if failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_native_tls.h" line="64" column="5" declfile="applications/serial_lte_modem/src/slm_native_tls.h" declline="64" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Utility functions for serial LTE modem native TLS socket. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>SLM_NATIVE_TLS_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SLM_NATIVE_TLS_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;net/tls_credentials.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="modem__key__mgmt_8h" kindref="compound">modem/modem_key_mgmt.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20" refid="slm__native__tls_8h_a61aab2f76b80078d41fbe406f00ff391_1a61aab2f76b80078d41fbe406f00ff391" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MAX_SLM_SEC_TAG<sp/>(INT_MAX/10)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="slm__native__tls_8h_a27b65c7521281a3c639bb3b4dcabe8c4_1a27b65c7521281a3c639bb3b4dcabe8c4" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MIN_SLM_SEC_TAG<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="slm__native__tls_8h_a2b7ce319b9f64c9cf6b40c3777b4e8f3_1a2b7ce319b9f64c9cf6b40c3777b4e8f3" refkind="member"><highlight class="normal">nrf_sec_tag_t<sp/><ref refid="slm__native__tls_8h_a2b7ce319b9f64c9cf6b40c3777b4e8f3_1a2b7ce319b9f64c9cf6b40c3777b4e8f3" kindref="member">slm_tls_map_sectag</ref>(sec_tag_t<sp/>sec_tag,<sp/>uint16_t<sp/>type);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="slm__native__tls_8h_a88eba904d412f183ee658ef185d588a1_1a88eba904d412f183ee658ef185d588a1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="slm__native__tls_8h_a88eba904d412f183ee658ef185d588a1_1a88eba904d412f183ee658ef185d588a1" kindref="member">slm_tls_loadcrdl</ref>(sec_tag_t<sp/>sec_tag);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="slm__native__tls_8h_a38e2cea241c8da9e5243d459bc66fbf5_1a38e2cea241c8da9e5243d459bc66fbf5" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="slm__native__tls_8h_a38e2cea241c8da9e5243d459bc66fbf5_1a38e2cea241c8da9e5243d459bc66fbf5" kindref="member">slm_tls_unloadcrdl</ref>(sec_tag_t<sp/>sec_tag);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>SLM_NATIVE_TLS_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/serial_lte_modem/src/slm_native_tls.h"/>
+  </compounddef>
+</doxygen>

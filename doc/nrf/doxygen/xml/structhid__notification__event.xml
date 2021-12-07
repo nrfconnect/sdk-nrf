@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structhid__notification__event" kind="struct" language="C++" prot="public">
+    <compoundname>hid_notification_event</compoundname>
+    <includes refid="hids__event_8h" local="no">hids_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structhid__notification__event_af686d19a3292079fcb271cb1b232f6a4_1af686d19a3292079fcb271cb1b232f6a4" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header hid_notification_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event header. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/hids_event.h" line="33" column="19" bodyfile="applications/nrf_desktop/src/events/hids_event.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structhid__notification__event_a8ba766353a225c9935210aab9aa52e93_1a8ba766353a225c9935210aab9aa52e93" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t hid_notification_event::report_id</definition>
+        <argsstring></argsstring>
+        <name>report_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>HID report id. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/hids_event.h" line="35" column="9" bodyfile="applications/nrf_desktop/src/events/hids_event.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structhid__notification__event_a0c90113f13c42770df06a814f04dd466_1a0c90113f13c42770df06a814f04dd466" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool hid_notification_event::enabled</definition>
+        <argsstring></argsstring>
+        <name>enabled</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>True if report is enabled. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/hids_event.h" line="36" column="6" bodyfile="applications/nrf_desktop/src/events/hids_event.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>HID notification event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>hid_notification_event</label>
+        <link refid="structhid__notification__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/nrf_desktop/src/events/hids_event.h" line="32" column="1" bodyfile="applications/nrf_desktop/src/events/hids_event.h" bodystart="32" bodyend="37"/>
+    <listofallmembers>
+      <member refid="structhid__notification__event_a0c90113f13c42770df06a814f04dd466_1a0c90113f13c42770df06a814f04dd466" prot="public" virt="non-virtual"><scope>hid_notification_event</scope><name>enabled</name></member>
+      <member refid="structhid__notification__event_af686d19a3292079fcb271cb1b232f6a4_1af686d19a3292079fcb271cb1b232f6a4" prot="public" virt="non-virtual"><scope>hid_notification_event</scope><name>header</name></member>
+      <member refid="structhid__notification__event_a8ba766353a225c9935210aab9aa52e93_1a8ba766353a225c9935210aab9aa52e93" prot="public" virt="non-virtual"><scope>hid_notification_event</scope><name>report_id</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

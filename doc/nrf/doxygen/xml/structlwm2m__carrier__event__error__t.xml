@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlwm2m__carrier__event__error__t" kind="struct" language="C++" prot="public">
+    <compoundname>lwm2m_carrier_event_error_t</compoundname>
+    <includes refid="lwm2m__carrier_8h" local="no">lwm2m_carrier.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlwm2m__carrier__event__error__t_a1402f8671e818220afcb39dcc753bf47_1a1402f8671e818220afcb39dcc753bf47" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t lwm2m_carrier_event_error_t::code</definition>
+        <argsstring></argsstring>
+        <name>code</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Error event code. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="131" column="10" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlwm2m__carrier__event__error__t_a6db1cece56adac40eacf3a62b7dc64ac_1a6db1cece56adac40eacf3a62b7dc64ac" prot="public" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t lwm2m_carrier_event_error_t::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Error event value. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="133" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>LWM2M carrier library error event structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="129" column="1" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="129" bodyend="134"/>
+    <listofallmembers>
+      <member refid="structlwm2m__carrier__event__error__t_a1402f8671e818220afcb39dcc753bf47_1a1402f8671e818220afcb39dcc753bf47" prot="public" virt="non-virtual"><scope>lwm2m_carrier_event_error_t</scope><name>code</name></member>
+      <member refid="structlwm2m__carrier__event__error__t_a6db1cece56adac40eacf3a62b7dc64ac_1a6db1cece56adac40eacf3a62b7dc64ac" prot="public" virt="non-virtual"><scope>lwm2m_carrier_event_error_t</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

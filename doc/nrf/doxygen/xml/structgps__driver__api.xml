@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structgps__driver__api" kind="struct" language="C++" prot="public">
+    <compoundname>gps_driver_api</compoundname>
+    <includes refid="gps_8h" local="no">gps.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structgps__driver__api_a528f4f6316ab830ea6283f1401e2c312_1a528f4f6316ab830ea6283f1401e2c312" prot="public" static="no" mutable="no">
+        <type><ref refid="group__gpsapi_gaee325e306cf329fc21c394caa2f14999_1gaee325e306cf329fc21c394caa2f14999" kindref="member">gps_start_t</ref></type>
+        <definition>gps_start_t gps_driver_api::start</definition>
+        <argsstring></argsstring>
+        <name>start</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="324" column="13" bodyfile="include/drivers/gps.h" bodystart="324" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__driver__api_aec3869d80ce4fb2f873ab4f7ea5d464e_1aec3869d80ce4fb2f873ab4f7ea5d464e" prot="public" static="no" mutable="no">
+        <type><ref refid="group__gpsapi_ga6d1d111c92123ee813858e6b59722eba_1ga6d1d111c92123ee813858e6b59722eba" kindref="member">gps_stop_t</ref></type>
+        <definition>gps_stop_t gps_driver_api::stop</definition>
+        <argsstring></argsstring>
+        <name>stop</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="325" column="12" bodyfile="include/drivers/gps.h" bodystart="325" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__driver__api_a750c81225ab209865f0845df16ed4e67_1a750c81225ab209865f0845df16ed4e67" prot="public" static="no" mutable="no">
+        <type><ref refid="group__gpsapi_ga3e155b76796cd48e9b2bfe0ac14e56dd_1ga3e155b76796cd48e9b2bfe0ac14e56dd" kindref="member">gps_agps_write_t</ref></type>
+        <definition>gps_agps_write_t gps_driver_api::agps_write</definition>
+        <argsstring></argsstring>
+        <name>agps_write</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="326" column="18" bodyfile="include/drivers/gps.h" bodystart="326" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__driver__api_add028a3cd87c57480cc184aa965a1250_1add028a3cd87c57480cc184aa965a1250" prot="public" static="no" mutable="no">
+        <type><ref refid="group__gpsapi_ga62d5954025672629c7d7eeca46c9a260_1ga62d5954025672629c7d7eeca46c9a260" kindref="member">gps_init_t</ref></type>
+        <definition>gps_init_t gps_driver_api::init</definition>
+        <argsstring></argsstring>
+        <name>init</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="327" column="12" bodyfile="include/drivers/gps.h" bodystart="327" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__driver__api_af45fe08ee760297eb6a57f5c729714a8_1af45fe08ee760297eb6a57f5c729714a8" prot="public" static="no" mutable="no">
+        <type><ref refid="group__gpsapi_ga50cdcdc1ee7f568eb1b8ee54573a46e6_1ga50cdcdc1ee7f568eb1b8ee54573a46e6" kindref="member">gps_deinit_t</ref></type>
+        <definition>gps_deinit_t gps_driver_api::deinit</definition>
+        <argsstring></argsstring>
+        <name>deinit</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="328" column="14" bodyfile="include/drivers/gps.h" bodystart="328" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>GPS driver API. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This is the API all GPS drivers must expose. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>gps_config</label>
+        <link refid="structgps__config"/>
+      </node>
+      <node id="1">
+        <label>gps_driver_api</label>
+        <link refid="structgps__driver__api"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>start</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/drivers/gps.h" line="323" column="1" bodyfile="include/drivers/gps.h" bodystart="323" bodyend="329"/>
+    <listofallmembers>
+      <member refid="structgps__driver__api_a750c81225ab209865f0845df16ed4e67_1a750c81225ab209865f0845df16ed4e67" prot="public" virt="non-virtual"><scope>gps_driver_api</scope><name>agps_write</name></member>
+      <member refid="structgps__driver__api_af45fe08ee760297eb6a57f5c729714a8_1af45fe08ee760297eb6a57f5c729714a8" prot="public" virt="non-virtual"><scope>gps_driver_api</scope><name>deinit</name></member>
+      <member refid="structgps__driver__api_add028a3cd87c57480cc184aa965a1250_1add028a3cd87c57480cc184aa965a1250" prot="public" virt="non-virtual"><scope>gps_driver_api</scope><name>init</name></member>
+      <member refid="structgps__driver__api_a528f4f6316ab830ea6283f1401e2c312_1a528f4f6316ab830ea6283f1401e2c312" prot="public" virt="non-virtual"><scope>gps_driver_api</scope><name>start</name></member>
+      <member refid="structgps__driver__api_aec3869d80ce4fb2f873ab4f7ea5d464e_1aec3869d80ce4fb2f873ab4f7ea5d464e" prot="public" virt="non-virtual"><scope>gps_driver_api</scope><name>stop</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

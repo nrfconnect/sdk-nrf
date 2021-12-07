@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_aa6f00da75993aa2802e27a1f3608b5c" kind="dir">
+    <compoundname>applications/asset_tracker/src</compoundname>
+    <innerdir refid="dir_720029e309359691ef3adf4901ef4218">applications/asset_tracker/src/carrier_certs</innerdir>
+    <innerdir refid="dir_6c9057d8404e38c6ba60db076ef49261">applications/asset_tracker/src/cloud_codec</innerdir>
+    <innerdir refid="dir_3b3c911388ed1549ed717817c65a1292">applications/asset_tracker/src/env_sensors</innerdir>
+    <innerdir refid="dir_85f08b5cfa62d403b486e8627db9ec9e">applications/asset_tracker/src/gps_controller</innerdir>
+    <innerdir refid="dir_5b93a85d3872047a685b2b31b9e78118">applications/asset_tracker/src/light_sensor</innerdir>
+    <innerdir refid="dir_50e402ccbfd4902809fbd09599e45497">applications/asset_tracker/src/motion</innerdir>
+    <innerdir refid="dir_46ade859d29635e6287bfbf145963d1b">applications/asset_tracker/src/ui</innerdir>
+    <innerdir refid="dir_40ebd1909c1452fcf2065440cdf34374">applications/asset_tracker/src/watchdog</innerdir>
+    <innerfile refid="certificates_8h">certificates.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker/src/"/>
+  </compounddef>
+</doxygen>

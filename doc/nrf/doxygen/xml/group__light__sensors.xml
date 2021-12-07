@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__light__sensors" kind="group">
+    <compoundname>light_sensors</compoundname>
+    <title>Light sensor interface</title>
+    <innerclass refid="structlight__sensor__data" prot="public">light_sensor_data</innerclass>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__light__sensors_1ga6a77284f3712563c84609ff29a27177c" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* light_sensor_data_ready_cb) (void)</definition>
+        <argsstring>)(void)</argsstring>
+        <name>light_sensor_data_ready_cb</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/light_sensor/light_sensor.h" line="36" column="9" bodyfile="applications/asset_tracker/src/light_sensor/light_sensor.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__light__sensors_1gaa6b4689d7998e758620b63b1022dc042" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int light_sensor_init_and_start</definition>
+        <argsstring>(struct k_work_q *work_q, const light_sensor_data_ready_cb cb)</argsstring>
+        <name>light_sensor_init_and_start</name>
+        <param>
+          <type>struct k_work_q *</type>
+          <declname>work_q</declname>
+        </param>
+        <param>
+          <type>const <ref refid="group__light__sensors_ga6a77284f3712563c84609ff29a27177c_1ga6a77284f3712563c84609ff29a27177c" kindref="member">light_sensor_data_ready_cb</ref></type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Initialize and start sampling the light sensor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>0 if the operation was successful, otherwise a (negative) error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/light_sensor/light_sensor.h" line="43" column="5" declfile="applications/asset_tracker/src/light_sensor/light_sensor.h" declline="43" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__light__sensors_1gad3899ad52764b0dd24408536347756f0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int light_sensor_get_data</definition>
+        <argsstring>(struct light_sensor_data *const data)</argsstring>
+        <name>light_sensor_get_data</name>
+        <param>
+          <type>struct <ref refid="structlight__sensor__data" kindref="compound">light_sensor_data</ref> *const</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Get latest sampled light data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to memory to store latest light sensor data.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if the operation was successful, otherwise a (negative) error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/light_sensor/light_sensor.h" line="53" column="5" declfile="applications/asset_tracker/src/light_sensor/light_sensor.h" declline="53" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__light__sensors_1ga135d45cc6c04196fab251d7535202845" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void light_sensor_set_send_interval</definition>
+        <argsstring>(const uint32_t interval_s)</argsstring>
+        <name>light_sensor_set_send_interval</name>
+        <param>
+          <type>const uint32_t</type>
+          <declname>interval_s</declname>
+        </param>
+        <briefdescription>
+<para>Set light sensor&apos;s poll/send interval. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>interval_s</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interval, in seconds. 0 to disable. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/light_sensor/light_sensor.h" line="61" column="6" declfile="applications/asset_tracker/src/light_sensor/light_sensor.h" declline="61" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__light__sensors_1gaeeb3e3815395db6a0769966d9fd69a0d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint32_t</type>
+        <definition>uint32_t light_sensor_get_send_interval</definition>
+        <argsstring>(void)</argsstring>
+        <name>light_sensor_get_send_interval</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Get light sensor&apos;s poll/send interval. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Interval, in seconds. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/light_sensor/light_sensor.h" line="68" column="10" declfile="applications/asset_tracker/src/light_sensor/light_sensor.h" declline="68" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="group__light__sensors_1gaa2f181aaac126273deb8b886c26da066" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int light_sensor_poll</definition>
+        <argsstring>(void)</argsstring>
+        <name>light_sensor_poll</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Perform an immediate poll of the light sensor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>0 if the operation was successful, otherwise a (negative) error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/light_sensor/light_sensor.h" line="75" column="5" declfile="applications/asset_tracker/src/light_sensor/light_sensor.h" declline="75" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Module for interfacing light sensor for asset tracker. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Interface for RGB IR light sensor for asset tracker. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

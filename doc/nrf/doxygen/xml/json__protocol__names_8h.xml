@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="json__protocol__names_8h" kind="file" language="C++">
+    <compoundname>json_protocol_names.h</compoundname>
+    <includedby refid="json__common_8h" local="yes">applications/asset_tracker_v2/src/cloud/cloud_codec/json_common.h</includedby>
+    <invincdepgraph>
+      <node id="2">
+        <label>applications/asset_tracker_v2/src/cloud/cloud_codec/json_common.h</label>
+        <link refid="json__common_8h"/>
+      </node>
+      <node id="1">
+        <label>applications/asset_tracker_v2/src/cloud/cloud_codec/json_protocol_names.h</label>
+        <link refid="json__protocol__names_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(CONFIG_CLOUD_CODEC_NRF_CLOUD)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="json__protocol__names__nrf__cloud_8h" kindref="compound">nrf_cloud/json_protocol_names_nrf_cloud.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#elif<sp/>defined(CONFIG_CLOUD_CODEC_AWS_IOT)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="json__protocol__names__aws__iot_8h" kindref="compound">aws_iot/json_protocol_names_aws_iot.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#elif<sp/>defined(CONFIG_CLOUD_CODEC_AZURE_IOT_HUB)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="json__protocol__names__azure__iot__hub_8h" kindref="compound">azure_iot_hub/json_protocol_names_azure_iot_hub.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/json_protocol_names.h"/>
+  </compounddef>
+</doxygen>

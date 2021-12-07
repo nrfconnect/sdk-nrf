@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbl__sha256__ext__api" kind="struct" language="C++" prot="public">
+    <compoundname>bl_sha256_ext_api</compoundname>
+    <includes refid="bl__crypto_8h" local="no">bl_crypto.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbl__sha256__ext__api_a6e5b4254aa18ec51886ef3e1dd77dbfc_1a6e5b4254aa18ec51886ef3e1dd77dbfc" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bl__crypto_gab1342c07a14778b98847daa8a600f67a_1gab1342c07a14778b98847daa8a600f67a" kindref="member">bl_sha256_init_t</ref></type>
+        <definition>bl_sha256_init_t bl_sha256_ext_api::bl_sha256_init</definition>
+        <argsstring></argsstring>
+        <name>bl_sha256_init</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="210" column="18" bodyfile="include/bl_crypto.h" bodystart="210" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbl__sha256__ext__api_a91f1d32b071894e7bd9d4ed3cbc87529_1a91f1d32b071894e7bd9d4ed3cbc87529" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bl__crypto_ga0fbac294c6f20be7b1594345dee33013_1ga0fbac294c6f20be7b1594345dee33013" kindref="member">bl_sha256_update_t</ref></type>
+        <definition>bl_sha256_update_t bl_sha256_ext_api::bl_sha256_update</definition>
+        <argsstring></argsstring>
+        <name>bl_sha256_update</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="211" column="20" bodyfile="include/bl_crypto.h" bodystart="211" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbl__sha256__ext__api_aef5a58a96fbb9682d6ee482c82cf690d_1aef5a58a96fbb9682d6ee482c82cf690d" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bl__crypto_gad6f8dd85c3e7628376f734430a65287d_1gad6f8dd85c3e7628376f734430a65287d" kindref="member">bl_sha256_finalize_t</ref></type>
+        <definition>bl_sha256_finalize_t bl_sha256_ext_api::bl_sha256_finalize</definition>
+        <argsstring></argsstring>
+        <name>bl_sha256_finalize</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="212" column="22" bodyfile="include/bl_crypto.h" bodystart="212" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbl__sha256__ext__api_a0cead67e1255ca1dc79676709f081f74_1a0cead67e1255ca1dc79676709f081f74" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bl__crypto_ga6cd13b98dca4433e1efbfae8b166cd22_1ga6cd13b98dca4433e1efbfae8b166cd22" kindref="member">bl_sha256_verify_t</ref></type>
+        <definition>bl_sha256_verify_t bl_sha256_ext_api::bl_sha256_verify</definition>
+        <argsstring></argsstring>
+        <name>bl_sha256_verify</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="213" column="20" bodyfile="include/bl_crypto.h" bodystart="213" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbl__sha256__ext__api_a51c5f9b7d84049e5055b2ffa847ee01f_1a51c5f9b7d84049e5055b2ffa847ee01f" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bl_sha256_ext_api::bl_sha256_ctx_size</definition>
+        <argsstring></argsstring>
+        <name>bl_sha256_ctx_size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="214" column="10" bodyfile="include/bl_crypto.h" bodystart="214" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Structure describing the BL_SHA256 EXT_API. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bl_crypto.h" line="209" column="1" bodyfile="include/bl_crypto.h" bodystart="209" bodyend="215"/>
+    <listofallmembers>
+      <member refid="structbl__sha256__ext__api_a51c5f9b7d84049e5055b2ffa847ee01f_1a51c5f9b7d84049e5055b2ffa847ee01f" prot="public" virt="non-virtual"><scope>bl_sha256_ext_api</scope><name>bl_sha256_ctx_size</name></member>
+      <member refid="structbl__sha256__ext__api_aef5a58a96fbb9682d6ee482c82cf690d_1aef5a58a96fbb9682d6ee482c82cf690d" prot="public" virt="non-virtual"><scope>bl_sha256_ext_api</scope><name>bl_sha256_finalize</name></member>
+      <member refid="structbl__sha256__ext__api_a6e5b4254aa18ec51886ef3e1dd77dbfc_1a6e5b4254aa18ec51886ef3e1dd77dbfc" prot="public" virt="non-virtual"><scope>bl_sha256_ext_api</scope><name>bl_sha256_init</name></member>
+      <member refid="structbl__sha256__ext__api_a91f1d32b071894e7bd9d4ed3cbc87529_1a91f1d32b071894e7bd9d4ed3cbc87529" prot="public" virt="non-virtual"><scope>bl_sha256_ext_api</scope><name>bl_sha256_update</name></member>
+      <member refid="structbl__sha256__ext__api_a0cead67e1255ca1dc79676709f081f74_1a0cead67e1255ca1dc79676709f081f74" prot="public" virt="non-virtual"><scope>bl_sha256_ext_api</scope><name>bl_sha256_verify</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

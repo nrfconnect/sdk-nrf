@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__paw3212" kind="group">
+    <compoundname>paw3212</compoundname>
+    <title>PAW3212 motion sensor driver</title>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__paw3212_1gab99871fbcb70d37cfb6789b937d822dd" prot="public" static="no" strong="no">
+        <type></type>
+        <name>paw3212_attribute</name>
+        <enumvalue id="group__paw3212_gab99871fbcb70d37cfb6789b937d822dd_1ggab99871fbcb70d37cfb6789b937d822ddaabdda5b8556f935edbd90b96f33d8ee8" prot="public">
+          <name>PAW3212_ATTR_CPI</name>
+          <initializer>= SENSOR_ATTR_PRIV_START</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Sensor CPI for both X and Y axes. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__paw3212_gab99871fbcb70d37cfb6789b937d822dd_1ggab99871fbcb70d37cfb6789b937d822dda63bf7fc0978909e026acdb89211cec76" prot="public">
+          <name>PAW3212_ATTR_SLEEP_ENABLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Enable or disable sleep modes. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__paw3212_gab99871fbcb70d37cfb6789b937d822dd_1ggab99871fbcb70d37cfb6789b937d822ddaf8cb3e9caf13be644e4988aad76148e4" prot="public">
+          <name>PAW3212_ATTR_SLEEP1_TIMEOUT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Entering time from Run mode to Sleep1 mode [ms]. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__paw3212_gab99871fbcb70d37cfb6789b937d822dd_1ggab99871fbcb70d37cfb6789b937d822ddacf0f4e0ea7407268257e0ab700a20bba" prot="public">
+          <name>PAW3212_ATTR_SLEEP2_TIMEOUT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Entering time from Run mode to Sleep2 mode [ms]. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__paw3212_gab99871fbcb70d37cfb6789b937d822dd_1ggab99871fbcb70d37cfb6789b937d822dda5ffe15e3e7c8372a9582bef6348c92be" prot="public">
+          <name>PAW3212_ATTR_SLEEP3_TIMEOUT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Entering time from Run mode to Sleep3 mode [ms]. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__paw3212_gab99871fbcb70d37cfb6789b937d822dd_1ggab99871fbcb70d37cfb6789b937d822dda302f8c4cadcdb42ed6ca4b2f23591f1f" prot="public">
+          <name>PAW3212_ATTR_SLEEP1_SAMPLE_TIME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Sampling frequency time during Sleep1 mode [ms]. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__paw3212_gab99871fbcb70d37cfb6789b937d822dd_1ggab99871fbcb70d37cfb6789b937d822dda5a6e9c7f9a78f886922f760e45973549" prot="public">
+          <name>PAW3212_ATTR_SLEEP2_SAMPLE_TIME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Sampling frequency time during Sleep2 mode [ms]. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__paw3212_gab99871fbcb70d37cfb6789b937d822dd_1ggab99871fbcb70d37cfb6789b937d822ddadb93860f381d9edf5ac7e3fca6f17191" prot="public">
+          <name>PAW3212_ATTR_SLEEP3_SAMPLE_TIME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Sampling frequency time during Sleep3 mode [ms]. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Sensor specific attributes of PAW3212. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/sensor/paw3212.h" line="28" column="1" bodyfile="include/sensor/paw3212.h" bodystart="28" bodyend="52"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>PAW3212 motion sensor driver. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

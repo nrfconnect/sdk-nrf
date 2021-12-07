@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__gattp" kind="struct" language="C++" prot="public">
+    <compoundname>bt_gattp</compoundname>
+    <includes refid="gattp_8h" local="no">gattp.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__gattp_a0cc77cd4b5b7705e560b4308592d0173_1a0cc77cd4b5b7705e560b4308592d0173" prot="public" static="no" mutable="no">
+        <type>struct bt_conn *</type>
+        <definition>struct bt_conn* bt_gattp::conn</definition>
+        <argsstring></argsstring>
+        <name>conn</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Connection object. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gattp.h" line="52" column="14" bodyfile="include/bluetooth/services/gattp.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__gattp_aaa0c9577d276a81e2c4a657c9d96bad0_1aaa0c9577d276a81e2c4a657c9d96bad0" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_gattp::handle_sc</definition>
+        <argsstring></argsstring>
+        <name>handle_sc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handle of the Service Changed Characteristic. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gattp.h" line="55" column="10" bodyfile="include/bluetooth/services/gattp.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__gattp_ac78a6632b72e3943e85e6b8001f16bbd_1ac78a6632b72e3943e85e6b8001f16bbd" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_gattp::handle_sc_ccc</definition>
+        <argsstring></argsstring>
+        <name>handle_sc_ccc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handle of the CCCD of the Service Changed Characteristic. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gattp.h" line="58" column="10" bodyfile="include/bluetooth/services/gattp.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__gattp_a0594422e0add2af528e233fb19cf32c0_1a0594422e0add2af528e233fb19cf32c0" prot="public" static="no" mutable="no">
+        <type>struct bt_gatt_subscribe_params</type>
+        <definition>struct bt_gatt_subscribe_params bt_gattp::indicate_params</definition>
+        <argsstring></argsstring>
+        <name>indicate_params</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>GATT subscribe parameters for the Service Changed Characteristic. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gattp.h" line="61" column="31" bodyfile="include/bluetooth/services/gattp.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__gattp_af861281b3b354b845bc15928a71df94a_1af861281b3b354b845bc15928a71df94a" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__gattp_ga35958bcbb2479c32c1fe147365d75e90_1ga35958bcbb2479c32c1fe147365d75e90" kindref="member">bt_gattp_indicate_cb</ref></type>
+        <definition>bt_gattp_indicate_cb bt_gattp::indicate_cb</definition>
+        <argsstring></argsstring>
+        <name>indicate_cb</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Callback function for the Service Changed indication. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gattp.h" line="64" column="22" bodyfile="include/bluetooth/services/gattp.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__gattp_a95320203708d79edfdd26ca01176cdf5_1a95320203708d79edfdd26ca01176cdf5" prot="public" static="no" mutable="no">
+        <type>atomic_t</type>
+        <definition>atomic_t bt_gattp::state</definition>
+        <argsstring></argsstring>
+        <name>state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Internal state. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gattp.h" line="67" column="10" bodyfile="include/bluetooth/services/gattp.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>GATT profile instance. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_gattp</label>
+        <link refid="structbt__gattp"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>indicate_cb</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/gattp.h" line="50" column="1" bodyfile="include/bluetooth/services/gattp.h" bodystart="50" bodyend="68"/>
+    <listofallmembers>
+      <member refid="structbt__gattp_a0cc77cd4b5b7705e560b4308592d0173_1a0cc77cd4b5b7705e560b4308592d0173" prot="public" virt="non-virtual"><scope>bt_gattp</scope><name>conn</name></member>
+      <member refid="structbt__gattp_aaa0c9577d276a81e2c4a657c9d96bad0_1aaa0c9577d276a81e2c4a657c9d96bad0" prot="public" virt="non-virtual"><scope>bt_gattp</scope><name>handle_sc</name></member>
+      <member refid="structbt__gattp_ac78a6632b72e3943e85e6b8001f16bbd_1ac78a6632b72e3943e85e6b8001f16bbd" prot="public" virt="non-virtual"><scope>bt_gattp</scope><name>handle_sc_ccc</name></member>
+      <member refid="structbt__gattp_af861281b3b354b845bc15928a71df94a_1af861281b3b354b845bc15928a71df94a" prot="public" virt="non-virtual"><scope>bt_gattp</scope><name>indicate_cb</name></member>
+      <member refid="structbt__gattp_a0594422e0add2af528e233fb19cf32c0_1a0594422e0add2af528e233fb19cf32c0" prot="public" virt="non-virtual"><scope>bt_gattp</scope><name>indicate_params</name></member>
+      <member refid="structbt__gattp_a95320203708d79edfdd26ca01176cdf5_1a95320203708d79edfdd26ca01176cdf5" prot="public" virt="non-virtual"><scope>bt_gattp</scope><name>state</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

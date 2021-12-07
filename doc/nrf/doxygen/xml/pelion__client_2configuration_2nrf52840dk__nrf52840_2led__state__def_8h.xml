@@ -1,0 +1,247 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="pelion__client_2configuration_2nrf52840dk__nrf52840_2led__state__def_8h" kind="file" language="C++">
+    <compoundname>led_state_def.h</compoundname>
+    <includes refid="include_2caf_2led__effect_8h" local="no">caf/led_effect.h</includes>
+    <includes refid="net__state__event_8h" local="no">caf/events/net_state_event.h</includes>
+    <includes local="yes">led_state.h</includes>
+    <includes refid="pelion__event_8h" local="yes">pelion_event.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/pelion_client/configuration/nrf52840dk_nrf52840/led_state_def.h</label>
+        <link refid="pelion__client_2configuration_2nrf52840dk__nrf52840_2led__state__def_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>pelion_event.h</label>
+        <link refid="pelion__event_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>caf/events/net_state_event.h</label>
+        <link refid="net__state__event_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>caf/led_effect.h</label>
+        <link refid="include_2caf_2led__effect_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>event_manager.h</label>
+        <link refid="event__manager_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>event_manager_profiler.h</label>
+        <link refid="event__manager__profiler_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>profiler.h</label>
+        <link refid="profiler_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>event_manager_priv.h</label>
+      </node>
+      <node id="14">
+        <label>event_manager_profiler_priv.h</label>
+      </node>
+      <node id="15">
+        <label>led_state.h</label>
+      </node>
+      <node id="10">
+        <label>logging/log_ctrl.h</label>
+      </node>
+      <node id="9">
+        <label>sys/__assert.h</label>
+      </node>
+      <node id="8">
+        <label>sys/reboot.h</label>
+      </node>
+      <node id="4">
+        <label>sys/util.h</label>
+      </node>
+      <node id="7">
+        <label>zephyr.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="pelion__client_2configuration_2nrf52840dk__nrf52840_2led__state__def_8h_aafb5800215681861fc5756d37562771c_1aafb5800215681861fc5756d37562771c" prot="public" static="no" mutable="no">
+        <type>const struct @120</type>
+        <definition>const struct @120 led_state_def_include_once</definition>
+        <argsstring></argsstring>
+        <name>led_state_def_include_once</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/pelion_client/configuration/nrf52840dk_nrf52840/led_state_def.h" line="20" column="40"/>
+      </memberdef>
+      <memberdef kind="variable" id="pelion__client_2configuration_2nrf52840dk__nrf52840_2led__state__def_8h_a33e9e1309676451b6c230f8a52f41d93_1a33e9e1309676451b6c230f8a52f41d93" prot="public" static="yes" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t led_map[LED_ID_COUNT]</definition>
+        <argsstring>[LED_ID_COUNT]</argsstring>
+        <name>led_map</name>
+        <initializer>= {
+	[<ref refid="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa0a63ae12524c4a6186bdef8291bc0480" kindref="member">LED_ID_NET_STATE</ref>] = 0,
+	[<ref refid="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa1f8a672ec7ce72465525bfbca246be82" kindref="member">LED_ID_PELION_STATE</ref>] = 1
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/pelion_client/configuration/nrf52840dk_nrf52840/led_state_def.h" line="24" column="22" bodyfile="applications/pelion_client/configuration/nrf52840dk_nrf52840/led_state_def.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="pelion__client_2configuration_2nrf52840dk__nrf52840_2led__state__def_8h_a4068ba8a70e986cba2e4079ecc4dd084_1a4068ba8a70e986cba2e4079ecc4dd084" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structled__effect" kindref="compound">led_effect</ref></type>
+        <definition>const struct led_effect led_net_state_effect[NET_STATE_COUNT]</definition>
+        <argsstring>[NET_STATE_COUNT]</argsstring>
+        <name>led_net_state_effect</name>
+        <initializer>= {
+	[<ref refid="group__net__state__event_gaa0aa10c73d9714b3e1d58b031397b8d7_1ggaa0aa10c73d9714b3e1d58b031397b8d7ac4713503d6393077250487c7ca8a8243" kindref="member">NET_STATE_DISABLED</ref>]     = <ref refid="group__led__effect__CAF_ga6eb404e4fd938a846223091c2d5dbb97_1ga6eb404e4fd938a846223091c2d5dbb97" kindref="member">LED_EFFECT_LED_OFF</ref>(),
+	[<ref refid="group__net__state__event_gaa0aa10c73d9714b3e1d58b031397b8d7_1ggaa0aa10c73d9714b3e1d58b031397b8d7ac26483c50da200706d4b92e9ad5c7c72" kindref="member">NET_STATE_DISCONNECTED</ref>] = <ref refid="group__led__effect__CAF_ga13326b14c6d61fff80085ec4b8ba9f88_1ga13326b14c6d61fff80085ec4b8ba9f88" kindref="member">LED_EFFECT_LED_BREATH</ref>(500, <ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(100, 100, 100)),
+	[<ref refid="group__net__state__event_gaa0aa10c73d9714b3e1d58b031397b8d7_1ggaa0aa10c73d9714b3e1d58b031397b8d7a917ad983c79e58a2ed2dd698882fc0d6" kindref="member">NET_STATE_CONNECTED</ref>]    = <ref refid="group__led__effect__CAF_ga7fb4ef307bd2b1730f82410432b823c9_1ga7fb4ef307bd2b1730f82410432b823c9" kindref="member">LED_EFFECT_LED_ON</ref>(<ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(150, 150, 150)),
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/pelion_client/configuration/nrf52840dk_nrf52840/led_state_def.h" line="29" column="30" bodyfile="applications/pelion_client/configuration/nrf52840dk_nrf52840/led_state_def.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="pelion__client_2configuration_2nrf52840dk__nrf52840_2led__state__def_8h_adcae7d8af5fa34a1e53623d1dfac0060_1adcae7d8af5fa34a1e53623d1dfac0060" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structled__effect" kindref="compound">led_effect</ref></type>
+        <definition>const struct led_effect led_pelion_state_effect[PELION_STATE_COUNT]</definition>
+        <argsstring>[PELION_STATE_COUNT]</argsstring>
+        <name>led_pelion_state_effect</name>
+        <initializer>= {
+	[<ref refid="group__pelion__state__event_ga17199c5dd6fbca573fccd18367ddbcbc_1gga17199c5dd6fbca573fccd18367ddbcbcaf4f62690151ba3d25b714e972a096d28" kindref="member">PELION_STATE_DISABLED</ref>]     = <ref refid="group__led__effect__CAF_ga6eb404e4fd938a846223091c2d5dbb97_1ga6eb404e4fd938a846223091c2d5dbb97" kindref="member">LED_EFFECT_LED_OFF</ref>(),
+	[<ref refid="group__pelion__state__event_ga17199c5dd6fbca573fccd18367ddbcbc_1gga17199c5dd6fbca573fccd18367ddbcbcae23744d13a618753822fc6a9dd2131d8" kindref="member">PELION_STATE_INITIALIZED</ref>]  = <ref refid="group__led__effect__CAF_ga13326b14c6d61fff80085ec4b8ba9f88_1ga13326b14c6d61fff80085ec4b8ba9f88" kindref="member">LED_EFFECT_LED_BREATH</ref>(500, <ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(100, 100, 100)),
+	[<ref refid="group__pelion__state__event_ga17199c5dd6fbca573fccd18367ddbcbc_1gga17199c5dd6fbca573fccd18367ddbcbcaf05ce6f90e5e76eb14e5b16da484d9d4" kindref="member">PELION_STATE_REGISTERED</ref>]   = <ref refid="group__led__effect__CAF_ga7fb4ef307bd2b1730f82410432b823c9_1ga7fb4ef307bd2b1730f82410432b823c9" kindref="member">LED_EFFECT_LED_ON</ref>(<ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(150, 150, 150)),
+	[<ref refid="group__pelion__state__event_ga17199c5dd6fbca573fccd18367ddbcbc_1gga17199c5dd6fbca573fccd18367ddbcbcafffa35e89120cb8cafbd62a1335e7346" kindref="member">PELION_STATE_UNREGISTERED</ref>] = <ref refid="group__led__effect__CAF_ga13326b14c6d61fff80085ec4b8ba9f88_1ga13326b14c6d61fff80085ec4b8ba9f88" kindref="member">LED_EFFECT_LED_BREATH</ref>(500, <ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(100, 100, 100)),
+	[<ref refid="group__pelion__state__event_ga17199c5dd6fbca573fccd18367ddbcbc_1gga17199c5dd6fbca573fccd18367ddbcbca82eee7e02ec65c3af84cc294da44be53" kindref="member">PELION_STATE_SUSPENDED</ref>]    = <ref refid="group__led__effect__CAF_ga13326b14c6d61fff80085ec4b8ba9f88_1ga13326b14c6d61fff80085ec4b8ba9f88" kindref="member">LED_EFFECT_LED_BREATH</ref>(200, <ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(100, 100, 100)),
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/pelion_client/configuration/nrf52840dk_nrf52840/led_state_def.h" line="35" column="30" bodyfile="applications/pelion_client/configuration/nrf52840dk_nrf52840/led_state_def.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="pelion__client_2configuration_2nrf52840dk__nrf52840_2led__state__def_8h_af480ad10076c3cf70fb6a9f1e8dccb37_1af480ad10076c3cf70fb6a9f1e8dccb37" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structled__effect" kindref="compound">led_effect</ref></type>
+        <definition>const struct led_effect led_system_error_effect</definition>
+        <argsstring></argsstring>
+        <name>led_system_error_effect</name>
+        <initializer>=
+	<ref refid="group__led__effect__CAF_ga3cbbf6d5748a1dd5c33af7d3e97fe2cf_1ga3cbbf6d5748a1dd5c33af7d3e97fe2cf" kindref="member">LED_EFFECT_LED_BLINK</ref>(200, <ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(255, 255, 255))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/pelion_client/configuration/nrf52840dk_nrf52840/led_state_def.h" line="43" column="30" bodyfile="applications/pelion_client/configuration/nrf52840dk_nrf52840/led_state_def.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="include_2caf_2led__effect_8h" kindref="compound">caf/led_effect.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="net__state__event_8h" kindref="compound">caf/events/net_state_event.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;led_state.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="pelion__event_8h" kindref="compound">pelion_event.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>configuration<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>from<sp/>led_state<sp/>module<sp/>and<sp/>holds</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*<sp/>information<sp/>about<sp/>LED<sp/>effect<sp/>associated<sp/>with<sp/>each<sp/>state.</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>structure<sp/>enforces<sp/>the<sp/>header<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>in<sp/>the<sp/>build.</highlight></codeline>
+<codeline lineno="18"><highlight class="comment"><sp/>*<sp/>Violating<sp/>this<sp/>requirement<sp/>triggers<sp/>a<sp/>multiple<sp/>definition<sp/>error<sp/>at<sp/>link<sp/>time.</highlight></codeline>
+<codeline lineno="19"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20" refid="pelion__client_2configuration_2nrf52840dk__nrf52840_2led__state__def_8h_aafb5800215681861fc5756d37562771c_1aafb5800215681861fc5756d37562771c" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{}<sp/><ref refid="asset__tracker__v2_2include_2nrf9160dk__nrf9160__ns_2led__state__def_8h_a8104467fcdd02583e61cbb922808f975_1a8104467fcdd02583e61cbb922808f975" kindref="member">led_state_def_include_once</ref>;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Map<sp/>function<sp/>to<sp/>LED<sp/>ID<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="pelion__client_2configuration_2nrf52840dk__nrf52840_2led__state__def_8h_a33e9e1309676451b6c230f8a52f41d93_1a33e9e1309676451b6c230f8a52f41d93" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/><ref refid="pelion__client_2configuration_2nrf52840dk__nrf52840_2led__state__def_8h_a33e9e1309676451b6c230f8a52f41d93_1a33e9e1309676451b6c230f8a52f41d93" kindref="member">led_map</ref>[<ref refid="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa02b155ecc1a1d4083c058aa46d6c4446" kindref="member">LED_ID_COUNT</ref>]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa0a63ae12524c4a6186bdef8291bc0480" kindref="member">LED_ID_NET_STATE</ref>]<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa1f8a672ec7ce72465525bfbca246be82" kindref="member">LED_ID_PELION_STATE</ref>]<sp/>=<sp/>1</highlight></codeline>
+<codeline lineno="27"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="pelion__client_2configuration_2nrf52840dk__nrf52840_2led__state__def_8h_a4068ba8a70e986cba2e4079ecc4dd084_1a4068ba8a70e986cba2e4079ecc4dd084" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structled__effect" kindref="compound">led_effect</ref><sp/><ref refid="pelion__client_2configuration_2nrf52840dk__nrf52840_2led__state__def_8h_a4068ba8a70e986cba2e4079ecc4dd084_1a4068ba8a70e986cba2e4079ecc4dd084" kindref="member">led_net_state_effect</ref>[<ref refid="group__net__state__event_gaa0aa10c73d9714b3e1d58b031397b8d7_1ggaa0aa10c73d9714b3e1d58b031397b8d7a7b299405ebd62d30cea7091b4078a050" kindref="member">NET_STATE_COUNT</ref>]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__net__state__event_gaa0aa10c73d9714b3e1d58b031397b8d7_1ggaa0aa10c73d9714b3e1d58b031397b8d7ac4713503d6393077250487c7ca8a8243" kindref="member">NET_STATE_DISABLED</ref>]<sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="group__led__effect_ga6eb404e4fd938a846223091c2d5dbb97_1ga6eb404e4fd938a846223091c2d5dbb97" kindref="member">LED_EFFECT_LED_OFF</ref>(),</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__net__state__event_gaa0aa10c73d9714b3e1d58b031397b8d7_1ggaa0aa10c73d9714b3e1d58b031397b8d7ac26483c50da200706d4b92e9ad5c7c72" kindref="member">NET_STATE_DISCONNECTED</ref>]<sp/>=<sp/><ref refid="group__led__effect__CAF_ga13326b14c6d61fff80085ec4b8ba9f88_1ga13326b14c6d61fff80085ec4b8ba9f88" kindref="member">LED_EFFECT_LED_BREATH</ref>(500,<sp/><ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(100,<sp/>100,<sp/>100)),</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__net__state__event_gaa0aa10c73d9714b3e1d58b031397b8d7_1ggaa0aa10c73d9714b3e1d58b031397b8d7a917ad983c79e58a2ed2dd698882fc0d6" kindref="member">NET_STATE_CONNECTED</ref>]<sp/><sp/><sp/><sp/>=<sp/><ref refid="group__led__effect_ga7fb4ef307bd2b1730f82410432b823c9_1ga7fb4ef307bd2b1730f82410432b823c9" kindref="member">LED_EFFECT_LED_ON</ref>(<ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(150,<sp/>150,<sp/>150)),</highlight></codeline>
+<codeline lineno="33"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="pelion__client_2configuration_2nrf52840dk__nrf52840_2led__state__def_8h_adcae7d8af5fa34a1e53623d1dfac0060_1adcae7d8af5fa34a1e53623d1dfac0060" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structled__effect" kindref="compound">led_effect</ref><sp/><ref refid="pelion__client_2configuration_2nrf52840dk__nrf52840_2led__state__def_8h_adcae7d8af5fa34a1e53623d1dfac0060_1adcae7d8af5fa34a1e53623d1dfac0060" kindref="member">led_pelion_state_effect</ref>[<ref refid="group__pelion__state__event_ga17199c5dd6fbca573fccd18367ddbcbc_1gga17199c5dd6fbca573fccd18367ddbcbcaf2a7fda47aaad4db086f0fcf61acaa40" kindref="member">PELION_STATE_COUNT</ref>]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__pelion__state__event_ga17199c5dd6fbca573fccd18367ddbcbc_1gga17199c5dd6fbca573fccd18367ddbcbcaf4f62690151ba3d25b714e972a096d28" kindref="member">PELION_STATE_DISABLED</ref>]<sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="group__led__effect_ga6eb404e4fd938a846223091c2d5dbb97_1ga6eb404e4fd938a846223091c2d5dbb97" kindref="member">LED_EFFECT_LED_OFF</ref>(),</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__pelion__state__event_ga17199c5dd6fbca573fccd18367ddbcbc_1gga17199c5dd6fbca573fccd18367ddbcbcae23744d13a618753822fc6a9dd2131d8" kindref="member">PELION_STATE_INITIALIZED</ref>]<sp/><sp/>=<sp/><ref refid="group__led__effect__CAF_ga13326b14c6d61fff80085ec4b8ba9f88_1ga13326b14c6d61fff80085ec4b8ba9f88" kindref="member">LED_EFFECT_LED_BREATH</ref>(500,<sp/><ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(100,<sp/>100,<sp/>100)),</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__pelion__state__event_ga17199c5dd6fbca573fccd18367ddbcbc_1gga17199c5dd6fbca573fccd18367ddbcbcaf05ce6f90e5e76eb14e5b16da484d9d4" kindref="member">PELION_STATE_REGISTERED</ref>]<sp/><sp/><sp/>=<sp/><ref refid="group__led__effect_ga7fb4ef307bd2b1730f82410432b823c9_1ga7fb4ef307bd2b1730f82410432b823c9" kindref="member">LED_EFFECT_LED_ON</ref>(<ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(150,<sp/>150,<sp/>150)),</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__pelion__state__event_ga17199c5dd6fbca573fccd18367ddbcbc_1gga17199c5dd6fbca573fccd18367ddbcbcafffa35e89120cb8cafbd62a1335e7346" kindref="member">PELION_STATE_UNREGISTERED</ref>]<sp/>=<sp/><ref refid="group__led__effect__CAF_ga13326b14c6d61fff80085ec4b8ba9f88_1ga13326b14c6d61fff80085ec4b8ba9f88" kindref="member">LED_EFFECT_LED_BREATH</ref>(500,<sp/><ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(100,<sp/>100,<sp/>100)),</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__pelion__state__event_ga17199c5dd6fbca573fccd18367ddbcbc_1gga17199c5dd6fbca573fccd18367ddbcbca82eee7e02ec65c3af84cc294da44be53" kindref="member">PELION_STATE_SUSPENDED</ref>]<sp/><sp/><sp/><sp/>=<sp/><ref refid="group__led__effect__CAF_ga13326b14c6d61fff80085ec4b8ba9f88_1ga13326b14c6d61fff80085ec4b8ba9f88" kindref="member">LED_EFFECT_LED_BREATH</ref>(200,<sp/><ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(100,<sp/>100,<sp/>100)),</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="pelion__client_2configuration_2nrf52840dk__nrf52840_2led__state__def_8h_af480ad10076c3cf70fb6a9f1e8dccb37_1af480ad10076c3cf70fb6a9f1e8dccb37" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structled__effect" kindref="compound">led_effect</ref><sp/><ref refid="pelion__client_2configuration_2nrf52840dk__nrf52840_2led__state__def_8h_af480ad10076c3cf70fb6a9f1e8dccb37_1af480ad10076c3cf70fb6a9f1e8dccb37" kindref="member">led_system_error_effect</ref><sp/>=</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__led__effect_ga3cbbf6d5748a1dd5c33af7d3e97fe2cf_1ga3cbbf6d5748a1dd5c33af7d3e97fe2cf" kindref="member">LED_EFFECT_LED_BLINK</ref>(200,<sp/><ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(255,<sp/>255,<sp/>255));</highlight></codeline>
+    </programlisting>
+    <location file="applications/pelion_client/configuration/nrf52840dk_nrf52840/led_state_def.h"/>
+  </compounddef>
+</doxygen>

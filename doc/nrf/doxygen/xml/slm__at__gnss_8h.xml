@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="slm__at__gnss_8h" kind="file" language="C++">
+    <compoundname>slm_at_gnss.h</compoundname>
+      <sectiondef kind="user-defined">
+      <memberdef kind="function" id="slm__at__gnss_8h_a2fc0fed2904c1270949a0aabb9a7f22c_1a2fc0fed2904c1270949a0aabb9a7f22c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int slm_at_gnss_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>slm_at_gnss_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize GNSS AT command parser. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/gnss/slm_at_gnss.h" line="22" column="5" declfile="applications/serial_lte_modem/src/gnss/slm_at_gnss.h" declline="22" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="slm__at__gnss_8h_a304db614840c2f849cadef2df9fc1613_1a304db614840c2f849cadef2df9fc1613" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int slm_at_gnss_uninit</definition>
+        <argsstring>(void)</argsstring>
+        <name>slm_at_gnss_uninit</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Uninitialize GNSS AT command parser. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/gnss/slm_at_gnss.h" line="30" column="5" declfile="applications/serial_lte_modem/src/gnss/slm_at_gnss.h" declline="30" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Vendor-specific AT command for GNSS service. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>SLM_AT_GNSS_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SLM_AT_GNSS_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22" refid="slm__at__gnss_8h_a2fc0fed2904c1270949a0aabb9a7f22c_1a2fc0fed2904c1270949a0aabb9a7f22c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="slm__at__gnss_8h_a2fc0fed2904c1270949a0aabb9a7f22c_1a2fc0fed2904c1270949a0aabb9a7f22c" kindref="member">slm_at_gnss_init</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="slm__at__gnss_8h_a304db614840c2f849cadef2df9fc1613_1a304db614840c2f849cadef2df9fc1613" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="slm__at__gnss_8h_a304db614840c2f849cadef2df9fc1613_1a304db614840c2f849cadef2df9fc1613" kindref="member">slm_at_gnss_uninit</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>SLM_AT_GNSS_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/serial_lte_modem/src/gnss/slm_at_gnss.h"/>
+  </compounddef>
+</doxygen>

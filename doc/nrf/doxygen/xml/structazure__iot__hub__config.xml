@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structazure__iot__hub__config" kind="struct" language="C++" prot="public">
+    <compoundname>azure_iot_hub_config</compoundname>
+    <includes refid="azure__iot__hub_8h" local="no">azure_iot_hub.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structazure__iot__hub__config_a4bf7ea436c300b603d5cc70f5d2830d8_1a4bf7ea436c300b603d5cc70f5d2830d8" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int azure_iot_hub_config::socket</definition>
+        <argsstring></argsstring>
+        <name>socket</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Socket for the Azure IoT Hub connection. Polling on the socket happens internally in the library. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="218" column="5" bodyfile="include/net/azure_iot_hub.h" bodystart="218" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structazure__iot__hub__config_aa70fa15ed3eccbed8132542a687c20b9_1aa70fa15ed3eccbed8132542a687c20b9" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* azure_iot_hub_config::device_id</definition>
+        <argsstring></argsstring>
+        <name>device_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device id for the Azure IoT Hub connection. If NULL, the device ID provided by Kconfig is used. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="222" column="6" bodyfile="include/net/azure_iot_hub.h" bodystart="222" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structazure__iot__hub__config_a06ba7e16578c36c61907c15a83eedbf9_1a06ba7e16578c36c61907c15a83eedbf9" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t azure_iot_hub_config::device_id_len</definition>
+        <argsstring></argsstring>
+        <name>device_id_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of device string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="224" column="8" bodyfile="include/net/azure_iot_hub.h" bodystart="224" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Structure for Azure IoT Hub connection parameters. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/azure_iot_hub.h" line="214" column="1" bodyfile="include/net/azure_iot_hub.h" bodystart="214" bodyend="225"/>
+    <listofallmembers>
+      <member refid="structazure__iot__hub__config_aa70fa15ed3eccbed8132542a687c20b9_1aa70fa15ed3eccbed8132542a687c20b9" prot="public" virt="non-virtual"><scope>azure_iot_hub_config</scope><name>device_id</name></member>
+      <member refid="structazure__iot__hub__config_a06ba7e16578c36c61907c15a83eedbf9_1a06ba7e16578c36c61907c15a83eedbf9" prot="public" virt="non-virtual"><scope>azure_iot_hub_config</scope><name>device_id_len</name></member>
+      <member refid="structazure__iot__hub__config_a4bf7ea436c300b603d5cc70f5d2830d8_1a4bf7ea436c300b603d5cc70f5d2830d8" prot="public" virt="non-virtual"><scope>azure_iot_hub_config</scope><name>socket</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

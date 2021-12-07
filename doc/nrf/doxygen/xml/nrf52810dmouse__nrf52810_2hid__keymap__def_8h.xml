@@ -1,0 +1,160 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="nrf52810dmouse__nrf52810_2hid__keymap__def_8h" kind="file" language="C++">
+    <compoundname>hid_keymap_def.h</compoundname>
+    <includes refid="hid__keymap_8h" local="yes">hid_keymap.h</includes>
+    <includes refid="key__id_8h" local="no">caf/key_id.h</includes>
+    <incdepgraph>
+      <node id="2">
+        <label>hid_keymap.h</label>
+        <link refid="hid__keymap_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>hid_report_consumer_ctrl.h</label>
+        <link refid="hid__report__consumer__ctrl_8h"/>
+      </node>
+      <node id="6">
+        <label>hid_report_desc.h</label>
+        <link refid="hid__report__desc_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>hid_report_keyboard.h</label>
+        <link refid="hid__report__keyboard_8h"/>
+      </node>
+      <node id="8">
+        <label>hid_report_mouse.h</label>
+        <link refid="hid__report__mouse_8h"/>
+      </node>
+      <node id="10">
+        <label>hid_report_system_ctrl.h</label>
+        <link refid="hid__report__system__ctrl_8h"/>
+      </node>
+      <node id="12">
+        <label>hid_report_user_config.h</label>
+        <link refid="hid__report__user__config_8h"/>
+      </node>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/hid_keymap_def.h</label>
+        <link refid="nrf52810dmouse__nrf52810_2hid__keymap__def_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>caf/key_id.h</label>
+        <link refid="key__id_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>stddef.h</label>
+      </node>
+      <node id="7">
+        <label>sys/util.h</label>
+      </node>
+      <node id="4">
+        <label>toolchain/common.h</label>
+      </node>
+      <node id="5">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="nrf52810dmouse__nrf52810_2hid__keymap__def_8h_ad92bba9ccab29fd7bbee4ee100b86230_1ad92bba9ccab29fd7bbee4ee100b86230" prot="public" static="no" mutable="no">
+        <type>const struct @53</type>
+        <definition>const struct @53 hid_keymap_def_include_once</definition>
+        <argsstring></argsstring>
+        <name>hid_keymap_def_include_once</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/hid_keymap_def.h" line="17" column="41"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf52810dmouse__nrf52810_2hid__keymap__def_8h_ace211ad226ddfac785ff036368d74e8d_1ace211ad226ddfac785ff036368d74e8d" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structhid__keymap" kindref="compound">hid_keymap</ref></type>
+        <definition>const struct hid_keymap hid_keymap[]</definition>
+        <argsstring>[]</argsstring>
+        <name>hid_keymap</name>
+        <initializer>= {
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0, 0), 0x01, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a408044af17ec0bd59c8df983e108eb53" kindref="member">REPORT_ID_MOUSE</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0, 1), 0x02, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a408044af17ec0bd59c8df983e108eb53" kindref="member">REPORT_ID_MOUSE</ref> }, 
+	{ <ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0, 2), 0x03, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a408044af17ec0bd59c8df983e108eb53" kindref="member">REPORT_ID_MOUSE</ref> }, 
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/hid_keymap_def.h" line="24" column="30" bodyfile="applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/hid_keymap_def.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="hid__keymap_8h" kindref="compound">hid_keymap.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="key__id_8h" kindref="compound">caf/key_id.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>configuration<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>from<sp/>hid_state<sp/>module<sp/>and<sp/>holds</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*<sp/>information<sp/>about<sp/>mapping<sp/>between<sp/>buttons<sp/>and<sp/>generated<sp/>reports.</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>structure<sp/>enforces<sp/>the<sp/>header<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>in<sp/>the<sp/>build.</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*<sp/>Violating<sp/>this<sp/>requirement<sp/>triggers<sp/>a<sp/>multiple<sp/>definition<sp/>error<sp/>at<sp/>link<sp/>time.</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17" refid="nrf52810dmouse__nrf52810_2hid__keymap__def_8h_ad92bba9ccab29fd7bbee4ee100b86230_1ad92bba9ccab29fd7bbee4ee100b86230" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{}<sp/><ref refid="nrf52810dmouse__nrf52810_2hid__keymap__def_8h_ad92bba9ccab29fd7bbee4ee100b86230_1ad92bba9ccab29fd7bbee4ee100b86230" kindref="member">hid_keymap_def_include_once</ref>;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="20"><highlight class="comment"><sp/>*<sp/>HID<sp/>keymap.<sp/>The<sp/>Consumer<sp/>Control<sp/>keys<sp/>are<sp/>defined<sp/>in<sp/>section<sp/>15<sp/>of</highlight></codeline>
+<codeline lineno="21"><highlight class="comment"><sp/>*<sp/>the<sp/>HID<sp/>Usage<sp/>Tables<sp/>document<sp/>under<sp/>the<sp/>following<sp/>URL:</highlight></codeline>
+<codeline lineno="22"><highlight class="comment"><sp/>*<sp/>https://www.usb.org/sites/default/files/hut1_12.pdf</highlight></codeline>
+<codeline lineno="23"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="nrf52810dmouse__nrf52810_2hid__keymap__def_8h_ace211ad226ddfac785ff036368d74e8d_1ace211ad226ddfac785ff036368d74e8d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structhid__keymap" kindref="compound">hid_keymap</ref><sp/><ref refid="structhid__keymap" kindref="compound">hid_keymap</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0,<sp/>0),<sp/>0x01,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a408044af17ec0bd59c8df983e108eb53" kindref="member">REPORT_ID_MOUSE</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>Left<sp/>Mouse<sp/>Button<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0,<sp/>1),<sp/>0x02,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a408044af17ec0bd59c8df983e108eb53" kindref="member">REPORT_ID_MOUSE</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>Right<sp/>Mouse<sp/>Button<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0,<sp/>2),<sp/>0x03,<sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a408044af17ec0bd59c8df983e108eb53" kindref="member">REPORT_ID_MOUSE</ref><sp/>},<sp/></highlight><highlight class="comment">/*<sp/>Middle<sp/>Mouse<sp/>Button<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/hid_keymap_def.h"/>
+  </compounddef>
+</doxygen>

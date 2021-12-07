@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlocation__data" kind="struct" language="C++" prot="public">
+    <compoundname>location_data</compoundname>
+    <includes refid="location_8h" local="no">location.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlocation__data_aeb8eed3a0ced9090f3c84e1f03aefa6f_1aeb8eed3a0ced9090f3c84e1f03aefa6f" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1gaf90edf6d88c090d3e8276ce08903aa23" kindref="member">location_method</ref></type>
+        <definition>enum location_method location_data::method</definition>
+        <argsstring></argsstring>
+        <name>method</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Used location method. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="102" column="21" bodyfile="include/modem/location.h" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__data_a04c85e8103a7db5503370f4a820e51da_1a04c85e8103a7db5503370f4a820e51da" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double location_data::latitude</definition>
+        <argsstring></argsstring>
+        <name>latitude</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Geodetic latitude (deg) in WGS-84. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="104" column="8" bodyfile="include/modem/location.h" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__data_a584a33b7a163f69795c9bd80b05730ed_1a584a33b7a163f69795c9bd80b05730ed" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double location_data::longitude</definition>
+        <argsstring></argsstring>
+        <name>longitude</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Geodetic longitude (deg) in WGS-84. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="106" column="8" bodyfile="include/modem/location.h" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__data_a359b0f79b3c05804a5c7fdc4eb9b6ac5_1a359b0f79b3c05804a5c7fdc4eb9b6ac5" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float location_data::accuracy</definition>
+        <argsstring></argsstring>
+        <name>accuracy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Location accuracy in meters (1-sigma). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="108" column="7" bodyfile="include/modem/location.h" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__data_ae97fdfebf485ff401351ab9de5665a90_1ae97fdfebf485ff401351ab9de5665a90" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlocation__datetime" kindref="compound">location_datetime</ref></type>
+        <definition>struct location_datetime location_data::datetime</definition>
+        <argsstring></argsstring>
+        <name>datetime</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Date and time (UTC). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="110" column="24" bodyfile="include/modem/location.h" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Location data. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>location_data</label>
+        <link refid="structlocation__data"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>datetime</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>location_datetime</label>
+        <link refid="structlocation__datetime"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/modem/location.h" line="100" column="1" bodyfile="include/modem/location.h" bodystart="100" bodyend="111"/>
+    <listofallmembers>
+      <member refid="structlocation__data_a359b0f79b3c05804a5c7fdc4eb9b6ac5_1a359b0f79b3c05804a5c7fdc4eb9b6ac5" prot="public" virt="non-virtual"><scope>location_data</scope><name>accuracy</name></member>
+      <member refid="structlocation__data_ae97fdfebf485ff401351ab9de5665a90_1ae97fdfebf485ff401351ab9de5665a90" prot="public" virt="non-virtual"><scope>location_data</scope><name>datetime</name></member>
+      <member refid="structlocation__data_a04c85e8103a7db5503370f4a820e51da_1a04c85e8103a7db5503370f4a820e51da" prot="public" virt="non-virtual"><scope>location_data</scope><name>latitude</name></member>
+      <member refid="structlocation__data_a584a33b7a163f69795c9bd80b05730ed_1a584a33b7a163f69795c9bd80b05730ed" prot="public" virt="non-virtual"><scope>location_data</scope><name>longitude</name></member>
+      <member refid="structlocation__data_aeb8eed3a0ced9090f3c84e1f03aefa6f_1aeb8eed3a0ced9090f3c84e1f03aefa6f" prot="public" virt="non-virtual"><scope>location_data</scope><name>method</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

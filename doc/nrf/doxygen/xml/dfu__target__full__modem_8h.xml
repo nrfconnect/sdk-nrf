@@ -1,0 +1,336 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dfu__target__full__modem_8h" kind="file" language="C++">
+    <compoundname>dfu_target_full_modem.h</compoundname>
+    <includes local="no">stddef.h</includes>
+    <includes local="no">sys/types.h</includes>
+    <includes local="no">device.h</includes>
+    <includes refid="dfu__target_8h" local="no">dfu/dfu_target.h</includes>
+    <incdepgraph>
+      <node id="5">
+        <label>dfu/dfu_target.h</label>
+        <link refid="dfu__target_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/dfu/dfu_target_full_modem.h</label>
+        <link refid="dfu__target__full__modem_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>device.h</label>
+      </node>
+      <node id="2">
+        <label>stddef.h</label>
+      </node>
+      <node id="3">
+        <label>sys/types.h</label>
+      </node>
+      <node id="6">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structdfu__target__fmfu__fdev" prot="public">dfu_target_fmfu_fdev</innerclass>
+    <innerclass refid="structdfu__target__full__modem__params" prot="public">dfu_target_full_modem_params</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__dfu__target__full__modem_ga7dbcc1bcb469c31aec9ea953c0931703_1ga7dbcc1bcb469c31aec9ea953c0931703" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_full_modem_cfg</definition>
+        <argsstring>(const struct dfu_target_full_modem_params *params)</argsstring>
+        <name>dfu_target_full_modem_cfg</name>
+        <param>
+          <type>const struct <ref refid="structdfu__target__full__modem__params" kindref="compound">dfu_target_full_modem_params</ref> *</type>
+          <declname>params</declname>
+        </param>
+        <briefdescription>
+<para>Configure resources required by dfu_target_full_modem. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to dfu target full modem update parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>non-negative</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>integer if successful, otherwise negative errno. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_full_modem.h" line="58" column="5" declfile="include/dfu/dfu_target_full_modem.h" declline="58" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target__full__modem_ga65c65fe61617bab7ec30066bf83eac2d_1ga65c65fe61617bab7ec30066bf83eac2d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool dfu_target_full_modem_identify</definition>
+        <argsstring>(const void *const buf)</argsstring>
+        <name>dfu_target_full_modem_identify</name>
+        <param>
+          <type>const void *const</type>
+          <declname>buf</declname>
+        </param>
+        <briefdescription>
+<para>See if data in buf indicates a full modem update. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to data to check.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if data matches, false otherwise. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_full_modem.h" line="67" column="6" declfile="include/dfu/dfu_target_full_modem.h" declline="67" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target__full__modem_gaab7798551a7411b3b4d9f42f8e65c886_1gaab7798551a7411b3b4d9f42f8e65c886" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_full_modem_init</definition>
+        <argsstring>(size_t file_size, dfu_target_callback_t callback)</argsstring>
+        <name>dfu_target_full_modem_init</name>
+        <param>
+          <type>size_t</type>
+          <declname>file_size</declname>
+        </param>
+        <param>
+          <type><ref refid="group__dfu__target_gaa44ceb54189d4c0dba08f4e8044a5981_1gaa44ceb54189d4c0dba08f4e8044a5981" kindref="member">dfu_target_callback_t</ref></type>
+          <declname>callback</declname>
+        </param>
+        <briefdescription>
+<para>Initialize dfu target, perform steps necessary to receive firmware. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">file_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the current file being downloaded. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">callback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Not in use. In place to be compatible with DFU target API.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful, negative errno otherwise. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_full_modem.h" line="78" column="5" declfile="include/dfu/dfu_target_full_modem.h" declline="78" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target__full__modem_ga96c1f2dbd5c9404f06738d241da71c4b_1ga96c1f2dbd5c9404f06738d241da71c4b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_full_modem_offset_get</definition>
+        <argsstring>(size_t *offset)</argsstring>
+        <name>dfu_target_full_modem_offset_get</name>
+        <param>
+          <type>size_t *</type>
+          <declname>offset</declname>
+        </param>
+        <briefdescription>
+<para>Get offset of firmware. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">offset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Returns the offset of the firmware upgrade.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if success, otherwise negative value if unable to get the offset </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_full_modem.h" line="88" column="5" declfile="include/dfu/dfu_target_full_modem.h" declline="88" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target__full__modem_gad344cdb0f2293f9cb62b6760f830ba35_1gad344cdb0f2293f9cb62b6760f830ba35" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_full_modem_write</definition>
+        <argsstring>(const void *const buf, size_t len)</argsstring>
+        <name>dfu_target_full_modem_write</name>
+        <param>
+          <type>const void *const</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Write firmware data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to data that should be written. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of data to write.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, negative errno otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_full_modem.h" line="98" column="5" declfile="include/dfu/dfu_target_full_modem.h" declline="98" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target__full__modem_gad2c1da472a30a1854fd7ef005bba3b56_1gad2c1da472a30a1854fd7ef005bba3b56" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_full_modem_done</definition>
+        <argsstring>(bool successful)</argsstring>
+        <name>dfu_target_full_modem_done</name>
+        <param>
+          <type>bool</type>
+          <declname>successful</declname>
+        </param>
+        <briefdescription>
+<para>De-initialize resources and finalize firmware upgrade if successful. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">successful</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Indicate whether the firmware was successfully received.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, negative errno otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_full_modem.h" line="108" column="5" declfile="include/dfu/dfu_target_full_modem.h" declline="108" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>DFU_TARGET_FULL_MODEM_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DFU_TARGET_FULL_MODEM_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stddef.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;device.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="dfu__target_8h" kindref="compound">dfu/dfu_target.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="structdfu__target__fmfu__fdev" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structdfu__target__fmfu__fdev" kindref="compound">dfu_target_fmfu_fdev</ref><sp/>{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Flash<sp/>device<sp/>to<sp/>use<sp/>for<sp/>storing<sp/>the<sp/>modem<sp/>firmware.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="structdfu__target__fmfu__fdev_a54c7c50c9394f7eb01898762e4e3a752_1a54c7c50c9394f7eb01898762e4e3a752" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">device<sp/>*<ref refid="structdfu__target__fmfu__fdev_a54c7c50c9394f7eb01898762e4e3a752_1a54c7c50c9394f7eb01898762e4e3a752" kindref="member">dev</ref>;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Offset<sp/>within<sp/>the<sp/>device<sp/>to<sp/>store<sp/>the<sp/>modem<sp/>firmware.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="structdfu__target__fmfu__fdev_ae3023ff58d555e7ce7f8067302aa8249_1ae3023ff58d555e7ce7f8067302aa8249" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>off_t<sp/><ref refid="structdfu__target__fmfu__fdev_ae3023ff58d555e7ce7f8067302aa8249_1ae3023ff58d555e7ce7f8067302aa8249" kindref="member">offset</ref>;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Number<sp/>of<sp/>bytes<sp/>to<sp/>set<sp/>aside<sp/>in<sp/>the<sp/>device<sp/>for<sp/>storing<sp/>the<sp/>modem</highlight></codeline>
+<codeline lineno="34"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<sp/>firmware.<sp/>Set<sp/>this<sp/>to<sp/>&apos;0&apos;<sp/>to<sp/>use<sp/>all<sp/>available<sp/>flash<sp/>(starting<sp/>from</highlight></codeline>
+<codeline lineno="35"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<sp/>`offset`.</highlight></codeline>
+<codeline lineno="36"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="structdfu__target__fmfu__fdev_a1897b36316c4091046fe742bc9d3a5b8_1a1897b36316c4091046fe742bc9d3a5b8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structdfu__target__fmfu__fdev_a1897b36316c4091046fe742bc9d3a5b8_1a1897b36316c4091046fe742bc9d3a5b8" kindref="member">size</ref>;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="structdfu__target__full__modem__params" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structdfu__target__full__modem__params" kindref="compound">dfu_target_full_modem_params</ref><sp/>{</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Buffer<sp/>for<sp/>writes<sp/>to<sp/>`fmfu_dev`.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="structdfu__target__full__modem__params_a2f5cb2361b06199d9374939b57d2de33_1a2f5cb2361b06199d9374939b57d2de33" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*<ref refid="structdfu__target__full__modem__params_a2f5cb2361b06199d9374939b57d2de33_1a2f5cb2361b06199d9374939b57d2de33" kindref="member">buf</ref>;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Length<sp/>of<sp/>`buf`<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="structdfu__target__full__modem__params_ad145ecaf89f7f7bbeb00d69de43fdd9f_1ad145ecaf89f7f7bbeb00d69de43fdd9f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structdfu__target__full__modem__params_ad145ecaf89f7f7bbeb00d69de43fdd9f_1ad145ecaf89f7f7bbeb00d69de43fdd9f" kindref="member">len</ref>;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Flash<sp/>device<sp/>for<sp/>storing<sp/>the<sp/>modem<sp/>firmware<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="structdfu__target__full__modem__params_aabdb9c9a851baec29dd1b05ec162412b_1aabdb9c9a851baec29dd1b05ec162412b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structdfu__target__fmfu__fdev" kindref="compound">dfu_target_fmfu_fdev</ref><sp/>*<ref refid="structdfu__target__full__modem__params_aabdb9c9a851baec29dd1b05ec162412b_1aabdb9c9a851baec29dd1b05ec162412b" kindref="member">dev</ref>;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58" refid="group__dfu__target__full__modem_ga7dbcc1bcb469c31aec9ea953c0931703_1ga7dbcc1bcb469c31aec9ea953c0931703" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dfu__target__full__modem_ga7dbcc1bcb469c31aec9ea953c0931703_1ga7dbcc1bcb469c31aec9ea953c0931703" kindref="member">dfu_target_full_modem_cfg</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structdfu__target__full__modem__params" kindref="compound">dfu_target_full_modem_params</ref><sp/>*params);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="group__dfu__target__full__modem_ga65c65fe61617bab7ec30066bf83eac2d_1ga65c65fe61617bab7ec30066bf83eac2d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__dfu__target__full__modem_ga65c65fe61617bab7ec30066bf83eac2d_1ga65c65fe61617bab7ec30066bf83eac2d" kindref="member">dfu_target_full_modem_identify</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>buf);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="group__dfu__target__full__modem_gaab7798551a7411b3b4d9f42f8e65c886_1gaab7798551a7411b3b4d9f42f8e65c886" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dfu__target__full__modem_gaab7798551a7411b3b4d9f42f8e65c886_1gaab7798551a7411b3b4d9f42f8e65c886" kindref="member">dfu_target_full_modem_init</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>file_size,</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__dfu__target_gaa44ceb54189d4c0dba08f4e8044a5981_1gaa44ceb54189d4c0dba08f4e8044a5981" kindref="member">dfu_target_callback_t</ref><sp/>callback);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="group__dfu__target__full__modem_ga96c1f2dbd5c9404f06738d241da71c4b_1ga96c1f2dbd5c9404f06738d241da71c4b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dfu__target__full__modem_ga96c1f2dbd5c9404f06738d241da71c4b_1ga96c1f2dbd5c9404f06738d241da71c4b" kindref="member">dfu_target_full_modem_offset_get</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>*<ref refid="structdfu__target__fmfu__fdev_ae3023ff58d555e7ce7f8067302aa8249_1ae3023ff58d555e7ce7f8067302aa8249" kindref="member">offset</ref>);</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98" refid="group__dfu__target__full__modem_gad344cdb0f2293f9cb62b6760f830ba35_1gad344cdb0f2293f9cb62b6760f830ba35" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dfu__target__full__modem_gad344cdb0f2293f9cb62b6760f830ba35_1gad344cdb0f2293f9cb62b6760f830ba35" kindref="member">dfu_target_full_modem_write</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>buf,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>len);</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108" refid="group__dfu__target__full__modem_gad2c1da472a30a1854fd7ef005bba3b56_1gad2c1da472a30a1854fd7ef005bba3b56" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dfu__target__full__modem_gad2c1da472a30a1854fd7ef005bba3b56_1gad2c1da472a30a1854fd7ef005bba3b56" kindref="member">dfu_target_full_modem_done</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>successful);</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>DFU_TARGET_FULL_MODEM_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/dfu/dfu_target_full_modem.h"/>
+  </compounddef>
+</doxygen>

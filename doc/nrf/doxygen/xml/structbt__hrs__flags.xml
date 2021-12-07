@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__hrs__flags" kind="struct" language="C++" prot="public">
+    <compoundname>bt_hrs_flags</compoundname>
+    <includes refid="hrs__client_8h" local="no">hrs_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__hrs__flags_aef21c114024749ffb8743bdca18d1739_1aef21c114024749ffb8743bdca18d1739" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hrs_flags::value_format</definition>
+        <argsstring></argsstring>
+        <name>value_format</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Value Format flag. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="76" column="9" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hrs__flags_a4177e7bd96aa57132265afa9c6585090_1a4177e7bd96aa57132265afa9c6585090" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hrs_flags::sensor_contact_detected</definition>
+        <argsstring></argsstring>
+        <name>sensor_contact_detected</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sensor Contact detected flag. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="79" column="9" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hrs__flags_af96162fa484944f2dc1e6f58e4cdbde2_1af96162fa484944f2dc1e6f58e4cdbde2" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hrs_flags::sensor_contact_supported</definition>
+        <argsstring></argsstring>
+        <name>sensor_contact_supported</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sensor Contact supported flag. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="82" column="9" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hrs__flags_a0ea2492fa18ea2437c765ae19ef9c8bb_1a0ea2492fa18ea2437c765ae19ef9c8bb" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hrs_flags::energy_expended_present</definition>
+        <argsstring></argsstring>
+        <name>energy_expended_present</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Energy Expended preset flag. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="85" column="9" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hrs__flags_ab544a63926570cce8348ffed16c914fc_1ab544a63926570cce8348ffed16c914fc" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hrs_flags::rr_intervals_present</definition>
+        <argsstring></argsstring>
+        <name>rr_intervals_present</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>RR-intervals present flag. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="88" column="9" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Heart Measurement flags structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/hrs_client.h" line="74" column="1" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="74" bodyend="89"/>
+    <listofallmembers>
+      <member refid="structbt__hrs__flags_a0ea2492fa18ea2437c765ae19ef9c8bb_1a0ea2492fa18ea2437c765ae19ef9c8bb" prot="public" virt="non-virtual"><scope>bt_hrs_flags</scope><name>energy_expended_present</name></member>
+      <member refid="structbt__hrs__flags_ab544a63926570cce8348ffed16c914fc_1ab544a63926570cce8348ffed16c914fc" prot="public" virt="non-virtual"><scope>bt_hrs_flags</scope><name>rr_intervals_present</name></member>
+      <member refid="structbt__hrs__flags_a4177e7bd96aa57132265afa9c6585090_1a4177e7bd96aa57132265afa9c6585090" prot="public" virt="non-virtual"><scope>bt_hrs_flags</scope><name>sensor_contact_detected</name></member>
+      <member refid="structbt__hrs__flags_af96162fa484944f2dc1e6f58e4cdbde2_1af96162fa484944f2dc1e6f58e4cdbde2" prot="public" virt="non-virtual"><scope>bt_hrs_flags</scope><name>sensor_contact_supported</name></member>
+      <member refid="structbt__hrs__flags_aef21c114024749ffb8743bdca18d1739_1aef21c114024749ffb8743bdca18d1739" prot="public" virt="non-virtual"><scope>bt_hrs_flags</scope><name>value_format</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

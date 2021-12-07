@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__caf__sensor__event" kind="group">
+    <compoundname>caf_sensor_event</compoundname>
+    <title>CAF Sensor Event</title>
+    <innerclass refid="structsensor__state__event" prot="public">sensor_state_event</innerclass>
+    <innerclass refid="structsensor__event" prot="public">sensor_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__caf__sensor__event_1ga3d6bbbd93d481807bf4beff831216749" prot="public" static="no" strong="no">
+        <type></type>
+        <name>sensor_state</name>
+        <enumvalue id="group__caf__sensor__event_ga3d6bbbd93d481807bf4beff831216749_1gga3d6bbbd93d481807bf4beff831216749a3cff3d7d8a46a3d790e7c4b1dcd21d54" prot="public">
+          <name>SENSOR_STATE_DISABLED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Initial state of the sensor. The state is used only before sensor is initialized and it should not be broadcasted using <ref refid="structsensor__state__event" kindref="compound">sensor_state_event</ref>. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__sensor__event_ga3d6bbbd93d481807bf4beff831216749_1gga3d6bbbd93d481807bf4beff831216749ab4553ab3a3a4d00c3abf3c53016ac51d" prot="public">
+          <name>SENSOR_STATE_SLEEP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Sensor is sleeping and no sampling is performed. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__sensor__event_ga3d6bbbd93d481807bf4beff831216749_1gga3d6bbbd93d481807bf4beff831216749a84f8aec695718fe8a5e3f65e231ae022" prot="public">
+          <name>SENSOR_STATE_ACTIVE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Sensor is sampled periodically. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__sensor__event_ga3d6bbbd93d481807bf4beff831216749_1gga3d6bbbd93d481807bf4beff831216749a926a047d10a2309d2e7ea68e318a2d9a" prot="public">
+          <name>SENSOR_STATE_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Sensor error occurred. The sensor is no longer sampled. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__sensor__event_ga3d6bbbd93d481807bf4beff831216749_1gga3d6bbbd93d481807bf4beff831216749aac79648a569c05c45ab9139f356b14cb" prot="public">
+          <name>SENSOR_STATE_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Number of sensor states. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Sensor states. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/sensor_event.h" line="25" column="1" bodyfile="include/caf/events/sensor_event.h" bodystart="25" bodyend="42"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__caf__sensor__event_1gaf92d41c8319140c932cf0781a819407f" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>static size_t sensor_event_get_data_cnt</definition>
+        <argsstring>(const struct sensor_event *event)</argsstring>
+        <name>sensor_event_get_data_cnt</name>
+        <param>
+          <type>const struct <ref refid="structsensor__event" kindref="compound">sensor_event</ref> *</type>
+          <declname>event</declname>
+        </param>
+        <briefdescription>
+<para>Get size of sensor data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">event</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the <ref refid="structsensor__event" kindref="compound">sensor_event</ref>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Size of the sensor data, expressed as a number of floating-point values. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/sensor_event.h" line="93" column="22" bodyfile="include/caf/events/sensor_event.h" bodystart="93" bodyend="98"/>
+      </memberdef>
+      <memberdef kind="function" id="group__caf__sensor__event_1ga91156904173e28396c783c3ff14f2ce6" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>float *</type>
+        <definition>static float * sensor_event_get_data_ptr</definition>
+        <argsstring>(const struct sensor_event *event)</argsstring>
+        <name>sensor_event_get_data_ptr</name>
+        <param>
+          <type>const struct <ref refid="structsensor__event" kindref="compound">sensor_event</ref> *</type>
+          <declname>event</declname>
+        </param>
+        <briefdescription>
+<para>Get pointer to the sensor data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">event</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the <ref refid="structsensor__event" kindref="compound">sensor_event</ref>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Pointer to the sensor data. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/sensor_event.h" line="106" column="21" bodyfile="include/caf/events/sensor_event.h" bodystart="106" bodyend="109"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>CAF Sensor Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structei__data__forwarder__event" kind="struct" language="C++" prot="public">
+    <compoundname>ei_data_forwarder_event</compoundname>
+    <includes refid="ei__data__forwarder__event_8h" local="no">ei_data_forwarder_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structei__data__forwarder__event_a2b045938a337d52e2b66ab1e34b74fc6_1a2b045938a337d52e2b66ab1e34b74fc6" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header ei_data_forwarder_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event header. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/machine_learning/src/events/ei_data_forwarder_event.h" line="35" column="19" bodyfile="applications/machine_learning/src/events/ei_data_forwarder_event.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structei__data__forwarder__event_aa44388b552bce740d5d312fe3d0eaa55_1aa44388b552bce740d5d312fe3d0eaa55" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__ei__data__forwarder__event_gad2753de99db4c77e1f02f0f60f48c274_1gad2753de99db4c77e1f02f0f60f48c274" kindref="member">ei_data_forwarder_state</ref></type>
+        <definition>enum ei_data_forwarder_state ei_data_forwarder_event::state</definition>
+        <argsstring></argsstring>
+        <name>state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Edge Impulse data forwarder state. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/machine_learning/src/events/ei_data_forwarder_event.h" line="37" column="29" bodyfile="applications/machine_learning/src/events/ei_data_forwarder_event.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Edge Impulse data forwarder event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>ei_data_forwarder_event</label>
+        <link refid="structei__data__forwarder__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/machine_learning/src/events/ei_data_forwarder_event.h" line="34" column="1" bodyfile="applications/machine_learning/src/events/ei_data_forwarder_event.h" bodystart="34" bodyend="38"/>
+    <listofallmembers>
+      <member refid="structei__data__forwarder__event_a2b045938a337d52e2b66ab1e34b74fc6_1a2b045938a337d52e2b66ab1e34b74fc6" prot="public" virt="non-virtual"><scope>ei_data_forwarder_event</scope><name>header</name></member>
+      <member refid="structei__data__forwarder__event_aa44388b552bce740d5d312fe3d0eaa55_1aa44388b552bce740d5d312fe3d0eaa55" prot="public" virt="non-virtual"><scope>ei_data_forwarder_event</scope><name>state</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

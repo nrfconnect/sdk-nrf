@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlte__lc__psm__cfg" kind="struct" language="C++" prot="public">
+    <compoundname>lte_lc_psm_cfg</compoundname>
+    <includes refid="lte__lc_8h" local="no">lte_lc.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlte__lc__psm__cfg_aa4dfe2de8937f2c721f3f9975c004187_1aa4dfe2de8937f2c721f3f9975c004187" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int lte_lc_psm_cfg::tau</definition>
+        <argsstring></argsstring>
+        <name>tau</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="247" column="5" bodyfile="include/modem/lte_lc.h" bodystart="247" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__psm__cfg_a893760d37e280bc2813fe484e3885c0c_1a893760d37e280bc2813fe484e3885c0c" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int lte_lc_psm_cfg::active_time</definition>
+        <argsstring></argsstring>
+        <name>active_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="248" column="5" bodyfile="include/modem/lte_lc.h" bodystart="248" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/modem/lte_lc.h" line="246" column="1" bodyfile="include/modem/lte_lc.h" bodystart="246" bodyend="249"/>
+    <listofallmembers>
+      <member refid="structlte__lc__psm__cfg_a893760d37e280bc2813fe484e3885c0c_1a893760d37e280bc2813fe484e3885c0c" prot="public" virt="non-virtual"><scope>lte_lc_psm_cfg</scope><name>active_time</name></member>
+      <member refid="structlte__lc__psm__cfg_aa4dfe2de8937f2c721f3f9975c004187_1aa4dfe2de8937f2c721f3f9975c004187" prot="public" virt="non-virtual"><scope>lte_lc_psm_cfg</scope><name>tau</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

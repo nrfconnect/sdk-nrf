@@ -1,0 +1,432 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="apdu_8h" kind="file" language="C++">
+    <compoundname>apdu.h</compoundname>
+    <includes local="no">stdint.h</includes>
+    <includes local="no">string.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/nfc/t4t/apdu.h</label>
+        <link refid="apdu_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stdint.h</label>
+      </node>
+      <node id="3">
+        <label>string.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structnfc__t4t__apdu__data" prot="public">nfc_t4t_apdu_data</innerclass>
+    <innerclass refid="structnfc__t4t__apdu__comm" prot="public">nfc_t4t_apdu_comm</innerclass>
+    <innerclass refid="structnfc__t4t__apdu__resp" prot="public">nfc_t4t_apdu_resp</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__t4t__apdu_ga3e9a815e319138d9dde7ba24e93e2842_1ga3e9a815e319138d9dde7ba24e93e2842" prot="public" static="no">
+        <name>NFC_T4T_APDU_CLASS_BYTE_NO_SECURE_MSG</name>
+        <initializer>0x00</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Class byte indicating no secure messaging, used in C-APDU. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="26" column="9" bodyfile="include/nfc/t4t/apdu.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t4t__apdu__select_gab99e890e32682d82e438ecf68f2a911e_1gab99e890e32682d82e438ecf68f2a911e" prot="public" static="no">
+        <name>NFC_T4T_APDU_SELECT_BY_FILE_ID</name>
+        <initializer>0x000C</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Select by file identifier, first or only occurrence. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="35" column="9" bodyfile="include/nfc/t4t/apdu.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t4t__apdu__select_gac4ad0fc5a26935fafa483517d82a98fa_1gac4ad0fc5a26935fafa483517d82a98fa" prot="public" static="no">
+        <name>NFC_T4T_APDU_SELECT_BY_NAME</name>
+        <initializer>0x0400</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Select by name, first or only occurrence. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="38" column="9" bodyfile="include/nfc/t4t/apdu.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t4t__apdu__status_gabc885e4cf9477403ac0f3131ff8ed844_1gabc885e4cf9477403ac0f3131ff8ed844" prot="public" static="no">
+        <name>NFC_T4T_APDU_RAPDU_STATUS_CMD_COMPLETED</name>
+        <initializer>0x9000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Command completed successfully. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="49" column="9" bodyfile="include/nfc/t4t/apdu.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t4t__apdu__status_ga45ad56c261ba3d5e9cf16cfac2f93c1b_1ga45ad56c261ba3d5e9cf16cfac2f93c1b" prot="public" static="no">
+        <name>NFC_T4T_APDU_RAPDU_STATUS_SEL_ITEM_NOT_FOUND</name>
+        <initializer>0x6A82</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Selected item has not been found. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="52" column="9" bodyfile="include/nfc/t4t/apdu.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nfc__t4t__apdu_ga994247eb772c9326ca42fcf5e52bfba9_1ga994247eb772c9326ca42fcf5e52bfba9" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nfc_t4t_apdu_comm_ins</name>
+        <enumvalue id="group__nfc__t4t__apdu_ga994247eb772c9326ca42fcf5e52bfba9_1gga994247eb772c9326ca42fcf5e52bfba9a61597d8bb9a68e8f2c73d22d086d2179" prot="public">
+          <name>NFC_T4T_APDU_COMM_INS_SELECT</name>
+          <initializer>= 0xA4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Code used for selecting EF or NDEF application. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__apdu_ga994247eb772c9326ca42fcf5e52bfba9_1gga994247eb772c9326ca42fcf5e52bfba9a4634f9be4f40fe176d55da7bd6f79594" prot="public">
+          <name>NFC_T4T_APDU_COMM_INS_READ</name>
+          <initializer>= 0xB0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Code used for selecting EF or NDEF application. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__apdu_ga994247eb772c9326ca42fcf5e52bfba9_1gga994247eb772c9326ca42fcf5e52bfba9a36c9ee6c37e50e6e519473d17af44f3b" prot="public">
+          <name>NFC_T4T_APDU_COMM_INS_UPDATE</name>
+          <initializer>= 0xD6</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Code used for selecting EF or NDEF application. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Possible instruction codes in C-APDU. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="60" column="1" bodyfile="include/nfc/t4t/apdu.h" bodystart="60" bodyend="69"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__t4t__apdu_ga91294c3b073226d1c0a5d6090275b0c1_1ga91294c3b073226d1c0a5d6090275b0c1" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void nfc_t4t_apdu_comm_clear</definition>
+        <argsstring>(struct nfc_t4t_apdu_comm *cmd_apdu)</argsstring>
+        <name>nfc_t4t_apdu_comm_clear</name>
+        <param>
+          <type>struct <ref refid="structnfc__t4t__apdu__comm" kindref="compound">nfc_t4t_apdu_comm</ref> *</type>
+          <declname>cmd_apdu</declname>
+        </param>
+        <briefdescription>
+<para>Clear a C-APDU descriptor and restore its default values. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cmd_apdu</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to C-APDU descriptor. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="160" column="20" bodyfile="include/nfc/t4t/apdu.h" bodystart="160" bodyend="163" declfile="include/nfc/t4t/apdu.h" declline="114" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__apdu_ga5e25603711d5b9c3be82555c9bbeccfb_1ga5e25603711d5b9c3be82555c9bbeccfb" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void nfc_t4t_apdu_resp_clear</definition>
+        <argsstring>(struct nfc_t4t_apdu_resp *resp_apdu)</argsstring>
+        <name>nfc_t4t_apdu_resp_clear</name>
+        <param>
+          <type>struct <ref refid="structnfc__t4t__apdu__resp" kindref="compound">nfc_t4t_apdu_resp</ref> *</type>
+          <declname>resp_apdu</declname>
+        </param>
+        <briefdescription>
+<para>Clearing an R-APDU descriptor and restore its default values. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">resp_apdu</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to R-APDU descriptor. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="165" column="20" bodyfile="include/nfc/t4t/apdu.h" bodystart="165" bodyend="168" declfile="include/nfc/t4t/apdu.h" declline="120" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__apdu_gad638e04ca41c269740abb698b15a8103_1gad638e04ca41c269740abb698b15a8103" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_apdu_comm_encode</definition>
+        <argsstring>(const struct nfc_t4t_apdu_comm *cmd_apdu, uint8_t *raw_data, uint16_t *len)</argsstring>
+        <name>nfc_t4t_apdu_comm_encode</name>
+        <param>
+          <type>const struct <ref refid="structnfc__t4t__apdu__comm" kindref="compound">nfc_t4t_apdu_comm</ref> *</type>
+          <declname>cmd_apdu</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>raw_data</declname>
+        </param>
+        <param>
+          <type>uint16_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Encode C-APDU. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function encodes C-APDU according to the provided descriptor.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cmd_apdu</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the C-APDU descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">raw_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer with encoded C-APDU. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the available memory for the C-APDU as input. Size of the generated C-APDU as output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="134" column="5" declfile="include/nfc/t4t/apdu.h" declline="134" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__apdu_gaf1fb2bbeb4e2f08330e39f65aeb21d56_1gaf1fb2bbeb4e2f08330e39f65aeb21d56" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_apdu_resp_decode</definition>
+        <argsstring>(struct nfc_t4t_apdu_resp *resp_apdu, const uint8_t *raw_data, uint16_t len)</argsstring>
+        <name>nfc_t4t_apdu_resp_decode</name>
+        <param>
+          <type>struct <ref refid="structnfc__t4t__apdu__resp" kindref="compound">nfc_t4t_apdu_resp</ref> *</type>
+          <declname>resp_apdu</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>raw_data</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Decode R-APDU. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function decodes buffer with encoded R-APDU and stores results in the R-APDU descriptor.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">resp_apdu</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the R-APDU descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">raw_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer with encoded R-APDU. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of of the buffer with encoded R-APDU.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="149" column="5" declfile="include/nfc/t4t/apdu.h" declline="149" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__apdu_ga6c4f28f9e19157ea088dbf699141e40d_1ga6c4f28f9e19157ea088dbf699141e40d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_t4t_apdu_resp_printout</definition>
+        <argsstring>(const struct nfc_t4t_apdu_resp *resp_apdu)</argsstring>
+        <name>nfc_t4t_apdu_resp_printout</name>
+        <param>
+          <type>const struct <ref refid="structnfc__t4t__apdu__resp" kindref="compound">nfc_t4t_apdu_resp</ref> *</type>
+          <declname>resp_apdu</declname>
+        </param>
+        <briefdescription>
+<para>Print an R-APDU descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function prints an R-APDU descriptor.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">resp_apdu</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the R-APDU descriptor. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="158" column="6" declfile="include/nfc/t4t/apdu.h" declline="158" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NFC_T4T_APDU_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T4T_APDU_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdint.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="group__nfc__t4t__apdu_ga3e9a815e319138d9dde7ba24e93e2842_1ga3e9a815e319138d9dde7ba24e93e2842" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T4T_APDU_CLASS_BYTE_NO_SECURE_MSG<sp/>0x00</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="group__nfc__t4t__apdu__select_gab99e890e32682d82e438ecf68f2a911e_1gab99e890e32682d82e438ecf68f2a911e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T4T_APDU_SELECT_BY_FILE_ID<sp/>0x000C</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="group__nfc__t4t__apdu__select_gac4ad0fc5a26935fafa483517d82a98fa_1gac4ad0fc5a26935fafa483517d82a98fa" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T4T_APDU_SELECT_BY_NAME<sp/>0x0400</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="group__nfc__t4t__apdu__status_gabc885e4cf9477403ac0f3131ff8ed844_1gabc885e4cf9477403ac0f3131ff8ed844" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T4T_APDU_RAPDU_STATUS_CMD_COMPLETED<sp/>0x9000</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="group__nfc__t4t__apdu__status_ga45ad56c261ba3d5e9cf16cfac2f93c1b_1ga45ad56c261ba3d5e9cf16cfac2f93c1b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T4T_APDU_RAPDU_STATUS_SEL_ITEM_NOT_FOUND<sp/>0x6A82</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="group__nfc__t4t__apdu_ga994247eb772c9326ca42fcf5e52bfba9_1ga994247eb772c9326ca42fcf5e52bfba9" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__apdu_ga994247eb772c9326ca42fcf5e52bfba9_1ga994247eb772c9326ca42fcf5e52bfba9" kindref="member">nfc_t4t_apdu_comm_ins</ref><sp/>{</highlight></codeline>
+<codeline lineno="62" refid="group__nfc__t4t__apdu_ga994247eb772c9326ca42fcf5e52bfba9_1gga994247eb772c9326ca42fcf5e52bfba9a61597d8bb9a68e8f2c73d22d086d2179" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__t4t__apdu_ga994247eb772c9326ca42fcf5e52bfba9_1gga994247eb772c9326ca42fcf5e52bfba9a61597d8bb9a68e8f2c73d22d086d2179" kindref="member">NFC_T4T_APDU_COMM_INS_SELECT</ref><sp/>=<sp/>0xA4,</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65" refid="group__nfc__t4t__apdu_ga994247eb772c9326ca42fcf5e52bfba9_1gga994247eb772c9326ca42fcf5e52bfba9a4634f9be4f40fe176d55da7bd6f79594" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__t4t__apdu_ga994247eb772c9326ca42fcf5e52bfba9_1gga994247eb772c9326ca42fcf5e52bfba9a4634f9be4f40fe176d55da7bd6f79594" kindref="member">NFC_T4T_APDU_COMM_INS_READ</ref><sp/>=<sp/>0xB0,</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__t4t__apdu_ga994247eb772c9326ca42fcf5e52bfba9_1gga994247eb772c9326ca42fcf5e52bfba9a36c9ee6c37e50e6e519473d17af44f3b" kindref="member">NFC_T4T_APDU_COMM_INS_UPDATE</ref><sp/>=<sp/>0xD6</highlight></codeline>
+<codeline lineno="69" refid="group__nfc__t4t__apdu_ga994247eb772c9326ca42fcf5e52bfba9_1gga994247eb772c9326ca42fcf5e52bfba9a36c9ee6c37e50e6e519473d17af44f3b" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="structnfc__t4t__apdu__data" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t4t__apdu__data" kindref="compound">nfc_t4t_apdu_data</ref><sp/>{</highlight></codeline>
+<codeline lineno="75" refid="structnfc__t4t__apdu__data_a18807fdc40dfecaef255d2bcf5e8d761_1a18807fdc40dfecaef255d2bcf5e8d761" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnfc__t4t__apdu__data_a18807fdc40dfecaef255d2bcf5e8d761_1a18807fdc40dfecaef255d2bcf5e8d761" kindref="member">len</ref>;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="structnfc__t4t__apdu__data_ab3659248124e532b53e82aebf8dad643_1ab3659248124e532b53e82aebf8dad643" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*<ref refid="structnfc__t4t__apdu__data_ab3659248124e532b53e82aebf8dad643_1ab3659248124e532b53e82aebf8dad643" kindref="member">buff</ref>;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83" refid="structnfc__t4t__apdu__comm" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t4t__apdu__comm" kindref="compound">nfc_t4t_apdu_comm</ref><sp/>{</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Class<sp/>byte.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="structnfc__t4t__apdu__comm_a98a53f87890d0038d252a4f8cae06091_1a98a53f87890d0038d252a4f8cae06091" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnfc__t4t__apdu__comm_a98a53f87890d0038d252a4f8cae06091_1a98a53f87890d0038d252a4f8cae06091" kindref="member">class_byte</ref>;</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="structnfc__t4t__apdu__comm_a9c690ca913eff16c228989c232619b37_1a9c690ca913eff16c228989c232619b37" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__apdu_ga994247eb772c9326ca42fcf5e52bfba9_1ga994247eb772c9326ca42fcf5e52bfba9" kindref="member">nfc_t4t_apdu_comm_ins</ref><sp/><ref refid="structnfc__t4t__apdu__comm_a9c690ca913eff16c228989c232619b37_1a9c690ca913eff16c228989c232619b37" kindref="member">instruction</ref>;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91" refid="structnfc__t4t__apdu__comm_a2acb74130e5a77b4e9db4059adfb8b2e_1a2acb74130e5a77b4e9db4059adfb8b2e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnfc__t4t__apdu__comm_a2acb74130e5a77b4e9db4059adfb8b2e_1a2acb74130e5a77b4e9db4059adfb8b2e" kindref="member">parameter</ref>;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94" refid="structnfc__t4t__apdu__comm_ab1cec98be7199d2fff394796c81b9aab_1ab1cec98be7199d2fff394796c81b9aab" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t4t__apdu__data" kindref="compound">nfc_t4t_apdu_data</ref><sp/><ref refid="structnfc__t4t__apdu__comm_ab1cec98be7199d2fff394796c81b9aab_1ab1cec98be7199d2fff394796c81b9aab" kindref="member">data</ref>;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97" refid="structnfc__t4t__apdu__comm_a0e55948862d445451c53fd3696d4dcd1_1a0e55948862d445451c53fd3696d4dcd1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnfc__t4t__apdu__comm_a0e55948862d445451c53fd3696d4dcd1_1a0e55948862d445451c53fd3696d4dcd1" kindref="member">resp_len</ref>;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102" refid="structnfc__t4t__apdu__resp" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t4t__apdu__resp" kindref="compound">nfc_t4t_apdu_resp</ref><sp/>{</highlight></codeline>
+<codeline lineno="104" refid="structnfc__t4t__apdu__resp_a0addd2711d5071d15c169c30af0258f6_1a0addd2711d5071d15c169c30af0258f6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnfc__t4t__apdu__resp_a0addd2711d5071d15c169c30af0258f6_1a0addd2711d5071d15c169c30af0258f6" kindref="member">status</ref>;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107" refid="structnfc__t4t__apdu__resp_ad3f7a32e581b15eafb47ffac71cb1de8_1ad3f7a32e581b15eafb47ffac71cb1de8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t4t__apdu__data" kindref="compound">nfc_t4t_apdu_data</ref><sp/><ref refid="structnfc__t4t__apdu__resp_ad3f7a32e581b15eafb47ffac71cb1de8_1ad3f7a32e581b15eafb47ffac71cb1de8" kindref="member">data</ref>;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__apdu_ga91294c3b073226d1c0a5d6090275b0c1_1ga91294c3b073226d1c0a5d6090275b0c1" kindref="member">nfc_t4t_apdu_comm_clear</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__apdu__comm" kindref="compound">nfc_t4t_apdu_comm</ref><sp/>*cmd_apdu);</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__apdu_ga5e25603711d5b9c3be82555c9bbeccfb_1ga5e25603711d5b9c3be82555c9bbeccfb" kindref="member">nfc_t4t_apdu_resp_clear</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__apdu__resp" kindref="compound">nfc_t4t_apdu_resp</ref><sp/>*resp_apdu);</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134" refid="group__nfc__t4t__apdu_gad638e04ca41c269740abb698b15a8103_1gad638e04ca41c269740abb698b15a8103" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__apdu_gad638e04ca41c269740abb698b15a8103_1gad638e04ca41c269740abb698b15a8103" kindref="member">nfc_t4t_apdu_comm_encode</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__apdu__comm" kindref="compound">nfc_t4t_apdu_comm</ref><sp/>*cmd_apdu,</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*raw_data,<sp/>uint16_t<sp/>*<ref refid="structnfc__t4t__apdu__data_a18807fdc40dfecaef255d2bcf5e8d761_1a18807fdc40dfecaef255d2bcf5e8d761" kindref="member">len</ref>);</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149" refid="group__nfc__t4t__apdu_gaf1fb2bbeb4e2f08330e39f65aeb21d56_1gaf1fb2bbeb4e2f08330e39f65aeb21d56" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__apdu_gaf1fb2bbeb4e2f08330e39f65aeb21d56_1gaf1fb2bbeb4e2f08330e39f65aeb21d56" kindref="member">nfc_t4t_apdu_resp_decode</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__apdu__resp" kindref="compound">nfc_t4t_apdu_resp</ref><sp/>*resp_apdu,</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*raw_data,<sp/>uint16_t<sp/><ref refid="structnfc__t4t__apdu__data_a18807fdc40dfecaef255d2bcf5e8d761_1a18807fdc40dfecaef255d2bcf5e8d761" kindref="member">len</ref>);</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="158" refid="group__nfc__t4t__apdu_ga6c4f28f9e19157ea088dbf699141e40d_1ga6c4f28f9e19157ea088dbf699141e40d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__apdu_ga6c4f28f9e19157ea088dbf699141e40d_1ga6c4f28f9e19157ea088dbf699141e40d" kindref="member">nfc_t4t_apdu_resp_printout</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__apdu__resp" kindref="compound">nfc_t4t_apdu_resp</ref><sp/>*resp_apdu);</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160" refid="group__nfc__t4t__apdu_ga91294c3b073226d1c0a5d6090275b0c1_1ga91294c3b073226d1c0a5d6090275b0c1" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__apdu_ga91294c3b073226d1c0a5d6090275b0c1_1ga91294c3b073226d1c0a5d6090275b0c1" kindref="member">nfc_t4t_apdu_comm_clear</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__apdu__comm" kindref="compound">nfc_t4t_apdu_comm</ref><sp/>*cmd_apdu)</highlight></codeline>
+<codeline lineno="161"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>memset(cmd_apdu,<sp/>0,<sp/></highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__apdu__comm" kindref="compound">nfc_t4t_apdu_comm</ref>));</highlight></codeline>
+<codeline lineno="163"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165" refid="group__nfc__t4t__apdu_ga5e25603711d5b9c3be82555c9bbeccfb_1ga5e25603711d5b9c3be82555c9bbeccfb" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__apdu_ga5e25603711d5b9c3be82555c9bbeccfb_1ga5e25603711d5b9c3be82555c9bbeccfb" kindref="member">nfc_t4t_apdu_resp_clear</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__apdu__resp" kindref="compound">nfc_t4t_apdu_resp</ref><sp/>*resp_apdu)</highlight></codeline>
+<codeline lineno="166"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>memset(resp_apdu,<sp/>0,<sp/></highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__apdu__resp" kindref="compound">nfc_t4t_apdu_resp</ref>));</highlight></codeline>
+<codeline lineno="168"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>NFC_T4T_APDU_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/nfc/t4t/apdu.h"/>
+  </compounddef>
+</doxygen>

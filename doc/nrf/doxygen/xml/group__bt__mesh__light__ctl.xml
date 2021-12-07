@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__light__ctl" kind="group">
+    <compoundname>bt_mesh_light_ctl</compoundname>
+    <title>Light CTL models</title>
+    <innerclass refid="structbt__mesh__light__ctl" prot="public">bt_mesh_light_ctl</innerclass>
+    <innerclass refid="structbt__mesh__light__temp" prot="public">bt_mesh_light_temp</innerclass>
+    <innerclass refid="structbt__mesh__light__ctl__set" prot="public">bt_mesh_light_ctl_set</innerclass>
+    <innerclass refid="structbt__mesh__light__ctl__status" prot="public">bt_mesh_light_ctl_status</innerclass>
+    <innerclass refid="structbt__mesh__light__temp__set" prot="public">bt_mesh_light_temp_set</innerclass>
+    <innerclass refid="structbt__mesh__light__temp__status" prot="public">bt_mesh_light_temp_status</innerclass>
+    <innerclass refid="structbt__mesh__light__temp__range" prot="public">bt_mesh_light_temp_range</innerclass>
+    <innerclass refid="structbt__mesh__light__temp__range__status" prot="public">bt_mesh_light_temp_range_status</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__light__ctl_1gaa5200a34d790cbdc0af6ad52d00a9e16" prot="public" static="no">
+        <name>BT_MESH_LIGHT_TEMP_MIN</name>
+        <initializer>800</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Minimum permitted Temperature level </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl.h" line="24" column="9" bodyfile="include/bluetooth/mesh/light_ctl.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__light__ctl_1gaf13717070f6e7f20dea54ee6c68ef2be" prot="public" static="no">
+        <name>BT_MESH_LIGHT_TEMP_MAX</name>
+        <initializer>20000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum permitted Temperature level </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl.h" line="26" column="9" bodyfile="include/bluetooth/mesh/light_ctl.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Light CTL models. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

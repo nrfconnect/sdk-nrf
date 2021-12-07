@@ -1,0 +1,392 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="cc__file_8h" kind="file" language="C++">
+    <compoundname>cc_file.h</compoundname>
+    <includes local="no">stdint.h</includes>
+    <includes refid="t4t_2tlv__block_8h" local="no">nfc/t4t/tlv_block.h</includes>
+    <includedby refid="hl__procedure_8h" local="no">include/nfc/t4t/hl_procedure.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/nfc/t4t/cc_file.h</label>
+        <link refid="cc__file_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>nfc/t4t/tlv_block.h</label>
+        <link refid="t4t_2tlv__block_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stdint.h</label>
+      </node>
+      <node id="4">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>include/nfc/t4t/cc_file.h</label>
+        <link refid="cc__file_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/nfc/t4t/hl_procedure.h</label>
+        <link refid="hl__procedure_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structnfc__t4t__cc__file" prot="public">nfc_t4t_cc_file</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__t4t__cc__file_ga932fe77069e0c1ebcbcb725d1e21723a_1ga932fe77069e0c1ebcbcb725d1e21723a" prot="public" static="no">
+        <name>NFC_T4T_CC_DESC_DEF</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_max_blocks</defname></param>
+        <initializer>	static struct <ref refid="structnfc__t4t__tlv__block" kindref="compound">nfc_t4t_tlv_block</ref> _name##_tlv_block_array[_max_blocks]; \
+	static struct <ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref> _name##_type_4_tag = {                  \
+		.max_tlv_blocks = _max_blocks,                                \
+		.tlv_block_array = _name##_tlv_block_array,                   \
+		.tlv_count = 0                                                \
+	}</initializer>
+        <briefdescription>
+<para>Macro for creating and initializing a Type 4 Tag Capability Container descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates and initializes a static instance of a <ref refid="group__nfc__t4t__cc__file" kindref="compound">CC file parser</ref> structure and an array of <ref refid="group__nfc__t4t__tlv__block" kindref="compound">File Control TLV block parser for Type 4 Tag.</ref> descriptors.</para>
+<para>Use the macro <ref refid="group__nfc__t4t__cc__file_ga30d668ae838e5c33e727183638a1d406_1ga30d668ae838e5c33e727183638a1d406" kindref="member">NFC_T4T_CC_DESC</ref> to access the Type 4 Tag descriptor instance.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the created descriptor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_max_blocks</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of <ref refid="group__nfc__t4t__tlv__block" kindref="compound">File Control TLV block parser for Type 4 Tag.</ref> descriptors that can be stored in the array. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/cc_file.h" line="67" column="9" bodyfile="include/nfc/t4t/cc_file.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t4t__cc__file_ga30d668ae838e5c33e727183638a1d406_1ga30d668ae838e5c33e727183638a1d406" prot="public" static="no">
+        <name>NFC_T4T_CC_DESC</name>
+        <param><defname>_name</defname></param>
+        <initializer>(_name##_type_4_tag)</initializer>
+        <briefdescription>
+<para>Macro for accessing the <ref refid="group__nfc__t4t__cc__file" kindref="compound">CC file parser</ref> instance that was created with <ref refid="group__nfc__t4t__cc__file_ga932fe77069e0c1ebcbcb725d1e21723a_1ga932fe77069e0c1ebcbcb725d1e21723a" kindref="member">NFC_T4T_CC_DESC_DEF</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the created descriptor instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/cc_file.h" line="80" column="9" bodyfile="include/nfc/t4t/cc_file.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__t4t__cc__file_ga9665ab4f0ab9f8a4899aff4a47225e00_1ga9665ab4f0ab9f8a4899aff4a47225e00" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_cc_file_parse</definition>
+        <argsstring>(struct nfc_t4t_cc_file *t4t_cc_file, const uint8_t *raw_data, uint16_t len)</argsstring>
+        <name>nfc_t4t_cc_file_parse</name>
+        <param>
+          <type>struct <ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref> *</type>
+          <declname>t4t_cc_file</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>raw_data</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Function for parsing raw data of a CC file, read from a Type 4 Tag. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function parses raw data of a Capability Container file and stores the results in its descriptor.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">t4t_cc_file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the CC file descriptor that will be filled with parsed data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">raw_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer with raw data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer length.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/cc_file.h" line="95" column="5" declfile="include/nfc/t4t/cc_file.h" declline="95" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__cc__file_gabdbb6e0d40ec3fc0c9a96a7eaf6693c1_1gabdbb6e0d40ec3fc0c9a96a7eaf6693c1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct <ref refid="structnfc__t4t__tlv__block" kindref="compound">nfc_t4t_tlv_block</ref> *</type>
+        <definition>struct nfc_t4t_tlv_block * nfc_t4t_cc_file_content_get</definition>
+        <argsstring>(struct nfc_t4t_cc_file *t4t_cc_file, uint16_t file_id)</argsstring>
+        <name>nfc_t4t_cc_file_content_get</name>
+        <param>
+          <type>struct <ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref> *</type>
+          <declname>t4t_cc_file</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>file_id</declname>
+        </param>
+        <briefdescription>
+<para>Function for finding File Control TLV block within the CC file descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function finds File Control TLV block that matches the specified file ID within the CC file descriptor.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">t4t_cc_file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the CC file descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">file_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>File identifier.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>TLV</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the File Control TLV. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>NULL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If TLV with the specified File ID was not found. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/cc_file.h" line="111" column="24" declfile="include/nfc/t4t/cc_file.h" declline="111" declcolumn="24"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__cc__file_ga26f1a78642ff33fc58b602165b8fecbc_1ga26f1a78642ff33fc58b602165b8fecbc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_cc_file_content_set</definition>
+        <argsstring>(struct nfc_t4t_cc_file *t4t_cc_file, const struct nfc_t4t_tlv_block_file *file, uint16_t file_id)</argsstring>
+        <name>nfc_t4t_cc_file_content_set</name>
+        <param>
+          <type>struct <ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref> *</type>
+          <declname>t4t_cc_file</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structnfc__t4t__tlv__block__file" kindref="compound">nfc_t4t_tlv_block_file</ref> *</type>
+          <declname>file</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>file_id</declname>
+        </param>
+        <briefdescription>
+<para>Function for binding a file with its File Control TLV block. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function binds file content with its File Control TLV block, in which maximal file size and access conditions are stored.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">t4t_cc_file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the CC file descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to File descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">file_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>File identifier.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/cc_file.h" line="126" column="5" declfile="include/nfc/t4t/cc_file.h" declline="126" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__cc__file_ga283dcb818c4d4db988d6cd63804aab2d_1ga283dcb818c4d4db988d6cd63804aab2d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_t4t_cc_file_printout</definition>
+        <argsstring>(const struct nfc_t4t_cc_file *t4t_cc_file)</argsstring>
+        <name>nfc_t4t_cc_file_printout</name>
+        <param>
+          <type>const struct <ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref> *</type>
+          <declname>t4t_cc_file</declname>
+        </param>
+        <briefdescription>
+<para>Function for printing the CC file descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function prints the CC file descriptor.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">t4t_cc_file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the CC file. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/cc_file.h" line="136" column="6" declfile="include/nfc/t4t/cc_file.h" declline="136" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NFC_T4T_CC_FILE_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T4T_CC_FILE_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdint.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="t4t_2tlv__block_8h" kindref="compound">nfc/t4t/tlv_block.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="structnfc__t4t__cc__file" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref><sp/>{</highlight></codeline>
+<codeline lineno="28" refid="structnfc__t4t__cc__file_a0a3d4c3111f78b984f922b75458ea02a_1a0a3d4c3111f78b984f922b75458ea02a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t4t__tlv__block" kindref="compound">nfc_t4t_tlv_block</ref><sp/>*<ref refid="structnfc__t4t__cc__file_a0a3d4c3111f78b984f922b75458ea02a_1a0a3d4c3111f78b984f922b75458ea02a" kindref="member">tlv_block_array</ref>;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="structnfc__t4t__cc__file_a130dbc99d432272b9984d48c50fc47a7_1a130dbc99d432272b9984d48c50fc47a7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnfc__t4t__cc__file_a130dbc99d432272b9984d48c50fc47a7_1a130dbc99d432272b9984d48c50fc47a7" kindref="member">tlv_count</ref>;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="structnfc__t4t__cc__file_a658b9470ab47479c0f38e84c2c157e95_1a658b9470ab47479c0f38e84c2c157e95" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnfc__t4t__cc__file_a658b9470ab47479c0f38e84c2c157e95_1a658b9470ab47479c0f38e84c2c157e95" kindref="member">max_tlv_blocks</ref>;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="structnfc__t4t__cc__file_a1302d3273fd912674c8769f1c488780f_1a1302d3273fd912674c8769f1c488780f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnfc__t4t__cc__file_a1302d3273fd912674c8769f1c488780f_1a1302d3273fd912674c8769f1c488780f" kindref="member">len</ref>;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="structnfc__t4t__cc__file_a01b996634e4662ea34272b2e96bd86dd_1a01b996634e4662ea34272b2e96bd86dd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnfc__t4t__cc__file_a01b996634e4662ea34272b2e96bd86dd_1a01b996634e4662ea34272b2e96bd86dd" kindref="member">max_rapdu_size</ref>;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="structnfc__t4t__cc__file_ae51029ec0f6b844f8b32d922befa1bcf_1ae51029ec0f6b844f8b32d922befa1bcf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnfc__t4t__cc__file_ae51029ec0f6b844f8b32d922befa1bcf_1ae51029ec0f6b844f8b32d922befa1bcf" kindref="member">max_capdu_size</ref>;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="structnfc__t4t__cc__file_a080231b6f03da957a4700a4cde631859_1a080231b6f03da957a4700a4cde631859" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnfc__t4t__cc__file_a080231b6f03da957a4700a4cde631859_1a080231b6f03da957a4700a4cde631859" kindref="member">major_version</ref>;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="structnfc__t4t__cc__file_aac297e59959d80c68aecc65f6ed8deb0_1aac297e59959d80c68aecc65f6ed8deb0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnfc__t4t__cc__file_aac297e59959d80c68aecc65f6ed8deb0_1aac297e59959d80c68aecc65f6ed8deb0" kindref="member">minor_version</ref>;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="group__nfc__t4t__cc__file_ga932fe77069e0c1ebcbcb725d1e21723a_1ga932fe77069e0c1ebcbcb725d1e21723a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T4T_CC_DESC_DEF(_name,<sp/>_max_blocks)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="68"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>static<sp/>struct<sp/>nfc_t4t_tlv_block<sp/>_name##_tlv_block_array[_max_blocks];<sp/>\</highlight></codeline>
+<codeline lineno="69"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>static<sp/>struct<sp/>nfc_t4t_cc_file<sp/>_name##_type_4_tag<sp/>=<sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="70"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.max_tlv_blocks<sp/>=<sp/>_max_blocks,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="71"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.tlv_block_array<sp/>=<sp/>_name##_tlv_block_array,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="72"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.tlv_count<sp/>=<sp/>0<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="73"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80" refid="group__nfc__t4t__cc__file_ga30d668ae838e5c33e727183638a1d406_1ga30d668ae838e5c33e727183638a1d406" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T4T_CC_DESC(_name)<sp/>(_name##_type_4_tag)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="group__nfc__t4t__cc__file_ga9665ab4f0ab9f8a4899aff4a47225e00_1ga9665ab4f0ab9f8a4899aff4a47225e00" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__cc__file_ga9665ab4f0ab9f8a4899aff4a47225e00_1ga9665ab4f0ab9f8a4899aff4a47225e00" kindref="member">nfc_t4t_cc_file_parse</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref><sp/>*t4t_cc_file,</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*raw_data,</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/>len);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111" refid="group__nfc__t4t__cc__file_gabdbb6e0d40ec3fc0c9a96a7eaf6693c1_1gabdbb6e0d40ec3fc0c9a96a7eaf6693c1" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t4t__tlv__block" kindref="compound">nfc_t4t_tlv_block</ref><sp/>*<ref refid="group__nfc__t4t__cc__file_gabdbb6e0d40ec3fc0c9a96a7eaf6693c1_1gabdbb6e0d40ec3fc0c9a96a7eaf6693c1" kindref="member">nfc_t4t_cc_file_content_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref><sp/>*t4t_cc_file,</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/>file_id);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126" refid="group__nfc__t4t__cc__file_ga26f1a78642ff33fc58b602165b8fecbc_1ga26f1a78642ff33fc58b602165b8fecbc" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__cc__file_ga26f1a78642ff33fc58b602165b8fecbc_1ga26f1a78642ff33fc58b602165b8fecbc" kindref="member">nfc_t4t_cc_file_content_set</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref><sp/>*t4t_cc_file,</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__tlv__block__file" kindref="compound">nfc_t4t_tlv_block_file</ref><sp/>*file,</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/>file_id);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136" refid="group__nfc__t4t__cc__file_ga283dcb818c4d4db988d6cd63804aab2d_1ga283dcb818c4d4db988d6cd63804aab2d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__cc__file_ga283dcb818c4d4db988d6cd63804aab2d_1ga283dcb818c4d4db988d6cd63804aab2d" kindref="member">nfc_t4t_cc_file_printout</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref><sp/>*t4t_cc_file);</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>NFC_T4T_CC_FILE_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/nfc/t4t/cc_file.h"/>
+  </compounddef>
+</doxygen>

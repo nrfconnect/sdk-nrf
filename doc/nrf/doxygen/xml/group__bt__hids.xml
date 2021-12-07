@@ -1,0 +1,919 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__hids" kind="group">
+    <compoundname>bt_hids</compoundname>
+    <title>Bluetooth LE GATT Human Interface Device Service API</title>
+    <innerclass refid="structbt__hids__info" prot="public">bt_hids_info</innerclass>
+    <innerclass refid="structbt__hids__rep" prot="public">bt_hids_rep</innerclass>
+    <innerclass refid="structbt__hids__inp__rep" prot="public">bt_hids_inp_rep</innerclass>
+    <innerclass refid="structbt__hids__outp__feat__rep" prot="public">bt_hids_outp_feat_rep</innerclass>
+    <innerclass refid="structbt__hids__boot__mouse__inp__rep" prot="public">bt_hids_boot_mouse_inp_rep</innerclass>
+    <innerclass refid="structbt__hids__boot__kb__inp__rep" prot="public">bt_hids_boot_kb_inp_rep</innerclass>
+    <innerclass refid="structbt__hids__boot__kb__outp__rep" prot="public">bt_hids_boot_kb_outp_rep</innerclass>
+    <innerclass refid="structbt__hids__inp__rep__group" prot="public">bt_hids_inp_rep_group</innerclass>
+    <innerclass refid="structbt__hids__outp__rep__group" prot="public">bt_hids_outp_rep_group</innerclass>
+    <innerclass refid="structbt__hids__feat__rep__group" prot="public">bt_hids_feat_rep_group</innerclass>
+    <innerclass refid="structbt__hids__rep__map" prot="public">bt_hids_rep_map</innerclass>
+    <innerclass refid="structbt__hids__pm__data" prot="public">bt_hids_pm_data</innerclass>
+    <innerclass refid="structbt__hids__cp" prot="public">bt_hids_cp</innerclass>
+    <innerclass refid="structbt__hids__init__param" prot="public">bt_hids_init_param</innerclass>
+    <innerclass refid="structbt__hids" prot="public">bt_hids</innerclass>
+    <innerclass refid="structbt__hids__conn__data" prot="public">bt_hids_conn_data</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__hids_1ga7bf00e4f8e959a950b8c8b82ccc3cf05" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_hids_pm</name>
+        <enumvalue id="group__bt__hids_ga7bf00e4f8e959a950b8c8b82ccc3cf05_1gga7bf00e4f8e959a950b8c8b82ccc3cf05a24e7f8c08636f7d6ed826ad64b0a19d2" prot="public">
+          <name>BT_HIDS_PM_BOOT</name>
+          <initializer>= 0x00</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Boot protocol. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__hids_ga7bf00e4f8e959a950b8c8b82ccc3cf05_1gga7bf00e4f8e959a950b8c8b82ccc3cf05a30e6d30fd1628b7355e04765d927ba86" prot="public">
+          <name>BT_HIDS_PM_REPORT</name>
+          <initializer>= 0x01</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Report protocol. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Possible values for the Protocol Mode Characteristic value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="74" column="1" bodyfile="include/bluetooth/services/hids.h" bodystart="74" bodyend="79"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__hids_1ga17ad39fc4573254727d2174a099c9b4c" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_hids_report_type</name>
+        <enumvalue id="group__bt__hids_ga17ad39fc4573254727d2174a099c9b4c_1gga17ad39fc4573254727d2174a099c9b4ca40e02cac18488fed4aaf2cad56eec2dc" prot="public">
+          <name>BT_HIDS_REPORT_TYPE_RESERVED</name>
+          <initializer>= 0x00</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Reserved value. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__hids_ga17ad39fc4573254727d2174a099c9b4c_1gga17ad39fc4573254727d2174a099c9b4ca514d368999a6b97d437383858f487580" prot="public">
+          <name>BT_HIDS_REPORT_TYPE_INPUT</name>
+          <initializer>= 0x01</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Input Report. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__hids_ga17ad39fc4573254727d2174a099c9b4c_1gga17ad39fc4573254727d2174a099c9b4cad671b9d9548cc3a880baa533f831b2d8" prot="public">
+          <name>BT_HIDS_REPORT_TYPE_OUTPUT</name>
+          <initializer>= 0x02</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Output report. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__hids_ga17ad39fc4573254727d2174a099c9b4c_1gga17ad39fc4573254727d2174a099c9b4ca5724cb794129d97aff0985f51cc6a08a" prot="public">
+          <name>BT_HIDS_REPORT_TYPE_FEATURE</name>
+          <initializer>= 0x03</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Feature Report. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Report types as defined in the Report Reference Characteristic descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="84" column="1" bodyfile="include/bluetooth/services/hids.h" bodystart="84" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__hids_1gafbfb85bbdd2f2c37c44fcca268eb7449" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_hids_flags</name>
+        <enumvalue id="group__bt__hids_gafbfb85bbdd2f2c37c44fcca268eb7449_1ggafbfb85bbdd2f2c37c44fcca268eb7449a5b8675afb42715d7d94afab3932d13c5" prot="public">
+          <name>BT_HIDS_REMOTE_WAKE</name>
+          <initializer>= BIT(0)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Device is capable of sending a wake-signal to a host. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__hids_gafbfb85bbdd2f2c37c44fcca268eb7449_1ggafbfb85bbdd2f2c37c44fcca268eb7449aeabc0d8980c422e3f21c6938d15b5d8e" prot="public">
+          <name>BT_HIDS_NORMALLY_CONNECTABLE</name>
+          <initializer>= BIT(1)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Device advertises when bonded but not connected. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>HID Service information flags. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="114" column="1" bodyfile="include/bluetooth/services/hids.h" bodystart="114" bodyend="119"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__hids_1ga0480c40cd9c4bc86505acf62fa906fea" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_hids_control_point</name>
+        <enumvalue id="group__bt__hids_ga0480c40cd9c4bc86505acf62fa906fea_1gga0480c40cd9c4bc86505acf62fa906feaafbb44f0114b42388312aebf47a2ca3cb" prot="public">
+          <name>BT_HIDS_CONTROL_POINT_SUSPEND</name>
+          <initializer>= 0x00</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Suspend value for Control Point. <linebreak/>
+ </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__hids_ga0480c40cd9c4bc86505acf62fa906fea_1gga0480c40cd9c4bc86505acf62fa906feaac2ebe3637cc055bd45811721633aa0fe" prot="public">
+          <name>BT_HIDS_CONTROL_POINT_EXIT_SUSPEND</name>
+          <initializer>= 0x01</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Exit suspend value for Control Point. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>HID Control Point settings. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="122" column="1" bodyfile="include/bluetooth/services/hids.h" bodystart="122" bodyend="128"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__hids_1ga4a85b2449c890ad0b088fafca2ec6e81" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_hids_pm_evt</name>
+        <enumvalue id="group__bt__hids_ga4a85b2449c890ad0b088fafca2ec6e81_1gga4a85b2449c890ad0b088fafca2ec6e81acf5dfa916aaba22918ed32ad5778bf51" prot="public">
+          <name>BT_HIDS_PM_EVT_BOOT_MODE_ENTERED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Boot mode entered. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__hids_ga4a85b2449c890ad0b088fafca2ec6e81_1gga4a85b2449c890ad0b088fafca2ec6e81ae79a2a4dae36d7a5cc21dbde0b6c17dc" prot="public">
+          <name>BT_HIDS_PM_EVT_REPORT_MODE_ENTERED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Report mode entered. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>HID Service Protocol Mode events. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="131" column="1" bodyfile="include/bluetooth/services/hids.h" bodystart="131" bodyend="136"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__hids_1ga95523e8368057bb54fe358c5abe8af6d" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_hids_cp_evt</name>
+        <enumvalue id="group__bt__hids_ga95523e8368057bb54fe358c5abe8af6d_1gga95523e8368057bb54fe358c5abe8af6dadfb6f92437c51e2ef60cff3d04644199" prot="public">
+          <name>BT_HIDS_CP_EVT_HOST_SUSP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Suspend command received. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__hids_ga95523e8368057bb54fe358c5abe8af6d_1gga95523e8368057bb54fe358c5abe8af6da40aee324e535ca56b51aa3bda831daa9" prot="public">
+          <name>BT_HIDS_CP_EVT_HOST_EXIT_SUSP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Exit suspend command received. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>HID Service Control Point events. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="139" column="1" bodyfile="include/bluetooth/services/hids.h" bodystart="139" bodyend="144"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__hids_1ga8962c572c27b5f01ac584a80cd302d06" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_hids_notify_evt</name>
+        <enumvalue id="group__bt__hids_ga8962c572c27b5f01ac584a80cd302d06_1gga8962c572c27b5f01ac584a80cd302d06ab5e5f4a1031339be63b156fc56e434f3" prot="public">
+          <name>BT_HIDS_CCCD_EVT_NOTIFY_ENABLED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Notification enabled event. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__hids_ga8962c572c27b5f01ac584a80cd302d06_1gga8962c572c27b5f01ac584a80cd302d06ab29ace25d6059d2b3614adcc209b5005" prot="public">
+          <name>BT_HIDS_CCCD_EVT_NOTIFY_DISABLED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Notification disabled event. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>HID notification events. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="147" column="1" bodyfile="include/bluetooth/services/hids.h" bodystart="147" bodyend="152"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__bt__hids_1gab1b327abc112792947b20763cb1b8936" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_hids_notify_handler_t) (enum bt_hids_notify_evt evt)</definition>
+        <argsstring>)(enum bt_hids_notify_evt evt)</argsstring>
+        <name>bt_hids_notify_handler_t</name>
+        <briefdescription>
+<para>HID notification event handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Notification event. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="168" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="168" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bt__hids_1gaaaafa67ab95764aba437dfa81eb38d63" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_hids_rep_handler_t) (struct bt_hids_rep *rep, struct bt_conn *conn, bool write)</definition>
+        <argsstring>)(struct bt_hids_rep *rep, struct bt_conn *conn, bool write)</argsstring>
+        <name>bt_hids_rep_handler_t</name>
+        <briefdescription>
+<para>HID Report event handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rep</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the report descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to Connection Object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>write</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><computeroutput>true</computeroutput> if handler is called for report write. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="176" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="176" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bt__hids_1ga4b9aee4e69b4bf5a340f6d7201fa2d11" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_hids_pm_evt_handler_t) (enum bt_hids_pm_evt evt, struct bt_conn *conn)</definition>
+        <argsstring>)(enum bt_hids_pm_evt evt, struct bt_conn *conn)</argsstring>
+        <name>bt_hids_pm_evt_handler_t</name>
+        <briefdescription>
+<para>HID Protocol Mode event handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Protocol Mode event (see <ref refid="group__bt__hids_ga4a85b2449c890ad0b088fafca2ec6e81_1ga4a85b2449c890ad0b088fafca2ec6e81" kindref="member">bt_hids_pm_evt</ref>). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to Connection Object. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="351" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="351" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bt__hids_1ga99df24bcad0dc74412c2a7724732360c" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_hids_cp_evt_handler_t) (enum bt_hids_cp_evt evt)</definition>
+        <argsstring>)(enum bt_hids_cp_evt evt)</argsstring>
+        <name>bt_hids_cp_evt_handler_t</name>
+        <briefdescription>
+<para>HID Control Point event handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event indicating that the Control Point value has changed. (see <ref refid="group__bt__hids_ga95523e8368057bb54fe358c5abe8af6d_1ga95523e8368057bb54fe358c5abe8af6d" kindref="member">bt_hids_cp_evt</ref>). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="367" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="367" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__hids_1gaa9723f7c52ccdcbac2e913809a8b1c00" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hids_init</definition>
+        <argsstring>(struct bt_hids *hids_obj, const struct bt_hids_init_param *init_param)</argsstring>
+        <name>bt_hids_init</name>
+        <param>
+          <type>struct <ref refid="structbt__hids" kindref="compound">bt_hids</ref> *</type>
+          <declname>hids_obj</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__hids__init__param" kindref="compound">bt_hids_init_param</ref> *</type>
+          <declname>init_param</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the HIDS instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hids_obj</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to HIDS instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>init_param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HIDS initialization descriptor.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="499" column="5" declfile="include/bluetooth/services/hids.h" declline="499" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hids_1ga00f8bf520bb623bd4718e700f2579250" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hids_uninit</definition>
+        <argsstring>(struct bt_hids *hids_obj)</argsstring>
+        <name>bt_hids_uninit</name>
+        <param>
+          <type>struct <ref refid="structbt__hids" kindref="compound">bt_hids</ref> *</type>
+          <declname>hids_obj</declname>
+        </param>
+        <briefdescription>
+<para>Uninitialize a HIDS instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hids_obj</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to HIDS instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="509" column="5" declfile="include/bluetooth/services/hids.h" declline="509" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hids_1ga71424a994a52a676de390d38aa085c71" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hids_connected</definition>
+        <argsstring>(struct bt_hids *hids_obj, struct bt_conn *conn)</argsstring>
+        <name>bt_hids_connected</name>
+        <param>
+          <type>struct <ref refid="structbt__hids" kindref="compound">bt_hids</ref> *</type>
+          <declname>hids_obj</declname>
+        </param>
+        <param>
+          <type>struct bt_conn *</type>
+          <declname>conn</declname>
+        </param>
+        <briefdescription>
+<para>Function for informing the HID service about connection to the device This function should be used in main application. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hids_obj</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to HIDS instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to Connection Object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="521" column="5" declfile="include/bluetooth/services/hids.h" declline="521" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hids_1gab9ed8880d5283a9ecce3ec92f0d375a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hids_disconnected</definition>
+        <argsstring>(struct bt_hids *hids_obj, struct bt_conn *conn)</argsstring>
+        <name>bt_hids_disconnected</name>
+        <param>
+          <type>struct <ref refid="structbt__hids" kindref="compound">bt_hids</ref> *</type>
+          <declname>hids_obj</declname>
+        </param>
+        <param>
+          <type>struct bt_conn *</type>
+          <declname>conn</declname>
+        </param>
+        <briefdescription>
+<para>Function for informing the HID service about disconnection from the device. This function should be used in main application. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hids_obj</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to HIDS instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to Connection Object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="533" column="5" declfile="include/bluetooth/services/hids.h" declline="533" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hids_1gaf33407179fb79b6eb14381008f4fe30d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hids_inp_rep_send</definition>
+        <argsstring>(struct bt_hids *hids_obj, struct bt_conn *conn, uint8_t rep_index, uint8_t const *rep, uint8_t len, bt_gatt_complete_func_t cb)</argsstring>
+        <name>bt_hids_inp_rep_send</name>
+        <param>
+          <type>struct <ref refid="structbt__hids" kindref="compound">bt_hids</ref> *</type>
+          <declname>hids_obj</declname>
+        </param>
+        <param>
+          <type>struct bt_conn *</type>
+          <declname>conn</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>rep_index</declname>
+        </param>
+        <param>
+          <type>uint8_t const *</type>
+          <declname>rep</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>len</declname>
+        </param>
+        <param>
+          <type>bt_gatt_complete_func_t</type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Send Input Report. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>The function is not thread safe. It can not be called from multiple threads at the same time.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hids_obj</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to HIDS instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to Connection Object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rep_index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of report descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rep</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the report data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of report data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Notification complete callback (can be NULL).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="550" column="5" declfile="include/bluetooth/services/hids.h" declline="550" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hids_1ga927007f99512537f63ad093564437ec8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hids_boot_mouse_inp_rep_send</definition>
+        <argsstring>(struct bt_hids *hids_obj, struct bt_conn *conn, const uint8_t *buttons, int8_t x_delta, int8_t y_delta, bt_gatt_complete_func_t cb)</argsstring>
+        <name>bt_hids_boot_mouse_inp_rep_send</name>
+        <param>
+          <type>struct <ref refid="structbt__hids" kindref="compound">bt_hids</ref> *</type>
+          <declname>hids_obj</declname>
+        </param>
+        <param>
+          <type>struct bt_conn *</type>
+          <declname>conn</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>buttons</declname>
+        </param>
+        <param>
+          <type>int8_t</type>
+          <declname>x_delta</declname>
+        </param>
+        <param>
+          <type>int8_t</type>
+          <declname>y_delta</declname>
+        </param>
+        <param>
+          <type>bt_gatt_complete_func_t</type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Send Boot Mouse Input Report. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>The function is not thread safe. It can not be called from multiple threads at the same time.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hids_obj</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to HIDS instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to Connection Object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buttons</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the state of the mouse buttons - if null, buttons are set to the previously passed value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>x_delta</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Horizontal movement. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>y_delta</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vertical movement. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Notification complete callback (can be NULL).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="570" column="5" declfile="include/bluetooth/services/hids.h" declline="570" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hids_1ga9cc268e34bf845f851758139ab495c96" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hids_boot_kb_inp_rep_send</definition>
+        <argsstring>(struct bt_hids *hids_obj, struct bt_conn *conn, uint8_t const *rep, uint16_t len, bt_gatt_complete_func_t cb)</argsstring>
+        <name>bt_hids_boot_kb_inp_rep_send</name>
+        <param>
+          <type>struct <ref refid="structbt__hids" kindref="compound">bt_hids</ref> *</type>
+          <declname>hids_obj</declname>
+        </param>
+        <param>
+          <type>struct bt_conn *</type>
+          <declname>conn</declname>
+        </param>
+        <param>
+          <type>uint8_t const *</type>
+          <declname>rep</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>len</declname>
+        </param>
+        <param>
+          <type>bt_gatt_complete_func_t</type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Send Boot Keyboard Input Report. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>The function is not thread safe. It can not be called from multiple threads at the same time.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hids_obj</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to HIDS instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to Connection Object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rep</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the report data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of report data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Notification complete callback (can be NULL).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="590" column="5" declfile="include/bluetooth/services/hids.h" declline="590" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__hids_1ga05a0403178a5d272e1242ba4a26ea3fc" prot="public" static="no">
+        <name>CONFIG_BT_HIDS_INPUT_REP_MAX</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="26" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__hids_1gaee13445f04cd8463ee43ee42831147cb" prot="public" static="no">
+        <name>CONFIG_BT_HIDS_OUTPUT_REP_MAX</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="30" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__hids_1gaeb6ca8a0e34c579aa05890bbc03a78bd" prot="public" static="no">
+        <name>CONFIG_BT_HIDS_FEATURE_REP_MAX</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="34" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__hids_1gaf604cd7682c156f858f9d5b0ebd20cb0" prot="public" static="no">
+        <name>BT_HIDS_BOOT_MOUSE_REP_LEN</name>
+        <initializer>8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of the Boot Mouse Input Report. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="38" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__hids_1ga137324e2362f85ef2fa6ab8c5e80a90d" prot="public" static="no">
+        <name>BT_HIDS_BOOT_KB_INPUT_REP_LEN</name>
+        <initializer>8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of the Boot Keyboard Input Report. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="40" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__hids_1ga68acfe94ea02dd3e7398777694e81b0b" prot="public" static="no">
+        <name>BT_HIDS_BOOT_KB_OUTPUT_REP_LEN</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of the Boot Keyboard Output Report. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="42" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__hids_1gad503a73241ddc0d079aeb49198783c57" prot="public" static="no">
+        <name>BT_HIDS_INFORMATION_LEN</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of encoded HID Information. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="45" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__hids_1gabc49547928b5578fa6372541d2550bb3" prot="public" static="no">
+        <name>BT_HIDS_DEF</name>
+        <param><defname>_name</defname></param>
+        <param><defname>...</defname></param>
+        <initializer>	<ref refid="group__bt__conn__ctx_ga57125acafeeaffd4f853ca58eb7513af_1ga57125acafeeaffd4f853ca58eb7513af" kindref="member">BT_CONN_CTX_DEF</ref>(_name,						       \
+			CONFIG_BT_HIDS_MAX_CLIENT_COUNT,		       \
+			_BT_HIDS_CONN_CTX_SIZE_CALC(__VA_ARGS__));	       \
+	static struct <ref refid="structbt__hids" kindref="compound">bt_hids</ref> _name =				       \
+	{								       \
+		.gp = <ref refid="group__bt__gatt__pool_ga8fa84f84e580facc1016ae4984922c6a_1ga8fa84f84e580facc1016ae4984922c6a" kindref="member">BT_GATT_POOL_INIT</ref>(CONFIG_BT_HIDS_ATTR_MAX),	       \
+		.conn_ctx = &amp;CONCAT(_name, _ctx_lib),			       \
+	}</initializer>
+        <briefdescription>
+<para>Declare a HIDS instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the HIDS instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Lengths of HIDS reports </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="53" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Bluetooth LE GATT Human Interface Device (HID) Service. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

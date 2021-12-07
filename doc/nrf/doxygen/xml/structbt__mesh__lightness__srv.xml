@@ -1,0 +1,304 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__lightness__srv" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_lightness_srv</compoundname>
+    <includes refid="lightness__srv_8h" local="no">lightness_srv.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__lightness__srv_acd99eef84655630d900979c84901662b_1acd99eef84655630d900979c84901662b" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__lvl__srv" kindref="compound">bt_mesh_lvl_srv</ref></type>
+        <definition>struct bt_mesh_lvl_srv bt_mesh_lightness_srv::lvl</definition>
+        <argsstring></argsstring>
+        <name>lvl</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light Level Server instance. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness_srv.h" line="144" column="22" bodyfile="include/bluetooth/mesh/lightness_srv.h" bodystart="144" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__srv_aa201da8d3d1d421c2475aa3a15e7aaeb_1aa201da8d3d1d421c2475aa3a15e7aaeb" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__ponoff__srv" kindref="compound">bt_mesh_ponoff_srv</ref></type>
+        <definition>struct bt_mesh_ponoff_srv bt_mesh_lightness_srv::ponoff</definition>
+        <argsstring></argsstring>
+        <name>ponoff</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light Light OnOff server instance. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness_srv.h" line="146" column="25" bodyfile="include/bluetooth/mesh/lightness_srv.h" bodystart="146" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__srv_af57af74f4c018a1d2be20090e83be05e_1af57af74f4c018a1d2be20090e83be05e" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model *</type>
+        <definition>struct bt_mesh_model* bt_mesh_lightness_srv::lightness_model</definition>
+        <argsstring></argsstring>
+        <name>lightness_model</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the model entry in the composition data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness_srv.h" line="148" column="20" bodyfile="include/bluetooth/mesh/lightness_srv.h" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__srv_aa9c04ca65e89b1bd2f3d4d385925b794_1aa9c04ca65e89b1bd2f3d4d385925b794" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model *</type>
+        <definition>struct bt_mesh_model* bt_mesh_lightness_srv::lightness_setup_model</definition>
+        <argsstring></argsstring>
+        <name>lightness_setup_model</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the Setup Server model entry in the composition data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness_srv.h" line="150" column="20" bodyfile="include/bluetooth/mesh/lightness_srv.h" bodystart="150" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__srv_ab11d7c527bedbbf80531f6178d71d145_1ab11d7c527bedbbf80531f6178d71d145" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model_pub</type>
+        <definition>struct bt_mesh_model_pub bt_mesh_lightness_srv::pub</definition>
+        <argsstring></argsstring>
+        <name>pub</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Model publication parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness_srv.h" line="152" column="24" bodyfile="include/bluetooth/mesh/lightness_srv.h" bodystart="152" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__srv_a07de0166711e5176e833cccbbb20955e_1a07de0166711e5176e833cccbbb20955e" prot="public" static="no" mutable="no">
+        <type>struct net_buf_simple</type>
+        <definition>struct net_buf_simple bt_mesh_lightness_srv::pub_buf</definition>
+        <argsstring></argsstring>
+        <name>pub_buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness_srv.h" line="154" column="21" bodyfile="include/bluetooth/mesh/lightness_srv.h" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__srv_a038b6bc86ccdfb60a95659dd7b95acbd_1a038b6bc86ccdfb60a95659dd7b95acbd" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_lightness_srv::pub_data[BT_MESH_MODEL_BUF_LEN( BT_MESH_LIGHTNESS_OP_STATUS, BT_MESH_LIGHTNESS_MSG_MAXLEN_STATUS)]</definition>
+        <argsstring>[BT_MESH_MODEL_BUF_LEN(BT_MESH_LIGHTNESS_OP_STATUS, BT_MESH_LIGHTNESS_MSG_MAXLEN_STATUS)]</argsstring>
+        <name>pub_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness_srv.h" line="156" column="9" bodyfile="include/bluetooth/mesh/lightness_srv.h" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__srv_adca60a2e3a3d6fa9e6f778ba1c665a8b_1adca60a2e3a3d6fa9e6f778ba1c665a8b" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__tid__ctx" kindref="compound">bt_mesh_tid_ctx</ref></type>
+        <definition>struct bt_mesh_tid_ctx bt_mesh_lightness_srv::tid</definition>
+        <argsstring></argsstring>
+        <name>tid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transaction ID tracker for the set messages. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness_srv.h" line="160" column="22" bodyfile="include/bluetooth/mesh/lightness_srv.h" bodystart="160" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__srv_a6a39f1f447f366fdaca4cd408e5c570a_1a6a39f1f447f366fdaca4cd408e5c570a" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__lightness__srv__handlers" kindref="compound">bt_mesh_lightness_srv_handlers</ref> *const</type>
+        <definition>const struct bt_mesh_lightness_srv_handlers* const bt_mesh_lightness_srv::handlers</definition>
+        <argsstring></argsstring>
+        <name>handlers</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>User handler functions. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness_srv.h" line="162" column="49" bodyfile="include/bluetooth/mesh/lightness_srv.h" bodystart="162" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__srv_a9f48feaf7d0c5101dc1b4084a0c7284d_1a9f48feaf7d0c5101dc1b4084a0c7284d" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__lightness__range" kindref="compound">bt_mesh_lightness_range</ref></type>
+        <definition>struct bt_mesh_lightness_range bt_mesh_lightness_srv::range</definition>
+        <argsstring></argsstring>
+        <name>range</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current Light Level Range. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness_srv.h" line="169" column="30" bodyfile="include/bluetooth/mesh/lightness_srv.h" bodystart="169" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__srv_a472f43fd8f37f6f7c58c2932269514e7_1a472f43fd8f37f6f7c58c2932269514e7" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_lightness_srv::default_light</definition>
+        <argsstring></argsstring>
+        <name>default_light</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current Default Light Level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness_srv.h" line="171" column="10" bodyfile="include/bluetooth/mesh/lightness_srv.h" bodystart="171" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__srv_a98f2a2072c2953866367f1a70efc412f_1a98f2a2072c2953866367f1a70efc412f" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_lightness_srv::last</definition>
+        <argsstring></argsstring>
+        <name>last</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The last known Light Level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness_srv.h" line="173" column="10" bodyfile="include/bluetooth/mesh/lightness_srv.h" bodystart="173" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__srv_a026ec9eb69c3d5326699ebff34226296_1a026ec9eb69c3d5326699ebff34226296" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_lightness_srv::delta_start</definition>
+        <argsstring></argsstring>
+        <name>delta_start</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The delta start Light Level </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness_srv.h" line="175" column="10" bodyfile="include/bluetooth/mesh/lightness_srv.h" bodystart="175" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__srv_a9a80a21495dc408a53ac475fd33025b3_1a9a80a21495dc408a53ac475fd33025b3" prot="public" static="no" mutable="no">
+        <type>atomic_t</type>
+        <definition>atomic_t bt_mesh_lightness_srv::flags</definition>
+        <argsstring></argsstring>
+        <name>flags</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Internal flag state. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness_srv.h" line="177" column="10" bodyfile="include/bluetooth/mesh/lightness_srv.h" bodystart="177" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Light Lightness Server instance.</para>
+<para>Should be initialized with <ref refid="group__bt__mesh__lightness__srv_gad4d882bb56e763ede5cf4a9ae2744173_1gad4d882bb56e763ede5cf4a9ae2744173" kindref="member">BT_MESH_LIGHTNESS_SRV_INIT</ref>. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="8">
+        <label>bt_mesh_dtt_srv</label>
+        <link refid="structbt__mesh__dtt__srv"/>
+      </node>
+      <node id="10">
+        <label>bt_mesh_lightness_range</label>
+        <link refid="structbt__mesh__lightness__range"/>
+      </node>
+      <node id="1">
+        <label>bt_mesh_lightness_srv</label>
+        <link refid="structbt__mesh__lightness__srv"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>lvl</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>ponoff</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>tid</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>handlers</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>range</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>bt_mesh_lightness_srv_handlers</label>
+        <link refid="structbt__mesh__lightness__srv__handlers"/>
+      </node>
+      <node id="2">
+        <label>bt_mesh_lvl_srv</label>
+        <link refid="structbt__mesh__lvl__srv"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>handlers</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>tid</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bt_mesh_lvl_srv_handlers</label>
+        <link refid="structbt__mesh__lvl__srv__handlers"/>
+      </node>
+      <node id="6">
+        <label>bt_mesh_onoff_srv</label>
+        <link refid="structbt__mesh__onoff__srv"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>prev_transaction</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>handlers</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>bt_mesh_onoff_srv_handlers</label>
+        <link refid="structbt__mesh__onoff__srv__handlers"/>
+      </node>
+      <node id="5">
+        <label>bt_mesh_ponoff_srv</label>
+        <link refid="structbt__mesh__ponoff__srv"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>onoff</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>dtt</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>onoff_handlers</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bt_mesh_tid_ctx</label>
+        <link refid="structbt__mesh__tid__ctx"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/lightness_srv.h" line="142" column="1" bodyfile="include/bluetooth/mesh/lightness_srv.h" bodystart="142" bodyend="183"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__lightness__srv_a472f43fd8f37f6f7c58c2932269514e7_1a472f43fd8f37f6f7c58c2932269514e7" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_srv</scope><name>default_light</name></member>
+      <member refid="structbt__mesh__lightness__srv_a026ec9eb69c3d5326699ebff34226296_1a026ec9eb69c3d5326699ebff34226296" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_srv</scope><name>delta_start</name></member>
+      <member refid="structbt__mesh__lightness__srv_a9a80a21495dc408a53ac475fd33025b3_1a9a80a21495dc408a53ac475fd33025b3" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_srv</scope><name>flags</name></member>
+      <member refid="structbt__mesh__lightness__srv_a6a39f1f447f366fdaca4cd408e5c570a_1a6a39f1f447f366fdaca4cd408e5c570a" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_srv</scope><name>handlers</name></member>
+      <member refid="structbt__mesh__lightness__srv_a98f2a2072c2953866367f1a70efc412f_1a98f2a2072c2953866367f1a70efc412f" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_srv</scope><name>last</name></member>
+      <member refid="structbt__mesh__lightness__srv_af57af74f4c018a1d2be20090e83be05e_1af57af74f4c018a1d2be20090e83be05e" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_srv</scope><name>lightness_model</name></member>
+      <member refid="structbt__mesh__lightness__srv_aa9c04ca65e89b1bd2f3d4d385925b794_1aa9c04ca65e89b1bd2f3d4d385925b794" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_srv</scope><name>lightness_setup_model</name></member>
+      <member refid="structbt__mesh__lightness__srv_acd99eef84655630d900979c84901662b_1acd99eef84655630d900979c84901662b" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_srv</scope><name>lvl</name></member>
+      <member refid="structbt__mesh__lightness__srv_aa201da8d3d1d421c2475aa3a15e7aaeb_1aa201da8d3d1d421c2475aa3a15e7aaeb" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_srv</scope><name>ponoff</name></member>
+      <member refid="structbt__mesh__lightness__srv_ab11d7c527bedbbf80531f6178d71d145_1ab11d7c527bedbbf80531f6178d71d145" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_srv</scope><name>pub</name></member>
+      <member refid="structbt__mesh__lightness__srv_a07de0166711e5176e833cccbbb20955e_1a07de0166711e5176e833cccbbb20955e" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_srv</scope><name>pub_buf</name></member>
+      <member refid="structbt__mesh__lightness__srv_a038b6bc86ccdfb60a95659dd7b95acbd_1a038b6bc86ccdfb60a95659dd7b95acbd" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_srv</scope><name>pub_data</name></member>
+      <member refid="structbt__mesh__lightness__srv_a9f48feaf7d0c5101dc1b4084a0c7284d_1a9f48feaf7d0c5101dc1b4084a0c7284d" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_srv</scope><name>range</name></member>
+      <member refid="structbt__mesh__lightness__srv_adca60a2e3a3d6fa9e6f778ba1c665a8b_1adca60a2e3a3d6fa9e6f778ba1c665a8b" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_srv</scope><name>tid</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,1384 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__ftp__client" kind="group">
+    <compoundname>ftp_client</compoundname>
+    <title>FTP client library</title>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__ftp__client_1ga1fd1b76dd9faa02fdb72440c94851c9f" prot="public" static="no" strong="no">
+        <type></type>
+        <name>ftp_reply_code</name>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa5897111ac3874de3eb6e0588e3dcdb9b" prot="public">
+          <name>FTP_CODE_110</name>
+          <initializer>= 110</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa2bfb4118127ba1b17efb2ca4039ff941" prot="public">
+          <name>FTP_CODE_120</name>
+          <initializer>= 120</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9faf9a9af7720a85617c5ecf7e352265c20" prot="public">
+          <name>FTP_CODE_125</name>
+          <initializer>= 125</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa210e773391557f517115c012a5cdd959" prot="public">
+          <name>FTP_CODE_150</name>
+          <initializer>= 150</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa7283fd43e7f87d3ce8005945f142921c" prot="public">
+          <name>FTP_CODE_200</name>
+          <initializer>= 200</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9faccbd3e4079caa06d5e2ef1a1e74318d3" prot="public">
+          <name>FTP_CODE_202</name>
+          <initializer>= 202</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa0fcad0973bf42f092c368e21d6e2ef01" prot="public">
+          <name>FTP_CODE_211</name>
+          <initializer>= 211</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa5cf9a364655ef820f17b79e90ca3e458" prot="public">
+          <name>FTP_CODE_212</name>
+          <initializer>= 212</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fad88c1d09b8b585ca7871c703bd00c0dd" prot="public">
+          <name>FTP_CODE_213</name>
+          <initializer>= 213</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa3efb66d3bae0c8aa3bf1d8b5fdde222e" prot="public">
+          <name>FTP_CODE_214</name>
+          <initializer>= 214</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fae122abaa6fcca67877b8cd0fc8162d64" prot="public">
+          <name>FTP_CODE_215</name>
+          <initializer>= 215</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa4b619cdc20dd18607a5c127124d7fb0d" prot="public">
+          <name>FTP_CODE_220</name>
+          <initializer>= 220</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fac08d33814bd671afda4b393228cfa4da" prot="public">
+          <name>FTP_CODE_221</name>
+          <initializer>= 221</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9faae60e29aa823ba8ffb3c176a0c171eb3" prot="public">
+          <name>FTP_CODE_225</name>
+          <initializer>= 225</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa3b82ad6ec83b9a75bbc81cdd0fcbe476" prot="public">
+          <name>FTP_CODE_226</name>
+          <initializer>= 226</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa47fb898e30e54636751fee57b57aa54f" prot="public">
+          <name>FTP_CODE_227</name>
+          <initializer>= 227</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9faca3a4c453c477382e185973ca1a8f9ad" prot="public">
+          <name>FTP_CODE_228</name>
+          <initializer>= 228</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa7c59d075fc51ce6ac5ee8bf82d911db1" prot="public">
+          <name>FTP_CODE_229</name>
+          <initializer>= 229</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fae7e51c46fe1b96fec02d4af1a0429420" prot="public">
+          <name>FTP_CODE_230</name>
+          <initializer>= 230</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fab7e49ef0c95fc3eac1ab97639ef69338" prot="public">
+          <name>FTP_CODE_231</name>
+          <initializer>= 231</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa56ebff7b3352aa3681b44433eb7575be" prot="public">
+          <name>FTP_CODE_233</name>
+          <initializer>= 233</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9faf5ccf7b3e06b60bd3c1166fbf0198fba" prot="public">
+          <name>FTP_CODE_234</name>
+          <initializer>= 234</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa8d7175f3514ee4080fb7fb2392c0f12b" prot="public">
+          <name>FTP_CODE_250</name>
+          <initializer>= 250</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fae497a0fdcf9f67bed6447505826fe94a" prot="public">
+          <name>FTP_CODE_257</name>
+          <initializer>= 257</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa2b77a0a10bd0ba0e137302417b4bdeff" prot="public">
+          <name>FTP_CODE_331</name>
+          <initializer>= 331</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa09355bd83505d470f7cb899655f80002" prot="public">
+          <name>FTP_CODE_332</name>
+          <initializer>= 332</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa7700f8318dca90d237a9a4ae97051cc0" prot="public">
+          <name>FTP_CODE_350</name>
+          <initializer>= 350</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa9f412cecfdc7ae9f031f7e79a1f5e711" prot="public">
+          <name>FTP_CODE_421</name>
+          <initializer>= 421</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa876250e01d85675d3577f587d0e74e74" prot="public">
+          <name>FTP_CODE_425</name>
+          <initializer>= 425</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa4f29b6a5c34eb4c14371eb636578dbea" prot="public">
+          <name>FTP_CODE_426</name>
+          <initializer>= 426</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa6186d0c170af9a5653e6a98635baa6d1" prot="public">
+          <name>FTP_CODE_430</name>
+          <initializer>= 430</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fae6e0bfcf445d472207b112f1d7cd327e" prot="public">
+          <name>FTP_CODE_434</name>
+          <initializer>= 434</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9faf82c8276486047b470fea7b91648f3c1" prot="public">
+          <name>FTP_CODE_450</name>
+          <initializer>= 450</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fab2db9d2c3030ba5ff11ddb08bdd17cd0" prot="public">
+          <name>FTP_CODE_451</name>
+          <initializer>= 451</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa5a754f06c64655ee41006406980e3365" prot="public">
+          <name>FTP_CODE_452</name>
+          <initializer>= 452</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa774f3caa043d2a3746b2b15822242ad2" prot="public">
+          <name>FTP_CODE_500</name>
+          <initializer>= 500</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa8a5a7fd5e6b1f618796178669fd317a5" prot="public">
+          <name>FTP_CODE_501</name>
+          <initializer>= 501</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa8bafd81775bd29d969a35a79518d40a4" prot="public">
+          <name>FTP_CODE_502</name>
+          <initializer>= 502</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa56a408b0536b39d7d2eeb92707441838" prot="public">
+          <name>FTP_CODE_503</name>
+          <initializer>= 503</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa6ac0748fceb45988c795b29fed6414b9" prot="public">
+          <name>FTP_CODE_504</name>
+          <initializer>= 504</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9faf081687986ce446ebfd9902f2dcb2d84" prot="public">
+          <name>FTP_CODE_530</name>
+          <initializer>= 530</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa0735e2680ae4b16b5839d2dfd6920928" prot="public">
+          <name>FTP_CODE_532</name>
+          <initializer>= 532</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fadd96d025059e6d3decc651e91ce971e6" prot="public">
+          <name>FTP_CODE_534</name>
+          <initializer>= 534</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa43c03a63caab2fb9fcd900c234633b6e" prot="public">
+          <name>FTP_CODE_550</name>
+          <initializer>= 550</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa89c3bc96a5f1211a9611f73ea8aa5ef6" prot="public">
+          <name>FTP_CODE_551</name>
+          <initializer>= 551</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa290a03135b35c34f4ffbca8325cfd488" prot="public">
+          <name>FTP_CODE_552</name>
+          <initializer>= 552</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa8d796a8b5976ab16a8ceb8185e58705a" prot="public">
+          <name>FTP_CODE_553</name>
+          <initializer>= 553</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa663665f572aec6d5d147aa2f763272b5" prot="public">
+          <name>FTP_CODE_631</name>
+          <initializer>= 631</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa4298fb1a603b9e1f38b840550e5d9a04" prot="public">
+          <name>FTP_CODE_632</name>
+          <initializer>= 632</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa5afb5b84fb2e34b26fb6c9fa4fcf8386" prot="public">
+          <name>FTP_CODE_633</name>
+          <initializer>= 633</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa3fb25a70944cf3472102b27902f7ed96" prot="public">
+          <name>FTP_CODE_900</name>
+          <initializer>= 900</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fad1695eb7d2327c1a2b87a724e67d9fd2" prot="public">
+          <name>FTP_CODE_901</name>
+          <initializer>= 901</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Fatal errors </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa8434f0d129afd8dedd79d28d7e73876f" prot="public">
+          <name>FTP_CODE_902</name>
+          <initializer>= 902</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fade4e2603dd2e358d295cd2d5406346a9" prot="public">
+          <name>FTP_CODE_903</name>
+          <initializer>= 903</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa7dcb7a7468df885439b0346f47636a96" prot="public">
+          <name>FTP_CODE_904</name>
+          <initializer>= 904</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fab939e05f2b610949f1a7c294fd108666" prot="public">
+          <name>FTP_CODE_905</name>
+          <initializer>= 905</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa101b4eba40218824cd51074ca10dfbe2" prot="public">
+          <name>FTP_CODE_909</name>
+          <initializer>= 909</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa27970be3c7b642fbb92b6c5445bbb5ca" prot="public">
+          <name>FTP_CODE_910</name>
+          <initializer>= 910</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Non-fatal errors </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa942d71e0b9ccae3d2dff2cbbf685c7fe" prot="public">
+          <name>FTP_CODE_10054</name>
+          <initializer>= 10054</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa5149411ff89914da6f1e858932b1051e" prot="public">
+          <name>FTP_CODE_10060</name>
+          <initializer>= 10060</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fad342e2bde22c3aab539f84e5cfd26c22" prot="public">
+          <name>FTP_CODE_10061</name>
+          <initializer>= 10061</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9fa7f88b5535d3d38e4474f655a56b030da" prot="public">
+          <name>FTP_CODE_10066</name>
+          <initializer>= 10066</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga1fd1b76dd9faa02fdb72440c94851c9f_1gga1fd1b76dd9faa02fdb72440c94851c9faf13a89b964509b56743b780f50cc827b" prot="public">
+          <name>FTP_CODE_10068</name>
+          <initializer>= 10068</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>List of FTP server reply codes Reference RFC959 FTP Transfer Protocol. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="30" column="1" bodyfile="include/net/ftp_client.h" bodystart="30" bodyend="222"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__ftp__client_1ga3b3f431a7d266384900b0aaef52845d1" prot="public" static="no" strong="no">
+        <type></type>
+        <name>ftp_trasfer_type</name>
+        <enumvalue id="group__ftp__client_ga3b3f431a7d266384900b0aaef52845d1_1gga3b3f431a7d266384900b0aaef52845d1ab3a051eff6a65236e97811716b2ae9ff" prot="public">
+          <name>FTP_TYPE_ASCII</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_ga3b3f431a7d266384900b0aaef52845d1_1gga3b3f431a7d266384900b0aaef52845d1a3a21938d02227ad37c1fcad3cda67039" prot="public">
+          <name>FTP_TYPE_BINARY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="233" column="1" bodyfile="include/net/ftp_client.h" bodystart="233" bodyend="236"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__ftp__client_1gaf9f99979b6178b195574135e30146b51" prot="public" static="no" strong="no">
+        <type></type>
+        <name>ftp_put_type</name>
+        <enumvalue id="group__ftp__client_gaf9f99979b6178b195574135e30146b51_1ggaf9f99979b6178b195574135e30146b51a1daa8fd6fb897bb0b6bedcd95b257d53" prot="public">
+          <name>FTP_PUT_NORMAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_gaf9f99979b6178b195574135e30146b51_1ggaf9f99979b6178b195574135e30146b51a86668e9c2d6905f8f270f353a015fc7d" prot="public">
+          <name>FTP_PUT_UNIQUE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ftp__client_gaf9f99979b6178b195574135e30146b51_1ggaf9f99979b6178b195574135e30146b51a64c12215f266804fd8d64112ca11d56e" prot="public">
+          <name>FTP_PUT_APPEND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="238" column="1" bodyfile="include/net/ftp_client.h" bodystart="238" bodyend="242"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__ftp__client_1ga5d2fbddcb382dc2c4b082b32cb28ef82" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* ftp_client_callback_t) (const uint8_t *msg, uint16_t len)</definition>
+        <argsstring>)(const uint8_t *msg, uint16_t len)</argsstring>
+        <name>ftp_client_callback_t</name>
+        <briefdescription>
+<para>FTP asynchronous callback function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>FTP client data received, or local message </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>length of message </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="250" column="9" bodyfile="include/net/ftp_client.h" bodystart="250" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__ftp__client_1gacdf439abe6764c7bfbdbad0e14827e17" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ftp_init</definition>
+        <argsstring>(ftp_client_callback_t ctrl_callback, ftp_client_callback_t data_callback)</argsstring>
+        <name>ftp_init</name>
+        <param>
+          <type><ref refid="group__ftp__client_ga5d2fbddcb382dc2c4b082b32cb28ef82_1ga5d2fbddcb382dc2c4b082b32cb28ef82" kindref="member">ftp_client_callback_t</ref></type>
+          <declname>ctrl_callback</declname>
+        </param>
+        <param>
+          <type><ref refid="group__ftp__client_ga5d2fbddcb382dc2c4b082b32cb28ef82_1ga5d2fbddcb382dc2c4b082b32cb28ef82" kindref="member">ftp_client_callback_t</ref></type>
+          <declname>data_callback</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the FTP client library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ctrl_callback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback for FTP command result. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data_callback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback for FTP received data.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successfully initialized. Otherwise, a negative value is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="260" column="5" declfile="include/net/ftp_client.h" declline="260" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ftp__client_1gaef4c3d8b9a1ca9c62432000e850d8bfe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ftp_uninit</definition>
+        <argsstring>(void)</argsstring>
+        <name>ftp_uninit</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Uninitialize the FTP client library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successfully initialized. Otherwise, a negative value is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="267" column="5" declfile="include/net/ftp_client.h" declline="267" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ftp__client_1gafb82f318dbbbbb13343cf7c4f8ad3721" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ftp_open</definition>
+        <argsstring>(const char *hostname, uint16_t port, int sec_tag)</argsstring>
+        <name>ftp_open</name>
+        <param>
+          <type>const char *</type>
+          <declname>hostname</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>port</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>sec_tag</declname>
+        </param>
+        <briefdescription>
+<para>Open FTP connection. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hostname</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>FTP server name or IP address </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>port</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>FTP service port on server </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>sec_tag</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If FTP over TLS is required (-1 means no TLS)</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>ftp_reply_code</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>or negative if error </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="277" column="5" declfile="include/net/ftp_client.h" declline="277" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ftp__client_1ga893894e9a736267e0f999e6b5d6fb77d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ftp_login</definition>
+        <argsstring>(const char *username, const char *password)</argsstring>
+        <name>ftp_login</name>
+        <param>
+          <type>const char *</type>
+          <declname>username</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>password</declname>
+        </param>
+        <briefdescription>
+<para>FTP server login. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>username</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>user name </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>password</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>passoword</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>ftp_reply_code</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>or negative if error </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="286" column="5" declfile="include/net/ftp_client.h" declline="286" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ftp__client_1ga59ed0cc1af9cc5a8704bfde4d6ec47c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ftp_close</definition>
+        <argsstring>(void)</argsstring>
+        <name>ftp_close</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Close FTP connection. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>ftp_reply_code</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>or negative if error </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="292" column="5" declfile="include/net/ftp_client.h" declline="292" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ftp__client_1ga3259469e2e5e56d546c3c66220552613" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ftp_status</definition>
+        <argsstring>(void)</argsstring>
+        <name>ftp_status</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Get FTP server and connection status Also returns server system type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>ftp_reply_code</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>or negative if error </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="299" column="5" declfile="include/net/ftp_client.h" declline="299" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ftp__client_1gaa23f46610fe2576226a963da6cfbf516" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ftp_type</definition>
+        <argsstring>(enum ftp_trasfer_type type)</argsstring>
+        <name>ftp_type</name>
+        <param>
+          <type>enum <ref refid="group__ftp__client_ga3b3f431a7d266384900b0aaef52845d1_1ga3b3f431a7d266384900b0aaef52845d1" kindref="member">ftp_trasfer_type</ref></type>
+          <declname>type</declname>
+        </param>
+        <briefdescription>
+<para>Set FTP transfer type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>transfer type</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>ftp_reply_code</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>or negative if error </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="307" column="5" declfile="include/net/ftp_client.h" declline="307" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ftp__client_1ga75b367c3b002f8d480caafb86c170a07" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ftp_pwd</definition>
+        <argsstring>(void)</argsstring>
+        <name>ftp_pwd</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Print working directory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>ftp_reply_code</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>or negative if error </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="313" column="5" declfile="include/net/ftp_client.h" declline="313" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ftp__client_1ga6cad68f9254311b8a1d1da73c9e0e1ee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ftp_list</definition>
+        <argsstring>(const char *options, const char *target)</argsstring>
+        <name>ftp_list</name>
+        <param>
+          <type>const char *</type>
+          <declname>options</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>target</declname>
+        </param>
+        <briefdescription>
+<para>List information of folder or file. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>List options, refer to Linux &quot;man ls&quot; </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>target</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>file or diretory to list. If not specified, list current folder</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>ftp_reply_code</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>or negative if error </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="322" column="5" declfile="include/net/ftp_client.h" declline="322" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ftp__client_1gad75d9e14bcbdd1b5d455ca2b7b44b065" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ftp_cwd</definition>
+        <argsstring>(const char *folder)</argsstring>
+        <name>ftp_cwd</name>
+        <param>
+          <type>const char *</type>
+          <declname>folder</declname>
+        </param>
+        <briefdescription>
+<para>Change working directory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>folder</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target folder</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>ftp_reply_code</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>or negative if error </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="330" column="5" declfile="include/net/ftp_client.h" declline="330" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ftp__client_1ga719dad0fc3ab327e4dbda289563c5d58" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ftp_mkd</definition>
+        <argsstring>(const char *folder)</argsstring>
+        <name>ftp_mkd</name>
+        <param>
+          <type>const char *</type>
+          <declname>folder</declname>
+        </param>
+        <briefdescription>
+<para>Make directory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>folder</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New folder name</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>ftp_reply_code</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>or negative if error </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="338" column="5" declfile="include/net/ftp_client.h" declline="338" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ftp__client_1ga637bf01a112bff47e57c30023ac5e32d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ftp_rmd</definition>
+        <argsstring>(const char *folder)</argsstring>
+        <name>ftp_rmd</name>
+        <param>
+          <type>const char *</type>
+          <declname>folder</declname>
+        </param>
+        <briefdescription>
+<para>Remove directory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>folder</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target folder name</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>ftp_reply_code</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>or negative if error </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="346" column="5" declfile="include/net/ftp_client.h" declline="346" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ftp__client_1ga756c66cba2f9538c7cf22aca822d94cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ftp_rename</definition>
+        <argsstring>(const char *old_name, const char *new_name)</argsstring>
+        <name>ftp_rename</name>
+        <param>
+          <type>const char *</type>
+          <declname>old_name</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>new_name</declname>
+        </param>
+        <briefdescription>
+<para>Rename a file. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>old_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Old file name </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>new_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New file name</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>ftp_reply_code</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>or negative if error </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="355" column="5" declfile="include/net/ftp_client.h" declline="355" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ftp__client_1gaa092469ee4af4ab34ee667a4aadec110" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ftp_delete</definition>
+        <argsstring>(const char *file)</argsstring>
+        <name>ftp_delete</name>
+        <param>
+          <type>const char *</type>
+          <declname>file</declname>
+        </param>
+        <briefdescription>
+<para>Delete a file. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target file name</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>ftp_reply_code</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>or negative if error </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="363" column="5" declfile="include/net/ftp_client.h" declline="363" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ftp__client_1ga8d9797f9c3753d9543749d187f30656f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ftp_get</definition>
+        <argsstring>(const char *file)</argsstring>
+        <name>ftp_get</name>
+        <param>
+          <type>const char *</type>
+          <declname>file</declname>
+        </param>
+        <briefdescription>
+<para>Get a file. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target file name</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>ftp_reply_code</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>or negative if error </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="371" column="5" declfile="include/net/ftp_client.h" declline="371" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ftp__client_1ga56a8b66d77925276c60042e80923ebd2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ftp_put</definition>
+        <argsstring>(const char *file, const uint8_t *data, uint16_t length, int type)</argsstring>
+        <name>ftp_put</name>
+        <param>
+          <type>const char *</type>
+          <declname>file</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>length</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>type</declname>
+        </param>
+        <briefdescription>
+<para>Put data to a file If file does not exist, create the file. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target file name </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to be stored </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of data to be stored </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>specify FTP put types, see enum ftp_reply_code</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>ftp_reply_code</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>or negative if error </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="383" column="5" declfile="include/net/ftp_client.h" declline="383" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__ftp__client_1gae0d2e7bc8d668207fb6d691977cd44f0" prot="public" static="no">
+        <name>FTP_PRELIMINARY_POS</name>
+        <param><defname>code</defname></param>
+        <initializer>(code &gt; 100 &amp;&amp; code &lt; 200)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="224" column="9" bodyfile="include/net/ftp_client.h" bodystart="224" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__ftp__client_1gab08ac0cc5252d949daa191e7ef78b78d" prot="public" static="no">
+        <name>FTP_COMPLETION_POS</name>
+        <param><defname>code</defname></param>
+        <initializer>(code &gt; 200 &amp;&amp; code &lt; 300)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="225" column="9" bodyfile="include/net/ftp_client.h" bodystart="225" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__ftp__client_1ga4186d0913217a817c900ca3256e6c61c" prot="public" static="no">
+        <name>FTP_INTERMEDIATE_POS</name>
+        <param><defname>code</defname></param>
+        <initializer>(code &gt; 300 &amp;&amp; code &lt; 400)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="226" column="9" bodyfile="include/net/ftp_client.h" bodystart="226" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__ftp__client_1ga131c88404bbc9bab28d726ca87ed5d0f" prot="public" static="no">
+        <name>FTP_TRANSIENT_NEG</name>
+        <param><defname>code</defname></param>
+        <initializer>(code &gt; 400 &amp;&amp; code &lt; 500)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="227" column="9" bodyfile="include/net/ftp_client.h" bodystart="227" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__ftp__client_1ga70e53928ec49591e672bd38aee8900aa" prot="public" static="no">
+        <name>FTP_COMPLETION_NEG</name>
+        <param><defname>code</defname></param>
+        <initializer>(code &gt; 500 &amp;&amp; code &lt; 600)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="228" column="9" bodyfile="include/net/ftp_client.h" bodystart="228" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__ftp__client_1gaeb93e6c09749debbf96b6fe324893dcc" prot="public" static="no">
+        <name>FTP_PROTECTED</name>
+        <param><defname>code</defname></param>
+        <initializer>(code &gt; 600 &amp;&amp; code &lt; 700)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="229" column="9" bodyfile="include/net/ftp_client.h" bodystart="229" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__ftp__client_1ga8b69a3ff0c4482622274ece26a9e54d6" prot="public" static="no">
+        <name>FTP_PROPRIETARY</name>
+        <param><defname>code</defname></param>
+        <initializer>(code &gt; 900 &amp;&amp; code &lt; 1000)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="230" column="9" bodyfile="include/net/ftp_client.h" bodystart="230" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__ftp__client_1ga07c24db339115e85723dcc05d1af975e" prot="public" static="no">
+        <name>FTP_WINSOCK_ERR</name>
+        <param><defname>code</defname></param>
+        <initializer>(code &gt; 10000)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/ftp_client.h" line="231" column="9" bodyfile="include/net/ftp_client.h" bodystart="231" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Library for FTP client. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Provide selected FTP client functionality </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

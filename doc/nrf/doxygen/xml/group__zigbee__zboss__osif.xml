@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__zigbee__zboss__osif" kind="group">
+    <compoundname>zigbee_zboss_osif</compoundname>
+    <title>Zigbee ZBOSS OSIF API</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__zigbee__zboss__osif_1ga93888a9afc51070be450daf8a3fc1330" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool zigbee_is_stack_started</definition>
+        <argsstring>(void)</argsstring>
+        <name>zigbee_is_stack_started</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for checking if the Zigbee stack has been started. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zigbee stack has been started. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zigbee stack has not been started yet. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="subsys/zigbee/osif/zb_nrf_platform.h" line="35" column="6" declfile="subsys/zigbee/osif/zb_nrf_platform.h" declline="35" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__zboss__osif_1gac932f42488c4ae48dd48a299ac589b30" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void zigbee_enable</definition>
+        <argsstring>(void)</argsstring>
+        <name>zigbee_enable</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for starting the Zigbee thread. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="subsys/zigbee/osif/zb_nrf_platform.h" line="38" column="6" declfile="subsys/zigbee/osif/zb_nrf_platform.h" declline="38" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__zboss__osif_1ga18cb00aba821ea83a945fd832caec29b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool zigbee_debug_zboss_thread_is_created</definition>
+        <argsstring>(void)</argsstring>
+        <name>zigbee_debug_zboss_thread_is_created</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for checking if the ZBOSS thread has been created. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="subsys/zigbee/osif/zb_nrf_platform.h" line="43" column="6" declfile="subsys/zigbee/osif/zb_nrf_platform.h" declline="43" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__zboss__osif_1ga84c9c7ea52bae3af4cb267f7e73bf948" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void zigbee_debug_suspend_zboss_thread</definition>
+        <argsstring>(void)</argsstring>
+        <name>zigbee_debug_suspend_zboss_thread</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for suspending the ZBOSS thread. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="subsys/zigbee/osif/zb_nrf_platform.h" line="47" column="6" declfile="subsys/zigbee/osif/zb_nrf_platform.h" declline="47" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__zboss__osif_1gae603cff252fc753b9e75e056af5327b7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void zigbee_debug_resume_zboss_thread</definition>
+        <argsstring>(void)</argsstring>
+        <name>zigbee_debug_resume_zboss_thread</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for resuming the ZBOSS thread. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="subsys/zigbee/osif/zb_nrf_platform.h" line="51" column="6" declfile="subsys/zigbee/osif/zb_nrf_platform.h" declline="51" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__zboss__osif_1ga5464d18bec23101086de1425c820ebe6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool zigbee_is_zboss_thread_suspended</definition>
+        <argsstring>(void)</argsstring>
+        <name>zigbee_is_zboss_thread_suspended</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for getting the state of the Zigbee stack thread processing suspension. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scheduler processing is suspended or the ZBOSS thread is not yet created. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scheduler processing is not suspended and the ZBOSS thread is created. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="subsys/zigbee/osif/zb_nrf_platform.h" line="61" column="6" declfile="subsys/zigbee/osif/zb_nrf_platform.h" declline="61" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,287 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__dfu__target__mcuboot" kind="group">
+    <compoundname>dfu_target_mcuboot</compoundname>
+    <title>MCUBoot DFU Target</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__dfu__target__mcuboot_1ga7f4e588b1f2d38391fd3beb2373fa9f2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_ctx_mcuboot_set_b1_file</definition>
+        <argsstring>(const char *file, bool s0_active, const char **update)</argsstring>
+        <name>dfu_ctx_mcuboot_set_b1_file</name>
+        <param>
+          <type>const char *</type>
+          <declname>file</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>s0_active</declname>
+        </param>
+        <param>
+          <type>const char **</type>
+          <declname>update</declname>
+        </param>
+        <briefdescription>
+<para>Find correct MCUBoot update file path entry in space separated string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When supporting upgrades of the MCUBoot bootloader, two variants of the new firmware is presented, each linked against a different address. This function is told what slot is active, and sets the update pointer to point to the correct none active entry in the file path.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>pointer to file path with space separator. Note that the space separator can be replaced by a NULL terminator. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">s0_active</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>bool indicating if S0 is the currently active slot. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">update</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>pointer to correct file MCUBoot bootloader upgrade. Will be set to NULL if no space separator is found.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful (note that this does not imply that a space separator was found) negative errno otherwise. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_mcuboot.h" line="42" column="5" declfile="include/dfu/dfu_target_mcuboot.h" declline="42" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target__mcuboot_1ga4e4801350d718a24138fc7285e2db68b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_mcuboot_set_buf</definition>
+        <argsstring>(uint8_t *buf, size_t len)</argsstring>
+        <name>dfu_target_mcuboot_set_buf</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Set buffer to use for flash write operations. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>Non-negative</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>value if successful, negative errno otherwise. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_mcuboot.h" line="50" column="5" declfile="include/dfu/dfu_target_mcuboot.h" declline="50" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target__mcuboot_1gafabc4d253376dc26de42ad53b55df6d0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool dfu_target_mcuboot_identify</definition>
+        <argsstring>(const void *const buf)</argsstring>
+        <name>dfu_target_mcuboot_identify</name>
+        <param>
+          <type>const void *const</type>
+          <declname>buf</declname>
+        </param>
+        <briefdescription>
+<para>See if data in buf indicates MCUBoot style upgrade. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if data matches, false otherwise. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_mcuboot.h" line="57" column="6" declfile="include/dfu/dfu_target_mcuboot.h" declline="57" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target__mcuboot_1ga5901daddae012cbba0c4cfd749fd8a5b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_mcuboot_init</definition>
+        <argsstring>(size_t file_size, dfu_target_callback_t cb)</argsstring>
+        <name>dfu_target_mcuboot_init</name>
+        <param>
+          <type>size_t</type>
+          <declname>file_size</declname>
+        </param>
+        <param>
+          <type><ref refid="group__dfu__target_gaa44ceb54189d4c0dba08f4e8044a5981_1gaa44ceb54189d4c0dba08f4e8044a5981" kindref="member">dfu_target_callback_t</ref></type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Initialize dfu target, perform steps necessary to receive firmware. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">file_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the current file being downloaded. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback for signaling events(unused).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful, negative errno otherwise. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_mcuboot.h" line="67" column="5" declfile="include/dfu/dfu_target_mcuboot.h" declline="67" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target__mcuboot_1ga6225ff0f74bd70c54431b16e292bdea0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_mcuboot_offset_get</definition>
+        <argsstring>(size_t *offset)</argsstring>
+        <name>dfu_target_mcuboot_offset_get</name>
+        <param>
+          <type>size_t *</type>
+          <declname>offset</declname>
+        </param>
+        <briefdescription>
+<para>Get offset of firmware. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">offset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Returns the offset of the firmware upgrade.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if success, otherwise negative value if unable to get the offset </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_mcuboot.h" line="76" column="5" declfile="include/dfu/dfu_target_mcuboot.h" declline="76" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target__mcuboot_1gacd40fa69f8b596df49500f599ad25687" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_mcuboot_write</definition>
+        <argsstring>(const void *const buf, size_t len)</argsstring>
+        <name>dfu_target_mcuboot_write</name>
+        <param>
+          <type>const void *const</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Write firmware data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to data that should be written. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of data to write.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, negative errno otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_mcuboot.h" line="86" column="5" declfile="include/dfu/dfu_target_mcuboot.h" declline="86" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target__mcuboot_1gacf468b65990570fe98ad9d06dc68c426" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_mcuboot_done</definition>
+        <argsstring>(bool successful)</argsstring>
+        <name>dfu_target_mcuboot_done</name>
+        <param>
+          <type>bool</type>
+          <declname>successful</declname>
+        </param>
+        <briefdescription>
+<para>Deinitialize resources and finalize firmware upgrade if successful. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">successful</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Indicate whether the firmware was successfully recived.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, negative errno otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_mcuboot.h" line="95" column="5" declfile="include/dfu/dfu_target_mcuboot.h" declline="95" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>DFU Target for upgrades performed by MCUBoot. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,147 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__onoff__cli" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_onoff_cli</compoundname>
+    <includes refid="gen__onoff__cli_8h" local="no">gen_onoff_cli.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__onoff__cli_aa4476fcce068201de5f3c9748ad226a1_1aa4476fcce068201de5f3c9748ad226a1" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_onoff_cli::status_handler) (struct bt_mesh_onoff_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_onoff_status *status)</definition>
+        <argsstring>)(struct bt_mesh_onoff_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_onoff_status *status)</argsstring>
+        <name>status_handler</name>
+        <briefdescription>
+<para>OnOff status message handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the incoming message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>OnOff Status of the Generic OnOff Server that published the message. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_onoff_cli.h" line="62" column="1" bodyfile="include/bluetooth/mesh/gen_onoff_cli.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__onoff__cli_ae1b7c7e018723f38e409b564d6f90b5a_1ae1b7c7e018723f38e409b564d6f90b5a" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_onoff_cli::tid</definition>
+        <argsstring></argsstring>
+        <name>tid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current Transaction ID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_onoff_cli.h" line="66" column="9" bodyfile="include/bluetooth/mesh/gen_onoff_cli.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__onoff__cli_a18b725ccf1f075b0e92a0221afe64eac_1a18b725ccf1f075b0e92a0221afe64eac" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_msg_ack_ctx</type>
+        <definition>struct bt_mesh_msg_ack_ctx bt_mesh_onoff_cli::ack_ctx</definition>
+        <argsstring></argsstring>
+        <name>ack_ctx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Response context for tracking acknowledged messages. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_onoff_cli.h" line="68" column="26" bodyfile="include/bluetooth/mesh/gen_onoff_cli.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__onoff__cli_a744418ba456b56aa939572e84b54cb12_1a744418ba456b56aa939572e84b54cb12" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model_pub</type>
+        <definition>struct bt_mesh_model_pub bt_mesh_onoff_cli::pub</definition>
+        <argsstring></argsstring>
+        <name>pub</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Publish parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_onoff_cli.h" line="70" column="24" bodyfile="include/bluetooth/mesh/gen_onoff_cli.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__onoff__cli_a077670102f7cca7151974cebd47f3bfe_1a077670102f7cca7151974cebd47f3bfe" prot="public" static="no" mutable="no">
+        <type>struct net_buf_simple</type>
+        <definition>struct net_buf_simple bt_mesh_onoff_cli::pub_buf</definition>
+        <argsstring></argsstring>
+        <name>pub_buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_onoff_cli.h" line="72" column="21" bodyfile="include/bluetooth/mesh/gen_onoff_cli.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__onoff__cli_a44eb3da06617c4de0986a4453a3665c8_1a44eb3da06617c4de0986a4453a3665c8" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_onoff_cli::pub_data[BT_MESH_MODEL_BUF_LEN(BT_MESH_ONOFF_OP_SET, BT_MESH_ONOFF_MSG_MAXLEN_SET)]</definition>
+        <argsstring>[BT_MESH_MODEL_BUF_LEN(BT_MESH_ONOFF_OP_SET, BT_MESH_ONOFF_MSG_MAXLEN_SET)]</argsstring>
+        <name>pub_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_onoff_cli.h" line="74" column="9" bodyfile="include/bluetooth/mesh/gen_onoff_cli.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__onoff__cli_a65781c301f07662e75ea859801314418_1a65781c301f07662e75ea859801314418" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model *</type>
+        <definition>struct bt_mesh_model* bt_mesh_onoff_cli::model</definition>
+        <argsstring></argsstring>
+        <name>model</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Access model pointer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_onoff_cli.h" line="77" column="20" bodyfile="include/bluetooth/mesh/gen_onoff_cli.h" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Generic OnOff Client structure.</para>
+<para>Should be initialized with the <ref refid="group__bt__mesh__onoff__cli_gac9af307dd77d9af0907a77ff9e063d5f_1gac9af307dd77d9af0907a77ff9e063d5f" kindref="member">BT_MESH_ONOFF_CLI_INIT</ref> macro. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/gen_onoff_cli.h" line="54" column="1" bodyfile="include/bluetooth/mesh/gen_onoff_cli.h" bodystart="54" bodyend="78"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__onoff__cli_a18b725ccf1f075b0e92a0221afe64eac_1a18b725ccf1f075b0e92a0221afe64eac" prot="public" virt="non-virtual"><scope>bt_mesh_onoff_cli</scope><name>ack_ctx</name></member>
+      <member refid="structbt__mesh__onoff__cli_a65781c301f07662e75ea859801314418_1a65781c301f07662e75ea859801314418" prot="public" virt="non-virtual"><scope>bt_mesh_onoff_cli</scope><name>model</name></member>
+      <member refid="structbt__mesh__onoff__cli_a744418ba456b56aa939572e84b54cb12_1a744418ba456b56aa939572e84b54cb12" prot="public" virt="non-virtual"><scope>bt_mesh_onoff_cli</scope><name>pub</name></member>
+      <member refid="structbt__mesh__onoff__cli_a077670102f7cca7151974cebd47f3bfe_1a077670102f7cca7151974cebd47f3bfe" prot="public" virt="non-virtual"><scope>bt_mesh_onoff_cli</scope><name>pub_buf</name></member>
+      <member refid="structbt__mesh__onoff__cli_a44eb3da06617c4de0986a4453a3665c8_1a44eb3da06617c4de0986a4453a3665c8" prot="public" virt="non-virtual"><scope>bt_mesh_onoff_cli</scope><name>pub_data</name></member>
+      <member refid="structbt__mesh__onoff__cli_aa4476fcce068201de5f3c9748ad226a1_1aa4476fcce068201de5f3c9748ad226a1" prot="public" virt="non-virtual"><scope>bt_mesh_onoff_cli</scope><name>status_handler</name></member>
+      <member refid="structbt__mesh__onoff__cli_ae1b7c7e018723f38e409b564d6f90b5a_1ae1b7c7e018723f38e409b564d6f90b5a" prot="public" virt="non-virtual"><scope>bt_mesh_onoff_cli</scope><name>tid</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,317 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__ndef__msg" kind="group">
+    <compoundname>nfc_ndef_msg</compoundname>
+    <title>Custom NDEF messages</title>
+    <innerclass refid="structnfc__ndef__msg__desc" prot="public">nfc_ndef_msg_desc</innerclass>
+    <innergroup refid="group__nfc__ndef__record">Custom NDEF records</innergroup>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__ndef__msg_1ga82467aede468e5467a8bff345ea05d2e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_msg_encode</definition>
+        <argsstring>(struct nfc_ndef_msg_desc const *ndef_msg_desc, uint8_t *msg_buffer, uint32_t *msg_len)</argsstring>
+        <name>nfc_ndef_msg_encode</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref> const *</type>
+          <declname>ndef_msg_desc</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>msg_buffer</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>msg_len</declname>
+        </param>
+        <briefdescription>
+<para>Encode an NDEF message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function encodes an NDEF message according to the provided message descriptor.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ndef_msg_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the message descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>msg_buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the message destination. If NULL, function will calculate the expected size of the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>msg_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the available memory for the message as input. Size of the generated message as output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/msg.h" line="56" column="5" declfile="include/nfc/ndef/msg.h" declline="56" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__msg_1gab58b51366a2bad10fbabd1dcf472c60d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_ndef_msg_clear</definition>
+        <argsstring>(struct nfc_ndef_msg_desc *msg)</argsstring>
+        <name>nfc_ndef_msg_clear</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref> *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+<para>Clear an NDEF message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function clears an NDEF message descriptor, thus empties the NDEF message.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the message descriptor. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/msg.h" line="68" column="6" declfile="include/nfc/ndef/msg.h" declline="68" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__msg_1gaa3eb7eacc6ffbeb2bf42d92c8c814554" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_msg_record_add</definition>
+        <argsstring>(struct nfc_ndef_msg_desc *msg, struct nfc_ndef_record_desc const *record)</argsstring>
+        <name>nfc_ndef_msg_record_add</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref> *</type>
+          <declname>msg</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> const *</type>
+          <declname>record</declname>
+        </param>
+        <briefdescription>
+<para>Add a record to an NDEF message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>record</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the record descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the message descriptor.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/msg.h" line="79" column="5" declfile="include/nfc/ndef/msg.h" declline="79" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__ndef__msg_1ga912e0302af4c49c3432535b3a44b0166" prot="public" static="no">
+        <name>NFC_NDEF_MSG_DEF</name>
+        <param><defname>name</defname></param>
+        <param><defname>max_record_cnt</defname></param>
+        <initializer>	struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> const				    \
+		*name##_nfc_ndef_record_desc_array[max_record_cnt];	    \
+	struct <ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref> name##_nfc_ndef_msg_desc =		    \
+	{								    \
+		.record = name##_nfc_ndef_record_desc_array,		    \
+		.max_record_count = max_record_cnt,			    \
+		.record_count = 0					    \
+	}</initializer>
+        <briefdescription>
+<para>Macro for creating and initializing an NFC NDEF message descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates and initializes an instance of type <ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref> and an array of pointers to record descriptors (<ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref>) used by the message.</para>
+<para>Use the macro <ref refid="group__nfc__ndef__msg_gaa3254c3d074722505b84cbe9c02e957d_1gaa3254c3d074722505b84cbe9c02e957d" kindref="member">NFC_NDEF_MSG</ref> to access the NDEF message descriptor instance.</para>
+<para><simplesect kind="note"><para>The message descriptor is declared as automatic variable, which implies that the NDEF message encoding must be done in the same variable scope.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the related instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>max_record_cnt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximal count of records in the message. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/msg.h" line="98" column="9" bodyfile="include/nfc/ndef/msg.h" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__msg_1gaa3254c3d074722505b84cbe9c02e957d" prot="public" static="no">
+        <name>NFC_NDEF_MSG</name>
+        <param><defname>name</defname></param>
+        <initializer>(name##_nfc_ndef_msg_desc)</initializer>
+        <briefdescription>
+<para>Macro for accessing the NFC NDEF message descriptor instance that you created with <ref refid="group__nfc__ndef__msg_ga912e0302af4c49c3432535b3a44b0166_1ga912e0302af4c49c3432535b3a44b0166" kindref="member">NFC_NDEF_MSG_DEF</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/msg.h" line="111" column="9" bodyfile="include/nfc/ndef/msg.h" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__msg_1gaaaf73f1022b42efaa7d5e34b42b1afc1" prot="public" static="no">
+        <name>NFC_NDEF_NESTED_NDEF_MSG_RECORD_DEF</name>
+        <param><defname>name</defname></param>
+        <param><defname>tnf_arg</defname></param>
+        <param><defname>id_arg</defname></param>
+        <param><defname>id_len</defname></param>
+        <param><defname>type_arg</defname></param>
+        <param><defname>type_len</defname></param>
+        <param><defname>nested_message</defname></param>
+        <initializer>	struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> name##_ndef_record_nested_desc =	\
+	{								\
+		.tnf = tnf_arg,						\
+		.id_length = id_len,					\
+		.id =  id_arg,						\
+		.type_length = type_len,				\
+		.type = type_arg,					\
+		.payload_constructor =					\
+			(<ref refid="group__nfc__ndef__record_ga1ccae5f0330b1b9b31af6efd37a8aeb8_1ga1ccae5f0330b1b9b31af6efd37a8aeb8" kindref="member">payload_constructor_t</ref>)(<ref refid="group__nfc__ndef__msg_ga82467aede468e5467a8bff345ea05d2e_1ga82467aede468e5467a8bff345ea05d2e" kindref="member">nfc_ndef_msg_encode</ref>),	\
+		.payload_descriptor = (void *) (nested_message)		\
+	}</initializer>
+        <briefdescription>
+<para>Macro for creating and initializing an NFC NDEF record descriptor with an encapsulated NDEF message. This macro creates and initializes an instance of type <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> that contains an encapsulated NDEF message as payload. <ref refid="group__nfc__ndef__msg_ga82467aede468e5467a8bff345ea05d2e_1ga82467aede468e5467a8bff345ea05d2e" kindref="member">nfc_ndef_msg_encode</ref> is used as payload constructor to encode the message. The encoded message is then used as payload for the record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Use the macro <ref refid="group__nfc__ndef__msg_ga09c1bbc342a2d776a5bcd339dc31d277_1ga09c1bbc342a2d776a5bcd339dc31d277" kindref="member">NFC_NDEF_NESTED_NDEF_MSG_RECORD</ref> to access the NDEF record descriptor instance.</para>
+<para><simplesect kind="note"><para>The message descriptor is declared as automatic variable, which implies that the NDEF message encoding must be done in the same variable scope.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the created record descriptor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>tnf_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type Name Format (TNF) value for the record. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>id_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the ID string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>id_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the ID string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>type_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the type string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>type_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the type string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>nested_message</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the message descriptor to encapsulate as the record&apos;s payload. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/msg.h" line="142" column="9" bodyfile="include/nfc/ndef/msg.h" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__msg_1ga09c1bbc342a2d776a5bcd339dc31d277" prot="public" static="no">
+        <name>NFC_NDEF_NESTED_NDEF_MSG_RECORD</name>
+        <param><defname>name</defname></param>
+        <initializer>(name##_ndef_record_nested_desc)</initializer>
+        <briefdescription>
+<para>Macro for accessing the NFC NDEF record descriptor instance that you created with <ref refid="group__nfc__ndef__msg_gaaaf73f1022b42efaa7d5e34b42b1afc1_1gaaaf73f1022b42efaa7d5e34b42b1afc1" kindref="member">NFC_NDEF_NESTED_NDEF_MSG_RECORD_DEF</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/msg.h" line="158" column="9" bodyfile="include/nfc/ndef/msg.h" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Generation of NFC NDEF messages for the NFC tag. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

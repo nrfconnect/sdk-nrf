@@ -32,4 +32,4 @@ Additionally, make sure that the following options are set as follows:
 
 This is to ensure that the device will be blocked after a fatal error and then the watchdog will trigger the reboot.
 
-After the reboot caused either by the watchdog or by the CPU lockup, the failsafe module erases the settings partition and clears the non-volatile settings data.
+After the reboot caused either by the watchdog or by the CPU lockup, the failsafe module erases the settings partition and clears the nonvolatile settings data.

@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nrf__cloud__rest__pgps__omit" kind="group">
+    <compoundname>nrf_cloud_rest_pgps_omit</compoundname>
+    <title>Omit item from P-GPS request.</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nrf__cloud__rest__pgps__omit_1ga2cb512b0dcf33abfeab11e2319a6afa2" prot="public" static="no">
+        <name>NRF_CLOUD_REST_PGPS_REQ_NO_COUNT</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="138" column="9" bodyfile="include/net/nrf_cloud_rest.h" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__rest__pgps__omit_1gaf9b169290acdc6b3604dc0661d9809bb" prot="public" static="no">
+        <name>NRF_CLOUD_REST_PGPS_REQ_NO_INTERVAL</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="139" column="9" bodyfile="include/net/nrf_cloud_rest.h" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__rest__pgps__omit_1gae9fb0312d6e782b0fe86b61d01be50bb" prot="public" static="no">
+        <name>NRF_CLOUD_REST_PGPS_REQ_NO_GPS_DAY</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="140" column="9" bodyfile="include/net/nrf_cloud_rest.h" bodystart="140" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__rest__pgps__omit_1ga063287e3aa1ccd8b6f7bd0a30621a10b" prot="public" static="no">
+        <name>NRF_CLOUD_REST_PGPS_REQ_NO_GPS_TOD</name>
+        <initializer>(-1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="141" column="9" bodyfile="include/net/nrf_cloud_rest.h" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

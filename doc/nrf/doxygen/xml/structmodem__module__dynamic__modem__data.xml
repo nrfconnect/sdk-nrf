@@ -1,0 +1,175 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structmodem__module__dynamic__modem__data" kind="struct" language="C++" prot="public">
+    <compoundname>modem_module_dynamic_modem_data</compoundname>
+    <includes refid="modem__module__event_8h" local="no">modem_module_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmodem__module__dynamic__modem__data_a23014f43b1b745961e4df6f0e7d09391_1a23014f43b1b745961e4df6f0e7d09391" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t modem_module_dynamic_modem_data::timestamp</definition>
+        <argsstring></argsstring>
+        <name>timestamp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="105" column="9" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__dynamic__modem__data_ab06028d6a89a9d26cfc0d9882adbc156_1ab06028d6a89a9d26cfc0d9882adbc156" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t modem_module_dynamic_modem_data::area_code</definition>
+        <argsstring></argsstring>
+        <name>area_code</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="106" column="10" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__dynamic__modem__data_a56dd0b023981f1aff298e44342055bf5_1a56dd0b023981f1aff298e44342055bf5" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t modem_module_dynamic_modem_data::cell_id</definition>
+        <argsstring></argsstring>
+        <name>cell_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="107" column="10" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__dynamic__modem__data_a2bfbc03759ae79978c7295c1e4a361e6_1a2bfbc03759ae79978c7295c1e4a361e6" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t modem_module_dynamic_modem_data::rsrp</definition>
+        <argsstring></argsstring>
+        <name>rsrp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="108" column="9" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__dynamic__modem__data_a1dd66f63e2e2bc6d851c3bb667e9b2fa_1a1dd66f63e2e2bc6d851c3bb667e9b2fa" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char modem_module_dynamic_modem_data::ip_address[INET6_ADDRSTRLEN]</definition>
+        <argsstring>[INET6_ADDRSTRLEN]</argsstring>
+        <name>ip_address</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="109" column="6" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="109" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__dynamic__modem__data_a86fcb2d8835032d4f282f2eb412a5d78_1a86fcb2d8835032d4f282f2eb412a5d78" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char modem_module_dynamic_modem_data::mccmnc[7]</definition>
+        <argsstring>[7]</argsstring>
+        <name>mccmnc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="110" column="6" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__dynamic__modem__data_abfd99b3a3fe6c4ba89770b7758ce1335_1abfd99b3a3fe6c4ba89770b7758ce1335" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool modem_module_dynamic_modem_data::area_code_fresh</definition>
+        <argsstring></argsstring>
+        <name>area_code_fresh</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="115" column="6" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="115" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__dynamic__modem__data_a7b3640d0098beb1abf60092d1ad3c813_1a7b3640d0098beb1abf60092d1ad3c813" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool modem_module_dynamic_modem_data::cell_id_fresh</definition>
+        <argsstring></argsstring>
+        <name>cell_id_fresh</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="116" column="6" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__dynamic__modem__data_a482869d84e131d9d5edef7f0afa764ab_1a482869d84e131d9d5edef7f0afa764ab" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool modem_module_dynamic_modem_data::rsrp_fresh</definition>
+        <argsstring></argsstring>
+        <name>rsrp_fresh</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="117" column="6" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="117" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__dynamic__modem__data_a35b3bb72131c5dc1f6092640c37f365f_1a35b3bb72131c5dc1f6092640c37f365f" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool modem_module_dynamic_modem_data::ip_address_fresh</definition>
+        <argsstring></argsstring>
+        <name>ip_address_fresh</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="118" column="6" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__dynamic__modem__data_a415772231f20d06e7f0be6a6e745951b_1a415772231f20d06e7f0be6a6e745951b" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool modem_module_dynamic_modem_data::mccmnc_fresh</definition>
+        <argsstring></argsstring>
+        <name>mccmnc_fresh</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="119" column="6" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="104" column="1" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="104" bodyend="120"/>
+    <listofallmembers>
+      <member refid="structmodem__module__dynamic__modem__data_ab06028d6a89a9d26cfc0d9882adbc156_1ab06028d6a89a9d26cfc0d9882adbc156" prot="public" virt="non-virtual"><scope>modem_module_dynamic_modem_data</scope><name>area_code</name></member>
+      <member refid="structmodem__module__dynamic__modem__data_abfd99b3a3fe6c4ba89770b7758ce1335_1abfd99b3a3fe6c4ba89770b7758ce1335" prot="public" virt="non-virtual"><scope>modem_module_dynamic_modem_data</scope><name>area_code_fresh</name></member>
+      <member refid="structmodem__module__dynamic__modem__data_a56dd0b023981f1aff298e44342055bf5_1a56dd0b023981f1aff298e44342055bf5" prot="public" virt="non-virtual"><scope>modem_module_dynamic_modem_data</scope><name>cell_id</name></member>
+      <member refid="structmodem__module__dynamic__modem__data_a7b3640d0098beb1abf60092d1ad3c813_1a7b3640d0098beb1abf60092d1ad3c813" prot="public" virt="non-virtual"><scope>modem_module_dynamic_modem_data</scope><name>cell_id_fresh</name></member>
+      <member refid="structmodem__module__dynamic__modem__data_a1dd66f63e2e2bc6d851c3bb667e9b2fa_1a1dd66f63e2e2bc6d851c3bb667e9b2fa" prot="public" virt="non-virtual"><scope>modem_module_dynamic_modem_data</scope><name>ip_address</name></member>
+      <member refid="structmodem__module__dynamic__modem__data_a35b3bb72131c5dc1f6092640c37f365f_1a35b3bb72131c5dc1f6092640c37f365f" prot="public" virt="non-virtual"><scope>modem_module_dynamic_modem_data</scope><name>ip_address_fresh</name></member>
+      <member refid="structmodem__module__dynamic__modem__data_a86fcb2d8835032d4f282f2eb412a5d78_1a86fcb2d8835032d4f282f2eb412a5d78" prot="public" virt="non-virtual"><scope>modem_module_dynamic_modem_data</scope><name>mccmnc</name></member>
+      <member refid="structmodem__module__dynamic__modem__data_a415772231f20d06e7f0be6a6e745951b_1a415772231f20d06e7f0be6a6e745951b" prot="public" virt="non-virtual"><scope>modem_module_dynamic_modem_data</scope><name>mccmnc_fresh</name></member>
+      <member refid="structmodem__module__dynamic__modem__data_a2bfbc03759ae79978c7295c1e4a361e6_1a2bfbc03759ae79978c7295c1e4a361e6" prot="public" virt="non-virtual"><scope>modem_module_dynamic_modem_data</scope><name>rsrp</name></member>
+      <member refid="structmodem__module__dynamic__modem__data_a482869d84e131d9d5edef7f0afa764ab_1a482869d84e131d9d5edef7f0afa764ab" prot="public" virt="non-virtual"><scope>modem_module_dynamic_modem_data</scope><name>rsrp_fresh</name></member>
+      <member refid="structmodem__module__dynamic__modem__data_a23014f43b1b745961e4df6f0e7d09391_1a23014f43b1b745961e4df6f0e7d09391" prot="public" virt="non-virtual"><scope>modem_module_dynamic_modem_data</scope><name>timestamp</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

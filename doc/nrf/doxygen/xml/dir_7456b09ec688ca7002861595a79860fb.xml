@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_7456b09ec688ca7002861595a79860fb" kind="dir">
+    <compoundname>lib/at_cmd_parser</compoundname>
+    <innerfile refid="at__utils_8h">at_utils.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/at_cmd_parser/"/>
+  </compounddef>
+</doxygen>

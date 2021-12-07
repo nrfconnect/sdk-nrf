@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__tnep__base" kind="group">
+    <compoundname>nfc_tnep_base</compoundname>
+    <title>Tag NDEF Exchange Protocol (TNEP) common API.</title>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nfc__tnep__base_1ga2327f2c748533d3e350b0e7e19ecf9fc" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nfc_tnep_comm_mode</name>
+        <enumvalue id="group__nfc__tnep__base_ga2327f2c748533d3e350b0e7e19ecf9fc_1gga2327f2c748533d3e350b0e7e19ecf9fca062f38bd8a7d1677d5bcf4c887f22887" prot="public">
+          <name>NFC_TNEP_COMM_MODE_SINGLE_RESPONSE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Single response communication mode </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__tnep__base_ga2327f2c748533d3e350b0e7e19ecf9fc_1gga2327f2c748533d3e350b0e7e19ecf9fca193dd8c882af0ba841977e3b4efb7169" prot="public">
+          <name>NFC_TNEP_COMM_MODE_SERVICE_SPECYFIC</name>
+          <initializer>= 0xFE</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Service specific communication mode </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Service communication modes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/base.h" line="28" column="1" bodyfile="include/nfc/tnep/base.h" bodystart="28" bodyend="34"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__nfc__tnep__base_1ga6a3da489c1aade13de10f4017d2ebcf9" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nfc_tnep_status_value</name>
+        <enumvalue id="group__nfc__tnep__base_ga6a3da489c1aade13de10f4017d2ebcf9_1gga6a3da489c1aade13de10f4017d2ebcf9a5dc863a47b22f721137e3b05241bbb27" prot="public">
+          <name>NFC_TNEP_STATUS_SUCCESS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Success </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__tnep__base_ga6a3da489c1aade13de10f4017d2ebcf9_1gga6a3da489c1aade13de10f4017d2ebcf9a3988c75857c66eee2408b32e0d799cab" prot="public">
+          <name>NFC_TNEP_STATUS_PROTOCOL_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>TNEP protocol error </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__tnep__base_ga6a3da489c1aade13de10f4017d2ebcf9_1gga6a3da489c1aade13de10f4017d2ebcf9ab0b886c18d0635b1ddfb41a37aa36a8c" prot="public">
+          <name>NFC_TNEP_STATUS_SERVICE_ERROR_BEGIN</name>
+          <initializer>= 0x80</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>First service error code. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__tnep__base_ga6a3da489c1aade13de10f4017d2ebcf9_1gga6a3da489c1aade13de10f4017d2ebcf9a3dde06237f070086e04e8a1982636f84" prot="public">
+          <name>NFC_TNEP_STATUS_SERVICE_ERROR_END</name>
+          <initializer>= 0xFE</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Last service error code. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Service status - payload in TNEP Status Record. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/base.h" line="37" column="1" bodyfile="include/nfc/tnep/base.h" bodystart="37" bodyend="49"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__tnep__base_1gac03f554bf2d3facdf1e8bb1e758b6f74" prot="public" static="no">
+        <name>NFC_TNEP_VERSION</name>
+        <initializer>0x10</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>TNEP Version. A major version number in high nibble, a minor version number in low nibble. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/base.h" line="24" column="9" bodyfile="include/nfc/tnep/base.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__tnep__base_1ga9b7d60a8afc4dcc99dd385eb739e8f7d" prot="public" static="no">
+        <name>NFC_TNEP_NDEF_NLEN_SIZE</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/base.h" line="25" column="9" bodyfile="include/nfc/tnep/base.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Tag NDEF Exchange Protocol common data structure definitions. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

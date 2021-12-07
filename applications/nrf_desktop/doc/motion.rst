@@ -35,7 +35,7 @@ The motion module selects the source of movement based on the following configur
 
 See the following sections for more information.
 
-Depending on the selected configuration option, different implementation file is used during the build process.
+Depending on the selected configuration option, a different implementation file is used during the build process.
 
 Movement data from motion sensors
 =================================
@@ -64,8 +64,8 @@ Simulated movement data
 
 Selecting the :kconfig:`CONFIG_DESKTOP_MOTION_SIMULATED_ENABLE` option adds the :file:`src/hw_interface/motion_simulated.c` file to the compilation.
 
-If shell is available (:kconfig:`CONFIG_SHELL` option is set) the motion module registers a shell module ``motion_sim`` and links to it two commands: ``start`` and ``stop``.
-If shell is not available motion generation starts automatically when the device is connected to the USB or Bluetooth®.
+If the shell is available (the :kconfig:`CONFIG_SHELL` option is set) the motion module registers a shell module ``motion_sim`` and links to it two commands: ``start`` and ``stop``.
+If the shell is not available motion generation starts automatically when the device is connected to the USB or Bluetooth®.
 
 When started, the module will generate simulated motion events.
 The movement data in each event will be tracing the predefined path, an eight-sided polygon.
@@ -93,7 +93,7 @@ In these configurations, the module is a configuration channel listener and it p
     The motion sensor CPI.
 * ``downshift``, ``rest1``, ``rest2``
     These firmware option names correspond to switch times of motion sensor modes, namely the sleep modes of ``PAW3212`` and the rest modes of ``PMW3360``.
-    This kind of modes is used by a motion sensor to reduce the power consumption, but it also increases the sensor's response time when a motion is detected after a period of inactivity.
+    These modes are used by a motion sensor to reduce the power consumption, but they also increase the sensor's response time when a motion is detected after a period of inactivity.
 
     The :ref:`nrf_desktop_config_channel_script` refers to these mode options using names that depend on the sensor variant:
 

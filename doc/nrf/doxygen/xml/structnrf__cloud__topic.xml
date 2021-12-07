@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnrf__cloud__topic" kind="struct" language="C++" prot="public">
+    <compoundname>nrf_cloud_topic</compoundname>
+    <includes refid="nrf__cloud_8h" local="no">nrf_cloud.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnrf__cloud__topic_a4268e543d85f9b37be7556cb602e3ae9_1a4268e543d85f9b37be7556cb602e3ae9" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t nrf_cloud_topic::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of the topic. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="241" column="10" bodyfile="include/net/nrf_cloud.h" bodystart="241" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__topic_ab79cf70c662af523511a18e10a9cc173_1ab79cf70c662af523511a18e10a9cc173" prot="public" static="no" mutable="no">
+        <type>const void *</type>
+        <definition>const void* nrf_cloud_topic::ptr</definition>
+        <argsstring></argsstring>
+        <name>ptr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the topic. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="243" column="12" bodyfile="include/net/nrf_cloud.h" bodystart="243" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>MQTT topic. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/nrf_cloud.h" line="239" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="239" bodyend="244"/>
+    <listofallmembers>
+      <member refid="structnrf__cloud__topic_a4268e543d85f9b37be7556cb602e3ae9_1a4268e543d85f9b37be7556cb602e3ae9" prot="public" virt="non-virtual"><scope>nrf_cloud_topic</scope><name>len</name></member>
+      <member refid="structnrf__cloud__topic_ab79cf70c662af523511a18e10a9cc173_1ab79cf70c662af523511a18e10a9cc173" prot="public" virt="non-virtual"><scope>nrf_cloud_topic</scope><name>ptr</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,245 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="lwm2m__client__utils_8h" kind="file" language="C++">
+    <compoundname>lwm2m_client_utils.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <includes local="no">net/lwm2m.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/net/lwm2m_client_utils.h</label>
+        <link refid="lwm2m__client__utils_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>net/lwm2m.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__lwm2m__client__utils_ga6e75f9942413c96b18a5553f32537fd1_1ga6e75f9942413c96b18a5553f32537fd1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_init_security</definition>
+        <argsstring>(struct lwm2m_ctx *ctx, char *endpoint)</argsstring>
+        <name>lwm2m_init_security</name>
+        <param>
+          <type>struct lwm2m_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>endpoint</declname>
+        </param>
+        <briefdescription>
+<para>Initialize Security object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils.h" line="37" column="5" declfile="include/net/lwm2m_client_utils.h" declline="37" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__client__utils_gacb6ce473dfbd63ddc60c156d9d1cfd27_1gacb6ce473dfbd63ddc60c156d9d1cfd27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_init_device</definition>
+        <argsstring>(void)</argsstring>
+        <name>lwm2m_init_device</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize Device object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils.h" line="44" column="5" declfile="include/net/lwm2m_client_utils.h" declline="44" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__client__utils_ga08f5415bca44f63bf9d251106be2da16_1ga08f5415bca44f63bf9d251106be2da16" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_init_location</definition>
+        <argsstring>(void)</argsstring>
+        <name>lwm2m_init_location</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize Location object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils.h" line="51" column="5" declfile="include/net/lwm2m_client_utils.h" declline="51" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__client__utils_ga5396dd581765661205d40a8ea452976a_1ga5396dd581765661205d40a8ea452976a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void * firmware_read_cb</definition>
+        <argsstring>(uint16_t obj_inst_id, size_t *data_len)</argsstring>
+        <name>firmware_read_cb</name>
+        <param>
+          <type>uint16_t</type>
+          <declname>obj_inst_id</declname>
+        </param>
+        <param>
+          <type>size_t *</type>
+          <declname>data_len</declname>
+        </param>
+        <briefdescription>
+<para>Firmware read callback. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils.h" line="58" column="6" declfile="include/net/lwm2m_client_utils.h" declline="58" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__client__utils_ga58fe38f3eb0d30fa83eacc741d60b5c0_1ga58fe38f3eb0d30fa83eacc741d60b5c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_init_firmware</definition>
+        <argsstring>(void)</argsstring>
+        <name>lwm2m_init_firmware</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Verify active firmware image. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils.h" line="62" column="5" declfile="include/net/lwm2m_client_utils.h" declline="62" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__client__utils_gaeb623e112d5fc6a15ed8d805fb35d96d_1gaeb623e112d5fc6a15ed8d805fb35d96d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_init_image</definition>
+        <argsstring>(void)</argsstring>
+        <name>lwm2m_init_image</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize Image Update object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils.h" line="67" column="5" declfile="include/net/lwm2m_client_utils.h" declline="67" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__client__utils_gae09b195b7ab21d4def2e4dc3f2711834_1gae09b195b7ab21d4def2e4dc3f2711834" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void lwm2m_verify_modem_fw_update</definition>
+        <argsstring>(void)</argsstring>
+        <name>lwm2m_verify_modem_fw_update</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Verifies modem firmware update. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils.h" line="72" column="6" declfile="include/net/lwm2m_client_utils.h" declline="72" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__client__utils_ga7e84e9a83ff879192112f8430ad3603b_1ga7e84e9a83ff879192112f8430ad3603b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_init_connmon</definition>
+        <argsstring>(void)</argsstring>
+        <name>lwm2m_init_connmon</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize Connectivity Monitoring object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils.h" line="79" column="5" declfile="include/net/lwm2m_client_utils.h" declline="79" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__client__utils_gae3d32f0d053b6d4876479bd6ba414b52_1gae3d32f0d053b6d4876479bd6ba414b52" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_update_connmon</definition>
+        <argsstring>(void)</argsstring>
+        <name>lwm2m_update_connmon</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Update Connectivity Monitoring object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils.h" line="84" column="5" declfile="include/net/lwm2m_client_utils.h" declline="84" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>LWM2M_CLIENT_UTILS_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CLIENT_UTILS_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;net/lwm2m.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(CONFIG_LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="group__lwm2m__client__utils_ga6e75f9942413c96b18a5553f32537fd1_1ga6e75f9942413c96b18a5553f32537fd1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__client__utils_ga6e75f9942413c96b18a5553f32537fd1_1ga6e75f9942413c96b18a5553f32537fd1" kindref="member">lwm2m_init_security</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>lwm2m_ctx<sp/>*ctx,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*endpoint);</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="group__lwm2m__client__utils_gacb6ce473dfbd63ddc60c156d9d1cfd27_1gacb6ce473dfbd63ddc60c156d9d1cfd27" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__client__utils_gacb6ce473dfbd63ddc60c156d9d1cfd27_1gacb6ce473dfbd63ddc60c156d9d1cfd27" kindref="member">lwm2m_init_device</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_OBJ_SUPPORT)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="group__lwm2m__client__utils_ga08f5415bca44f63bf9d251106be2da16_1ga08f5415bca44f63bf9d251106be2da16" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__client__utils_ga08f5415bca44f63bf9d251106be2da16_1ga08f5415bca44f63bf9d251106be2da16" kindref="member">lwm2m_init_location</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58" refid="group__lwm2m__client__utils_ga5396dd581765661205d40a8ea452976a_1ga5396dd581765661205d40a8ea452976a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="group__lwm2m__client__utils_ga5396dd581765661205d40a8ea452976a_1ga5396dd581765661205d40a8ea452976a" kindref="member">firmware_read_cb</ref>(uint16_t<sp/>obj_inst_id,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>*data_len);</highlight></codeline>
+<codeline lineno="62" refid="group__lwm2m__client__utils_ga58fe38f3eb0d30fa83eacc741d60b5c0_1ga58fe38f3eb0d30fa83eacc741d60b5c0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__client__utils_ga58fe38f3eb0d30fa83eacc741d60b5c0_1ga58fe38f3eb0d30fa83eacc741d60b5c0" kindref="member">lwm2m_init_firmware</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="group__lwm2m__client__utils_gaeb623e112d5fc6a15ed8d805fb35d96d_1gaeb623e112d5fc6a15ed8d805fb35d96d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__client__utils_gaeb623e112d5fc6a15ed8d805fb35d96d_1gaeb623e112d5fc6a15ed8d805fb35d96d" kindref="member">lwm2m_init_image</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="group__lwm2m__client__utils_gae09b195b7ab21d4def2e4dc3f2711834_1gae09b195b7ab21d4def2e4dc3f2711834" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__client__utils_gae09b195b7ab21d4def2e4dc3f2711834_1gae09b195b7ab21d4def2e4dc3f2711834" kindref="member">lwm2m_verify_modem_fw_update</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="group__lwm2m__client__utils_ga7e84e9a83ff879192112f8430ad3603b_1ga7e84e9a83ff879192112f8430ad3603b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__client__utils_ga7e84e9a83ff879192112f8430ad3603b_1ga7e84e9a83ff879192112f8430ad3603b" kindref="member">lwm2m_init_connmon</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84" refid="group__lwm2m__client__utils_gae3d32f0d053b6d4876479bd6ba414b52_1gae3d32f0d053b6d4876479bd6ba414b52" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__client__utils_gae3d32f0d053b6d4876479bd6ba414b52_1gae3d32f0d053b6d4876479bd6ba414b52" kindref="member">lwm2m_update_connmon</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>LWM2M_CLIENT_UTILS_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/net/lwm2m_client_utils.h"/>
+  </compounddef>
+</doxygen>

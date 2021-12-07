@@ -1,0 +1,293 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structmodem__module__event" kind="struct" language="C++" prot="public">
+    <compoundname>modem_module_event</compoundname>
+    <includes refid="modem__module__event_8h" local="no">modem_module_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmodem__module__event_a7fe401eb48a139c7c6d0b9c27e7cb6a6_1a7fe401eb48a139c7c6d0b9c27e7cb6a6" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header modem_module_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="135" column="19" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__event_a1dad7c92352229b227d16deefde11ada_1a1dad7c92352229b227d16deefde11ada" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__modem__module__event_ga740174394280b905e512d3eca418e623_1ga740174394280b905e512d3eca418e623" kindref="member">modem_module_event_type</ref></type>
+        <definition>enum modem_module_event_type modem_module_event::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="136" column="29" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__event_af5a0c187ac75cfa8c08a91f42db8e224_1af5a0c187ac75cfa8c08a91f42db8e224" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structmodem__module__static__modem__data" kindref="compound">modem_module_static_modem_data</ref></type>
+        <definition>struct modem_module_static_modem_data modem_module_event::modem_static</definition>
+        <argsstring></argsstring>
+        <name>modem_static</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="138" column="37" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__event_a40f3470d442d79657cb2df41ff912191_1a40f3470d442d79657cb2df41ff912191" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structmodem__module__dynamic__modem__data" kindref="compound">modem_module_dynamic_modem_data</ref></type>
+        <definition>struct modem_module_dynamic_modem_data modem_module_event::modem_dynamic</definition>
+        <argsstring></argsstring>
+        <name>modem_dynamic</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="139" column="38" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__event_ab4f926fb45ce201a2c92e454fea49cde_1ab4f926fb45ce201a2c92e454fea49cde" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structmodem__module__battery__data" kindref="compound">modem_module_battery_data</ref></type>
+        <definition>struct modem_module_battery_data modem_module_event::bat</definition>
+        <argsstring></argsstring>
+        <name>bat</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="140" column="32" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="140" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__event_a82cba565646b918a1176d382b1760142_1a82cba565646b918a1176d382b1760142" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structmodem__module__cell" kindref="compound">modem_module_cell</ref></type>
+        <definition>struct modem_module_cell modem_module_event::cell</definition>
+        <argsstring></argsstring>
+        <name>cell</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="141" column="24" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__event_a3ab74aa8020c9d6ba4bc1d3c310a33bb_1a3ab74aa8020c9d6ba4bc1d3c310a33bb" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structmodem__module__psm" kindref="compound">modem_module_psm</ref></type>
+        <definition>struct modem_module_psm modem_module_event::psm</definition>
+        <argsstring></argsstring>
+        <name>psm</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="142" column="23" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__event_a96aca1d8f8123583b1e6ce2feec31732_1a96aca1d8f8123583b1e6ce2feec31732" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structmodem__module__edrx" kindref="compound">modem_module_edrx</ref></type>
+        <definition>struct modem_module_edrx modem_module_event::edrx</definition>
+        <argsstring></argsstring>
+        <name>edrx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="143" column="24" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="143" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__event_a8bac8d3d60564d4920e08cbf3da228a1_1a8bac8d3d60564d4920e08cbf3da228a1" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structmodem__module__neighbor__cells" kindref="compound">modem_module_neighbor_cells</ref></type>
+        <definition>struct modem_module_neighbor_cells modem_module_event::neighbor_cells</definition>
+        <argsstring></argsstring>
+        <name>neighbor_cells</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="144" column="34" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="144" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__event_a6039479d0d7af55025c62146d8994531_1a6039479d0d7af55025c62146d8994531" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t modem_module_event::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="146" column="10" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="146" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__event_a6981768e31795aef38ebd74217de49b7_1a6981768e31795aef38ebd74217de49b7" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int modem_module_event::err</definition>
+        <argsstring></argsstring>
+        <name>err</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="147" column="5" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__event_ab1efcccb054669745d16c7911e889d4b_1ab1efcccb054669745d16c7911e889d4b" prot="public" static="no" mutable="no">
+        <type>union modem_module_event::@16</type>
+        <definition>union modem_module_event::@16 modem_module_event::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="148" column="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Modem event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>lte_lc_cell</label>
+        <link refid="structlte__lc__cell"/>
+      </node>
+      <node id="13">
+        <label>lte_lc_cells_info</label>
+        <link refid="structlte__lc__cells__info"/>
+        <childnode refid="14" relation="usage">
+          <edgelabel>current_cell</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>neighbor_cells</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>lte_lc_ncell</label>
+        <link refid="structlte__lc__ncell"/>
+      </node>
+      <node id="8">
+        <label>modem_module_battery_data</label>
+        <link refid="structmodem__module__battery__data"/>
+      </node>
+      <node id="9">
+        <label>modem_module_cell</label>
+        <link refid="structmodem__module__cell"/>
+      </node>
+      <node id="7">
+        <label>modem_module_dynamic_modem_data</label>
+        <link refid="structmodem__module__dynamic__modem__data"/>
+      </node>
+      <node id="11">
+        <label>modem_module_edrx</label>
+        <link refid="structmodem__module__edrx"/>
+      </node>
+      <node id="1">
+        <label>modem_module_event</label>
+        <link refid="structmodem__module__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>modem_static</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>modem_dynamic</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>bat</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>cell</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>psm</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>edrx</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>neighbor_cells</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>modem_module_neighbor_cells</label>
+        <link refid="structmodem__module__neighbor__cells"/>
+        <childnode refid="13" relation="usage">
+          <edgelabel>cell_data</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>neighbor_cells</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>modem_module_psm</label>
+        <link refid="structmodem__module__psm"/>
+      </node>
+      <node id="6">
+        <label>modem_module_static_modem_data</label>
+        <link refid="structmodem__module__static__modem__data"/>
+      </node>
+    </collaborationgraph>
+    <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="134" column="1" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="134" bodyend="149"/>
+    <listofallmembers>
+      <member refid="structmodem__module__event_ab4f926fb45ce201a2c92e454fea49cde_1ab4f926fb45ce201a2c92e454fea49cde" prot="public" virt="non-virtual"><scope>modem_module_event</scope><name>bat</name></member>
+      <member refid="structmodem__module__event_a82cba565646b918a1176d382b1760142_1a82cba565646b918a1176d382b1760142" prot="public" virt="non-virtual"><scope>modem_module_event</scope><name>cell</name></member>
+      <member refid="structmodem__module__event_ab1efcccb054669745d16c7911e889d4b_1ab1efcccb054669745d16c7911e889d4b" prot="public" virt="non-virtual"><scope>modem_module_event</scope><name>data</name></member>
+      <member refid="structmodem__module__event_a96aca1d8f8123583b1e6ce2feec31732_1a96aca1d8f8123583b1e6ce2feec31732" prot="public" virt="non-virtual"><scope>modem_module_event</scope><name>edrx</name></member>
+      <member refid="structmodem__module__event_a6981768e31795aef38ebd74217de49b7_1a6981768e31795aef38ebd74217de49b7" prot="public" virt="non-virtual"><scope>modem_module_event</scope><name>err</name></member>
+      <member refid="structmodem__module__event_a7fe401eb48a139c7c6d0b9c27e7cb6a6_1a7fe401eb48a139c7c6d0b9c27e7cb6a6" prot="public" virt="non-virtual"><scope>modem_module_event</scope><name>header</name></member>
+      <member refid="structmodem__module__event_a6039479d0d7af55025c62146d8994531_1a6039479d0d7af55025c62146d8994531" prot="public" virt="non-virtual"><scope>modem_module_event</scope><name>id</name></member>
+      <member refid="structmodem__module__event_a40f3470d442d79657cb2df41ff912191_1a40f3470d442d79657cb2df41ff912191" prot="public" virt="non-virtual"><scope>modem_module_event</scope><name>modem_dynamic</name></member>
+      <member refid="structmodem__module__event_af5a0c187ac75cfa8c08a91f42db8e224_1af5a0c187ac75cfa8c08a91f42db8e224" prot="public" virt="non-virtual"><scope>modem_module_event</scope><name>modem_static</name></member>
+      <member refid="structmodem__module__event_a8bac8d3d60564d4920e08cbf3da228a1_1a8bac8d3d60564d4920e08cbf3da228a1" prot="public" virt="non-virtual"><scope>modem_module_event</scope><name>neighbor_cells</name></member>
+      <member refid="structmodem__module__event_a3ab74aa8020c9d6ba4bc1d3c310a33bb_1a3ab74aa8020c9d6ba4bc1d3c310a33bb" prot="public" virt="non-virtual"><scope>modem_module_event</scope><name>psm</name></member>
+      <member refid="structmodem__module__event_a1dad7c92352229b227d16deefde11ada_1a1dad7c92352229b227d16deefde11ada" prot="public" virt="non-virtual"><scope>modem_module_event</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

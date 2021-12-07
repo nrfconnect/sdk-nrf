@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__caf__button__event" kind="group">
+    <compoundname>caf_button_event</compoundname>
+    <title>CAF Button Event</title>
+    <innerclass refid="structbutton__event" prot="public">button_event</innerclass>
+    <briefdescription>
+<para>CAF Button Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

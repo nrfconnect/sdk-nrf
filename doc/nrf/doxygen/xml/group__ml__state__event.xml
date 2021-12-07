@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__ml__state__event" kind="group">
+    <compoundname>ml_state_event</compoundname>
+    <title>Machine Learning State Event</title>
+    <innerclass refid="structml__state__event" prot="public">ml_state_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__ml__state__event_1ga6346855518d85c98f8a6964bccefeb8f" prot="public" static="no" strong="no">
+        <type></type>
+        <name>ml_state</name>
+        <enumvalue id="group__ml__state__event_ga6346855518d85c98f8a6964bccefeb8f_1gga6346855518d85c98f8a6964bccefeb8fa4c0d34445acddb44797bde46855bc245" prot="public">
+          <name>ML_STATE_MODEL_RUNNING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ml__state__event_ga6346855518d85c98f8a6964bccefeb8f_1gga6346855518d85c98f8a6964bccefeb8fad145455f68f63cc3f09cf0583013b1b8" prot="public">
+          <name>ML_STATE_DATA_FORWARDING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ml__state__event_ga6346855518d85c98f8a6964bccefeb8f_1gga6346855518d85c98f8a6964bccefeb8fa2269d0de8bb080d04181725ceac967b5" prot="public">
+          <name>ML_STATE_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Machine learning states. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/machine_learning/src/events/ml_state_event.h" line="24" column="1" bodyfile="applications/machine_learning/src/events/ml_state_event.h" bodystart="24" bodyend="29"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Machine Learning State Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

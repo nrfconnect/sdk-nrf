@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__iso14443a__reg" kind="group">
+    <compoundname>st25r3911b_iso14443a_reg</compoundname>
+    <title>ISO14443A and NFC</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__iso14443a__reg_1ga44de9f2005777c3dcda3b60a84cf66ae" prot="public" static="no">
+        <name>ST25R3911B_REG_ISO14443A_ANTCL</name>
+        <initializer>BIT(0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="219" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="219" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__iso14443a__reg_1ga798060ccb7de5a133e3420e338515a0e" prot="public" static="no">
+        <name>ST25R3911B_REG_ISO14443A_PLEN0</name>
+        <initializer>BIT(1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="220" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="220" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__iso14443a__reg_1gaa122c2348a5a043a0a2333363f7838dd" prot="public" static="no">
+        <name>ST25R3911B_REG_ISO14443A_PLEN1</name>
+        <initializer>BIT(2)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="221" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="221" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__iso14443a__reg_1ga8a692a8674d9db716a504cf361a3db9c" prot="public" static="no">
+        <name>ST25R3911B_REG_ISO14443A_PLEN2</name>
+        <initializer>BIT(3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="222" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="222" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__iso14443a__reg_1ga915982611d8833b9bea82c570364d48f" prot="public" static="no">
+        <name>ST25R3911B_REG_ISO14443A_PLEN3</name>
+        <initializer>BIT(4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="223" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="223" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__iso14443a__reg_1ga1596a972632962139cdc56ce158e4f82" prot="public" static="no">
+        <name>ST25R3911B_REG_ISO14443A_NFC_F0</name>
+        <initializer>BIT(5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="224" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="225" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__iso14443a__reg_1ga1596a972632962139cdc56ce158e4f82" prot="public" static="no">
+        <name>ST25R3911B_REG_ISO14443A_NFC_F0</name>
+        <initializer>BIT(5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="225" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="225" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__iso14443a__reg_1gaaf04de5820f353048e7906bece8cdced" prot="public" static="no">
+        <name>ST25R3911B_REG_ISO14443A_NO_RX_PARITY</name>
+        <initializer>BIT(6)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="226" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="226" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__iso14443a__reg_1gaf68e433e1b084f3f97ae3aad666cbec6" prot="public" static="no">
+        <name>ST25R3911B_REG_ISO14443A_NO_TX_PARITY</name>
+        <initializer>BIT(7)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="227" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="227" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>settings Register bits </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

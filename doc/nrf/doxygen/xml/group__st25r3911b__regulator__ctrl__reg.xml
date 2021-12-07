@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__regulator__ctrl__reg" kind="group">
+    <compoundname>st25r3911b_regulator_ctrl_reg</compoundname>
+    <title>Regulator Voltage</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__regulator__ctrl__reg_1gae7dcfb55ad469d0f02f8713a45fbe747" prot="public" static="no">
+        <name>ST25R3911B_REG_REGULATOR_CTRL_MPSV0</name>
+        <initializer>BIT(1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="527" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="527" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__regulator__ctrl__reg_1ga09f33aedea2009bf6140a19e1ffff8a9" prot="public" static="no">
+        <name>ST25R3911B_REG_REGULATOR_CTRL_MPSV1</name>
+        <initializer>BIT(2)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="528" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="528" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__regulator__ctrl__reg_1gae9c56f8117c86d684fbcabf5e2fe5bb1" prot="public" static="no">
+        <name>ST25R3911B_REG_REGULATOR_CTRL_MPSV_MASK</name>
+        <initializer>(3 &lt;&lt; 1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="529" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="529" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__regulator__ctrl__reg_1ga9c455fe2f271ab5487aa4cd31fd0ba4d" prot="public" static="no">
+        <name>ST25R3911B_REG_REGULATOR_CTRL_MPSV_VDD</name>
+        <initializer>(0 &lt;&lt; 1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="530" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="530" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__regulator__ctrl__reg_1ga167e1f1031f4d745c68a016a39164b79" prot="public" static="no">
+        <name>ST25R3911B_REG_REGULATOR_CTRL_MPSV_VSP_A</name>
+        <initializer>(1 &lt;&lt; 1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="531" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="531" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__regulator__ctrl__reg_1gad58695008cc754fd05d0e469db71c3ac" prot="public" static="no">
+        <name>ST25R3911B_REG_REGULATOR_CTRL_MPSV_VSP_D</name>
+        <initializer>(2 &lt;&lt; 1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="532" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="532" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__regulator__ctrl__reg_1ga5e9bec1658baf72e25c5fe681042a46a" prot="public" static="no">
+        <name>ST25R3911B_REG_REGULATOR_CTRL_MPSV_VSP_RF</name>
+        <initializer>(3 &lt;&lt; 1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="533" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="533" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__regulator__ctrl__reg_1ga82d6c22882ab9eaef5ff3ade10ac2f98" prot="public" static="no">
+        <name>ST25R3911B_REG_REGULATOR_CTRL_REGE0</name>
+        <initializer>BIT(3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="534" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="534" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__regulator__ctrl__reg_1ga843e2a12503def6e6dcd9b339f022e9d" prot="public" static="no">
+        <name>ST25R3911B_REG_REGULATOR_CTRL_REGE2</name>
+        <initializer>BIT(4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="535" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="535" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__regulator__ctrl__reg_1ga9e1fb4cf0b78ee034205f7c83550441d" prot="public" static="no">
+        <name>ST25R3911B_REG_REGULATOR_CTRL_REGE3</name>
+        <initializer>BIT(5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="536" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="536" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__regulator__ctrl__reg_1ga69d70d652e0d144f6722192828b07fe2" prot="public" static="no">
+        <name>ST25R3911B_REG_REGULATOR_CTRL_REG_S</name>
+        <initializer>BIT(6)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="537" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="537" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Control Register bits </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

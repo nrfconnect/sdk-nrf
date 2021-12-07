@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__sensor__descriptor" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_sensor_descriptor</compoundname>
+    <includes refid="sensor_8h" local="no">sensor.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__sensor__descriptor_abdb374f7df9312edf3fd9cc8f5a0b1ae_1abdb374f7df9312edf3fd9cc8f5a0b1ae" prot="public" static="no" mutable="no">
+        <type>struct sensor_value</type>
+        <definition>struct sensor_value bt_mesh_sensor_descriptor::positive</definition>
+        <argsstring></argsstring>
+        <name>positive</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum positive measurement error (in percent). A tolerance of 0 should be interpreted as &quot;unspecified&quot;. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="72" column="19" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__descriptor_a4aefb5b1872e964b30a164900250b274_1a4aefb5b1872e964b30a164900250b274" prot="public" static="no" mutable="no">
+        <type>struct sensor_value</type>
+        <definition>struct sensor_value bt_mesh_sensor_descriptor::negative</definition>
+        <argsstring></argsstring>
+        <name>negative</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum negative measurement error (in percent). A tolerance of 0 should be interpreted as &quot;unspecified&quot;. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="76" column="19" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__descriptor_adb74cce13095a69a346597d0199f31a0_1adb74cce13095a69a346597d0199f31a0" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_sensor_descriptor::@131</type>
+        <definition>struct bt_mesh_sensor_descriptor::@131 bt_mesh_sensor_descriptor::tolerance</definition>
+        <argsstring></argsstring>
+        <name>tolerance</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sensor measurement tolerance specification. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="77" column="11"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__descriptor_a3549c1f21fb5c2b432fb3e0a3736d987_1a3549c1f21fb5c2b432fb3e0a3736d987" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1ga0f4cd1a561942c6cb9e05ed2eb3c3360" kindref="member">bt_mesh_sensor_sampling</ref></type>
+        <definition>enum bt_mesh_sensor_sampling bt_mesh_sensor_descriptor::sampling_type</definition>
+        <argsstring></argsstring>
+        <name>sampling_type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sampling type for the sensor data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="79" column="29" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__descriptor_a56d67bc762a5a4a9e9120c5d43f8d323_1a56d67bc762a5a4a9e9120c5d43f8d323" prot="public" static="no" mutable="no">
+        <type>uint64_t</type>
+        <definition>uint64_t bt_mesh_sensor_descriptor::period</definition>
+        <argsstring></argsstring>
+        <name>period</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Measurement period for the samples, if applicable. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="81" column="10" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__descriptor_a766f676d4a797657c21182d215e9a051_1a766f676d4a797657c21182d215e9a051" prot="public" static="no" mutable="no">
+        <type>uint64_t</type>
+        <definition>uint64_t bt_mesh_sensor_descriptor::update_interval</definition>
+        <argsstring></argsstring>
+        <name>update_interval</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Update interval for the samples, if applicable. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="83" column="10" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Sensor descriptor representing various static metadata for the sensor. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/sensor.h" line="66" column="1" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="66" bodyend="84"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__sensor__descriptor_a4aefb5b1872e964b30a164900250b274_1a4aefb5b1872e964b30a164900250b274" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_descriptor</scope><name>negative</name></member>
+      <member refid="structbt__mesh__sensor__descriptor_a56d67bc762a5a4a9e9120c5d43f8d323_1a56d67bc762a5a4a9e9120c5d43f8d323" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_descriptor</scope><name>period</name></member>
+      <member refid="structbt__mesh__sensor__descriptor_abdb374f7df9312edf3fd9cc8f5a0b1ae_1abdb374f7df9312edf3fd9cc8f5a0b1ae" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_descriptor</scope><name>positive</name></member>
+      <member refid="structbt__mesh__sensor__descriptor_a3549c1f21fb5c2b432fb3e0a3736d987_1a3549c1f21fb5c2b432fb3e0a3736d987" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_descriptor</scope><name>sampling_type</name></member>
+      <member refid="structbt__mesh__sensor__descriptor_adb74cce13095a69a346597d0199f31a0_1adb74cce13095a69a346597d0199f31a0" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_descriptor</scope><name>tolerance</name></member>
+      <member refid="structbt__mesh__sensor__descriptor_a766f676d4a797657c21182d215e9a051_1a766f676d4a797657c21182d215e9a051" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_descriptor</scope><name>update_interval</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

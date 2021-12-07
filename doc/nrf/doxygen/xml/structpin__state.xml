@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structpin__state" kind="struct" language="C++" prot="public">
+    <compoundname>pin_state</compoundname>
+    <includes refid="port__state_8h" local="no">port_state.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structpin__state_a39a363f995c9f194f8bb63723f515362_1a39a363f995c9f194f8bb63723f515362" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t pin_state::pin</definition>
+        <argsstring></argsstring>
+        <name>pin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/port_state.h" line="19" column="10" bodyfile="applications/nrf_desktop/configuration/common/port_state.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structpin__state_a178bb3f467aac07c258c8b6173944f8f_1a178bb3f467aac07c258c8b6173944f8f" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t pin_state::val</definition>
+        <argsstring></argsstring>
+        <name>val</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/port_state.h" line="20" column="10" bodyfile="applications/nrf_desktop/configuration/common/port_state.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/nrf_desktop/configuration/common/port_state.h" line="18" column="1" bodyfile="applications/nrf_desktop/configuration/common/port_state.h" bodystart="18" bodyend="21"/>
+    <listofallmembers>
+      <member refid="structpin__state_a39a363f995c9f194f8bb63723f515362_1a39a363f995c9f194f8bb63723f515362" prot="public" virt="non-virtual"><scope>pin_state</scope><name>pin</name></member>
+      <member refid="structpin__state_a178bb3f467aac07c258c8b6173944f8f_1a178bb3f467aac07c258c8b6173944f8f" prot="public" virt="non-virtual"><scope>pin_state</scope><name>val</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

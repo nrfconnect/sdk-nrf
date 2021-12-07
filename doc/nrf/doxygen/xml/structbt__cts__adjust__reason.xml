@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__cts__adjust__reason" kind="struct" language="C++" prot="public">
+    <compoundname>bt_cts_adjust_reason</compoundname>
+    <includes refid="cts__client_8h" local="no">cts_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__cts__adjust__reason_a20873f76962a748266c429b47813e11f_1a20873f76962a748266c429b47813e11f" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_cts_adjust_reason::manual_time_update</definition>
+        <argsstring></argsstring>
+        <name>manual_time_update</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="40" column="9" bodyfile="include/bluetooth/services/cts_client.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__cts__adjust__reason_a007c64171469cad81226b89691b09328_1a007c64171469cad81226b89691b09328" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_cts_adjust_reason::external_reference_time_update</definition>
+        <argsstring></argsstring>
+        <name>external_reference_time_update</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="41" column="9" bodyfile="include/bluetooth/services/cts_client.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__cts__adjust__reason_a7a0911b4c683512baedd95b64387e954_1a7a0911b4c683512baedd95b64387e954" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_cts_adjust_reason::change_of_time_zone</definition>
+        <argsstring></argsstring>
+        <name>change_of_time_zone</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="42" column="9" bodyfile="include/bluetooth/services/cts_client.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__cts__adjust__reason_afce5e4bff08046aac4de1781b94e27c3_1afce5e4bff08046aac4de1781b94e27c3" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_cts_adjust_reason::change_of_daylight_savings_time</definition>
+        <argsstring></argsstring>
+        <name>change_of_daylight_savings_time</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="43" column="9" bodyfile="include/bluetooth/services/cts_client.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>&quot;Adjust Reason&quot; field of the Current Time characteristic. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/cts_client.h" line="39" column="1" bodyfile="include/bluetooth/services/cts_client.h" bodystart="39" bodyend="44"/>
+    <listofallmembers>
+      <member refid="structbt__cts__adjust__reason_afce5e4bff08046aac4de1781b94e27c3_1afce5e4bff08046aac4de1781b94e27c3" prot="public" virt="non-virtual"><scope>bt_cts_adjust_reason</scope><name>change_of_daylight_savings_time</name></member>
+      <member refid="structbt__cts__adjust__reason_a7a0911b4c683512baedd95b64387e954_1a7a0911b4c683512baedd95b64387e954" prot="public" virt="non-virtual"><scope>bt_cts_adjust_reason</scope><name>change_of_time_zone</name></member>
+      <member refid="structbt__cts__adjust__reason_a007c64171469cad81226b89691b09328_1a007c64171469cad81226b89691b09328" prot="public" virt="non-virtual"><scope>bt_cts_adjust_reason</scope><name>external_reference_time_update</name></member>
+      <member refid="structbt__cts__adjust__reason_a20873f76962a748266c429b47813e11f_1a20873f76962a748266c429b47813e11f" prot="public" virt="non-virtual"><scope>bt_cts_adjust_reason</scope><name>manual_time_update</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structgps__config" kind="struct" language="C++" prot="public">
+    <compoundname>gps_config</compoundname>
+    <includes refid="gps_8h" local="no">gps.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structgps__config_a62441c4be3dd50f2781b02431807fc68_1a62441c4be3dd50f2781b02431807fc68" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__gpsapi_ga6e93eed6a2f60cb5ef982aa2bcb2e199_1ga6e93eed6a2f60cb5ef982aa2bcb2e199" kindref="member">gps_nav_mode</ref></type>
+        <definition>enum gps_nav_mode gps_config::nav_mode</definition>
+        <argsstring></argsstring>
+        <name>nav_mode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>GPS navigation mode, <ref refid="group__gpsapi_ga6e93eed6a2f60cb5ef982aa2bcb2e199_1ga6e93eed6a2f60cb5ef982aa2bcb2e199" kindref="member">gps_nav_mode</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="136" column="18" bodyfile="include/drivers/gps.h" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__config_a10743f0e772acd7d20376ca20cd52513_1a10743f0e772acd7d20376ca20cd52513" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__gpsapi_ga238bfaa4b889e85868695930d42beffd_1ga238bfaa4b889e85868695930d42beffd" kindref="member">gps_power_mode</ref></type>
+        <definition>enum gps_power_mode gps_config::power_mode</definition>
+        <argsstring></argsstring>
+        <name>power_mode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Power mode, <ref refid="group__gpsapi_ga238bfaa4b889e85868695930d42beffd_1ga238bfaa4b889e85868695930d42beffd" kindref="member">gps_power_mode</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="139" column="20" bodyfile="include/drivers/gps.h" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__config_a784936043a940e4586e834d23c734e52_1a784936043a940e4586e834d23c734e52" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__gpsapi_gabc6fdafb6f37fac688b38c5aea0993df_1gabc6fdafb6f37fac688b38c5aea0993df" kindref="member">gps_use_case</ref></type>
+        <definition>enum gps_use_case gps_config::use_case</definition>
+        <argsstring></argsstring>
+        <name>use_case</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>GPS use case, <ref refid="group__gpsapi_gabc6fdafb6f37fac688b38c5aea0993df_1gabc6fdafb6f37fac688b38c5aea0993df" kindref="member">gps_use_case</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="142" column="18" bodyfile="include/drivers/gps.h" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__config_a3b7aa0d95f94914d3e50ceec7ef44b5f_1a3b7aa0d95f94914d3e50ceec7ef44b5f" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__gpsapi_ga2f2168aeab0b29444e8c416592dff43e_1ga2f2168aeab0b29444e8c416592dff43e" kindref="member">gps_accuracy</ref></type>
+        <definition>enum gps_accuracy gps_config::accuracy</definition>
+        <argsstring></argsstring>
+        <name>accuracy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Accuracy threshold for producing fix, <ref refid="group__gpsapi_ga2f2168aeab0b29444e8c416592dff43e_1ga2f2168aeab0b29444e8c416592dff43e" kindref="member">gps_accuracy</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="145" column="18" bodyfile="include/drivers/gps.h" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__config_a92d5b1b945f43152696904d29663d828_1a92d5b1b945f43152696904d29663d828" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t gps_config::interval</definition>
+        <argsstring></argsstring>
+        <name>interval</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Interval, in seconds, at which to start GPS search. The value is ignored outside periodic mode. Minimum accepted value is 10 seconds. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="150" column="10" bodyfile="include/drivers/gps.h" bodystart="150" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__config_a2fb8a392fed9a5e59048cef996c1a059_1a2fb8a392fed9a5e59048cef996c1a059" prot="public" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t gps_config::timeout</definition>
+        <argsstring></argsstring>
+        <name>timeout</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Time to search for fix before giving up. If used in periodic mode, the timeout repeats every interval. K_FOREVER or 0 indicate that the GPS will search until it gets a valid PVT estimate, except in continuous mode, where it will stay on until explicitly stopped also in case of valid PVT. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="158" column="9" bodyfile="include/drivers/gps.h" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__config_ad92a3849074fc57fc13fffe38d0bd81e_1ad92a3849074fc57fc13fffe38d0bd81e" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool gps_config::delete_agps_data</definition>
+        <argsstring></argsstring>
+        <name>delete_agps_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Delete stored assistance data before starting GPS search. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="161" column="6" bodyfile="include/drivers/gps.h" bodystart="161" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__config_a67580966864f9e091e97d2a979c65709_1a67580966864f9e091e97d2a979c65709" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool gps_config::priority</definition>
+        <argsstring></argsstring>
+        <name>priority</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Give GPS priority in competition with other radio resource users. This may affect the operation of other protocols, such as LTE in the case of nRF9160. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="167" column="6" bodyfile="include/drivers/gps.h" bodystart="167" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>GPS search configuration. </para>
+    </detaileddescription>
+    <location file="include/drivers/gps.h" line="134" column="1" bodyfile="include/drivers/gps.h" bodystart="134" bodyend="168"/>
+    <listofallmembers>
+      <member refid="structgps__config_a3b7aa0d95f94914d3e50ceec7ef44b5f_1a3b7aa0d95f94914d3e50ceec7ef44b5f" prot="public" virt="non-virtual"><scope>gps_config</scope><name>accuracy</name></member>
+      <member refid="structgps__config_ad92a3849074fc57fc13fffe38d0bd81e_1ad92a3849074fc57fc13fffe38d0bd81e" prot="public" virt="non-virtual"><scope>gps_config</scope><name>delete_agps_data</name></member>
+      <member refid="structgps__config_a92d5b1b945f43152696904d29663d828_1a92d5b1b945f43152696904d29663d828" prot="public" virt="non-virtual"><scope>gps_config</scope><name>interval</name></member>
+      <member refid="structgps__config_a62441c4be3dd50f2781b02431807fc68_1a62441c4be3dd50f2781b02431807fc68" prot="public" virt="non-virtual"><scope>gps_config</scope><name>nav_mode</name></member>
+      <member refid="structgps__config_a10743f0e772acd7d20376ca20cd52513_1a10743f0e772acd7d20376ca20cd52513" prot="public" virt="non-virtual"><scope>gps_config</scope><name>power_mode</name></member>
+      <member refid="structgps__config_a67580966864f9e091e97d2a979c65709_1a67580966864f9e091e97d2a979c65709" prot="public" virt="non-virtual"><scope>gps_config</scope><name>priority</name></member>
+      <member refid="structgps__config_a2fb8a392fed9a5e59048cef996c1a059_1a2fb8a392fed9a5e59048cef996c1a059" prot="public" virt="non-virtual"><scope>gps_config</scope><name>timeout</name></member>
+      <member refid="structgps__config_a784936043a940e4586e834d23c734e52_1a784936043a940e4586e834d23c734e52" prot="public" virt="non-virtual"><scope>gps_config</scope><name>use_case</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

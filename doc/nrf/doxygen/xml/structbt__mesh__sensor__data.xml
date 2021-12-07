@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__sensor__data" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_sensor_data</compoundname>
+    <includes refid="sensor__cli_8h" local="no">sensor_cli.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__sensor__data_a4d215e86aa8dea3520d246970538933a_1a4d215e86aa8dea3520d246970538933a" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref> *</type>
+        <definition>const struct bt_mesh_sensor_type* bt_mesh_sensor_data::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sensor type. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="120" column="32" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__data_af06502eae59010b4f225ca3a9aace788_1af06502eae59010b4f225ca3a9aace788" prot="public" static="no" mutable="no">
+        <type>struct sensor_value</type>
+        <definition>struct sensor_value bt_mesh_sensor_data::value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX]</definition>
+        <argsstring>[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX]</argsstring>
+        <name>value</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sensor value. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="122" column="19" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>bt_mesh_sensor_channel</label>
+        <link refid="structbt__mesh__sensor__channel"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>format</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>bt_mesh_sensor_data</label>
+        <link refid="structbt__mesh__sensor__data"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bt_mesh_sensor_format</label>
+        <link refid="structbt__mesh__sensor__format"/>
+      </node>
+      <node id="2">
+        <label>bt_mesh_sensor_type</label>
+        <link refid="structbt__mesh__sensor__type"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>channels</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/sensor_cli.h" line="118" column="1" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="118" bodyend="123"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__sensor__data_a4d215e86aa8dea3520d246970538933a_1a4d215e86aa8dea3520d246970538933a" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_data</scope><name>type</name></member>
+      <member refid="structbt__mesh__sensor__data_af06502eae59010b4f225ca3a9aace788_1af06502eae59010b4f225ca3a9aace788" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_data</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

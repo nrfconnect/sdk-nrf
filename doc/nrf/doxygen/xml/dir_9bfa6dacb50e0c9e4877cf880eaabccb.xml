@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_9bfa6dacb50e0c9e4877cf880eaabccb" kind="dir">
+    <compoundname>include/bluetooth</compoundname>
+    <innerdir refid="dir_8c60589f685581a0e1b0b1f5d3e25d2f">include/bluetooth/mesh</innerdir>
+    <innerdir refid="dir_052ad5436f7da2562bb561a98b16b222">include/bluetooth/services</innerdir>
+    <innerfile refid="conn__ctx_8h">conn_ctx.h</innerfile>
+    <innerfile refid="enocean_8h">enocean.h</innerfile>
+    <innerfile refid="gatt__dm_8h">gatt_dm.h</innerfile>
+    <innerfile refid="gatt__pool_8h">gatt_pool.h</innerfile>
+    <innerfile refid="scan_8h">scan.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,311 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="tfm__ioctl__api_8h" kind="file" language="C++">
+    <compoundname>tfm_ioctl_api.h</compoundname>
+    <includes local="no">limits.h</includes>
+    <includes local="no">stdint.h</includes>
+    <includes local="no">tfm_api.h</includes>
+    <includes local="no">tfm_platform_api.h</includes>
+    <includes local="no">hal/nrf_gpio.h</includes>
+    <includedby refid="tfm__read__ranges_8h" local="no">include/tfm/tfm_read_ranges.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/tfm/tfm_ioctl_api.h</label>
+        <link refid="tfm__ioctl__api_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>hal/nrf_gpio.h</label>
+      </node>
+      <node id="2">
+        <label>limits.h</label>
+      </node>
+      <node id="3">
+        <label>stdint.h</label>
+      </node>
+      <node id="4">
+        <label>tfm_api.h</label>
+      </node>
+      <node id="5">
+        <label>tfm_platform_api.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>include/tfm/tfm_ioctl_api.h</label>
+        <link refid="tfm__ioctl__api_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/tfm/tfm_read_ranges.h</label>
+        <link refid="tfm__read__ranges_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structtfm__read__service__args__t" prot="public">tfm_read_service_args_t</innerclass>
+    <innerclass refid="structtfm__read__service__out__t" prot="public">tfm_read_service_out_t</innerclass>
+    <innerclass refid="structtfm__gpio__service__args__mcu__select" prot="public">tfm_gpio_service_args_mcu_select</innerclass>
+    <innerclass refid="structtfm__gpio__service__args" prot="public">tfm_gpio_service_args</innerclass>
+    <innerclass refid="structtfm__gpio__service__out" prot="public">tfm_gpio_service_out</innerclass>
+    <innerclass refid="structtfm__read__service__range" prot="public">tfm_read_service_range</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__tfm__ioctl__api_ga178e5ef13dd8c96bde032aa6b9739029_1ga178e5ef13dd8c96bde032aa6b9739029" prot="public" static="no" strong="no">
+        <type></type>
+        <name>tfm_platform_ioctl_reqest_types_t</name>
+        <enumvalue id="group__tfm__ioctl__api_ga178e5ef13dd8c96bde032aa6b9739029_1gga178e5ef13dd8c96bde032aa6b9739029a79296eabca6042c85c8007cc7de635a0" prot="public">
+          <name>TFM_PLATFORM_IOCTL_READ_SERVICE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__tfm__ioctl__api_ga178e5ef13dd8c96bde032aa6b9739029_1gga178e5ef13dd8c96bde032aa6b9739029a18ec03509b6710993b4aae074f45bca7" prot="public">
+          <name>TFM_PLATFORM_IOCTL_GPIO_SERVICE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Supported request types. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/tfm/tfm_ioctl_api.h" line="33" column="1" bodyfile="include/tfm/tfm_ioctl_api.h" bodystart="33" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__tfm__ioctl__api_gac87a66c535198235bdbb9a6308ddfeb7_1gac87a66c535198235bdbb9a6308ddfeb7" prot="public" static="no" strong="no">
+        <type></type>
+        <name>tfm_gpio_service_type</name>
+        <enumvalue id="group__tfm__ioctl__api_gac87a66c535198235bdbb9a6308ddfeb7_1ggac87a66c535198235bdbb9a6308ddfeb7ac4cd12f4869ffee28acb0d8b5355c647" prot="public">
+          <name>TFM_GPIO_SERVICE_TYPE_PIN_MCU_SELECT</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Select which MCU / Subsystem controls the pin </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/tfm/tfm_ioctl_api.h" line="53" column="1" bodyfile="include/tfm/tfm_ioctl_api.h" bodystart="53" bodyend="56"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__tfm__ioctl__api_gaa316b4de6ae3466cc49b4b995dc57df2_1gaa316b4de6ae3466cc49b4b995dc57df2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>enum tfm_platform_err_t</type>
+        <definition>enum tfm_platform_err_t tfm_platform_mem_read</definition>
+        <argsstring>(void *destination, uint32_t addr, size_t len, uint32_t *result)</argsstring>
+        <name>tfm_platform_mem_read</name>
+        <param>
+          <type>void *</type>
+          <declname>destination</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>addr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+<para>Perform a read operation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">destination</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer where read result is stored </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">addr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Address to read from </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of bytes to read </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">result</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Result of operation</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Returns values as specified by the tfm_platform_err_t </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/tfm/tfm_ioctl_api.h" line="88" column="24" declfile="include/tfm/tfm_ioctl_api.h" declline="88" declcolumn="24"/>
+      </memberdef>
+      <memberdef kind="function" id="group__tfm__ioctl__api_ga9bac997c85eb5d8832e900b307f59c3b_1ga9bac997c85eb5d8832e900b307f59c3b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>enum tfm_platform_err_t</type>
+        <definition>enum tfm_platform_err_t tfm_platform_gpio_pin_mcu_select</definition>
+        <argsstring>(uint32_t pin_number, uint32_t mcu, uint32_t *result)</argsstring>
+        <name>tfm_platform_gpio_pin_mcu_select</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>pin_number</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>mcu</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+<para>Perform a GPIO MCU select operation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>pin_number</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pin_number. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>mcu</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>MCU to control the pin, use nrf_gpio_pin_mcusel_t values.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">result</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Result of operation</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Returns values as specified by the tfm_platform_err_t </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/tfm/tfm_ioctl_api.h" line="108" column="24" declfile="include/tfm/tfm_ioctl_api.h" declline="108" declcolumn="24"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>TFM IOCTL API header. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>TFM_IOCTL_API_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>TFM_IOCTL_API_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;limits.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdint.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;tfm_api.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;tfm_platform_api.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;hal/nrf_gpio.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="group__tfm__ioctl__api_ga178e5ef13dd8c96bde032aa6b9739029_1ga178e5ef13dd8c96bde032aa6b9739029" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__tfm__ioctl__api_ga178e5ef13dd8c96bde032aa6b9739029_1ga178e5ef13dd8c96bde032aa6b9739029" kindref="member">tfm_platform_ioctl_reqest_types_t</ref><sp/>{</highlight></codeline>
+<codeline lineno="34" refid="group__tfm__ioctl__api_ga178e5ef13dd8c96bde032aa6b9739029_1gga178e5ef13dd8c96bde032aa6b9739029a79296eabca6042c85c8007cc7de635a0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__tfm__ioctl__api_ga178e5ef13dd8c96bde032aa6b9739029_1gga178e5ef13dd8c96bde032aa6b9739029a79296eabca6042c85c8007cc7de635a0" kindref="member">TFM_PLATFORM_IOCTL_READ_SERVICE</ref>,</highlight></codeline>
+<codeline lineno="35" refid="group__tfm__ioctl__api_ga178e5ef13dd8c96bde032aa6b9739029_1gga178e5ef13dd8c96bde032aa6b9739029a18ec03509b6710993b4aae074f45bca7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__tfm__ioctl__api_ga178e5ef13dd8c96bde032aa6b9739029_1gga178e5ef13dd8c96bde032aa6b9739029a18ec03509b6710993b4aae074f45bca7" kindref="member">TFM_PLATFORM_IOCTL_GPIO_SERVICE</ref>,</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="structtfm__read__service__args__t" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structtfm__read__service__args__t" kindref="compound">tfm_read_service_args_t</ref><sp/>{</highlight></codeline>
+<codeline lineno="41" refid="structtfm__read__service__args__t_ac376d553371eacdb5009e589ead77256_1ac376d553371eacdb5009e589ead77256" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structtfm__read__service__args__t_ac376d553371eacdb5009e589ead77256_1ac376d553371eacdb5009e589ead77256" kindref="member">destination</ref>;</highlight></codeline>
+<codeline lineno="42" refid="structtfm__read__service__args__t_abeee8a2384b1c0e0f9c61ec6cdce1abd_1abeee8a2384b1c0e0f9c61ec6cdce1abd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structtfm__read__service__args__t_abeee8a2384b1c0e0f9c61ec6cdce1abd_1abeee8a2384b1c0e0f9c61ec6cdce1abd" kindref="member">addr</ref>;</highlight></codeline>
+<codeline lineno="43" refid="structtfm__read__service__args__t_a2c47e89c213bca5c37cf860085b51c2a_1a2c47e89c213bca5c37cf860085b51c2a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structtfm__read__service__args__t_a2c47e89c213bca5c37cf860085b51c2a_1a2c47e89c213bca5c37cf860085b51c2a" kindref="member">len</ref>;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="structtfm__read__service__out__t" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structtfm__read__service__out__t" kindref="compound">tfm_read_service_out_t</ref><sp/>{</highlight></codeline>
+<codeline lineno="50" refid="structtfm__read__service__out__t_abac87ab5c69b38fd398a45e4bc1ad978_1abac87ab5c69b38fd398a45e4bc1ad978" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structtfm__read__service__out__t_abac87ab5c69b38fd398a45e4bc1ad978_1abac87ab5c69b38fd398a45e4bc1ad978" kindref="member">result</ref>;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="group__tfm__ioctl__api_gac87a66c535198235bdbb9a6308ddfeb7_1gac87a66c535198235bdbb9a6308ddfeb7" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__tfm__ioctl__api_gac87a66c535198235bdbb9a6308ddfeb7_1gac87a66c535198235bdbb9a6308ddfeb7" kindref="member">tfm_gpio_service_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="55" refid="group__tfm__ioctl__api_gac87a66c535198235bdbb9a6308ddfeb7_1ggac87a66c535198235bdbb9a6308ddfeb7ac4cd12f4869ffee28acb0d8b5355c647" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__tfm__ioctl__api_gac87a66c535198235bdbb9a6308ddfeb7_1ggac87a66c535198235bdbb9a6308ddfeb7ac4cd12f4869ffee28acb0d8b5355c647" kindref="member">TFM_GPIO_SERVICE_TYPE_PIN_MCU_SELECT</ref><sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="56"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="structtfm__gpio__service__args__mcu__select" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structtfm__gpio__service__args__mcu__select" kindref="compound">tfm_gpio_service_args_mcu_select</ref><sp/>{</highlight></codeline>
+<codeline lineno="60" refid="structtfm__gpio__service__args__mcu__select_a350be0ac3e23f89307b4f4b988a1b2e4_1a350be0ac3e23f89307b4f4b988a1b2e4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structtfm__gpio__service__args__mcu__select_a350be0ac3e23f89307b4f4b988a1b2e4_1a350be0ac3e23f89307b4f4b988a1b2e4" kindref="member">pin_number</ref>;</highlight></codeline>
+<codeline lineno="61" refid="structtfm__gpio__service__args__mcu__select_a6789ffaa14aaf55e6e71f46f61a65c98_1a6789ffaa14aaf55e6e71f46f61a65c98" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structtfm__gpio__service__args__mcu__select_a6789ffaa14aaf55e6e71f46f61a65c98_1a6789ffaa14aaf55e6e71f46f61a65c98" kindref="member">mcu</ref>;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65" refid="structtfm__gpio__service__args" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structtfm__gpio__service__args" kindref="compound">tfm_gpio_service_args</ref><sp/>{</highlight></codeline>
+<codeline lineno="66" refid="structtfm__gpio__service__args_a89a6d37fb2b8ca7a325323fb3743c8e9_1a89a6d37fb2b8ca7a325323fb3743c8e9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structtfm__gpio__service__args_a89a6d37fb2b8ca7a325323fb3743c8e9_1a89a6d37fb2b8ca7a325323fb3743c8e9" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">union<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="68" refid="structtfm__gpio__service__args_aefb933cc62878e4780762501178ef7ea_1aefb933cc62878e4780762501178ef7ea" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structtfm__gpio__service__args__mcu__select" kindref="compound">tfm_gpio_service_args_mcu_select</ref><sp/><ref refid="structtfm__gpio__service__args_aefb933cc62878e4780762501178ef7ea_1aefb933cc62878e4780762501178ef7ea" kindref="member">mcu_select</ref>;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="70"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="structtfm__gpio__service__out" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structtfm__gpio__service__out" kindref="compound">tfm_gpio_service_out</ref><sp/>{</highlight></codeline>
+<codeline lineno="75" refid="structtfm__gpio__service__out_aa5beb9215924ce3423c21992448fda33_1aa5beb9215924ce3423c21992448fda33" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structtfm__gpio__service__out_aa5beb9215924ce3423c21992448fda33_1aa5beb9215924ce3423c21992448fda33" kindref="member">result</ref>;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="group__tfm__ioctl__api_gaa316b4de6ae3466cc49b4b995dc57df2_1gaa316b4de6ae3466cc49b4b995dc57df2" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/>tfm_platform_err_t<sp/><ref refid="group__tfm__ioctl__api_gaa316b4de6ae3466cc49b4b995dc57df2_1gaa316b4de6ae3466cc49b4b995dc57df2" kindref="member">tfm_platform_mem_read</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*destination,<sp/>uint32_t<sp/>addr,</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>len,<sp/>uint32_t<sp/>*result);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="structtfm__read__service__range" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structtfm__read__service__range" kindref="compound">tfm_read_service_range</ref><sp/>{</highlight></codeline>
+<codeline lineno="94" refid="structtfm__read__service__range_ac6ac4817c7416669569237edec543e3b_1ac6ac4817c7416669569237edec543e3b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structtfm__read__service__range_ac6ac4817c7416669569237edec543e3b_1ac6ac4817c7416669569237edec543e3b" kindref="member">start</ref>;</highlight></codeline>
+<codeline lineno="95" refid="structtfm__read__service__range_a1a65301a3919d1dd60f79e809611cc96_1a1a65301a3919d1dd60f79e809611cc96" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structtfm__read__service__range_a1a65301a3919d1dd60f79e809611cc96_1a1a65301a3919d1dd60f79e809611cc96" kindref="member">size</ref>;</highlight></codeline>
+<codeline lineno="96"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108" refid="group__tfm__ioctl__api_ga9bac997c85eb5d8832e900b307f59c3b_1ga9bac997c85eb5d8832e900b307f59c3b" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/>tfm_platform_err_t<sp/><ref refid="group__tfm__ioctl__api_ga9bac997c85eb5d8832e900b307f59c3b_1ga9bac997c85eb5d8832e900b307f59c3b" kindref="member">tfm_platform_gpio_pin_mcu_select</ref>(uint32_t<sp/>pin_number,<sp/>uint32_t<sp/>mcu,</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/>*result);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>TFM_IOCTL_API_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/tfm/tfm_ioctl_api.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,552 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="st25r3911b__spi_8h" kind="file" language="C++">
+    <compoundname>st25r3911b_spi.h</compoundname>
+    <includes local="no">stddef.h</includes>
+    <includes local="no">zephyr/types.h</includes>
+    <includes local="no">sys/util.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>lib/st25r3911b/st25r3911b_spi.h</label>
+        <link refid="st25r3911b__spi_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stddef.h</label>
+      </node>
+      <node id="4">
+        <label>sys/util.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__nfc__spi_ga626f4b68d5c1426241d923cc8d122702_1ga626f4b68d5c1426241d923cc8d122702" prot="public" static="no">
+        <name>ST25R3911B_MAX_FIFO_LEN</name>
+        <initializer>96</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>ST25R3911B FIFO maximum length. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_spi.h" line="27" column="9" bodyfile="lib/st25r3911b/st25r3911b_spi.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__st25r3911b__nfc__spi_ga09a2d85bdb2d2e49d7858bff71a54ab0_1ga09a2d85bdb2d2e49d7858bff71a54ab0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_spi_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>st25r3911b_spi_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize ST25R3911B NFC Reader SPI hardware interface. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function initializes the hardware SPI interface according to ST25R3911B IC documentation chapter 1.2.12.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_spi.h" line="37" column="5" declfile="lib/st25r3911b/st25r3911b_spi.h" declline="37" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfc__spi_ga4def850235c6dd5b3aabc75bd7adad05_1ga4def850235c6dd5b3aabc75bd7adad05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_multiple_reg_write</definition>
+        <argsstring>(uint8_t start_reg, uint8_t *val, size_t len)</argsstring>
+        <name>st25r3911b_multiple_reg_write</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>start_reg</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>val</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Write multiple NFC Reader registers. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The register address is auto-incrementing. Registers are written in the order ascending from the starting address.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">start_reg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The address of the register from which the writing will start. See <ref refid="group__st25r3911b__reg" kindref="compound">Registers</ref> for the register addresses. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Register values to write. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of registers to write.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_spi.h" line="54" column="5" declfile="lib/st25r3911b/st25r3911b_spi.h" declline="54" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfc__spi_ga1e58a194fc1c5681ad6da9b6c04784d3_1ga1e58a194fc1c5681ad6da9b6c04784d3" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int st25r3911b_reg_write</definition>
+        <argsstring>(uint8_t reg, uint8_t val)</argsstring>
+        <name>st25r3911b_reg_write</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>reg</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+<para>Write a single NFCA Reader register. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">reg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Register address (see <ref refid="group__st25r3911b__reg" kindref="compound">Registers</ref>). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value to write.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_spi.h" line="65" column="19" bodyfile="lib/st25r3911b/st25r3911b_spi.h" bodystart="65" bodyend="68"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfc__spi_ga8ed404f870d7227dbcc398feb44423d9_1ga8ed404f870d7227dbcc398feb44423d9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_multiple_reg_read</definition>
+        <argsstring>(uint8_t start_reg, uint8_t *val, size_t len)</argsstring>
+        <name>st25r3911b_multiple_reg_read</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>start_reg</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>val</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Read multiple NFC Reader registers. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The register address is auto-incrementing. Registers are read in the order ascending from the starting address.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">start_reg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The address of the register from which the reading will start. See <ref refid="group__st25r3911b__reg" kindref="compound">Registers</ref> for the register addresses. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Read registers values. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of registers to read.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_spi.h" line="86" column="5" declfile="lib/st25r3911b/st25r3911b_spi.h" declline="86" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfc__spi_ga2ae400acdeb83a9b221e9bbbf30aff0c_1ga2ae400acdeb83a9b221e9bbbf30aff0c" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int st25r3911b_reg_read</definition>
+        <argsstring>(uint8_t reg, uint8_t *val)</argsstring>
+        <name>st25r3911b_reg_read</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>reg</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+<para>Read a single NFC Reader register. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">reg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Register address (see <ref refid="group__st25r3911b__reg" kindref="compound">Registers</ref>). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Read register value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_spi.h" line="96" column="19" bodyfile="lib/st25r3911b/st25r3911b_spi.h" bodystart="96" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfc__spi_ga77530b9c5b53f274ca7d0e63cb3108ae_1ga77530b9c5b53f274ca7d0e63cb3108ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_cmd_execute</definition>
+        <argsstring>(uint8_t cmd)</argsstring>
+        <name>st25r3911b_cmd_execute</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>cmd</declname>
+        </param>
+        <briefdescription>
+<para>Execute an NFC Reader direct command. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Direct commands are used to automate certain activities.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cmd</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Direct command (see <ref refid="group__st25r3911b__direct__command" kindref="compound">Direct command</ref>).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_spi.h" line="110" column="5" declfile="lib/st25r3911b/st25r3911b_spi.h" declline="110" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfc__spi_ga9050502e76d6511fa4b06b7d3ec1dbf0_1ga9050502e76d6511fa4b06b7d3ec1dbf0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_reg_modify</definition>
+        <argsstring>(uint8_t reg, uint8_t clr_mask, uint8_t set_mask)</argsstring>
+        <name>st25r3911b_reg_modify</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>reg</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>clr_mask</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>set_mask</declname>
+        </param>
+        <briefdescription>
+<para>Modify a single NFC Reader register. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The first register value is read, then the bits selected by the clear mask are cleared. Finally, the bits selected by the set mask are set.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">reg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Register address (see <ref refid="group__st25r3911b__reg" kindref="compound">Registers</ref>). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">clr_mask</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bitmask that defines which register bits to clear. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set_mask</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bitmask that defines which register bits to set.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_spi.h" line="127" column="5" declfile="lib/st25r3911b/st25r3911b_spi.h" declline="127" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfc__spi_gaf3a0cacd3862a3f6b0b3b0e7f096da37_1gaf3a0cacd3862a3f6b0b3b0e7f096da37" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_fifo_read</definition>
+        <argsstring>(uint8_t *data, size_t length)</argsstring>
+        <name>st25r3911b_fifo_read</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>length</declname>
+        </param>
+        <briefdescription>
+<para>Read NFC Reader FIFO data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Data from FIFO is read by SPI. The data length to read can be in the range of 1 to 96 bytes.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Read FIFO data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of data to read.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_spi.h" line="140" column="5" declfile="lib/st25r3911b/st25r3911b_spi.h" declline="140" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfc__spi_ga4d942b86abc52bf5114b7bf9aac3beee_1ga4d942b86abc52bf5114b7bf9aac3beee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_fifo_write</definition>
+        <argsstring>(uint8_t *data, size_t length)</argsstring>
+        <name>st25r3911b_fifo_write</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>length</declname>
+        </param>
+        <briefdescription>
+<para>Write NFC Reader FIFO data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Data from FIFO is written by SPI.The data length to write can be in the range of 1 to 96 bytes.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>FIFO data to write. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of data to write.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_spi.h" line="153" column="5" declfile="lib/st25r3911b/st25r3911b_spi.h" declline="153" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>ST25R3911B_SPI_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_SPI_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stddef.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/util.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="group__st25r3911b__nfc__spi_ga626f4b68d5c1426241d923cc8d122702_1ga626f4b68d5c1426241d923cc8d122702" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_MAX_FIFO_LEN<sp/>96</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="group__st25r3911b__nfc__spi_ga09a2d85bdb2d2e49d7858bff71a54ab0_1ga09a2d85bdb2d2e49d7858bff71a54ab0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfc__spi_ga09a2d85bdb2d2e49d7858bff71a54ab0_1ga09a2d85bdb2d2e49d7858bff71a54ab0" kindref="member">st25r3911b_spi_init</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="group__st25r3911b__nfc__spi_ga4def850235c6dd5b3aabc75bd7adad05_1ga4def850235c6dd5b3aabc75bd7adad05" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfc__spi_ga4def850235c6dd5b3aabc75bd7adad05_1ga4def850235c6dd5b3aabc75bd7adad05" kindref="member">st25r3911b_multiple_reg_write</ref>(uint8_t<sp/>start_reg,<sp/>uint8_t<sp/>*val,</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>len);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65" refid="group__st25r3911b__nfc__spi_ga1e58a194fc1c5681ad6da9b6c04784d3_1ga1e58a194fc1c5681ad6da9b6c04784d3" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfc__spi_ga1e58a194fc1c5681ad6da9b6c04784d3_1ga1e58a194fc1c5681ad6da9b6c04784d3" kindref="member">st25r3911b_reg_write</ref>(uint8_t<sp/>reg,<sp/>uint8_t<sp/>val)</highlight></codeline>
+<codeline lineno="66"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfc__spi_ga4def850235c6dd5b3aabc75bd7adad05_1ga4def850235c6dd5b3aabc75bd7adad05" kindref="member">st25r3911b_multiple_reg_write</ref>(reg,<sp/>&amp;val,<sp/>1);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="group__st25r3911b__nfc__spi_ga8ed404f870d7227dbcc398feb44423d9_1ga8ed404f870d7227dbcc398feb44423d9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfc__spi_ga8ed404f870d7227dbcc398feb44423d9_1ga8ed404f870d7227dbcc398feb44423d9" kindref="member">st25r3911b_multiple_reg_read</ref>(uint8_t<sp/>start_reg,<sp/>uint8_t<sp/>*val,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>len);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96" refid="group__st25r3911b__nfc__spi_ga2ae400acdeb83a9b221e9bbbf30aff0c_1ga2ae400acdeb83a9b221e9bbbf30aff0c" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfc__spi_ga2ae400acdeb83a9b221e9bbbf30aff0c_1ga2ae400acdeb83a9b221e9bbbf30aff0c" kindref="member">st25r3911b_reg_read</ref>(uint8_t<sp/>reg,<sp/>uint8_t<sp/>*val)</highlight></codeline>
+<codeline lineno="97"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfc__spi_ga8ed404f870d7227dbcc398feb44423d9_1ga8ed404f870d7227dbcc398feb44423d9" kindref="member">st25r3911b_multiple_reg_read</ref>(reg,<sp/>val,<sp/>1);</highlight></codeline>
+<codeline lineno="99"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110" refid="group__st25r3911b__nfc__spi_ga77530b9c5b53f274ca7d0e63cb3108ae_1ga77530b9c5b53f274ca7d0e63cb3108ae" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfc__spi_ga77530b9c5b53f274ca7d0e63cb3108ae_1ga77530b9c5b53f274ca7d0e63cb3108ae" kindref="member">st25r3911b_cmd_execute</ref>(uint8_t<sp/>cmd);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127" refid="group__st25r3911b__nfc__spi_ga9050502e76d6511fa4b06b7d3ec1dbf0_1ga9050502e76d6511fa4b06b7d3ec1dbf0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfc__spi_ga9050502e76d6511fa4b06b7d3ec1dbf0_1ga9050502e76d6511fa4b06b7d3ec1dbf0" kindref="member">st25r3911b_reg_modify</ref>(uint8_t<sp/>reg,<sp/>uint8_t<sp/>clr_mask,<sp/>uint8_t<sp/>set_mask);</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140" refid="group__st25r3911b__nfc__spi_gaf3a0cacd3862a3f6b0b3b0e7f096da37_1gaf3a0cacd3862a3f6b0b3b0e7f096da37" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfc__spi_gaf3a0cacd3862a3f6b0b3b0e7f096da37_1gaf3a0cacd3862a3f6b0b3b0e7f096da37" kindref="member">st25r3911b_fifo_read</ref>(uint8_t<sp/>*data,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>length);</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153" refid="group__st25r3911b__nfc__spi_ga4d942b86abc52bf5114b7bf9aac3beee_1ga4d942b86abc52bf5114b7bf9aac3beee" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfc__spi_ga4d942b86abc52bf5114b7bf9aac3beee_1ga4d942b86abc52bf5114b7bf9aac3beee" kindref="member">st25r3911b_fifo_write</ref>(uint8_t<sp/>*data,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>length);</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>ST25R3911B_SPI_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="lib/st25r3911b/st25r3911b_spi.h"/>
+  </compounddef>
+</doxygen>

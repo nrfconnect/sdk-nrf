@@ -1,0 +1,164 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structsensor__module__event" kind="struct" language="C++" prot="public">
+    <compoundname>sensor_module_event</compoundname>
+    <includes refid="sensor__module__event_8h" local="no">sensor_module_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structsensor__module__event_a59ef7e0ba7c665f754205296dedbaa47_1a59ef7e0ba7c665f754205296dedbaa47" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header sensor_module_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/sensor_module_event.h" line="47" column="19" bodyfile="applications/asset_tracker_v2/src/events/sensor_module_event.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsensor__module__event_a67ace44d857a786cbea4ce1e6287f093_1a67ace44d857a786cbea4ce1e6287f093" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__sensor__module__event_ga18364a1850d66750f93a1c251978a8a1_1ga18364a1850d66750f93a1c251978a8a1" kindref="member">sensor_module_event_type</ref></type>
+        <definition>enum sensor_module_event_type sensor_module_event::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/sensor_module_event.h" line="48" column="30" bodyfile="applications/asset_tracker_v2/src/events/sensor_module_event.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsensor__module__event_a8ec55a0aff9d1a5cea0f30f048f8b12e_1a8ec55a0aff9d1a5cea0f30f048f8b12e" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structsensor__module__data" kindref="compound">sensor_module_data</ref></type>
+        <definition>struct sensor_module_data sensor_module_event::sensors</definition>
+        <argsstring></argsstring>
+        <name>sensors</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/sensor_module_event.h" line="50" column="25" bodyfile="applications/asset_tracker_v2/src/events/sensor_module_event.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsensor__module__event_a39d2b789a2a29f7caa29a483971b1787_1a39d2b789a2a29f7caa29a483971b1787" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structsensor__module__accel__data" kindref="compound">sensor_module_accel_data</ref></type>
+        <definition>struct sensor_module_accel_data sensor_module_event::accel</definition>
+        <argsstring></argsstring>
+        <name>accel</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/sensor_module_event.h" line="51" column="31" bodyfile="applications/asset_tracker_v2/src/events/sensor_module_event.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsensor__module__event_aa21659d3ad2fb065caee3a75af8a02ac_1aa21659d3ad2fb065caee3a75af8a02ac" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t sensor_module_event::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/sensor_module_event.h" line="53" column="10" bodyfile="applications/asset_tracker_v2/src/events/sensor_module_event.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsensor__module__event_a15cf25ae3261441ec3b7b1d67f40edfe_1a15cf25ae3261441ec3b7b1d67f40edfe" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int sensor_module_event::err</definition>
+        <argsstring></argsstring>
+        <name>err</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/sensor_module_event.h" line="54" column="5" bodyfile="applications/asset_tracker_v2/src/events/sensor_module_event.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsensor__module__event_a87b09fd0e151957ad6d3c76012cf41e3_1a87b09fd0e151957ad6d3c76012cf41e3" prot="public" static="no" mutable="no">
+        <type>union sensor_module_event::@17</type>
+        <definition>union sensor_module_event::@17 sensor_module_event::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/sensor_module_event.h" line="55" column="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Sensor event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>sensor_module_accel_data</label>
+        <link refid="structsensor__module__accel__data"/>
+      </node>
+      <node id="6">
+        <label>sensor_module_data</label>
+        <link refid="structsensor__module__data"/>
+      </node>
+      <node id="1">
+        <label>sensor_module_event</label>
+        <link refid="structsensor__module__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>sensors</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>accel</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/asset_tracker_v2/src/events/sensor_module_event.h" line="46" column="1" bodyfile="applications/asset_tracker_v2/src/events/sensor_module_event.h" bodystart="46" bodyend="56"/>
+    <listofallmembers>
+      <member refid="structsensor__module__event_a39d2b789a2a29f7caa29a483971b1787_1a39d2b789a2a29f7caa29a483971b1787" prot="public" virt="non-virtual"><scope>sensor_module_event</scope><name>accel</name></member>
+      <member refid="structsensor__module__event_a87b09fd0e151957ad6d3c76012cf41e3_1a87b09fd0e151957ad6d3c76012cf41e3" prot="public" virt="non-virtual"><scope>sensor_module_event</scope><name>data</name></member>
+      <member refid="structsensor__module__event_a15cf25ae3261441ec3b7b1d67f40edfe_1a15cf25ae3261441ec3b7b1d67f40edfe" prot="public" virt="non-virtual"><scope>sensor_module_event</scope><name>err</name></member>
+      <member refid="structsensor__module__event_a59ef7e0ba7c665f754205296dedbaa47_1a59ef7e0ba7c665f754205296dedbaa47" prot="public" virt="non-virtual"><scope>sensor_module_event</scope><name>header</name></member>
+      <member refid="structsensor__module__event_aa21659d3ad2fb065caee3a75af8a02ac_1aa21659d3ad2fb065caee3a75af8a02ac" prot="public" virt="non-virtual"><scope>sensor_module_event</scope><name>id</name></member>
+      <member refid="structsensor__module__event_a8ec55a0aff9d1a5cea0f30f048f8b12e_1a8ec55a0aff9d1a5cea0f30f048f8b12e" prot="public" virt="non-virtual"><scope>sensor_module_event</scope><name>sensors</name></member>
+      <member refid="structsensor__module__event_a67ace44d857a786cbea4ce1e6287f093_1a67ace44d857a786cbea4ce1e6287f093" prot="public" virt="non-virtual"><scope>sensor_module_event</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

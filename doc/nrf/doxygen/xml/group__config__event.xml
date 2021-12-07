@@ -1,0 +1,454 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__config__event" kind="group">
+    <compoundname>config_event</compoundname>
+    <title>Config Event</title>
+    <innerclass refid="structconfig__event" prot="public">config_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__config__event_1ga949835c81881b9b36f3ca8a7eb9173e8" prot="public" static="no" strong="no">
+        <type></type>
+        <name>config_status</name>
+        <enumvalue id="group__config__event_ga949835c81881b9b36f3ca8a7eb9173e8_1gga949835c81881b9b36f3ca8a7eb9173e8" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(CONFIG_STATUS_,  PENDING )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__config__event_ga949835c81881b9b36f3ca8a7eb9173e8_1gga949835c81881b9b36f3ca8a7eb9173e8" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(CONFIG_STATUS_,  PENDING )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__config__event_ga949835c81881b9b36f3ca8a7eb9173e8_1gga949835c81881b9b36f3ca8a7eb9173e8" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(CONFIG_STATUS_,  PENDING )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__config__event_ga949835c81881b9b36f3ca8a7eb9173e8_1gga949835c81881b9b36f3ca8a7eb9173e8" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(CONFIG_STATUS_,  PENDING )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__config__event_ga949835c81881b9b36f3ca8a7eb9173e8_1gga949835c81881b9b36f3ca8a7eb9173e8" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(CONFIG_STATUS_,  PENDING )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__config__event_ga949835c81881b9b36f3ca8a7eb9173e8_1gga949835c81881b9b36f3ca8a7eb9173e8" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(CONFIG_STATUS_,  PENDING )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__config__event_ga949835c81881b9b36f3ca8a7eb9173e8_1gga949835c81881b9b36f3ca8a7eb9173e8" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(CONFIG_STATUS_,  PENDING )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__config__event_ga949835c81881b9b36f3ca8a7eb9173e8_1gga949835c81881b9b36f3ca8a7eb9173e8" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(CONFIG_STATUS_,  PENDING )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__config__event_ga949835c81881b9b36f3ca8a7eb9173e8_1gga949835c81881b9b36f3ca8a7eb9173e8" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(CONFIG_STATUS_,  PENDING )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__config__event_ga949835c81881b9b36f3ca8a7eb9173e8_1gga949835c81881b9b36f3ca8a7eb9173e8" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(CONFIG_STATUS_,  PENDING )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__config__event_ga949835c81881b9b36f3ca8a7eb9173e8_1gga949835c81881b9b36f3ca8a7eb9173e8" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(CONFIG_STATUS_,  PENDING )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__config__event_ga949835c81881b9b36f3ca8a7eb9173e8_1gga949835c81881b9b36f3ca8a7eb9173e8" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(CONFIG_STATUS_,  PENDING )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__config__event_ga949835c81881b9b36f3ca8a7eb9173e8_1gga949835c81881b9b36f3ca8a7eb9173e8" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(CONFIG_STATUS_,  PENDING )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__config__event_ga949835c81881b9b36f3ca8a7eb9173e8_1gga949835c81881b9b36f3ca8a7eb9173e8a6cf2eb8915f65f369fe1ce77f45b33ed" prot="public">
+          <name>CONFIG_STATUS_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="41" column="1" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="41" bodyend="47"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__config__event_1ga46792fcdf1a8f1507f81bf060b47be86" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>EVENT_TYPE_DYNDATA_DECLARE</definition>
+        <argsstring>(config_event)</argsstring>
+        <name>EVENT_TYPE_DYNDATA_DECLARE</name>
+        <param>
+          <type><ref refid="structconfig__event" kindref="compound">config_event</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="96" column="1" declfile="applications/nrf_desktop/src/events/config_event.h" declline="96" declcolumn="1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__config__event_1gabe70975c8df7d147281cec43e5b44597" prot="public" static="no">
+        <name>CONFIG_STATUS_LIST</name>
+        <initializer>	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(PENDING)			\
+	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(GET_MAX_MOD_ID)		\
+	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(GET_HWID)			\
+	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(GET_BOARD_NAME)		\
+	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(INDEX_PEERS)			\
+	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(GET_PEER)			\
+	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(SET)				\
+	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(FETCH)			\
+	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(SUCCESS)			\
+	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(TIMEOUT)			\
+	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(REJECT)			\
+	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(WRITE_FAIL)			\
+	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(DISCONNECTED)</initializer>
+        <briefdescription>
+<para>Config channel status list. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="26" column="9" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__config__event_1ga441873276457853161957933920e3350" prot="public" static="no">
+        <name>CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE</name>
+        <initializer>16</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="50" column="9" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__config__event_1ga18bcd03ebdadc49e8f41be47ad1debad" prot="public" static="no">
+        <name>MOD_FIELD_POS</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="54" column="9" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__config__event_1ga8a67bef98749ee64128aa4312682f49a" prot="public" static="no">
+        <name>MOD_FIELD_SIZE</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="55" column="9" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__config__event_1ga7e8634ecc19245b048ca36435836f4f5" prot="public" static="no">
+        <name>MOD_FIELD_MASK</name>
+        <initializer>BIT_MASK(<ref refid="group__config__event_ga8a67bef98749ee64128aa4312682f49a_1ga8a67bef98749ee64128aa4312682f49a" kindref="member">MOD_FIELD_SIZE</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="56" column="9" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__config__event_1gafce203e5aabdb409a9aa348285d5e91f" prot="public" static="no">
+        <name>MOD_FIELD_SET</name>
+        <param><defname>module</defname></param>
+        <initializer>((module &amp; <ref refid="group__config__event_ga7e8634ecc19245b048ca36435836f4f5_1ga7e8634ecc19245b048ca36435836f4f5" kindref="member">MOD_FIELD_MASK</ref>) &lt;&lt; <ref refid="group__config__event_ga18bcd03ebdadc49e8f41be47ad1debad_1ga18bcd03ebdadc49e8f41be47ad1debad" kindref="member">MOD_FIELD_POS</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="57" column="9" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__config__event_1ga79f86d28516952c323654aa4d18a853b" prot="public" static="no">
+        <name>MOD_FIELD_GET</name>
+        <param><defname>event_id</defname></param>
+        <initializer>((event_id &gt;&gt; <ref refid="group__config__event_ga18bcd03ebdadc49e8f41be47ad1debad_1ga18bcd03ebdadc49e8f41be47ad1debad" kindref="member">MOD_FIELD_POS</ref>) &amp; <ref refid="group__config__event_ga7e8634ecc19245b048ca36435836f4f5_1ga7e8634ecc19245b048ca36435836f4f5" kindref="member">MOD_FIELD_MASK</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="58" column="9" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__config__event_1ga87e9882223e397848fbd69f143271637" prot="public" static="no">
+        <name>OPT_FIELD_POS</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="60" column="9" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__config__event_1ga895d65ff46d4dc3c48b120654e360344" prot="public" static="no">
+        <name>OPT_FIELD_SIZE</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="61" column="9" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__config__event_1gae181d966b807672781dcdba4f85244b3" prot="public" static="no">
+        <name>OPT_FIELD_MASK</name>
+        <initializer>BIT_MASK(<ref refid="group__config__event_ga895d65ff46d4dc3c48b120654e360344_1ga895d65ff46d4dc3c48b120654e360344" kindref="member">OPT_FIELD_SIZE</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="62" column="9" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__config__event_1ga6d8132c5357828707a75a2d8313607e9" prot="public" static="no">
+        <name>OPT_FIELD_SET</name>
+        <param><defname>option</defname></param>
+        <initializer>((option &amp; <ref refid="group__config__event_gae181d966b807672781dcdba4f85244b3_1gae181d966b807672781dcdba4f85244b3" kindref="member">OPT_FIELD_MASK</ref>) &lt;&lt; <ref refid="group__config__event_ga87e9882223e397848fbd69f143271637_1ga87e9882223e397848fbd69f143271637" kindref="member">OPT_FIELD_POS</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="63" column="9" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__config__event_1gae677ae83a7ab6234049aa46035122faa" prot="public" static="no">
+        <name>OPT_FIELD_GET</name>
+        <param><defname>event_id</defname></param>
+        <initializer>((event_id &gt;&gt; <ref refid="group__config__event_ga87e9882223e397848fbd69f143271637_1ga87e9882223e397848fbd69f143271637" kindref="member">OPT_FIELD_POS</ref>) &amp; <ref refid="group__config__event_gae181d966b807672781dcdba4f85244b3_1gae181d966b807672781dcdba4f85244b3" kindref="member">OPT_FIELD_MASK</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="64" column="9" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__config__event_1ga436e02e1491adb02ad40d0466d09c3fb" prot="public" static="no">
+        <name>OPT_ID_GET</name>
+        <param><defname>opt_field</defname></param>
+        <initializer>(opt_field - 1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="66" column="9" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__config__event_1gab0ae17e131d493be9807ef9ffbd5ce9e" prot="public" static="no">
+        <name>MODULE_OPT_MODULE_DESCR</name>
+        <initializer>0x0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="69" column="9" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__config__event_1gada901a7979ed2cbfa8986340b6aa3b2d" prot="public" static="no">
+        <name>MODULE_DESCR_END_CHAR</name>
+        <initializer>&apos;\n&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="72" column="9" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__config__event_1gad965201f92e24c09c794def1d9a4c4bd" prot="public" static="no">
+        <name>OPT_DESCR_MODULE_VARIANT</name>
+        <initializer>&quot;module_variant&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="75" column="9" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__config__event_1ga2912d106b27e633df6ea8b84eb34119b" prot="public" static="no">
+        <name>CFG_CHAN_RECIPIENT_LOCAL</name>
+        <initializer>0x00</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="78" column="9" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__config__event_1gac024ffe79812cbb469f8ba6c1e60e42b" prot="public" static="no">
+        <name>GEN_CONFIG_EVENT_HANDLERS</name>
+        <param><defname>mod_name</defname></param>
+        <param><defname>opt_descr</defname></param>
+        <param><defname>config_set_fn</defname></param>
+        <param><defname>config_fetch_fn</defname></param>
+        <initializer>	BUILD_ASSERT(ARRAY_SIZE(opt_descr) &gt; 0);						\
+	BUILD_ASSERT(ARRAY_SIZE(opt_descr) &lt;= <ref refid="group__config__event_gae181d966b807672781dcdba4f85244b3_1gae181d966b807672781dcdba4f85244b3" kindref="member">OPT_FIELD_MASK</ref>);					\
+	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &amp;&amp; is_config_event(eh)) {		\
+		static const uint8_t module_id_in_section					\
+			__attribute__((__section__(&quot;config_channel_modules&quot;))) = 0;		\
+		uint8_t config_module_id =							\
+			&amp;module_id_in_section - (uint8_t *)__start_config_channel_modules;	\
+		static uint8_t cur_opt_descr;							\
+												\
+		struct <ref refid="structconfig__event" kindref="compound">config_event</ref> *event = cast_config_event(eh);				\
+												\
+		uint8_t rsp_data_buf[<ref refid="group__config__event_ga441873276457853161957933920e3350_1ga441873276457853161957933920e3350" kindref="member">CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE</ref>];			\
+		size_t rsp_data_size = 0;							\
+		bool consume = false;								\
+												\
+		/* Not for us. */								\
+		if (event-&gt;recipient != <ref refid="group__config__event_ga2912d106b27e633df6ea8b84eb34119b_1ga2912d106b27e633df6ea8b84eb34119b" kindref="member">CFG_CHAN_RECIPIENT_LOCAL</ref>) {				\
+			return false;								\
+		}										\
+												\
+		if (event-&gt;status == CONFIG_STATUS_SET) {					\
+			if (<ref refid="group__config__event_ga79f86d28516952c323654aa4d18a853b_1ga79f86d28516952c323654aa4d18a853b" kindref="member">MOD_FIELD_GET</ref>(event-&gt;event_id) == config_module_id) {		\
+				BUILD_ASSERT(config_set_fn != NULL); 				\
+				(*config_set_fn)(<ref refid="group__config__event_ga436e02e1491adb02ad40d0466d09c3fb_1ga436e02e1491adb02ad40d0466d09c3fb" kindref="member">OPT_ID_GET</ref>(<ref refid="group__config__event_gae677ae83a7ab6234049aa46035122faa_1gae677ae83a7ab6234049aa46035122faa" kindref="member">OPT_FIELD_GET</ref>(event-&gt;event_id)),	\
+						 event-&gt;dyndata.data,				\
+						 event-&gt;dyndata.size);				\
+				consume = true;							\
+			}									\
+		} else if (event-&gt;status == CONFIG_STATUS_FETCH) {				\
+			if (<ref refid="group__config__event_ga79f86d28516952c323654aa4d18a853b_1ga79f86d28516952c323654aa4d18a853b" kindref="member">MOD_FIELD_GET</ref>(event-&gt;event_id) == config_module_id) {		\
+				if (<ref refid="group__config__event_gae677ae83a7ab6234049aa46035122faa_1gae677ae83a7ab6234049aa46035122faa" kindref="member">OPT_FIELD_GET</ref>(event-&gt;event_id) == <ref refid="group__config__event_gab0ae17e131d493be9807ef9ffbd5ce9e_1gab0ae17e131d493be9807ef9ffbd5ce9e" kindref="member">MODULE_OPT_MODULE_DESCR</ref>) {\
+					if (cur_opt_descr &lt; ARRAY_SIZE(opt_descr) + 1) {	\
+						const char *data_ptr;				\
+												\
+						if (cur_opt_descr == 0) {			\
+							data_ptr = mod_name;			\
+						} else {					\
+							data_ptr = opt_descr[cur_opt_descr - 1];\
+						}						\
+						rsp_data_size = strlen(data_ptr);		\
+						__ASSERT_NO_MSG(rsp_data_size &lt;=		\
+								sizeof(rsp_data_buf));		\
+						strncpy(rsp_data_buf, data_ptr, rsp_data_size);	\
+						cur_opt_descr++;				\
+					} else {						\
+						rsp_data_size = sizeof(uint8_t);		\
+						rsp_data_buf[0] = <ref refid="group__config__event_gada901a7979ed2cbfa8986340b6aa3b2d_1gada901a7979ed2cbfa8986340b6aa3b2d" kindref="member">MODULE_DESCR_END_CHAR</ref>;	\
+						cur_opt_descr = 0;				\
+					}							\
+				} else {							\
+					BUILD_ASSERT(config_fetch_fn != NULL);			\
+					(*config_fetch_fn)(<ref refid="group__config__event_ga436e02e1491adb02ad40d0466d09c3fb_1ga436e02e1491adb02ad40d0466d09c3fb" kindref="member">OPT_ID_GET</ref>(				\
+							      <ref refid="group__config__event_gae677ae83a7ab6234049aa46035122faa_1gae677ae83a7ab6234049aa46035122faa" kindref="member">OPT_FIELD_GET</ref>(event-&gt;event_id)),	\
+							   rsp_data_buf,			\
+							   &amp;rsp_data_size);			\
+				}								\
+				consume = true;							\
+			}									\
+		}										\
+												\
+		if (consume) {									\
+			struct <ref refid="structconfig__event" kindref="compound">config_event</ref> *rsp = new_config_event(rsp_data_size);		\
+												\
+			rsp-&gt;transport_id = event-&gt;transport_id;				\
+			rsp-&gt;recipient = event-&gt;recipient;					\
+			rsp-&gt;event_id = event-&gt;event_id;					\
+			rsp-&gt;status = CONFIG_STATUS_SUCCESS;					\
+			rsp-&gt;is_request = false;						\
+												\
+			if (rsp_data_size &gt; 0) {						\
+				memcpy(rsp-&gt;dyndata.data, rsp_data_buf, rsp_data_size);		\
+			}									\
+												\
+			<ref refid="group__event__manager_ga5fb4d859ba408c80abc899d18bb626e4_1ga5fb4d859ba408c80abc899d18bb626e4" kindref="member">EVENT_SUBMIT</ref>(rsp);							\
+		}										\
+												\
+		return consume;									\
+	}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="100" column="9" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Config Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

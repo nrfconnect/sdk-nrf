@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structgps__agps__request" kind="struct" language="C++" prot="public">
+    <compoundname>gps_agps_request</compoundname>
+    <includes refid="gps_8h" local="no">gps.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structgps__agps__request_aefdef1909728087fef54714ce9ff1702_1aefdef1909728087fef54714ce9ff1702" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t gps_agps_request::sv_mask_ephe</definition>
+        <argsstring></argsstring>
+        <name>sv_mask_ephe</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Bit mask indicating the satellite PRNs for which the assistance GPS ephemeris data is needed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="204" column="10" bodyfile="include/drivers/gps.h" bodystart="204" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__agps__request_a9fc06405446141abd74cab92dbc3d8c3_1a9fc06405446141abd74cab92dbc3d8c3" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t gps_agps_request::sv_mask_alm</definition>
+        <argsstring></argsstring>
+        <name>sv_mask_alm</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Bit mask indicating the satellite PRNs for which the assistance GPS almanac data is needed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="209" column="10" bodyfile="include/drivers/gps.h" bodystart="209" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__agps__request_adf035d222f45edb97103daab5f872e12_1adf035d222f45edb97103daab5f872e12" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t gps_agps_request::utc</definition>
+        <argsstring></argsstring>
+        <name>utc</name>
+        <bitfield>1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>GPS UTC parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="212" column="9" bodyfile="include/drivers/gps.h" bodystart="212" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__agps__request_a28ae5276d1723525820a017b69ea9eda_1a28ae5276d1723525820a017b69ea9eda" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t gps_agps_request::klobuchar</definition>
+        <argsstring></argsstring>
+        <name>klobuchar</name>
+        <bitfield>1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Klobuchar parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="215" column="9" bodyfile="include/drivers/gps.h" bodystart="215" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__agps__request_a3b2027b12713d93f8af8976fe8d18ac5_1a3b2027b12713d93f8af8976fe8d18ac5" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t gps_agps_request::nequick</definition>
+        <argsstring></argsstring>
+        <name>nequick</name>
+        <bitfield>1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>NeQuick parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="218" column="9" bodyfile="include/drivers/gps.h" bodystart="218" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__agps__request_a2116308e15ea8c274ab46b5a3ca8c8a7_1a2116308e15ea8c274ab46b5a3ca8c8a7" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t gps_agps_request::system_time_tow</definition>
+        <argsstring></argsstring>
+        <name>system_time_tow</name>
+        <bitfield>1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>GPS system time and SV TOWs. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="221" column="9" bodyfile="include/drivers/gps.h" bodystart="221" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__agps__request_ad40221b92df2f37cdf0413e3b38f0488_1ad40221b92df2f37cdf0413e3b38f0488" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t gps_agps_request::position</definition>
+        <argsstring></argsstring>
+        <name>position</name>
+        <bitfield>1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Position assistance parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="224" column="9" bodyfile="include/drivers/gps.h" bodystart="224" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__agps__request_a27e44fff4fea4b71d4a4a4be4fc126e5_1a27e44fff4fea4b71d4a4a4be4fc126e5" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t gps_agps_request::integrity</definition>
+        <argsstring></argsstring>
+        <name>integrity</name>
+        <bitfield>1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Integrity assistance parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="227" column="9" bodyfile="include/drivers/gps.h" bodystart="227" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/drivers/gps.h" line="200" column="1" bodyfile="include/drivers/gps.h" bodystart="200" bodyend="228"/>
+    <listofallmembers>
+      <member refid="structgps__agps__request_a27e44fff4fea4b71d4a4a4be4fc126e5_1a27e44fff4fea4b71d4a4a4be4fc126e5" prot="public" virt="non-virtual"><scope>gps_agps_request</scope><name>integrity</name></member>
+      <member refid="structgps__agps__request_a28ae5276d1723525820a017b69ea9eda_1a28ae5276d1723525820a017b69ea9eda" prot="public" virt="non-virtual"><scope>gps_agps_request</scope><name>klobuchar</name></member>
+      <member refid="structgps__agps__request_a3b2027b12713d93f8af8976fe8d18ac5_1a3b2027b12713d93f8af8976fe8d18ac5" prot="public" virt="non-virtual"><scope>gps_agps_request</scope><name>nequick</name></member>
+      <member refid="structgps__agps__request_ad40221b92df2f37cdf0413e3b38f0488_1ad40221b92df2f37cdf0413e3b38f0488" prot="public" virt="non-virtual"><scope>gps_agps_request</scope><name>position</name></member>
+      <member refid="structgps__agps__request_a9fc06405446141abd74cab92dbc3d8c3_1a9fc06405446141abd74cab92dbc3d8c3" prot="public" virt="non-virtual"><scope>gps_agps_request</scope><name>sv_mask_alm</name></member>
+      <member refid="structgps__agps__request_aefdef1909728087fef54714ce9ff1702_1aefdef1909728087fef54714ce9ff1702" prot="public" virt="non-virtual"><scope>gps_agps_request</scope><name>sv_mask_ephe</name></member>
+      <member refid="structgps__agps__request_a2116308e15ea8c274ab46b5a3ca8c8a7_1a2116308e15ea8c274ab46b5a3ca8c8a7" prot="public" virt="non-virtual"><scope>gps_agps_request</scope><name>system_time_tow</name></member>
+      <member refid="structgps__agps__request_adf035d222f45edb97103daab5f872e12_1adf035d222f45edb97103daab5f872e12" prot="public" virt="non-virtual"><scope>gps_agps_request</scope><name>utc</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

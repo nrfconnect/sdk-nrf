@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structmodem__module__edrx" kind="struct" language="C++" prot="public">
+    <compoundname>modem_module_edrx</compoundname>
+    <includes refid="modem__module__event_8h" local="no">modem_module_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmodem__module__edrx_ab75d602f1f0d6c86414281a617ef5320_1ab75d602f1f0d6c86414281a617ef5320" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float modem_module_edrx::edrx</definition>
+        <argsstring></argsstring>
+        <name>edrx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>eDRX interval value [s] </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="87" column="7" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__edrx_ab32535766e76082ddc076bc18a688a6b_1ab32535766e76082ddc076bc18a688a6b" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float modem_module_edrx::ptw</definition>
+        <argsstring></argsstring>
+        <name>ptw</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Paging time window [s] </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="89" column="7" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>eDRX information. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="85" column="1" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="85" bodyend="90"/>
+    <listofallmembers>
+      <member refid="structmodem__module__edrx_ab75d602f1f0d6c86414281a617ef5320_1ab75d602f1f0d6c86414281a617ef5320" prot="public" virt="non-virtual"><scope>modem_module_edrx</scope><name>edrx</name></member>
+      <member refid="structmodem__module__edrx_ab32535766e76082ddc076bc18a688a6b_1ab32535766e76082ddc076bc18a688a6b" prot="public" virt="non-virtual"><scope>modem_module_edrx</scope><name>ptw</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

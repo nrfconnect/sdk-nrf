@@ -1,0 +1,558 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__secure__services" kind="group">
+    <compoundname>secure_services</compoundname>
+    <title>Secure Services</title>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__secure__services_1gaa89d06d8dfae1da6f47ead1452c993bf" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* spm_ns_on_fatal_error_t) (void)</definition>
+        <argsstring>)(void)</argsstring>
+        <name>spm_ns_on_fatal_error_t</name>
+        <briefdescription>
+<para>Prototype of the function that is called in non-secure context from secure fault handler context. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Function can be used to print pending logging data before reboot. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/secure_services.h" line="140" column="9" bodyfile="include/secure_services.h" bodystart="140" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__secure__services_1ga1af38eec5ec0c815187ec042dadbdaf9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void before_nse</definition>
+        <argsstring>(void)</argsstring>
+        <name>before_nse</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/secure_services.h" line="33" column="6" declfile="include/secure_services.h" declline="33" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__secure__services_1ga5fdeeb143c51f3147aace2a72710032f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void after_nse</definition>
+        <argsstring>(void)</argsstring>
+        <name>after_nse</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/secure_services.h" line="34" column="6" declfile="include/secure_services.h" declline="34" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__secure__services_1gabc4500c9cc54b1a74cc62556aea0f8a8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void spm_request_system_reboot</definition>
+        <argsstring>(void)</argsstring>
+        <name>spm_request_system_reboot</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Request a system reboot from the Secure Firmware.</para>
+<para>Rebooting is not available from the Non-Secure Firmware. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/secure_services.h" line="63" column="6" declfile="include/secure_services.h" declline="63" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__secure__services_1gabff963332c50a4f48b873b3f8e9c3619" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int spm_request_random_number</definition>
+        <argsstring>(uint8_t *output, size_t len, size_t *olen)</argsstring>
+        <name>spm_request_random_number</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <param>
+          <type>size_t *</type>
+          <declname>olen</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Request a random number from the Secure Firmware.</para>
+<para>This provides a CTR_DRBG number from the CC3XX platform libraries.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The CTR_DRBG number. Must be at least <computeroutput>len</computeroutput> long. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The length of the output array. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">olen</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The length of the random number provided.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>non-negative on success, negative errno code on fail </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/secure_services.h" line="75" column="5" declfile="include/secure_services.h" declline="75" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__secure__services_1gaea4c57d39527dc9feb0522ad0a3874d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int spm_request_read</definition>
+        <argsstring>(void *destination, uint32_t addr, size_t len)</argsstring>
+        <name>spm_request_read</name>
+        <param>
+          <type>void *</type>
+          <declname>destination</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>addr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Request a read operation to be executed from Secure Firmware.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">destination</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to destination array where the content is to be copied. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">addr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Address to be copied from. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of bytes to copy.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If destination is NULL, or if len is &lt;= 0. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EPERM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If source is outside of allowed ranges. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/secure_services.h" line="88" column="5" declfile="include/secure_services.h" declline="88" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__secure__services_1gad67788235b8f0e120bb3d73ab077c6b9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int spm_s0_active</definition>
+        <argsstring>(uint32_t s0_address, uint32_t s1_address, bool *s0_active)</argsstring>
+        <name>spm_s0_active</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>s0_address</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>s1_address</declname>
+        </param>
+        <param>
+          <type>bool *</type>
+          <declname>s0_active</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Check if S0 is the active B1 slot.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">s0_address</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Address of s0 slot. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">s1_address</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Address of s1 slot. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">s0_active</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set to &apos;true&apos; if s0 is active slot, &apos;false&apos; otherwise</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If info for both slots are NULL. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/secure_services.h" line="99" column="5" declfile="include/secure_services.h" declline="99" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__secure__services_1ga6aa3b232f37a6f59bea869e9751302e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int spm_firmware_info</definition>
+        <argsstring>(uint32_t fw_address, struct fw_info *info)</argsstring>
+        <name>spm_firmware_info</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>fw_address</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structfw__info" kindref="compound">fw_info</ref> *</type>
+          <declname>info</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Search for the <ref refid="structfw__info" kindref="compound">fw_info</ref> structure in firmware image located at address.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">fw_address</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Address where firmware image is stored. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">info</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to where found info is stored.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If info is NULL. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If no info is found. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/secure_services.h" line="110" column="5" declfile="include/secure_services.h" declline="110" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__secure__services_1ga5b1bc7211d57001597add87050c6a728" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int spm_prevalidate_b1_upgrade</definition>
+        <argsstring>(uint32_t dst_addr, uint32_t src_addr)</argsstring>
+        <name>spm_prevalidate_b1_upgrade</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>dst_addr</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>src_addr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Prevalidate a B1 update</para>
+<para>This is performed by the B0 bootloader.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dst_addr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target location for the upgrade. This will typically be the start address of either S0 or S1. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">src_addr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current location of the upgrade.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>1</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the upgrade is valid. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the upgrade is invalid. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOTSUP</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the functionality is unavailable. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/secure_services.h" line="124" column="5" declfile="include/secure_services.h" declline="124" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__secure__services_1gaf65750860c11726c7bbb4fd4af4711ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void spm_busy_wait</definition>
+        <argsstring>(uint32_t busy_wait_us)</argsstring>
+        <name>spm_busy_wait</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>busy_wait_us</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Busy wait in secure mode (debug function)</para>
+<para>This function is for writing tests that require the execution to be in secure mode</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">busy_wait_us</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of microseconds to wait for. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/secure_services.h" line="133" column="6" declfile="include/secure_services.h" declline="133" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__secure__services_1gaedfdf28a6d00c63309336d5f303938c5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int spm_set_ns_fatal_error_handler</definition>
+        <argsstring>(spm_ns_on_fatal_error_t handler)</argsstring>
+        <name>spm_set_ns_fatal_error_handler</name>
+        <param>
+          <type><ref refid="group__secure__services_gaa89d06d8dfae1da6f47ead1452c993bf_1gaa89d06d8dfae1da6f47ead1452c993bf" kindref="member">spm_ns_on_fatal_error_t</ref></type>
+          <declname>handler</declname>
+        </param>
+        <briefdescription>
+<para>Set handler which is called by the SPM fault handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler can be used to print out any pending log data before reset.</para>
+<para><simplesect kind="note"><para>It is only for debugging purposes!</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Handler.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-ENOTSUP</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if feature is disabled. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>on success. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/secure_services.h" line="153" column="5" declfile="include/secure_services.h" declline="153" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__secure__services_1ga47c08461a6f598ae95ad2b9109d90bf9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void z_spm_ns_fatal_error_handler</definition>
+        <argsstring>(void)</argsstring>
+        <name>z_spm_ns_fatal_error_handler</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Call non-secure fatal error handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Must be called from fatal error handler. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/secure_services.h" line="159" column="6" declfile="include/secure_services.h" declline="159" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__secure__services_1ga6df735b1393b8b8791eaae8df2dadfe3" prot="public" static="no">
+        <name>NRF_NSE</name>
+        <param><defname>ret</defname></param>
+        <param><defname>name</defname></param>
+        <param><defname>...</defname></param>
+        <initializer>ret name ## _nse(__VA_ARGS__); \
+ret __attribute__((naked)) name(__VA_ARGS__) \
+{ \
+	__TZ_WRAP_FUNC(<ref refid="group__secure__services_ga1af38eec5ec0c815187ec042dadbdaf9_1ga1af38eec5ec0c815187ec042dadbdaf9" kindref="member">before_nse</ref>, name ## _nse, <ref refid="group__secure__services_ga5fdeeb143c51f3147aace2a72710032f_1ga5fdeeb143c51f3147aace2a72710032f" kindref="member">after_nse</ref>); \
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Implement a wrapper function around a secure_service.</para>
+<para>This function must reside in the non-secure binary. It makes the secure service thread safe by locking the scheduler while the service is running. The scheduler locking is done via TZ_THREAD_SAFE_NONSECURE_ENTRY_FUNC().</para>
+<para>The macro implements of the wrapper function. The wrapper function has the same function signature as the secure service.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ret</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The return type of the secure service and the wrapper function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the wrapper function. The secure service is assumed to be named the same, but with the suffix &apos;_nse&apos;. E.g. the wrapper function foo() wraps the secure service foo_nse(). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The arguments of the secure service and the wrapper function, as they would appear in a function signature, i.e. type and name. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/secure_services.h" line="52" column="9" bodyfile="include/secure_services.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Secure services available to the Non-Secure Firmware. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The Secure Services provide access to functionality controlled by the Secure Firmware. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

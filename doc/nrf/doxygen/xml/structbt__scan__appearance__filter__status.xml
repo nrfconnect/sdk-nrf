@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__scan__appearance__filter__status" kind="struct" language="C++" prot="public">
+    <compoundname>bt_scan_appearance_filter_status</compoundname>
+    <includes refid="scan_8h" local="no">scan.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__scan__appearance__filter__status_ac42c2760e624774e19793b2d326cf605_1ac42c2760e624774e19793b2d326cf605" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool bt_scan_appearance_filter_status::match</definition>
+        <argsstring></argsstring>
+        <name>match</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set to true if this type of filter is matched. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="232" column="6" bodyfile="include/bluetooth/scan.h" bodystart="232" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__scan__appearance__filter__status_a471bd38fb2c83f7dadf7ed7a4451fdd7_1a471bd38fb2c83f7dadf7ed7a4451fdd7" prot="public" static="no" mutable="no">
+        <type>const uint16_t *</type>
+        <definition>const uint16_t* bt_scan_appearance_filter_status::appearance</definition>
+        <argsstring></argsstring>
+        <name>appearance</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the matched filter appearance. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="235" column="16" bodyfile="include/bluetooth/scan.h" bodystart="235" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Appearance filter status structure, used to inform the application which appearance filter is matched. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/scan.h" line="230" column="1" bodyfile="include/bluetooth/scan.h" bodystart="230" bodyend="236"/>
+    <listofallmembers>
+      <member refid="structbt__scan__appearance__filter__status_a471bd38fb2c83f7dadf7ed7a4451fdd7_1a471bd38fb2c83f7dadf7ed7a4451fdd7" prot="public" virt="non-virtual"><scope>bt_scan_appearance_filter_status</scope><name>appearance</name></member>
+      <member refid="structbt__scan__appearance__filter__status_ac42c2760e624774e19793b2d326cf605_1ac42c2760e624774e19793b2d326cf605" prot="public" virt="non-virtual"><scope>bt_scan_appearance_filter_status</scope><name>match</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

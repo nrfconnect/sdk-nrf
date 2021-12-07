@@ -1,0 +1,551 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__ei__wrapper" kind="group">
+    <compoundname>ei_wrapper</compoundname>
+    <title>Edge Impulse wrapper</title>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__ei__wrapper_1ga7bdaa6028c57b15b377257db465b2fd3" prot="public" static="no">
+        <type>void(*</type>
+        <definition>ei_wrapper_result_ready_cb</definition>
+        <argsstring>)(int err)</argsstring>
+        <name>ei_wrapper_result_ready_cb</name>
+        <briefdescription>
+<para>Callback executed by the wrapper when the result is ready. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zero (if operation was successful) or negative error code. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/ei_wrapper.h" line="34" column="9" bodyfile="include/ei_wrapper.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__ei__wrapper_1ga745db416d6f8573893f1abf6ca6fcea4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ei_wrapper_classifier_has_anomaly</definition>
+        <argsstring>(void)</argsstring>
+        <name>ei_wrapper_classifier_has_anomaly</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Check if classifier calculates anomaly value.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the classifier calculates the anomaly value. Otherwise, false is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/ei_wrapper.h" line="42" column="6" declfile="include/ei_wrapper.h" declline="42" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ei__wrapper_1ga4708d3fd01343a01837964ef662c5ae9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t ei_wrapper_get_frame_size</definition>
+        <argsstring>(void)</argsstring>
+        <name>ei_wrapper_get_frame_size</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get the size of the input frame.</para>
+<para><simplesect kind="return"><para>Size of the input frame, expressed as a number of floating-point values. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/ei_wrapper.h" line="50" column="8" declfile="include/ei_wrapper.h" declline="50" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ei__wrapper_1ga38d1833168e3e3dca6b4698b743b997d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t ei_wrapper_get_window_size</definition>
+        <argsstring>(void)</argsstring>
+        <name>ei_wrapper_get_window_size</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get the size of the input window.</para>
+<para><simplesect kind="return"><para>Size of the input window, expressed as a number of floating-point values. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/ei_wrapper.h" line="58" column="8" declfile="include/ei_wrapper.h" declline="58" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ei__wrapper_1gacb8b47961be296ab108d95c7e097b29f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t ei_wrapper_get_classifier_frequency</definition>
+        <argsstring>(void)</argsstring>
+        <name>ei_wrapper_get_classifier_frequency</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get input data sampling frequency of the classifier.</para>
+<para><simplesect kind="return"><para>The sampling frequency in Hz. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/ei_wrapper.h" line="65" column="8" declfile="include/ei_wrapper.h" declline="65" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ei__wrapper_1ga72b375c5495c50315f0cc62c022c9562" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t ei_wrapper_get_classifier_label_count</definition>
+        <argsstring>(void)</argsstring>
+        <name>ei_wrapper_get_classifier_label_count</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get number of labels used by the classifier.</para>
+<para><simplesect kind="return"><para>Number of labels. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/ei_wrapper.h" line="72" column="8" declfile="include/ei_wrapper.h" declline="72" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ei__wrapper_1ga2bd7646c2e33399e84d6f355627fd7c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const char *</type>
+        <definition>const char * ei_wrapper_get_classifier_label</definition>
+        <argsstring>(size_t idx)</argsstring>
+        <name>ei_wrapper_get_classifier_label</name>
+        <param>
+          <type>size_t</type>
+          <declname>idx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get classifier label with given index.</para>
+<para>Index can be number from 0 to number of labels used by classifier minus one.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the selected classification label.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Classifier label or NULL if the index is out of range. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/ei_wrapper.h" line="83" column="12" declfile="include/ei_wrapper.h" declline="83" declcolumn="12"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ei__wrapper_1ga3c63dadd263835c798bf7ecb724bce72" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ei_wrapper_add_data</definition>
+        <argsstring>(const float *data, size_t data_size)</argsstring>
+        <name>ei_wrapper_add_data</name>
+        <param>
+          <type>const float *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>data_size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Add input data for the library.</para>
+<para>Size of the added data must be divisible by input frame size.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer with input data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the data (number of floating-point values).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/ei_wrapper.h" line="96" column="5" declfile="include/ei_wrapper.h" declline="96" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ei__wrapper_1ga5e28d373865d57f90d86f65a460238a7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ei_wrapper_clear_data</definition>
+        <argsstring>(bool *cancelled)</argsstring>
+        <name>ei_wrapper_clear_data</name>
+        <param>
+          <type>bool *</type>
+          <declname>cancelled</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Clear all buffered data.</para>
+<para>The buffer cannot be cleared if the prediction was already started and the wrapper is not waiting for data. In that case, user must wait until the prediction is finished.</para>
+<para>If the wrapper is waiting for data, the prediction is cancelled.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">cancelled</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the variable that is used to store information if prediction was cancelled.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/ei_wrapper.h" line="113" column="5" declfile="include/ei_wrapper.h" declline="113" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ei__wrapper_1ga9fd659517c93f6f21aff253e375c0531" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ei_wrapper_start_prediction</definition>
+        <argsstring>(size_t window_shift, size_t frame_shift)</argsstring>
+        <name>ei_wrapper_start_prediction</name>
+        <param>
+          <type>size_t</type>
+          <declname>window_shift</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>frame_shift</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Start a prediction using the Edge Impulse library.</para>
+<para>If there is not enough data in the input buffer, the prediction start is delayed until the missing data is added.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">window_shift</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of windows the input window is shifted before prediction. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">frame_shift</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of frames the input window is shifted before prediction.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/ei_wrapper.h" line="129" column="5" declfile="include/ei_wrapper.h" declline="129" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ei__wrapper_1gabaa7b328cb301ecf66278e0aef53d476" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ei_wrapper_get_next_classification_result</definition>
+        <argsstring>(const char **label, float *value, size_t *idx)</argsstring>
+        <name>ei_wrapper_get_next_classification_result</name>
+        <param>
+          <type>const char **</type>
+          <declname>label</declname>
+        </param>
+        <param>
+          <type>float *</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>size_t *</type>
+          <declname>idx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get next classification result.</para>
+<para>Results are ordered based on descending classification value. If there are more results with the given value, they are ordered based on ascending index.</para>
+<para>This function can be executed only from the wrapper&apos;s callback context. Otherwise it returns a (negative) error code.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">label</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the variable that is used to store the pointer to the classification label. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the variable that is used to store the classification value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the variable that is used to store the index of the classification label.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>On success. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EACCES</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If function is executed from other context that the wrapper&apos;s callback. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOENT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If no more results are available. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/ei_wrapper.h" line="150" column="5" declfile="include/ei_wrapper.h" declline="150" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ei__wrapper_1gaac4706589d4059b3caf1d7878bbd38c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ei_wrapper_get_anomaly</definition>
+        <argsstring>(float *anomaly)</argsstring>
+        <name>ei_wrapper_get_anomaly</name>
+        <param>
+          <type>float *</type>
+          <declname>anomaly</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get anomaly value.</para>
+<para>This function can be executed only from the wrapper&apos;s callback context. Otherwise it returns a (negative) error code.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">anomaly</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the variable that is used to store the anomaly.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>On success. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EACCES</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If function is executed from other context that the wrapper&apos;s callback. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOTSUP</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If calculating anomaly value is not supported. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/ei_wrapper.h" line="164" column="5" declfile="include/ei_wrapper.h" declline="164" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ei__wrapper_1ga9d747219dd4863712440a74dc2b57b36" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ei_wrapper_get_timing</definition>
+        <argsstring>(int *dsp_time, int *classification_time, int *anomaly_time)</argsstring>
+        <name>ei_wrapper_get_timing</name>
+        <param>
+          <type>int *</type>
+          <declname>dsp_time</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>classification_time</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>anomaly_time</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get execution times for operations performed by the library.</para>
+<para>This function can be executed only from the wrapper&apos;s callback context. Otherwise, it returns a (negative) error code.</para>
+<para>The library uses Zephyr&apos;s uptime for calculations. Because of that execution times can be affected by other operations performed by the CPU.</para>
+<para>If calculating the anomaly value is not supported, anomaly_time is set to the value of -1.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">dsp_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the variable that is used to store the dsp time. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">classification_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the variable that is used to store the classification time. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">anomaly_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the variable that is used to store the anomaly time.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/ei_wrapper.h" line="188" column="5" declfile="include/ei_wrapper.h" declline="188" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ei__wrapper_1ga0e6bcbf7f0224bccdb0417c7b9087e2b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ei_wrapper_init</definition>
+        <argsstring>(ei_wrapper_result_ready_cb cb)</argsstring>
+        <name>ei_wrapper_init</name>
+        <param>
+          <type><ref refid="group__ei__wrapper_ga7bdaa6028c57b15b377257db465b2fd3_1ga7bdaa6028c57b15b377257db465b2fd3" kindref="member">ei_wrapper_result_ready_cb</ref></type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initialize the Edge Impulse wrapper.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback used to receive results.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/ei_wrapper.h" line="199" column="5" declfile="include/ei_wrapper.h" declline="199" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Wrapper that uses Edge Impulse lib to run machine learning on device. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__rssi__disp__reg" kind="group">
+    <compoundname>st25r3911b_rssi_disp_reg</compoundname>
+    <title>RSSI Display Register bits</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__rssi__disp__reg_1ga0e5f48b84b21a90a681a01e74d538789" prot="public" static="no">
+        <name>ST25R3911B_REG_RSSI_DISP_RSSI_PM0</name>
+        <initializer>BIT(0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="563" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="563" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__rssi__disp__reg_1gadc254b15117290f76d1243e3dbca8954" prot="public" static="no">
+        <name>ST25R3911B_REG_RSSI_DISP_RSSI_PM1</name>
+        <initializer>BIT(1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="564" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="564" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__rssi__disp__reg_1ga6ef6e6f1803cbf375073eb68a410f5b1" prot="public" static="no">
+        <name>ST25R3911B_REG_RSSI_DISP_RSSI_PM2</name>
+        <initializer>BIT(2)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="565" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="565" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__rssi__disp__reg_1gac882ffdbadefcf76215cc37db95dd588" prot="public" static="no">
+        <name>ST25R3911B_REG_RSSI_DISP_RSSI_PM3</name>
+        <initializer>BIT(3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="566" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="566" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__rssi__disp__reg_1gaf2e9ece5d3bad6fce00d70e0bc5bf2f4" prot="public" static="no">
+        <name>ST25R3911B_REG_RSSI_DISP_RSSI_AM0</name>
+        <initializer>BIT(4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="567" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="567" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__rssi__disp__reg_1ga83af8e89ca750832bd940a0dad4c9ad0" prot="public" static="no">
+        <name>ST25R3911B_REG_RSSI_DISP_RSSI_AM1</name>
+        <initializer>BIT(5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="568" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="568" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__rssi__disp__reg_1ga57f0f844c488e662f492f962ed99465b" prot="public" static="no">
+        <name>ST25R3911B_REG_RSSI_DISP_RSSI_AM2</name>
+        <initializer>BIT(6)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="569" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="569" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__rssi__disp__reg_1gaee5987192c083478d5762d7db1cd53d0" prot="public" static="no">
+        <name>ST25R3911B_REG_RSSI_DISP_RSSI_AM3</name>
+        <initializer>BIT(7)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="570" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="570" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

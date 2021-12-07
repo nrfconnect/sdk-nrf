@@ -1,0 +1,647 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="nrf__cloud__pgps_8h" kind="file" language="C++">
+    <compoundname>nrf_cloud_pgps.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <includes local="no">nrf_modem_gnss.h</includes>
+    <includes local="yes">nrf_cloud_agps_schema_v1.h</includes>
+    <includedby refid="nrf__cloud__rest_8h" local="no">include/net/nrf_cloud_rest.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/net/nrf_cloud_pgps.h</label>
+        <link refid="nrf__cloud__pgps_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>nrf_cloud_agps_schema_v1.h</label>
+      </node>
+      <node id="3">
+        <label>nrf_modem_gnss.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>include/net/nrf_cloud_pgps.h</label>
+        <link refid="nrf__cloud__pgps_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/net/nrf_cloud_rest.h</label>
+        <link refid="nrf__cloud__rest_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structnrf__cloud__pgps__system__time" prot="public">nrf_cloud_pgps_system_time</innerclass>
+    <innerclass refid="structnrf__cloud__pgps__prediction" prot="public">nrf_cloud_pgps_prediction</innerclass>
+    <innerclass refid="structgps__pgps__request" prot="public">gps_pgps_request</innerclass>
+    <innerclass refid="structnrf__cloud__pgps__result" prot="public">nrf_cloud_pgps_result</innerclass>
+    <innerclass refid="structnrf__cloud__pgps__event" prot="public">nrf_cloud_pgps_event</innerclass>
+    <innerclass refid="structnrf__cloud__pgps__init__param" prot="public">nrf_cloud_pgps_init_param</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nrf__cloud__pgps_ga3fe5498c156d44668fadc1840f34a220_1ga3fe5498c156d44668fadc1840f34a220" prot="public" static="no">
+        <name>NRF_CLOUD_PGPS_NUM_SV</name>
+        <initializer>(32U)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="26" column="9" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__pgps_ga4cabaf0e111e6c8c3ff00890ce66a435_1ga4cabaf0e111e6c8c3ff00890ce66a435" prot="public" static="no">
+        <name>ETIMEUNKNOWN</name>
+        <initializer>8000</initializer>
+        <briefdescription>
+<para>P-GPS error code: current time unknown. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="102" column="9" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__pgps_gaa47c8eb7d17845871eeb8ffbefaa078a_1gaa47c8eb7d17845871eeb8ffbefaa078a" prot="public" static="no">
+        <name>ELOADING</name>
+        <initializer>8001</initializer>
+        <briefdescription>
+<para>P-GPS error code: not found but loading in progress. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="104" column="9" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__pgps_ga083f6e019e6d7de58678c9640ed99908_1ga083f6e019e6d7de58678c9640ed99908" prot="public" static="no">
+        <name>NRF_CLOUD_PGPS_EMPTY_EPHEM_HEALTH</name>
+        <initializer>(0xff)</initializer>
+        <briefdescription>
+<para>Value to mark the ephemeris as unavailable for satellites for which no predictions are available from the cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="109" column="9" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="109" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1ga9067506754060c359049f5fb95be68a2" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_pgps_event_type</name>
+        <enumvalue id="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1gga9067506754060c359049f5fb95be68a2a8da5f6663b11a4e60e1d37cd84cff0ca" prot="public">
+          <name>PGPS_EVT_INIT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>P-GPS initialization beginning. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1gga9067506754060c359049f5fb95be68a2a569377c066858fe774ce7c770d315135" prot="public">
+          <name>PGPS_EVT_UNAVAILABLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>There are currently no P-GPS predictions available. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1gga9067506754060c359049f5fb95be68a2a4eee3c1d21a948a8a9a33a78c3d60d9a" prot="public">
+          <name>PGPS_EVT_LOADING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>P-GPS predictions are being loaded from the cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1gga9067506754060c359049f5fb95be68a2a9a25706f4a77764993a550412ac53900" prot="public">
+          <name>PGPS_EVT_AVAILABLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>A P-GPS prediction is available now for the current date and time. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1gga9067506754060c359049f5fb95be68a2ac22427df240c95724e97ac43b18fc629" prot="public">
+          <name>PGPS_EVT_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>All P-GPS predictions are available. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1gga9067506754060c359049f5fb95be68a2a58c0adf808d09dc1a0f562607c8676da" prot="public">
+          <name>PGPS_EVT_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>A P-GPS request has been created for missing predictions. The event has payload in the form of <ref refid="structgps__pgps__request" kindref="compound">gps_pgps_request</ref>. The event is intended to be used when CONFIG_NRF_CLOUD_PGPS_TRANSPORT_MQTT is disabled to let the application decide when and how to use the request information. This event type is not received if CONFIG_NRF_CLOUD_PGPS_TRANSPORT_MQTT is enabled. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>P-GPS event passed to the registered pgps_event_handler. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="112" column="1" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="112" bodyend="132"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__nrf__cloud__pgps_ga7ad2ea3e7e17c17ed3aad15ec722e8c1_1ga7ad2ea3e7e17c17ed3aad15ec722e8c1" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* pgps_event_handler_t) (struct nrf_cloud_pgps_event *event)</definition>
+        <argsstring>)(struct nrf_cloud_pgps_event *event)</argsstring>
+        <name>pgps_event_handler_t</name>
+        <briefdescription>
+<para>Event handler registered with the module to handle asynchronous events from the module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">event</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The event that just occurred. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="148" column="9" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nrf__cloud__pgps_gadb8f13aa83fa6f92854a8a0a216a3098_1gadb8f13aa83fa6f92854a8a0a216a3098" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nrf_cloud_pgps_set_location_normalized</definition>
+        <argsstring>(int32_t latitude, int32_t longitude)</argsstring>
+        <name>nrf_cloud_pgps_set_location_normalized</name>
+        <param>
+          <type>int32_t</type>
+          <declname>latitude</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>longitude</declname>
+        </param>
+        <briefdescription>
+<para>Update storage of the most recent known location, in modem-specific normalized format (int32_t). Current time is also stored. Normalization: (latitude / 90.0) * (1 &lt;&lt; 23) (longitude / 360.0) * (1 &lt;&lt; 24) </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>latitude</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current latitude normalized. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>longitude</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current longitude in normalized. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="170" column="6" declfile="include/net/nrf_cloud_pgps.h" declline="170" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__pgps_gaf29a7a0c52d92927f4a013e40e41fc83_1gaf29a7a0c52d92927f4a013e40e41fc83" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nrf_cloud_pgps_set_location</definition>
+        <argsstring>(double latitude, double longitude)</argsstring>
+        <name>nrf_cloud_pgps_set_location</name>
+        <param>
+          <type>double</type>
+          <declname>latitude</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>longitude</declname>
+        </param>
+        <briefdescription>
+<para>Update the storage of the most recent known location in degrees. This will be injected along with the current time and relevant predicted ephemerides to the GPS unit in order to get the fastest possible fix, when the P-GPS subsystem is built with A-GPS disabled, or when A-GPS data is unavailable due to lack of a cloud connection. Current time is also stored. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>latitude</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current latitude in degrees. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>longitude</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current longitude in degrees. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="182" column="6" declfile="include/net/nrf_cloud_pgps.h" declline="182" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__pgps_ga78813e5fd14bdcc2520c490698d95b58_1ga78813e5fd14bdcc2520c490698d95b58" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nrf_cloud_pgps_clear_location</definition>
+        <argsstring>(void)</argsstring>
+        <name>nrf_cloud_pgps_clear_location</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>If location has previously been set, clear it. The application should do this if significant distances might have been travelled since the previous location was saved. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="188" column="6" declfile="include/net/nrf_cloud_pgps.h" declline="188" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__pgps_ga603581ced037947814377e093d5e80df_1ga603581ced037947814377e093d5e80df" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nrf_cloud_pgps_set_leap_seconds</definition>
+        <argsstring>(int leap_seconds)</argsstring>
+        <name>nrf_cloud_pgps_set_leap_seconds</name>
+        <param>
+          <type>int</type>
+          <declname>leap_seconds</declname>
+        </param>
+        <briefdescription>
+<para>Update the storage of the leap second offset between GPS time and UTC. This called automatically by the A-GPS subsystem (if enabled) when it receives a UTC assistance element, setting leap_seconds to the delta_tls field. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>leap_seconds</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Offset in seconds. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="196" column="6" declfile="include/net/nrf_cloud_pgps.h" declline="196" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__pgps_ga84ecdc347d93b591c8723f43f7d422ae_1ga84ecdc347d93b591c8723f43f7d422ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_pgps_notify_prediction</definition>
+        <argsstring>(void)</argsstring>
+        <name>nrf_cloud_pgps_notify_prediction</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Schedule a callback when prediction for current time is available. Callback could be immediate, if data already stored in Flash, or later, after loading from the cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>0 if scheduled successfully, or negative error code if could not send request to cloud. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="205" column="5" declfile="include/net/nrf_cloud_pgps.h" declline="205" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__pgps_gac2a7ea3c51d520a4254a03e6831e6c06_1gac2a7ea3c51d520a4254a03e6831e6c06" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_pgps_find_prediction</definition>
+        <argsstring>(struct nrf_cloud_pgps_prediction **prediction)</argsstring>
+        <name>nrf_cloud_pgps_find_prediction</name>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__pgps__prediction" kindref="compound">nrf_cloud_pgps_prediction</ref> **</type>
+          <declname>prediction</declname>
+        </param>
+        <briefdescription>
+<para>Tries to find an appropriate GPS prediction for the current time. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>prediction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a pointer to a prediction; the pointer at this pointer will be modified to point to the prediction if the return value is 0. Will be set to NULL on failure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0..NumPredictions-1 if successful; -ETIMEUNKNOWN if current date and time not known; -ETIMEDOUT if all predictions stored are expired; -EINVAL if prediction for the current time is invalid. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="217" column="5" declfile="include/net/nrf_cloud_pgps.h" declline="217" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__pgps_gae5554df8baf4bb437a59a4d0a4d86b56_1gae5554df8baf4bb437a59a4d0a4d86b56" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_pgps_process</definition>
+        <argsstring>(const char *buf, size_t buf_len)</argsstring>
+        <name>nrf_cloud_pgps_process</name>
+        <param>
+          <type>const char *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buf_len</declname>
+        </param>
+        <briefdescription>
+<para>Processes binary P-GPS data received from nRF Cloud over MQTT or REST. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to data received from nRF Cloud. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buf_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer size of data to be processed.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if successful, otherwise a (negative) error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="258" column="5" declfile="include/net/nrf_cloud_pgps.h" declline="258" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__pgps_ga791c41d96c969f31e76fd98d8bcd04ab_1ga791c41d96c969f31e76fd98d8bcd04ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_pgps_inject</definition>
+        <argsstring>(struct nrf_cloud_pgps_prediction *p, const struct nrf_modem_gnss_agps_data_frame *request)</argsstring>
+        <name>nrf_cloud_pgps_inject</name>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__pgps__prediction" kindref="compound">nrf_cloud_pgps_prediction</ref> *</type>
+          <declname>p</declname>
+        </param>
+        <param>
+          <type>const struct nrf_modem_gnss_agps_data_frame *</type>
+          <declname>request</declname>
+        </param>
+        <briefdescription>
+<para>Injects binary P-GPS data to the modem. If request is NULL, it is assumed that only ephemerides assistance should be injected. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>p</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a prediction. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>request</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Which assistance elements the modem needs. May be NULL.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if successful, otherwise a (negative) error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="268" column="5" declfile="include/net/nrf_cloud_pgps.h" declline="268" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__pgps_ga47c0ae7499f9295c074105cb49caa075_1ga47c0ae7499f9295c074105cb49caa075" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nrf_cloud_pgps_loading</definition>
+        <argsstring>(void)</argsstring>
+        <name>nrf_cloud_pgps_loading</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Find out if P-GPS update is in progress. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>True if request sent but loading not yet completed. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="275" column="6" declfile="include/net/nrf_cloud_pgps.h" declline="275" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__pgps_ga967df3ae450fc68a1d3d645206f921f3_1ga967df3ae450fc68a1d3d645206f921f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_pgps_preemptive_updates</definition>
+        <argsstring>(void)</argsstring>
+        <name>nrf_cloud_pgps_preemptive_updates</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Download more predictions if less than CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD predictions remain which are still valid. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>0 if successful, otherwise a (negative) error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="282" column="5" declfile="include/net/nrf_cloud_pgps.h" declline="282" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__pgps_gaa3760641b9c349f8331a57a03c6f714e_1gaa3760641b9c349f8331a57a03c6f714e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_pgps_init</definition>
+        <argsstring>(struct nrf_cloud_pgps_init_param *param)</argsstring>
+        <name>nrf_cloud_pgps_init</name>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__pgps__init__param" kindref="compound">nrf_cloud_pgps_init_param</ref> *</type>
+          <declname>param</declname>
+        </param>
+        <briefdescription>
+<para>Initialize P-GPS subsystem. Validates what is stored, then requests any missing predictions, or full set if expired or missing. When successful, it is ready to provide valid ephemeris predictions. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>It must return successfully before using P-GPS services.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Initialization parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if valid or request begun; nonzero on error. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="294" column="5" declfile="include/net/nrf_cloud_pgps.h" declline="294" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Module to provide nRF Cloud Predicted GPS (P-GPS) support to nRF9160 SiP. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NRF_CLOUD_PGPS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_PGPS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;nrf_modem_gnss.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nrf_cloud_agps_schema_v1.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="group__nrf__cloud__pgps_ga3fe5498c156d44668fadc1840f34a220_1ga3fe5498c156d44668fadc1840f34a220" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_PGPS_NUM_SV<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(32U)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="structnrf__cloud__pgps__system__time" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__pgps__system__time" kindref="compound">nrf_cloud_pgps_system_time</ref><sp/>{</highlight></codeline>
+<codeline lineno="38" refid="structnrf__cloud__pgps__system__time_a78b01910533a6130189ee6a676ad4304_1a78b01910533a6130189ee6a676ad4304" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnrf__cloud__pgps__system__time_a78b01910533a6130189ee6a676ad4304_1a78b01910533a6130189ee6a676ad4304" kindref="member">date_day</ref>;</highlight></codeline>
+<codeline lineno="40" refid="structnrf__cloud__pgps__system__time_a0765a1c4f092ae8b1470dbb9fbd98887_1a0765a1c4f092ae8b1470dbb9fbd98887" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structnrf__cloud__pgps__system__time_a0765a1c4f092ae8b1470dbb9fbd98887_1a0765a1c4f092ae8b1470dbb9fbd98887" kindref="member">time_full_s</ref>;</highlight></codeline>
+<codeline lineno="42" refid="structnrf__cloud__pgps__system__time_ae9d13fa06cae85c5cfb74d04bff9ae8e_1ae9d13fa06cae85c5cfb74d04bff9ae8e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnrf__cloud__pgps__system__time_ae9d13fa06cae85c5cfb74d04bff9ae8e_1ae9d13fa06cae85c5cfb74d04bff9ae8e" kindref="member">time_frac_ms</ref>;</highlight></codeline>
+<codeline lineno="44" refid="structnrf__cloud__pgps__system__time_aa0471057caa1a3927afb947a56b1ef1a_1aa0471057caa1a3927afb947a56b1ef1a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structnrf__cloud__pgps__system__time_aa0471057caa1a3927afb947a56b1ef1a_1aa0471057caa1a3927afb947a56b1ef1a" kindref="member">sv_mask</ref>;</highlight></codeline>
+<codeline lineno="46" refid="structnrf__cloud__pgps__system__time_a7fabac5fc5076bec527308a8fc8be201_1a7fabac5fc5076bec527308a8fc8be201" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structnrf__cloud__pgps__system__time_a7fabac5fc5076bec527308a8fc8be201_1a7fabac5fc5076bec527308a8fc8be201" kindref="member">pad</ref>;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">}<sp/>__packed;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="structnrf__cloud__pgps__prediction" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__pgps__prediction" kindref="compound">nrf_cloud_pgps_prediction</ref><sp/>{</highlight></codeline>
+<codeline lineno="52" refid="structnrf__cloud__pgps__prediction_a37e044730c1fa1dfbd88fce3ce54bd7a_1a37e044730c1fa1dfbd88fce3ce54bd7a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnrf__cloud__pgps__prediction_a37e044730c1fa1dfbd88fce3ce54bd7a_1a37e044730c1fa1dfbd88fce3ce54bd7a" kindref="member">time_type</ref>;</highlight></codeline>
+<codeline lineno="54" refid="structnrf__cloud__pgps__prediction_a508bc55d2d48550d8ee77162d0a67b40_1a508bc55d2d48550d8ee77162d0a67b40" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnrf__cloud__pgps__prediction_a508bc55d2d48550d8ee77162d0a67b40_1a508bc55d2d48550d8ee77162d0a67b40" kindref="member">time_count</ref>;</highlight></codeline>
+<codeline lineno="56" refid="structnrf__cloud__pgps__prediction_a4a4bd288e49543c68cc8ce4c930fe1ff_1a4a4bd288e49543c68cc8ce4c930fe1ff" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__pgps__system__time" kindref="compound">nrf_cloud_pgps_system_time</ref><sp/><ref refid="structnrf__cloud__pgps__prediction_a4a4bd288e49543c68cc8ce4c930fe1ff_1a4a4bd288e49543c68cc8ce4c930fe1ff" kindref="member">time</ref>;</highlight></codeline>
+<codeline lineno="58" refid="structnrf__cloud__pgps__prediction_a7397f1ad6e06d17a7828ac2839e53c20_1a7397f1ad6e06d17a7828ac2839e53c20" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnrf__cloud__pgps__prediction_a7397f1ad6e06d17a7828ac2839e53c20_1a7397f1ad6e06d17a7828ac2839e53c20" kindref="member">schema_version</ref>;</highlight></codeline>
+<codeline lineno="60" refid="structnrf__cloud__pgps__prediction_a622ccf560882f7920d164341abd36bd9_1a622ccf560882f7920d164341abd36bd9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnrf__cloud__pgps__prediction_a622ccf560882f7920d164341abd36bd9_1a622ccf560882f7920d164341abd36bd9" kindref="member">ephemeris_type</ref>;</highlight></codeline>
+<codeline lineno="62" refid="structnrf__cloud__pgps__prediction_a1feb2ffa9db7ec82987429b4dbbe6499_1a1feb2ffa9db7ec82987429b4dbbe6499" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnrf__cloud__pgps__prediction_a1feb2ffa9db7ec82987429b4dbbe6499_1a1feb2ffa9db7ec82987429b4dbbe6499" kindref="member">ephemeris_count</ref>;</highlight></codeline>
+<codeline lineno="64" refid="structnrf__cloud__pgps__prediction_a071eb8a3737f5cee37930cdb84b73304_1a071eb8a3737f5cee37930cdb84b73304" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">nrf_cloud_agps_ephemeris<sp/><ref refid="structnrf__cloud__pgps__prediction_a071eb8a3737f5cee37930cdb84b73304_1a071eb8a3737f5cee37930cdb84b73304" kindref="member">ephemerii</ref>[<ref refid="group__nrf__cloud__pgps_ga3fe5498c156d44668fadc1840f34a220_1ga3fe5498c156d44668fadc1840f34a220" kindref="member">NRF_CLOUD_PGPS_NUM_SV</ref>];</highlight></codeline>
+<codeline lineno="66" refid="structnrf__cloud__pgps__prediction_afca9f4d9b66200ab71424ab27ecc6cc5_1afca9f4d9b66200ab71424ab27ecc6cc5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structnrf__cloud__pgps__prediction_afca9f4d9b66200ab71424ab27ecc6cc5_1afca9f4d9b66200ab71424ab27ecc6cc5" kindref="member">sentinel</ref>;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal">}<sp/>__packed;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="structgps__pgps__request" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structgps__pgps__request" kindref="compound">gps_pgps_request</ref><sp/>{</highlight></codeline>
+<codeline lineno="72" refid="structgps__pgps__request_a3344f862cf91dbc79811a6257d81eca8_1a3344f862cf91dbc79811a6257d81eca8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structgps__pgps__request_a3344f862cf91dbc79811a6257d81eca8_1a3344f862cf91dbc79811a6257d81eca8" kindref="member">prediction_count</ref>;</highlight></codeline>
+<codeline lineno="74" refid="structgps__pgps__request_af14790d7451092de15dce82cb11c6962_1af14790d7451092de15dce82cb11c6962" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structgps__pgps__request_af14790d7451092de15dce82cb11c6962_1af14790d7451092de15dce82cb11c6962" kindref="member">prediction_period_min</ref>;</highlight></codeline>
+<codeline lineno="78" refid="structgps__pgps__request_a75e6ee4b7f044cc1810640b4c998daa6_1a75e6ee4b7f044cc1810640b4c998daa6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structgps__pgps__request_a75e6ee4b7f044cc1810640b4c998daa6_1a75e6ee4b7f044cc1810640b4c998daa6" kindref="member">gps_day</ref>;</highlight></codeline>
+<codeline lineno="82" refid="structgps__pgps__request_a5df595eeaf24585f79bc6f1925ea7acb_1a5df595eeaf24585f79bc6f1925ea7acb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structgps__pgps__request_a5df595eeaf24585f79bc6f1925ea7acb_1a5df595eeaf24585f79bc6f1925ea7acb" kindref="member">gps_time_of_day</ref>;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal">}<sp/>__packed;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89" refid="structnrf__cloud__pgps__result" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__pgps__result" kindref="compound">nrf_cloud_pgps_result</ref><sp/>{</highlight></codeline>
+<codeline lineno="91" refid="structnrf__cloud__pgps__result_a0411cd9486dc33ee51890e4c60f4c5ca_1a0411cd9486dc33ee51890e4c60f4c5ca" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structnrf__cloud__pgps__result_a0411cd9486dc33ee51890e4c60f4c5ca_1a0411cd9486dc33ee51890e4c60f4c5ca" kindref="member">host</ref>;</highlight></codeline>
+<codeline lineno="93" refid="structnrf__cloud__pgps__result_a9026033aceec2d1c028326f696cda2b7_1a9026033aceec2d1c028326f696cda2b7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__pgps__result_a9026033aceec2d1c028326f696cda2b7_1a9026033aceec2d1c028326f696cda2b7" kindref="member">host_sz</ref>;</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96" refid="structnrf__cloud__pgps__result_aad532cb0046cea4830ce1218185d4426_1aad532cb0046cea4830ce1218185d4426" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structnrf__cloud__pgps__result_aad532cb0046cea4830ce1218185d4426_1aad532cb0046cea4830ce1218185d4426" kindref="member">path</ref>;</highlight></codeline>
+<codeline lineno="98" refid="structnrf__cloud__pgps__result_a72dabce042ccf5b43b5e3ee42afca56f_1a72dabce042ccf5b43b5e3ee42afca56f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__pgps__result_a72dabce042ccf5b43b5e3ee42afca56f_1a72dabce042ccf5b43b5e3ee42afca56f" kindref="member">path_sz</ref>;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102" refid="group__nrf__cloud__pgps_ga4cabaf0e111e6c8c3ff00890ce66a435_1ga4cabaf0e111e6c8c3ff00890ce66a435" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ETIMEUNKNOWN<sp/><sp/><sp/><sp/>8000</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104" refid="group__nrf__cloud__pgps_gaa47c8eb7d17845871eeb8ffbefaa078a_1gaa47c8eb7d17845871eeb8ffbefaa078a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ELOADING<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>8001</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109" refid="group__nrf__cloud__pgps_ga083f6e019e6d7de58678c9640ed99908_1ga083f6e019e6d7de58678c9640ed99908" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_PGPS_EMPTY_EPHEM_HEALTH<sp/>(0xff)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112" refid="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1ga9067506754060c359049f5fb95be68a2" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1ga9067506754060c359049f5fb95be68a2" kindref="member">nrf_cloud_pgps_event_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="114" refid="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1gga9067506754060c359049f5fb95be68a2a8da5f6663b11a4e60e1d37cd84cff0ca" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1gga9067506754060c359049f5fb95be68a2a8da5f6663b11a4e60e1d37cd84cff0ca" kindref="member">PGPS_EVT_INIT</ref>,</highlight></codeline>
+<codeline lineno="116" refid="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1gga9067506754060c359049f5fb95be68a2a569377c066858fe774ce7c770d315135" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1gga9067506754060c359049f5fb95be68a2a569377c066858fe774ce7c770d315135" kindref="member">PGPS_EVT_UNAVAILABLE</ref>,</highlight></codeline>
+<codeline lineno="118" refid="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1gga9067506754060c359049f5fb95be68a2a4eee3c1d21a948a8a9a33a78c3d60d9a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1gga9067506754060c359049f5fb95be68a2a4eee3c1d21a948a8a9a33a78c3d60d9a" kindref="member">PGPS_EVT_LOADING</ref>,</highlight></codeline>
+<codeline lineno="120" refid="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1gga9067506754060c359049f5fb95be68a2a9a25706f4a77764993a550412ac53900" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1gga9067506754060c359049f5fb95be68a2a9a25706f4a77764993a550412ac53900" kindref="member">PGPS_EVT_AVAILABLE</ref>,</highlight></codeline>
+<codeline lineno="122" refid="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1gga9067506754060c359049f5fb95be68a2ac22427df240c95724e97ac43b18fc629" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1gga9067506754060c359049f5fb95be68a2ac22427df240c95724e97ac43b18fc629" kindref="member">PGPS_EVT_READY</ref>,</highlight></codeline>
+<codeline lineno="131" refid="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1gga9067506754060c359049f5fb95be68a2a58c0adf808d09dc1a0f562607c8676da" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1gga9067506754060c359049f5fb95be68a2a58c0adf808d09dc1a0f562607c8676da" kindref="member">PGPS_EVT_REQUEST</ref>,</highlight></codeline>
+<codeline lineno="132"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134" refid="structnrf__cloud__pgps__event" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__pgps__event" kindref="compound">nrf_cloud_pgps_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="135" refid="structnrf__cloud__pgps__event_af60bb18453f1db341779b8d7d73d3f8a_1af60bb18453f1db341779b8d7d73d3f8a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1ga9067506754060c359049f5fb95be68a2" kindref="member">nrf_cloud_pgps_event_type</ref><sp/><ref refid="structnrf__cloud__pgps__event_af60bb18453f1db341779b8d7d73d3f8a_1af60bb18453f1db341779b8d7d73d3f8a" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">union<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="137" refid="structnrf__cloud__pgps__event_a370f3f17ef26a10fc7a76eb21f732787_1a370f3f17ef26a10fc7a76eb21f732787" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__pgps__prediction" kindref="compound">nrf_cloud_pgps_prediction</ref><sp/>*<ref refid="structnrf__cloud__pgps__event_a370f3f17ef26a10fc7a76eb21f732787_1a370f3f17ef26a10fc7a76eb21f732787" kindref="member">prediction</ref>;</highlight></codeline>
+<codeline lineno="138" refid="structnrf__cloud__pgps__event_ac450092a341c605fc2ecd465790985f1_1ac450092a341c605fc2ecd465790985f1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structgps__pgps__request" kindref="compound">gps_pgps_request</ref><sp/>*<ref refid="structnrf__cloud__pgps__event_ac450092a341c605fc2ecd465790985f1_1ac450092a341c605fc2ecd465790985f1" kindref="member">request</ref>;</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="140"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148" refid="group__nrf__cloud__pgps_ga7ad2ea3e7e17c17ed3aad15ec722e8c1_1ga7ad2ea3e7e17c17ed3aad15ec722e8c1" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__nrf__cloud__pgps_ga7ad2ea3e7e17c17ed3aad15ec722e8c1_1ga7ad2ea3e7e17c17ed3aad15ec722e8c1" kindref="member">pgps_event_handler_t</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__pgps__event" kindref="compound">nrf_cloud_pgps_event</ref><sp/>*event);</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="151" refid="structnrf__cloud__pgps__init__param" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__pgps__init__param" kindref="compound">nrf_cloud_pgps_init_param</ref><sp/>{</highlight></codeline>
+<codeline lineno="153" refid="structnrf__cloud__pgps__init__param_a8cab3736938df5ef4a0ad21196d83ba5_1a8cab3736938df5ef4a0ad21196d83ba5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__pgps_ga7ad2ea3e7e17c17ed3aad15ec722e8c1_1ga7ad2ea3e7e17c17ed3aad15ec722e8c1" kindref="member">pgps_event_handler_t</ref><sp/><ref refid="structnrf__cloud__pgps__init__param_a8cab3736938df5ef4a0ad21196d83ba5_1a8cab3736938df5ef4a0ad21196d83ba5" kindref="member">event_handler</ref>;</highlight></codeline>
+<codeline lineno="155" refid="structnrf__cloud__pgps__init__param_a2206572ae2f756230497a3bb93256368_1a2206572ae2f756230497a3bb93256368" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structnrf__cloud__pgps__init__param_a2206572ae2f756230497a3bb93256368_1a2206572ae2f756230497a3bb93256368" kindref="member">storage_base</ref>;</highlight></codeline>
+<codeline lineno="157" refid="structnrf__cloud__pgps__init__param_ae1b7b9d9059604644c208b0db93830f7_1ae1b7b9d9059604644c208b0db93830f7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structnrf__cloud__pgps__init__param_ae1b7b9d9059604644c208b0db93830f7_1ae1b7b9d9059604644c208b0db93830f7" kindref="member">storage_size</ref>;</highlight></codeline>
+<codeline lineno="158"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170" refid="group__nrf__cloud__pgps_gadb8f13aa83fa6f92854a8a0a216a3098_1gadb8f13aa83fa6f92854a8a0a216a3098" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__pgps_gadb8f13aa83fa6f92854a8a0a216a3098_1gadb8f13aa83fa6f92854a8a0a216a3098" kindref="member">nrf_cloud_pgps_set_location_normalized</ref>(int32_t<sp/>latitude,<sp/>int32_t<sp/>longitude);</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight></codeline>
+<codeline lineno="182" refid="group__nrf__cloud__pgps_gaf29a7a0c52d92927f4a013e40e41fc83_1gaf29a7a0c52d92927f4a013e40e41fc83" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__pgps_gaf29a7a0c52d92927f4a013e40e41fc83_1gaf29a7a0c52d92927f4a013e40e41fc83" kindref="member">nrf_cloud_pgps_set_location</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>latitude,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>longitude);</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight></codeline>
+<codeline lineno="188" refid="group__nrf__cloud__pgps_ga78813e5fd14bdcc2520c490698d95b58_1ga78813e5fd14bdcc2520c490698d95b58" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__pgps_ga78813e5fd14bdcc2520c490698d95b58_1ga78813e5fd14bdcc2520c490698d95b58" kindref="member">nrf_cloud_pgps_clear_location</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="196" refid="group__nrf__cloud__pgps_ga603581ced037947814377e093d5e80df_1ga603581ced037947814377e093d5e80df" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__pgps_ga603581ced037947814377e093d5e80df_1ga603581ced037947814377e093d5e80df" kindref="member">nrf_cloud_pgps_set_leap_seconds</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>leap_seconds);</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205" refid="group__nrf__cloud__pgps_ga84ecdc347d93b591c8723f43f7d422ae_1ga84ecdc347d93b591c8723f43f7d422ae" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__pgps_ga84ecdc347d93b591c8723f43f7d422ae_1ga84ecdc347d93b591c8723f43f7d422ae" kindref="member">nrf_cloud_pgps_notify_prediction</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight></codeline>
+<codeline lineno="217" refid="group__nrf__cloud__pgps_gac2a7ea3c51d520a4254a03e6831e6c06_1gac2a7ea3c51d520a4254a03e6831e6c06" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__pgps_gac2a7ea3c51d520a4254a03e6831e6c06_1gac2a7ea3c51d520a4254a03e6831e6c06" kindref="member">nrf_cloud_pgps_find_prediction</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__pgps__prediction" kindref="compound">nrf_cloud_pgps_prediction</ref><sp/>**prediction);</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"></highlight></codeline>
+<codeline lineno="219"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(CONFIG_NRF_CLOUD_MQTT)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nrf_cloud_pgps_request(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structgps__pgps__request" kindref="compound">gps_pgps_request</ref><sp/>*request);</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nrf_cloud_pgps_request_all(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>CONFIG_NRF_CLOUD_MQTT<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="240"><highlight class="normal"></highlight></codeline>
+<codeline lineno="241"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="248"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>nrf_cloud_pgps_request_reset(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="250"><highlight class="normal"></highlight></codeline>
+<codeline lineno="258" refid="group__nrf__cloud__pgps_gae5554df8baf4bb437a59a4d0a4d86b56_1gae5554df8baf4bb437a59a4d0a4d86b56" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__pgps_gae5554df8baf4bb437a59a4d0a4d86b56_1gae5554df8baf4bb437a59a4d0a4d86b56" kindref="member">nrf_cloud_pgps_process</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*buf,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>buf_len);</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"></highlight></codeline>
+<codeline lineno="268" refid="group__nrf__cloud__pgps_ga791c41d96c969f31e76fd98d8bcd04ab_1ga791c41d96c969f31e76fd98d8bcd04ab" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__pgps_ga791c41d96c969f31e76fd98d8bcd04ab_1ga791c41d96c969f31e76fd98d8bcd04ab" kindref="member">nrf_cloud_pgps_inject</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__pgps__prediction" kindref="compound">nrf_cloud_pgps_prediction</ref><sp/>*p,</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>nrf_modem_gnss_agps_data_frame<sp/>*request);</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"></highlight></codeline>
+<codeline lineno="275" refid="group__nrf__cloud__pgps_ga47c0ae7499f9295c074105cb49caa075_1ga47c0ae7499f9295c074105cb49caa075" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__pgps_ga47c0ae7499f9295c074105cb49caa075_1ga47c0ae7499f9295c074105cb49caa075" kindref="member">nrf_cloud_pgps_loading</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"></highlight></codeline>
+<codeline lineno="282" refid="group__nrf__cloud__pgps_ga967df3ae450fc68a1d3d645206f921f3_1ga967df3ae450fc68a1d3d645206f921f3" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__pgps_ga967df3ae450fc68a1d3d645206f921f3_1ga967df3ae450fc68a1d3d645206f921f3" kindref="member">nrf_cloud_pgps_preemptive_updates</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"></highlight></codeline>
+<codeline lineno="294" refid="group__nrf__cloud__pgps_gaa3760641b9c349f8331a57a03c6f714e_1gaa3760641b9c349f8331a57a03c6f714e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__pgps_gaa3760641b9c349f8331a57a03c6f714e_1gaa3760641b9c349f8331a57a03c6f714e" kindref="member">nrf_cloud_pgps_init</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__pgps__init__param" kindref="compound">nrf_cloud_pgps_init_param</ref><sp/>*param);</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"></highlight></codeline>
+<codeline lineno="298"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="299"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="300"><highlight class="normal"></highlight></codeline>
+<codeline lineno="301"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>NRF_CLOUD_PGPS_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/net/nrf_cloud_pgps.h"/>
+  </compounddef>
+</doxygen>

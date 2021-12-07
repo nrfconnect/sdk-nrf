@@ -1,0 +1,938 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="scan_8h" kind="file" language="C++">
+    <compoundname>scan.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <includes local="no">sys/slist.h</includes>
+    <includes local="no">bluetooth/bluetooth.h</includes>
+    <includes local="no">bluetooth/uuid.h</includes>
+    <includes local="no">bluetooth/conn.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/bluetooth/scan.h</label>
+        <link refid="scan_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bluetooth/bluetooth.h</label>
+      </node>
+      <node id="6">
+        <label>bluetooth/conn.h</label>
+      </node>
+      <node id="5">
+        <label>bluetooth/uuid.h</label>
+      </node>
+      <node id="3">
+        <label>sys/slist.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structbt__scan__filter__info" prot="public">bt_scan_filter_info</innerclass>
+    <innerclass refid="structbt__filter__status" prot="public">bt_filter_status</innerclass>
+    <innerclass refid="structbt__scan__adv__info" prot="public">bt_scan_adv_info</innerclass>
+    <innerclass refid="structbt__scan__short__name" prot="public">bt_scan_short_name</innerclass>
+    <innerclass refid="structbt__scan__manufacturer__data" prot="public">bt_scan_manufacturer_data</innerclass>
+    <innerclass refid="structbt__scan__init__param" prot="public">bt_scan_init_param</innerclass>
+    <innerclass refid="structbt__scan__name__filter__status" prot="public">bt_scan_name_filter_status</innerclass>
+    <innerclass refid="structbt__scan__addr__filter__status" prot="public">bt_scan_addr_filter_status</innerclass>
+    <innerclass refid="structbt__scan__uuid__filter__status" prot="public">bt_scan_uuid_filter_status</innerclass>
+    <innerclass refid="structbt__scan__appearance__filter__status" prot="public">bt_scan_appearance_filter_status</innerclass>
+    <innerclass refid="structbt__scan__manufacturer__data__filter__status" prot="public">bt_scan_manufacturer_data_filter_status</innerclass>
+    <innerclass refid="structbt__scan__filter__match" prot="public">bt_scan_filter_match</innerclass>
+    <innerclass refid="structbt__scan__device__info" prot="public">bt_scan_device_info</innerclass>
+    <innerclass refid="structcb__data" prot="public">cb_data</innerclass>
+    <innerclass refid="structbt__scan__cb" prot="public">bt_scan_cb</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__BT__SCAN__FILTER__MODE_gaf7f4b11364a5281c30408bf7a2bcc06f_1gaf7f4b11364a5281c30408bf7a2bcc06f" prot="public" static="no">
+        <name>BT_SCAN_NAME_FILTER</name>
+        <initializer>0x01</initializer>
+        <briefdescription>
+<para>Filters the device name. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="44" column="9" bodyfile="include/bluetooth/scan.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__BT__SCAN__FILTER__MODE_ga6cd8f8629d400bd59b8c214e9fe82d34_1ga6cd8f8629d400bd59b8c214e9fe82d34" prot="public" static="no">
+        <name>BT_SCAN_ADDR_FILTER</name>
+        <initializer>0x02</initializer>
+        <briefdescription>
+<para>Filters the device address. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="47" column="9" bodyfile="include/bluetooth/scan.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__BT__SCAN__FILTER__MODE_gaf96c04e5993f212eff90553022ab3281_1gaf96c04e5993f212eff90553022ab3281" prot="public" static="no">
+        <name>BT_SCAN_UUID_FILTER</name>
+        <initializer>0x04</initializer>
+        <briefdescription>
+<para>Filters the UUID. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="50" column="9" bodyfile="include/bluetooth/scan.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__BT__SCAN__FILTER__MODE_ga03ecee69067f2835d2f55120e8a4d693_1ga03ecee69067f2835d2f55120e8a4d693" prot="public" static="no">
+        <name>BT_SCAN_APPEARANCE_FILTER</name>
+        <initializer>0x08</initializer>
+        <briefdescription>
+<para>Filters the appearance. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="53" column="9" bodyfile="include/bluetooth/scan.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__BT__SCAN__FILTER__MODE_ga34057c658ca53aff5150a375d83e2b59_1ga34057c658ca53aff5150a375d83e2b59" prot="public" static="no">
+        <name>BT_SCAN_SHORT_NAME_FILTER</name>
+        <initializer>0x10</initializer>
+        <briefdescription>
+<para>Filters the device short name. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="56" column="9" bodyfile="include/bluetooth/scan.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__BT__SCAN__FILTER__MODE_ga13e6bfc11ab4633bc5e157c2c35716b0_1ga13e6bfc11ab4633bc5e157c2c35716b0" prot="public" static="no">
+        <name>BT_SCAN_MANUFACTURER_DATA_FILTER</name>
+        <initializer>0x20</initializer>
+        <briefdescription>
+<para>Filters the manufacturer data. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="59" column="9" bodyfile="include/bluetooth/scan.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__BT__SCAN__FILTER__MODE_ga6ab379ca716bc2eee99113ad0b40fb49_1ga6ab379ca716bc2eee99113ad0b40fb49" prot="public" static="no">
+        <name>BT_SCAN_ALL_FILTER</name>
+        <initializer>0x3F</initializer>
+        <briefdescription>
+<para>Uses the combination of all filters. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="62" column="9" bodyfile="include/bluetooth/scan.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__bt__scan_gaaecbaf4fa4218aa999b42844a8045ce9_1gaaecbaf4fa4218aa999b42844a8045ce9" prot="public" static="no">
+        <name>BT_SCAN_CB_INIT</name>
+        <param><defname>_name</defname></param>
+        <param><defname>match_fun</defname></param>
+        <param><defname>no_match_fun</defname></param>
+        <param><defname>error_fun</defname></param>
+        <param><defname>connecting_fun</defname></param>
+        <initializer>	static const struct <ref refid="structcb__data" kindref="compound">cb_data</ref> _name ## _data = { 	\
+		.filter_match = match_fun,		\
+		.filter_no_match = no_match_fun,	\
+		.connecting_error = error_fun,		\
+		.connecting = connecting_fun,		\
+	};						\
+	static struct <ref refid="structbt__scan__cb" kindref="compound">bt_scan_cb</ref> _name = {		\
+		.cb_addr = &amp;_name ## _data,		\
+	}</initializer>
+        <briefdescription>
+<para>Initializing macro for scanning module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is macro initializing necessary structures for <ref refid="structbt__scan__cb" kindref="compound">bt_scan_cb</ref> type.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Unique name for <ref refid="structbt__scan__cb" kindref="compound">bt_scan_cb</ref> structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">match_fun</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scan filter matched function pointer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">no_match_fun</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scan filter unmatched (the device was not found) function pointer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">error_fun</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Error when connecting function pointer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">connecting_fun</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connecting data function pointer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="315" column="9" bodyfile="include/bluetooth/scan.h" bodystart="311" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nrf__bt__scan_ga3e89c0eebbc80f1458a47e11de9f52f3_1ga3e89c0eebbc80f1458a47e11de9f52f3" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_scan_type</name>
+        <enumvalue id="group__nrf__bt__scan_ga3e89c0eebbc80f1458a47e11de9f52f3_1gga3e89c0eebbc80f1458a47e11de9f52f3aa8585a9c194323f999b43ceec23c7710" prot="public">
+          <name>BT_SCAN_TYPE_SCAN_PASSIVE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Active scanning. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__bt__scan_ga3e89c0eebbc80f1458a47e11de9f52f3_1gga3e89c0eebbc80f1458a47e11de9f52f3a8f9bf315072d98eed2ce7f76c2eb326f" prot="public">
+          <name>BT_SCAN_TYPE_SCAN_ACTIVE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Passive scanning. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Scan types. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="68" column="1" bodyfile="include/bluetooth/scan.h" bodystart="68" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1ga0dc9b7b2be9a0ce4d0ad93d88f399565" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_scan_filter_type</name>
+        <enumvalue id="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565a8baf63b387ed679c608f73952296b443" prot="public">
+          <name>BT_SCAN_FILTER_TYPE_NAME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Filter for names. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565a5ef77da97ee7953416cbfccb7fc75bb1" prot="public">
+          <name>BT_SCAN_FILTER_TYPE_SHORT_NAME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Filter for short names. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565ae789bbbc20951ed3c8415b011893aee1" prot="public">
+          <name>BT_SCAN_FILTER_TYPE_ADDR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Filter for addresses. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565ab059c2432821d465a5c3bd5b467ecddb" prot="public">
+          <name>BT_SCAN_FILTER_TYPE_UUID</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Filter for UUIDs. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565a14399ae2c466c4dd54e2f1060f80d60c" prot="public">
+          <name>BT_SCAN_FILTER_TYPE_APPEARANCE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Filter for appearances. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565afd7430ed5fc246963c053114f34c26e9" prot="public">
+          <name>BT_SCAN_FILTER_TYPE_MANUFACTURER_DATA</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Filter for manufacturer data. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Types of filters. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="78" column="1" bodyfile="include/bluetooth/scan.h" bodystart="78" bodyend="96"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nrf__bt__scan_ga9d503c79f44b6df1f9f1048f64e6c0df_1ga9d503c79f44b6df1f9f1048f64e6c0df" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_scan_cb_register</definition>
+        <argsstring>(struct bt_scan_cb *cb)</argsstring>
+        <name>bt_scan_cb_register</name>
+        <param>
+          <type>struct <ref refid="structbt__scan__cb" kindref="compound">bt_scan_cb</ref> *</type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Register scanning callbacks. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Register callbacks to monitor the state of scanning.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback struct. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="396" column="6" declfile="include/bluetooth/scan.h" declline="396" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_gad1960003a31eeac39f7405fc93a0e086_1gad1960003a31eeac39f7405fc93a0e086" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_scan_init</definition>
+        <argsstring>(const struct bt_scan_init_param *init)</argsstring>
+        <name>bt_scan_init</name>
+        <param>
+          <type>const struct <ref refid="structbt__scan__init__param" kindref="compound">bt_scan_init_param</ref> *</type>
+          <declname>init</declname>
+        </param>
+        <briefdescription>
+<para>Function for initializing the Scanning Module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">init</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to scanning module initialization structure. Can be initialized as NULL. If NULL, the parameters required to initialize the module are loaded from static configuration. If module is to establish the connection automatically, this must be initialized with the relevant data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="407" column="6" declfile="include/bluetooth/scan.h" declline="407" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_ga4d503246962d58d6aea9e815e0899e45_1ga4d503246962d58d6aea9e815e0899e45" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_scan_start</definition>
+        <argsstring>(enum bt_scan_type scan_type)</argsstring>
+        <name>bt_scan_start</name>
+        <param>
+          <type>enum <ref refid="group__nrf__bt__scan_ga3e89c0eebbc80f1458a47e11de9f52f3_1ga3e89c0eebbc80f1458a47e11de9f52f3" kindref="member">bt_scan_type</ref></type>
+          <declname>scan_type</declname>
+        </param>
+        <briefdescription>
+<para>Function for starting scanning. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function starts the scanning according to the configuration set during the initialization.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">scan_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The choice between active and passive scanning.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="419" column="5" declfile="include/bluetooth/scan.h" declline="419" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_gaab3258c0ad99c5ffaf6231170cc3a493_1gaab3258c0ad99c5ffaf6231170cc3a493" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_scan_stop</definition>
+        <argsstring>(void)</argsstring>
+        <name>bt_scan_stop</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for stopping scanning. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="423" column="5" declfile="include/bluetooth/scan.h" declline="423" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_ga494590dc24ed9aa1c057aee285fcb715_1ga494590dc24ed9aa1c057aee285fcb715" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_scan_update_init_conn_params</definition>
+        <argsstring>(struct bt_le_conn_param *new_conn_param)</argsstring>
+        <name>bt_scan_update_init_conn_params</name>
+        <param>
+          <type>struct bt_le_conn_param *</type>
+          <declname>new_conn_param</declname>
+        </param>
+        <briefdescription>
+<para>Function to update initial connection parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>The function should not be used when scanning is active.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">new_conn_param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New initial connection parameters. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="431" column="6" declfile="include/bluetooth/scan.h" declline="431" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_ga5a166ca0ea8a0223c56af9efb5f56f67_1ga5a166ca0ea8a0223c56af9efb5f56f67" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_scan_filter_enable</definition>
+        <argsstring>(uint8_t mode, bool match_all)</argsstring>
+        <name>bt_scan_filter_enable</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>mode</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>match_all</declname>
+        </param>
+        <briefdescription>
+<para>Function for enabling filtering. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The filters can be combined with each other. For example, you can enable one filter or several filters. For example, (BT_SCAN_NAME_FILTER | BT_SCAN_UUID_FILTER) enables UUID and name filters.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">mode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Filter mode: <ref refid="group__BT__SCAN__FILTER__MODE" kindref="compound">Filter modes</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">match_all</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If this flag is set, all types of enabled filters must be matched before generating <emphasis>BT_SCAN_EVT_FILTER_MATCH</emphasis> to the main application. Otherwise, it is enough to match one filter to trigger the filter match event.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="453" column="5" declfile="include/bluetooth/scan.h" declline="453" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_ga02c3257b0902ba840cf83872a098bdc8_1ga02c3257b0902ba840cf83872a098bdc8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_scan_filter_disable</definition>
+        <argsstring>(void)</argsstring>
+        <name>bt_scan_filter_disable</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for disabling filtering. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function disables all filters. Even if the automatic connection establishing is enabled, the connection will not be established with the first device found after this function is called. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="462" column="6" declfile="include/bluetooth/scan.h" declline="462" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_gab92cc96006fe08d039c69ed4b2ba2f46_1gab92cc96006fe08d039c69ed4b2ba2f46" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_scan_filter_status</definition>
+        <argsstring>(struct bt_filter_status *status)</argsstring>
+        <name>bt_scan_filter_status</name>
+        <param>
+          <type>struct <ref refid="structbt__filter__status" kindref="compound">bt_filter_status</ref> *</type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+<para>Function for getting filter status. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function returns the filter setting and whether it is enabled or disabled.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to Filter Status structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="474" column="5" declfile="include/bluetooth/scan.h" declline="474" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_gac0768a9a67ddd298b108c32c48eb769c_1gac0768a9a67ddd298b108c32c48eb769c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_scan_filter_add</definition>
+        <argsstring>(enum bt_scan_filter_type type, const void *data)</argsstring>
+        <name>bt_scan_filter_add</name>
+        <param>
+          <type>enum <ref refid="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1ga0dc9b7b2be9a0ce4d0ad93d88f399565" kindref="member">bt_scan_filter_type</ref></type>
+          <declname>type</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Function for adding any type of filter to the scanning. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function adds a new filter by type. The filter will be added if there is available space in this filter type array, and if the same filter has not already been set.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Filter type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to The filter data to add.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="489" column="5" declfile="include/bluetooth/scan.h" declline="489" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_gafad82ea488fd69e8aa17033536319c30_1gafad82ea488fd69e8aa17033536319c30" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_scan_filter_remove_all</definition>
+        <argsstring>(void)</argsstring>
+        <name>bt_scan_filter_remove_all</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for removing all set filters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The function removes all previously set filters.</para>
+<para><simplesect kind="note"><para>After using this function the filters are still enabled. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="498" column="6" declfile="include/bluetooth/scan.h" declline="498" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_ga4d1d8b9ae85bb4f3fe567e4599c29b47_1ga4d1d8b9ae85bb4f3fe567e4599c29b47" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_scan_params_set</definition>
+        <argsstring>(struct bt_le_scan_param *scan_param)</argsstring>
+        <name>bt_scan_params_set</name>
+        <param>
+          <type>struct bt_le_scan_param *</type>
+          <declname>scan_param</declname>
+        </param>
+        <briefdescription>
+<para>Function for changing the scanning parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Use this function to change scanning parameters. During the parameter change the scan is stopped. To resume scanning, use <ref refid="group__nrf__bt__scan_ga4d503246962d58d6aea9e815e0899e45_1ga4d503246962d58d6aea9e815e0899e45" kindref="member">bt_scan_start</ref>. Scanning parameters can be set to NULL. If so, the default static configuration is used.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">scan_param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to Scanning parameters. Can be initialized as NULL.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="516" column="5" declfile="include/bluetooth/scan.h" declline="516" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_gab844ca2c4d1010890cd8802df43796d5_1gab844ca2c4d1010890cd8802df43796d5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_scan_conn_attempts_filter_clear</definition>
+        <argsstring>(void)</argsstring>
+        <name>bt_scan_conn_attempts_filter_clear</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Clear connection attempts filter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Use this function to remove all entries from the connection attempts filter. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="523" column="6" declfile="include/bluetooth/scan.h" declline="523" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_ga8fa1fe8ec5635bdb6833125cf70bb8f5_1ga8fa1fe8ec5635bdb6833125cf70bb8f5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_scan_blocklist_device_add</definition>
+        <argsstring>(const bt_addr_le_t *addr)</argsstring>
+        <name>bt_scan_blocklist_device_add</name>
+        <param>
+          <type>const bt_addr_le_t *</type>
+          <declname>addr</declname>
+        </param>
+        <briefdescription>
+<para>Add a new device to the blocklist. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Use this function to add a device to the blocklist. Scanning module does not generate any event for the blocklist device or does not try to connect such devices.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">addr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Device address.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="537" column="5" declfile="include/bluetooth/scan.h" declline="537" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_ga9af099d21381896d402fffb958daf58f_1ga9af099d21381896d402fffb958daf58f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_scan_blocklist_clear</definition>
+        <argsstring>(void)</argsstring>
+        <name>bt_scan_blocklist_clear</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Clear the blocklist of the scanning module device. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Use this function to remove all entries from the blocklist. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="544" column="6" declfile="include/bluetooth/scan.h" declline="544" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2018<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_SCAN_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_SCAN_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/slist.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/bluetooth.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/uuid.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/conn.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="group__BT__SCAN__FILTER__MODE_gaf7f4b11364a5281c30408bf7a2bcc06f_1gaf7f4b11364a5281c30408bf7a2bcc06f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_SCAN_NAME_FILTER<sp/>0x01</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="group__BT__SCAN__FILTER__MODE_ga6cd8f8629d400bd59b8c214e9fe82d34_1ga6cd8f8629d400bd59b8c214e9fe82d34" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_SCAN_ADDR_FILTER<sp/>0x02</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="group__BT__SCAN__FILTER__MODE_gaf96c04e5993f212eff90553022ab3281_1gaf96c04e5993f212eff90553022ab3281" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_SCAN_UUID_FILTER<sp/>0x04</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="group__BT__SCAN__FILTER__MODE_ga03ecee69067f2835d2f55120e8a4d693_1ga03ecee69067f2835d2f55120e8a4d693" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_SCAN_APPEARANCE_FILTER<sp/>0x08</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="group__BT__SCAN__FILTER__MODE_ga34057c658ca53aff5150a375d83e2b59_1ga34057c658ca53aff5150a375d83e2b59" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_SCAN_SHORT_NAME_FILTER<sp/>0x10</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="group__BT__SCAN__FILTER__MODE_ga13e6bfc11ab4633bc5e157c2c35716b0_1ga13e6bfc11ab4633bc5e157c2c35716b0" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_SCAN_MANUFACTURER_DATA_FILTER<sp/>0x20</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="group__BT__SCAN__FILTER__MODE_ga6ab379ca716bc2eee99113ad0b40fb49_1ga6ab379ca716bc2eee99113ad0b40fb49" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_SCAN_ALL_FILTER<sp/>0x3F</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="group__nrf__bt__scan_ga3e89c0eebbc80f1458a47e11de9f52f3_1ga3e89c0eebbc80f1458a47e11de9f52f3" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__bt__scan_ga3e89c0eebbc80f1458a47e11de9f52f3_1ga3e89c0eebbc80f1458a47e11de9f52f3" kindref="member">bt_scan_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="70" refid="group__nrf__bt__scan_ga3e89c0eebbc80f1458a47e11de9f52f3_1gga3e89c0eebbc80f1458a47e11de9f52f3aa8585a9c194323f999b43ceec23c7710" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__bt__scan_ga3e89c0eebbc80f1458a47e11de9f52f3_1gga3e89c0eebbc80f1458a47e11de9f52f3aa8585a9c194323f999b43ceec23c7710" kindref="member">BT_SCAN_TYPE_SCAN_PASSIVE</ref>,</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__bt__scan_ga3e89c0eebbc80f1458a47e11de9f52f3_1gga3e89c0eebbc80f1458a47e11de9f52f3a8f9bf315072d98eed2ce7f76c2eb326f" kindref="member">BT_SCAN_TYPE_SCAN_ACTIVE</ref></highlight></codeline>
+<codeline lineno="74" refid="group__nrf__bt__scan_ga3e89c0eebbc80f1458a47e11de9f52f3_1gga3e89c0eebbc80f1458a47e11de9f52f3a8f9bf315072d98eed2ce7f76c2eb326f" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1ga0dc9b7b2be9a0ce4d0ad93d88f399565" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1ga0dc9b7b2be9a0ce4d0ad93d88f399565" kindref="member">bt_scan_filter_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="80" refid="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565a8baf63b387ed679c608f73952296b443" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565a8baf63b387ed679c608f73952296b443" kindref="member">BT_SCAN_FILTER_TYPE_NAME</ref>,</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83" refid="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565a5ef77da97ee7953416cbfccb7fc75bb1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565a5ef77da97ee7953416cbfccb7fc75bb1" kindref="member">BT_SCAN_FILTER_TYPE_SHORT_NAME</ref>,</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565ae789bbbc20951ed3c8415b011893aee1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565ae789bbbc20951ed3c8415b011893aee1" kindref="member">BT_SCAN_FILTER_TYPE_ADDR</ref>,</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89" refid="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565ab059c2432821d465a5c3bd5b467ecddb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565ab059c2432821d465a5c3bd5b467ecddb" kindref="member">BT_SCAN_FILTER_TYPE_UUID</ref>,</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565a14399ae2c466c4dd54e2f1060f80d60c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565a14399ae2c466c4dd54e2f1060f80d60c" kindref="member">BT_SCAN_FILTER_TYPE_APPEARANCE</ref>,</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565afd7430ed5fc246963c053114f34c26e9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565afd7430ed5fc246963c053114f34c26e9" kindref="member">BT_SCAN_FILTER_TYPE_MANUFACTURER_DATA</ref>,</highlight></codeline>
+<codeline lineno="96"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103" refid="structbt__scan__filter__info" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__filter__info" kindref="compound">bt_scan_filter_info</ref><sp/>{</highlight></codeline>
+<codeline lineno="105" refid="structbt__scan__filter__info_a7b189f0cb8aa9c0e3aa27a7e7705fa85_1a7b189f0cb8aa9c0e3aa27a7e7705fa85" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structbt__scan__filter__info_a7b189f0cb8aa9c0e3aa27a7e7705fa85_1a7b189f0cb8aa9c0e3aa27a7e7705fa85" kindref="member">enabled</ref>;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108" refid="structbt__scan__filter__info_aad4b85487ff462c9d01964b546405c99_1aad4b85487ff462c9d01964b546405c99" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__scan__filter__info_aad4b85487ff462c9d01964b546405c99_1aad4b85487ff462c9d01964b546405c99" kindref="member">cnt</ref>;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113" refid="structbt__filter__status" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__filter__status" kindref="compound">bt_filter_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="115" refid="structbt__filter__status_a4df847962fec7f020e5631c707ff7605_1a4df847962fec7f020e5631c707ff7605" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structbt__filter__status_a4df847962fec7f020e5631c707ff7605_1a4df847962fec7f020e5631c707ff7605" kindref="member">all_mode</ref>;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118" refid="structbt__filter__status_ae1b490d2654cc25b73f71baa225460a6_1ae1b490d2654cc25b73f71baa225460a6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__filter__info" kindref="compound">bt_scan_filter_info</ref><sp/><ref refid="structbt__filter__status_ae1b490d2654cc25b73f71baa225460a6_1ae1b490d2654cc25b73f71baa225460a6" kindref="member">name</ref>;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121" refid="structbt__filter__status_a7fde7cfb0dffc45de641a8404e6d0bd9_1a7fde7cfb0dffc45de641a8404e6d0bd9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__filter__info" kindref="compound">bt_scan_filter_info</ref><sp/><ref refid="structbt__filter__status_a7fde7cfb0dffc45de641a8404e6d0bd9_1a7fde7cfb0dffc45de641a8404e6d0bd9" kindref="member">short_name</ref>;</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124" refid="structbt__filter__status_a39649325612c87a37e4c407e2223112f_1a39649325612c87a37e4c407e2223112f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__filter__info" kindref="compound">bt_scan_filter_info</ref><sp/><ref refid="structbt__filter__status_a39649325612c87a37e4c407e2223112f_1a39649325612c87a37e4c407e2223112f" kindref="member">addr</ref>;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127" refid="structbt__filter__status_a4947cdb9a16038cb5b073ac9b89e0cbf_1a4947cdb9a16038cb5b073ac9b89e0cbf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__filter__info" kindref="compound">bt_scan_filter_info</ref><sp/><ref refid="structbt__filter__status_a4947cdb9a16038cb5b073ac9b89e0cbf_1a4947cdb9a16038cb5b073ac9b89e0cbf" kindref="member">uuid</ref>;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130" refid="structbt__filter__status_a3c69dd4e91988ce7fc00cc80e25e6f3f_1a3c69dd4e91988ce7fc00cc80e25e6f3f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__filter__info" kindref="compound">bt_scan_filter_info</ref><sp/><ref refid="structbt__filter__status_a3c69dd4e91988ce7fc00cc80e25e6f3f_1a3c69dd4e91988ce7fc00cc80e25e6f3f" kindref="member">appearance</ref>;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133" refid="structbt__filter__status_a0c37aa5839565723b28870528e0e36a0_1a0c37aa5839565723b28870528e0e36a0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__filter__info" kindref="compound">bt_scan_filter_info</ref><sp/><ref refid="structbt__filter__status_a0c37aa5839565723b28870528e0e36a0_1a0c37aa5839565723b28870528e0e36a0" kindref="member">manufacturer_data</ref>;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138" refid="structbt__scan__adv__info" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__adv__info" kindref="compound">bt_scan_adv_info</ref><sp/>{</highlight></codeline>
+<codeline lineno="142" refid="structbt__scan__adv__info_ab548476cd34e85e4a3b5e829be008874_1ab548476cd34e85e4a3b5e829be008874" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__scan__adv__info_ab548476cd34e85e4a3b5e829be008874_1ab548476cd34e85e4a3b5e829be008874" kindref="member">adv_type</ref>;</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145" refid="structbt__scan__adv__info_adc1abf4f254a3c7c4f83af3b55753089_1adc1abf4f254a3c7c4f83af3b55753089" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int8_t<sp/><ref refid="structbt__scan__adv__info_adc1abf4f254a3c7c4f83af3b55753089_1adc1abf4f254a3c7c4f83af3b55753089" kindref="member">rssi</ref>;</highlight></codeline>
+<codeline lineno="146"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150" refid="structbt__scan__short__name" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__short__name" kindref="compound">bt_scan_short_name</ref><sp/>{</highlight></codeline>
+<codeline lineno="152" refid="structbt__scan__short__name_a4e9da7b5d70d80061842d53dc3d53fcd_1a4e9da7b5d70d80061842d53dc3d53fcd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structbt__scan__short__name_a4e9da7b5d70d80061842d53dc3d53fcd_1a4e9da7b5d70d80061842d53dc3d53fcd" kindref="member">name</ref>;</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155" refid="structbt__scan__short__name_a431c90f10fc9a84d72f4ac5c04f96856_1a431c90f10fc9a84d72f4ac5c04f96856" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__scan__short__name_a431c90f10fc9a84d72f4ac5c04f96856_1a431c90f10fc9a84d72f4ac5c04f96856" kindref="member">min_len</ref>;</highlight></codeline>
+<codeline lineno="156"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160" refid="structbt__scan__manufacturer__data" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__manufacturer__data" kindref="compound">bt_scan_manufacturer_data</ref><sp/>{</highlight></codeline>
+<codeline lineno="162" refid="structbt__scan__manufacturer__data_a88d08782c038972a41713190838e0406_1a88d08782c038972a41713190838e0406" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*<ref refid="structbt__scan__manufacturer__data_a88d08782c038972a41713190838e0406_1a88d08782c038972a41713190838e0406" kindref="member">data</ref>;</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165" refid="structbt__scan__manufacturer__data_a448f8b548da256a8b248418fa0808446_1a448f8b548da256a8b248418fa0808446" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__scan__manufacturer__data_a448f8b548da256a8b248418fa0808446_1a448f8b548da256a8b248418fa0808446" kindref="member">data_len</ref>;</highlight></codeline>
+<codeline lineno="166"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170" refid="structbt__scan__init__param" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__init__param" kindref="compound">bt_scan_init_param</ref><sp/>{</highlight></codeline>
+<codeline lineno="175" refid="structbt__scan__init__param_aad34818a41033b73a6fbe4d02f007bcf_1aad34818a41033b73a6fbe4d02f007bcf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_le_scan_param<sp/>*<ref refid="structbt__scan__init__param_aad34818a41033b73a6fbe4d02f007bcf_1aad34818a41033b73a6fbe4d02f007bcf" kindref="member">scan_param</ref>;</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight></codeline>
+<codeline lineno="180" refid="structbt__scan__init__param_ab7d6888712c8c43227cf2f6b6a25499c_1ab7d6888712c8c43227cf2f6b6a25499c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structbt__scan__init__param_ab7d6888712c8c43227cf2f6b6a25499c_1ab7d6888712c8c43227cf2f6b6a25499c" kindref="member">connect_if_match</ref>;</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185" refid="structbt__scan__init__param_a9f4515dc08a48e320c59b19615538acd_1a9f4515dc08a48e320c59b19615538acd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_le_conn_param<sp/>*<ref refid="structbt__scan__init__param_a9f4515dc08a48e320c59b19615538acd_1a9f4515dc08a48e320c59b19615538acd" kindref="member">conn_param</ref>;</highlight></codeline>
+<codeline lineno="186"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight></codeline>
+<codeline lineno="191" refid="structbt__scan__name__filter__status" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__name__filter__status" kindref="compound">bt_scan_name_filter_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="193" refid="structbt__scan__name__filter__status_a775ce792e358c1186106a6c8b600ddc3_1a775ce792e358c1186106a6c8b600ddc3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structbt__scan__name__filter__status_a775ce792e358c1186106a6c8b600ddc3_1a775ce792e358c1186106a6c8b600ddc3" kindref="member">match</ref>;</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight></codeline>
+<codeline lineno="196" refid="structbt__scan__name__filter__status_ab6ffc732c781e64154db285dbe56f7db_1ab6ffc732c781e64154db285dbe56f7db" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structbt__scan__name__filter__status_ab6ffc732c781e64154db285dbe56f7db_1ab6ffc732c781e64154db285dbe56f7db" kindref="member">name</ref>;</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight></codeline>
+<codeline lineno="199" refid="structbt__scan__name__filter__status_a55b1111033614f680af5ef92ac12416f_1a55b1111033614f680af5ef92ac12416f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__scan__name__filter__status_a55b1111033614f680af5ef92ac12416f_1a55b1111033614f680af5ef92ac12416f" kindref="member">len</ref>;</highlight></codeline>
+<codeline lineno="200"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205" refid="structbt__scan__addr__filter__status" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__addr__filter__status" kindref="compound">bt_scan_addr_filter_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="207" refid="structbt__scan__addr__filter__status_a3b36d13e0f6e544e2e19887add3fc7dc_1a3b36d13e0f6e544e2e19887add3fc7dc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structbt__scan__addr__filter__status_a3b36d13e0f6e544e2e19887add3fc7dc_1a3b36d13e0f6e544e2e19887add3fc7dc" kindref="member">match</ref>;</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight></codeline>
+<codeline lineno="210" refid="structbt__scan__addr__filter__status_acb320acfafd89eb7e46e49d0e884af57_1acb320acfafd89eb7e46e49d0e884af57" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>bt_addr_le_t<sp/>*<ref refid="structbt__scan__addr__filter__status_acb320acfafd89eb7e46e49d0e884af57_1acb320acfafd89eb7e46e49d0e884af57" kindref="member">addr</ref>;</highlight></codeline>
+<codeline lineno="211"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight></codeline>
+<codeline lineno="216" refid="structbt__scan__uuid__filter__status" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__uuid__filter__status" kindref="compound">bt_scan_uuid_filter_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="218" refid="structbt__scan__uuid__filter__status_a8ae7cd648b85de9f45ae5e1ea8703585_1a8ae7cd648b85de9f45ae5e1ea8703585" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structbt__scan__uuid__filter__status_a8ae7cd648b85de9f45ae5e1ea8703585_1a8ae7cd648b85de9f45ae5e1ea8703585" kindref="member">match</ref>;</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"></highlight></codeline>
+<codeline lineno="221" refid="structbt__scan__uuid__filter__status_a433abd2a75f36d9f12385a5f72eab3b9_1a433abd2a75f36d9f12385a5f72eab3b9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_uuid<sp/>*<ref refid="structbt__scan__uuid__filter__status_a433abd2a75f36d9f12385a5f72eab3b9_1a433abd2a75f36d9f12385a5f72eab3b9" kindref="member">uuid</ref>[CONFIG_BT_SCAN_UUID_CNT];</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight></codeline>
+<codeline lineno="224" refid="structbt__scan__uuid__filter__status_a042189ddf82870cde8eead9011c847e1_1a042189ddf82870cde8eead9011c847e1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__scan__uuid__filter__status_a042189ddf82870cde8eead9011c847e1_1a042189ddf82870cde8eead9011c847e1" kindref="member">count</ref>;</highlight></codeline>
+<codeline lineno="225"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight></codeline>
+<codeline lineno="230" refid="structbt__scan__appearance__filter__status" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__appearance__filter__status" kindref="compound">bt_scan_appearance_filter_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="232" refid="structbt__scan__appearance__filter__status_ac42c2760e624774e19793b2d326cf605_1ac42c2760e624774e19793b2d326cf605" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structbt__scan__appearance__filter__status_ac42c2760e624774e19793b2d326cf605_1ac42c2760e624774e19793b2d326cf605" kindref="member">match</ref>;</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight></codeline>
+<codeline lineno="235" refid="structbt__scan__appearance__filter__status_a471bd38fb2c83f7dadf7ed7a4451fdd7_1a471bd38fb2c83f7dadf7ed7a4451fdd7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint16_t<sp/>*<ref refid="structbt__scan__appearance__filter__status_a471bd38fb2c83f7dadf7ed7a4451fdd7_1a471bd38fb2c83f7dadf7ed7a4451fdd7" kindref="member">appearance</ref>;</highlight></codeline>
+<codeline lineno="236"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"></highlight></codeline>
+<codeline lineno="241" refid="structbt__scan__manufacturer__data__filter__status" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__manufacturer__data__filter__status" kindref="compound">bt_scan_manufacturer_data_filter_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="243" refid="structbt__scan__manufacturer__data__filter__status_afd0f95690fcc3df0e23b5708cc09d046_1afd0f95690fcc3df0e23b5708cc09d046" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structbt__scan__manufacturer__data__filter__status_afd0f95690fcc3df0e23b5708cc09d046_1afd0f95690fcc3df0e23b5708cc09d046" kindref="member">match</ref>;</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"></highlight></codeline>
+<codeline lineno="246" refid="structbt__scan__manufacturer__data__filter__status_a5db1ede548ecf81c3a8b080bbd3d8e4c_1a5db1ede548ecf81c3a8b080bbd3d8e4c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*<ref refid="structbt__scan__manufacturer__data__filter__status_a5db1ede548ecf81c3a8b080bbd3d8e4c_1a5db1ede548ecf81c3a8b080bbd3d8e4c" kindref="member">data</ref>;</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"></highlight></codeline>
+<codeline lineno="249" refid="structbt__scan__manufacturer__data__filter__status_a27a03528285a36553e5f57a6f87b8568_1a27a03528285a36553e5f57a6f87b8568" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__scan__manufacturer__data__filter__status_a27a03528285a36553e5f57a6f87b8568_1a27a03528285a36553e5f57a6f87b8568" kindref="member">len</ref>;</highlight></codeline>
+<codeline lineno="250"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"></highlight></codeline>
+<codeline lineno="261" refid="structbt__scan__filter__match" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__filter__match" kindref="compound">bt_scan_filter_match</ref><sp/>{</highlight></codeline>
+<codeline lineno="263" refid="structbt__scan__filter__match_aadff77edc9b2d1b75ab04d0dd9610be1_1aadff77edc9b2d1b75ab04d0dd9610be1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__name__filter__status" kindref="compound">bt_scan_name_filter_status</ref><sp/><ref refid="structbt__scan__filter__match_aadff77edc9b2d1b75ab04d0dd9610be1_1aadff77edc9b2d1b75ab04d0dd9610be1" kindref="member">name</ref>;</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"></highlight></codeline>
+<codeline lineno="266" refid="structbt__scan__filter__match_a0d1256914109bc71d4ce492388c8c3eb_1a0d1256914109bc71d4ce492388c8c3eb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__name__filter__status" kindref="compound">bt_scan_name_filter_status</ref><sp/><ref refid="structbt__scan__filter__match_a0d1256914109bc71d4ce492388c8c3eb_1a0d1256914109bc71d4ce492388c8c3eb" kindref="member">short_name</ref>;</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"></highlight></codeline>
+<codeline lineno="269" refid="structbt__scan__filter__match_afe25026f496f7a5bdcdde05257531841_1afe25026f496f7a5bdcdde05257531841" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__addr__filter__status" kindref="compound">bt_scan_addr_filter_status</ref><sp/><ref refid="structbt__scan__filter__match_afe25026f496f7a5bdcdde05257531841_1afe25026f496f7a5bdcdde05257531841" kindref="member">addr</ref>;</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"></highlight></codeline>
+<codeline lineno="272" refid="structbt__scan__filter__match_a4f0491513a25f6e40e86d4947faf1e64_1a4f0491513a25f6e40e86d4947faf1e64" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__uuid__filter__status" kindref="compound">bt_scan_uuid_filter_status</ref><sp/><ref refid="structbt__scan__filter__match_a4f0491513a25f6e40e86d4947faf1e64_1a4f0491513a25f6e40e86d4947faf1e64" kindref="member">uuid</ref>;</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"></highlight></codeline>
+<codeline lineno="275" refid="structbt__scan__filter__match_a48bb6ac3c68f8798c6ac38e06e75fec1_1a48bb6ac3c68f8798c6ac38e06e75fec1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__appearance__filter__status" kindref="compound">bt_scan_appearance_filter_status</ref><sp/><ref refid="structbt__scan__filter__match_a48bb6ac3c68f8798c6ac38e06e75fec1_1a48bb6ac3c68f8798c6ac38e06e75fec1" kindref="member">appearance</ref>;</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"></highlight></codeline>
+<codeline lineno="278" refid="structbt__scan__filter__match_a793ad10e696db571df24333020209612_1a793ad10e696db571df24333020209612" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__manufacturer__data__filter__status" kindref="compound">bt_scan_manufacturer_data_filter_status</ref><sp/><ref refid="structbt__scan__filter__match_a793ad10e696db571df24333020209612_1a793ad10e696db571df24333020209612" kindref="member">manufacturer_data</ref>;</highlight></codeline>
+<codeline lineno="279"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"></highlight></codeline>
+<codeline lineno="284" refid="structbt__scan__device__info" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__device__info" kindref="compound">bt_scan_device_info</ref><sp/>{</highlight></codeline>
+<codeline lineno="286" refid="structbt__scan__device__info_a61783c6607da7f33f1f91624efa4f140_1a61783c6607da7f33f1f91624efa4f140" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_le_scan_recv_info<sp/>*<ref refid="structbt__scan__device__info_a61783c6607da7f33f1f91624efa4f140_1a61783c6607da7f33f1f91624efa4f140" kindref="member">recv_info</ref>;</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"></highlight></codeline>
+<codeline lineno="289" refid="structbt__scan__device__info_aaadb32a7185c95a4256a3239712e7ce4_1aaadb32a7185c95a4256a3239712e7ce4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_le_conn_param<sp/>*<ref refid="structbt__scan__device__info_aaadb32a7185c95a4256a3239712e7ce4_1aaadb32a7185c95a4256a3239712e7ce4" kindref="member">conn_param</ref>;</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"></highlight></codeline>
+<codeline lineno="296" refid="structbt__scan__device__info_a33a3d469a9f7da41f7bad8770ad1b0a4_1a33a3d469a9f7da41f7bad8770ad1b0a4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">net_buf_simple<sp/>*<ref refid="structbt__scan__device__info_a33a3d469a9f7da41f7bad8770ad1b0a4_1a33a3d469a9f7da41f7bad8770ad1b0a4" kindref="member">adv_data</ref>;</highlight></codeline>
+<codeline lineno="297"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"></highlight></codeline>
+<codeline lineno="311" refid="group__nrf__bt__scan_gaaecbaf4fa4218aa999b42844a8045ce9_1gaaecbaf4fa4218aa999b42844a8045ce9" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_SCAN_CB_INIT(_name,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="312"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>match_fun,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="313"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>no_match_fun,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="314"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>error_fun,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="315"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>connecting_fun)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="316"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>static<sp/>const<sp/>struct<sp/>cb_data<sp/>_name<sp/>##<sp/>_data<sp/>=<sp/>{<sp/><sp/>\</highlight></codeline>
+<codeline lineno="317"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.filter_match<sp/>=<sp/>match_fun,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="318"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.filter_no_match<sp/>=<sp/>no_match_fun,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="319"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.connecting_error<sp/>=<sp/>error_fun,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="320"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.connecting<sp/>=<sp/>connecting_fun,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="321"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="322"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>static<sp/>struct<sp/>bt_scan_cb<sp/>_name<sp/>=<sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="323"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.cb_addr<sp/>=<sp/>&amp;_name<sp/>##<sp/>_data,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="324"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="325"><highlight class="normal"></highlight></codeline>
+<codeline lineno="332" refid="structcb__data" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcb__data" kindref="compound">cb_data</ref><sp/>{</highlight></codeline>
+<codeline lineno="340" refid="structcb__data_a905d248d7e797ba3aeff263af6237004_1a905d248d7e797ba3aeff263af6237004" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structcb__data_a905d248d7e797ba3aeff263af6237004_1a905d248d7e797ba3aeff263af6237004" kindref="member">filter_match</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__device__info" kindref="compound">bt_scan_device_info</ref><sp/>*device_info,</highlight></codeline>
+<codeline lineno="341"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__filter__match" kindref="compound">bt_scan_filter_match</ref><sp/>*<ref refid="structcb__data_a905d248d7e797ba3aeff263af6237004_1a905d248d7e797ba3aeff263af6237004" kindref="member">filter_match</ref>,</highlight></codeline>
+<codeline lineno="342"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>connectable);</highlight></codeline>
+<codeline lineno="343"><highlight class="normal"></highlight></codeline>
+<codeline lineno="354" refid="structcb__data_ae6cc16c436bd3771fe5dfa30193655fd_1ae6cc16c436bd3771fe5dfa30193655fd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structcb__data_ae6cc16c436bd3771fe5dfa30193655fd_1ae6cc16c436bd3771fe5dfa30193655fd" kindref="member">filter_no_match</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__device__info" kindref="compound">bt_scan_device_info</ref><sp/>*device_info,</highlight></codeline>
+<codeline lineno="355"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>connectable);</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"></highlight></codeline>
+<codeline lineno="362" refid="structcb__data_af15465dbea8e95a02b14d454f1c9b685_1af15465dbea8e95a02b14d454f1c9b685" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structcb__data_af15465dbea8e95a02b14d454f1c9b685_1af15465dbea8e95a02b14d454f1c9b685" kindref="member">connecting_error</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__device__info" kindref="compound">bt_scan_device_info</ref><sp/>*device_info);</highlight></codeline>
+<codeline lineno="369" refid="structcb__data_aad8d7c4957e8345a8c324cee46aadd32_1aad8d7c4957e8345a8c324cee46aadd32" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structcb__data_aad8d7c4957e8345a8c324cee46aadd32_1aad8d7c4957e8345a8c324cee46aadd32" kindref="member">connecting</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__device__info" kindref="compound">bt_scan_device_info</ref><sp/>*device_info,</highlight></codeline>
+<codeline lineno="370"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_conn<sp/>*conn);</highlight></codeline>
+<codeline lineno="371"><highlight class="normal"></highlight></codeline>
+<codeline lineno="372"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="373"><highlight class="normal"></highlight></codeline>
+<codeline lineno="385" refid="structbt__scan__cb" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__scan__cb" kindref="compound">bt_scan_cb</ref><sp/>{</highlight></codeline>
+<codeline lineno="386" refid="structbt__scan__cb_a3fbce1e100e2dc185c76bbb955c5144a_1a3fbce1e100e2dc185c76bbb955c5144a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcb__data" kindref="compound">cb_data</ref><sp/>*<ref refid="structbt__scan__cb_a3fbce1e100e2dc185c76bbb955c5144a_1a3fbce1e100e2dc185c76bbb955c5144a" kindref="member">cb_addr</ref>;</highlight></codeline>
+<codeline lineno="387" refid="structbt__scan__cb_ab0fc4c49f700d03a26017826eeb06526_1ab0fc4c49f700d03a26017826eeb06526" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sys_snode_t<sp/><ref refid="structbt__scan__cb_ab0fc4c49f700d03a26017826eeb06526_1ab0fc4c49f700d03a26017826eeb06526" kindref="member">node</ref>;</highlight></codeline>
+<codeline lineno="388"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="389"><highlight class="normal"></highlight></codeline>
+<codeline lineno="396" refid="group__nrf__bt__scan_ga9d503c79f44b6df1f9f1048f64e6c0df_1ga9d503c79f44b6df1f9f1048f64e6c0df" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nrf__bt__scan_ga9d503c79f44b6df1f9f1048f64e6c0df_1ga9d503c79f44b6df1f9f1048f64e6c0df" kindref="member">bt_scan_cb_register</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__scan__cb" kindref="compound">bt_scan_cb</ref><sp/>*cb);</highlight></codeline>
+<codeline lineno="397"><highlight class="normal"></highlight></codeline>
+<codeline lineno="407" refid="group__nrf__bt__scan_gad1960003a31eeac39f7405fc93a0e086_1gad1960003a31eeac39f7405fc93a0e086" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nrf__bt__scan_gad1960003a31eeac39f7405fc93a0e086_1gad1960003a31eeac39f7405fc93a0e086" kindref="member">bt_scan_init</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__scan__init__param" kindref="compound">bt_scan_init_param</ref><sp/>*init);</highlight></codeline>
+<codeline lineno="408"><highlight class="normal"></highlight></codeline>
+<codeline lineno="419" refid="group__nrf__bt__scan_ga4d503246962d58d6aea9e815e0899e45_1ga4d503246962d58d6aea9e815e0899e45" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__bt__scan_ga4d503246962d58d6aea9e815e0899e45_1ga4d503246962d58d6aea9e815e0899e45" kindref="member">bt_scan_start</ref>(</highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__bt__scan_ga3e89c0eebbc80f1458a47e11de9f52f3_1ga3e89c0eebbc80f1458a47e11de9f52f3" kindref="member">bt_scan_type</ref><sp/>scan_type);</highlight></codeline>
+<codeline lineno="420"><highlight class="normal"></highlight></codeline>
+<codeline lineno="423" refid="group__nrf__bt__scan_gaab3258c0ad99c5ffaf6231170cc3a493_1gaab3258c0ad99c5ffaf6231170cc3a493" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__bt__scan_gaab3258c0ad99c5ffaf6231170cc3a493_1gaab3258c0ad99c5ffaf6231170cc3a493" kindref="member">bt_scan_stop</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="424"><highlight class="normal"></highlight></codeline>
+<codeline lineno="431" refid="group__nrf__bt__scan_ga494590dc24ed9aa1c057aee285fcb715_1ga494590dc24ed9aa1c057aee285fcb715" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nrf__bt__scan_ga494590dc24ed9aa1c057aee285fcb715_1ga494590dc24ed9aa1c057aee285fcb715" kindref="member">bt_scan_update_init_conn_params</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_le_conn_param<sp/>*new_conn_param);</highlight></codeline>
+<codeline lineno="432"><highlight class="normal"></highlight></codeline>
+<codeline lineno="433"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>CONFIG_BT_SCAN_FILTER_ENABLE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="434"><highlight class="normal"></highlight></codeline>
+<codeline lineno="453" refid="group__nrf__bt__scan_ga5a166ca0ea8a0223c56af9efb5f56f67_1ga5a166ca0ea8a0223c56af9efb5f56f67" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__bt__scan_ga5a166ca0ea8a0223c56af9efb5f56f67_1ga5a166ca0ea8a0223c56af9efb5f56f67" kindref="member">bt_scan_filter_enable</ref>(uint8_t<sp/>mode,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>match_all);</highlight></codeline>
+<codeline lineno="454"><highlight class="normal"></highlight></codeline>
+<codeline lineno="462" refid="group__nrf__bt__scan_ga02c3257b0902ba840cf83872a098bdc8_1ga02c3257b0902ba840cf83872a098bdc8" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nrf__bt__scan_ga02c3257b0902ba840cf83872a098bdc8_1ga02c3257b0902ba840cf83872a098bdc8" kindref="member">bt_scan_filter_disable</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="463"><highlight class="normal"></highlight></codeline>
+<codeline lineno="474" refid="group__nrf__bt__scan_gab92cc96006fe08d039c69ed4b2ba2f46_1gab92cc96006fe08d039c69ed4b2ba2f46" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__bt__scan_gab92cc96006fe08d039c69ed4b2ba2f46_1gab92cc96006fe08d039c69ed4b2ba2f46" kindref="member">bt_scan_filter_status</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__filter__status" kindref="compound">bt_filter_status</ref><sp/>*status);</highlight></codeline>
+<codeline lineno="475"><highlight class="normal"></highlight></codeline>
+<codeline lineno="489" refid="group__nrf__bt__scan_gac0768a9a67ddd298b108c32c48eb769c_1gac0768a9a67ddd298b108c32c48eb769c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__bt__scan_gac0768a9a67ddd298b108c32c48eb769c_1gac0768a9a67ddd298b108c32c48eb769c" kindref="member">bt_scan_filter_add</ref>(</highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1ga0dc9b7b2be9a0ce4d0ad93d88f399565" kindref="member">bt_scan_filter_type</ref><sp/>type,</highlight></codeline>
+<codeline lineno="490"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*data);</highlight></codeline>
+<codeline lineno="491"><highlight class="normal"></highlight></codeline>
+<codeline lineno="498" refid="group__nrf__bt__scan_gafad82ea488fd69e8aa17033536319c30_1gafad82ea488fd69e8aa17033536319c30" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nrf__bt__scan_gafad82ea488fd69e8aa17033536319c30_1gafad82ea488fd69e8aa17033536319c30" kindref="member">bt_scan_filter_remove_all</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="499"><highlight class="normal"></highlight></codeline>
+<codeline lineno="500"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>CONFIG_BT_SCAN_FILTER_ENABLE<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="501"><highlight class="normal"></highlight></codeline>
+<codeline lineno="516" refid="group__nrf__bt__scan_ga4d1d8b9ae85bb4f3fe567e4599c29b47_1ga4d1d8b9ae85bb4f3fe567e4599c29b47" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__bt__scan_ga4d1d8b9ae85bb4f3fe567e4599c29b47_1ga4d1d8b9ae85bb4f3fe567e4599c29b47" kindref="member">bt_scan_params_set</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_le_scan_param<sp/>*scan_param);</highlight></codeline>
+<codeline lineno="517"><highlight class="normal"></highlight></codeline>
+<codeline lineno="523" refid="group__nrf__bt__scan_gab844ca2c4d1010890cd8802df43796d5_1gab844ca2c4d1010890cd8802df43796d5" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nrf__bt__scan_gab844ca2c4d1010890cd8802df43796d5_1gab844ca2c4d1010890cd8802df43796d5" kindref="member">bt_scan_conn_attempts_filter_clear</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="524"><highlight class="normal"></highlight></codeline>
+<codeline lineno="537" refid="group__nrf__bt__scan_ga8fa1fe8ec5635bdb6833125cf70bb8f5_1ga8fa1fe8ec5635bdb6833125cf70bb8f5" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__bt__scan_ga8fa1fe8ec5635bdb6833125cf70bb8f5_1ga8fa1fe8ec5635bdb6833125cf70bb8f5" kindref="member">bt_scan_blocklist_device_add</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>bt_addr_le_t<sp/>*addr);</highlight></codeline>
+<codeline lineno="538"><highlight class="normal"></highlight></codeline>
+<codeline lineno="544" refid="group__nrf__bt__scan_ga9af099d21381896d402fffb958daf58f_1ga9af099d21381896d402fffb958daf58f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nrf__bt__scan_ga9af099d21381896d402fffb958daf58f_1ga9af099d21381896d402fffb958daf58f" kindref="member">bt_scan_blocklist_clear</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="545"><highlight class="normal"></highlight></codeline>
+<codeline lineno="546"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="547"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="548"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="549"><highlight class="normal"></highlight></codeline>
+<codeline lineno="550"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_SCAN_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="551"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/scan.h"/>
+  </compounddef>
+</doxygen>

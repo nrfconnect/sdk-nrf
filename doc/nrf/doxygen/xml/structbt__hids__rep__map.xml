@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__hids__rep__map" kind="struct" language="C++" prot="public">
+    <compoundname>bt_hids_rep_map</compoundname>
+    <includes refid="hids_8h" local="no">hids.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__hids__rep__map_ad9ad0fc9be3a77e402d45f4e5d1ebca9_1ad9ad0fc9be3a77e402d45f4e5d1ebca9" prot="public" static="no" mutable="no">
+        <type>uint8_t const  *</type>
+        <definition>uint8_t const* bt_hids_rep_map::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the map. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="340" column="15" bodyfile="include/bluetooth/services/hids.h" bodystart="340" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__rep__map_a3410a92d6540c02dfd7baa741913e50b_1a3410a92d6540c02dfd7baa741913e50b" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_rep_map::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of the map. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="343" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="343" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Report Map. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/hids.h" line="338" column="1" bodyfile="include/bluetooth/services/hids.h" bodystart="338" bodyend="344"/>
+    <listofallmembers>
+      <member refid="structbt__hids__rep__map_ad9ad0fc9be3a77e402d45f4e5d1ebca9_1ad9ad0fc9be3a77e402d45f4e5d1ebca9" prot="public" virt="non-virtual"><scope>bt_hids_rep_map</scope><name>data</name></member>
+      <member refid="structbt__hids__rep__map_a3410a92d6540c02dfd7baa741913e50b_1a3410a92d6540c02dfd7baa741913e50b" prot="public" virt="non-virtual"><scope>bt_hids_rep_map</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="fs__event_8h" kind="file" language="C++">
+    <compoundname>fs_event.h</compoundname>
+    <includes local="no">string.h</includes>
+    <includes local="no">toolchain/common.h</includes>
+    <includes refid="event__manager_8h" local="no">event_manager.h</includes>
+    <includes refid="event__manager__profiler_8h" local="no">event_manager_profiler.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/connectivity_bridge/src/events/fs_event.h</label>
+        <link refid="fs__event_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>event_manager.h</label>
+        <link refid="event__manager_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>event_manager_profiler.h</label>
+        <link refid="event__manager__profiler_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>profiler.h</label>
+        <link refid="profiler_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>event_manager_priv.h</label>
+      </node>
+      <node id="14">
+        <label>event_manager_profiler_priv.h</label>
+      </node>
+      <node id="9">
+        <label>logging/log_ctrl.h</label>
+      </node>
+      <node id="2">
+        <label>string.h</label>
+      </node>
+      <node id="8">
+        <label>sys/__assert.h</label>
+      </node>
+      <node id="7">
+        <label>sys/reboot.h</label>
+      </node>
+      <node id="12">
+        <label>sys/util.h</label>
+      </node>
+      <node id="3">
+        <label>toolchain/common.h</label>
+      </node>
+      <node id="5">
+        <label>zephyr.h</label>
+      </node>
+      <node id="6">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structfs__event" prot="public">fs_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__fs__event_ga652404abdb8687a02ef7787b60621510_1ga652404abdb8687a02ef7787b60621510" prot="public" static="no" strong="no">
+        <type></type>
+        <name>fs_request</name>
+        <enumvalue id="group__fs__event_ga652404abdb8687a02ef7787b60621510_1gga652404abdb8687a02ef7787b60621510a58dbeb4f330fa0068821689a8b5c5707" prot="public">
+          <name>FS_REQUEST_CREATE_FILE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__fs__event_ga652404abdb8687a02ef7787b60621510_1gga652404abdb8687a02ef7787b60621510a6bf5cb5def0454a71aea331b1b761577" prot="public">
+          <name>FS_REQUEST_PARSE_FILE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/fs_event.h" line="26" column="1" bodyfile="applications/connectivity_bridge/src/events/fs_event.h" bodystart="26" bodyend="29"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__fs__event_ga95506ced5e3e24865023eb254ca9f977_1ga95506ced5e3e24865023eb254ca9f977" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int fs_event_helper_file_write</definition>
+        <argsstring>(const char *mnt_point, const char *file_path, char const *file_contents, size_t contents_len)</argsstring>
+        <name>fs_event_helper_file_write</name>
+        <param>
+          <type>const char *</type>
+          <declname>mnt_point</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>file_path</declname>
+        </param>
+        <param>
+          <type>char const *</type>
+          <declname>file_contents</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>contents_len</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/fs_event.h" line="41" column="5" declfile="applications/connectivity_bridge/src/events/fs_event.h" declline="41" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_FS_EVENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_FS_EVENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;toolchain/common.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="event__manager_8h" kindref="compound">event_manager.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="event__manager__profiler_8h" kindref="compound">event_manager_profiler.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="group__fs__event_ga652404abdb8687a02ef7787b60621510_1ga652404abdb8687a02ef7787b60621510" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__fs__event_ga652404abdb8687a02ef7787b60621510_1ga652404abdb8687a02ef7787b60621510" kindref="member">fs_request</ref><sp/>{</highlight></codeline>
+<codeline lineno="27" refid="group__fs__event_ga652404abdb8687a02ef7787b60621510_1gga652404abdb8687a02ef7787b60621510a58dbeb4f330fa0068821689a8b5c5707" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__fs__event_ga652404abdb8687a02ef7787b60621510_1gga652404abdb8687a02ef7787b60621510a58dbeb4f330fa0068821689a8b5c5707" kindref="member">FS_REQUEST_CREATE_FILE</ref>,</highlight></codeline>
+<codeline lineno="28" refid="group__fs__event_ga652404abdb8687a02ef7787b60621510_1gga652404abdb8687a02ef7787b60621510a6bf5cb5def0454a71aea331b1b761577" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__fs__event_ga652404abdb8687a02ef7787b60621510_1gga652404abdb8687a02ef7787b60621510a6bf5cb5def0454a71aea331b1b761577" kindref="member">FS_REQUEST_PARSE_FILE</ref>,<sp/></highlight><highlight class="comment">/*<sp/>Triggered<sp/>to<sp/>detect<sp/>user<sp/>changes<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="structfs__event" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structfs__event" kindref="compound">fs_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="33" refid="structfs__event_ae31a749bfcf08bbb1c1d77103b65b996_1ae31a749bfcf08bbb1c1d77103b65b996" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structevent__header" kindref="compound">event_header</ref><sp/><ref refid="structfs__event_ae31a749bfcf08bbb1c1d77103b65b996_1ae31a749bfcf08bbb1c1d77103b65b996" kindref="member">header</ref>;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="structfs__event_aa62fb7d38b62b39aa53a36c0926468f2_1aa62fb7d38b62b39aa53a36c0926468f2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__fs__event_ga652404abdb8687a02ef7787b60621510_1ga652404abdb8687a02ef7787b60621510" kindref="member">fs_request</ref><sp/><ref refid="structfs__event_aa62fb7d38b62b39aa53a36c0926468f2_1aa62fb7d38b62b39aa53a36c0926468f2" kindref="member">req</ref>;</highlight></codeline>
+<codeline lineno="36" refid="structfs__event_a0753645b1ef8e060cedb4660102cf14e_1a0753645b1ef8e060cedb4660102cf14e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structfs__event_a0753645b1ef8e060cedb4660102cf14e_1a0753645b1ef8e060cedb4660102cf14e" kindref="member">mnt_point</ref>;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><ref refid="group__event__manager_gade0652b21cddf1a6b4d58e668b402caa_1gade0652b21cddf1a6b4d58e668b402caa" kindref="member">EVENT_TYPE_DECLARE</ref>(<ref refid="structfs__event" kindref="compound">fs_event</ref>);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="group__fs__event_ga95506ced5e3e24865023eb254ca9f977_1ga95506ced5e3e24865023eb254ca9f977" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__fs__event_ga95506ced5e3e24865023eb254ca9f977_1ga95506ced5e3e24865023eb254ca9f977" kindref="member">fs_event_helper_file_write</ref>(</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*mnt_point,</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*file_path,</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>*file_contents,</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>contents_len);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_FS_EVENT_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/connectivity_bridge/src/events/fs_event.h"/>
+  </compounddef>
+</doxygen>

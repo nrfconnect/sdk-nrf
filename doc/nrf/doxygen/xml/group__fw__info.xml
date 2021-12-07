@@ -1,0 +1,360 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__fw__info" kind="group">
+    <compoundname>fw_info</compoundname>
+    <title>Firmware info structure</title>
+    <innerclass refid="structfw__info__ext__api" prot="public">fw_info_ext_api</innerclass>
+    <innerclass refid="structfw__info__ext__api__request" prot="public">fw_info_ext_api_request</innerclass>
+    <innerclass refid="structfw__info" prot="public">fw_info</innerclass>
+    <innerclass refid="structext__api__provide__ext__api" prot="public">ext_api_provide_ext_api</innerclass>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__fw__info_1ga19e9a54005602c6d04fe25b1f0980500" prot="public" static="no">
+        <type>bool(*</type>
+        <definition>typedef bool(* fw_info_ext_api_provide_t) (const struct fw_info *fwinfo, bool provide)</definition>
+        <argsstring>)(const struct fw_info *fwinfo, bool provide)</argsstring>
+        <name>fw_info_ext_api_provide_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="379" column="9" bodyfile="include/fw_info.h" bodystart="379" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__fw__info_1ga0f1288a42c7aab29f7c9b878b9f853d0" prot="public" static="yes" mutable="no">
+        <type>const uint32_t</type>
+        <definition>const uint32_t fw_info_allowed_offsets[]</definition>
+        <argsstring>[]</argsstring>
+        <name>fw_info_allowed_offsets</name>
+        <initializer>= {
+					 0x0 ,  0x200 ,
+					 0x400 ,  0x800 ,
+					 0x1000 }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="317" column="23" bodyfile="include/fw_info.h" bodystart="317" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__fw__info_1ga761612fb99f6551fe834cd8510770d5c" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const struct <ref refid="structfw__info__ext__api" kindref="compound">fw_info_ext_api</ref> *</type>
+        <definition>static const struct fw_info_ext_api * fw_info_ext_api_check</definition>
+        <argsstring>(uint32_t ext_api_addr)</argsstring>
+        <name>fw_info_ext_api_check</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>ext_api_addr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="110" column="42" bodyfile="include/fw_info.h" bodystart="110" bodyend="122"/>
+      </memberdef>
+      <memberdef kind="function" id="group__fw__info_1gaec656511bd7ed114452dce42f3ade791" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const struct <ref refid="structfw__info" kindref="compound">fw_info</ref> *</type>
+        <definition>static const struct fw_info * fw_info_check</definition>
+        <argsstring>(uint32_t fw_info_addr)</argsstring>
+        <name>fw_info_check</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>fw_info_addr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="275" column="34" bodyfile="include/fw_info.h" bodystart="275" bodyend="286"/>
+      </memberdef>
+      <memberdef kind="function" id="group__fw__info_1gaafd6dbc9bb757c6ae6d9144f05a1a85e" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const struct <ref refid="structfw__info" kindref="compound">fw_info</ref> *</type>
+        <definition>static const struct fw_info * fw_info_find</definition>
+        <argsstring>(uint32_t firmware_address)</argsstring>
+        <name>fw_info_find</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>firmware_address</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Search for the firmware_info structure inside the firmware.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">firmware_address</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The start of the image. The function will search at the allowed offsets from firmware_address.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A pointer to the <ref refid="structfw__info" kindref="compound">fw_info</ref> struct if found. Otherwise NULL. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="348" column="34" bodyfile="include/fw_info.h" bodystart="348" bodyend="360"/>
+      </memberdef>
+      <memberdef kind="function" id="group__fw__info_1ga21f6b55232bf46b901a0f7c99035ccd4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool fw_info_ext_api_provide</definition>
+        <argsstring>(const struct fw_info *fwinfo, bool provide)</argsstring>
+        <name>fw_info_ext_api_provide</name>
+        <param>
+          <type>const struct <ref refid="structfw__info" kindref="compound">fw_info</ref> *</type>
+          <declname>fwinfo</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>provide</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Expose EXT_APIs to another firmware</para>
+<para>Populate the other firmware&apos;s <computeroutput>ext_api_in</computeroutput> with EXT_APIs from other images.</para>
+<para><simplesect kind="note"><para>This is should be called immediately before booting the other firmware since it will likely corrupt the memory of the running firmware.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">fwinfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the other firmware&apos;s information structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">provide</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, populate ext_api_in. If false, only check whether requirements can be satisfied.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Whether requirements could be satisified. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="377" column="6" declfile="include/fw_info.h" declline="377" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__fw__info_1ga8e6f107ad53cf5b9aefb60e66edfab3b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void fw_info_invalidate</definition>
+        <argsstring>(const struct fw_info *fw_info)</argsstring>
+        <name>fw_info_invalidate</name>
+        <param>
+          <type>const struct <ref refid="structfw__info" kindref="compound">fw_info</ref> *</type>
+          <declname>fw_info</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Invalidate an image by manipulating its <ref refid="structfw__info" kindref="compound">fw_info</ref>.</para>
+<para>Invalidation happens by setting the <computeroutput>valid</computeroutput> value to INVALID_VAL.</para>
+<para><simplesect kind="note"><para>This function needs to have <verbatim>embed:rst:inline :kconfig:`CONFIG_NRFX_NVMC` </verbatim> enabled.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in"><ref refid="structfw__info" kindref="compound">fw_info</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The info structure to invalidate. This memory will be modified directly in flash. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="391" column="6" declfile="include/fw_info.h" declline="391" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__fw__info_1ga05e112c3c885437430f4c8908e696a0c" prot="public" static="no">
+        <name>MAGIC_LEN_WORDS</name>
+        <initializer>(CONFIG_FW_INFO_MAGIC_LEN / sizeof(uint32_t))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="29" column="9" bodyfile="include/fw_info.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__fw__info_1ga0149018d3260448bc647c9a3fe55bb84" prot="public" static="no">
+        <name>EXT_API</name>
+        <param><defname>ext_api_name</defname></param>
+        <param><defname>type</defname></param>
+        <param><defname>name</defname></param>
+        <initializer>	Z_GENERIC_SECTION(.ext_apis) \
+	const uint8_t _CONCAT(name, _ext_api_counter) = 0xFF; \
+	BUILD_ASSERT((sizeof(type) % 4) == 0, \
+			&quot;Size of EXT_API &quot; #type &quot; is not word-aligned&quot;); \
+	struct __packed _CONCAT(name, _t) \
+	{ \
+		struct <ref refid="structfw__info__ext__api" kindref="compound">fw_info_ext_api</ref> header; \
+		type ext_api; \
+	}; \
+	Z_GENERIC_SECTION(.firmware_info.1) __attribute__((used)) \
+	const struct _CONCAT(name, _t) name = { \
+	.header = {\
+		.magic = {EXT_API_MAGIC}, \
+		.ext_api_id = CONFIG_ ## ext_api_name ## _EXT_API_ID, \
+		.ext_api_flags = CONFIG_ ## ext_api_name ## _EXT_API_FLAGS, \
+		.ext_api_version = CONFIG_ ## ext_api_name ## _EXT_API_VER, \
+		.ext_api_len = sizeof(struct __packed _CONCAT(name, _t)), \
+	}, \
+	.ext_api</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="84" column="9" bodyfile="include/fw_info.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__fw__info_1gae8a7197716c16b537d6fb822649a4da8" prot="public" static="no">
+        <name>EXT_API_REQ</name>
+        <param><defname>name</defname></param>
+        <param><defname>req</defname></param>
+        <param><defname>type</defname></param>
+        <param><defname>var_name</defname></param>
+        <initializer>	Z_GENERIC_SECTION(.ext_apis_req) \
+	const uint8_t _CONCAT(var_name, _ext_api_req_counter) = 0xFF; \
+	__noinit const struct __packed \
+	{ \
+		struct <ref refid="structfw__info__ext__api" kindref="compound">fw_info_ext_api</ref> header; \
+		type ext_api; \
+	} *var_name; \
+	Z_GENERIC_SECTION(.firmware_info.2) \
+	__attribute__((used)) \
+	const struct <ref refid="structfw__info__ext__api__request" kindref="compound">fw_info_ext_api_request</ref> _CONCAT(var_name, _req) = \
+	{ \
+		.request = {\
+			.magic = {EXT_API_MAGIC}, \
+			.ext_api_id = CONFIG_ ## name ## _EXT_API_ID, \
+			.ext_api_flags = CONFIG_ ## name ## _EXT_API_FLAGS, \
+			.ext_api_version = CONFIG_ ## name ## _EXT_API_VER, \
+			.ext_api_len = sizeof(struct <ref refid="structfw__info__ext__api__request" kindref="compound">fw_info_ext_api_request</ref>), \
+		}, \
+		.ext_api_max_version = CONFIG_ ## name ## _EXT_API_MAX_VER, \
+		.required = req, \
+		.ext_api = (void *) &amp;var_name, \
+	}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="174" column="9" bodyfile="include/fw_info.h" bodystart="174" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__fw__info_1ga0f75431e4c212a40a5a59dae399cd99a" prot="public" static="no">
+        <name>FW_INFO_OFFSET0</name>
+        <initializer>0x0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="290" column="9" bodyfile="include/fw_info.h" bodystart="290" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__fw__info_1ga3f2d0cca8acec7a0b7f207d7d62ce68c" prot="public" static="no">
+        <name>FW_INFO_OFFSET1</name>
+        <initializer>0x200</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="291" column="9" bodyfile="include/fw_info.h" bodystart="291" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__fw__info_1ga0bb442cc1e41b63f586aafee75aebf78" prot="public" static="no">
+        <name>FW_INFO_OFFSET2</name>
+        <initializer>0x400</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="292" column="9" bodyfile="include/fw_info.h" bodystart="292" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__fw__info_1ga9b0e8c61448141e1b8c32086d792fef1" prot="public" static="no">
+        <name>FW_INFO_OFFSET3</name>
+        <initializer>0x800</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="293" column="9" bodyfile="include/fw_info.h" bodystart="293" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__fw__info_1gaa994161baf1daf2abc34f0d3a3ad9600" prot="public" static="no">
+        <name>FW_INFO_OFFSET4</name>
+        <initializer>0x1000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="294" column="9" bodyfile="include/fw_info.h" bodystart="294" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__fw__info_1gada889dc8a81a2da32c7622751bbdbcbe" prot="public" static="no">
+        <name>FW_INFO_OFFSET_COUNT</name>
+        <initializer>5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="295" column="9" bodyfile="include/fw_info.h" bodystart="295" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__fw__info_1ga560b86f362bb7de199d1b64ec0740b8c" prot="public" static="no">
+        <name>FW_INFO_VECTOR_OFFSET</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="308" column="11" bodyfile="include/fw_info.h" bodystart="308" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__fw__info_1ga4c8da29991a7ea435bed730f48f61278" prot="public" static="no">
+        <name>FW_INFO_CURRENT_OFFSET</name>
+        <initializer>(CONFIG_FW_INFO_OFFSET + <ref refid="group__fw__info_ga560b86f362bb7de199d1b64ec0740b8c_1ga560b86f362bb7de199d1b64ec0740b8c" kindref="member">FW_INFO_VECTOR_OFFSET</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="314" column="9" bodyfile="include/fw_info.h" bodystart="314" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

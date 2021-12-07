@@ -1,0 +1,219 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="gen__loc_8h" kind="file" language="C++">
+    <compoundname>gen_loc.h</compoundname>
+    <includes local="no">bluetooth/mesh.h</includes>
+    <includedby refid="gen__loc__cli_8h" local="no">include/bluetooth/mesh/gen_loc_cli.h</includedby>
+    <includedby refid="gen__loc__srv_8h" local="no">include/bluetooth/mesh/gen_loc_srv.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/bluetooth/mesh/gen_loc.h</label>
+        <link refid="gen__loc_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bluetooth/mesh.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>include/bluetooth/mesh/gen_loc.h</label>
+        <link refid="gen__loc_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/bluetooth/mesh/gen_loc_cli.h</label>
+        <link refid="gen__loc__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>include/bluetooth/mesh/gen_loc_srv.h</label>
+        <link refid="gen__loc__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>include/bluetooth/mesh/models.h</label>
+        <link refid="models_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>include/bluetooth/mesh/vnd/silvair_enocean_srv.h</label>
+        <link refid="silvair__enocean__srv_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structbt__mesh__loc__global" prot="public">bt_mesh_loc_global</innerclass>
+    <innerclass refid="structbt__mesh__loc__local" prot="public">bt_mesh_loc_local</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__loc__altitude__defines_ga8d80d41b6bb3e81f835ab2fa11e50969_1ga8d80d41b6bb3e81f835ab2fa11e50969" prot="public" static="no">
+        <name>BT_MESH_LOC_ALTITUDE_MAX</name>
+        <initializer>32765</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Highest altitude that can be represented </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="29" column="9" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__loc__altitude__defines_ga9e4faec23612dc45e72c4ebea2c7e66a_1ga9e4faec23612dc45e72c4ebea2c7e66a" prot="public" static="no">
+        <name>BT_MESH_LOC_ALTITUDE_UNKNOWN</name>
+        <initializer>0x7fff</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Altitude is unknown or not configured. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="31" column="9" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__loc__altitude__defines_ga44bdd63cdb1af283ddc22040a1652528_1ga44bdd63cdb1af283ddc22040a1652528" prot="public" static="no">
+        <name>BT_MESH_LOC_ALTITUDE_TOO_LARGE</name>
+        <initializer>0x7ffe</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Altitude is out of bounds. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="33" column="9" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__loc__floor__number__defines_gaed3dc8c78d4b33615bad10cdd3d6142e_1gaed3dc8c78d4b33615bad10cdd3d6142e" prot="public" static="no">
+        <name>BT_MESH_LOC_FLOOR_NUMBER_MIN</name>
+        <initializer>(-20)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Lowest floor number that can be represented. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="42" column="9" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__loc__floor__number__defines_gab55be7523d221616c27b560f7730ec15_1gab55be7523d221616c27b560f7730ec15" prot="public" static="no">
+        <name>BT_MESH_LOC_FLOOR_NUMBER_MAX</name>
+        <initializer>232</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Highest floor number that can be represented. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="44" column="9" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__loc__floor__number__defines_gae6d749dfcdf34afa89ae437ebec53f7a_1gae6d749dfcdf34afa89ae437ebec53f7a" prot="public" static="no">
+        <name>BT_MESH_LOC_FLOOR_NUMBER_GROUND_FLOOR_0</name>
+        <initializer>0xfc</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Ground floor (where the ground floor is referred to as floor 0) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="46" column="9" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__loc__floor__number__defines_ga4df62ea8fd95bd5d7b41ea69cd98c23a_1ga4df62ea8fd95bd5d7b41ea69cd98c23a" prot="public" static="no">
+        <name>BT_MESH_LOC_FLOOR_NUMBER_GROUND_FLOOR_1</name>
+        <initializer>0xfd</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Ground floor (where the ground floor is referred to as floor 1) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="48" column="9" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__loc__floor__number__defines_ga61d806b2872354509dd8f258a67639ef_1ga61d806b2872354509dd8f258a67639ef" prot="public" static="no">
+        <name>BT_MESH_LOC_FLOOR_NUMBER_UNKNOWN</name>
+        <initializer>0xff</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Unknown or unconfigured floor number. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="50" column="9" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_MESH_GEN_LOC_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_GEN_LOC_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/mesh.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="group__bt__mesh__loc__altitude__defines_ga8d80d41b6bb3e81f835ab2fa11e50969_1ga8d80d41b6bb3e81f835ab2fa11e50969" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LOC_ALTITUDE_MAX<sp/>32765</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="group__bt__mesh__loc__altitude__defines_ga9e4faec23612dc45e72c4ebea2c7e66a_1ga9e4faec23612dc45e72c4ebea2c7e66a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LOC_ALTITUDE_UNKNOWN<sp/>0x7fff</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="group__bt__mesh__loc__altitude__defines_ga44bdd63cdb1af283ddc22040a1652528_1ga44bdd63cdb1af283ddc22040a1652528" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LOC_ALTITUDE_TOO_LARGE<sp/>0x7ffe</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="group__bt__mesh__loc__floor__number__defines_gaed3dc8c78d4b33615bad10cdd3d6142e_1gaed3dc8c78d4b33615bad10cdd3d6142e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LOC_FLOOR_NUMBER_MIN<sp/>(-20)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="group__bt__mesh__loc__floor__number__defines_gab55be7523d221616c27b560f7730ec15_1gab55be7523d221616c27b560f7730ec15" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LOC_FLOOR_NUMBER_MAX<sp/>232</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="group__bt__mesh__loc__floor__number__defines_gae6d749dfcdf34afa89ae437ebec53f7a_1gae6d749dfcdf34afa89ae437ebec53f7a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LOC_FLOOR_NUMBER_GROUND_FLOOR_0<sp/>0xfc</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="group__bt__mesh__loc__floor__number__defines_ga4df62ea8fd95bd5d7b41ea69cd98c23a_1ga4df62ea8fd95bd5d7b41ea69cd98c23a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LOC_FLOOR_NUMBER_GROUND_FLOOR_1<sp/>0xfd</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="group__bt__mesh__loc__floor__number__defines_ga61d806b2872354509dd8f258a67639ef_1ga61d806b2872354509dd8f258a67639ef" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LOC_FLOOR_NUMBER_UNKNOWN<sp/>0xff</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="structbt__mesh__loc__global" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__loc__global" kindref="compound">bt_mesh_loc_global</ref><sp/>{</highlight></codeline>
+<codeline lineno="56" refid="structbt__mesh__loc__global_a8a65aee98d24d940d03601b9902c041f_1a8a65aee98d24d940d03601b9902c041f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__loc__global_a8a65aee98d24d940d03601b9902c041f_1a8a65aee98d24d940d03601b9902c041f" kindref="member">latitude</ref>;</highlight></codeline>
+<codeline lineno="58" refid="structbt__mesh__loc__global_a350d5d2fa66f6deb3b63a2e3b5ecfc16_1a350d5d2fa66f6deb3b63a2e3b5ecfc16" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__loc__global_a350d5d2fa66f6deb3b63a2e3b5ecfc16_1a350d5d2fa66f6deb3b63a2e3b5ecfc16" kindref="member">longitude</ref>;</highlight></codeline>
+<codeline lineno="63" refid="structbt__mesh__loc__global_a7da79fee65bd7b9180ca0c9dc3fce727_1a7da79fee65bd7b9180ca0c9dc3fce727" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structbt__mesh__loc__global_a7da79fee65bd7b9180ca0c9dc3fce727_1a7da79fee65bd7b9180ca0c9dc3fce727" kindref="member">altitude</ref>;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="structbt__mesh__loc__local" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__loc__local" kindref="compound">bt_mesh_loc_local</ref><sp/>{</highlight></codeline>
+<codeline lineno="69" refid="structbt__mesh__loc__local_af359cf9d35c326d847505904344587a4_1af359cf9d35c326d847505904344587a4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structbt__mesh__loc__local_af359cf9d35c326d847505904344587a4_1af359cf9d35c326d847505904344587a4" kindref="member">north</ref>;</highlight></codeline>
+<codeline lineno="71" refid="structbt__mesh__loc__local_af0df07b45cbdb2e7f5e755345dfe6390_1af0df07b45cbdb2e7f5e755345dfe6390" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structbt__mesh__loc__local_af0df07b45cbdb2e7f5e755345dfe6390_1af0df07b45cbdb2e7f5e755345dfe6390" kindref="member">east</ref>;</highlight></codeline>
+<codeline lineno="73" refid="structbt__mesh__loc__local_a055a1f7ee1c32405d1fb5ca502bd8154_1a055a1f7ee1c32405d1fb5ca502bd8154" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structbt__mesh__loc__local_a055a1f7ee1c32405d1fb5ca502bd8154_1a055a1f7ee1c32405d1fb5ca502bd8154" kindref="member">altitude</ref>;</highlight></codeline>
+<codeline lineno="75" refid="structbt__mesh__loc__local_aa9c0fb7e24956dff21fc08e248249939_1aa9c0fb7e24956dff21fc08e248249939" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structbt__mesh__loc__local_aa9c0fb7e24956dff21fc08e248249939_1aa9c0fb7e24956dff21fc08e248249939" kindref="member">floor_number</ref>;</highlight></codeline>
+<codeline lineno="77" refid="structbt__mesh__loc__local_a30b45031c26807eafa27aa644be0e48d_1a30b45031c26807eafa27aa644be0e48d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__loc__local_a30b45031c26807eafa27aa644be0e48d_1a30b45031c26807eafa27aa644be0e48d" kindref="member">is_mobile</ref>;</highlight></codeline>
+<codeline lineno="81" refid="structbt__mesh__loc__local_acd481c50ed9c51fc8b1f9ddefe6c7bb5_1acd481c50ed9c51fc8b1f9ddefe6c7bb5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int32_t<sp/><ref refid="structbt__mesh__loc__local_acd481c50ed9c51fc8b1f9ddefe6c7bb5_1acd481c50ed9c51fc8b1f9ddefe6c7bb5" kindref="member">time_delta</ref>;</highlight></codeline>
+<codeline lineno="83" refid="structbt__mesh__loc__local_a4c6b9691b6e8bbee002c2c0107e579dc_1a4c6b9691b6e8bbee002c2c0107e579dc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__mesh__loc__local_a4c6b9691b6e8bbee002c2c0107e579dc_1a4c6b9691b6e8bbee002c2c0107e579dc" kindref="member">precision_mm</ref>;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LOC_OP_GLOBAL_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x25)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LOC_OP_GLOBAL_STATUS<sp/>BT_MESH_MODEL_OP_1(0x40)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LOC_OP_GLOBAL_SET<sp/>BT_MESH_MODEL_OP_1(0x41)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LOC_OP_GLOBAL_SET_UNACK<sp/>BT_MESH_MODEL_OP_1(0x42)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LOC_OP_LOCAL_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x26)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LOC_OP_LOCAL_STATUS<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x27)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LOC_OP_LOCAL_SET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x28)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LOC_OP_LOCAL_SET_UNACK<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x29)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LOC_MSG_LEN_GLOBAL_GET<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LOC_MSG_LEN_GLOBAL_STATUS<sp/>10</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LOC_MSG_LEN_GLOBAL_SET<sp/>10</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LOC_MSG_LEN_LOCAL_GET<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LOC_MSG_LEN_LOCAL_STATUS<sp/>9</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LOC_MSG_LEN_LOCAL_SET<sp/>9</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_MESH_GEN_LOC_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/mesh/gen_loc.h"/>
+  </compounddef>
+</doxygen>

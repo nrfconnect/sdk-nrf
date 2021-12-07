@@ -1,0 +1,622 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__ndef__ch__record__parser" kind="group">
+    <compoundname>nfc_ndef_ch_record_parser</compoundname>
+    <title>Parser for NDEF Connection Handover</title>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nfc__ndef__ch__record__parser_1ga566f50d7d12a9c0145968a43edeb02c9" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nfc_ndef_ch_rec_type</name>
+        <enumvalue id="group__nfc__ndef__ch__record__parser_ga566f50d7d12a9c0145968a43edeb02c9_1gga566f50d7d12a9c0145968a43edeb02c9a59f12c1aebe9285edaa2aac099fbbb50" prot="public">
+          <name>NFC_NDEF_CH_REC_TYPE_HANDOVER_SELECT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>NFC NDEF Connection Handover Select Record. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__ndef__ch__record__parser_ga566f50d7d12a9c0145968a43edeb02c9_1gga566f50d7d12a9c0145968a43edeb02c9a5aef9dd0663c86cdc4fd0fc73d9ac9fc" prot="public">
+          <name>NFC_NDEF_CH_REC_TYPE_HANDOVER_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>NFC NDEF Connection Handover Request Record. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__ndef__ch__record__parser_ga566f50d7d12a9c0145968a43edeb02c9_1gga566f50d7d12a9c0145968a43edeb02c9afffd99ed7444425f5cb4e936aac5c35c" prot="public">
+          <name>NFC_NDEF_CH_REC_TYPE_HANDOVER_INITIATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>NFC NDEF Connection Handover Initiate Record. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__ndef__ch__record__parser_ga566f50d7d12a9c0145968a43edeb02c9_1gga566f50d7d12a9c0145968a43edeb02c9adc92ec1418a5d11958131eb5b500b0ee" prot="public">
+          <name>NFC_NDEF_CH_REC_TYPE_HANDOVER_MEDIATION</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>NFC NDEF Connection Handover Mediation Record. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>NFC NDEF Connection Handover Record type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_rec_parser.h" line="27" column="1" bodyfile="include/nfc/ndef/ch_rec_parser.h" bodystart="27" bodyend="39"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__ndef__ch__record__parser_1ga26ed425d62c60a6b2808ecf24d4a8940" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nfc_ndef_ch_ac_rec_check</definition>
+        <argsstring>(const struct nfc_ndef_record_desc *rec_desc)</argsstring>
+        <name>nfc_ndef_ch_ac_rec_check</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>rec_desc</declname>
+        </param>
+        <briefdescription>
+<para>Check if an NDEF Record is the Alternative Carrier Record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">rec_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>General NDEF Record descriptor.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the NDEF Record Type is Alternative Carrier Record. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the NDEF Record Type is different. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_rec_parser.h" line="48" column="6" declfile="include/nfc/ndef/ch_rec_parser.h" declline="48" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__ch__record__parser_1gaa49a17fedc926d841777395c7ce97b2d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nfc_ndef_ch_cr_rec_check</definition>
+        <argsstring>(const struct nfc_ndef_record_desc *rec_desc)</argsstring>
+        <name>nfc_ndef_ch_cr_rec_check</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>rec_desc</declname>
+        </param>
+        <briefdescription>
+<para>Check if an NDEF Record is the Handover Collision Resolution Record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">rec_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>General NDEF Record descriptor.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the NDEF Record Type is Handover Collision Resolution Record. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the NDEF Record Type is different. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_rec_parser.h" line="58" column="6" declfile="include/nfc/ndef/ch_rec_parser.h" declline="58" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__ch__record__parser_1ga35c6209953e39f0d84ab2e6b8ca88ce3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nfc_ndef_ch_hc_rec_check</definition>
+        <argsstring>(const struct nfc_ndef_record_desc *rec_desc)</argsstring>
+        <name>nfc_ndef_ch_hc_rec_check</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>rec_desc</declname>
+        </param>
+        <briefdescription>
+<para>Check if an NDEF Record is the Handover Carrier Record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">rec_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>General NDEF Record descriptor.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the NDEF Record Type is the Handover Carrier Record. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the NDEF Record Type is different. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_rec_parser.h" line="67" column="6" declfile="include/nfc/ndef/ch_rec_parser.h" declline="67" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__ch__record__parser_1ga7672e9df60779bcf2f55b67b992c01ee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nfc_ndef_ch_rec_check</definition>
+        <argsstring>(const struct nfc_ndef_record_desc *rec_desc, enum nfc_ndef_ch_rec_type rec_type)</argsstring>
+        <name>nfc_ndef_ch_rec_check</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>rec_desc</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__nfc__ndef__ch__record__parser_ga566f50d7d12a9c0145968a43edeb02c9_1ga566f50d7d12a9c0145968a43edeb02c9" kindref="member">nfc_ndef_ch_rec_type</ref></type>
+          <declname>rec_type</declname>
+        </param>
+        <briefdescription>
+<para>Check if an NDEF Record is the fallowing Handover Connection Record: </para>
+        </briefdescription>
+        <detaileddescription>
+<para><itemizedlist>
+<listitem><para>Handover Select Record</para>
+</listitem><listitem><para>Handover Request Record</para>
+</listitem><listitem><para>Handover Mediation Record</para>
+</listitem><listitem><para>Handover Initiate Record</para>
+</listitem></itemizedlist>
+</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">rec_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>General NDEF Record descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">rec_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connection Handover Record type to check.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the NDEF Record Type is <computeroutput>rec_type</computeroutput> Record. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the NDEF Record Type is different. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_rec_parser.h" line="81" column="6" declfile="include/nfc/ndef/ch_rec_parser.h" declline="81" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__ch__record__parser_1gaceb6dc0f6fac46968699ca848259f7ba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_ch_rec_parse</definition>
+        <argsstring>(const struct nfc_ndef_record_desc *rec_desc, uint8_t *result_buf, uint32_t *result_buf_len)</argsstring>
+        <name>nfc_ndef_ch_rec_parse</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>rec_desc</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>result_buf</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>result_buf_len</declname>
+        </param>
+        <briefdescription>
+<para>Parse the fallowing NDEF Connection Handover Records: </para>
+        </briefdescription>
+        <detaileddescription>
+<para><itemizedlist>
+<listitem><para>Handover Select Record</para>
+</listitem><listitem><para>Handover Request Record</para>
+</listitem><listitem><para>Handover Mediation Record</para>
+</listitem><listitem><para>Handover Initiate Record</para>
+</listitem></itemizedlist>
+</para>
+<para>This function only parses NDEF Record descriptors with Connection Handover Type. Parsing results are stored in the Handover Connection Record descriptor (<ref refid="structnfc__ndef__ch__rec" kindref="compound">nfc_ndef_ch_rec</ref>).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">rec_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>General NDEF Record descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">result_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The buffer that will be used to hold the Connection Hendover Record descriptor. After parsing is completed successfully, the first address in the buffer is filled by the NDEF Record descriptor (<ref refid="structnfc__ndef__ch__rec" kindref="compound">nfc_ndef_ch_rec</ref>), which provides a full description of the parsed NDEF Record. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">result_buf_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>As input: size of the <computeroutput>result_buf</computeroutput> buffer As output: size of the reserved (used) part of the <computeroutput>result_buf</computeroutput> buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_rec_parser.h" line="109" column="5" declfile="include/nfc/ndef/ch_rec_parser.h" declline="109" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__ch__record__parser_1gae6c65cd2fda2714d472701beb578d983" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_ch_ac_rec_parse</definition>
+        <argsstring>(const struct nfc_ndef_record_desc *rec_desc, uint8_t *result_buf, uint32_t *result_buf_len)</argsstring>
+        <name>nfc_ndef_ch_ac_rec_parse</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>rec_desc</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>result_buf</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>result_buf_len</declname>
+        </param>
+        <briefdescription>
+<para>Parse an NDEF Alternative Carrier Record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function only parses NDEF Record descriptors with Alternative Carrier Record Type. Parsing results are stored in the Alternative Carrier Record descriptor (<ref refid="structnfc__ndef__ch__ac__rec" kindref="compound">nfc_ndef_ch_ac_rec</ref>).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">rec_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>General NDEF Record descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">result_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The buffer that will be used to hold the Alternative Carrier Record descriptor. After parsing is completed successfully, the first address in the buffer is filled by the NDEF Record descriptor (<ref refid="structnfc__ndef__ch__ac__rec" kindref="compound">nfc_ndef_ch_ac_rec</ref>), which provides a full description of the parsed NDEF Record. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">result_buf_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>As input: size of the <computeroutput>result_buf</computeroutput> buffer As output: size of the reserved (used) part of the <computeroutput>result_buf</computeroutput> buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_rec_parser.h" line="133" column="5" declfile="include/nfc/ndef/ch_rec_parser.h" declline="133" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__ch__record__parser_1ga11e353ada5112489575fc401e96653d8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_ch_cr_rec_parse</definition>
+        <argsstring>(const struct nfc_ndef_record_desc *rec_desc, struct nfc_ndef_ch_cr_rec *cr_rec)</argsstring>
+        <name>nfc_ndef_ch_cr_rec_parse</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>rec_desc</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__ch__cr__rec" kindref="compound">nfc_ndef_ch_cr_rec</ref> *</type>
+          <declname>cr_rec</declname>
+        </param>
+        <briefdescription>
+<para>Parse an NDEF Collision Resolution Record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function only parses NDEF Record descriptors with Collision Resolution Record Type. Parsing results are stored in the Collision Resolution Record descriptor (<ref refid="structnfc__ndef__ch__cr__rec" kindref="compound">nfc_ndef_ch_cr_rec</ref>).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">rec_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>General NDEF Record descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">cr_rec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parsed Collision Resolution Record descriptor. After parsing is completed successfully it is filled with Collision Resolution parsed data.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_rec_parser.h" line="150" column="5" declfile="include/nfc/ndef/ch_rec_parser.h" declline="150" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__ch__record__parser_1gabae02d520d39384160661d33314fdc64" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_ch_hc_rec_parse</definition>
+        <argsstring>(const struct nfc_ndef_record_desc *rec_desc, uint8_t *result_buf, uint32_t *result_buf_len)</argsstring>
+        <name>nfc_ndef_ch_hc_rec_parse</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>rec_desc</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>result_buf</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>result_buf_len</declname>
+        </param>
+        <briefdescription>
+<para>Parse an NDEF Handover Carrier Record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function only parses NDEF Record descriptors with Handover Carrier Record Type. Parsing results are stored in the Handover Carrier Record descriptor (<ref refid="structnfc__ndef__ch__hc__rec" kindref="compound">nfc_ndef_ch_hc_rec</ref>).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">rec_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>General NDEF Record descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">result_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The buffer that will be used to hold the Handover Carrier Record descriptor. After parsing is completed successfully, the first address in the buffer is filled by the NDEF Record descriptor (<ref refid="structnfc__ndef__ch__hc__rec" kindref="compound">nfc_ndef_ch_hc_rec</ref>), which provides a full description of the parsed NDEF Record. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">result_buf_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>As input: size of the <computeroutput>result_buf</computeroutput> buffer As output: size of the reserved (used) part of the <computeroutput>result_buf</computeroutput> buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_rec_parser.h" line="174" column="5" declfile="include/nfc/ndef/ch_rec_parser.h" declline="174" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__ch__record__parser_1gad8527ea84972e9ec106f5d4e724cc60e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_ndef_ch_rec_printout</definition>
+        <argsstring>(const struct nfc_ndef_ch_rec *ch_rec)</argsstring>
+        <name>nfc_ndef_ch_rec_printout</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__ch__rec" kindref="compound">nfc_ndef_ch_rec</ref> *</type>
+          <declname>ch_rec</declname>
+        </param>
+        <briefdescription>
+<para>Print the parsed contents of the fallowing Connection Handover Records: </para>
+        </briefdescription>
+        <detaileddescription>
+<para><itemizedlist>
+<listitem><para>Handover Select Record</para>
+</listitem><listitem><para>Handover Request Record</para>
+</listitem><listitem><para>Handover Mediation Record</para>
+</listitem><listitem><para>Handover Initiate Record</para>
+</listitem></itemizedlist>
+</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ch_rec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Descriptor of the Connection Handover Record that should be printed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_rec_parser.h" line="187" column="6" declfile="include/nfc/ndef/ch_rec_parser.h" declline="187" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__ch__record__parser_1ga88abd86eba3aaab1f8472de487e9f45e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_ndef_ac_rec_printout</definition>
+        <argsstring>(const struct nfc_ndef_ch_ac_rec *ac_rec)</argsstring>
+        <name>nfc_ndef_ac_rec_printout</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__ch__ac__rec" kindref="compound">nfc_ndef_ch_ac_rec</ref> *</type>
+          <declname>ac_rec</declname>
+        </param>
+        <briefdescription>
+<para>Print the parsed contents of an NDEF Alternative Carrier Record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ac_rec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Descriptor of the Alternative Carrier Record that should be printed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_rec_parser.h" line="194" column="6" declfile="include/nfc/ndef/ch_rec_parser.h" declline="194" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__ch__record__parser_1gaa1f437501f9d949e2605ffeb6b51d1c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_ndef_hc_rec_printout</definition>
+        <argsstring>(const struct nfc_ndef_ch_hc_rec *hc_rec)</argsstring>
+        <name>nfc_ndef_hc_rec_printout</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__ch__hc__rec" kindref="compound">nfc_ndef_ch_hc_rec</ref> *</type>
+          <declname>hc_rec</declname>
+        </param>
+        <briefdescription>
+<para>Print the parsed contents of an NDEF Handover Carrier Record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">hc_rec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Descriptor of the Handover Carrier Record that should be printed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_rec_parser.h" line="201" column="6" declfile="include/nfc/ndef/ch_rec_parser.h" declline="201" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__ch__record__parser_1gae37e95ee480297e6637faa1d403f2fd0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_ndef_cr_rec_printout</definition>
+        <argsstring>(const struct nfc_ndef_ch_cr_rec *cr_rec)</argsstring>
+        <name>nfc_ndef_cr_rec_printout</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__ch__cr__rec" kindref="compound">nfc_ndef_ch_cr_rec</ref> *</type>
+          <declname>cr_rec</declname>
+        </param>
+        <briefdescription>
+<para>Print the parsed contents of an NDEF Collision Resolution Record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cr_rec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Descriptor of the Collision Resolution Record that should be printed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_rec_parser.h" line="208" column="6" declfile="include/nfc/ndef/ch_rec_parser.h" declline="208" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Parser for NDEF Connection Handover Records. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Records </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

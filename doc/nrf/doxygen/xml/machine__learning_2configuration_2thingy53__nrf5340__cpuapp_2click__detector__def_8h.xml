@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="machine__learning_2configuration_2thingy53__nrf5340__cpuapp_2click__detector__def_8h" kind="file" language="C++">
+    <compoundname>click_detector_def.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <includes refid="click__detector_8h" local="no">caf/click_detector.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/machine_learning/configuration/thingy53_nrf5340_cpuapp/click_detector_def.h</label>
+        <link refid="machine__learning_2configuration_2thingy53__nrf5340__cpuapp_2click__detector__def_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>caf/click_detector.h</label>
+        <link refid="click__detector_8h"/>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="machine__learning_2configuration_2thingy53__nrf5340__cpuapp_2click__detector__def_8h_ab09c5006ec2a76f1614b050bf5f89beb_1ab09c5006ec2a76f1614b050bf5f89beb" prot="public" static="no" mutable="no">
+        <type>const struct @38</type>
+        <definition>const struct @38 click_detector_def_include_once</definition>
+        <argsstring></argsstring>
+        <name>click_detector_def_include_once</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/machine_learning/configuration/thingy53_nrf5340_cpuapp/click_detector_def.h" line="17" column="45"/>
+      </memberdef>
+      <memberdef kind="variable" id="machine__learning_2configuration_2thingy53__nrf5340__cpuapp_2click__detector__def_8h_a1a95064de578234c2cd935d9219ae6ed_1a1a95064de578234c2cd935d9219ae6ed" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structclick__detector__config" kindref="compound">click_detector_config</ref></type>
+        <definition>const struct click_detector_config click_detector_config[]</definition>
+        <argsstring>[]</argsstring>
+        <name>click_detector_config</name>
+        <initializer>= {
+	{
+		.key_id = CONFIG_ML_APP_ML_STATE_CONTROL_BUTTON_ID,
+		.consume_button_event = true,
+	},
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/machine_learning/configuration/thingy53_nrf5340_cpuapp/click_detector_def.h" line="19" column="41" bodyfile="applications/machine_learning/configuration/thingy53_nrf5340_cpuapp/click_detector_def.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="click__detector_8h" kindref="compound">caf/click_detector.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>configuration<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>from<sp/>click_detector<sp/>module</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*<sp/>and<sp/>holds<sp/>information<sp/>about<sp/>click<sp/>detector<sp/>configuration.</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>structure<sp/>enforces<sp/>the<sp/>header<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>in<sp/>the<sp/>build.</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*<sp/>Violating<sp/>this<sp/>requirement<sp/>triggers<sp/>a<sp/>multiple<sp/>definition<sp/>error<sp/>at<sp/>link<sp/>time.</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17" refid="machine__learning_2configuration_2thingy53__nrf5340__cpuapp_2click__detector__def_8h_ab09c5006ec2a76f1614b050bf5f89beb_1ab09c5006ec2a76f1614b050bf5f89beb" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{}<sp/><ref refid="machine__learning_2configuration_2nrf52840dk__nrf52840_2click__detector__def_8h_af9d5f21c38847e6d8c14fb8378ab8e95_1af9d5f21c38847e6d8c14fb8378ab8e95" kindref="member">click_detector_def_include_once</ref>;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="machine__learning_2configuration_2thingy53__nrf5340__cpuapp_2click__detector__def_8h_a1a95064de578234c2cd935d9219ae6ed_1a1a95064de578234c2cd935d9219ae6ed" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structclick__detector__config" kindref="compound">click_detector_config</ref><sp/><ref refid="structclick__detector__config" kindref="compound">click_detector_config</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.<ref refid="structclick__detector__config_acda68b6ba20f12693c4b7f6c08636dda_1acda68b6ba20f12693c4b7f6c08636dda" kindref="member">key_id</ref><sp/>=<sp/>CONFIG_ML_APP_ML_STATE_CONTROL_BUTTON_ID,</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.consume_button_event<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>},</highlight></codeline>
+<codeline lineno="24"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="applications/machine_learning/configuration/thingy53_nrf5340_cpuapp/click_detector_def.h"/>
+  </compounddef>
+</doxygen>

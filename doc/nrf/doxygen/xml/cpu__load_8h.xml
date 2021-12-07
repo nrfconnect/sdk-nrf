@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="cpu__load_8h" kind="file" language="C++">
+    <compoundname>cpu_load.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/debug/cpu_load.h</label>
+        <link refid="cpu__load_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__cpu__load_ga8681ce0fe8066b513d2ba3bab22c004c_1ga8681ce0fe8066b513d2ba3bab22c004c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cpu_load_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>cpu_load_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize the CPU load measurement module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The TIMER driver and PPI channels are allocated during the initialization of this module.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The initialization is successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENODEV</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>PPI channels could not be allocated. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EBUSY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>TIMER instance is busy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/debug/cpu_load.h" line="31" column="5" declfile="include/debug/cpu_load.h" declline="31" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cpu__load_ga3f7eb5267193498c3510cfcf56a350ea_1ga3f7eb5267193498c3510cfcf56a350ea" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cpu_load_reset</definition>
+        <argsstring>(void)</argsstring>
+        <name>cpu_load_reset</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Reset measurement. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Measurement must be reset at least every 4294 seconds. If not, results are invalid. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/debug/cpu_load.h" line="38" column="6" declfile="include/debug/cpu_load.h" declline="38" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cpu__load_gabdd157071eb13d6adeac29b34cc632b4_1gabdd157071eb13d6adeac29b34cc632b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint32_t</type>
+        <definition>uint32_t cpu_load_get</definition>
+        <argsstring>(void)</argsstring>
+        <name>cpu_load_get</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Get the CPU load measurement value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The CPU load is represented in 0,001% units where a 100000 value represents 100% load (e.g. 12345 represents 12,345% load).</para>
+<para><simplesect kind="return"><para>The current CPU load value. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/debug/cpu_load.h" line="47" column="10" declfile="include/debug/cpu_load.h" declline="47" declcolumn="10"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>__CPU_LOAD_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>__CPU_LOAD_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="group__cpu__load_ga8681ce0fe8066b513d2ba3bab22c004c_1ga8681ce0fe8066b513d2ba3bab22c004c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__cpu__load_ga8681ce0fe8066b513d2ba3bab22c004c_1ga8681ce0fe8066b513d2ba3bab22c004c" kindref="member">cpu_load_init</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="group__cpu__load_ga3f7eb5267193498c3510cfcf56a350ea_1ga3f7eb5267193498c3510cfcf56a350ea" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__cpu__load_ga3f7eb5267193498c3510cfcf56a350ea_1ga3f7eb5267193498c3510cfcf56a350ea" kindref="member">cpu_load_reset</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="group__cpu__load_gabdd157071eb13d6adeac29b34cc632b4_1gabdd157071eb13d6adeac29b34cc632b4" refkind="member"><highlight class="normal">uint32_t<sp/><ref refid="group__cpu__load_gabdd157071eb13d6adeac29b34cc632b4_1gabdd157071eb13d6adeac29b34cc632b4" kindref="member">cpu_load_get</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>__CPU_LOAD_H<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/debug/cpu_load.h"/>
+  </compounddef>
+</doxygen>

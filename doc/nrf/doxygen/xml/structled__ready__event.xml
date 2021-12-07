@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structled__ready__event" kind="struct" language="C++" prot="public">
+    <compoundname>led_ready_event</compoundname>
+    <includes refid="led__event_8h" local="no">led_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structled__ready__event_a542aca31f214373bcafb59ab8ff658d5_1a542aca31f214373bcafb59ab8ff658d5" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header led_ready_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event header. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/led_event.h" line="53" column="19" bodyfile="include/caf/events/led_event.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structled__ready__event_a4339803f807d8186da4efd1014ef1d8a_1a4339803f807d8186da4efd1014ef1d8a" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t led_ready_event::led_id</definition>
+        <argsstring></argsstring>
+        <name>led_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>ID of the LED. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/led_event.h" line="56" column="8" bodyfile="include/caf/events/led_event.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structled__ready__event_a60e68524bc41dc9923cc5dbfb56caf0b_1a60e68524bc41dc9923cc5dbfb56caf0b" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structled__effect" kindref="compound">led_effect</ref> *</type>
+        <definition>const struct led_effect* led_ready_event::led_effect</definition>
+        <argsstring></argsstring>
+        <name>led_effect</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the LED effect that was displayed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/led_event.h" line="59" column="23" bodyfile="include/caf/events/led_event.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>LED ready event. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The LED ready event is submitted to inform that a LED has finished displaying a LED effect. The event is used to notify that the LED is ready to display next effect.</para>
+<para>If the displayed LED effect has loop_forever set to true, the effect never ends and the LED ready event should not be submitted. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>led_color</label>
+        <link refid="structled__color"/>
+      </node>
+      <node id="6">
+        <label>led_effect</label>
+        <link refid="structled__effect"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>steps</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>led_effect_step</label>
+        <link refid="structled__effect__step"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>color</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>led_ready_event</label>
+        <link refid="structled__ready__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>led_effect</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/caf/events/led_event.h" line="51" column="1" bodyfile="include/caf/events/led_event.h" bodystart="51" bodyend="60"/>
+    <listofallmembers>
+      <member refid="structled__ready__event_a542aca31f214373bcafb59ab8ff658d5_1a542aca31f214373bcafb59ab8ff658d5" prot="public" virt="non-virtual"><scope>led_ready_event</scope><name>header</name></member>
+      <member refid="structled__ready__event_a60e68524bc41dc9923cc5dbfb56caf0b_1a60e68524bc41dc9923cc5dbfb56caf0b" prot="public" virt="non-virtual"><scope>led_ready_event</scope><name>led_effect</name></member>
+      <member refid="structled__ready__event_a4339803f807d8186da4efd1014ef1d8a_1a4339803f807d8186da4efd1014ef1d8a" prot="public" virt="non-virtual"><scope>led_ready_event</scope><name>led_id</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="certificates_8h" kind="file" language="C++">
+    <compoundname>certificates.h</compoundname>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="certificates_8h_af5d3962c39ae5ee98c1b072a34b3cd32_1af5d3962c39ae5ee98c1b072a34b3cd32" prot="public" static="no">
+        <name>NRF_CLOUD_CLIENT_ID</name>
+        <initializer>&quot;my-client-id&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/certificates.h" line="7" column="9" bodyfile="applications/asset_tracker/src/certificates.h" bodystart="7" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="certificates_8h_a9e86a6db17af2b5c28fb3d580a64b4f4_1a9e86a6db17af2b5c28fb3d580a64b4f4" prot="public" static="no">
+        <name>NRF_CLOUD_CLIENT_PRIVATE_KEY</name>
+        <initializer>	&quot;-----BEGIN RSA PRIVATE KEY-----\n&quot; \
+	&quot;NRF_CLOUD_CLIENT_PRIVATE_KEY\n&quot; \
+	&quot;-----END RSA PRIVATE KEY-----\n&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/certificates.h" line="9" column="9" bodyfile="applications/asset_tracker/src/certificates.h" bodystart="9" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="certificates_8h_a89fc0668af24a44ed04aa3b60ba8e5e4_1a89fc0668af24a44ed04aa3b60ba8e5e4" prot="public" static="no">
+        <name>NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE</name>
+        <initializer>	&quot;-----BEGIN CERTIFICATE-----\n&quot; \
+	&quot;NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE\n&quot; \
+	&quot;-----END CERTIFICATE-----\n&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/certificates.h" line="14" column="9" bodyfile="applications/asset_tracker/src/certificates.h" bodystart="14" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="certificates_8h_ac79acced8a4b24d8a3befe1aa1d6a105_1ac79acced8a4b24d8a3befe1aa1d6a105" prot="public" static="no">
+        <name>NRF_CLOUD_CA_CERTIFICATE</name>
+        <initializer>	&quot;-----BEGIN CERTIFICATE-----\n&quot; \
+	&quot;NRF_CLOUD_CA_CERTIFICATE\n&quot; \
+	&quot;-----END CERTIFICATE-----\n&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/certificates.h" line="19" column="9" bodyfile="applications/asset_tracker/src/certificates.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2018<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7" refid="certificates_8h_af5d3962c39ae5ee98c1b072a34b3cd32_1af5d3962c39ae5ee98c1b072a34b3cd32" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_CLIENT_ID<sp/>&quot;my-client-id&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9" refid="certificates_8h_a9e86a6db17af2b5c28fb3d580a64b4f4_1a9e86a6db17af2b5c28fb3d580a64b4f4" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_CLIENT_PRIVATE_KEY<sp/>\</highlight></codeline>
+<codeline lineno="10"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;-----BEGIN<sp/>RSA<sp/>PRIVATE<sp/>KEY-----\n&quot;</highlight><highlight class="normal"><sp/>\</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;NRF_CLOUD_CLIENT_PRIVATE_KEY\n&quot;<sp/>\</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;-----END<sp/>RSA<sp/>PRIVATE<sp/>KEY-----\n&quot;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14" refid="certificates_8h_a89fc0668af24a44ed04aa3b60ba8e5e4_1a89fc0668af24a44ed04aa3b60ba8e5e4" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE<sp/>\</highlight></codeline>
+<codeline lineno="15"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;-----BEGIN<sp/>CERTIFICATE-----\n&quot;</highlight><highlight class="normal"><sp/>\</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE\n&quot;<sp/>\</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;-----END<sp/>CERTIFICATE-----\n&quot;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="certificates_8h_ac79acced8a4b24d8a3befe1aa1d6a105_1ac79acced8a4b24d8a3befe1aa1d6a105" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_CA_CERTIFICATE<sp/>\</highlight></codeline>
+<codeline lineno="20"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;-----BEGIN<sp/>CERTIFICATE-----\n&quot;</highlight><highlight class="normal"><sp/>\</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;NRF_CLOUD_CA_CERTIFICATE\n&quot;<sp/>\</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;-----END<sp/>CERTIFICATE-----\n&quot;</highlight></codeline>
+    </programlisting>
+    <location file="applications/asset_tracker/src/certificates.h"/>
+  </compounddef>
+</doxygen>

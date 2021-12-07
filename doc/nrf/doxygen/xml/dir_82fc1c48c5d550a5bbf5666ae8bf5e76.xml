@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_82fc1c48c5d550a5bbf5666ae8bf5e76" kind="dir">
+    <compoundname>include/caf/events</compoundname>
+    <innerfile refid="ble__common__event_8h">ble_common_event.h</innerfile>
+    <innerfile refid="ble__smp__event_8h">ble_smp_event.h</innerfile>
+    <innerfile refid="button__event_8h">button_event.h</innerfile>
+    <innerfile refid="click__event_8h">click_event.h</innerfile>
+    <innerfile refid="factory__reset__event_8h">factory_reset_event.h</innerfile>
+    <innerfile refid="force__power__down__event_8h">force_power_down_event.h</innerfile>
+    <innerfile refid="keep__alive__event_8h">keep_alive_event.h</innerfile>
+    <innerfile refid="led__event_8h">led_event.h</innerfile>
+    <innerfile refid="module__state__event_8h">module_state_event.h</innerfile>
+    <innerfile refid="net__state__event_8h">net_state_event.h</innerfile>
+    <innerfile refid="include_2caf_2events_2power__event_8h">power_event.h</innerfile>
+    <innerfile refid="power__manager__event_8h">power_manager_event.h</innerfile>
+    <innerfile refid="sensor__event_8h">sensor_event.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/caf/events/"/>
+  </compounddef>
+</doxygen>

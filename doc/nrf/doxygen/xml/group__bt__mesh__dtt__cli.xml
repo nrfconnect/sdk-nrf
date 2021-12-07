@@ -1,0 +1,348 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__dtt__cli" kind="group">
+    <compoundname>bt_mesh_dtt_cli</compoundname>
+    <title>Generic Default Transition Time Client API</title>
+    <innerclass refid="structbt__mesh__dtt__cli" prot="public">bt_mesh_dtt_cli</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__dtt__cli_1gac60634bd0bc5b65f2418093c203e1c17" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_dtt_get</definition>
+        <argsstring>(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx, int32_t *rsp_transition_time)</argsstring>
+        <name>bt_mesh_dtt_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__dtt__cli" kindref="compound">bt_mesh_dtt_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>int32_t *</type>
+          <declname>rsp_transition_time</declname>
+        </param>
+        <briefdescription>
+<para>Get the Default Transition Time of the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp_transition_time</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__dtt__cli_a992bbd39043a46fb3c467e30a645fb23_1a992bbd39043a46fb3c467e30a645fb23" kindref="member">bt_mesh_dtt_cli::status_handler</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client making the request. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to use for sending, or NULL to publish with the configured parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp_transition_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a response buffer, or NULL to keep from blocking. The response denotes the configured transition time in milliseconds. Can be <emphasis>SYS_FOREVER_MS</emphasis> if the current state is unknown or too large to represent.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully retrieved the status of the bound srv. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking operation is already in progress in this model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_dtt_cli.h" line="102" column="5" declfile="include/bluetooth/mesh/gen_dtt_cli.h" declline="102" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__dtt__cli_1ga6153824d63d940c645cfa65dabd9a8f2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_dtt_set</definition>
+        <argsstring>(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx, uint32_t transition_time, int32_t *rsp_transition_time)</argsstring>
+        <name>bt_mesh_dtt_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__dtt__cli" kindref="compound">bt_mesh_dtt_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>transition_time</declname>
+        </param>
+        <param>
+          <type>int32_t *</type>
+          <declname>rsp_transition_time</declname>
+        </param>
+        <briefdescription>
+<para>Set the Default Transition Time of the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp_transition_time</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__dtt__cli_a992bbd39043a46fb3c467e30a645fb23_1a992bbd39043a46fb3c467e30a645fb23" kindref="member">bt_mesh_dtt_cli::status_handler</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to use for sending, or NULL to publish with the configured parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">transition_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Transition time to set (in milliseconds). Must be less than <ref refid="group__bt__mesh__model__types_ga0683efc6f4d79111c243c62aef62cf7b_1ga0683efc6f4d79111c243c62aef62cf7b" kindref="member">BT_MESH_MODEL_TRANSITION_TIME_MAX_MS</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp_transition_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a response buffer, or NULL to keep from blocking. The response denotes the configured transition time in milliseconds. Can be <emphasis>SYS_FOREVER_MS</emphasis> if the current state is unknown or too large to represent.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp_transition_time</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The given transition time is invalid. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking operation is already in progress in this model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_dtt_cli.h" line="128" column="5" declfile="include/bluetooth/mesh/gen_dtt_cli.h" declline="128" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__dtt__cli_1ga905cd5017580e1b9037d69ce7716eb66" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_dtt_set_unack</definition>
+        <argsstring>(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx, uint32_t transition_time)</argsstring>
+        <name>bt_mesh_dtt_set_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__dtt__cli" kindref="compound">bt_mesh_dtt_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>transition_time</declname>
+        </param>
+        <briefdescription>
+<para>Set the Default Transition Time of the server without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to use for sending, or NULL to publish with the configured parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">transition_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Transition time to set (in milliseconds). Must be less than <ref refid="group__bt__mesh__model__types_ga0683efc6f4d79111c243c62aef62cf7b_1ga0683efc6f4d79111c243c62aef62cf7b" kindref="member">BT_MESH_MODEL_TRANSITION_TIME_MAX_MS</ref>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The given transition time is invalid. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_dtt_cli.h" line="146" column="5" declfile="include/bluetooth/mesh/gen_dtt_cli.h" declline="146" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__dtt__cli_1ga9b0156425c4427858c2012846618f49b" prot="public" static="no">
+        <name>BT_MESH_DTT_CLI_INIT</name>
+        <param><defname>_status_handler</defname></param>
+        <initializer>	{                                                                      \
+		.status_handler = _status_handler,                             \
+	}</initializer>
+        <briefdescription>
+<para>Initialization parameters for the <ref refid="group__bt__mesh__dtt__cli" kindref="compound">Generic Default Transition Time Client API</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_status_handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional status message handler. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="structbt__mesh__dtt__cli_a992bbd39043a46fb3c467e30a645fb23_1a992bbd39043a46fb3c467e30a645fb23" kindref="member">bt_mesh_dtt_cli::status_handler</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_dtt_cli.h" line="34" column="9" bodyfile="include/bluetooth/mesh/gen_dtt_cli.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__dtt__cli_1gaec84323f449898b419fa3ecd665edfab" prot="public" static="no">
+        <name>BT_MESH_MODEL_DTT_CLI</name>
+        <param><defname>_cli</defname></param>
+        <initializer>	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_DEF_TRANS_TIME_CLI,              \
+			 _bt_mesh_dtt_cli_op, &amp;(_cli)-&gt;pub,                    \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__dtt__cli" kindref="compound">bt_mesh_dtt_cli</ref>,       \
+						 _cli),                        \
+			 &amp;_bt_mesh_dtt_cli_cb)</initializer>
+        <briefdescription>
+<para>Generic DTT Client model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__dtt__cli" kindref="compound">Generic Default Transition Time Client API</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_dtt_cli.h" line="45" column="9" bodyfile="include/bluetooth/mesh/gen_dtt_cli.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Generic Default Transition Time (DTT) Client. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

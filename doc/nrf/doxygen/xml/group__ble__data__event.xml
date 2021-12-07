@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__ble__data__event" kind="group">
+    <compoundname>ble_data_event</compoundname>
+    <title>BLE Data Event</title>
+    <innerclass refid="structble__data__event" prot="public">ble_data_event</innerclass>
+    <briefdescription>
+<para>BLE Data Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

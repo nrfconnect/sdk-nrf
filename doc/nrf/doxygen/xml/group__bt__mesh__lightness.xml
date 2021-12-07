@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__lightness" kind="group">
+    <compoundname>bt_mesh_lightness</compoundname>
+    <title>Light Lightness Models</title>
+    <innerclass refid="structbt__mesh__lightness__set" prot="public">bt_mesh_lightness_set</innerclass>
+    <innerclass refid="structbt__mesh__lightness__status" prot="public">bt_mesh_lightness_status</innerclass>
+    <innerclass refid="structbt__mesh__lightness__range" prot="public">bt_mesh_lightness_range</innerclass>
+    <innerclass refid="structbt__mesh__lightness__range__status" prot="public">bt_mesh_lightness_range_status</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__lightness_1gad162dd3e99108acecb0169e038e1de06" prot="public" static="no">
+        <name>BT_MESH_LIGHTNESS_MIN</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Minimum permitted Lightness level </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness.h" line="25" column="9" bodyfile="include/bluetooth/mesh/lightness.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__lightness_1gab639e97d8a738aff2304146bf81a756b" prot="public" static="no">
+        <name>BT_MESH_LIGHTNESS_MAX</name>
+        <initializer>UINT16_MAX</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum permitted Lightness level </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness.h" line="27" column="9" bodyfile="include/bluetooth/mesh/lightness.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Light Lightness models. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

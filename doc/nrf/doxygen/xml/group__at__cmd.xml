@@ -1,0 +1,367 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__at__cmd" kind="group">
+    <compoundname>at_cmd</compoundname>
+    <title>AT command interface driver</title>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__at__cmd_1ga010fd2ed5ee35e4ed0f831ea16cec130" prot="public" static="no" strong="no">
+        <type></type>
+        <name>at_cmd_state</name>
+        <enumvalue id="group__at__cmd_ga010fd2ed5ee35e4ed0f831ea16cec130_1gga010fd2ed5ee35e4ed0f831ea16cec130a1c41f23636a4ee32d1a5f73794356389" prot="public">
+          <name>AT_CMD_OK</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__at__cmd_ga010fd2ed5ee35e4ed0f831ea16cec130_1gga010fd2ed5ee35e4ed0f831ea16cec130ae13a0ed344d6139161b17515b1fcfc9a" prot="public">
+          <name>AT_CMD_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__at__cmd_ga010fd2ed5ee35e4ed0f831ea16cec130_1gga010fd2ed5ee35e4ed0f831ea16cec130a21abd45fbfca090a692d5ba74fa94532" prot="public">
+          <name>AT_CMD_ERROR_CMS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__at__cmd_ga010fd2ed5ee35e4ed0f831ea16cec130_1gga010fd2ed5ee35e4ed0f831ea16cec130a8271417491a7379a61b3d03fc1ffa4f2" prot="public">
+          <name>AT_CMD_ERROR_CME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__at__cmd_ga010fd2ed5ee35e4ed0f831ea16cec130_1gga010fd2ed5ee35e4ed0f831ea16cec130ab1d42f020b858f53a45fae6a68e1beee" prot="public">
+          <name>AT_CMD_ERROR_QUEUE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__at__cmd_ga010fd2ed5ee35e4ed0f831ea16cec130_1gga010fd2ed5ee35e4ed0f831ea16cec130a9408670028e6d5289d8391fe46b88575" prot="public">
+          <name>AT_CMD_ERROR_WRITE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__at__cmd_ga010fd2ed5ee35e4ed0f831ea16cec130_1gga010fd2ed5ee35e4ed0f831ea16cec130af46e881f09ad18db44a11a920263c5c5" prot="public">
+          <name>AT_CMD_ERROR_READ</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__at__cmd_ga010fd2ed5ee35e4ed0f831ea16cec130_1gga010fd2ed5ee35e4ed0f831ea16cec130a4808e1f471426e68f5939ce025f111fb" prot="public">
+          <name>AT_CMD_NOTIFICATION</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>AT command return codes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_cmd.h" line="30" column="1" bodyfile="include/modem/at_cmd.h" bodystart="30" bodyend="39"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__at__cmd_1ga7155188df037be6eb265071dc9490c88" prot="public" static="no">
+        <type>void(*</type>
+        <definition>at_cmd_handler_t</definition>
+        <argsstring>)(const char *response)</argsstring>
+        <name>at_cmd_handler_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Because this driver let multiple threads share the same socket, it must make sure that the correct thread gets the correct data returned from the AT interface. The <ref refid="group__at__cmd_gaf19e18add888dc6bb8107e2958f25a0e_1gaf19e18add888dc6bb8107e2958f25a0e" kindref="member">at_cmd_write_with_callback()</ref> function let the user specify the handler that will process the data from a specific AT command call. Notifications will be handled by the global handler defined using the <ref refid="group__at__cmd_gaaac477f23ac44e407240441af9b10cd7_1gaaac477f23ac44e407240441af9b10cd7" kindref="member">at_cmd_set_notification_handler()</ref> function. Both handlers are of the type <ref refid="group__at__cmd_ga7155188df037be6eb265071dc9490c88_1ga7155188df037be6eb265071dc9490c88" kindref="member">at_cmd_handler_t</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>response</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null terminated string containing the modem message </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_cmd.h" line="55" column="9" bodyfile="include/modem/at_cmd.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__at__cmd_1gaf1d97f0ed19016dc78329055518ba96a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_cmd_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>at_cmd_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize or recover the AT command driver. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Zero on success, non-zero otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_cmd.h" line="61" column="5" declfile="include/modem/at_cmd.h" declline="61" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd_1gaf19e18add888dc6bb8107e2958f25a0e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_cmd_write_with_callback</definition>
+        <argsstring>(const char *const cmd, at_cmd_handler_t handler)</argsstring>
+        <name>at_cmd_write_with_callback</name>
+        <param>
+          <type>const char *const</type>
+          <declname>cmd</declname>
+        </param>
+        <param>
+          <type><ref refid="group__at__cmd_ga7155188df037be6eb265071dc9490c88_1ga7155188df037be6eb265071dc9490c88" kindref="member">at_cmd_handler_t</ref></type>
+          <declname>handler</declname>
+        </param>
+        <briefdescription>
+<para>Function to send an AT command to the modem, any data from the modem will trigger the callback defined by the handler parameter in the function prototype. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cmd</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to null terminated AT command string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to handler that will process any returned data. NULL pointer is allowed, which means that any returned data will not processed other than the return code (OK, ERROR, CMS or CME).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>The handler function runs from at_cmd&apos;s thread. It must not call at_cmd_write, as that would lead to a deadlock.</para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If command execution was successful (same as OK returned from modem). Error codes returned from the driver or by the socket are returned as negative values, CMS and CME errors are returned as positive values, the state parameter will indicate if it&apos;s a CME or CMS error. ERROR will return ENOEXEC (positve).</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOBUFS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>is returned if AT_CMD_RESPONSE_MAX_LEN is not large enough to hold the data returned from the modem. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOEXEC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>is returned if the modem returned ERROR. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>is returned if allocation of callback worker failed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EIO</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>is returned if the function failed to send the command. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EHOSTDOWN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>is returned if the Modem library is shutdown. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_cmd.h" line="90" column="5" declfile="include/modem/at_cmd.h" declline="90" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd_1ga05555e87ffee000b8dd02c89974be9a7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_cmd_write</definition>
+        <argsstring>(const char *const cmd, char *buf, size_t buf_len, enum at_cmd_state *state)</argsstring>
+        <name>at_cmd_write</name>
+        <param>
+          <type>const char *const</type>
+          <declname>cmd</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buf_len</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__at__cmd_ga010fd2ed5ee35e4ed0f831ea16cec130_1ga010fd2ed5ee35e4ed0f831ea16cec130" kindref="member">at_cmd_state</ref> *</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+<para>Function to send an AT command and receive response immediately. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function should be used if the response from the modem should be returned in a user supplied buffer. This function will return an empty buffer if nothing is returned by the modem.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cmd</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to null terminated AT command string </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to put the response in. NULL pointer is allowed, see behaviour explanation for <computeroutput>buf_len</computeroutput> equals 0. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buf_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of response buffer. 0 length is allowed and will send the command, process the return code from the modem, but any returned data will be dropped. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>state</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to enum <emphasis>at_cmd_state</emphasis> variable that can hold the error state returned by the modem. If the return state is a CMS or CME errors will the error code be returned in the the function return code as a positive value. NULL pointer is allowed.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>It is allowed to use the same buffer for both, <computeroutput>cmd</computeroutput> and <computeroutput>buf</computeroutput> parameters in order to save RAM. The function will not modify <computeroutput>buf</computeroutput> contents until the entire <computeroutput>cmd</computeroutput> is sent.</para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If command execution was successful (same as OK returned from modem). Error codes returned from the driver or by the socket are returned as negative values, CMS and CME errors are returned as positive values, the state parameter will indicate if it&apos;s a CME or CMS error. ERROR will return ENOEXEC (positve).</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOBUFS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>is returned if AT_CMD_RESPONSE_MAX_LEN is not large enough to hold the data returned from the modem. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOEXEC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>is returned if the modem returned ERROR. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EMSGSIZE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>is returned if the supplied buffer is to small or NULL. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EIO</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>is returned if the function failed to send the command. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EHOSTDOWN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>is returned if the Modem library is shutdown. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_cmd.h" line="130" column="5" declfile="include/modem/at_cmd.h" declline="130" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd_1gaaac477f23ac44e407240441af9b10cd7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void at_cmd_set_notification_handler</definition>
+        <argsstring>(at_cmd_handler_t handler)</argsstring>
+        <name>at_cmd_set_notification_handler</name>
+        <param>
+          <type><ref refid="group__at__cmd_ga7155188df037be6eb265071dc9490c88_1ga7155188df037be6eb265071dc9490c88" kindref="member">at_cmd_handler_t</ref></type>
+          <declname>handler</declname>
+        </param>
+        <briefdescription>
+<para>Function to set AT command global notification handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a received notification handler function of type <ref refid="group__at__cmd_ga7155188df037be6eb265071dc9490c88_1ga7155188df037be6eb265071dc9490c88" kindref="member">at_cmd_handler_t</ref>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>The handler function runs from at_cmd&apos;s thread. It must not call at_cmd_write, as that would lead to a deadlock. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_cmd.h" line="144" column="6" declfile="include/modem/at_cmd.h" declline="144" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Public APIs for the AT command interface driver. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

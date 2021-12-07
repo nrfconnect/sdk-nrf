@@ -1,0 +1,538 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="scheduler_8h" kind="file" language="C++">
+    <compoundname>scheduler.h</compoundname>
+    <includes refid="model__types_8h" local="no">bluetooth/mesh/model_types.h</includes>
+    <includedby refid="scheduler__cli_8h" local="no">include/bluetooth/mesh/scheduler_cli.h</includedby>
+    <includedby refid="scheduler__srv_8h" local="no">include/bluetooth/mesh/scheduler_srv.h</includedby>
+    <incdepgraph>
+      <node id="2">
+        <label>bluetooth/mesh/model_types.h</label>
+        <link refid="model__types_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/mesh/scheduler.h</label>
+        <link refid="scheduler_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/mesh.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="3">
+        <label>include/bluetooth/mesh/models.h</label>
+        <link refid="models_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/mesh/scheduler.h</label>
+        <link refid="scheduler_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/bluetooth/mesh/scheduler_cli.h</label>
+        <link refid="scheduler__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>include/bluetooth/mesh/scheduler_srv.h</label>
+        <link refid="scheduler__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>include/bluetooth/mesh/vnd/silvair_enocean_srv.h</label>
+        <link refid="silvair__enocean__srv_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structbt__mesh__schedule__entry" prot="public">bt_mesh_schedule_entry</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__scheduler_ga38ce2d588a77844623e981f13993ffa4_1ga38ce2d588a77844623e981f13993ffa4" prot="public" static="no">
+        <name>BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT</name>
+        <initializer>16u</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum number of entries of the Schedule Register state . </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="24" column="9" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__scheduler_ga6b51eaeea8df2dfe4721a284537a402c_1ga6b51eaeea8df2dfe4721a284537a402c" prot="public" static="no">
+        <name>BT_MESH_SCHEDULER_ANY_YEAR</name>
+        <initializer>0x64</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Scheduled at any year. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="27" column="9" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__scheduler_ga1b7e946259998510af63228875d98881_1ga1b7e946259998510af63228875d98881" prot="public" static="no">
+        <name>BT_MESH_SCHEDULER_ANY_DAY</name>
+        <initializer>0x00</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Scheduled at any day of the month. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="29" column="9" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__scheduler_gab453efc5212d480dc13072a740189111_1gab453efc5212d480dc13072a740189111" prot="public" static="no">
+        <name>BT_MESH_SCHEDULER_ANY_HOUR</name>
+        <initializer>0x18</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Scheduled at any hour of the day. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="31" column="9" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__scheduler_ga31c66e527dd7deae8d5409f97fecf0f2_1ga31c66e527dd7deae8d5409f97fecf0f2" prot="public" static="no">
+        <name>BT_MESH_SCHEDULER_ONCE_A_DAY</name>
+        <initializer>0x19</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Scheduled once a day at a random hour. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="33" column="9" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__scheduler_gad07b688f2c47ed8f947e3cc176b2da54_1gad07b688f2c47ed8f947e3cc176b2da54" prot="public" static="no">
+        <name>BT_MESH_SCHEDULER_ANY_MINUTE</name>
+        <initializer>0x3C</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Scheduled at any minute of the hour. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="35" column="9" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__scheduler_ga1b496de2004f9493cf901482d60186fd_1ga1b496de2004f9493cf901482d60186fd" prot="public" static="no">
+        <name>BT_MESH_SCHEDULER_EVERY_15_MINUTES</name>
+        <initializer>0x3D</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Scheduled every 15 minutes (minute modulo 15 is 0) (0, 15, 30, 45). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="37" column="9" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__scheduler_ga6e13472ef228548875621459c81ae315_1ga6e13472ef228548875621459c81ae315" prot="public" static="no">
+        <name>BT_MESH_SCHEDULER_EVERY_20_MINUTES</name>
+        <initializer>0x3E</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Scheduled every 20 minutes (minute modulo 20 is 0) (0, 20, 40). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="39" column="9" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__scheduler_ga3f22e1c1959a66ef87085d133f99bf3e_1ga3f22e1c1959a66ef87085d133f99bf3e" prot="public" static="no">
+        <name>BT_MESH_SCHEDULER_ONCE_AN_HOUR</name>
+        <initializer>0x3F</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Scheduled once an hour (at a random minute). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="41" column="9" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__scheduler_gaf25a7beed568c007d797eae409537167_1gaf25a7beed568c007d797eae409537167" prot="public" static="no">
+        <name>BT_MESH_SCHEDULER_ANY_SECOND</name>
+        <initializer>0x3C</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Scheduled at any second of the minute. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="43" column="9" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__scheduler_gae5b54af42bf37c0cd02e6796d134a197_1gae5b54af42bf37c0cd02e6796d134a197" prot="public" static="no">
+        <name>BT_MESH_SCHEDULER_EVERY_15_SECONDS</name>
+        <initializer>0x3D</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Scheduled every 15 seconds (minute modulo 15 is 0) (0, 15, 30, 45). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="45" column="9" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__scheduler_ga857f03352874a6993d9bd73d872f0d2d_1ga857f03352874a6993d9bd73d872f0d2d" prot="public" static="no">
+        <name>BT_MESH_SCHEDULER_EVERY_20_SECONDS</name>
+        <initializer>0x3E</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Scheduled every 20 seconds (minute modulo 20 is 0) (0, 20, 40). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="47" column="9" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__scheduler_ga2c26427a7c6e6866802b3150d1d5cc32_1ga2c26427a7c6e6866802b3150d1d5cc32" prot="public" static="no">
+        <name>BT_MESH_SCHEDULER_ONCE_A_MINUTE</name>
+        <initializer>0x3F</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Scheduled once a minute (at a random second). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="49" column="9" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1ga68fd3b88ea5749620c6d06299fdb6c1d" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_scheduler_month</name>
+        <enumvalue id="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da78e2998dac46e27b2d93d734991ca8ca" prot="public">
+          <name>BT_MESH_SCHEDULER_JAN</name>
+          <initializer>= BIT(0)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da9afe644063decd259317093a856362cb" prot="public">
+          <name>BT_MESH_SCHEDULER_FEB</name>
+          <initializer>= BIT(1)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da571957e208194905d813ae08033d6e7a" prot="public">
+          <name>BT_MESH_SCHEDULER_MAR</name>
+          <initializer>= BIT(2)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da5524f0d5eb42a125f210a50785459ea7" prot="public">
+          <name>BT_MESH_SCHEDULER_APR</name>
+          <initializer>= BIT(3)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da275319866cf72d6a4014e7fcd537c637" prot="public">
+          <name>BT_MESH_SCHEDULER_MAY</name>
+          <initializer>= BIT(4)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da1bf0393d4f94679165702f19dfad60fb" prot="public">
+          <name>BT_MESH_SCHEDULER_JUN</name>
+          <initializer>= BIT(5)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1dabebd61fc7e692e7755dd6f8ff1518f20" prot="public">
+          <name>BT_MESH_SCHEDULER_JUL</name>
+          <initializer>= BIT(6)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da6a76c614b8836c58f4ed4e98beb06af4" prot="public">
+          <name>BT_MESH_SCHEDULER_AUG</name>
+          <initializer>= BIT(7)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1dae49d564a8feac47dca60e8c411298812" prot="public">
+          <name>BT_MESH_SCHEDULER_SEP</name>
+          <initializer>= BIT(8)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da832d469e8c4f8d91c9e3a5af80250d20" prot="public">
+          <name>BT_MESH_SCHEDULER_OCT</name>
+          <initializer>= BIT(9)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da8f8012e2533836757289c9608f3ce7ef" prot="public">
+          <name>BT_MESH_SCHEDULER_NOV</name>
+          <initializer>= BIT(10)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da3e69a0b397a8463abf0c9829bfe63b7f" prot="public">
+          <name>BT_MESH_SCHEDULER_DEC</name>
+          <initializer>= BIT(11)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Representation of the months of the year in which the scheduled event is enabled. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="54" column="1" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="54" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1gaeff55d04c01c89a3a0ae7b65333a8414" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_scheduler_wday</name>
+        <enumvalue id="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1ggaeff55d04c01c89a3a0ae7b65333a8414ad8471dddca2cd8d1a2f638d748665162" prot="public">
+          <name>BT_MESH_SCHEDULER_MON</name>
+          <initializer>= BIT(0)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1ggaeff55d04c01c89a3a0ae7b65333a8414a010cace4b650794b857edc0bf7f2a1f9" prot="public">
+          <name>BT_MESH_SCHEDULER_TUE</name>
+          <initializer>= BIT(1)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1ggaeff55d04c01c89a3a0ae7b65333a8414ac5b20782d14b76f57abd32775a98f161" prot="public">
+          <name>BT_MESH_SCHEDULER_WED</name>
+          <initializer>= BIT(2)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1ggaeff55d04c01c89a3a0ae7b65333a8414af288f3638468dca219ad3ce3b640ec60" prot="public">
+          <name>BT_MESH_SCHEDULER_THU</name>
+          <initializer>= BIT(3)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1ggaeff55d04c01c89a3a0ae7b65333a8414a55b0459fae809e5d8528fd23a4e4e09a" prot="public">
+          <name>BT_MESH_SCHEDULER_FRI</name>
+          <initializer>= BIT(4)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1ggaeff55d04c01c89a3a0ae7b65333a8414a05883e9e4045bab2db442dc6283b9f35" prot="public">
+          <name>BT_MESH_SCHEDULER_SAT</name>
+          <initializer>= BIT(5)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1ggaeff55d04c01c89a3a0ae7b65333a8414a8a9f73c92ed8104be8e7969d7285a9e4" prot="public">
+          <name>BT_MESH_SCHEDULER_SUN</name>
+          <initializer>= BIT(6)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Representation of the days of the week in which the scheduled event is enabled. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="72" column="1" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="72" bodyend="80"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__mesh__scheduler_ga64c1c1f9a042a6eb1b97bfed5c8c9930_1ga64c1c1f9a042a6eb1b97bfed5c8c9930" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_scheduler_action</name>
+        <enumvalue id="group__bt__mesh__scheduler_ga64c1c1f9a042a6eb1b97bfed5c8c9930_1gga64c1c1f9a042a6eb1b97bfed5c8c9930ad102430fee9890d680d6a3fa60adeb57" prot="public">
+          <name>BT_MESH_SCHEDULER_TURN_OFF</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__scheduler_ga64c1c1f9a042a6eb1b97bfed5c8c9930_1gga64c1c1f9a042a6eb1b97bfed5c8c9930a41837aa4d3147c637c9ca5b025814ca1" prot="public">
+          <name>BT_MESH_SCHEDULER_TURN_ON</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__scheduler_ga64c1c1f9a042a6eb1b97bfed5c8c9930_1gga64c1c1f9a042a6eb1b97bfed5c8c9930a2fe8071622421efe2258fe30c4d90d16" prot="public">
+          <name>BT_MESH_SCHEDULER_SCENE_RECALL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__scheduler_ga64c1c1f9a042a6eb1b97bfed5c8c9930_1gga64c1c1f9a042a6eb1b97bfed5c8c9930ab0a3cc5d91986781714b7870c41fafbd" prot="public">
+          <name>BT_MESH_SCHEDULER_NO_ACTIONS</name>
+          <initializer>= 0xf</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Representation of the actions to be executed for a scheduled event. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="83" column="1" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="83" bodyend="88"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_MESH_SCHEDULER_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="model__types_8h" kindref="compound">bluetooth/mesh/model_types.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="group__bt__mesh__scheduler_ga38ce2d588a77844623e981f13993ffa4_1ga38ce2d588a77844623e981f13993ffa4" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT<sp/><sp/>16u</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="group__bt__mesh__scheduler_ga6b51eaeea8df2dfe4721a284537a402c_1ga6b51eaeea8df2dfe4721a284537a402c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_ANY_YEAR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x64</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="group__bt__mesh__scheduler_ga1b7e946259998510af63228875d98881_1ga1b7e946259998510af63228875d98881" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_ANY_DAY<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x00</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="group__bt__mesh__scheduler_gab453efc5212d480dc13072a740189111_1gab453efc5212d480dc13072a740189111" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_ANY_HOUR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x18</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="group__bt__mesh__scheduler_ga31c66e527dd7deae8d5409f97fecf0f2_1ga31c66e527dd7deae8d5409f97fecf0f2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_ONCE_A_DAY<sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x19</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="group__bt__mesh__scheduler_gad07b688f2c47ed8f947e3cc176b2da54_1gad07b688f2c47ed8f947e3cc176b2da54" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_ANY_MINUTE<sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x3C</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="group__bt__mesh__scheduler_ga1b496de2004f9493cf901482d60186fd_1ga1b496de2004f9493cf901482d60186fd" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_EVERY_15_MINUTES<sp/>0x3D</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="group__bt__mesh__scheduler_ga6e13472ef228548875621459c81ae315_1ga6e13472ef228548875621459c81ae315" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_EVERY_20_MINUTES<sp/>0x3E</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="group__bt__mesh__scheduler_ga3f22e1c1959a66ef87085d133f99bf3e_1ga3f22e1c1959a66ef87085d133f99bf3e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_ONCE_AN_HOUR<sp/><sp/><sp/><sp/><sp/>0x3F</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="group__bt__mesh__scheduler_gaf25a7beed568c007d797eae409537167_1gaf25a7beed568c007d797eae409537167" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_ANY_SECOND<sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x3C</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="group__bt__mesh__scheduler_gae5b54af42bf37c0cd02e6796d134a197_1gae5b54af42bf37c0cd02e6796d134a197" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_EVERY_15_SECONDS<sp/>0x3D</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="group__bt__mesh__scheduler_ga857f03352874a6993d9bd73d872f0d2d_1ga857f03352874a6993d9bd73d872f0d2d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_EVERY_20_SECONDS<sp/>0x3E</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="group__bt__mesh__scheduler_ga2c26427a7c6e6866802b3150d1d5cc32_1ga2c26427a7c6e6866802b3150d1d5cc32" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_ONCE_A_MINUTE<sp/><sp/><sp/><sp/>0x3F</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1ga68fd3b88ea5749620c6d06299fdb6c1d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1ga68fd3b88ea5749620c6d06299fdb6c1d" kindref="member">bt_mesh_scheduler_month</ref><sp/>{</highlight></codeline>
+<codeline lineno="55" refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da78e2998dac46e27b2d93d734991ca8ca" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da78e2998dac46e27b2d93d734991ca8ca" kindref="member">BT_MESH_SCHEDULER_JAN</ref><sp/>=<sp/>BIT(0),</highlight></codeline>
+<codeline lineno="56" refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da9afe644063decd259317093a856362cb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da9afe644063decd259317093a856362cb" kindref="member">BT_MESH_SCHEDULER_FEB</ref><sp/>=<sp/>BIT(1),</highlight></codeline>
+<codeline lineno="57" refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da571957e208194905d813ae08033d6e7a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da571957e208194905d813ae08033d6e7a" kindref="member">BT_MESH_SCHEDULER_MAR</ref><sp/>=<sp/>BIT(2),</highlight></codeline>
+<codeline lineno="58" refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da5524f0d5eb42a125f210a50785459ea7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da5524f0d5eb42a125f210a50785459ea7" kindref="member">BT_MESH_SCHEDULER_APR</ref><sp/>=<sp/>BIT(3),</highlight></codeline>
+<codeline lineno="59" refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da275319866cf72d6a4014e7fcd537c637" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da275319866cf72d6a4014e7fcd537c637" kindref="member">BT_MESH_SCHEDULER_MAY</ref><sp/>=<sp/>BIT(4),</highlight></codeline>
+<codeline lineno="60" refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da1bf0393d4f94679165702f19dfad60fb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da1bf0393d4f94679165702f19dfad60fb" kindref="member">BT_MESH_SCHEDULER_JUN</ref><sp/>=<sp/>BIT(5),</highlight></codeline>
+<codeline lineno="61" refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1dabebd61fc7e692e7755dd6f8ff1518f20" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1dabebd61fc7e692e7755dd6f8ff1518f20" kindref="member">BT_MESH_SCHEDULER_JUL</ref><sp/>=<sp/>BIT(6),</highlight></codeline>
+<codeline lineno="62" refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da6a76c614b8836c58f4ed4e98beb06af4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da6a76c614b8836c58f4ed4e98beb06af4" kindref="member">BT_MESH_SCHEDULER_AUG</ref><sp/>=<sp/>BIT(7),</highlight></codeline>
+<codeline lineno="63" refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1dae49d564a8feac47dca60e8c411298812" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1dae49d564a8feac47dca60e8c411298812" kindref="member">BT_MESH_SCHEDULER_SEP</ref><sp/>=<sp/>BIT(8),</highlight></codeline>
+<codeline lineno="64" refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da832d469e8c4f8d91c9e3a5af80250d20" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da832d469e8c4f8d91c9e3a5af80250d20" kindref="member">BT_MESH_SCHEDULER_OCT</ref><sp/>=<sp/>BIT(9),</highlight></codeline>
+<codeline lineno="65" refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da8f8012e2533836757289c9608f3ce7ef" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da8f8012e2533836757289c9608f3ce7ef" kindref="member">BT_MESH_SCHEDULER_NOV</ref><sp/>=<sp/>BIT(10),</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da3e69a0b397a8463abf0c9829bfe63b7f" kindref="member">BT_MESH_SCHEDULER_DEC</ref><sp/>=<sp/>BIT(11)</highlight></codeline>
+<codeline lineno="67" refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1gga68fd3b88ea5749620c6d06299fdb6c1da3e69a0b397a8463abf0c9829bfe63b7f" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1gaeff55d04c01c89a3a0ae7b65333a8414" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1gaeff55d04c01c89a3a0ae7b65333a8414" kindref="member">bt_mesh_scheduler_wday</ref><sp/>{</highlight></codeline>
+<codeline lineno="73" refid="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1ggaeff55d04c01c89a3a0ae7b65333a8414ad8471dddca2cd8d1a2f638d748665162" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1ggaeff55d04c01c89a3a0ae7b65333a8414ad8471dddca2cd8d1a2f638d748665162" kindref="member">BT_MESH_SCHEDULER_MON</ref><sp/>=<sp/>BIT(0),</highlight></codeline>
+<codeline lineno="74" refid="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1ggaeff55d04c01c89a3a0ae7b65333a8414a010cace4b650794b857edc0bf7f2a1f9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1ggaeff55d04c01c89a3a0ae7b65333a8414a010cace4b650794b857edc0bf7f2a1f9" kindref="member">BT_MESH_SCHEDULER_TUE</ref><sp/>=<sp/>BIT(1),</highlight></codeline>
+<codeline lineno="75" refid="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1ggaeff55d04c01c89a3a0ae7b65333a8414ac5b20782d14b76f57abd32775a98f161" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1ggaeff55d04c01c89a3a0ae7b65333a8414ac5b20782d14b76f57abd32775a98f161" kindref="member">BT_MESH_SCHEDULER_WED</ref><sp/>=<sp/>BIT(2),</highlight></codeline>
+<codeline lineno="76" refid="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1ggaeff55d04c01c89a3a0ae7b65333a8414af288f3638468dca219ad3ce3b640ec60" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1ggaeff55d04c01c89a3a0ae7b65333a8414af288f3638468dca219ad3ce3b640ec60" kindref="member">BT_MESH_SCHEDULER_THU</ref><sp/>=<sp/>BIT(3),</highlight></codeline>
+<codeline lineno="77" refid="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1ggaeff55d04c01c89a3a0ae7b65333a8414a55b0459fae809e5d8528fd23a4e4e09a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1ggaeff55d04c01c89a3a0ae7b65333a8414a55b0459fae809e5d8528fd23a4e4e09a" kindref="member">BT_MESH_SCHEDULER_FRI</ref><sp/>=<sp/>BIT(4),</highlight></codeline>
+<codeline lineno="78" refid="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1ggaeff55d04c01c89a3a0ae7b65333a8414a05883e9e4045bab2db442dc6283b9f35" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1ggaeff55d04c01c89a3a0ae7b65333a8414a05883e9e4045bab2db442dc6283b9f35" kindref="member">BT_MESH_SCHEDULER_SAT</ref><sp/>=<sp/>BIT(5),</highlight></codeline>
+<codeline lineno="79" refid="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1ggaeff55d04c01c89a3a0ae7b65333a8414a8a9f73c92ed8104be8e7969d7285a9e4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1ggaeff55d04c01c89a3a0ae7b65333a8414a8a9f73c92ed8104be8e7969d7285a9e4" kindref="member">BT_MESH_SCHEDULER_SUN</ref><sp/>=<sp/>BIT(6),</highlight></codeline>
+<codeline lineno="80"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83" refid="group__bt__mesh__scheduler_ga64c1c1f9a042a6eb1b97bfed5c8c9930_1ga64c1c1f9a042a6eb1b97bfed5c8c9930" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__scheduler_ga64c1c1f9a042a6eb1b97bfed5c8c9930_1ga64c1c1f9a042a6eb1b97bfed5c8c9930" kindref="member">bt_mesh_scheduler_action</ref><sp/>{</highlight></codeline>
+<codeline lineno="84" refid="group__bt__mesh__scheduler_ga64c1c1f9a042a6eb1b97bfed5c8c9930_1gga64c1c1f9a042a6eb1b97bfed5c8c9930ad102430fee9890d680d6a3fa60adeb57" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_ga64c1c1f9a042a6eb1b97bfed5c8c9930_1gga64c1c1f9a042a6eb1b97bfed5c8c9930ad102430fee9890d680d6a3fa60adeb57" kindref="member">BT_MESH_SCHEDULER_TURN_OFF</ref>,</highlight></codeline>
+<codeline lineno="85" refid="group__bt__mesh__scheduler_ga64c1c1f9a042a6eb1b97bfed5c8c9930_1gga64c1c1f9a042a6eb1b97bfed5c8c9930a41837aa4d3147c637c9ca5b025814ca1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_ga64c1c1f9a042a6eb1b97bfed5c8c9930_1gga64c1c1f9a042a6eb1b97bfed5c8c9930a41837aa4d3147c637c9ca5b025814ca1" kindref="member">BT_MESH_SCHEDULER_TURN_ON</ref>,</highlight></codeline>
+<codeline lineno="86" refid="group__bt__mesh__scheduler_ga64c1c1f9a042a6eb1b97bfed5c8c9930_1gga64c1c1f9a042a6eb1b97bfed5c8c9930a2fe8071622421efe2258fe30c4d90d16" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_ga64c1c1f9a042a6eb1b97bfed5c8c9930_1gga64c1c1f9a042a6eb1b97bfed5c8c9930a2fe8071622421efe2258fe30c4d90d16" kindref="member">BT_MESH_SCHEDULER_SCENE_RECALL</ref>,</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__scheduler_ga64c1c1f9a042a6eb1b97bfed5c8c9930_1gga64c1c1f9a042a6eb1b97bfed5c8c9930ab0a3cc5d91986781714b7870c41fafbd" kindref="member">BT_MESH_SCHEDULER_NO_ACTIONS</ref><sp/>=<sp/>0xf</highlight></codeline>
+<codeline lineno="88" refid="group__bt__mesh__scheduler_ga64c1c1f9a042a6eb1b97bfed5c8c9930_1gga64c1c1f9a042a6eb1b97bfed5c8c9930ab0a3cc5d91986781714b7870c41fafbd" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91" refid="structbt__mesh__schedule__entry" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__schedule__entry" kindref="compound">bt_mesh_schedule_entry</ref><sp/>{</highlight></codeline>
+<codeline lineno="95" refid="structbt__mesh__schedule__entry_aebde28e3ec72530fb538825aa502d2e1_1aebde28e3ec72530fb538825aa502d2e1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__schedule__entry_aebde28e3ec72530fb538825aa502d2e1_1aebde28e3ec72530fb538825aa502d2e1" kindref="member">year</ref>;</highlight></codeline>
+<codeline lineno="97" refid="structbt__mesh__schedule__entry_a6831b1a83f7cb983776d09f119c223d0_1a6831b1a83f7cb983776d09f119c223d0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1ga68fd3b88ea5749620c6d06299fdb6c1d" kindref="member">bt_mesh_scheduler_month</ref><sp/><ref refid="structbt__mesh__schedule__entry_a6831b1a83f7cb983776d09f119c223d0_1a6831b1a83f7cb983776d09f119c223d0" kindref="member">month</ref><sp/>:<sp/>12;</highlight></codeline>
+<codeline lineno="99" refid="structbt__mesh__schedule__entry_ad6a9fe6c50e3f761343cdc674dd8898f_1ad6a9fe6c50e3f761343cdc674dd8898f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__schedule__entry_ad6a9fe6c50e3f761343cdc674dd8898f_1ad6a9fe6c50e3f761343cdc674dd8898f" kindref="member">day</ref>;</highlight></codeline>
+<codeline lineno="101" refid="structbt__mesh__schedule__entry_a4f5d501ac9b34a838756f5d3e5f6c690_1a4f5d501ac9b34a838756f5d3e5f6c690" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__schedule__entry_a4f5d501ac9b34a838756f5d3e5f6c690_1a4f5d501ac9b34a838756f5d3e5f6c690" kindref="member">hour</ref>;</highlight></codeline>
+<codeline lineno="103" refid="structbt__mesh__schedule__entry_a7569fdeb6a67572d0fcf409b331ee6ec_1a7569fdeb6a67572d0fcf409b331ee6ec" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__schedule__entry_a7569fdeb6a67572d0fcf409b331ee6ec_1a7569fdeb6a67572d0fcf409b331ee6ec" kindref="member">minute</ref>;</highlight></codeline>
+<codeline lineno="105" refid="structbt__mesh__schedule__entry_affdb343685f797962e0cacafc6e5a4cb_1affdb343685f797962e0cacafc6e5a4cb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__schedule__entry_affdb343685f797962e0cacafc6e5a4cb_1affdb343685f797962e0cacafc6e5a4cb" kindref="member">second</ref>;</highlight></codeline>
+<codeline lineno="107" refid="structbt__mesh__schedule__entry_a16c5b4aeab93bf9a3e35f9a570496b47_1a16c5b4aeab93bf9a3e35f9a570496b47" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1gaeff55d04c01c89a3a0ae7b65333a8414" kindref="member">bt_mesh_scheduler_wday</ref><sp/><ref refid="structbt__mesh__schedule__entry_a16c5b4aeab93bf9a3e35f9a570496b47_1a16c5b4aeab93bf9a3e35f9a570496b47" kindref="member">day_of_week</ref><sp/>:<sp/>7;</highlight></codeline>
+<codeline lineno="109" refid="structbt__mesh__schedule__entry_a3f4625e163643b53d287cf33009c14ea_1a3f4625e163643b53d287cf33009c14ea" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__scheduler_ga64c1c1f9a042a6eb1b97bfed5c8c9930_1ga64c1c1f9a042a6eb1b97bfed5c8c9930" kindref="member">bt_mesh_scheduler_action</ref><sp/><ref refid="structbt__mesh__schedule__entry_a3f4625e163643b53d287cf33009c14ea_1a3f4625e163643b53d287cf33009c14ea" kindref="member">action</ref><sp/>:<sp/>4;</highlight></codeline>
+<codeline lineno="111" refid="structbt__mesh__schedule__entry_a0d22cc96206e92e42ffe66d76b67ea9f_1a0d22cc96206e92e42ffe66d76b67ea9f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__schedule__entry_a0d22cc96206e92e42ffe66d76b67ea9f_1a0d22cc96206e92e42ffe66d76b67ea9f" kindref="member">transition_time</ref>;</highlight></codeline>
+<codeline lineno="113" refid="structbt__mesh__schedule__entry_a1ff7c0e01f7c68568ace994cd99f6f3b_1a1ff7c0e01f7c68568ace994cd99f6f3b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__mesh__schedule__entry_a1ff7c0e01f7c68568ace994cd99f6f3b_1a1ff7c0e01f7c68568ace994cd99f6f3b" kindref="member">scene_number</ref>;</highlight></codeline>
+<codeline lineno="114"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_OP_GET<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x49)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_OP_STATUS<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x4A)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_OP_ACTION_GET<sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x48)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_OP_ACTION_STATUS<sp/><sp/><sp/><sp/>BT_MESH_MODEL_OP_1(0x5F)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_OP_ACTION_SET<sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_OP_1(0x60)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_OP_ACTION_SET_UNACK<sp/>BT_MESH_MODEL_OP_1(0x61)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_MSG_LEN_ACTION_GET<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_MSG_LEN_ACTION_SET<sp/>10</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_MSG_LEN_ACTION_STATUS<sp/>10</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_MSG_LEN_ACTION_STATUS_REDUCED<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_MSG_LEN_GET<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_MSG_LEN_STATUS<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_MESH_SCHEDULER_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/mesh/scheduler.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structesb__payload" kind="struct" language="C++" prot="public">
+    <compoundname>esb_payload</compoundname>
+    <includes refid="esb_8h" local="no">esb.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structesb__payload_a96cd3b980ac4b9a5741ad867e30ef9e8_1a96cd3b980ac4b9a5741ad867e30ef9e8" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t esb_payload::length</definition>
+        <argsstring></argsstring>
+        <name>length</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of the packet when not in DPL mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="197" column="9" bodyfile="include/esb.h" bodystart="197" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structesb__payload_ab48b8982de6676821515598ee632026f_1ab48b8982de6676821515598ee632026f" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t esb_payload::pipe</definition>
+        <argsstring></argsstring>
+        <name>pipe</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pipe used for this payload. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="198" column="9" bodyfile="include/esb.h" bodystart="198" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structesb__payload_aae5f5fe38804078b5287bcd0c015d9a6_1aae5f5fe38804078b5287bcd0c015d9a6" prot="public" static="no" mutable="no">
+        <type>int8_t</type>
+        <definition>int8_t esb_payload::rssi</definition>
+        <argsstring></argsstring>
+        <name>rssi</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>RSSI for the received packet. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="199" column="8" bodyfile="include/esb.h" bodystart="199" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structesb__payload_a412729c61c54fcb1a143ce37ba904378_1a412729c61c54fcb1a143ce37ba904378" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t esb_payload::noack</definition>
+        <argsstring></argsstring>
+        <name>noack</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Flag indicating that this packet will not be acknowledged. Flag is ignored when selective auto ack is enabled. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="200" column="9" bodyfile="include/esb.h" bodystart="200" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structesb__payload_a84dc554d8a04d9fe1545dd990e9b6acb_1a84dc554d8a04d9fe1545dd990e9b6acb" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t esb_payload::pid</definition>
+        <argsstring></argsstring>
+        <name>pid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>PID assigned during communication. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="204" column="9" bodyfile="include/esb.h" bodystart="204" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structesb__payload_a637a29c68106cb7737a76207e88302a5_1a637a29c68106cb7737a76207e88302a5" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t esb_payload::data[CONFIG_ESB_MAX_PAYLOAD_LENGTH]</definition>
+        <argsstring>[CONFIG_ESB_MAX_PAYLOAD_LENGTH]</argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The payload data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="205" column="9" bodyfile="include/esb.h" bodystart="205" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Enhanced ShockBurst payload. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The payload is used both for transmissions and for acknowledging a received packet with a payload. </para>
+    </detaileddescription>
+    <location file="include/esb.h" line="196" column="1" bodyfile="include/esb.h" bodystart="196" bodyend="206"/>
+    <listofallmembers>
+      <member refid="structesb__payload_a637a29c68106cb7737a76207e88302a5_1a637a29c68106cb7737a76207e88302a5" prot="public" virt="non-virtual"><scope>esb_payload</scope><name>data</name></member>
+      <member refid="structesb__payload_a96cd3b980ac4b9a5741ad867e30ef9e8_1a96cd3b980ac4b9a5741ad867e30ef9e8" prot="public" virt="non-virtual"><scope>esb_payload</scope><name>length</name></member>
+      <member refid="structesb__payload_a412729c61c54fcb1a143ce37ba904378_1a412729c61c54fcb1a143ce37ba904378" prot="public" virt="non-virtual"><scope>esb_payload</scope><name>noack</name></member>
+      <member refid="structesb__payload_a84dc554d8a04d9fe1545dd990e9b6acb_1a84dc554d8a04d9fe1545dd990e9b6acb" prot="public" virt="non-virtual"><scope>esb_payload</scope><name>pid</name></member>
+      <member refid="structesb__payload_ab48b8982de6676821515598ee632026f_1ab48b8982de6676821515598ee632026f" prot="public" virt="non-virtual"><scope>esb_payload</scope><name>pipe</name></member>
+      <member refid="structesb__payload_aae5f5fe38804078b5287bcd0c015d9a6_1aae5f5fe38804078b5287bcd0c015d9a6" prot="public" virt="non-virtual"><scope>esb_payload</scope><name>rssi</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

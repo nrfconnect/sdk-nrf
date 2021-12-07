@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structpasskey__input__config" kind="struct" language="C++" prot="public">
+    <compoundname>passkey_input_config</compoundname>
+    <includes refid="passkey__buttons_8h" local="no">passkey_buttons.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structpasskey__input__config_a713f1c30142f0df50b7c4c6565fece44_1a713f1c30142f0df50b7c4c6565fece44" prot="public" static="no" mutable="no">
+        <type>const uint16_t</type>
+        <definition>const uint16_t passkey_input_config::key_ids[10]</definition>
+        <argsstring>[10]</argsstring>
+        <name>key_ids</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/passkey_buttons.h" line="15" column="16" bodyfile="applications/nrf_desktop/configuration/common/passkey_buttons.h" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/nrf_desktop/configuration/common/passkey_buttons.h" line="14" column="1" bodyfile="applications/nrf_desktop/configuration/common/passkey_buttons.h" bodystart="14" bodyend="16"/>
+    <listofallmembers>
+      <member refid="structpasskey__input__config_a713f1c30142f0df50b7c4c6565fece44_1a713f1c30142f0df50b7c4c6565fece44" prot="public" virt="non-virtual"><scope>passkey_input_config</scope><name>key_ids</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,277 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="nrf52840gmouse__nrf52840_2port__state__def_8h" kind="file" language="C++">
+    <compoundname>port_state_def.h</compoundname>
+    <includes local="no">soc.h</includes>
+    <includes refid="port__state_8h" local="yes">port_state.h</includes>
+    <incdepgraph>
+      <node id="3">
+        <label>port_state.h</label>
+        <link refid="port__state_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/port_state_def.h</label>
+        <link refid="nrf52840gmouse__nrf52840_2port__state__def_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>soc.h</label>
+      </node>
+      <node id="4">
+        <label>stddef.h</label>
+      </node>
+      <node id="5">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="nrf52840gmouse__nrf52840_2port__state__def_8h_aa1203f4400838d94376e2ac5b697d3f1_1aa1203f4400838d94376e2ac5b697d3f1" prot="public" static="no" mutable="no">
+        <type>const struct @96</type>
+        <definition>const struct @96 port_state_def_include_once</definition>
+        <argsstring></argsstring>
+        <name>port_state_def_include_once</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/port_state_def.h" line="18" column="41"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf52840gmouse__nrf52840_2port__state__def_8h_aeed24526c1850535b2bcd1428f8285ab_1aeed24526c1850535b2bcd1428f8285ab" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structpin__state" kindref="compound">pin_state</ref></type>
+        <definition>const struct pin_state port0_on[]</definition>
+        <argsstring>[]</argsstring>
+        <name>port0_on</name>
+        <initializer>= {
+
+
+	{6,  0}, 
+
+
+
+	{23, 0}, 
+	{25, 0}, 
+	{7,  0}, 
+	{11, 0}, 
+	{26, 0}, 
+	{27, 0}, 
+
+
+	{9,  0}, 
+	{10, 0}, 
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/port_state_def.h" line="21" column="29" bodyfile="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/port_state_def.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf52840gmouse__nrf52840_2port__state__def_8h_a56c2acfbdf08033820ff689aab816ec6_1a56c2acfbdf08033820ff689aab816ec6" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structpin__state" kindref="compound">pin_state</ref></type>
+        <definition>const struct pin_state port1_on[]</definition>
+        <argsstring>[]</argsstring>
+        <name>port1_on</name>
+        <initializer>= {
+	{3,  0}, 
+	{5,  0}, 
+	{7,  0}, 
+
+
+
+
+	{13, 0}, 
+
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/port_state_def.h" line="40" column="29" bodyfile="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/port_state_def.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf52840gmouse__nrf52840_2port__state__def_8h_ab06e068c8e0335be117488ae33e14385_1ab06e068c8e0335be117488ae33e14385" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structpin__state" kindref="compound">pin_state</ref></type>
+        <definition>const struct pin_state port0_off[]</definition>
+        <argsstring>[]</argsstring>
+        <name>port0_off</name>
+        <initializer>= {
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/port_state_def.h" line="52" column="29" bodyfile="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/port_state_def.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf52840gmouse__nrf52840_2port__state__def_8h_aaf3b3a5379aefd59b464097318072810_1aaf3b3a5379aefd59b464097318072810" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structpin__state" kindref="compound">pin_state</ref></type>
+        <definition>const struct pin_state port1_off[]</definition>
+        <argsstring>[]</argsstring>
+        <name>port1_off</name>
+        <initializer>= {
+	{13, 0}, 
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/port_state_def.h" line="55" column="29" bodyfile="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/port_state_def.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf52840gmouse__nrf52840_2port__state__def_8h_a665d461cc54ee2374c8526a8388712f5_1a665d461cc54ee2374c8526a8388712f5" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structport__state" kindref="compound">port_state</ref></type>
+        <definition>const struct port_state port_state_on[]</definition>
+        <argsstring>[]</argsstring>
+        <name>port_state_on</name>
+        <initializer>= {
+	{
+		.name     = DT_LABEL(DT_NODELABEL(gpio0)),
+		.ps       = <ref refid="nrf5340dk__nrf5340__cpuapp_2port__state__def_8h_aeed24526c1850535b2bcd1428f8285ab_1aeed24526c1850535b2bcd1428f8285ab" kindref="member">port0_on</ref>,
+		.ps_count = ARRAY_SIZE(<ref refid="nrf5340dk__nrf5340__cpuapp_2port__state__def_8h_aeed24526c1850535b2bcd1428f8285ab_1aeed24526c1850535b2bcd1428f8285ab" kindref="member">port0_on</ref>),
+	},
+	{
+		.name     = DT_LABEL(DT_NODELABEL(gpio1)),
+		.ps       = <ref refid="nrf5340dk__nrf5340__cpuapp_2port__state__def_8h_a56c2acfbdf08033820ff689aab816ec6_1a56c2acfbdf08033820ff689aab816ec6" kindref="member">port1_on</ref>,
+		.ps_count = ARRAY_SIZE(<ref refid="nrf5340dk__nrf5340__cpuapp_2port__state__def_8h_a56c2acfbdf08033820ff689aab816ec6_1a56c2acfbdf08033820ff689aab816ec6" kindref="member">port1_on</ref>),
+	}
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/port_state_def.h" line="60" column="30" bodyfile="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/port_state_def.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf52840gmouse__nrf52840_2port__state__def_8h_a13bafe3e94a97aae8b3ff314b7d19d2d_1a13bafe3e94a97aae8b3ff314b7d19d2d" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structport__state" kindref="compound">port_state</ref></type>
+        <definition>const struct port_state port_state_off[]</definition>
+        <argsstring>[]</argsstring>
+        <name>port_state_off</name>
+        <initializer>= {
+	{
+		.name     = DT_LABEL(DT_NODELABEL(gpio0)),
+		.ps       = <ref refid="nrf5340dk__nrf5340__cpuapp_2port__state__def_8h_ab06e068c8e0335be117488ae33e14385_1ab06e068c8e0335be117488ae33e14385" kindref="member">port0_off</ref>,
+		.ps_count = ARRAY_SIZE(<ref refid="nrf5340dk__nrf5340__cpuapp_2port__state__def_8h_ab06e068c8e0335be117488ae33e14385_1ab06e068c8e0335be117488ae33e14385" kindref="member">port0_off</ref>),
+	},
+	{
+		.name     = DT_LABEL(DT_NODELABEL(gpio1)),
+		.ps       = <ref refid="nrf5340dk__nrf5340__cpuapp_2port__state__def_8h_aaf3b3a5379aefd59b464097318072810_1aaf3b3a5379aefd59b464097318072810" kindref="member">port1_off</ref>,
+		.ps_count = ARRAY_SIZE(<ref refid="nrf5340dk__nrf5340__cpuapp_2port__state__def_8h_aaf3b3a5379aefd59b464097318072810_1aaf3b3a5379aefd59b464097318072810" kindref="member">port1_off</ref>),
+	}
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/port_state_def.h" line="73" column="30" bodyfile="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/port_state_def.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2018<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;soc.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="port__state_8h" kindref="compound">port_state.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>configuration<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>from<sp/>board<sp/>module<sp/>and<sp/>holds</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*<sp/>information<sp/>about<sp/>default<sp/>pin<sp/>states<sp/>set<sp/>while<sp/>board<sp/>is<sp/>on<sp/>and<sp/>off.</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>structure<sp/>enforces<sp/>the<sp/>header<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>in<sp/>the<sp/>build.</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*<sp/>Violating<sp/>this<sp/>requirement<sp/>triggers<sp/>a<sp/>multiple<sp/>definition<sp/>error<sp/>at<sp/>link<sp/>time.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="nrf52840gmouse__nrf52840_2port__state__def_8h_aa1203f4400838d94376e2ac5b697d3f1_1aa1203f4400838d94376e2ac5b697d3f1" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{}<sp/><ref refid="nrf52810dmouse__nrf52810_2port__state__def_8h_a2cd7e664ccceacfad3bb7d1e64e0d3de_1a2cd7e664ccceacfad3bb7d1e64e0d3de" kindref="member">port_state_def_include_once</ref>;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="nrf52840gmouse__nrf52840_2port__state__def_8h_aeed24526c1850535b2bcd1428f8285ab_1aeed24526c1850535b2bcd1428f8285ab" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structpin__state" kindref="compound">pin_state</ref><sp/><ref refid="nrf52840gmouse__nrf52840_2port__state__def_8h_aeed24526c1850535b2bcd1428f8285ab_1aeed24526c1850535b2bcd1428f8285ab" kindref="member">port0_on</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>!defined(CONFIG_DESKTOP_BATTERY_DISCRETE)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{6,<sp/><sp/>0},<sp/></highlight><highlight class="comment">/*<sp/>battery<sp/>monitor<sp/>enable<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>!defined(CONFIG_CAF_LEDS)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{23,<sp/>0},<sp/></highlight><highlight class="comment">/*<sp/>Front<sp/>LED<sp/>red<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{25,<sp/>0},<sp/></highlight><highlight class="comment">/*<sp/>Front<sp/>LED<sp/>green<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{7,<sp/><sp/>0},<sp/></highlight><highlight class="comment">/*<sp/>Front<sp/>LED<sp/>blue<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{11,<sp/>0},<sp/></highlight><highlight class="comment">/*<sp/>Back<sp/>LED<sp/>red<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{26,<sp/>0},<sp/></highlight><highlight class="comment">/*<sp/>Back<sp/>LED<sp/>green<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{27,<sp/>0},<sp/></highlight><highlight class="comment">/*<sp/>Back<sp/>LED<sp/>blue<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{9,<sp/><sp/>0},<sp/></highlight><highlight class="comment">/*<sp/>NFC1<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{10,<sp/>0},<sp/></highlight><highlight class="comment">/*<sp/>NFC2<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="nrf52840gmouse__nrf52840_2port__state__def_8h_a56c2acfbdf08033820ff689aab816ec6_1a56c2acfbdf08033820ff689aab816ec6" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structpin__state" kindref="compound">pin_state</ref><sp/><ref refid="nrf52840gmouse__nrf52840_2port__state__def_8h_a56c2acfbdf08033820ff689aab816ec6_1a56c2acfbdf08033820ff689aab816ec6" kindref="member">port1_on</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{3,<sp/><sp/>0},<sp/></highlight><highlight class="comment">/*<sp/>LED3<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{5,<sp/><sp/>0},<sp/></highlight><highlight class="comment">/*<sp/>LED3<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{7,<sp/><sp/>0},<sp/></highlight><highlight class="comment">/*<sp/>LED3<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(CONFIG_CAF_LEDS)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{13,<sp/>1},<sp/></highlight><highlight class="comment">/*<sp/>LED<sp/>power<sp/>enable<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{13,<sp/>0},<sp/></highlight><highlight class="comment">/*<sp/>LED<sp/>power<sp/>enable<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="nrf52840gmouse__nrf52840_2port__state__def_8h_ab06e068c8e0335be117488ae33e14385_1ab06e068c8e0335be117488ae33e14385" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structpin__state" kindref="compound">pin_state</ref><sp/><ref refid="nrf52840gmouse__nrf52840_2port__state__def_8h_ab06e068c8e0335be117488ae33e14385_1ab06e068c8e0335be117488ae33e14385" kindref="member">port0_off</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="nrf52840gmouse__nrf52840_2port__state__def_8h_aaf3b3a5379aefd59b464097318072810_1aaf3b3a5379aefd59b464097318072810" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structpin__state" kindref="compound">pin_state</ref><sp/><ref refid="nrf52840gmouse__nrf52840_2port__state__def_8h_aaf3b3a5379aefd59b464097318072810_1aaf3b3a5379aefd59b464097318072810" kindref="member">port1_off</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{13,<sp/>0},<sp/></highlight><highlight class="comment">/*<sp/>LED<sp/>power<sp/>enable<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="nrf52840gmouse__nrf52840_2port__state__def_8h_a665d461cc54ee2374c8526a8388712f5_1a665d461cc54ee2374c8526a8388712f5" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structport__state" kindref="compound">port_state</ref><sp/><ref refid="nrf52840gmouse__nrf52840_2port__state__def_8h_a665d461cc54ee2374c8526a8388712f5_1a665d461cc54ee2374c8526a8388712f5" kindref="member">port_state_on</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.<ref refid="structport__state_a7951c56b8ef9a0cd0b924c745033ad73_1a7951c56b8ef9a0cd0b924c745033ad73" kindref="member">name</ref><sp/><sp/><sp/><sp/><sp/>=<sp/>DT_LABEL(DT_NODELABEL(gpio0)),</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.ps<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="nrf52840gmouse__nrf52840_2port__state__def_8h_aeed24526c1850535b2bcd1428f8285ab_1aeed24526c1850535b2bcd1428f8285ab" kindref="member">port0_on</ref>,</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.ps_count<sp/>=<sp/>ARRAY_SIZE(<ref refid="nrf52840gmouse__nrf52840_2port__state__def_8h_aeed24526c1850535b2bcd1428f8285ab_1aeed24526c1850535b2bcd1428f8285ab" kindref="member">port0_on</ref>),</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>},</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.name<sp/><sp/><sp/><sp/><sp/>=<sp/>DT_LABEL(DT_NODELABEL(gpio1)),</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.ps<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="nrf52840gmouse__nrf52840_2port__state__def_8h_a56c2acfbdf08033820ff689aab816ec6_1a56c2acfbdf08033820ff689aab816ec6" kindref="member">port1_on</ref>,</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.ps_count<sp/>=<sp/>ARRAY_SIZE(<ref refid="nrf52840gmouse__nrf52840_2port__state__def_8h_a56c2acfbdf08033820ff689aab816ec6_1a56c2acfbdf08033820ff689aab816ec6" kindref="member">port1_on</ref>),</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="71"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="nrf52840gmouse__nrf52840_2port__state__def_8h_a13bafe3e94a97aae8b3ff314b7d19d2d_1a13bafe3e94a97aae8b3ff314b7d19d2d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structport__state" kindref="compound">port_state</ref><sp/><ref refid="nrf52840gmouse__nrf52840_2port__state__def_8h_a13bafe3e94a97aae8b3ff314b7d19d2d_1a13bafe3e94a97aae8b3ff314b7d19d2d" kindref="member">port_state_off</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.<ref refid="structport__state_a7951c56b8ef9a0cd0b924c745033ad73_1a7951c56b8ef9a0cd0b924c745033ad73" kindref="member">name</ref><sp/><sp/><sp/><sp/><sp/>=<sp/>DT_LABEL(DT_NODELABEL(gpio0)),</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.ps<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="nrf52840gmouse__nrf52840_2port__state__def_8h_ab06e068c8e0335be117488ae33e14385_1ab06e068c8e0335be117488ae33e14385" kindref="member">port0_off</ref>,</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.ps_count<sp/>=<sp/>ARRAY_SIZE(<ref refid="nrf52840gmouse__nrf52840_2port__state__def_8h_ab06e068c8e0335be117488ae33e14385_1ab06e068c8e0335be117488ae33e14385" kindref="member">port0_off</ref>),</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>},</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.name<sp/><sp/><sp/><sp/><sp/>=<sp/>DT_LABEL(DT_NODELABEL(gpio1)),</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.ps<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="nrf52840gmouse__nrf52840_2port__state__def_8h_aaf3b3a5379aefd59b464097318072810_1aaf3b3a5379aefd59b464097318072810" kindref="member">port1_off</ref>,</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.ps_count<sp/>=<sp/>ARRAY_SIZE(<ref refid="nrf52840gmouse__nrf52840_2port__state__def_8h_aaf3b3a5379aefd59b464097318072810_1aaf3b3a5379aefd59b464097318072810" kindref="member">port1_off</ref>),</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/port_state_def.h"/>
+  </compounddef>
+</doxygen>

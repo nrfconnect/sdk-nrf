@@ -1,0 +1,230 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__battery" kind="group">
+    <compoundname>bt_mesh_battery</compoundname>
+    <title>Generic Battery models</title>
+    <innerclass refid="structbt__mesh__battery__status" prot="public">bt_mesh_battery_status</innerclass>
+    <innergroup refid="group__bt__mesh__battery__srv">Generic Battery Server model</innergroup>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__mesh__battery_1ga7fc61b1fec97d78e5db3d2bffecb7c7d" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_battery_presence</name>
+        <enumvalue id="group__bt__mesh__battery_ga7fc61b1fec97d78e5db3d2bffecb7c7d_1gga7fc61b1fec97d78e5db3d2bffecb7c7da678d9b9115e3d89da3a1f5d51aa464ae" prot="public">
+          <name>BT_MESH_BATTERY_PRESENCE_NOT_PRESENT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The battery is not present. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__battery_ga7fc61b1fec97d78e5db3d2bffecb7c7d_1gga7fc61b1fec97d78e5db3d2bffecb7c7daa2896b4a39e3ef47f4578bbe7829ec71" prot="public">
+          <name>BT_MESH_BATTERY_PRESENCE_PRESENT_REMOVABLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The battery is present and is removable. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__battery_ga7fc61b1fec97d78e5db3d2bffecb7c7d_1gga7fc61b1fec97d78e5db3d2bffecb7c7dae1e7e5a55591cabc2b26d1d3c06d6f92" prot="public">
+          <name>BT_MESH_BATTERY_PRESENCE_PRESENT_NOT_REMOVABLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The battery is present and is non-removable. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__battery_ga7fc61b1fec97d78e5db3d2bffecb7c7d_1gga7fc61b1fec97d78e5db3d2bffecb7c7dad663cc77a3fc3768e1bc2d5050186101" prot="public">
+          <name>BT_MESH_BATTERY_PRESENCE_UNKNOWN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The battery presence is unknown. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Battery presence state. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_battery.h" line="32" column="1" bodyfile="include/bluetooth/mesh/gen_battery.h" bodystart="32" bodyend="41"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__mesh__battery_1gaa5b7af6d793ce81d5db90b4be03f30ed" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_battery_indicator</name>
+        <enumvalue id="group__bt__mesh__battery_gaa5b7af6d793ce81d5db90b4be03f30ed_1ggaa5b7af6d793ce81d5db90b4be03f30eda1ddc7cfff81522d1ba9ee131767e855a" prot="public">
+          <name>BT_MESH_BATTERY_INDICATOR_CRITICALLY_LOW</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The battery charge is Critically Low Level. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__battery_gaa5b7af6d793ce81d5db90b4be03f30ed_1ggaa5b7af6d793ce81d5db90b4be03f30eda7c5258c3f24e4501e85a5d9fff45d189" prot="public">
+          <name>BT_MESH_BATTERY_INDICATOR_LOW</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The battery charge is Low Level. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__battery_gaa5b7af6d793ce81d5db90b4be03f30ed_1ggaa5b7af6d793ce81d5db90b4be03f30eda35dfa9a82d68a7ef83653c7013d5c6e7" prot="public">
+          <name>BT_MESH_BATTERY_INDICATOR_GOOD</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The battery charge is Good Level. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__battery_gaa5b7af6d793ce81d5db90b4be03f30ed_1ggaa5b7af6d793ce81d5db90b4be03f30eda58472a0b11ca3fceeba7a6a13ec768f6" prot="public">
+          <name>BT_MESH_BATTERY_INDICATOR_UNKNOWN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The battery charge is unknown. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicator for the charge level of the battery. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_battery.h" line="44" column="1" bodyfile="include/bluetooth/mesh/gen_battery.h" bodystart="44" bodyend="53"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__mesh__battery_1gad35f2011de602ee9a42dd84dfdb401c3" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_battery_charging</name>
+        <enumvalue id="group__bt__mesh__battery_gad35f2011de602ee9a42dd84dfdb401c3_1ggad35f2011de602ee9a42dd84dfdb401c3a5a5fd8da4ea3a5ec1237f30009f43e79" prot="public">
+          <name>BT_MESH_BATTERY_CHARGING_NOT_CHARGEABLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The battery is not chargeable. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__battery_gad35f2011de602ee9a42dd84dfdb401c3_1ggad35f2011de602ee9a42dd84dfdb401c3a5a2d31e104ebffa365a98413ef116c54" prot="public">
+          <name>BT_MESH_BATTERY_CHARGING_CHARGEABLE_NOT_CHARGING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The battery is chargeable and is not charging. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__battery_gad35f2011de602ee9a42dd84dfdb401c3_1ggad35f2011de602ee9a42dd84dfdb401c3ada0391362e73ad3fdf499a6cf23bd3fe" prot="public">
+          <name>BT_MESH_BATTERY_CHARGING_CHARGEABLE_CHARGING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The battery is chareable and is charging. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__battery_gad35f2011de602ee9a42dd84dfdb401c3_1ggad35f2011de602ee9a42dd84dfdb401c3ab24c8e3d81c4ef1db86ea82d60f567b2" prot="public">
+          <name>BT_MESH_BATTERY_CHARGING_UNKNOWN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The battery charging state is unknown. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Battery charging state. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_battery.h" line="56" column="1" bodyfile="include/bluetooth/mesh/gen_battery.h" bodystart="56" bodyend="65"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__mesh__battery_1ga8a86d9ba6c874fcad9ed4b10979b5e91" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_battery_service</name>
+        <enumvalue id="group__bt__mesh__battery_ga8a86d9ba6c874fcad9ed4b10979b5e91_1gga8a86d9ba6c874fcad9ed4b10979b5e91a06370f5de6f239b220167003149e5804" prot="public">
+          <name>BT_MESH_BATTERY_SERVICE_INVALID</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Reserved for future use. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__battery_ga8a86d9ba6c874fcad9ed4b10979b5e91_1gga8a86d9ba6c874fcad9ed4b10979b5e91af1bc881eb5647c1a6f81edc89654554d" prot="public">
+          <name>BT_MESH_BATTERY_SERVICE_NOT_REQUIRED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The battery does not require service. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__battery_ga8a86d9ba6c874fcad9ed4b10979b5e91_1gga8a86d9ba6c874fcad9ed4b10979b5e91a1f5790d26fa40507103a160e0925a3d2" prot="public">
+          <name>BT_MESH_BATTERY_SERVICE_REQUIRED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The battery requires service. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__battery_ga8a86d9ba6c874fcad9ed4b10979b5e91_1gga8a86d9ba6c874fcad9ed4b10979b5e91a435ecd27b02b23a7b1e62891d8fa8f20" prot="public">
+          <name>BT_MESH_BATTERY_SERVICE_UNKNOWN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The battery servicability is unknown. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Battery service state. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_battery.h" line="68" column="1" bodyfile="include/bluetooth/mesh/gen_battery.h" bodystart="68" bodyend="77"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__battery_1gaa16db19c82abd079a97d8c70166d4109" prot="public" static="no">
+        <name>BT_MESH_BATTERY_LVL_UNKNOWN</name>
+        <initializer>0xff</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Unknown battery level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_battery.h" line="24" column="9" bodyfile="include/bluetooth/mesh/gen_battery.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__battery_1gacffd5ebc07a52647aebc69339a2bf6da" prot="public" static="no">
+        <name>BT_MESH_BATTERY_TIME_MAX</name>
+        <initializer>0xfffffe</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Longest acceptable charge and discharge time in minutes </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_battery.h" line="27" column="9" bodyfile="include/bluetooth/mesh/gen_battery.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__battery_1ga32cd1512b81db39e440be81c72cf5649" prot="public" static="no">
+        <name>BT_MESH_BATTERY_TIME_UNKNOWN</name>
+        <initializer>0xffffff</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Unknown discharge time </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_battery.h" line="29" column="9" bodyfile="include/bluetooth/mesh/gen_battery.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Generic Battery models. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

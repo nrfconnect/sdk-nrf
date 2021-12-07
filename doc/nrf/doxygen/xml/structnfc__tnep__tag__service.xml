@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__tnep__tag__service" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_tnep_tag_service</compoundname>
+    <includes refid="tag_8h" local="no">tag.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__tnep__tag__service_ae2b1f9340c5c41a00aec1744d26a7c66_1ae2b1f9340c5c41a00aec1744d26a7c66" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structnfc__ndef__tnep__rec__svc__param" kindref="compound">nfc_ndef_tnep_rec_svc_param</ref> *</type>
+        <definition>struct nfc_ndef_tnep_rec_svc_param* nfc_tnep_tag_service::parameters</definition>
+        <argsstring></argsstring>
+        <name>parameters</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Services parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="74" column="34" bodyfile="include/nfc/tnep/tag.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__tag__service_a70eec10020a92af5ca38ebbd15061b32_1a70eec10020a92af5ca38ebbd15061b32" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+        <definition>struct nfc_ndef_record_desc* nfc_tnep_tag_service::ndef_record</definition>
+        <argsstring></argsstring>
+        <name>ndef_record</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>NDEF records data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="77" column="27" bodyfile="include/nfc/tnep/tag.h" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__tag__service_a4dedd8be029071a810eacd982813df57_1a4dedd8be029071a810eacd982813df57" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structnfc__tnep__tag__service__cb" kindref="compound">nfc_tnep_tag_service_cb</ref> *</type>
+        <definition>const struct nfc_tnep_tag_service_cb* nfc_tnep_tag_service::callbacks</definition>
+        <argsstring></argsstring>
+        <name>callbacks</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Callbacks structure. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="80" column="36" bodyfile="include/nfc/tnep/tag.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Service structure. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This structure contains all information about user service. It contains service parameters, service parameters record and services callbacks. It is used by <emphasis>tnep_init()</emphasis> function. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>nfc_ndef_record_desc</label>
+        <link refid="structnfc__ndef__record__desc"/>
+      </node>
+      <node id="2">
+        <label>nfc_ndef_tnep_rec_svc_param</label>
+        <link refid="structnfc__ndef__tnep__rec__svc__param"/>
+      </node>
+      <node id="1">
+        <label>nfc_tnep_tag_service</label>
+        <link refid="structnfc__tnep__tag__service"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>parameters</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>ndef_record</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>callbacks</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>nfc_tnep_tag_service_cb</label>
+        <link refid="structnfc__tnep__tag__service__cb"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/nfc/tnep/tag.h" line="72" column="1" bodyfile="include/nfc/tnep/tag.h" bodystart="72" bodyend="81"/>
+    <listofallmembers>
+      <member refid="structnfc__tnep__tag__service_a4dedd8be029071a810eacd982813df57_1a4dedd8be029071a810eacd982813df57" prot="public" virt="non-virtual"><scope>nfc_tnep_tag_service</scope><name>callbacks</name></member>
+      <member refid="structnfc__tnep__tag__service_a70eec10020a92af5ca38ebbd15061b32_1a70eec10020a92af5ca38ebbd15061b32" prot="public" virt="non-virtual"><scope>nfc_tnep_tag_service</scope><name>ndef_record</name></member>
+      <member refid="structnfc__tnep__tag__service_ae2b1f9340c5c41a00aec1744d26a7c66_1ae2b1f9340c5c41a00aec1744d26a7c66" prot="public" virt="non-virtual"><scope>nfc_tnep_tag_service</scope><name>parameters</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

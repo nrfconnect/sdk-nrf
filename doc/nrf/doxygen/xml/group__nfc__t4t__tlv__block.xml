@@ -1,0 +1,162 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__t4t__tlv__block" kind="group">
+    <compoundname>nfc_t4t_tlv_block</compoundname>
+    <title>File Control TLV block parser for Type 4 Tag.</title>
+    <innerclass refid="structnfc__t4t__tlv__block__file" prot="public">nfc_t4t_tlv_block_file</innerclass>
+    <innerclass refid="structnfc__t4t__tlv__block__file__control__val" prot="public">nfc_t4t_tlv_block_file_control_val</innerclass>
+    <innerclass refid="structnfc__t4t__tlv__block" prot="public">nfc_t4t_tlv_block</innerclass>
+    <innergroup refid="group__nfc__t4t__tlv__block__file__access">Possible values of file</innergroup>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nfc__t4t__tlv__block_1ga3fc67c751a2b5ee4603c6d15fc3a73d1" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nfc_t4t_tlv_block_type</name>
+        <enumvalue id="group__nfc__t4t__tlv__block_ga3fc67c751a2b5ee4603c6d15fc3a73d1_1gga3fc67c751a2b5ee4603c6d15fc3a73d1aafa77582ae4b4bd7e56a6bb30aac23d6" prot="public">
+          <name>NFC_T4T_TLV_BLOCK_TYPE_NDEF_FILE_CONTROL_TLV</name>
+          <initializer>= 0x04</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Control information concerning the EF file with short NDEF message. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__tlv__block_ga3fc67c751a2b5ee4603c6d15fc3a73d1_1gga3fc67c751a2b5ee4603c6d15fc3a73d1ae25bd03b51882e634e888b64d4d27e39" prot="public">
+          <name>NFC_T4T_TLV_BLOCK_TYPE_PROPRIETARY_FILE_CONTROL_TLV</name>
+          <initializer>= 0x05</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Control information concerning the Proprietary file with proprietary data. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__tlv__block_ga3fc67c751a2b5ee4603c6d15fc3a73d1_1gga3fc67c751a2b5ee4603c6d15fc3a73d1a7b3465cc1c9563c6b89c31094f775c41" prot="public">
+          <name>NFC_T4T_TLV_BLOCK_TYPE_EXTENDED_NDEF_FILE_CONTROL_TLV</name>
+          <initializer>= 0x06</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Control information concerning the EF file with long NDEF message. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Possible types of File Control TLV for Type 4 Tag. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/tlv_block.h" line="44" column="1" bodyfile="include/nfc/t4t/tlv_block.h" bodystart="44" bodyend="53"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__t4t__tlv__block_1gaa119f8ef1b12880646030603172e9bc7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_tlv_block_parse</definition>
+        <argsstring>(struct nfc_t4t_tlv_block *file_control_tlv, const uint8_t *raw_data, uint16_t *len)</argsstring>
+        <name>nfc_t4t_tlv_block_parse</name>
+        <param>
+          <type>struct <ref refid="structnfc__t4t__tlv__block" kindref="compound">nfc_t4t_tlv_block</ref> *</type>
+          <declname>file_control_tlv</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>raw_data</declname>
+        </param>
+        <param>
+          <type>uint16_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Function for parsing raw data of File Control TLV, read from a Type 4 Tag. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function parses raw data of File Control TLV and stores the results in its descriptor.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">file_control_tlv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the File Control TLV that will be filled with parsed data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">raw_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer with raw TLV data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>In: Buffer length with TLV blocks. Out: Total length of first identified TLV within the buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/tlv_block.h" line="114" column="5" declfile="include/nfc/t4t/tlv_block.h" declline="114" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__tlv__block_1gad1a6e45a742ce7e690838c9733aac442" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_t4t_tlv_block_printout</definition>
+        <argsstring>(uint8_t num, const struct nfc_t4t_tlv_block *t4t_tlv_block)</argsstring>
+        <name>nfc_t4t_tlv_block_printout</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>num</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structnfc__t4t__tlv__block" kindref="compound">nfc_t4t_tlv_block</ref> *</type>
+          <declname>t4t_tlv_block</declname>
+        </param>
+        <briefdescription>
+<para>Function for printing TLV block descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function prints TLV block descriptor.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">num</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>TLV block number. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">t4t_tlv_block</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the TLV block descriptor. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/tlv_block.h" line="125" column="6" declfile="include/nfc/t4t/tlv_block.h" declline="125" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>File Control TLV block parser for Type 4 Tag (T4T). </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

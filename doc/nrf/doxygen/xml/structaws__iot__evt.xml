@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structaws__iot__evt" kind="struct" language="C++" prot="public">
+    <compoundname>aws_iot_evt</compoundname>
+    <includes refid="aws__iot_8h" local="no">aws_iot.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structaws__iot__evt_a19d48d3b054bc728c08117cb0ba72029_1a19d48d3b054bc728c08117cb0ba72029" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__aws__iot_gae9de5373422676c25b58a93746587638_1gae9de5373422676c25b58a93746587638" kindref="member">aws_iot_evt_type</ref></type>
+        <definition>enum aws_iot_evt_type aws_iot_evt::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Type of event. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="145" column="22" bodyfile="include/net/aws_iot.h" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structaws__iot__evt_aff15cca9d61bf32aa57341193369097c_1aff15cca9d61bf32aa57341193369097c" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structaws__iot__data" kindref="compound">aws_iot_data</ref></type>
+        <definition>struct aws_iot_data aws_iot_evt::msg</definition>
+        <argsstring></argsstring>
+        <name>msg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="147" column="19" bodyfile="include/net/aws_iot.h" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structaws__iot__evt_afe1f9f23e80a2d4c63717843d811f3a0_1afe1f9f23e80a2d4c63717843d811f3a0" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int aws_iot_evt::err</definition>
+        <argsstring></argsstring>
+        <name>err</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="148" column="5" bodyfile="include/net/aws_iot.h" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structaws__iot__evt_a225cc975bc4613235be7126a59c71691_1a225cc975bc4613235be7126a59c71691" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int aws_iot_evt::fota_progress</definition>
+        <argsstring></argsstring>
+        <name>fota_progress</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>FOTA progress in percentage. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="150" column="5" bodyfile="include/net/aws_iot.h" bodystart="150" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structaws__iot__evt_a8fb9d23fd2fb2c5b0af39b108c880235_1a8fb9d23fd2fb2c5b0af39b108c880235" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool aws_iot_evt::persistent_session</definition>
+        <argsstring></argsstring>
+        <name>persistent_session</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="151" column="6" bodyfile="include/net/aws_iot.h" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structaws__iot__evt_a34360c71d2d9b43c3ccd97642ee5e45e_1a34360c71d2d9b43c3ccd97642ee5e45e" prot="public" static="no" mutable="no">
+        <type>union aws_iot_evt::@153</type>
+        <definition>union aws_iot_evt::@153 aws_iot_evt::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="152" column="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Struct with data received from AWS IoT broker. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>aws_iot_data</label>
+        <link refid="structaws__iot__data"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>topic</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>aws_iot_evt</label>
+        <link refid="structaws__iot__evt"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>msg</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>aws_iot_topic_data</label>
+        <link refid="structaws__iot__topic__data"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/net/aws_iot.h" line="143" column="1" bodyfile="include/net/aws_iot.h" bodystart="143" bodyend="153"/>
+    <listofallmembers>
+      <member refid="structaws__iot__evt_a34360c71d2d9b43c3ccd97642ee5e45e_1a34360c71d2d9b43c3ccd97642ee5e45e" prot="public" virt="non-virtual"><scope>aws_iot_evt</scope><name>data</name></member>
+      <member refid="structaws__iot__evt_afe1f9f23e80a2d4c63717843d811f3a0_1afe1f9f23e80a2d4c63717843d811f3a0" prot="public" virt="non-virtual"><scope>aws_iot_evt</scope><name>err</name></member>
+      <member refid="structaws__iot__evt_a225cc975bc4613235be7126a59c71691_1a225cc975bc4613235be7126a59c71691" prot="public" virt="non-virtual"><scope>aws_iot_evt</scope><name>fota_progress</name></member>
+      <member refid="structaws__iot__evt_aff15cca9d61bf32aa57341193369097c_1aff15cca9d61bf32aa57341193369097c" prot="public" virt="non-virtual"><scope>aws_iot_evt</scope><name>msg</name></member>
+      <member refid="structaws__iot__evt_a8fb9d23fd2fb2c5b0af39b108c880235_1a8fb9d23fd2fb2c5b0af39b108c880235" prot="public" virt="non-virtual"><scope>aws_iot_evt</scope><name>persistent_session</name></member>
+      <member refid="structaws__iot__evt_a19d48d3b054bc728c08117cb0ba72029_1a19d48d3b054bc728c08117cb0ba72029" prot="public" virt="non-virtual"><scope>aws_iot_evt</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

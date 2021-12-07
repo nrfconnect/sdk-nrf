@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_5168967913d11e301c2cf924aaf8b025" kind="dir">
+    <compoundname>applications/connectivity_bridge/src/events</compoundname>
+    <innerfile refid="ble__ctrl__event_8h">ble_ctrl_event.h</innerfile>
+    <innerfile refid="ble__data__event_8h">ble_data_event.h</innerfile>
+    <innerfile refid="cdc__data__event_8h">cdc_data_event.h</innerfile>
+    <innerfile refid="fs__event_8h">fs_event.h</innerfile>
+    <innerfile refid="peer__conn__event_8h">peer_conn_event.h</innerfile>
+    <innerfile refid="applications_2connectivity__bridge_2src_2events_2power__event_8h">power_event.h</innerfile>
+    <innerfile refid="uart__data__event_8h">uart_data_event.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/connectivity_bridge/src/events/"/>
+  </compounddef>
+</doxygen>

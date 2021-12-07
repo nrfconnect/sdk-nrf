@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="nrf__desktop_2configuration_2nrf52840gmouse__nrf52840_2buttons__def_8h" kind="file" language="C++">
+    <compoundname>buttons_def.h</compoundname>
+    <includes refid="gpio__pins_8h" local="no">caf/gpio_pins.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/buttons_def.h</label>
+        <link refid="nrf__desktop_2configuration_2nrf52840gmouse__nrf52840_2buttons__def_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>caf/gpio_pins.h</label>
+        <link refid="gpio__pins_8h"/>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="nrf__desktop_2configuration_2nrf52840gmouse__nrf52840_2buttons__def_8h_a3efda2f334a95b29b5b24c5860dbc969_1a3efda2f334a95b29b5b24c5860dbc969" prot="public" static="no" mutable="no">
+        <type>const struct @91</type>
+        <definition>const struct @91 buttons_def_include_once</definition>
+        <argsstring></argsstring>
+        <name>buttons_def_include_once</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/buttons_def.h" line="16" column="38"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf__desktop_2configuration_2nrf52840gmouse__nrf52840_2buttons__def_8h_ab8a7dd48815242eb130a808ef84ddaee_1ab8a7dd48815242eb130a808ef84ddaee" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structgpio__pin" kindref="compound">gpio_pin</ref></type>
+        <definition>const struct gpio_pin col[]</definition>
+        <argsstring>[]</argsstring>
+        <name>col</name>
+        <initializer>= {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/buttons_def.h" line="18" column="28" bodyfile="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/buttons_def.h" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf__desktop_2configuration_2nrf52840gmouse__nrf52840_2buttons__def_8h_a3d1cc71347d8dcd036b518b6de497ce7_1a3d1cc71347d8dcd036b518b6de497ce7" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structgpio__pin" kindref="compound">gpio_pin</ref></type>
+        <definition>const struct gpio_pin row[]</definition>
+        <argsstring>[]</argsstring>
+        <name>row</name>
+        <initializer>= {
+	{ .port = 0, .pin = 2 },
+	{ .port = 1, .pin = 15 },
+	{ .port = 1, .pin = 14 },
+	{ .port = 0, .pin = 29 },
+	{ .port = 0, .pin = 31 },
+	{ .port = 0, .pin = 24 },
+	{ .port = 0, .pin = 22 },
+	{ .port = 0, .pin = 4 },
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/buttons_def.h" line="20" column="28" bodyfile="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/buttons_def.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="gpio__pins_8h" kindref="compound">caf/gpio_pins.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>configuration<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>from<sp/>button<sp/>module<sp/>and<sp/>holds</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*<sp/>information<sp/>about<sp/>pins<sp/>forming<sp/>keyboard<sp/>matrix.</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>structure<sp/>enforces<sp/>the<sp/>header<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>in<sp/>the<sp/>build.</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*<sp/>Violating<sp/>this<sp/>requirement<sp/>triggers<sp/>a<sp/>multiple<sp/>definition<sp/>error<sp/>at<sp/>link<sp/>time.</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16" refid="nrf__desktop_2configuration_2nrf52840gmouse__nrf52840_2buttons__def_8h_a3efda2f334a95b29b5b24c5860dbc969_1a3efda2f334a95b29b5b24c5860dbc969" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{}<sp/><ref refid="machine__learning_2configuration_2nrf52840dk__nrf52840_2buttons__def_8h_a67e45b797ef3816129d91ea8d2d630f3_1a67e45b797ef3816129d91ea8d2d630f3" kindref="member">buttons_def_include_once</ref>;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="nrf__desktop_2configuration_2nrf52840gmouse__nrf52840_2buttons__def_8h_ab8a7dd48815242eb130a808ef84ddaee_1ab8a7dd48815242eb130a808ef84ddaee" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structgpio__pin" kindref="compound">gpio_pin</ref><sp/><ref refid="nrf__desktop_2configuration_2nrf52840gmouse__nrf52840_2buttons__def_8h_ab8a7dd48815242eb130a808ef84ddaee_1ab8a7dd48815242eb130a808ef84ddaee" kindref="member">col</ref>[]<sp/>=<sp/>{};</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20" refid="nrf__desktop_2configuration_2nrf52840gmouse__nrf52840_2buttons__def_8h_a3d1cc71347d8dcd036b518b6de497ce7_1a3d1cc71347d8dcd036b518b6de497ce7" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structgpio__pin" kindref="compound">gpio_pin</ref><sp/><ref refid="nrf__desktop_2configuration_2nrf52840gmouse__nrf52840_2buttons__def_8h_a3d1cc71347d8dcd036b518b6de497ce7_1a3d1cc71347d8dcd036b518b6de497ce7" kindref="member">row</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>.<ref refid="structgpio__pin_a212f457b42f09b06a050c865bd4f4f2c_1a212f457b42f09b06a050c865bd4f4f2c" kindref="member">port</ref><sp/>=<sp/>0,<sp/>.pin<sp/>=<sp/>2<sp/>},</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>.port<sp/>=<sp/>1,<sp/>.pin<sp/>=<sp/>15<sp/>},</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>.port<sp/>=<sp/>1,<sp/>.pin<sp/>=<sp/>14<sp/>},</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>.port<sp/>=<sp/>0,<sp/>.pin<sp/>=<sp/>29<sp/>},</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>.port<sp/>=<sp/>0,<sp/>.pin<sp/>=<sp/>31<sp/>},</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>.port<sp/>=<sp/>0,<sp/>.pin<sp/>=<sp/>24<sp/>},</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>.port<sp/>=<sp/>0,<sp/>.pin<sp/>=<sp/>22<sp/>},</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>.port<sp/>=<sp/>0,<sp/>.pin<sp/>=<sp/>4<sp/>},</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/buttons_def.h"/>
+  </compounddef>
+</doxygen>

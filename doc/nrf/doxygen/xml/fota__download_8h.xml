@@ -1,0 +1,555 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="fota__download_8h" kind="file" language="C++">
+    <compoundname>fota_download.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <includes local="no">zephyr/types.h</includes>
+    <includes refid="download__client_8h" local="no">net/download_client.h</includes>
+    <includes refid="dfu__target_8h" local="no">dfu/dfu_target.h</includes>
+    <incdepgraph>
+      <node id="6">
+        <label>dfu/dfu_target.h</label>
+        <link refid="dfu__target_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>net/download_client.h</label>
+        <link refid="download__client_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/net/fota_download.h</label>
+        <link refid="fota__download_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>net/coap.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structfota__download__evt" prot="public">fota_download_evt</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1ga217989aeef171680eed63a79a9238ba2" prot="public" static="no" strong="no">
+        <type></type>
+        <name>fota_download_evt_id</name>
+        <enumvalue id="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1gga217989aeef171680eed63a79a9238ba2a3ee5ed910cbf3ac83377a6325f311c10" prot="public">
+          <name>FOTA_DOWNLOAD_EVT_PROGRESS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA download progress report. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1gga217989aeef171680eed63a79a9238ba2a0c04c54557619b099e43d8fd636f89cc" prot="public">
+          <name>FOTA_DOWNLOAD_EVT_FINISHED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA download finished. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1gga217989aeef171680eed63a79a9238ba2a517790928651330e8caa51c8d0d8f77c" prot="public">
+          <name>FOTA_DOWNLOAD_EVT_ERASE_PENDING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA download erase pending. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1gga217989aeef171680eed63a79a9238ba2a2de19fa91dd40b0fa971c206f38993cb" prot="public">
+          <name>FOTA_DOWNLOAD_EVT_ERASE_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA download erase done. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1gga217989aeef171680eed63a79a9238ba2a64a984f35c689c50e656b4659c1904bf" prot="public">
+          <name>FOTA_DOWNLOAD_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA download error. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1gga217989aeef171680eed63a79a9238ba2a69388889f788bbb78a2bbefd0efc23e4" prot="public">
+          <name>FOTA_DOWNLOAD_EVT_CANCELLED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA download cancelled. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>FOTA download event IDs. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/fota_download.h" line="33" column="1" bodyfile="include/net/fota_download.h" bodystart="33" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__fota__download_ga9dc903c6231f7c7de49dfa9d6a5c5d47_1ga9dc903c6231f7c7de49dfa9d6a5c5d47" prot="public" static="no" strong="no">
+        <type></type>
+        <name>fota_download_error_cause</name>
+        <enumvalue id="group__fota__download_ga9dc903c6231f7c7de49dfa9d6a5c5d47_1gga9dc903c6231f7c7de49dfa9d6a5c5d47ae63598a676a80135354ad93d46e62e1e" prot="public">
+          <name>FOTA_DOWNLOAD_ERROR_CAUSE_NO_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>No error, used when event ID is not FOTA_DOWNLOAD_EVT_ERROR. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__fota__download_ga9dc903c6231f7c7de49dfa9d6a5c5d47_1gga9dc903c6231f7c7de49dfa9d6a5c5d47a1c114feabab49dfe5beb222f327ce220" prot="public">
+          <name>FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Downloading the update failed. The download may be retried. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__fota__download_ga9dc903c6231f7c7de49dfa9d6a5c5d47_1gga9dc903c6231f7c7de49dfa9d6a5c5d47aafc18fa3147519e7974ee40207a483c9" prot="public">
+          <name>FOTA_DOWNLOAD_ERROR_CAUSE_INVALID_UPDATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The update is invalid and was rejected. Retry will not help. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__fota__download_ga9dc903c6231f7c7de49dfa9d6a5c5d47_1gga9dc903c6231f7c7de49dfa9d6a5c5d47ace44cc359b9974dd8b45e7d4c5ebd3de" prot="public">
+          <name>FOTA_DOWNLOAD_ERROR_CAUSE_TYPE_MISMATCH</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Actual firmware type does not match expected. Retry will not help. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>FOTA download error cause values. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/fota_download.h" line="51" column="1" bodyfile="include/net/fota_download.h" bodystart="51" bodyend="60"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__fota__download_ga95d0d50155479a91d7f0322ae32fbd60_1ga95d0d50155479a91d7f0322ae32fbd60" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* fota_download_callback_t) (const struct fota_download_evt *evt)</definition>
+        <argsstring>)(const struct fota_download_evt *evt)</argsstring>
+        <name>fota_download_callback_t</name>
+        <briefdescription>
+<para>FOTA download asynchronous callback function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/fota_download.h" line="82" column="9" bodyfile="include/net/fota_download.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__fota__download_gacb88d80a30bf57dc5865d330a298aee9_1gacb88d80a30bf57dc5865d330a298aee9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int fota_download_init</definition>
+        <argsstring>(fota_download_callback_t client_callback)</argsstring>
+        <name>fota_download_init</name>
+        <param>
+          <type><ref refid="group__fota__download_ga95d0d50155479a91d7f0322ae32fbd60_1ga95d0d50155479a91d7f0322ae32fbd60" kindref="member">fota_download_callback_t</ref></type>
+          <declname>client_callback</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the firmware over-the-air download library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>client_callback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback for the generated events.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successfully initialized. Otherwise, a negative value is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/fota_download.h" line="91" column="5" declfile="include/net/fota_download.h" declline="91" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__fota__download_ga7dc5a6a165f00dd04f82770ea6a84844_1ga7dc5a6a165f00dd04f82770ea6a84844" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int fota_download_start</definition>
+        <argsstring>(const char *host, const char *file, int sec_tag, uint8_t pdn_id, size_t fragment_size)</argsstring>
+        <name>fota_download_start</name>
+        <param>
+          <type>const char *</type>
+          <declname>host</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>file</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>sec_tag</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>pdn_id</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>fragment_size</declname>
+        </param>
+        <briefdescription>
+<para>Start downloading the given file from the given host. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When the download is complete, the secondary slot of MCUboot is tagged as having valid firmware inside it. The completion is reported through an event.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>host</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of host to start downloading from. Can include scheme and port number, e.g. <ulink url="https://google.com:443">https://google.com:443</ulink> </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Filepath to the file you wish to download. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>sec_tag</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Security tag you want to use with HTTPS set to -1 to Disable. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>pdn_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Packet Data Network ID to use for the download, or 0 to use the default. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fragment_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Fragment size to be used for the download. If 0, <verbatim>embed:rst:inline :kconfig:`CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE` </verbatim> is used.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If download has started successfully. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If download is already ongoing. Otherwise, a negative value is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/fota_download.h" line="110" column="5" declfile="include/net/fota_download.h" declline="110" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__fota__download_ga49f9983d2492c6c7d1097e32b6666b0c_1ga49f9983d2492c6c7d1097e32b6666b0c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int fota_download_start_with_image_type</definition>
+        <argsstring>(const char *host, const char *file, int sec_tag, uint8_t pdn_id, size_t fragment_size, const enum dfu_target_image_type expected_type)</argsstring>
+        <name>fota_download_start_with_image_type</name>
+        <param>
+          <type>const char *</type>
+          <declname>host</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>file</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>sec_tag</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>pdn_id</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>fragment_size</declname>
+        </param>
+        <param>
+          <type>const enum <ref refid="group__dfu__target_gad3de6472dd7ff6c41abd911a16b67a79_1gad3de6472dd7ff6c41abd911a16b67a79" kindref="member">dfu_target_image_type</ref></type>
+          <declname>expected_type</declname>
+        </param>
+        <briefdescription>
+<para>Start downloading the given file from the given host. Validate that the file type matches the expected type before starting the installation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When the download is complete, the secondary slot of MCUboot is tagged as having valid firmware inside it. The completion is reported through an event.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>host</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of host to start downloading from. Can include scheme and port number, e.g. <ulink url="https://google.com:443">https://google.com:443</ulink> </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Filepath to the file you wish to download. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>sec_tag</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Security tag you want to use with HTTPS set to -1 to Disable. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>pdn_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Packet Data Network ID to use for the download, or 0 to use the default. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fragment_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Fragment size to be used for the download. If 0, <verbatim>embed:rst:inline :kconfig:`CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE` </verbatim> is used. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>expected_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of firmware file to be downloaded and installed.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If download has started successfully. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If download is already ongoing. Otherwise, a negative value is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/fota_download.h" line="132" column="5" declfile="include/net/fota_download.h" declline="132" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__fota__download_gaac764ae25e1c7ed8ee34921c90873318_1gaac764ae25e1c7ed8ee34921c90873318" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int fota_download_cancel</definition>
+        <argsstring>(void)</argsstring>
+        <name>fota_download_cancel</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Cancel FOTA image downloading. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If FOTA download is cancelled successfully. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If download is not started, aborted or completed. Otherwise, a negative value is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/fota_download.h" line="142" column="5" declfile="include/net/fota_download.h" declline="142" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__fota__download_ga98282fb0ca9256c4ef71285a3dce18b8_1ga98282fb0ca9256c4ef71285a3dce18b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int fota_download_target</definition>
+        <argsstring>(void)</argsstring>
+        <name>fota_download_target</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Get target image type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Image type becomes known after download starts.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Unknown type before download starts. Otherwise, a type defined in enum dfu_target_image_type. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/fota_download.h" line="151" column="5" declfile="include/net/fota_download.h" declline="151" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>FOTA_DOWNLOAD_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>FOTA_DOWNLOAD_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="download__client_8h" kindref="compound">net/download_client.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="dfu__target_8h" kindref="compound">dfu/dfu_target.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1ga217989aeef171680eed63a79a9238ba2" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1ga217989aeef171680eed63a79a9238ba2" kindref="member">fota_download_evt_id</ref><sp/>{</highlight></codeline>
+<codeline lineno="35" refid="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1gga217989aeef171680eed63a79a9238ba2a3ee5ed910cbf3ac83377a6325f311c10" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1gga217989aeef171680eed63a79a9238ba2a3ee5ed910cbf3ac83377a6325f311c10" kindref="member">FOTA_DOWNLOAD_EVT_PROGRESS</ref>,</highlight></codeline>
+<codeline lineno="37" refid="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1gga217989aeef171680eed63a79a9238ba2a0c04c54557619b099e43d8fd636f89cc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1gga217989aeef171680eed63a79a9238ba2a0c04c54557619b099e43d8fd636f89cc" kindref="member">FOTA_DOWNLOAD_EVT_FINISHED</ref>,</highlight></codeline>
+<codeline lineno="39" refid="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1gga217989aeef171680eed63a79a9238ba2a517790928651330e8caa51c8d0d8f77c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1gga217989aeef171680eed63a79a9238ba2a517790928651330e8caa51c8d0d8f77c" kindref="member">FOTA_DOWNLOAD_EVT_ERASE_PENDING</ref>,</highlight></codeline>
+<codeline lineno="41" refid="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1gga217989aeef171680eed63a79a9238ba2a2de19fa91dd40b0fa971c206f38993cb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1gga217989aeef171680eed63a79a9238ba2a2de19fa91dd40b0fa971c206f38993cb" kindref="member">FOTA_DOWNLOAD_EVT_ERASE_DONE</ref>,</highlight></codeline>
+<codeline lineno="43" refid="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1gga217989aeef171680eed63a79a9238ba2a64a984f35c689c50e656b4659c1904bf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1gga217989aeef171680eed63a79a9238ba2a64a984f35c689c50e656b4659c1904bf" kindref="member">FOTA_DOWNLOAD_EVT_ERROR</ref>,</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1gga217989aeef171680eed63a79a9238ba2a69388889f788bbb78a2bbefd0efc23e4" kindref="member">FOTA_DOWNLOAD_EVT_CANCELLED</ref></highlight></codeline>
+<codeline lineno="46" refid="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1gga217989aeef171680eed63a79a9238ba2a69388889f788bbb78a2bbefd0efc23e4" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="group__fota__download_ga9dc903c6231f7c7de49dfa9d6a5c5d47_1ga9dc903c6231f7c7de49dfa9d6a5c5d47" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__fota__download_ga9dc903c6231f7c7de49dfa9d6a5c5d47_1ga9dc903c6231f7c7de49dfa9d6a5c5d47" kindref="member">fota_download_error_cause</ref><sp/>{</highlight></codeline>
+<codeline lineno="53" refid="group__fota__download_ga9dc903c6231f7c7de49dfa9d6a5c5d47_1gga9dc903c6231f7c7de49dfa9d6a5c5d47ae63598a676a80135354ad93d46e62e1e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__fota__download_ga9dc903c6231f7c7de49dfa9d6a5c5d47_1gga9dc903c6231f7c7de49dfa9d6a5c5d47ae63598a676a80135354ad93d46e62e1e" kindref="member">FOTA_DOWNLOAD_ERROR_CAUSE_NO_ERROR</ref>,</highlight></codeline>
+<codeline lineno="55" refid="group__fota__download_ga9dc903c6231f7c7de49dfa9d6a5c5d47_1gga9dc903c6231f7c7de49dfa9d6a5c5d47a1c114feabab49dfe5beb222f327ce220" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__fota__download_ga9dc903c6231f7c7de49dfa9d6a5c5d47_1gga9dc903c6231f7c7de49dfa9d6a5c5d47a1c114feabab49dfe5beb222f327ce220" kindref="member">FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED</ref>,</highlight></codeline>
+<codeline lineno="57" refid="group__fota__download_ga9dc903c6231f7c7de49dfa9d6a5c5d47_1gga9dc903c6231f7c7de49dfa9d6a5c5d47aafc18fa3147519e7974ee40207a483c9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__fota__download_ga9dc903c6231f7c7de49dfa9d6a5c5d47_1gga9dc903c6231f7c7de49dfa9d6a5c5d47aafc18fa3147519e7974ee40207a483c9" kindref="member">FOTA_DOWNLOAD_ERROR_CAUSE_INVALID_UPDATE</ref>,</highlight></codeline>
+<codeline lineno="59" refid="group__fota__download_ga9dc903c6231f7c7de49dfa9d6a5c5d47_1gga9dc903c6231f7c7de49dfa9d6a5c5d47ace44cc359b9974dd8b45e7d4c5ebd3de" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__fota__download_ga9dc903c6231f7c7de49dfa9d6a5c5d47_1gga9dc903c6231f7c7de49dfa9d6a5c5d47ace44cc359b9974dd8b45e7d4c5ebd3de" kindref="member">FOTA_DOWNLOAD_ERROR_CAUSE_TYPE_MISMATCH</ref>,</highlight></codeline>
+<codeline lineno="60"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65" refid="structfota__download__evt" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structfota__download__evt" kindref="compound">fota_download_evt</ref><sp/>{</highlight></codeline>
+<codeline lineno="66" refid="structfota__download__evt_a04e8bdc226212ec351630856ee4f926b_1a04e8bdc226212ec351630856ee4f926b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1ga217989aeef171680eed63a79a9238ba2" kindref="member">fota_download_evt_id</ref><sp/><ref refid="structfota__download__evt_a04e8bdc226212ec351630856ee4f926b_1a04e8bdc226212ec351630856ee4f926b" kindref="member">id</ref>;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">union<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="70" refid="structfota__download__evt_a2c524190ee0e8747ff83015be38a64bb_1a2c524190ee0e8747ff83015be38a64bb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__fota__download_ga9dc903c6231f7c7de49dfa9d6a5c5d47_1ga9dc903c6231f7c7de49dfa9d6a5c5d47" kindref="member">fota_download_error_cause</ref><sp/><ref refid="structfota__download__evt_a2c524190ee0e8747ff83015be38a64bb_1a2c524190ee0e8747ff83015be38a64bb" kindref="member">cause</ref>;</highlight></codeline>
+<codeline lineno="72" refid="structfota__download__evt_ac6b7bf171b953f375635645f57802a98_1ac6b7bf171b953f375635645f57802a98" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structfota__download__evt_ac6b7bf171b953f375635645f57802a98_1ac6b7bf171b953f375635645f57802a98" kindref="member">progress</ref>;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="74"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="group__fota__download_ga95d0d50155479a91d7f0322ae32fbd60_1ga95d0d50155479a91d7f0322ae32fbd60" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__fota__download_ga95d0d50155479a91d7f0322ae32fbd60_1ga95d0d50155479a91d7f0322ae32fbd60" kindref="member">fota_download_callback_t</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structfota__download__evt" kindref="compound">fota_download_evt</ref><sp/>*evt);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91" refid="group__fota__download_gacb88d80a30bf57dc5865d330a298aee9_1gacb88d80a30bf57dc5865d330a298aee9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__fota__download_gacb88d80a30bf57dc5865d330a298aee9_1gacb88d80a30bf57dc5865d330a298aee9" kindref="member">fota_download_init</ref>(<ref refid="group__fota__download_ga95d0d50155479a91d7f0322ae32fbd60_1ga95d0d50155479a91d7f0322ae32fbd60" kindref="member">fota_download_callback_t</ref><sp/>client_callback);</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110" refid="group__fota__download_ga7dc5a6a165f00dd04f82770ea6a84844_1ga7dc5a6a165f00dd04f82770ea6a84844" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__fota__download_ga7dc5a6a165f00dd04f82770ea6a84844_1ga7dc5a6a165f00dd04f82770ea6a84844" kindref="member">fota_download_start</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*host,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*file,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sec_tag,</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>pdn_id,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>fragment_size);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132" refid="group__fota__download_ga49f9983d2492c6c7d1097e32b6666b0c_1ga49f9983d2492c6c7d1097e32b6666b0c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__fota__download_ga49f9983d2492c6c7d1097e32b6666b0c_1ga49f9983d2492c6c7d1097e32b6666b0c" kindref="member">fota_download_start_with_image_type</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*host,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*file,</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sec_tag,<sp/>uint8_t<sp/>pdn_id,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>fragment_size,</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__dfu__target_gad3de6472dd7ff6c41abd911a16b67a79_1gad3de6472dd7ff6c41abd911a16b67a79" kindref="member">dfu_target_image_type</ref><sp/>expected_type);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142" refid="group__fota__download_gaac764ae25e1c7ed8ee34921c90873318_1gaac764ae25e1c7ed8ee34921c90873318" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__fota__download_gaac764ae25e1c7ed8ee34921c90873318_1gaac764ae25e1c7ed8ee34921c90873318" kindref="member">fota_download_cancel</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="151" refid="group__fota__download_ga98282fb0ca9256c4ef71285a3dce18b8_1ga98282fb0ca9256c4ef71285a3dce18b8" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__fota__download_ga98282fb0ca9256c4ef71285a3dce18b8_1ga98282fb0ca9256c4ef71285a3dce18b8" kindref="member">fota_download_target</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>FOTA_DOWNLOAD_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/net/fota_download.h"/>
+  </compounddef>
+</doxygen>

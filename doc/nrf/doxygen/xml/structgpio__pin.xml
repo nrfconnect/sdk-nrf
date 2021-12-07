@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structgpio__pin" kind="struct" language="C++" prot="public">
+    <compoundname>gpio_pin</compoundname>
+    <includes refid="gpio__pins_8h" local="no">gpio_pins.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structgpio__pin_a212f457b42f09b06a050c865bd4f4f2c_1a212f457b42f09b06a050c865bd4f4f2c" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t gpio_pin::port</definition>
+        <argsstring></argsstring>
+        <name>port</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/gpio_pins.h" line="24" column="9" bodyfile="include/caf/gpio_pins.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgpio__pin_ae241fa63054d5bc735d803e4b2de3182_1ae241fa63054d5bc735d803e4b2de3182" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t gpio_pin::pin</definition>
+        <argsstring></argsstring>
+        <name>pin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/gpio_pins.h" line="25" column="9" bodyfile="include/caf/gpio_pins.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/caf/gpio_pins.h" line="23" column="1" bodyfile="include/caf/gpio_pins.h" bodystart="23" bodyend="26"/>
+    <listofallmembers>
+      <member refid="structgpio__pin_ae241fa63054d5bc735d803e4b2de3182_1ae241fa63054d5bc735d803e4b2de3182" prot="public" virt="non-virtual"><scope>gpio_pin</scope><name>pin</name></member>
+      <member refid="structgpio__pin_a212f457b42f09b06a050c865bd4f4f2c_1a212f457b42f09b06a050c865bd4f4f2c" prot="public" virt="non-virtual"><scope>gpio_pin</scope><name>port</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

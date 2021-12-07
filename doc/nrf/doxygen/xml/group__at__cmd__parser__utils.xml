@@ -1,0 +1,667 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__at__cmd__parser__utils" kind="group">
+    <compoundname>at_cmd_parser_utils</compoundname>
+    <title>AT Command utility functions.</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__at__cmd__parser__utils_1gad1b3f29d2b74f317c014bb4057a4e871" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_notification</definition>
+        <argsstring>(char chr)</argsstring>
+        <name>is_notification</name>
+        <param>
+          <type>char</type>
+          <declname>chr</declname>
+        </param>
+        <briefdescription>
+<para>Check if character is a notification start character. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function will check if the character is a + or % which identifies a notification from the AT host.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">chr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character that should be examined</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is + or % </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is something else </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="44" column="20" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="44" bodyend="52"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser__utils_1gaab7b66248176daa09ba6762264ae8301" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_valid_command_char</definition>
+        <argsstring>(char chr)</argsstring>
+        <name>is_valid_command_char</name>
+        <param>
+          <type>char</type>
+          <declname>chr</declname>
+        </param>
+        <briefdescription>
+<para>Verify that the character is a valid character. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Command strings can only contain alphanemuric characters.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">chr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character that should be examined</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is valid </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is not valid </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="64" column="20" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="64" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser__utils_1ga9c7d62fe5981c369e69eecff8782c218" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_valid_notification_char</definition>
+        <argsstring>(char chr)</argsstring>
+        <name>is_valid_notification_char</name>
+        <param>
+          <type>char</type>
+          <declname>chr</declname>
+        </param>
+        <briefdescription>
+<para>Verify that the character is a valid character. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Notification ID strings can only contain upper case letters &apos;A&apos; through &apos;Z&apos;</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">chr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character that should be examined</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is valid </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is not valid </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="83" column="20" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="83" bodyend="92"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser__utils_1ga7cb556c7e979fa8a0744caac6dfd3755" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_terminated</definition>
+        <argsstring>(char chr)</argsstring>
+        <name>is_terminated</name>
+        <param>
+          <type>char</type>
+          <declname>chr</declname>
+        </param>
+        <briefdescription>
+<para>Check if the character identifies the end of the buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>All strings returned from the AT Host is null terminated, this function will check if we have hit the termination character.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">chr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character that should be examined</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is 0 </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is not 0 </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="105" column="20" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="105" bodyend="112"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser__utils_1gac57f5fd685cae62a1fa50166bee12c55" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_separator</definition>
+        <argsstring>(char chr)</argsstring>
+        <name>is_separator</name>
+        <param>
+          <type>char</type>
+          <declname>chr</declname>
+        </param>
+        <briefdescription>
+<para>Check if character is a valid AT string separator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Elements in the AT string can either be separated by &apos;:&apos; or &apos;,&apos;, this function will check if the character is either.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">chr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character that should be examined</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is &apos;:&apos; or &apos;,&apos; </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>In all other cases </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="125" column="20" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="125" bodyend="133"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser__utils_1gabcb41f4292114dfdf675b799446ba24e" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_lfcr</definition>
+        <argsstring>(char chr)</argsstring>
+        <name>is_lfcr</name>
+        <param>
+          <type>char</type>
+          <declname>chr</declname>
+        </param>
+        <briefdescription>
+<para>Check if character linefeed or carry return characters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A line shift in an AT string is always identified by a &apos;\r\n&apos; sequence</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">chr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character that should be examined</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If an line shift character is detected </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is something else </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="145" column="20" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="145" bodyend="152"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser__utils_1gabdb63199586188b7573ddb540834f840" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_dblquote</definition>
+        <argsstring>(char chr)</argsstring>
+        <name>is_dblquote</name>
+        <param>
+          <type>char</type>
+          <declname>chr</declname>
+        </param>
+        <briefdescription>
+<para>Check if character is a double quote character. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A string in an AT string is always started and stopped with a double quote character.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">chr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character that should be examined</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is " </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is something else </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="165" column="20" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="165" bodyend="172"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser__utils_1gaae89a598534afde6b08047f035fbe6e7" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_array_start</definition>
+        <argsstring>(char chr)</argsstring>
+        <name>is_array_start</name>
+        <param>
+          <type>char</type>
+          <declname>chr</declname>
+        </param>
+        <briefdescription>
+<para>Check if character is an array start character. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>An array in an AT string is always started with a left parenthesis</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">chr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character that should be examined</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is ( </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is something else </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="184" column="20" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="184" bodyend="191"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser__utils_1gadc6521a07ffcaeae0f7c06a788b49eda" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_array_stop</definition>
+        <argsstring>(char chr)</argsstring>
+        <name>is_array_stop</name>
+        <param>
+          <type>char</type>
+          <declname>chr</declname>
+        </param>
+        <briefdescription>
+<para>Check if character is an array stop character. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>An array in an AT string is always stopped with a right parenthesis</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">chr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character that should be examined</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is ) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is something else </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="203" column="20" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="203" bodyend="210"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser__utils_1gae64f8b37c5049d4637d087cff4b28cf4" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_number</definition>
+        <argsstring>(char chr)</argsstring>
+        <name>is_number</name>
+        <param>
+          <type>char</type>
+          <declname>chr</declname>
+        </param>
+        <briefdescription>
+<para>Check if character is a number character (including + and -) </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Detect number characters in an AT string, including the + and - sign</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">chr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character that should be examined</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is number character </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is something else </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="222" column="20" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="222" bodyend="229"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser__utils_1ga320bfcaefc63888c9c1a12d2dab6e1ab" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_command</definition>
+        <argsstring>(const char *str)</argsstring>
+        <name>is_command</name>
+        <param>
+          <type>const char *</type>
+          <declname>str</declname>
+        </param>
+        <briefdescription>
+<para>Check if a string is a beginning of an AT command. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function will check if the string is a valid AT command prefix.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">str</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>String to examine</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the string is an AT command </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Otherwise </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="241" column="20" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="241" bodyend="262"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser__utils_1ga20b5c2f8c82e96126e97199cc037bedd" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_clac</definition>
+        <argsstring>(const char *str)</argsstring>
+        <name>is_clac</name>
+        <param>
+          <type>const char *</type>
+          <declname>str</declname>
+        </param>
+        <briefdescription>
+<para>Check if a string is a beginning of an AT CLAC response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function will check if the string is a CLAC response prefix. Valid prefixes: AT+ and AT%, except ATX</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">str</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>String to examine</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the string is a CLAC response </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Otherwise </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="275" column="13" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="275" bodyend="302"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__at__cmd__parser__utils_1gadd39e567a3fb99b982e22fa83faf70ce" prot="public" static="no">
+        <name>AT_PARAM_SEPARATOR</name>
+        <initializer>&apos;,&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="23" column="9" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__cmd__parser__utils_1gabc8b5af16a272dc24b9fb3340f70ddaf" prot="public" static="no">
+        <name>AT_RSP_SEPARATOR</name>
+        <initializer>&apos;:&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="24" column="9" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__cmd__parser__utils_1gac45fc1b7cede821e5e5585dddc4348ef" prot="public" static="no">
+        <name>AT_CMD_SEPARATOR</name>
+        <initializer>&apos;=&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="25" column="9" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__cmd__parser__utils_1ga203ecae7d15294823ff9466652576e82" prot="public" static="no">
+        <name>AT_CMD_READ_TEST_IDENTIFIER</name>
+        <initializer>&apos;?&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="26" column="9" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__cmd__parser__utils_1gaa5b8c5a9fa97922d28a30c55857bc57f" prot="public" static="no">
+        <name>AT_CMD_BUFFER_TERMINATOR</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="27" column="9" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__cmd__parser__utils_1ga5d7f881624085c36bc42382352a8b124" prot="public" static="no">
+        <name>AT_CMD_STRING_IDENTIFIER</name>
+        <initializer>&apos;\&quot;&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="28" column="9" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__cmd__parser__utils_1ga3a9a13fae6333f455a8e33fac2c38943" prot="public" static="no">
+        <name>AT_STANDARD_NOTIFICATION_PREFIX</name>
+        <initializer>&apos;+&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="29" column="9" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__cmd__parser__utils_1gad467d9371b2e4ccc235ae54131649e68" prot="public" static="no">
+        <name>AT_PROP_NOTIFICATION_PREFX</name>
+        <initializer>&apos;%&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="30" column="9" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__cmd__parser__utils_1gab018aa30c8f1697c724ab380947423a2" prot="public" static="no">
+        <name>AT_CUSTOM_COMMAND_PREFX</name>
+        <initializer>&apos;#&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="31" column="9" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>AT parser utility functions to deal with strings. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

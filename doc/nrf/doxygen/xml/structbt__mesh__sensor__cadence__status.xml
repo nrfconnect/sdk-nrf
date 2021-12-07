@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__sensor__cadence__status" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_sensor_cadence_status</compoundname>
+    <includes refid="sensor__cli_8h" local="no">sensor_cli.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__sensor__cadence__status_aa60b45125ab800896711c4c58833a257_1aa60b45125ab800896711c4c58833a257" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_sensor_cadence_status::fast_period_div</definition>
+        <argsstring></argsstring>
+        <name>fast_period_div</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Logarithmic fast publish period divisor value.</para>
+<para>The sensor&apos;s fast period interval is publish_period / (1 &lt;&lt; fast_period_div). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="81" column="9" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__cadence__status_ac574bd67c7b36838ea05bf2b54beb9af_1ac574bd67c7b36838ea05bf2b54beb9af" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_sensor_cadence_status::min_int</definition>
+        <argsstring></argsstring>
+        <name>min_int</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Logarithmic minimum publish period.</para>
+<para>The sensor&apos;s fast period interval is never lower than (1 &lt;&lt; min_int). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="87" column="9" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__cadence__status_a34dda58aeaa3e887bf109b0388d9150e_1a34dda58aeaa3e887bf109b0388d9150e" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__sensor__threshold" kindref="compound">bt_mesh_sensor_threshold</ref></type>
+        <definition>struct bt_mesh_sensor_threshold bt_mesh_sensor_cadence_status::threshold</definition>
+        <argsstring></argsstring>
+        <name>threshold</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sensor threshold values. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="89" column="31" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Sensor cadence status parameters </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_mesh_sensor_cadence_status</label>
+        <link refid="structbt__mesh__sensor__cadence__status"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>threshold</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_mesh_sensor_threshold</label>
+        <link refid="structbt__mesh__sensor__threshold"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/sensor_cli.h" line="75" column="1" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="75" bodyend="90"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__sensor__cadence__status_aa60b45125ab800896711c4c58833a257_1aa60b45125ab800896711c4c58833a257" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_cadence_status</scope><name>fast_period_div</name></member>
+      <member refid="structbt__mesh__sensor__cadence__status_ac574bd67c7b36838ea05bf2b54beb9af_1ac574bd67c7b36838ea05bf2b54beb9af" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_cadence_status</scope><name>min_int</name></member>
+      <member refid="structbt__mesh__sensor__cadence__status_a34dda58aeaa3e887bf109b0388d9150e_1a34dda58aeaa3e887bf109b0388d9150e" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_cadence_status</scope><name>threshold</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

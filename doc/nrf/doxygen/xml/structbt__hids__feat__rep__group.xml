@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__hids__feat__rep__group" kind="struct" language="C++" prot="public">
+    <compoundname>bt_hids_feat_rep_group</compoundname>
+    <includes refid="hids_8h" local="no">hids.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__hids__feat__rep__group_a4b15751fc663053b3e68d55deea765cb_1a4b15751fc663053b3e68d55deea765cb" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__hids__outp__feat__rep" kindref="compound">bt_hids_outp_feat_rep</ref></type>
+        <definition>struct bt_hids_outp_feat_rep bt_hids_feat_rep_group::reports[0]</definition>
+        <argsstring>[0]</argsstring>
+        <name>reports</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the report collection. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="330" column="28" bodyfile="include/bluetooth/services/hids.h" bodystart="330" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__feat__rep__group_a20cc86ff6c4b535e8d4ee36fa3e3c171_1a20cc86ff6c4b535e8d4ee36fa3e3c171" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_feat_rep_group::cnt</definition>
+        <argsstring></argsstring>
+        <name>cnt</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Total number of reports. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="333" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="333" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Collection of all feature reports. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_hids_feat_rep_group</label>
+        <link refid="structbt__hids__feat__rep__group"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>reports</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_hids_outp_feat_rep</label>
+        <link refid="structbt__hids__outp__feat__rep"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>handler</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bt_hids_rep</label>
+        <link refid="structbt__hids__rep"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/hids.h" line="328" column="1" bodyfile="include/bluetooth/services/hids.h" bodystart="328" bodyend="334"/>
+    <listofallmembers>
+      <member refid="structbt__hids__feat__rep__group_a20cc86ff6c4b535e8d4ee36fa3e3c171_1a20cc86ff6c4b535e8d4ee36fa3e3c171" prot="public" virt="non-virtual"><scope>bt_hids_feat_rep_group</scope><name>cnt</name></member>
+      <member refid="structbt__hids__feat__rep__group_a4b15751fc663053b3e68d55deea765cb_1a4b15751fc663053b3e68d55deea765cb" prot="public" virt="non-virtual"><scope>bt_hids_feat_rep_group</scope><name>reports</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

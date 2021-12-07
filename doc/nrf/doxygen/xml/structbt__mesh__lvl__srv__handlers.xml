@@ -1,0 +1,217 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__lvl__srv__handlers" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_lvl_srv_handlers</compoundname>
+    <includes refid="gen__lvl__srv_8h" local="no">gen_lvl_srv.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__lvl__srv__handlers_ab470a4b9673baabf741ee4d21a74e2f5_1ab470a4b9673baabf741ee4d21a74e2f5" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_lvl_srv_handlers::get) (struct bt_mesh_lvl_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_lvl_status *rsp)</definition>
+        <argsstring>)(struct bt_mesh_lvl_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_lvl_status *rsp)</argsstring>
+        <name>get</name>
+        <briefdescription>
+<para>Get the current Level state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Level server to get the state of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context for the message that triggered the request, or NULL if the request is not coming from a message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response structure to be filled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl_srv.h" line="62" column="1" bodyfile="include/bluetooth/mesh/gen_lvl_srv.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lvl__srv__handlers_ac03cdc20931b739a200a6545cb3280e5_1ac03cdc20931b739a200a6545cb3280e5" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_lvl_srv_handlers::set) (struct bt_mesh_lvl_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_lvl_set *set, struct bt_mesh_lvl_status *rsp)</definition>
+        <argsstring>)(struct bt_mesh_lvl_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_lvl_set *set, struct bt_mesh_lvl_status *rsp)</argsstring>
+        <name>set</name>
+        <briefdescription>
+<para>Set the Level state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When a set message is received, the model publishes a status message, with the response set to <computeroutput>rsp</computeroutput>. When an acknowledged set message is received, the model also sends a response back to a client. If a state change is non-instantaneous, for example when <ref refid="group__bt__mesh__model__types_gaa845685eb265d1294b17bb80fbde4996_1gaa845685eb265d1294b17bb80fbde4996" kindref="member">bt_mesh_model_transition_time</ref> returns a nonzero value, the application is responsible for publishing a value of the Level state at the end of the transition.</para>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Level server to set the state of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context for the message that triggered the change, or NULL if the change is not coming from a message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters of the state change. Note that the transition will always be non-NULL. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response structure to be filled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl_srv.h" line="83" column="1" bodyfile="include/bluetooth/mesh/gen_lvl_srv.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lvl__srv__handlers_a47c900c0598e6a4420b8d4dd361c4f48_1a47c900c0598e6a4420b8d4dd361c4f48" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_lvl_srv_handlers::delta_set) (struct bt_mesh_lvl_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_lvl_delta_set *delta_set, struct bt_mesh_lvl_status *rsp)</definition>
+        <argsstring>)(struct bt_mesh_lvl_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_lvl_delta_set *delta_set, struct bt_mesh_lvl_status *rsp)</argsstring>
+        <name>delta_set</name>
+        <briefdescription>
+<para>Change the Level state relative to its current value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If <computeroutput>delta_set::new_transaction</computeroutput> is false, the state transition should use the same start point as the previous delta_set message, effectively overriding the previous message. If it&apos;s true, the level transition should start from the current level, stopping any ongoing transitions.</para>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Level server to change the state of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context for the message that triggered the change, or NULL if the change is not coming from a messge. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">delta_set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters of the state change. Note that the transition will always be non-NULL. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response structure to be filled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl_srv.h" line="106" column="1" bodyfile="include/bluetooth/mesh/gen_lvl_srv.h" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lvl__srv__handlers_ae63187936bc8c8c8bb0ccd24b23cfa5f_1ae63187936bc8c8c8bb0ccd24b23cfa5f" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_lvl_srv_handlers::move_set) (struct bt_mesh_lvl_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_lvl_move_set *move_set, struct bt_mesh_lvl_status *rsp)</definition>
+        <argsstring>)(struct bt_mesh_lvl_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_lvl_move_set *move_set, struct bt_mesh_lvl_status *rsp)</argsstring>
+        <name>move_set</name>
+        <briefdescription>
+<para>Move the Level state continuously at a given rate. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The Level state should move <computeroutput>move_set::delta</computeroutput> units for every <computeroutput>move_set::transition::time</computeroutput> milliseconds. For instance, if delta is 5 and the transition time is 100ms, the state should move at a rate of 50 per second.</para>
+<para>When reaching the border values for the state, the wraparound behavior is application specific. While the server is executing a move command, it should report its <computeroutput>target</computeroutput> value as <ref refid="group__bt__mesh__lvl_ga80faf45ebedb469969a9d3d5001f247d_1ga80faf45ebedb469969a9d3d5001f247d" kindref="member">BT_MESH_LVL_MIN</ref> or <ref refid="group__bt__mesh__lvl_ga87e011f7c72e0fb3b52072c17cc98e81_1ga87e011f7c72e0fb3b52072c17cc98e81" kindref="member">BT_MESH_LVL_MAX</ref>, depending on whether it&apos;s moving up or down.</para>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Level server to change the state of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context for the message that triggered the change, or NULL if the change is not coming from a messge. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">move_set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters of the state change. Note that the transition will always be non-NULL. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response structure to be filled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl_srv.h" line="133" column="1" bodyfile="include/bluetooth/mesh/gen_lvl_srv.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Handler functions for the Generic Level Server. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/gen_lvl_srv.h" line="52" column="1" bodyfile="include/bluetooth/mesh/gen_lvl_srv.h" bodystart="52" bodyend="137"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__lvl__srv__handlers_a47c900c0598e6a4420b8d4dd361c4f48_1a47c900c0598e6a4420b8d4dd361c4f48" prot="public" virt="non-virtual"><scope>bt_mesh_lvl_srv_handlers</scope><name>delta_set</name></member>
+      <member refid="structbt__mesh__lvl__srv__handlers_ab470a4b9673baabf741ee4d21a74e2f5_1ab470a4b9673baabf741ee4d21a74e2f5" prot="public" virt="non-virtual"><scope>bt_mesh_lvl_srv_handlers</scope><name>get</name></member>
+      <member refid="structbt__mesh__lvl__srv__handlers_ae63187936bc8c8c8bb0ccd24b23cfa5f_1ae63187936bc8c8c8bb0ccd24b23cfa5f" prot="public" virt="non-virtual"><scope>bt_mesh_lvl_srv_handlers</scope><name>move_set</name></member>
+      <member refid="structbt__mesh__lvl__srv__handlers_ac03cdc20931b739a200a6545cb3280e5_1ac03cdc20931b739a200a6545cb3280e5" prot="public" virt="non-virtual"><scope>bt_mesh_lvl_srv_handlers</scope><name>set</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

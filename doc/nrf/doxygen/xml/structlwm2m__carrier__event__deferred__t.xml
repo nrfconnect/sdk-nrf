@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlwm2m__carrier__event__deferred__t" kind="struct" language="C++" prot="public">
+    <compoundname>lwm2m_carrier_event_deferred_t</compoundname>
+    <includes refid="lwm2m__carrier_8h" local="no">lwm2m_carrier.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlwm2m__carrier__event__deferred__t_a65dd7030e89813ae1afdc96b9b67493c_1a65dd7030e89813ae1afdc96b9b67493c" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t lwm2m_carrier_event_deferred_t::reason</definition>
+        <argsstring></argsstring>
+        <name>reason</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Deferred event reason. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="95" column="10" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlwm2m__carrier__event__deferred__t_ab66b465a2aabe05c255160ad018a12f2_1ab66b465a2aabe05c255160ad018a12f2" prot="public" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t lwm2m_carrier_event_deferred_t::timeout</definition>
+        <argsstring></argsstring>
+        <name>timeout</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Time before operation is resumed (seconds). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="97" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="93" column="1" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="93" bodyend="98"/>
+    <listofallmembers>
+      <member refid="structlwm2m__carrier__event__deferred__t_a65dd7030e89813ae1afdc96b9b67493c_1a65dd7030e89813ae1afdc96b9b67493c" prot="public" virt="non-virtual"><scope>lwm2m_carrier_event_deferred_t</scope><name>reason</name></member>
+      <member refid="structlwm2m__carrier__event__deferred__t_ab66b465a2aabe05c255160ad018a12f2_1ab66b465a2aabe05c255160ad018a12f2" prot="public" virt="non-virtual"><scope>lwm2m_carrier_event_deferred_t</scope><name>timeout</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

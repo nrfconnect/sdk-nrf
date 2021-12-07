@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structdate__time__evt" kind="struct" language="C++" prot="public">
+    <compoundname>date_time_evt</compoundname>
+    <includes refid="date__time_8h" local="no">date_time.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structdate__time__evt_a888ea3e6b18f5f605849ef7b2f43ce58_1a888ea3e6b18f5f605849ef7b2f43ce58" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__date__time_ga0f84f7e7e0b9cb11d7f59a97a0cf36bb_1ga0f84f7e7e0b9cb11d7f59a97a0cf36bb" kindref="member">date_time_evt_type</ref></type>
+        <definition>enum date_time_evt_type date_time_evt::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Type of event. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/date_time.h" line="40" column="24" bodyfile="include/date_time.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Struct with data received from the Date time library. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/date_time.h" line="38" column="1" bodyfile="include/date_time.h" bodystart="38" bodyend="41"/>
+    <listofallmembers>
+      <member refid="structdate__time__evt_a888ea3e6b18f5f605849ef7b2f43ce58_1a888ea3e6b18f5f605849ef7b2f43ce58" prot="public" virt="non-virtual"><scope>date_time_evt</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

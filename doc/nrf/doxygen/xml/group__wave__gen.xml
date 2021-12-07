@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__wave__gen" kind="group">
+    <compoundname>wave_gen</compoundname>
+    <title>Wave generator</title>
+    <innerclass refid="structwave__gen__param" prot="public">wave_gen_param</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__wave__gen_1gaeb5f3200375b475d760feffbfce4c5a5" prot="public" static="no" strong="no">
+        <type></type>
+        <name>wave_gen_type</name>
+        <enumvalue id="group__wave__gen_gaeb5f3200375b475d760feffbfce4c5a5_1ggaeb5f3200375b475d760feffbfce4c5a5a7c317aa5b26139e4f468231be986d621" prot="public">
+          <name>WAVE_GEN_TYPE_SINE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__wave__gen_gaeb5f3200375b475d760feffbfce4c5a5_1ggaeb5f3200375b475d760feffbfce4c5a5a3f4fe1937e9d38594e8b22312f9ef7b9" prot="public">
+          <name>WAVE_GEN_TYPE_TRIANGLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__wave__gen_gaeb5f3200375b475d760feffbfce4c5a5_1ggaeb5f3200375b475d760feffbfce4c5a5a26e16f98ed70bd0ac70d4d56a26bd37c" prot="public">
+          <name>WAVE_GEN_TYPE_SQUARE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__wave__gen_gaeb5f3200375b475d760feffbfce4c5a5_1ggaeb5f3200375b475d760feffbfce4c5a5ad00a48dc5a06fd0aa8d37209ee4b1931" prot="public">
+          <name>WAVE_GEN_TYPE_NONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__wave__gen_gaeb5f3200375b475d760feffbfce4c5a5_1ggaeb5f3200375b475d760feffbfce4c5a5a6f5e447840f299b12d02e8f46ff44a59" prot="public">
+          <name>WAVE_GEN_TYPE_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Available generated wave types. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/wave_gen.h" line="29" column="1" bodyfile="include/wave_gen.h" bodystart="29" bodyend="36"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__wave__gen_1ga9b10da9690bfcf0f7906c92a4e92aebc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int wave_gen_generate_value</definition>
+        <argsstring>(uint32_t time, const struct wave_gen_param *params, double *out_val)</argsstring>
+        <name>wave_gen_generate_value</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>time</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structwave__gen__param" kindref="compound">wave_gen_param</ref> *</type>
+          <declname>params</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>out_val</declname>
+        </param>
+        <briefdescription>
+<para>Generate wave value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time for generated value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters describing generated wave signal. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">out_val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the variable that is used to store generated value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/wave_gen.h" line="67" column="5" declfile="include/wave_gen.h" declline="67" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Library for generating wave signals. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

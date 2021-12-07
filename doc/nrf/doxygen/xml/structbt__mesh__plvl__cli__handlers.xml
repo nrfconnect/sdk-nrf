@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__plvl__cli__handlers" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_plvl_cli_handlers</compoundname>
+    <includes refid="gen__plvl__cli_8h" local="no">gen_plvl_cli.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__plvl__cli__handlers_a48f0235b62456cfd2d15863b7944a009_1a48f0235b62456cfd2d15863b7944a009" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_plvl_cli_handlers::power_status) (struct bt_mesh_plvl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_plvl_status *status)</definition>
+        <argsstring>)(struct bt_mesh_plvl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_plvl_status *status)</argsstring>
+        <name>power_status</name>
+        <briefdescription>
+<para>Power Level status message handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Generic Power Level status contained in the message. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl_cli.h" line="59" column="1" bodyfile="include/bluetooth/mesh/gen_plvl_cli.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__cli__handlers_a3e32582be37560cc0f1859745fc2373f_1a3e32582be37560cc0f1859745fc2373f" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_plvl_cli_handlers::default_status) (struct bt_mesh_plvl_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t default_power)</definition>
+        <argsstring>)(struct bt_mesh_plvl_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t default_power)</argsstring>
+        <name>default_status</name>
+        <briefdescription>
+<para>Default Power status message handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">default_power</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Default Power Level of the server. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl_cli.h" line="69" column="1" bodyfile="include/bluetooth/mesh/gen_plvl_cli.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__cli__handlers_ac5c6299da77ee7b9132129c4ea7e9c6e_1ac5c6299da77ee7b9132129c4ea7e9c6e" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_plvl_cli_handlers::range_status) (struct bt_mesh_plvl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_plvl_range_status *status)</definition>
+        <argsstring>)(struct bt_mesh_plvl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_plvl_range_status *status)</argsstring>
+        <name>range_status</name>
+        <briefdescription>
+<para>Power Range status message handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Power Range state of the server. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl_cli.h" line="79" column="1" bodyfile="include/bluetooth/mesh/gen_plvl_cli.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__cli__handlers_a4d890453de6f4a39c8f7c05e5e1693a3_1a4d890453de6f4a39c8f7c05e5e1693a3" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_plvl_cli_handlers::last_status) (struct bt_mesh_plvl_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t last)</definition>
+        <argsstring>)(struct bt_mesh_plvl_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t last)</argsstring>
+        <name>last_status</name>
+        <briefdescription>
+<para>Last non-zero Power Level status message handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">last</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Last non-zero Power Level of the server. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl_cli.h" line="89" column="1" bodyfile="include/bluetooth/mesh/gen_plvl_cli.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Handler function for the Power Level Client. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/gen_plvl_cli.h" line="51" column="1" bodyfile="include/bluetooth/mesh/gen_plvl_cli.h" bodystart="51" bodyend="91"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__plvl__cli__handlers_a3e32582be37560cc0f1859745fc2373f_1a3e32582be37560cc0f1859745fc2373f" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_cli_handlers</scope><name>default_status</name></member>
+      <member refid="structbt__mesh__plvl__cli__handlers_a4d890453de6f4a39c8f7c05e5e1693a3_1a4d890453de6f4a39c8f7c05e5e1693a3" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_cli_handlers</scope><name>last_status</name></member>
+      <member refid="structbt__mesh__plvl__cli__handlers_a48f0235b62456cfd2d15863b7944a009_1a48f0235b62456cfd2d15863b7944a009" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_cli_handlers</scope><name>power_status</name></member>
+      <member refid="structbt__mesh__plvl__cli__handlers_ac5c6299da77ee7b9132129c4ea7e9c6e_1ac5c6299da77ee7b9132129c4ea7e9c6e" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_cli_handlers</scope><name>range_status</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

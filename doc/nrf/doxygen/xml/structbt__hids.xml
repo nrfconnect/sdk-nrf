@@ -1,0 +1,344 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__hids" kind="struct" language="C++" prot="public">
+    <compoundname>bt_hids</compoundname>
+    <includes refid="hids_8h" local="no">hids.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__hids_ae5772a64c8884b4af0f7d9b58f228398_1ae5772a64c8884b4af0f7d9b58f228398" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__gatt__pool" kindref="compound">bt_gatt_pool</ref></type>
+        <definition>struct bt_gatt_pool bt_hids::gp</definition>
+        <argsstring></argsstring>
+        <name>gp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Descriptor of the service attribute array. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="423" column="19" bodyfile="include/bluetooth/services/hids.h" bodystart="423" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids_a10990488a46a8e28e6124525ca1aff34_1a10990488a46a8e28e6124525ca1aff34" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__hids__inp__rep__group" kindref="compound">bt_hids_inp_rep_group</ref></type>
+        <definition>struct bt_hids_inp_rep_group bt_hids::inp_rep_group</definition>
+        <argsstring></argsstring>
+        <name>inp_rep_group</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Input Report collection. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="426" column="28" bodyfile="include/bluetooth/services/hids.h" bodystart="426" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids_a5d9a6bdf2957e02fdf54752a59f919b7_1a5d9a6bdf2957e02fdf54752a59f919b7" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__hids__outp__rep__group" kindref="compound">bt_hids_outp_rep_group</ref></type>
+        <definition>struct bt_hids_outp_rep_group bt_hids::outp_rep_group</definition>
+        <argsstring></argsstring>
+        <name>outp_rep_group</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Output Report collection. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="429" column="29" bodyfile="include/bluetooth/services/hids.h" bodystart="429" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids_a161ce69200997fc06597094931a94a80_1a161ce69200997fc06597094931a94a80" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__hids__feat__rep__group" kindref="compound">bt_hids_feat_rep_group</ref></type>
+        <definition>struct bt_hids_feat_rep_group bt_hids::feat_rep_group</definition>
+        <argsstring></argsstring>
+        <name>feat_rep_group</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Feature Report collection. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="432" column="29" bodyfile="include/bluetooth/services/hids.h" bodystart="432" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids_ad146c0caa67ba6fb5ca8ade7536daa8b_1ad146c0caa67ba6fb5ca8ade7536daa8b" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__hids__boot__mouse__inp__rep" kindref="compound">bt_hids_boot_mouse_inp_rep</ref></type>
+        <definition>struct bt_hids_boot_mouse_inp_rep bt_hids::boot_mouse_inp_rep</definition>
+        <argsstring></argsstring>
+        <name>boot_mouse_inp_rep</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Boot Mouse Input Report. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="435" column="33" bodyfile="include/bluetooth/services/hids.h" bodystart="435" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids_afc16f516bfcfb9cd03e6c40658436bb2_1afc16f516bfcfb9cd03e6c40658436bb2" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__hids__boot__kb__inp__rep" kindref="compound">bt_hids_boot_kb_inp_rep</ref></type>
+        <definition>struct bt_hids_boot_kb_inp_rep bt_hids::boot_kb_inp_rep</definition>
+        <argsstring></argsstring>
+        <name>boot_kb_inp_rep</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Boot Keyboard Input Report. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="438" column="30" bodyfile="include/bluetooth/services/hids.h" bodystart="438" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids_a9c5787dc0e4a4f55cfc877017a39fb40_1a9c5787dc0e4a4f55cfc877017a39fb40" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__hids__boot__kb__outp__rep" kindref="compound">bt_hids_boot_kb_outp_rep</ref></type>
+        <definition>struct bt_hids_boot_kb_outp_rep bt_hids::boot_kb_outp_rep</definition>
+        <argsstring></argsstring>
+        <name>boot_kb_outp_rep</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Boot Keyboard Output Report. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="441" column="31" bodyfile="include/bluetooth/services/hids.h" bodystart="441" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids_afe5f20ef18aeacb84c61659707a41dad_1afe5f20ef18aeacb84c61659707a41dad" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__hids__rep__map" kindref="compound">bt_hids_rep_map</ref></type>
+        <definition>struct bt_hids_rep_map bt_hids::rep_map</definition>
+        <argsstring></argsstring>
+        <name>rep_map</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Report Map. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="444" column="22" bodyfile="include/bluetooth/services/hids.h" bodystart="444" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids_a236fef7d5ce7ddda460f580a80652b98_1a236fef7d5ce7ddda460f580a80652b98" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__hids__pm__data" kindref="compound">bt_hids_pm_data</ref></type>
+        <definition>struct bt_hids_pm_data bt_hids::pm</definition>
+        <argsstring></argsstring>
+        <name>pm</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Protocol Mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="447" column="22" bodyfile="include/bluetooth/services/hids.h" bodystart="447" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids_af4c160ea718b47d081f8ab162f2b5edd_1af4c160ea718b47d081f8ab162f2b5edd" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__hids__cp" kindref="compound">bt_hids_cp</ref></type>
+        <definition>struct bt_hids_cp bt_hids::cp</definition>
+        <argsstring></argsstring>
+        <name>cp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Control Point. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="450" column="17" bodyfile="include/bluetooth/services/hids.h" bodystart="450" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids_a8773656d2895a29167b60f1981dac183_1a8773656d2895a29167b60f1981dac183" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids::info[4]</definition>
+        <argsstring>[4]</argsstring>
+        <name>info</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Buffer with encoded HID Information. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="453" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="453" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids_a899cab0a5f7b22d7dc3249760ffa3b96_1a899cab0a5f7b22d7dc3249760ffa3b96" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool bt_hids::is_mouse</definition>
+        <argsstring></argsstring>
+        <name>is_mouse</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Flag indicating that the device has mouse capabilities. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="456" column="6" bodyfile="include/bluetooth/services/hids.h" bodystart="456" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids_adb68293b70a1662a16ef90dabe5765f6_1adb68293b70a1662a16ef90dabe5765f6" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool bt_hids::is_kb</definition>
+        <argsstring></argsstring>
+        <name>is_kb</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Flag indicating that the device has keyboard capabilities. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="459" column="6" bodyfile="include/bluetooth/services/hids.h" bodystart="459" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids_ac715790c85f56263121c7d57ec1b280c_1ac715790c85f56263121c7d57ec1b280c" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__conn__ctx__lib" kindref="compound">bt_conn_ctx_lib</ref> *</type>
+        <definition>struct bt_conn_ctx_lib* bt_hids::conn_ctx</definition>
+        <argsstring></argsstring>
+        <name>conn_ctx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Bluetooth connection contexts. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="462" column="22" bodyfile="include/bluetooth/services/hids.h" bodystart="462" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>HID Service structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="16">
+        <label>bt_conn_ctx</label>
+        <link refid="structbt__conn__ctx"/>
+      </node>
+      <node id="15">
+        <label>bt_conn_ctx_lib</label>
+        <link refid="structbt__conn__ctx__lib"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>ctx</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_gatt_pool</label>
+        <link refid="structbt__gatt__pool"/>
+      </node>
+      <node id="1">
+        <label>bt_hids</label>
+        <link refid="structbt__hids"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>gp</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>inp_rep_group</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>outp_rep_group</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>feat_rep_group</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>boot_mouse_inp_rep</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>boot_kb_inp_rep</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>boot_kb_outp_rep</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>rep_map</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>pm</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>cp</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>conn_ctx</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>bt_hids_boot_kb_inp_rep</label>
+        <link refid="structbt__hids__boot__kb__inp__rep"/>
+      </node>
+      <node id="11">
+        <label>bt_hids_boot_kb_outp_rep</label>
+        <link refid="structbt__hids__boot__kb__outp__rep"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>handler</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>bt_hids_boot_mouse_inp_rep</label>
+        <link refid="structbt__hids__boot__mouse__inp__rep"/>
+      </node>
+      <node id="14">
+        <label>bt_hids_cp</label>
+        <link refid="structbt__hids__cp"/>
+      </node>
+      <node id="8">
+        <label>bt_hids_feat_rep_group</label>
+        <link refid="structbt__hids__feat__rep__group"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>reports</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bt_hids_inp_rep</label>
+        <link refid="structbt__hids__inp__rep"/>
+      </node>
+      <node id="3">
+        <label>bt_hids_inp_rep_group</label>
+        <link refid="structbt__hids__inp__rep__group"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>reports</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>bt_hids_outp_feat_rep</label>
+        <link refid="structbt__hids__outp__feat__rep"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>handler</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>bt_hids_outp_rep_group</label>
+        <link refid="structbt__hids__outp__rep__group"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>reports</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>bt_hids_pm_data</label>
+        <link refid="structbt__hids__pm__data"/>
+      </node>
+      <node id="7">
+        <label>bt_hids_rep</label>
+        <link refid="structbt__hids__rep"/>
+      </node>
+      <node id="12">
+        <label>bt_hids_rep_map</label>
+        <link refid="structbt__hids__rep__map"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/hids.h" line="421" column="1" bodyfile="include/bluetooth/services/hids.h" bodystart="421" bodyend="463"/>
+    <listofallmembers>
+      <member refid="structbt__hids_afc16f516bfcfb9cd03e6c40658436bb2_1afc16f516bfcfb9cd03e6c40658436bb2" prot="public" virt="non-virtual"><scope>bt_hids</scope><name>boot_kb_inp_rep</name></member>
+      <member refid="structbt__hids_a9c5787dc0e4a4f55cfc877017a39fb40_1a9c5787dc0e4a4f55cfc877017a39fb40" prot="public" virt="non-virtual"><scope>bt_hids</scope><name>boot_kb_outp_rep</name></member>
+      <member refid="structbt__hids_ad146c0caa67ba6fb5ca8ade7536daa8b_1ad146c0caa67ba6fb5ca8ade7536daa8b" prot="public" virt="non-virtual"><scope>bt_hids</scope><name>boot_mouse_inp_rep</name></member>
+      <member refid="structbt__hids_ac715790c85f56263121c7d57ec1b280c_1ac715790c85f56263121c7d57ec1b280c" prot="public" virt="non-virtual"><scope>bt_hids</scope><name>conn_ctx</name></member>
+      <member refid="structbt__hids_af4c160ea718b47d081f8ab162f2b5edd_1af4c160ea718b47d081f8ab162f2b5edd" prot="public" virt="non-virtual"><scope>bt_hids</scope><name>cp</name></member>
+      <member refid="structbt__hids_a161ce69200997fc06597094931a94a80_1a161ce69200997fc06597094931a94a80" prot="public" virt="non-virtual"><scope>bt_hids</scope><name>feat_rep_group</name></member>
+      <member refid="structbt__hids_ae5772a64c8884b4af0f7d9b58f228398_1ae5772a64c8884b4af0f7d9b58f228398" prot="public" virt="non-virtual"><scope>bt_hids</scope><name>gp</name></member>
+      <member refid="structbt__hids_a8773656d2895a29167b60f1981dac183_1a8773656d2895a29167b60f1981dac183" prot="public" virt="non-virtual"><scope>bt_hids</scope><name>info</name></member>
+      <member refid="structbt__hids_a10990488a46a8e28e6124525ca1aff34_1a10990488a46a8e28e6124525ca1aff34" prot="public" virt="non-virtual"><scope>bt_hids</scope><name>inp_rep_group</name></member>
+      <member refid="structbt__hids_adb68293b70a1662a16ef90dabe5765f6_1adb68293b70a1662a16ef90dabe5765f6" prot="public" virt="non-virtual"><scope>bt_hids</scope><name>is_kb</name></member>
+      <member refid="structbt__hids_a899cab0a5f7b22d7dc3249760ffa3b96_1a899cab0a5f7b22d7dc3249760ffa3b96" prot="public" virt="non-virtual"><scope>bt_hids</scope><name>is_mouse</name></member>
+      <member refid="structbt__hids_a5d9a6bdf2957e02fdf54752a59f919b7_1a5d9a6bdf2957e02fdf54752a59f919b7" prot="public" virt="non-virtual"><scope>bt_hids</scope><name>outp_rep_group</name></member>
+      <member refid="structbt__hids_a236fef7d5ce7ddda460f580a80652b98_1a236fef7d5ce7ddda460f580a80652b98" prot="public" virt="non-virtual"><scope>bt_hids</scope><name>pm</name></member>
+      <member refid="structbt__hids_afe5f20ef18aeacb84c61659707a41dad_1afe5f20ef18aeacb84c61659707a41dad" prot="public" virt="non-virtual"><scope>bt_hids</scope><name>rep_map</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

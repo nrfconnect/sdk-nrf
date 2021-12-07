@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="hw__unique__key__internal_8h" kind="file" language="C++">
+    <compoundname>hw_unique_key_internal.h</compoundname>
+    <includes refid="hw__unique__key_8h" local="no">hw_unique_key.h</includes>
+    <incdepgraph>
+      <node id="2">
+        <label>hw_unique_key.h</label>
+        <link refid="hw__unique__key_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>lib/hw_unique_key/hw_unique_key_internal.h</label>
+        <link refid="hw__unique__key__internal_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>stdbool.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="hw__unique__key__internal_8h_ae444f7d9bc24b2f3a9d6547b6bc6aa32_1ae444f7d9bc24b2f3a9d6547b6bc6aa32" prot="public" static="no">
+        <name>HUK_PRINT</name>
+        <param><defname>...</defname></param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/hw_unique_key/hw_unique_key_internal.h" line="31" column="9" bodyfile="lib/hw_unique_key/hw_unique_key_internal.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hw__unique__key__internal_8h_a03b9d9e27f55a8878b6f3c63ec412aed_1a03b9d9e27f55a8878b6f3c63ec412aed" prot="public" static="no">
+        <name>HUK_PANIC</name>
+        <initializer><ref refid="hw__unique__key__internal_8h_af9ff7e9158a5d4b3c3b4aaf863a478f7_1af9ff7e9158a5d4b3c3b4aaf863a478f7" kindref="member">panic</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/hw_unique_key/hw_unique_key_internal.h" line="32" column="9" bodyfile="lib/hw_unique_key/hw_unique_key_internal.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="hw__unique__key__internal_8h_a8919d5670fa072864b7933d7a789beda_1a8919d5670fa072864b7933d7a789beda" prot="public" static="yes" mutable="no">
+        <type>enum <ref refid="group__hw__unique__key_ga382d8696f6adec5f05569a95bb2d8201_1ga382d8696f6adec5f05569a95bb2d8201" kindref="member">hw_unique_key_slot</ref></type>
+        <definition>enum hw_unique_key_slot huk_slots[]</definition>
+        <argsstring>[]</argsstring>
+        <name>huk_slots</name>
+        <initializer>= {
+
+	HUK_KEYSLOT_KDR,
+
+
+
+
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/hw_unique_key/hw_unique_key_internal.h" line="37" column="37" bodyfile="lib/hw_unique_key/hw_unique_key_internal.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="hw__unique__key__internal_8h_af9ff7e9158a5d4b3c3b4aaf863a478f7_1af9ff7e9158a5d4b3c3b4aaf863a478f7" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void panic</definition>
+        <argsstring>(void)</argsstring>
+        <name>panic</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/hw_unique_key/hw_unique_key_internal.h" line="26" column="13" bodyfile="lib/hw_unique_key/hw_unique_key_internal.h" bodystart="26" bodyend="30"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NRF_LIB_HW_UNIQUE_KEY_INTERNAL_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_LIB_HW_UNIQUE_KEY_INTERNAL_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="hw__unique__key_8h" kindref="compound">hw_unique_key.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Define<sp/>print<sp/>and<sp/>panic<sp/>macros.<sp/>This<sp/>library<sp/>can<sp/>be<sp/>compiled<sp/>for<sp/>different<sp/>OSes.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__ZEPHYR__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/printk.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;kernel.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>HUK_PRINT<sp/>printk</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>HUK_PANIC<sp/>k_panic</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#elif<sp/>defined(__NRF_TFM__)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;log/tfm_log.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;utilities.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>HUK_PRINT<sp/>LOG_MSG</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>HUK_PANIC<sp/>tfm_core_panic</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="hw__unique__key__internal_8h_af9ff7e9158a5d4b3c3b4aaf863a478f7_1af9ff7e9158a5d4b3c3b4aaf863a478f7" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="hw__unique__key__internal_8h_af9ff7e9158a5d4b3c3b4aaf863a478f7_1af9ff7e9158a5d4b3c3b4aaf863a478f7" kindref="member">panic</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="27"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(1)</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="31" refid="hw__unique__key__internal_8h_ae444f7d9bc24b2f3a9d6547b6bc6aa32_1ae444f7d9bc24b2f3a9d6547b6bc6aa32" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>HUK_PRINT(...)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="hw__unique__key__internal_8h_a03b9d9e27f55a8878b6f3c63ec412aed_1a03b9d9e27f55a8878b6f3c63ec412aed" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>HUK_PANIC<sp/>panic</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>__ZEPHYR__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>The<sp/>available<sp/>slots<sp/>as<sp/>an<sp/>array<sp/>that<sp/>can<sp/>be<sp/>iterated<sp/>over.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="hw__unique__key__internal_8h_a8919d5670fa072864b7933d7a789beda_1a8919d5670fa072864b7933d7a789beda" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__hw__unique__key_ga382d8696f6adec5f05569a95bb2d8201_1ga382d8696f6adec5f05569a95bb2d8201" kindref="member">hw_unique_key_slot</ref><sp/><ref refid="hw__unique__key__internal_8h_a8919d5670fa072864b7933d7a789beda_1a8919d5670fa072864b7933d7a789beda" kindref="member">huk_slots</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>HUK_HAS_KMU</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>HUK_KEYSLOT_KDR,</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__hw__unique__key_ga382d8696f6adec5f05569a95bb2d8201_1gga382d8696f6adec5f05569a95bb2d8201af73932bb322cb5223dd27a969463b523" kindref="member">HUK_KEYSLOT_MKEK</ref>,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__hw__unique__key_ga382d8696f6adec5f05569a95bb2d8201_1gga382d8696f6adec5f05569a95bb2d8201aaf9eb3006e676cdb35cb8b29640835df" kindref="member">HUK_KEYSLOT_MEXT</ref>,</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>NRF_LIB_HW_UNIQUE_KEY_INTERNAL_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="lib/hw_unique_key/hw_unique_key_internal.h"/>
+  </compounddef>
+</doxygen>

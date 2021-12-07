@@ -1,0 +1,355 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__gadgets__profile" kind="group">
+    <compoundname>bt_gadgets_profile</compoundname>
+    <title>Alexa Gadgets profile</title>
+    <innerclass refid="structbt__gadgets__evt" prot="public">bt_gadgets_evt</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__gadgets__profile_1ga07b0617ffa14a591dfa0a89e13bc0e4f" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_gadgets_evt_type</name>
+        <enumvalue id="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa28d6de60fbf275ee64663cc54d00ce73" prot="public">
+          <name>BT_GADGETS_EVT_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Handshake with peer completed </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4faa6c363c44309f10d8c31675c0d6eed76" prot="public">
+          <name>BT_GADGETS_EVT_SETALERT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>SetAlert Directive </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fabeae1ffa11580fa098e9a841d527d044" prot="public">
+          <name>BT_GADGETS_EVT_DELETEALERT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>DeleteAlert Directive </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa0dd3d8bb0f549314249d7630eaca51ad" prot="public">
+          <name>BT_GADGETS_EVT_SETINDICATOR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>SetIndicator Directive </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa2eb615df00a353bc81ef980643d8f4c2" prot="public">
+          <name>BT_GADGETS_EVT_CLEARINDICATOR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>ClearIndicator Directive </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa5686bc99907ade1d56bdf36a15f4d2f4" prot="public">
+          <name>BT_GADGETS_EVT_STATEUPDATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>StateUpdate Directive </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa5624900c002e6fd1b665dba5f6acd1cf" prot="public">
+          <name>BT_GADGETS_EVT_SPEECHMARKS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Speechmarks Directive </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fae54171d32c8c59dff2065eae2517362c" prot="public">
+          <name>BT_GADGETS_EVT_MUSICTEMPO</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Tempo Directive </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fabb5dc31a422a977a3b665f396a42e2b5" prot="public">
+          <name>BT_GADGETS_EVT_CUSTOM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Custom Directive </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa7264f7713823997e91cb9121b274be9e" prot="public">
+          <name>BT_GADGETS_EVT_CUSTOM_SENT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Custom event sent </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Gadgets event types. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets_profile.h" line="61" column="1" bodyfile="include/bluetooth/services/gadgets_profile.h" bodystart="61" bodyend="91"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__bt__gadgets__profile_1ga834a6a85b1c4860387d15db946fa26dc" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_gadgets_profile_cb_t) (const struct bt_gadgets_evt *evt)</definition>
+        <argsstring>)(const struct bt_gadgets_evt *evt)</argsstring>
+        <name>bt_gadgets_profile_cb_t</name>
+        <briefdescription>
+<para>Callback type for Gadget events. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets_profile.h" line="141" column="9" bodyfile="include/bluetooth/services/gadgets_profile.h" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__gadgets__profile_1gaf67e2f183edabd303279b3b9547e421c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_gadgets_profile_init</definition>
+        <argsstring>(bt_gadgets_profile_cb_t evt_handler)</argsstring>
+        <name>bt_gadgets_profile_init</name>
+        <param>
+          <type><ref refid="group__bt__gadgets__profile_ga834a6a85b1c4860387d15db946fa26dc_1ga834a6a85b1c4860387d15db946fa26dc" kindref="member">bt_gadgets_profile_cb_t</ref></type>
+          <declname>evt_handler</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the profile. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Initializes profile state and the underlying Gadgets Bluetooth Service.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">evt_handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>event handler function pointer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If initialization is successful. Otherwise, a negative value is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets_profile.h" line="153" column="5" declfile="include/bluetooth/services/gadgets_profile.h" declline="153" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gadgets__profile_1ga4178b90aa8e964863178113fabd12ee7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_gadgets_profile_adv_start</definition>
+        <argsstring>(bool bondable_type)</argsstring>
+        <name>bt_gadgets_profile_adv_start</name>
+        <param>
+          <type>bool</type>
+          <declname>bondable_type</declname>
+        </param>
+        <briefdescription>
+<para>Start advertising using the Gadgets advertisement format. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When connection is established, the profile will wait for the link to become encrypted, and the MTU exchange to complete (<ref refid="group__bt__gadgets__profile_gaec2dc9afb42592c908d886003810f5c3_1gaec2dc9afb42592c908d886003810f5c3" kindref="member">bt_gadgets_profile_mtu_exchanged</ref>). The handshake procedure is then automatically started.</para>
+<para><simplesect kind="note"><para>Advertisement is resumed automatically upon disconnect, unless <ref refid="group__bt__gadgets__profile_gaf3bcd31eb50122df91ac6f3b743b05b4_1gaf3bcd31eb50122df91ac6f3b743b05b4" kindref="member">bt_gadgets_profile_adv_stop</ref> is called first.</para>
+</simplesect>
+<simplesect kind="note"><para>Bluetooth connections established without calling this function first will be ignored by this module, such that other connections can be established without interference.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">bondable_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set to true if the &quot;new bond&quot; payload format should be used. False when reconnecting to bonded peer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If advertisement is successfully started. Otherwise, a negative value is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets_profile.h" line="175" column="5" declfile="include/bluetooth/services/gadgets_profile.h" declline="175" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gadgets__profile_1gaf3bcd31eb50122df91ac6f3b743b05b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_gadgets_profile_adv_stop</definition>
+        <argsstring>(void)</argsstring>
+        <name>bt_gadgets_profile_adv_stop</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Stop advertising using the Gadgets advertisement format, and prevents Gadgets advertisement from being resumed if an ongoing connection becomes disconnected. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Stops ongoing advertisement. Any new connection established without first calling <ref refid="group__bt__gadgets__profile_ga4178b90aa8e964863178113fabd12ee7_1ga4178b90aa8e964863178113fabd12ee7" kindref="member">bt_gadgets_profile_adv_start</ref> will be ignored by profile. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets_profile.h" line="185" column="6" declfile="include/bluetooth/services/gadgets_profile.h" declline="185" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gadgets__profile_1gaec2dc9afb42592c908d886003810f5c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_gadgets_profile_mtu_exchanged</definition>
+        <argsstring>(struct bt_conn *conn)</argsstring>
+        <name>bt_gadgets_profile_mtu_exchanged</name>
+        <param>
+          <type>struct bt_conn *</type>
+          <declname>conn</declname>
+        </param>
+        <briefdescription>
+<para>Inform Gadgets profile that the MTU exchange has been performed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The profile will not perform handshake with peer until MTU exchange has completed. The other prerequisites for the handshake are automatically detected (encryption using LE Secure Connections, and Notifications enabled).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The connection the MTU exchange applies to. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets_profile.h" line="196" column="6" declfile="include/bluetooth/services/gadgets_profile.h" declline="196" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gadgets__profile_1ga1551763c0ea40dcd740290e45ed2f169" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_gadgets_profile_custom_event_json_send</definition>
+        <argsstring>(uint8_t *name, uint8_t *json)</argsstring>
+        <name>bt_gadgets_profile_custom_event_json_send</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>json</declname>
+        </param>
+        <briefdescription>
+<para>Send a custom event to Alexa using preconfigured custom event. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Custom events are constructed using user-specified protobuf format. This function uses a simple custom event structure with a single string as the payload. The string must be valid JSON for the cloud side to accept it. The namespace for this custom event is given by <verbatim>embed:rst:inline :kconfig:`CONFIG_BT_ALEXA_GADGETS_CAPABILITY_CUSTOM_NAMESPACE` </verbatim>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated event name string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">json</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated JSON string.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>When successful. Otherwise, a negative value is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets_profile.h" line="213" column="5" declfile="include/bluetooth/services/gadgets_profile.h" declline="213" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gadgets__profile_1gac77612524e15cd32ca40a9d2169c3738" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_gadgets_profile_custom_event_send</definition>
+        <argsstring>(uint8_t *encoded_data, size_t len)</argsstring>
+        <name>bt_gadgets_profile_custom_event_send</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>encoded_data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Send a pre-encoded custom event to Alexa. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Custom events are constructed using user-specified protobuf format. The user of this function must encode the data using the chosen protobuf format and pass the encoded buffer to this function (i.e. the output from pb_encode()). See here for more information: <ulink url="https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/custom-interface.html#events">https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/custom-interface.html#events</ulink></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">encoded_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data encoded using pb_encode() </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length in bytes of encoded data</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>When successful. Otherwise, a negative value is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets_profile.h" line="231" column="5" declfile="include/bluetooth/services/gadgets_profile.h" declline="231" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Alexa Gadgets profile API. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Implements the Alexa Gadgets profile and data handling for protobuf-defined interfaces. These interfaces are protobuf-defined data formats for Directives (incoming data) and events (outgoing data). All the standard defined interfaces in the Alexa Gadgets Toolkit are handled.</para>
+<para>Custom interfaces are also supported, including a basic custom event type.</para>
+<para>To interact with Alexa, follow the registration steps outlined in the Alexa Gadgets documentation: <ulink url="https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/understand-alexa-gadgets-toolkit.html">https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/understand-alexa-gadgets-toolkit.html</ulink> </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

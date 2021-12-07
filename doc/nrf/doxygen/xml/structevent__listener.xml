@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structevent__listener" kind="struct" language="C++" prot="public">
+    <compoundname>event_listener</compoundname>
+    <includes refid="event__manager_8h" local="no">event_manager.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structevent__listener_af7d1d57a94b1073478731b0894067d01_1af7d1d57a94b1073478731b0894067d01" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* event_listener::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Name of this listener. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="91" column="12" bodyfile="include/event_manager.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structevent__listener_ad4a9f282e8769a2a228df070f42fc5c0_1ad4a9f282e8769a2a228df070f42fc5c0" prot="public" static="no" mutable="no">
+        <type>bool(*</type>
+        <definition>bool(* event_listener::notification) (const struct event_header *eh)</definition>
+        <argsstring>)(const struct event_header *eh)</argsstring>
+        <name>notification</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the function that is called when an event is handled. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="95" column="1" bodyfile="include/event_manager.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Event listener. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>All event listeners must be defined using <ref refid="group__event__manager_ga490c892c4aced8be6dfbd9b2c3981a14_1ga490c892c4aced8be6dfbd9b2c3981a14" kindref="member">EVENT_LISTENER</ref>. </para>
+    </detaileddescription>
+    <location file="include/event_manager.h" line="89" column="1" bodyfile="include/event_manager.h" bodystart="89" bodyend="96"/>
+    <listofallmembers>
+      <member refid="structevent__listener_af7d1d57a94b1073478731b0894067d01_1af7d1d57a94b1073478731b0894067d01" prot="public" virt="non-virtual"><scope>event_listener</scope><name>name</name></member>
+      <member refid="structevent__listener_ad4a9f282e8769a2a228df070f42fc5c0_1ad4a9f282e8769a2a228df070f42fc5c0" prot="public" virt="non-virtual"><scope>event_listener</scope><name>notification</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

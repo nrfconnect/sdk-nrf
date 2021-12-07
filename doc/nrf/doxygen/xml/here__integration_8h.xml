@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="here__integration_8h" kind="file" language="C++">
+    <compoundname>here_integration.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <includes refid="lte__lc_8h" local="no">modem/lte_lc.h</includes>
+    <includes refid="multicell__location_8h" local="no">net/multicell_location.h</includes>
+    <incdepgraph>
+      <node id="3">
+        <label>modem/lte_lc.h</label>
+        <link refid="lte__lc_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>net/multicell_location.h</label>
+        <link refid="multicell__location_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>lib/multicell_location/services/here_integration.h</label>
+        <link refid="here__integration_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>stdbool.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="here__integration_8h_a8d974dc27e4a937090e32d2c1ce85629_1a8d974dc27e4a937090e32d2c1ce85629" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const char *</type>
+        <definition>const char * location_service_get_certificate_here</definition>
+        <argsstring>(void)</argsstring>
+        <name>location_service_get_certificate_here</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/multicell_location/services/here_integration.h" line="18" column="12" declfile="lib/multicell_location/services/here_integration.h" declline="18" declcolumn="12"/>
+      </memberdef>
+      <memberdef kind="function" id="here__integration_8h_acf7342247522765097d0d18f00796e37_1acf7342247522765097d0d18f00796e37" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int location_service_get_cell_location_here</definition>
+        <argsstring>(const struct lte_lc_cells_info *cell_data, char *const rcv_buf, const size_t rcv_buf_len, struct multicell_location *const location)</argsstring>
+        <name>location_service_get_cell_location_here</name>
+        <param>
+          <type>const struct <ref refid="structlte__lc__cells__info" kindref="compound">lte_lc_cells_info</ref> *</type>
+          <declname>cell_data</declname>
+        </param>
+        <param>
+          <type>char *const</type>
+          <declname>rcv_buf</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>rcv_buf_len</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structmulticell__location" kindref="compound">multicell_location</ref> *const</type>
+          <declname>location</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/multicell_location/services/here_integration.h" line="20" column="5" declfile="lib/multicell_location/services/here_integration.h" declline="20" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>HERE_INTEGRATION_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>HERE_INTEGRATION_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="lte__lc_8h" kindref="compound">modem/lte_lc.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="multicell__location_8h" kindref="compound">net/multicell_location.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="here__integration_8h_a8d974dc27e4a937090e32d2c1ce85629_1a8d974dc27e4a937090e32d2c1ce85629" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="here__integration_8h_a8d974dc27e4a937090e32d2c1ce85629_1a8d974dc27e4a937090e32d2c1ce85629" kindref="member">location_service_get_certificate_here</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20" refid="here__integration_8h_acf7342247522765097d0d18f00796e37_1acf7342247522765097d0d18f00796e37" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="here__integration_8h_acf7342247522765097d0d18f00796e37_1acf7342247522765097d0d18f00796e37" kindref="member">location_service_get_cell_location_here</ref>(</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlte__lc__cells__info" kindref="compound">lte_lc_cells_info</ref><sp/>*cell_data,</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rcv_buf,</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>rcv_buf_len,</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structmulticell__location" kindref="compound">multicell_location</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>location);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>HERE_INTEGRATION_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="lib/multicell_location/services/here_integration.h"/>
+  </compounddef>
+</doxygen>

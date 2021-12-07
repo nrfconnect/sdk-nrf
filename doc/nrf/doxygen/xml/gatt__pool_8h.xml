@@ -1,0 +1,731 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="gatt__pool_8h" kind="file" language="C++">
+    <compoundname>gatt_pool.h</compoundname>
+    <includes local="no">bluetooth/gatt.h</includes>
+    <includes local="no">bluetooth/uuid.h</includes>
+    <includedby refid="hids_8h" local="no">include/bluetooth/services/hids.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/bluetooth/gatt_pool.h</label>
+        <link refid="gatt__pool_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bluetooth/gatt.h</label>
+      </node>
+      <node id="3">
+        <label>bluetooth/uuid.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="3">
+        <label>applications/nrf_desktop/src/events/hids_event.h</label>
+        <link refid="hids__event_8h"/>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/gatt_pool.h</label>
+        <link refid="gatt__pool_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/bluetooth/services/hids.h</label>
+        <link refid="hids_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>include/bluetooth/services/hogp.h</label>
+        <link refid="hogp_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structbt__gatt__pool" prot="public">bt_gatt_pool</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__gatt__pool_ga8fa84f84e580facc1016ae4984922c6a_1ga8fa84f84e580facc1016ae4984922c6a" prot="public" static="no">
+        <name>BT_GATT_POOL_INIT</name>
+        <param><defname>_attr_array_size</defname></param>
+        <initializer>	{                                                                      \
+		.svc =                                                         \
+		{                                                              \
+			.attrs = (struct bt_gatt_attr[_attr_array_size])       \
+				{ {0} }                                        \
+		},                                                             \
+		.attr_array_size = _attr_array_size                            \
+	}</initializer>
+        <briefdescription>
+<para>Initialization of the GATT attribute pool variable. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates the initializer for the new attribute pool.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>_attr_array_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the attribute array. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_pool.h" line="31" column="9" bodyfile="include/bluetooth/gatt_pool.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__gatt__pool_ga82d965ec3c2a0b8fe94d98cd7ffdf1f0_1ga82d965ec3c2a0b8fe94d98cd7ffdf1f0" prot="public" static="no">
+        <name>BT_GATT_POOL_DEF</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_attr_array_size</defname></param>
+        <initializer>	const static struct <ref refid="structbt__gatt__pool" kindref="compound">bt_gatt_pool</ref> _name =  \
+		<ref refid="group__bt__gatt__pool_ga8fa84f84e580facc1016ae4984922c6a_1ga8fa84f84e580facc1016ae4984922c6a" kindref="member">BT_GATT_POOL_INIT</ref>(_attr_array_size)</initializer>
+        <briefdescription>
+<para>Define a new GATT attribute pool. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates a new attribute pool.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the pool created. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_attr_array_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the attribute array. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_pool.h" line="48" column="9" bodyfile="include/bluetooth/gatt_pool.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__gatt__pool_ga11f3ac45b17a37a257524253e710bde1_1ga11f3ac45b17a37a257524253e710bde1" prot="public" static="no">
+        <name>BT_GATT_POOL_SVC</name>
+        <param><defname>_gp</defname></param>
+        <param><defname>_svc_uuid_init</defname></param>
+        <initializer>	do {                                                                   \
+		int _ret;                                                      \
+		const struct bt_uuid *_svc_uuid = _svc_uuid_init;              \
+		_ret = <ref refid="group__bt__gatt__pool_ga906b7d14c4dbfb36a7e03e5223c232e6_1ga906b7d14c4dbfb36a7e03e5223c232e6" kindref="member">bt_gatt_pool_svc_alloc</ref>(_gp, _svc_uuid);                 \
+		__ASSERT_NO_MSG(!_ret);                                        \
+		(void)_ret;                                                    \
+	} while (0)</initializer>
+        <briefdescription>
+<para>Register a primary service descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>_gp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>GATT service object with dynamic attribute allocation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_svc_uuid_init</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Service UUID. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_pool.h" line="57" column="9" bodyfile="include/bluetooth/gatt_pool.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__gatt__pool_ga8b0f2a989a99af7f8b94670b287d19d9_1ga8b0f2a989a99af7f8b94670b287d19d9" prot="public" static="no">
+        <name>BT_GATT_POOL_CHRC</name>
+        <param><defname>_gp</defname></param>
+        <param><defname>_uuid</defname></param>
+        <param><defname>_props</defname></param>
+        <param><defname>_perm</defname></param>
+        <param><defname>_read</defname></param>
+        <param><defname>_write</defname></param>
+        <param><defname>_value</defname></param>
+        <initializer>	do {                                                                   \
+		int _ret;                                                      \
+		const struct bt_gatt_attr _attr = BT_GATT_ATTRIBUTE(           \
+			_uuid, _perm, _read, _write, _value);                  \
+		_ret = <ref refid="group__bt__gatt__pool_ga339fbe78e76d6d505d12ef3f30860941_1ga339fbe78e76d6d505d12ef3f30860941" kindref="member">bt_gatt_pool_chrc_alloc</ref>(_gp, _props, &amp;_attr);           \
+		__ASSERT_NO_MSG(!_ret);                                        \
+		(void)_ret;                                                    \
+	} while (0)</initializer>
+        <briefdescription>
+<para>Register a characteristic descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>_gp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>GATT service object with dynamic attribute allocation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_uuid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Characteristic UUID. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_props</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Characteristic properties. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_perm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Characteristic access permissions. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_read</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Characteristic read callback. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_write</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Characteristic write callback. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Characteristic value. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_pool.h" line="76" column="9" bodyfile="include/bluetooth/gatt_pool.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__gatt__pool_gaf4d738330980578b764a002b31dad059_1gaf4d738330980578b764a002b31dad059" prot="public" static="no">
+        <name>BT_GATT_POOL_DESC</name>
+        <param><defname>_gp</defname></param>
+        <param><defname>_uuid</defname></param>
+        <param><defname>_perm</defname></param>
+        <param><defname>_read</defname></param>
+        <param><defname>_write</defname></param>
+        <param><defname>_value</defname></param>
+        <initializer>	do {                                                                   \
+		int _ret;                                                      \
+		const struct bt_gatt_attr _descriptor = BT_GATT_DESCRIPTOR(    \
+			_uuid, _perm, _read, _write, _value);                  \
+		_ret = <ref refid="group__bt__gatt__pool_gad94d0b10a8dcaf2f43d7d0ca5e1fc23f_1gad94d0b10a8dcaf2f43d7d0ca5e1fc23f" kindref="member">bt_gatt_pool_desc_alloc</ref>(_gp, &amp;_descriptor);             \
+		__ASSERT_NO_MSG(!_ret);                                        \
+		(void)_ret;                                                    \
+	} while (0)</initializer>
+        <briefdescription>
+<para>Register an attribute descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>_gp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>GATT service object with dynamic attribute allocation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_uuid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Descriptor UUID. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_perm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Descriptor access permissions. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_read</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Descriptor read callback. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_write</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Descriptor write callback. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Descriptor value. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_pool.h" line="95" column="9" bodyfile="include/bluetooth/gatt_pool.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__gatt__pool_gaf084c9a38f2b7a8a6e3446b6484f7530_1gaf084c9a38f2b7a8a6e3446b6484f7530" prot="public" static="no">
+        <name>BT_GATT_POOL_CCC</name>
+        <param><defname>_gp</defname></param>
+        <param><defname>_ccc</defname></param>
+        <param><defname>_ccc_changed</defname></param>
+        <param><defname>_perm</defname></param>
+        <initializer>	do {                                                                   \
+		int _ret;                                                      \
+		_ccc = (struct _bt_gatt_ccc)BT_GATT_CCC_INITIALIZER(\
+			_ccc_changed, NULL, NULL);      \
+		_ret = <ref refid="group__bt__gatt__pool_gabeaa3e9c570484375708c42039d91197_1gabeaa3e9c570484375708c42039d91197" kindref="member">bt_gatt_pool_ccc_alloc</ref>(_gp, &amp;_ccc, _perm);              \
+		__ASSERT_NO_MSG(!_ret);                                        \
+		(void)_ret;                                                    \
+	} while (0)</initializer>
+        <briefdescription>
+<para>Register a CCC descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>_gp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>GATT service object with dynamic attribute allocation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_ccc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>CCC descriptor configuration. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_ccc_changed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>CCC value changed callback. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_perm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>CCC descriptor permissions. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_pool.h" line="112" column="9" bodyfile="include/bluetooth/gatt_pool.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__gatt__pool_ga906b7d14c4dbfb36a7e03e5223c232e6_1ga906b7d14c4dbfb36a7e03e5223c232e6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_gatt_pool_svc_alloc</definition>
+        <argsstring>(struct bt_gatt_pool *gp, struct bt_uuid const *svc_uuid)</argsstring>
+        <name>bt_gatt_pool_svc_alloc</name>
+        <param>
+          <type>struct <ref refid="structbt__gatt__pool" kindref="compound">bt_gatt_pool</ref> *</type>
+          <declname>gp</declname>
+        </param>
+        <param>
+          <type>struct bt_uuid const *</type>
+          <declname>svc_uuid</declname>
+        </param>
+        <briefdescription>
+<para>Take a primary service descriptor from the pool. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>gp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>GATT service object with dynamic attribute allocation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>svc_uuid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Service UUID.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Operation finished successfully. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid input value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOSPC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of arguments in <computeroutput>svc</computeroutput> would exceed <computeroutput>array_size</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>No internal memory in the gatt_poll module. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_pool.h" line="145" column="5" declfile="include/bluetooth/gatt_pool.h" declline="145" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__pool_ga339fbe78e76d6d505d12ef3f30860941_1ga339fbe78e76d6d505d12ef3f30860941" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_gatt_pool_chrc_alloc</definition>
+        <argsstring>(struct bt_gatt_pool *gp, uint8_t props, struct bt_gatt_attr const *attr)</argsstring>
+        <name>bt_gatt_pool_chrc_alloc</name>
+        <param>
+          <type>struct <ref refid="structbt__gatt__pool" kindref="compound">bt_gatt_pool</ref> *</type>
+          <declname>gp</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>props</declname>
+        </param>
+        <param>
+          <type>struct bt_gatt_attr const *</type>
+          <declname>attr</declname>
+        </param>
+        <briefdescription>
+<para>Take a characteristic descriptor from the pool. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>gp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>GATT service object with dynamic attribute allocation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>props</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Properties of the characteristic. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>attr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Characteristic value attribute.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 or a negative error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_pool.h" line="156" column="5" declfile="include/bluetooth/gatt_pool.h" declline="156" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__pool_gad94d0b10a8dcaf2f43d7d0ca5e1fc23f_1gad94d0b10a8dcaf2f43d7d0ca5e1fc23f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_gatt_pool_desc_alloc</definition>
+        <argsstring>(struct bt_gatt_pool *gp, struct bt_gatt_attr const *descriptor)</argsstring>
+        <name>bt_gatt_pool_desc_alloc</name>
+        <param>
+          <type>struct <ref refid="structbt__gatt__pool" kindref="compound">bt_gatt_pool</ref> *</type>
+          <declname>gp</declname>
+        </param>
+        <param>
+          <type>struct bt_gatt_attr const *</type>
+          <declname>descriptor</declname>
+        </param>
+        <briefdescription>
+<para>Take an attribute descriptor from the pool. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>gp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>GATT service object with dynamic attribute allocation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>descriptor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Attribute descriptor.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 or negative error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_pool.h" line="166" column="5" declfile="include/bluetooth/gatt_pool.h" declline="166" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__pool_gabeaa3e9c570484375708c42039d91197_1gabeaa3e9c570484375708c42039d91197" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_gatt_pool_ccc_alloc</definition>
+        <argsstring>(struct bt_gatt_pool *gp, struct _bt_gatt_ccc *ccc, uint8_t perm)</argsstring>
+        <name>bt_gatt_pool_ccc_alloc</name>
+        <param>
+          <type>struct <ref refid="structbt__gatt__pool" kindref="compound">bt_gatt_pool</ref> *</type>
+          <declname>gp</declname>
+        </param>
+        <param>
+          <type>struct _bt_gatt_ccc *</type>
+          <declname>ccc</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>perm</declname>
+        </param>
+        <briefdescription>
+<para>Take a CCC descriptor from the pool. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>gp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>GATT service object with dynamic attribute allocation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ccc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>CCC descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>perm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Permissions to access CCC. Use the GATT attribute permission bit field values.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 or negative error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_pool.h" line="178" column="5" declfile="include/bluetooth/gatt_pool.h" declline="178" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__pool_ga9feeed5c5653b73172d15bc4fd3f3daf_1ga9feeed5c5653b73172d15bc4fd3f3daf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_gatt_pool_free</definition>
+        <argsstring>(struct bt_gatt_pool *gp)</argsstring>
+        <name>bt_gatt_pool_free</name>
+        <param>
+          <type>struct <ref refid="structbt__gatt__pool" kindref="compound">bt_gatt_pool</ref> *</type>
+          <declname>gp</declname>
+        </param>
+        <briefdescription>
+<para>Free the whole dynamically created GATT service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>gp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>GATT service object with dynamic attribute allocation. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_pool.h" line="186" column="6" declfile="include/bluetooth/gatt_pool.h" declline="186" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2018<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_GATT_POOL_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_GATT_POOL_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/gatt.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/uuid.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="group__bt__gatt__pool_ga8fa84f84e580facc1016ae4984922c6a_1ga8fa84f84e580facc1016ae4984922c6a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_GATT_POOL_INIT(_attr_array_size)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="32"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="33"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.svc<sp/>=<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="34"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="35"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.attrs<sp/>=<sp/>(struct<sp/>bt_gatt_attr[_attr_array_size])<sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="36"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>{0}<sp/>}<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="37"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>},<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="38"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.attr_array_size<sp/>=<sp/>_attr_array_size<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="39"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="group__bt__gatt__pool_ga82d965ec3c2a0b8fe94d98cd7ffdf1f0_1ga82d965ec3c2a0b8fe94d98cd7ffdf1f0" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_GATT_POOL_DEF(_name,<sp/>_attr_array_size)<sp/>\</highlight></codeline>
+<codeline lineno="49"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>static<sp/>struct<sp/>bt_gatt_pool<sp/>_name<sp/>=<sp/><sp/>\</highlight></codeline>
+<codeline lineno="50"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_GATT_POOL_INIT(_attr_array_size)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="group__bt__gatt__pool_ga11f3ac45b17a37a257524253e710bde1_1ga11f3ac45b17a37a257524253e710bde1" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_GATT_POOL_SVC(_gp,<sp/>_svc_uuid_init)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="58"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>do<sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="59"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>_ret;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="60"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>struct<sp/>bt_uuid<sp/>*_svc_uuid<sp/>=<sp/>_svc_uuid_init;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="61"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_ret<sp/>=<sp/>bt_gatt_pool_svc_alloc(_gp,<sp/>_svc_uuid);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="62"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__ASSERT_NO_MSG(!_ret);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="63"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(void)_ret;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="64"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/>while<sp/>(0)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="group__bt__gatt__pool_ga8b0f2a989a99af7f8b94670b287d19d9_1ga8b0f2a989a99af7f8b94670b287d19d9" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_GATT_POOL_CHRC(_gp,<sp/>_uuid,<sp/>_props,<sp/>_perm,<sp/>_read,<sp/>_write,<sp/>_value)<sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="77"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>do<sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="78"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>_ret;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="79"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>struct<sp/>bt_gatt_attr<sp/>_attr<sp/>=<sp/>BT_GATT_ATTRIBUTE(<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="80"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_uuid,<sp/>_perm,<sp/>_read,<sp/>_write,<sp/>_value);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="81"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_ret<sp/>=<sp/>bt_gatt_pool_chrc_alloc(_gp,<sp/>_props,<sp/>&amp;_attr);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="82"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__ASSERT_NO_MSG(!_ret);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="83"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(void)_ret;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="84"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/>while<sp/>(0)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="group__bt__gatt__pool_gaf4d738330980578b764a002b31dad059_1gaf4d738330980578b764a002b31dad059" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_GATT_POOL_DESC(_gp,<sp/>_uuid,<sp/>_perm,<sp/>_read,<sp/>_write,<sp/>_value)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="96"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>do<sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="97"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>_ret;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="98"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>struct<sp/>bt_gatt_attr<sp/>_descriptor<sp/>=<sp/>BT_GATT_DESCRIPTOR(<sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="99"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_uuid,<sp/>_perm,<sp/>_read,<sp/>_write,<sp/>_value);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="100"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_ret<sp/>=<sp/>bt_gatt_pool_desc_alloc(_gp,<sp/>&amp;_descriptor);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="101"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__ASSERT_NO_MSG(!_ret);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="102"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(void)_ret;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="103"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/>while<sp/>(0)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112" refid="group__bt__gatt__pool_gaf084c9a38f2b7a8a6e3446b6484f7530_1gaf084c9a38f2b7a8a6e3446b6484f7530" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_GATT_POOL_CCC(_gp,<sp/>_ccc,<sp/>_ccc_changed,<sp/>_perm)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="113"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>do<sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="114"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>_ret;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="115"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_ccc<sp/>=<sp/>(struct<sp/>_bt_gatt_ccc)BT_GATT_CCC_INITIALIZER(\</highlight></codeline>
+<codeline lineno="116"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_ccc_changed,<sp/>NULL,<sp/>NULL);<sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="117"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_ret<sp/>=<sp/>bt_gatt_pool_ccc_alloc(_gp,<sp/>&amp;_ccc,<sp/>_perm);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="118"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__ASSERT_NO_MSG(!_ret);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="119"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(void)_ret;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="120"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/>while<sp/>(0)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128" refid="structbt__gatt__pool" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__gatt__pool" kindref="compound">bt_gatt_pool</ref><sp/>{</highlight></codeline>
+<codeline lineno="130" refid="structbt__gatt__pool_a4b7b607aade8a05fe553f17fb465c863_1a4b7b607aade8a05fe553f17fb465c863" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_gatt_service<sp/><ref refid="structbt__gatt__pool_a4b7b607aade8a05fe553f17fb465c863_1a4b7b607aade8a05fe553f17fb465c863" kindref="member">svc</ref>;</highlight></codeline>
+<codeline lineno="132" refid="structbt__gatt__pool_a3151e01dba93450531cd67a5d0c8634f_1a3151e01dba93450531cd67a5d0c8634f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structbt__gatt__pool_a3151e01dba93450531cd67a5d0c8634f_1a3151e01dba93450531cd67a5d0c8634f" kindref="member">attr_array_size</ref>;</highlight></codeline>
+<codeline lineno="133"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145" refid="group__bt__gatt__pool_ga906b7d14c4dbfb36a7e03e5223c232e6_1ga906b7d14c4dbfb36a7e03e5223c232e6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__gatt__pool_ga906b7d14c4dbfb36a7e03e5223c232e6_1ga906b7d14c4dbfb36a7e03e5223c232e6" kindref="member">bt_gatt_pool_svc_alloc</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__gatt__pool" kindref="compound">bt_gatt_pool</ref><sp/>*gp,</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_uuid<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>*svc_uuid);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156" refid="group__bt__gatt__pool_ga339fbe78e76d6d505d12ef3f30860941_1ga339fbe78e76d6d505d12ef3f30860941" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__gatt__pool_ga339fbe78e76d6d505d12ef3f30860941_1ga339fbe78e76d6d505d12ef3f30860941" kindref="member">bt_gatt_pool_chrc_alloc</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__gatt__pool" kindref="compound">bt_gatt_pool</ref><sp/>*gp,<sp/>uint8_t<sp/>props,</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_gatt_attr<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>*attr);</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166" refid="group__bt__gatt__pool_gad94d0b10a8dcaf2f43d7d0ca5e1fc23f_1gad94d0b10a8dcaf2f43d7d0ca5e1fc23f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__gatt__pool_gad94d0b10a8dcaf2f43d7d0ca5e1fc23f_1gad94d0b10a8dcaf2f43d7d0ca5e1fc23f" kindref="member">bt_gatt_pool_desc_alloc</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__gatt__pool" kindref="compound">bt_gatt_pool</ref><sp/>*gp,</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_gatt_attr<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>*descriptor);</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178" refid="group__bt__gatt__pool_gabeaa3e9c570484375708c42039d91197_1gabeaa3e9c570484375708c42039d91197" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__gatt__pool_gabeaa3e9c570484375708c42039d91197_1gabeaa3e9c570484375708c42039d91197" kindref="member">bt_gatt_pool_ccc_alloc</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__gatt__pool" kindref="compound">bt_gatt_pool</ref><sp/>*gp,</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>_bt_gatt_ccc<sp/>*ccc,</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>perm);</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight></codeline>
+<codeline lineno="186" refid="group__bt__gatt__pool_ga9feeed5c5653b73172d15bc4fd3f3daf_1ga9feeed5c5653b73172d15bc4fd3f3daf" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__bt__gatt__pool_ga9feeed5c5653b73172d15bc4fd3f3daf_1ga9feeed5c5653b73172d15bc4fd3f3daf" kindref="member">bt_gatt_pool_free</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__gatt__pool" kindref="compound">bt_gatt_pool</ref><sp/>*gp);</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>CONFIG_BT_GATT_POOL_STATS<sp/>!=<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>bt_gatt_pool_stats_print(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_GATT_POOL_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/gatt_pool.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structmodem__module__battery__data" kind="struct" language="C++" prot="public">
+    <compoundname>modem_module_battery_data</compoundname>
+    <includes refid="modem__module__event_8h" local="no">modem_module_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmodem__module__battery__data_a6afd6714739101f757338c7ffdbf1cb2_1a6afd6714739101f757338c7ffdbf1cb2" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t modem_module_battery_data::battery_voltage</definition>
+        <argsstring></argsstring>
+        <name>battery_voltage</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="123" column="10" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__battery__data_a39b8423ecc7e3c245f66c1662e8ff523_1a39b8423ecc7e3c245f66c1662e8ff523" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t modem_module_battery_data::timestamp</definition>
+        <argsstring></argsstring>
+        <name>timestamp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="124" column="9" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="122" column="1" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="122" bodyend="125"/>
+    <listofallmembers>
+      <member refid="structmodem__module__battery__data_a6afd6714739101f757338c7ffdbf1cb2_1a6afd6714739101f757338c7ffdbf1cb2" prot="public" virt="non-virtual"><scope>modem_module_battery_data</scope><name>battery_voltage</name></member>
+      <member refid="structmodem__module__battery__data_a39b8423ecc7e3c245f66c1662e8ff523_1a39b8423ecc7e3c245f66c1662e8ff523" prot="public" virt="non-virtual"><scope>modem_module_battery_data</scope><name>timestamp</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

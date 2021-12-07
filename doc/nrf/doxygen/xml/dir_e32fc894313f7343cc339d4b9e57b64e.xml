@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_e32fc894313f7343cc339d4b9e57b64e" kind="dir">
+    <compoundname>applications/asset_tracker_v2</compoundname>
+    <innerdir refid="dir_fd88f35d7935fdb768d3e708e4d85c5c">applications/asset_tracker_v2/configuration</innerdir>
+    <innerdir refid="dir_a6c755acfd506f556c4f6418519f6e94">applications/asset_tracker_v2/include</innerdir>
+    <innerdir refid="dir_ed7340a23a6c69e783d0df6e54204996">applications/asset_tracker_v2/src</innerdir>
+    <innerdir refid="dir_a1b0174cda08b0a5b438be68c26ad86c">applications/asset_tracker_v2/tests</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/"/>
+  </compounddef>
+</doxygen>

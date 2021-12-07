@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__fs__event" kind="group">
+    <compoundname>fs_event</compoundname>
+    <title>File system event</title>
+    <innerclass refid="structfs__event" prot="public">fs_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__fs__event_1ga652404abdb8687a02ef7787b60621510" prot="public" static="no" strong="no">
+        <type></type>
+        <name>fs_request</name>
+        <enumvalue id="group__fs__event_ga652404abdb8687a02ef7787b60621510_1gga652404abdb8687a02ef7787b60621510a58dbeb4f330fa0068821689a8b5c5707" prot="public">
+          <name>FS_REQUEST_CREATE_FILE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__fs__event_ga652404abdb8687a02ef7787b60621510_1gga652404abdb8687a02ef7787b60621510a6bf5cb5def0454a71aea331b1b761577" prot="public">
+          <name>FS_REQUEST_PARSE_FILE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/fs_event.h" line="26" column="1" bodyfile="applications/connectivity_bridge/src/events/fs_event.h" bodystart="26" bodyend="29"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__fs__event_1ga95506ced5e3e24865023eb254ca9f977" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int fs_event_helper_file_write</definition>
+        <argsstring>(const char *mnt_point, const char *file_path, char const *file_contents, size_t contents_len)</argsstring>
+        <name>fs_event_helper_file_write</name>
+        <param>
+          <type>const char *</type>
+          <declname>mnt_point</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>file_path</declname>
+        </param>
+        <param>
+          <type>char const *</type>
+          <declname>file_contents</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>contents_len</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/fs_event.h" line="41" column="5" declfile="applications/connectivity_bridge/src/events/fs_event.h" declline="41" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>File system event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

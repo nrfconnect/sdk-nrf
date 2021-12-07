@@ -1,0 +1,140 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__ndef__record__parser" kind="group">
+    <compoundname>nfc_ndef_record_parser</compoundname>
+    <title>Parser for NDEF records</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__ndef__record__parser_1ga8340ea50520e5e1d615c426daf9b67ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_record_parse</definition>
+        <argsstring>(struct nfc_ndef_bin_payload_desc *bin_pay_desc, struct nfc_ndef_record_desc *rec_desc, enum nfc_ndef_record_location *record_location, const uint8_t *nfc_data, uint32_t *nfc_data_len)</argsstring>
+        <name>nfc_ndef_record_parse</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__bin__payload__desc" kindref="compound">nfc_ndef_bin_payload_desc</ref> *</type>
+          <declname>bin_pay_desc</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>rec_desc</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__nfc__ndef__record_ga75fb331c1fa9fea07d96d9cbe0112dcb_1ga75fb331c1fa9fea07d96d9cbe0112dcb" kindref="member">nfc_ndef_record_location</ref> *</type>
+          <declname>record_location</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>nfc_data</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>nfc_data_len</declname>
+        </param>
+        <briefdescription>
+<para>Parse NDEF records. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This parsing implementation uses the binary payload descriptor (<ref refid="structnfc__ndef__bin__payload__desc" kindref="compound">nfc_ndef_bin_payload_desc</ref>) to describe the payload for the record.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">bin_pay_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the binary payload descriptor that will be filled and referenced by the record descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rec_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the record descriptor that will be filled with parsed data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">record_location</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the record location. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">nfc_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the raw data to be parsed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">nfc_data_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>As input: size of the NFC data in the <computeroutput>nfc_data</computeroutput> buffer. As output: size of the parsed record.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record_parser.h" line="43" column="5" declfile="include/nfc/ndef/record_parser.h" declline="43" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__record__parser_1ga9a1829d8ca899718af3c6438b2569dc4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_ndef_record_printout</definition>
+        <argsstring>(uint32_t num, const struct nfc_ndef_record_desc *rec_desc)</argsstring>
+        <name>nfc_ndef_record_printout</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>num</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>rec_desc</declname>
+        </param>
+        <briefdescription>
+<para>Print the parsed contents of the NDEF record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">num</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sequence number of the record within the NDEF message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">rec_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the descriptor of the record that should be printed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record_parser.h" line="56" column="6" declfile="include/nfc/ndef/record_parser.h" declline="56" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Parser for NFC NDEF records. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

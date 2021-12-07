@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__hids__cp" kind="struct" language="C++" prot="public">
+    <compoundname>bt_hids_cp</compoundname>
+    <includes refid="hids_8h" local="no">hids.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__hids__cp_a6ee2184d076f684838627b52e79d6283_1a6ee2184d076f684838627b52e79d6283" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_cp::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current value of the Control Point. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="373" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="373" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__cp_a3e1333487f3caa9ce4b7cd175d3d9721_1a3e1333487f3caa9ce4b7cd175d3d9721" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__hids_ga99df24bcad0dc74412c2a7724732360c_1ga99df24bcad0dc74412c2a7724732360c" kindref="member">bt_hids_cp_evt_handler_t</ref></type>
+        <definition>bt_hids_cp_evt_handler_t bt_hids_cp::evt_handler</definition>
+        <argsstring></argsstring>
+        <name>evt_handler</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Callback with new Control Point state. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="376" column="26" bodyfile="include/bluetooth/services/hids.h" bodystart="376" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Control Point. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/hids.h" line="371" column="1" bodyfile="include/bluetooth/services/hids.h" bodystart="371" bodyend="377"/>
+    <listofallmembers>
+      <member refid="structbt__hids__cp_a3e1333487f3caa9ce4b7cd175d3d9721_1a3e1333487f3caa9ce4b7cd175d3d9721" prot="public" virt="non-virtual"><scope>bt_hids_cp</scope><name>evt_handler</name></member>
+      <member refid="structbt__hids__cp_a6ee2184d076f684838627b52e79d6283_1a6ee2184d076f684838627b52e79d6283" prot="public" virt="non-virtual"><scope>bt_hids_cp</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

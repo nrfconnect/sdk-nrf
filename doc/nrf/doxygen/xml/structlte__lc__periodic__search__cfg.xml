@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlte__lc__periodic__search__cfg" kind="struct" language="C++" prot="public">
+    <compoundname>lte_lc_periodic_search_cfg</compoundname>
+    <includes refid="lte__lc_8h" local="no">lte_lc.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlte__lc__periodic__search__cfg_acecbb1c3d84c7f1b28e32508dc8edb56_1acecbb1c3d84c7f1b28e32508dc8edb56" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool lte_lc_periodic_search_cfg::loop</definition>
+        <argsstring></argsstring>
+        <name>loop</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates if the last given pattern is looped from the beginning when the pattern has ended. If several patterns are configured, this impacts only the last pattern. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="725" column="6" bodyfile="include/modem/lte_lc.h" bodystart="725" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__periodic__search__cfg_a6315b0ae3d54484f60bf06ac4bdd9998_1a6315b0ae3d54484f60bf06ac4bdd9998" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t lte_lc_periodic_search_cfg::return_to_pattern</definition>
+        <argsstring></argsstring>
+        <name>return_to_pattern</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates if the modem can return to a given search pattern with shorter sleeps, for example, when radio conditions change and the given pattern index has already been exceeded.</para>
+<para>Allowed values: 0: No return pattern. 1 - 4: Return to search pattern index 1..4. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="735" column="10" bodyfile="include/modem/lte_lc.h" bodystart="735" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__periodic__search__cfg_a6dd8cdfa072069ea026401aafc99e4db_1a6dd8cdfa072069ea026401aafc99e4db" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t lte_lc_periodic_search_cfg::band_optimization</definition>
+        <argsstring></argsstring>
+        <name>band_optimization</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>0: No optimization. Every periodic search shall be all band search. 1: Use default optimizations predefined by modem. Predefinition depends on the active data profile. See &quot;nRF91 AT Commands - Command Reference Guide&quot; for more information. 2 - 20: Every n periodic search must be an all band search. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="743" column="10" bodyfile="include/modem/lte_lc.h" bodystart="743" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__periodic__search__cfg_a6c269307b6954a227d8d8e735182e362_1a6c269307b6954a227d8d8e735182e362" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t lte_lc_periodic_search_cfg::pattern_count</definition>
+        <argsstring></argsstring>
+        <name>pattern_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The number of valid patterns. Range 1 - 4. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="746" column="8" bodyfile="include/modem/lte_lc.h" bodystart="746" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__periodic__search__cfg_a1b3cb8fc19659d22a171b4fd2b7b9809_1a1b3cb8fc19659d22a171b4fd2b7b9809" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__lc__periodic__search__pattern" kindref="compound">lte_lc_periodic_search_pattern</ref></type>
+        <definition>struct lte_lc_periodic_search_pattern lte_lc_periodic_search_cfg::patterns[4]</definition>
+        <argsstring>[4]</argsstring>
+        <name>patterns</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Array of periodic search patterns. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="749" column="37" bodyfile="include/modem/lte_lc.h" bodystart="749" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Periodic search configuration. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>lte_lc_periodic_search_cfg</label>
+        <link refid="structlte__lc__periodic__search__cfg"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>patterns</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>lte_lc_periodic_search_pattern</label>
+        <link refid="structlte__lc__periodic__search__pattern"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/modem/lte_lc.h" line="720" column="1" bodyfile="include/modem/lte_lc.h" bodystart="720" bodyend="750"/>
+    <listofallmembers>
+      <member refid="structlte__lc__periodic__search__cfg_a6dd8cdfa072069ea026401aafc99e4db_1a6dd8cdfa072069ea026401aafc99e4db" prot="public" virt="non-virtual"><scope>lte_lc_periodic_search_cfg</scope><name>band_optimization</name></member>
+      <member refid="structlte__lc__periodic__search__cfg_acecbb1c3d84c7f1b28e32508dc8edb56_1acecbb1c3d84c7f1b28e32508dc8edb56" prot="public" virt="non-virtual"><scope>lte_lc_periodic_search_cfg</scope><name>loop</name></member>
+      <member refid="structlte__lc__periodic__search__cfg_a6c269307b6954a227d8d8e735182e362_1a6c269307b6954a227d8d8e735182e362" prot="public" virt="non-virtual"><scope>lte_lc_periodic_search_cfg</scope><name>pattern_count</name></member>
+      <member refid="structlte__lc__periodic__search__cfg_a1b3cb8fc19659d22a171b4fd2b7b9809_1a1b3cb8fc19659d22a171b4fd2b7b9809" prot="public" virt="non-virtual"><scope>lte_lc_periodic_search_cfg</scope><name>patterns</name></member>
+      <member refid="structlte__lc__periodic__search__cfg_a6315b0ae3d54484f60bf06ac4bdd9998_1a6315b0ae3d54484f60bf06ac4bdd9998" prot="public" virt="non-virtual"><scope>lte_lc_periodic_search_cfg</scope><name>return_to_pattern</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

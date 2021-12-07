@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structst25r3911b__nfca__sens__resp" kind="struct" language="C++" prot="public">
+    <compoundname>st25r3911b_nfca_sens_resp</compoundname>
+    <includes refid="st25r3911b__nfca_8h" local="no">st25r3911b_nfca.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structst25r3911b__nfca__sens__resp_a45e458c44c2c198c50107b09874ae60d_1a45e458c44c2c198c50107b09874ae60d" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t st25r3911b_nfca_sens_resp::anticollison</definition>
+        <argsstring></argsstring>
+        <name>anticollison</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Anticollision data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="81" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structst25r3911b__nfca__sens__resp_ac69dce3594b46f9afcf867dbad4552ad_1ac69dce3594b46f9afcf867dbad4552ad" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t st25r3911b_nfca_sens_resp::platform_info</definition>
+        <argsstring></argsstring>
+        <name>platform_info</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Platform information data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="84" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>NFC-A SENS response. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/st25r3911b_nfca.h" line="79" column="1" bodyfile="include/st25r3911b_nfca.h" bodystart="79" bodyend="85"/>
+    <listofallmembers>
+      <member refid="structst25r3911b__nfca__sens__resp_a45e458c44c2c198c50107b09874ae60d_1a45e458c44c2c198c50107b09874ae60d" prot="public" virt="non-virtual"><scope>st25r3911b_nfca_sens_resp</scope><name>anticollison</name></member>
+      <member refid="structst25r3911b__nfca__sens__resp_ac69dce3594b46f9afcf867dbad4552ad_1ac69dce3594b46f9afcf867dbad4552ad" prot="public" virt="non-virtual"><scope>st25r3911b_nfca_sens_resp</scope><name>platform_info</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

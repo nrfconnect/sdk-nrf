@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_1b436e6e09bca9a49997c64eb38e0fe9" kind="dir">
+    <compoundname>include/nfc</compoundname>
+    <innerdir refid="dir_e20674fa9bb9636777012f2ea677369f">include/nfc/ndef</innerdir>
+    <innerdir refid="dir_febc8640699391dc4ce800f162232ad0">include/nfc/t2t</innerdir>
+    <innerdir refid="dir_2d58ac5eb3c0f1d43464bf00cc5964b4">include/nfc/t4t</innerdir>
+    <innerdir refid="dir_6d2e30a41dbf5567d976fd409e67dd36">include/nfc/tnep</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/nfc/"/>
+  </compounddef>
+</doxygen>

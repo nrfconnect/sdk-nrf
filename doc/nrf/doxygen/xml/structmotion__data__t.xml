@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structmotion__data__t" kind="struct" language="C++" prot="public">
+    <compoundname>motion_data_t</compoundname>
+    <includes refid="motion_8h" local="no">motion.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmotion__data__t_a0500d5252235cf323adf17bdce10b97d_1a0500d5252235cf323adf17bdce10b97d" prot="public" static="no" mutable="no">
+        <type><ref refid="group__motion_ga64b2808569cc487467165359f9d0cada_1ga64b2808569cc487467165359f9d0cada" kindref="member">motion_orientation_state_t</ref></type>
+        <definition>motion_orientation_state_t motion_data_t::orientation</definition>
+        <argsstring></argsstring>
+        <name>orientation</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/motion/motion.h" line="49" column="28" bodyfile="applications/asset_tracker/src/motion/motion.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmotion__data__t_a09ace1ed6ca03a6d7c26688ab4583e47_1a09ace1ed6ca03a6d7c26688ab4583e47" prot="public" static="no" mutable="no">
+        <type><ref refid="structmotion__acceleration__data__t" kindref="compound">motion_acceleration_data_t</ref></type>
+        <definition>motion_acceleration_data_t motion_data_t::acceleration</definition>
+        <argsstring></argsstring>
+        <name>acceleration</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/motion/motion.h" line="50" column="28" bodyfile="applications/asset_tracker/src/motion/motion.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmotion__data__t_aca0a97d9d930c34e83b7c4c5f2629b53_1aca0a97d9d930c34e83b7c4c5f2629b53" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t motion_data_t::ts</definition>
+        <argsstring></argsstring>
+        <name>ts</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Data sampling uptime. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/motion/motion.h" line="52" column="9" bodyfile="applications/asset_tracker/src/motion/motion.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>motion_acceleration_data_t</label>
+        <link refid="structmotion__acceleration__data__t"/>
+      </node>
+      <node id="1">
+        <label>motion_data_t</label>
+        <link refid="structmotion__data__t"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>acceleration</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/asset_tracker/src/motion/motion.h" line="48" column="1" bodyfile="applications/asset_tracker/src/motion/motion.h" bodystart="48" bodyend="53"/>
+    <listofallmembers>
+      <member refid="structmotion__data__t_a09ace1ed6ca03a6d7c26688ab4583e47_1a09ace1ed6ca03a6d7c26688ab4583e47" prot="public" virt="non-virtual"><scope>motion_data_t</scope><name>acceleration</name></member>
+      <member refid="structmotion__data__t_a0500d5252235cf323adf17bdce10b97d_1a0500d5252235cf323adf17bdce10b97d" prot="public" virt="non-virtual"><scope>motion_data_t</scope><name>orientation</name></member>
+      <member refid="structmotion__data__t_aca0a97d9d930c34e83b7c4c5f2629b53_1aca0a97d9d930c34e83b7c4c5f2629b53" prot="public" virt="non-virtual"><scope>motion_data_t</scope><name>ts</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

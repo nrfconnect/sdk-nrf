@@ -1,0 +1,302 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="json__helpers_8h" kind="file" language="C++">
+    <compoundname>json_helpers.h</compoundname>
+    <includes local="yes">cJSON.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/asset_tracker_v2/src/cloud/cloud_codec/json_helpers.h</label>
+        <link refid="json__helpers_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>cJSON.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="json__helpers_8h_a44fb53ddaffe06ac2b397dad34e3b2c4_1a44fb53ddaffe06ac2b397dad34e3b2c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void json_add_obj</definition>
+        <argsstring>(cJSON *parent, const char *str, cJSON *item)</argsstring>
+        <name>json_add_obj</name>
+        <param>
+          <type>cJSON *</type>
+          <declname>parent</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>str</declname>
+        </param>
+        <param>
+          <type>cJSON *</type>
+          <declname>item</declname>
+        </param>
+        <briefdescription>
+<para>Associate a child object with a parent. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This API is expected to be called after data has been added to the child item. If this API fails to add the child item to the parent it will free the child item. Due to this its not guaranteed that subsequent accesses to the child item will succeed after this API call.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">parent</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a parent object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">str</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the added child object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">item</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to child object. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/json_helpers.h" line="21" column="6" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/json_helpers.h" declline="21" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="json__helpers_8h_ac8e21c7b3fbe8c87e662f2231c150140_1ac8e21c7b3fbe8c87e662f2231c150140" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void json_add_obj_array</definition>
+        <argsstring>(cJSON *parent, cJSON *item)</argsstring>
+        <name>json_add_obj_array</name>
+        <param>
+          <type>cJSON *</type>
+          <declname>parent</declname>
+        </param>
+        <param>
+          <type>cJSON *</type>
+          <declname>item</declname>
+        </param>
+        <briefdescription>
+<para>Add item to array object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This API is expected to be called after data has been added to the child item. If this API fails to add the child item to the parent it will free the child item. Due to this its not guaranteed that subsequent accesses to the child item will succeed after this API call.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">parent</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a parent array object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">item</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to item to be added. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/json_helpers.h" line="34" column="6" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/json_helpers.h" declline="34" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="json__helpers_8h_a4d4ecc24ae050ae6459a2550f2e56f7d_1a4d4ecc24ae050ae6459a2550f2e56f7d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int json_add_number_to_array</definition>
+        <argsstring>(cJSON *parent, double number)</argsstring>
+        <name>json_add_number_to_array</name>
+        <param>
+          <type>cJSON *</type>
+          <declname>parent</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>number</declname>
+        </param>
+        <briefdescription>
+<para>Add number to array object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This API is expected to be called after data has been added to the child item. If this API fails to add the child item to the parent it will free the child item. Due to this its not guaranteed that subsequent accesses to the child item will succeed after this API call.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">parent</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a parent array object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">number</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to number to be added. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/json_helpers.h" line="47" column="5" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/json_helpers.h" declline="47" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="json__helpers_8h_a6b90ade4a83fbd79f93cc1e2322ff70b_1a6b90ade4a83fbd79f93cc1e2322ff70b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int json_add_number</definition>
+        <argsstring>(cJSON *parent, const char *str, double item)</argsstring>
+        <name>json_add_number</name>
+        <param>
+          <type>cJSON *</type>
+          <declname>parent</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>str</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>item</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/json_helpers.h" line="49" column="5" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/json_helpers.h" declline="49" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="json__helpers_8h_aab9dacdeec005c6960da92d8e2a4993d_1aab9dacdeec005c6960da92d8e2a4993d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int json_add_bool</definition>
+        <argsstring>(cJSON *parent, const char *str, int item)</argsstring>
+        <name>json_add_bool</name>
+        <param>
+          <type>cJSON *</type>
+          <declname>parent</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>str</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>item</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/json_helpers.h" line="51" column="5" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/json_helpers.h" declline="51" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="json__helpers_8h_a3626bb09197fdc91f3f605e872a260f7_1a3626bb09197fdc91f3f605e872a260f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>cJSON *</type>
+        <definition>cJSON * json_object_decode</definition>
+        <argsstring>(cJSON *obj, const char *str)</argsstring>
+        <name>json_object_decode</name>
+        <param>
+          <type>cJSON *</type>
+          <declname>obj</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>str</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/json_helpers.h" line="53" column="7" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/json_helpers.h" declline="53" declcolumn="7"/>
+      </memberdef>
+      <memberdef kind="function" id="json__helpers_8h_aea109a625a308312fd9d9404cabce191_1aea109a625a308312fd9d9404cabce191" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int json_add_str</definition>
+        <argsstring>(cJSON *parent, const char *str, const char *item)</argsstring>
+        <name>json_add_str</name>
+        <param>
+          <type>cJSON *</type>
+          <declname>parent</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>str</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>item</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/json_helpers.h" line="55" column="5" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/json_helpers.h" declline="55" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="json__helpers_8h_a5d3d70948d18a3859cb5aef929e23c14_1a5d3d70948d18a3859cb5aef929e23c14" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void json_print_obj</definition>
+        <argsstring>(const char *prefix, const cJSON *obj)</argsstring>
+        <name>json_print_obj</name>
+        <param>
+          <type>const char *</type>
+          <declname>prefix</declname>
+        </param>
+        <param>
+          <type>const cJSON *</type>
+          <declname>obj</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/json_helpers.h" line="57" column="6" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/json_helpers.h" declline="57" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;cJSON.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="json__helpers_8h_a44fb53ddaffe06ac2b397dad34e3b2c4_1a44fb53ddaffe06ac2b397dad34e3b2c4" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="json__helpers_8h_a44fb53ddaffe06ac2b397dad34e3b2c4_1a44fb53ddaffe06ac2b397dad34e3b2c4" kindref="member">json_add_obj</ref>(cJSON<sp/>*parent,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*str,<sp/>cJSON<sp/>*item);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="json__helpers_8h_ac8e21c7b3fbe8c87e662f2231c150140_1ac8e21c7b3fbe8c87e662f2231c150140" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="json__helpers_8h_ac8e21c7b3fbe8c87e662f2231c150140_1ac8e21c7b3fbe8c87e662f2231c150140" kindref="member">json_add_obj_array</ref>(cJSON<sp/>*parent,<sp/>cJSON<sp/>*item);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="json__helpers_8h_a4d4ecc24ae050ae6459a2550f2e56f7d_1a4d4ecc24ae050ae6459a2550f2e56f7d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="json__helpers_8h_a4d4ecc24ae050ae6459a2550f2e56f7d_1a4d4ecc24ae050ae6459a2550f2e56f7d" kindref="member">json_add_number_to_array</ref>(cJSON<sp/>*parent,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>number);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="json__helpers_8h_a6b90ade4a83fbd79f93cc1e2322ff70b_1a6b90ade4a83fbd79f93cc1e2322ff70b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="json__helpers_8h_a6b90ade4a83fbd79f93cc1e2322ff70b_1a6b90ade4a83fbd79f93cc1e2322ff70b" kindref="member">json_add_number</ref>(cJSON<sp/>*parent,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*str,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>item);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="json__helpers_8h_aab9dacdeec005c6960da92d8e2a4993d_1aab9dacdeec005c6960da92d8e2a4993d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="json__helpers_8h_aab9dacdeec005c6960da92d8e2a4993d_1aab9dacdeec005c6960da92d8e2a4993d" kindref="member">json_add_bool</ref>(cJSON<sp/>*parent,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*str,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>item);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="json__helpers_8h_a3626bb09197fdc91f3f605e872a260f7_1a3626bb09197fdc91f3f605e872a260f7" refkind="member"><highlight class="normal">cJSON<sp/>*<ref refid="json__helpers_8h_a3626bb09197fdc91f3f605e872a260f7_1a3626bb09197fdc91f3f605e872a260f7" kindref="member">json_object_decode</ref>(cJSON<sp/>*obj,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*str);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="json__helpers_8h_aea109a625a308312fd9d9404cabce191_1aea109a625a308312fd9d9404cabce191" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="json__helpers_8h_aea109a625a308312fd9d9404cabce191_1aea109a625a308312fd9d9404cabce191" kindref="member">json_add_str</ref>(cJSON<sp/>*parent,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*str,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*item);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="json__helpers_8h_a5d3d70948d18a3859cb5aef929e23c14_1a5d3d70948d18a3859cb5aef929e23c14" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="json__helpers_8h_a5d3d70948d18a3859cb5aef929e23c14_1a5d3d70948d18a3859cb5aef929e23c14" kindref="member">json_print_obj</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*prefix,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>cJSON<sp/>*obj);</highlight></codeline>
+    </programlisting>
+    <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/json_helpers.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,156 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__t2t__tlv__block" kind="group">
+    <compoundname>nfc_t2t_tlv_block</compoundname>
+    <title>Type 2 Tag TLV blocks</title>
+    <innerclass refid="structnfc__t2t__tlv__block" prot="public">nfc_t2t_tlv_block</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nfc__t2t__tlv__block_1ga85bc26660e942b445b9e3303e98562c2" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nfc_t2t_tlv_block_types</name>
+        <enumvalue id="group__nfc__t2t__tlv__block_ga85bc26660e942b445b9e3303e98562c2_1gga85bc26660e942b445b9e3303e98562c2afb7d9ace0f53d45107be3230514e3bd8" prot="public">
+          <name>NFC_T2T_TLV_NULL</name>
+          <initializer>= 0x00</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Can be used for padding of memory areas. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t2t__tlv__block_ga85bc26660e942b445b9e3303e98562c2_1gga85bc26660e942b445b9e3303e98562c2abe8f97aaa61e89ef8409dae92b9bd812" prot="public">
+          <name>NFC_T2T_TLV_LOCK_CONTROL</name>
+          <initializer>= 0x01</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Defines details of the lock bits. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t2t__tlv__block_ga85bc26660e942b445b9e3303e98562c2_1gga85bc26660e942b445b9e3303e98562c2a14570e3c496fb99939ce3c901dd5be4b" prot="public">
+          <name>NFC_T2T_TLV_MEMORY_CONTROL</name>
+          <initializer>= 0x02</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Identifies reserved memory areas. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t2t__tlv__block_ga85bc26660e942b445b9e3303e98562c2_1gga85bc26660e942b445b9e3303e98562c2a2ba0e998f79bc85795774b2d3452a23f" prot="public">
+          <name>NFC_T2T_TLV_NDEF_MESSAGE</name>
+          <initializer>= 0x03</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Contains an NDEF message. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t2t__tlv__block_ga85bc26660e942b445b9e3303e98562c2_1gga85bc26660e942b445b9e3303e98562c2a6b1e8cd83efc2a858bbfde590502f506" prot="public">
+          <name>NFC_T2T_TLV_PROPRIETARY</name>
+          <initializer>= 0xFD</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Tag proprietary information. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t2t__tlv__block_ga85bc26660e942b445b9e3303e98562c2_1gga85bc26660e942b445b9e3303e98562c2a48330973f3e3f53f6e19f3aa77e33b26" prot="public">
+          <name>NFC_T2T_TLV_TERMINATOR</name>
+          <initializer>= 0xFE</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Last TLV block in the data area. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Tag field values. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Possible values for the tag field in a TLV block. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/tlv_block.h" line="30" column="1" bodyfile="include/nfc/t2t/tlv_block.h" bodystart="30" bodyend="48"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__t2t__tlv__block_1ga236c33f4ecde49460218a4ebccd06f0b" prot="public" static="no">
+        <name>NFC_T2T_TLV_T_LENGTH</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of a tag field. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/tlv_block.h" line="66" column="9" bodyfile="include/nfc/t2t/tlv_block.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t2t__tlv__block_1ga9345d14742077c3abc53c46b13a8286c" prot="public" static="no">
+        <name>NFC_T2T_TLV_L_SHORT_LENGTH</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of a short length field. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/tlv_block.h" line="69" column="9" bodyfile="include/nfc/t2t/tlv_block.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t2t__tlv__block_1ga38213f803cc080876da633f22ccb0d83" prot="public" static="no">
+        <name>NFC_T2T_TLV_L_LONG_LENGTH</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of an extended length field. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/tlv_block.h" line="72" column="9" bodyfile="include/nfc/t2t/tlv_block.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t2t__tlv__block_1ga1e108c1073b9d95cc798a6a362de2699" prot="public" static="no">
+        <name>NFC_T2T_TLV_L_FORMAT_FLAG</name>
+        <initializer>0xFF</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Value indicating the use of an extended length field. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/tlv_block.h" line="75" column="9" bodyfile="include/nfc/t2t/tlv_block.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t2t__tlv__block_1ga3edd9ef045bebfa1743964cda786cb48" prot="public" static="no">
+        <name>NFC_T2T_TLV_NULL_TERMINATOR_LEN</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Predefined length of the NULL and TERMINATOR TLV blocks. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/tlv_block.h" line="78" column="9" bodyfile="include/nfc/t2t/tlv_block.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t2t__tlv__block_1ga94621509a28d3673f345ee7754049621" prot="public" static="no">
+        <name>NFC_T2T_TLV_LOCK_MEMORY_CTRL_LEN</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Predefined length of the LOCK CONTROL and MEMORY CONTROL blocks. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/tlv_block.h" line="81" column="9" bodyfile="include/nfc/t2t/tlv_block.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Descriptor for a Type 2 Tag TLV block. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

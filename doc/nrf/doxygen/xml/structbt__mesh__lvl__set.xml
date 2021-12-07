@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__lvl__set" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_lvl_set</compoundname>
+    <includes refid="gen__lvl_8h" local="no">gen_lvl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__lvl__set_a99fdba68b7e74178593586dfb0ef0fe7_1a99fdba68b7e74178593586dfb0ef0fe7" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t bt_mesh_lvl_set::lvl</definition>
+        <argsstring></argsstring>
+        <name>lvl</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>New level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl.h" line="31" column="9" bodyfile="include/bluetooth/mesh/gen_lvl.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lvl__set_a1849a2141451abbd6a69a29522bf4829_1a1849a2141451abbd6a69a29522bf4829" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool bt_mesh_lvl_set::new_transaction</definition>
+        <argsstring></argsstring>
+        <name>new_transaction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Whether this is a new action. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl.h" line="33" column="6" bodyfile="include/bluetooth/mesh/gen_lvl.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lvl__set_ab42454ebf72a5d0f841ea9884bc0aad4_1ab42454ebf72a5d0f841ea9884bc0aad4" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref> *</type>
+        <definition>const struct bt_mesh_model_transition* bt_mesh_lvl_set::transition</definition>
+        <argsstring></argsstring>
+        <name>transition</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transition time parameters for the state change, or NULL.</para>
+<para>When sending, setting the transition to NULL makes the receiver use its default transition time parameters, or 0 if no default transition time is set. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl.h" line="41" column="37" bodyfile="include/bluetooth/mesh/gen_lvl.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Generic Level set message parameters. <linebreak/>
+ </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_mesh_lvl_set</label>
+        <link refid="structbt__mesh__lvl__set"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>transition</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_mesh_model_transition</label>
+        <link refid="structbt__mesh__model__transition"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/gen_lvl.h" line="29" column="1" bodyfile="include/bluetooth/mesh/gen_lvl.h" bodystart="29" bodyend="42"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__lvl__set_a99fdba68b7e74178593586dfb0ef0fe7_1a99fdba68b7e74178593586dfb0ef0fe7" prot="public" virt="non-virtual"><scope>bt_mesh_lvl_set</scope><name>lvl</name></member>
+      <member refid="structbt__mesh__lvl__set_a1849a2141451abbd6a69a29522bf4829_1a1849a2141451abbd6a69a29522bf4829" prot="public" virt="non-virtual"><scope>bt_mesh_lvl_set</scope><name>new_transaction</name></member>
+      <member refid="structbt__mesh__lvl__set_ab42454ebf72a5d0f841ea9884bc0aad4_1ab42454ebf72a5d0f841ea9884bc0aad4" prot="public" virt="non-virtual"><scope>bt_mesh_lvl_set</scope><name>transition</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,167 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__t4t__isodep__tag" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_t4t_isodep_tag</compoundname>
+    <includes refid="isodep_8h" local="no">isodep.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__t4t__isodep__tag_a5f32ae4e015e218c621075ab63c87ec2_1a5f32ae4e015e218c621075ab63c87ec2" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t nfc_t4t_isodep_tag::fwt</definition>
+        <argsstring></argsstring>
+        <name>fwt</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Frame Waiting Time. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="49" column="10" bodyfile="include/nfc/t4t/isodep.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__isodep__tag_aa2e7bf71f17de141f689156273d20edd_1aa2e7bf71f17de141f689156273d20edd" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t nfc_t4t_isodep_tag::sfgt</definition>
+        <argsstring></argsstring>
+        <name>sfgt</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Start-up Frame Guard Time </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="52" column="10" bodyfile="include/nfc/t4t/isodep.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__isodep__tag_a84d24f76d4e831049cc0c6d63af1d666_1a84d24f76d4e831049cc0c6d63af1d666" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t nfc_t4t_isodep_tag::fsc</definition>
+        <argsstring></argsstring>
+        <name>fsc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Frame size for proximity card. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="55" column="10" bodyfile="include/nfc/t4t/isodep.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__isodep__tag_a4734acc37f052ef4b29f8517f1db1e9b_1a4734acc37f052ef4b29f8517f1db1e9b" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_t4t_isodep_tag::did</definition>
+        <argsstring></argsstring>
+        <name>did</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Logical number of the addressed Listener. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="58" column="9" bodyfile="include/nfc/t4t/isodep.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__isodep__tag_a367e1c3672090617be347c214b48b07a_1a367e1c3672090617be347c214b48b07a" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_t4t_isodep_tag::lp_divisor</definition>
+        <argsstring></argsstring>
+        <name>lp_divisor</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Listener-Poller bit rate divisor. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="61" column="9" bodyfile="include/nfc/t4t/isodep.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__isodep__tag_a6391903b13c32df05e3fb3cb33c4a4f4_1a6391903b13c32df05e3fb3cb33c4a4f4" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_t4t_isodep_tag::pl_divisor</definition>
+        <argsstring></argsstring>
+        <name>pl_divisor</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Poller-Listener bit rate divisor. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="64" column="9" bodyfile="include/nfc/t4t/isodep.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__isodep__tag_a307935fce929434fddb8089de6019012_1a307935fce929434fddb8089de6019012" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_t4t_isodep_tag::historical[15]</definition>
+        <argsstring>[15]</argsstring>
+        <name>historical</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Historical bytes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="67" column="9" bodyfile="include/nfc/t4t/isodep.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__isodep__tag_a78749852d8fefcf0e086cb6f9699a40f_1a78749852d8fefcf0e086cb6f9699a40f" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_t4t_isodep_tag::historical_len</definition>
+        <argsstring></argsstring>
+        <name>historical_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Historical bytes length. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="70" column="9" bodyfile="include/nfc/t4t/isodep.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__isodep__tag_a529ccaed9378b748540824325af60a13_1a529ccaed9378b748540824325af60a13" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nfc_t4t_isodep_tag::did_supported</definition>
+        <argsstring></argsstring>
+        <name>did_supported</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>DID supported. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="73" column="6" bodyfile="include/nfc/t4t/isodep.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__isodep__tag_a7ef10a9e37f626db8d4308bdcc9632fb_1a7ef10a9e37f626db8d4308bdcc9632fb" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nfc_t4t_isodep_tag::nad_supported</definition>
+        <argsstring></argsstring>
+        <name>nad_supported</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>NAD supported. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="76" column="6" bodyfile="include/nfc/t4t/isodep.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>NFC Type 4 Tag data negotiated over RATS command exchange. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/nfc/t4t/isodep.h" line="47" column="1" bodyfile="include/nfc/t4t/isodep.h" bodystart="47" bodyend="77"/>
+    <listofallmembers>
+      <member refid="structnfc__t4t__isodep__tag_a4734acc37f052ef4b29f8517f1db1e9b_1a4734acc37f052ef4b29f8517f1db1e9b" prot="public" virt="non-virtual"><scope>nfc_t4t_isodep_tag</scope><name>did</name></member>
+      <member refid="structnfc__t4t__isodep__tag_a529ccaed9378b748540824325af60a13_1a529ccaed9378b748540824325af60a13" prot="public" virt="non-virtual"><scope>nfc_t4t_isodep_tag</scope><name>did_supported</name></member>
+      <member refid="structnfc__t4t__isodep__tag_a84d24f76d4e831049cc0c6d63af1d666_1a84d24f76d4e831049cc0c6d63af1d666" prot="public" virt="non-virtual"><scope>nfc_t4t_isodep_tag</scope><name>fsc</name></member>
+      <member refid="structnfc__t4t__isodep__tag_a5f32ae4e015e218c621075ab63c87ec2_1a5f32ae4e015e218c621075ab63c87ec2" prot="public" virt="non-virtual"><scope>nfc_t4t_isodep_tag</scope><name>fwt</name></member>
+      <member refid="structnfc__t4t__isodep__tag_a307935fce929434fddb8089de6019012_1a307935fce929434fddb8089de6019012" prot="public" virt="non-virtual"><scope>nfc_t4t_isodep_tag</scope><name>historical</name></member>
+      <member refid="structnfc__t4t__isodep__tag_a78749852d8fefcf0e086cb6f9699a40f_1a78749852d8fefcf0e086cb6f9699a40f" prot="public" virt="non-virtual"><scope>nfc_t4t_isodep_tag</scope><name>historical_len</name></member>
+      <member refid="structnfc__t4t__isodep__tag_a367e1c3672090617be347c214b48b07a_1a367e1c3672090617be347c214b48b07a" prot="public" virt="non-virtual"><scope>nfc_t4t_isodep_tag</scope><name>lp_divisor</name></member>
+      <member refid="structnfc__t4t__isodep__tag_a7ef10a9e37f626db8d4308bdcc9632fb_1a7ef10a9e37f626db8d4308bdcc9632fb" prot="public" virt="non-virtual"><scope>nfc_t4t_isodep_tag</scope><name>nad_supported</name></member>
+      <member refid="structnfc__t4t__isodep__tag_a6391903b13c32df05e3fb3cb33c4a4f4_1a6391903b13c32df05e3fb3cb33c4a4f4" prot="public" virt="non-virtual"><scope>nfc_t4t_isodep_tag</scope><name>pl_divisor</name></member>
+      <member refid="structnfc__t4t__isodep__tag_aa2e7bf71f17de141f689156273d20edd_1aa2e7bf71f17de141f689156273d20edd" prot="public" virt="non-virtual"><scope>nfc_t4t_isodep_tag</scope><name>sfgt</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

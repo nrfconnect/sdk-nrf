@@ -1,0 +1,369 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="pcd_8h" kind="file" language="C++">
+    <compoundname>pcd.h</compoundname>
+    <includes local="no">device.h</includes>
+    <includes local="no">sys/types.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/dfu/pcd.h</label>
+        <link refid="pcd_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>device.h</label>
+      </node>
+      <node id="3">
+        <label>sys/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__pcd_ga2bc7843bc0ce97c186e764c8d7fc1679_1ga2bc7843bc0ce97c186e764c8d7fc1679" prot="public" static="no" strong="no">
+        <type></type>
+        <name>pcd_status</name>
+        <enumvalue id="group__pcd_ga2bc7843bc0ce97c186e764c8d7fc1679_1gga2bc7843bc0ce97c186e764c8d7fc1679a600bdd49bbf504268f2411c236286bc3" prot="public">
+          <name>PCD_STATUS_COPY</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pcd_ga2bc7843bc0ce97c186e764c8d7fc1679_1gga2bc7843bc0ce97c186e764c8d7fc1679a41cb8688971d78894d35a33222a9f449" prot="public">
+          <name>PCD_STATUS_COPY_DONE</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pcd_ga2bc7843bc0ce97c186e764c8d7fc1679_1gga2bc7843bc0ce97c186e764c8d7fc1679a8ab409c4e650b2c709605413c0827d84" prot="public">
+          <name>PCD_STATUS_COPY_FAILED</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/pcd.h" line="54" column="1" bodyfile="include/dfu/pcd.h" bodystart="54" bodyend="58"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__pcd_ga27dfedbccc9f95a944b2ef16715f1d6f_1ga27dfedbccc9f95a944b2ef16715f1d6f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int pcd_network_core_update</definition>
+        <argsstring>(const void *src_addr, size_t len)</argsstring>
+        <name>pcd_network_core_update</name>
+        <param>
+          <type>const void *</type>
+          <declname>src_addr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Sets up the PCD command structure with the location and size of the firmware update. Then boots the network core and checks if the update completed successfully. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>src_addr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Start address of the data which is to be copied into the network core. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the data which is to be copied into the network core.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>on success, -1 on failure. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/pcd.h" line="70" column="5" declfile="include/dfu/pcd.h" declline="70" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__pcd_gac288f8ee3c0c7cad58bac956d063c698_1gac288f8ee3c0c7cad58bac956d063c698" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int pcd_network_core_update_initiate</definition>
+        <argsstring>(const void *src_addr, size_t len)</argsstring>
+        <name>pcd_network_core_update_initiate</name>
+        <param>
+          <type>const void *</type>
+          <declname>src_addr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Sets up the PCD command structure with the location and size of the firmware update. Then boots the network core and initiates the update procedure. The function will return before the update procedure on the network core has completed or failed, and will indicate succes as long as the initialization of the update procedure was successful. The network core will still be in a powered on state when this function returns. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>src_addr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Start address of the data which is to be copied into the network core. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the data which is to be copied into the network core.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>on success, an error code on failure. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/pcd.h" line="86" column="5" declfile="include/dfu/pcd.h" declline="86" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__pcd_ga5e43a24db19098f2cdb3c6b0c926a3a2_1ga5e43a24db19098f2cdb3c6b0c926a3a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void pcd_lock_ram</definition>
+        <argsstring>(void)</argsstring>
+        <name>pcd_lock_ram</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Lock the RAM section used for IPC with the network core bootloader. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/pcd.h" line="90" column="6" declfile="include/dfu/pcd.h" declline="90" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__pcd_gab0bc0dabe6e12732afa01025be5587a3_1gab0bc0dabe6e12732afa01025be5587a3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void pcd_fw_copy_done</definition>
+        <argsstring>(void)</argsstring>
+        <name>pcd_fw_copy_done</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Update the PCD CMD to indicate that the copy operation has completed successfully. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/pcd.h" line="95" column="6" declfile="include/dfu/pcd.h" declline="95" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__pcd_ga4ad0d337f1aebe029b9ded42ab7197c6_1ga4ad0d337f1aebe029b9ded42ab7197c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void pcd_fw_copy_invalidate</definition>
+        <argsstring>(void)</argsstring>
+        <name>pcd_fw_copy_invalidate</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Invalidate the PCD CMD, indicating that the copy failed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/pcd.h" line="99" column="6" declfile="include/dfu/pcd.h" declline="99" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__pcd_gaea0a6912c0ac01baf59772b45d82fc60_1gaea0a6912c0ac01baf59772b45d82fc60" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>enum <ref refid="group__pcd_ga2bc7843bc0ce97c186e764c8d7fc1679_1ga2bc7843bc0ce97c186e764c8d7fc1679" kindref="member">pcd_status</ref></type>
+        <definition>enum pcd_status pcd_fw_copy_status_get</definition>
+        <argsstring>(void)</argsstring>
+        <name>pcd_fw_copy_status_get</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Check the PCD CMD to find the status of the update. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>PCD_STATUS_COPY if update is pending </para>
+</simplesect>
+<simplesect kind="return"><para>PCD_STATUS_COPY_DONE if update has completed successfully </para>
+</simplesect>
+<simplesect kind="return"><para>PCD_STATUS_COPY_FAILED if update has completed unsuccessfully </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/pcd.h" line="107" column="16" declfile="include/dfu/pcd.h" declline="107" declcolumn="16"/>
+      </memberdef>
+      <memberdef kind="function" id="group__pcd_gacb724004c64e2175855cf4fa421fb016_1gacb724004c64e2175855cf4fa421fb016" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const void *</type>
+        <definition>const void * pcd_cmd_data_ptr_get</definition>
+        <argsstring>(void)</argsstring>
+        <name>pcd_cmd_data_ptr_get</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Get value of &apos;data&apos; member of pcd cmd. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>of &apos;data&apos; member. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/pcd.h" line="113" column="12" declfile="include/dfu/pcd.h" declline="113" declcolumn="12"/>
+      </memberdef>
+      <memberdef kind="function" id="group__pcd_ga9e926c79cd2a08dd35cea11a2fde2375_1ga9e926c79cd2a08dd35cea11a2fde2375" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int pcd_fw_copy</definition>
+        <argsstring>(const struct device *fdev)</argsstring>
+        <name>pcd_fw_copy</name>
+        <param>
+          <type>const struct device *</type>
+          <declname>fdev</declname>
+        </param>
+        <briefdescription>
+<para>Perform the DFU image transfer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Use the information in the PCD CMD to load a DFU image to the provided flash device.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>fdev</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The flash device to transfer the DFU image to.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>non-negative</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>integer on success, negative errno code on failure. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/pcd.h" line="124" column="5" declfile="include/dfu/pcd.h" declline="124" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>PCD_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PCD_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;device.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_SOC_SERIES_NRF53X</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_PCD_CMD_ADDRESS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PCD_CMD_ADDRESS<sp/>CONFIG_PCD_CMD_ADDRESS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;pm_config.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>PM_PCD_SRAM_ADDRESS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PCD_CMD_ADDRESS<sp/>PM_PCD_SRAM_ADDRESS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>extra<sp/>&apos;_&apos;<sp/>since<sp/>its<sp/>in<sp/>a<sp/>different<sp/>domain<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PCD_CMD_ADDRESS<sp/>PM__PCD_SRAM_ADDRESS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>PM_PCD_SRAM_ADDRESS<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>CONFIG_PCD_CMD_ADDRESS<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>CONFIG_SOC_SERIES_NRF53X<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="group__pcd_ga2bc7843bc0ce97c186e764c8d7fc1679_1ga2bc7843bc0ce97c186e764c8d7fc1679" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__pcd_ga2bc7843bc0ce97c186e764c8d7fc1679_1ga2bc7843bc0ce97c186e764c8d7fc1679" kindref="member">pcd_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="55" refid="group__pcd_ga2bc7843bc0ce97c186e764c8d7fc1679_1gga2bc7843bc0ce97c186e764c8d7fc1679a600bdd49bbf504268f2411c236286bc3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pcd_ga2bc7843bc0ce97c186e764c8d7fc1679_1gga2bc7843bc0ce97c186e764c8d7fc1679a600bdd49bbf504268f2411c236286bc3" kindref="member">PCD_STATUS_COPY</ref><sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="56" refid="group__pcd_ga2bc7843bc0ce97c186e764c8d7fc1679_1gga2bc7843bc0ce97c186e764c8d7fc1679a41cb8688971d78894d35a33222a9f449" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pcd_ga2bc7843bc0ce97c186e764c8d7fc1679_1gga2bc7843bc0ce97c186e764c8d7fc1679a41cb8688971d78894d35a33222a9f449" kindref="member">PCD_STATUS_COPY_DONE</ref><sp/>=<sp/>1,</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pcd_ga2bc7843bc0ce97c186e764c8d7fc1679_1gga2bc7843bc0ce97c186e764c8d7fc1679a8ab409c4e650b2c709605413c0827d84" kindref="member">PCD_STATUS_COPY_FAILED</ref><sp/>=<sp/>2</highlight></codeline>
+<codeline lineno="58" refid="group__pcd_ga2bc7843bc0ce97c186e764c8d7fc1679_1gga2bc7843bc0ce97c186e764c8d7fc1679a8ab409c4e650b2c709605413c0827d84" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="group__pcd_ga27dfedbccc9f95a944b2ef16715f1d6f_1ga27dfedbccc9f95a944b2ef16715f1d6f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__pcd_ga27dfedbccc9f95a944b2ef16715f1d6f_1ga27dfedbccc9f95a944b2ef16715f1d6f" kindref="member">pcd_network_core_update</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*src_addr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>len);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="group__pcd_gac288f8ee3c0c7cad58bac956d063c698_1gac288f8ee3c0c7cad58bac956d063c698" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__pcd_gac288f8ee3c0c7cad58bac956d063c698_1gac288f8ee3c0c7cad58bac956d063c698" kindref="member">pcd_network_core_update_initiate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*src_addr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>len);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="group__pcd_ga5e43a24db19098f2cdb3c6b0c926a3a2_1ga5e43a24db19098f2cdb3c6b0c926a3a2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__pcd_ga5e43a24db19098f2cdb3c6b0c926a3a2_1ga5e43a24db19098f2cdb3c6b0c926a3a2" kindref="member">pcd_lock_ram</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="group__pcd_gab0bc0dabe6e12732afa01025be5587a3_1gab0bc0dabe6e12732afa01025be5587a3" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__pcd_gab0bc0dabe6e12732afa01025be5587a3_1gab0bc0dabe6e12732afa01025be5587a3" kindref="member">pcd_fw_copy_done</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99" refid="group__pcd_ga4ad0d337f1aebe029b9ded42ab7197c6_1ga4ad0d337f1aebe029b9ded42ab7197c6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__pcd_ga4ad0d337f1aebe029b9ded42ab7197c6_1ga4ad0d337f1aebe029b9ded42ab7197c6" kindref="member">pcd_fw_copy_invalidate</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107" refid="group__pcd_gaea0a6912c0ac01baf59772b45d82fc60_1gaea0a6912c0ac01baf59772b45d82fc60" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__pcd_ga2bc7843bc0ce97c186e764c8d7fc1679_1ga2bc7843bc0ce97c186e764c8d7fc1679" kindref="member">pcd_status</ref><sp/><ref refid="group__pcd_gaea0a6912c0ac01baf59772b45d82fc60_1gaea0a6912c0ac01baf59772b45d82fc60" kindref="member">pcd_fw_copy_status_get</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113" refid="group__pcd_gacb724004c64e2175855cf4fa421fb016_1gacb724004c64e2175855cf4fa421fb016" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="group__pcd_gacb724004c64e2175855cf4fa421fb016_1gacb724004c64e2175855cf4fa421fb016" kindref="member">pcd_cmd_data_ptr_get</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124" refid="group__pcd_ga9e926c79cd2a08dd35cea11a2fde2375_1ga9e926c79cd2a08dd35cea11a2fde2375" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__pcd_ga9e926c79cd2a08dd35cea11a2fde2375_1ga9e926c79cd2a08dd35cea11a2fde2375" kindref="member">pcd_fw_copy</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>device<sp/>*fdev);</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>PCD_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/dfu/pcd.h"/>
+  </compounddef>
+</doxygen>

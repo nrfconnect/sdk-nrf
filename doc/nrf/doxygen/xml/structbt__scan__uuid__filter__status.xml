@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__scan__uuid__filter__status" kind="struct" language="C++" prot="public">
+    <compoundname>bt_scan_uuid_filter_status</compoundname>
+    <includes refid="scan_8h" local="no">scan.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__scan__uuid__filter__status_a8ae7cd648b85de9f45ae5e1ea8703585_1a8ae7cd648b85de9f45ae5e1ea8703585" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool bt_scan_uuid_filter_status::match</definition>
+        <argsstring></argsstring>
+        <name>match</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set to true if this type of filter is matched. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="218" column="6" bodyfile="include/bluetooth/scan.h" bodystart="218" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__scan__uuid__filter__status_a433abd2a75f36d9f12385a5f72eab3b9_1a433abd2a75f36d9f12385a5f72eab3b9" prot="public" static="no" mutable="no">
+        <type>const struct bt_uuid *</type>
+        <definition>const struct bt_uuid* bt_scan_uuid_filter_status::uuid[1]</definition>
+        <argsstring>[1]</argsstring>
+        <name>uuid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Array of pointers to the matched UUID filters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="221" column="20" bodyfile="include/bluetooth/scan.h" bodystart="221" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__scan__uuid__filter__status_a042189ddf82870cde8eead9011c847e1_1a042189ddf82870cde8eead9011c847e1" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_scan_uuid_filter_status::count</definition>
+        <argsstring></argsstring>
+        <name>count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Matched UUID count. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="224" column="9" bodyfile="include/bluetooth/scan.h" bodystart="224" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>UUID filter status structure, used to inform the application which UUID filters are matched. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/scan.h" line="216" column="1" bodyfile="include/bluetooth/scan.h" bodystart="216" bodyend="225"/>
+    <listofallmembers>
+      <member refid="structbt__scan__uuid__filter__status_a042189ddf82870cde8eead9011c847e1_1a042189ddf82870cde8eead9011c847e1" prot="public" virt="non-virtual"><scope>bt_scan_uuid_filter_status</scope><name>count</name></member>
+      <member refid="structbt__scan__uuid__filter__status_a8ae7cd648b85de9f45ae5e1ea8703585_1a8ae7cd648b85de9f45ae5e1ea8703585" prot="public" virt="non-virtual"><scope>bt_scan_uuid_filter_status</scope><name>match</name></member>
+      <member refid="structbt__scan__uuid__filter__status_a433abd2a75f36d9f12385a5f72eab3b9_1a433abd2a75f36d9f12385a5f72eab3b9" prot="public" virt="non-virtual"><scope>bt_scan_uuid_filter_status</scope><name>uuid</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

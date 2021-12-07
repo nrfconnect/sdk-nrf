@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_c8b620280a8a7246d9f1929211cb3639" kind="dir">
+    <compoundname>applications/pelion_client/src/util</compoundname>
+    <innerdir refid="dir_e88cae9839a4dfe98058b5537737ab06">applications/pelion_client/src/util/net</innerdir>
+    <innerfile refid="pelion__fcc__err_8h">pelion_fcc_err.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/pelion_client/src/util/"/>
+  </compounddef>
+</doxygen>

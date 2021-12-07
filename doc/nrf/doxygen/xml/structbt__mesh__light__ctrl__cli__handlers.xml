@@ -1,0 +1,243 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__ctrl__cli__handlers" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_ctrl_cli_handlers</compoundname>
+    <includes refid="light__ctrl__cli_8h" local="no">light_ctrl_cli.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__cli__handlers_a9ded7fd2b8a0bb18712bc3b96fa5e050_1a9ded7fd2b8a0bb18712bc3b96fa5e050" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_mesh_light_ctrl_cli_handlers::mode) (struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, bool enabled)</definition>
+        <argsstring>)(struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, bool enabled)</argsstring>
+        <name>mode</name>
+        <briefdescription>
+<para>Light LC Mode status handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The Light Lightness Control Server will only control its Lightness Server when in enabled mode.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">enabled</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether the reporting server is enabled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="65" column="1" bodyfile="include/bluetooth/mesh/light_ctrl_cli.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__cli__handlers_ae53a1305f1fd6b4f4f46c012df790bf7_1ae53a1305f1fd6b4f4f46c012df790bf7" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_mesh_light_ctrl_cli_handlers::occupancy_mode) (struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, bool enabled)</definition>
+        <argsstring>)(struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, bool enabled)</argsstring>
+        <name>occupancy_mode</name>
+        <briefdescription>
+<para>Light LC Occupancy Mode status handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The Occupancy Mode state controls whether the Light Lightness Control accepts occupancy sensor messages for controlling it.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">enabled</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether the reporting server accepts occupancy sensor messages. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="78" column="1" bodyfile="include/bluetooth/mesh/light_ctrl_cli.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__cli__handlers_ae5a94b276ba851b0608773efb1b879d8_1ae5a94b276ba851b0608773efb1b879d8" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_mesh_light_ctrl_cli_handlers::light_onoff) (struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_onoff_status *status)</definition>
+        <argsstring>)(struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_onoff_status *status)</argsstring>
+        <name>light_onoff</name>
+        <briefdescription>
+<para>Light LC OnOff status handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The Light OnOff state indicates whether the Light Lightness Control Server is enabled and has turned the Lightness Server on.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current OnOff state of the reporting server. The remaining time indicates the remaining fading time. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="92" column="1" bodyfile="include/bluetooth/mesh/light_ctrl_cli.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__cli__handlers_ad94e8b305bbee0f2afc1b8e7a34d0638_1ad94e8b305bbee0f2afc1b8e7a34d0638" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_mesh_light_ctrl_cli_handlers::prop) (struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, enum bt_mesh_light_ctrl_prop id, const struct sensor_value *value)</definition>
+        <argsstring>)(struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, enum bt_mesh_light_ctrl_prop id, const struct sensor_value *value)</argsstring>
+        <name>prop</name>
+        <briefdescription>
+<para>Light LC Property status handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The Light Lightness Control Server&apos;s properties are configuration parameters for its behavior. All properties are represented as a single sensor value channel.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ID of the property. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value of the property. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="107" column="1" bodyfile="include/bluetooth/mesh/light_ctrl_cli.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__cli__handlers_af7a053713ac8e68523e99bb12df584fb_1af7a053713ac8e68523e99bb12df584fb" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_mesh_light_ctrl_cli_handlers::coeff) (struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, enum bt_mesh_light_ctrl_coeff id, float value)</definition>
+        <argsstring>)(struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, enum bt_mesh_light_ctrl_coeff id, float value)</argsstring>
+        <name>coeff</name>
+        <briefdescription>
+<para>Light LC Regulator Coefficient status handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The Light Lightness Control Server&apos;s Regulator Coeffients control its Illuminance Regulator&apos;s response.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ID of the property. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value of the property. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="122" column="1" bodyfile="include/bluetooth/mesh/light_ctrl_cli.h" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Light Control Client handlers </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="55" column="1" bodyfile="include/bluetooth/mesh/light_ctrl_cli.h" bodystart="55" bodyend="126"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__ctrl__cli__handlers_af7a053713ac8e68523e99bb12df584fb_1af7a053713ac8e68523e99bb12df584fb" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_cli_handlers</scope><name>coeff</name></member>
+      <member refid="structbt__mesh__light__ctrl__cli__handlers_ae5a94b276ba851b0608773efb1b879d8_1ae5a94b276ba851b0608773efb1b879d8" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_cli_handlers</scope><name>light_onoff</name></member>
+      <member refid="structbt__mesh__light__ctrl__cli__handlers_a9ded7fd2b8a0bb18712bc3b96fa5e050_1a9ded7fd2b8a0bb18712bc3b96fa5e050" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_cli_handlers</scope><name>mode</name></member>
+      <member refid="structbt__mesh__light__ctrl__cli__handlers_ae53a1305f1fd6b4f4f46c012df790bf7_1ae53a1305f1fd6b4f4f46c012df790bf7" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_cli_handlers</scope><name>occupancy_mode</name></member>
+      <member refid="structbt__mesh__light__ctrl__cli__handlers_ad94e8b305bbee0f2afc1b8e7a34d0638_1ad94e8b305bbee0f2afc1b8e7a34d0638" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_cli_handlers</scope><name>prop</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

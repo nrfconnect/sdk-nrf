@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_0ca87e0e155b63d3277a4a8052f2e1d0" kind="dir">
+    <compoundname>include/debug</compoundname>
+    <innerfile refid="cpu__load_8h">cpu_load.h</innerfile>
+    <innerfile refid="ppi__trace_8h">ppi_trace.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/debug/"/>
+  </compounddef>
+</doxygen>

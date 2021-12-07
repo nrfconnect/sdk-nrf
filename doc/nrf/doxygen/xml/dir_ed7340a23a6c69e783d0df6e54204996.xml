@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_ed7340a23a6c69e783d0df6e54204996" kind="dir">
+    <compoundname>applications/asset_tracker_v2/src</compoundname>
+    <innerdir refid="dir_97bda31a0973d8f3c0723ccd670291b6">applications/asset_tracker_v2/src/carrier_certs</innerdir>
+    <innerdir refid="dir_4f7e0d4bbbf2e8ecac35bbfa9732442f">applications/asset_tracker_v2/src/cloud</innerdir>
+    <innerdir refid="dir_c9e07056523ceb16c548c8f89edec384">applications/asset_tracker_v2/src/events</innerdir>
+    <innerdir refid="dir_21cbe3e91f3793446ed68d520ce757bf">applications/asset_tracker_v2/src/ext_sensors</innerdir>
+    <innerdir refid="dir_e0ba5576808efa723d534cc5e888aad2">applications/asset_tracker_v2/src/modules</innerdir>
+    <innerdir refid="dir_cf9c2745012e7f56ae0fa032b543df2b">applications/asset_tracker_v2/src/watchdog</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/"/>
+  </compounddef>
+</doxygen>

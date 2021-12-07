@@ -1,0 +1,225 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="hid__event_8h" kind="file" language="C++">
+    <compoundname>hid_event.h</compoundname>
+    <includes refid="event__manager_8h" local="no">event_manager.h</includes>
+    <includes refid="event__manager__profiler_8h" local="no">event_manager_profiler.h</includes>
+    <includes refid="profiler_8h" local="yes">profiler.h</includes>
+    <includes refid="hid__report__desc_8h" local="yes">hid_report_desc.h</includes>
+    <incdepgraph>
+      <node id="19">
+        <label>hid_report_consumer_ctrl.h</label>
+        <link refid="hid__report__consumer__ctrl_8h"/>
+      </node>
+      <node id="13">
+        <label>hid_report_desc.h</label>
+        <link refid="hid__report__desc_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>hid_report_keyboard.h</label>
+        <link refid="hid__report__keyboard_8h"/>
+      </node>
+      <node id="16">
+        <label>hid_report_mouse.h</label>
+        <link refid="hid__report__mouse_8h"/>
+      </node>
+      <node id="18">
+        <label>hid_report_system_ctrl.h</label>
+        <link refid="hid__report__system__ctrl_8h"/>
+      </node>
+      <node id="20">
+        <label>hid_report_user_config.h</label>
+        <link refid="hid__report__user__config_8h"/>
+      </node>
+      <node id="1">
+        <label>applications/nrf_desktop/src/events/hid_event.h</label>
+        <link refid="hid__event_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>event_manager.h</label>
+        <link refid="event__manager_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>event_manager_profiler.h</label>
+        <link refid="event__manager__profiler_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>profiler.h</label>
+        <link refid="profiler_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>event_manager_priv.h</label>
+      </node>
+      <node id="12">
+        <label>event_manager_profiler_priv.h</label>
+      </node>
+      <node id="7">
+        <label>logging/log_ctrl.h</label>
+      </node>
+      <node id="14">
+        <label>stddef.h</label>
+      </node>
+      <node id="6">
+        <label>sys/__assert.h</label>
+      </node>
+      <node id="5">
+        <label>sys/reboot.h</label>
+      </node>
+      <node id="10">
+        <label>sys/util.h</label>
+      </node>
+      <node id="15">
+        <label>toolchain/common.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr.h</label>
+      </node>
+      <node id="4">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structhid__report__event" prot="public">hid_report_event</innerclass>
+    <innerclass refid="structhid__report__subscriber__event" prot="public">hid_report_subscriber_event</innerclass>
+    <innerclass refid="structhid__report__sent__event" prot="public">hid_report_sent_event</innerclass>
+    <innerclass refid="structhid__report__subscription__event" prot="public">hid_report_subscription_event</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__hid__event_gaa09fcafe85ba0f1d8a6ba5888ea10ada_1gaa09fcafe85ba0f1d8a6ba5888ea10ada" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>EVENT_TYPE_DYNDATA_DECLARE</definition>
+        <argsstring>(hid_report_event)</argsstring>
+        <name>EVENT_TYPE_DYNDATA_DECLARE</name>
+        <param>
+          <type><ref refid="structhid__report__event" kindref="compound">hid_report_event</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/hid_event.h" line="40" column="1" declfile="applications/nrf_desktop/src/events/hid_event.h" declline="40" declcolumn="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2018<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_HID_EVENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_HID_EVENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="event__manager_8h" kindref="compound">event_manager.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="event__manager__profiler_8h" kindref="compound">event_manager_profiler.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="profiler_8h" kindref="compound">profiler.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="hid__report__desc_8h" kindref="compound">hid_report_desc.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="structhid__report__event" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structhid__report__event" kindref="compound">hid_report_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="33" refid="structhid__report__event_afc6e80bf1dcb5553383e60ea18771832_1afc6e80bf1dcb5553383e60ea18771832" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structevent__header" kindref="compound">event_header</ref><sp/><ref refid="structhid__report__event_afc6e80bf1dcb5553383e60ea18771832_1afc6e80bf1dcb5553383e60ea18771832" kindref="member">header</ref>;<sp/></highlight></codeline>
+<codeline lineno="35" refid="structhid__report__event_a13108364712975b55140334cfe50d402_1a13108364712975b55140334cfe50d402" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structhid__report__event_a13108364712975b55140334cfe50d402_1a13108364712975b55140334cfe50d402" kindref="member">source</ref>;<sp/></highlight></codeline>
+<codeline lineno="36" refid="structhid__report__event_a3a0a5cfe12485ec8a2db6b21d0e12afe_1a3a0a5cfe12485ec8a2db6b21d0e12afe" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structhid__report__event_a3a0a5cfe12485ec8a2db6b21d0e12afe_1a3a0a5cfe12485ec8a2db6b21d0e12afe" kindref="member">subscriber</ref>;<sp/></highlight></codeline>
+<codeline lineno="37" refid="structhid__report__event_a1a6c08f02db07378ab5b510aa4eac635_1a1a6c08f02db07378ab5b510aa4eac635" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structevent__dyndata" kindref="compound">event_dyndata</ref><sp/><ref refid="structhid__report__event_a1a6c08f02db07378ab5b510aa4eac635_1a1a6c08f02db07378ab5b510aa4eac635" kindref="member">dyndata</ref>;<sp/></highlight></codeline>
+<codeline lineno="38"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="group__hid__event_gaa09fcafe85ba0f1d8a6ba5888ea10ada_1gaa09fcafe85ba0f1d8a6ba5888ea10ada" refkind="member"><highlight class="normal"><ref refid="group__hid__event_gaa09fcafe85ba0f1d8a6ba5888ea10ada_1gaa09fcafe85ba0f1d8a6ba5888ea10ada" kindref="member">EVENT_TYPE_DYNDATA_DECLARE</ref>(<ref refid="structhid__report__event" kindref="compound">hid_report_event</ref>);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="structhid__report__subscriber__event" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structhid__report__subscriber__event" kindref="compound">hid_report_subscriber_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="45" refid="structhid__report__subscriber__event_a6c718bbcd28706fe5fc9753ba1ea55b0_1a6c718bbcd28706fe5fc9753ba1ea55b0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structevent__header" kindref="compound">event_header</ref><sp/><ref refid="structhid__report__subscriber__event_a6c718bbcd28706fe5fc9753ba1ea55b0_1a6c718bbcd28706fe5fc9753ba1ea55b0" kindref="member">header</ref>;<sp/></highlight></codeline>
+<codeline lineno="47" refid="structhid__report__subscriber__event_a9a70c172eb9c7995ef4b42bd8c66a92d_1a9a70c172eb9c7995ef4b42bd8c66a92d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structhid__report__subscriber__event_a9a70c172eb9c7995ef4b42bd8c66a92d_1a9a70c172eb9c7995ef4b42bd8c66a92d" kindref="member">subscriber</ref>;<sp/></highlight></codeline>
+<codeline lineno="48" refid="structhid__report__subscriber__event_a1fa04c1b99b6b7be75c0ac1604ad2d3d_1a1fa04c1b99b6b7be75c0ac1604ad2d3d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structhid__report__subscriber__event_a1fa04c1b99b6b7be75c0ac1604ad2d3d_1a1fa04c1b99b6b7be75c0ac1604ad2d3d" kindref="member">connected</ref>;<sp/></highlight></codeline>
+<codeline lineno="49"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><ref refid="group__event__manager_gade0652b21cddf1a6b4d58e668b402caa_1gade0652b21cddf1a6b4d58e668b402caa" kindref="member">EVENT_TYPE_DECLARE</ref>(<ref refid="structhid__report__subscriber__event" kindref="compound">hid_report_subscriber_event</ref>);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="structhid__report__sent__event" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structhid__report__sent__event" kindref="compound">hid_report_sent_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="56" refid="structhid__report__sent__event_a117e2308a9b06c981932472fb15ef8cf_1a117e2308a9b06c981932472fb15ef8cf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structevent__header" kindref="compound">event_header</ref><sp/><ref refid="structhid__report__sent__event_a117e2308a9b06c981932472fb15ef8cf_1a117e2308a9b06c981932472fb15ef8cf" kindref="member">header</ref>;<sp/></highlight></codeline>
+<codeline lineno="58" refid="structhid__report__sent__event_ad3ccd86fb37f3070d1be2ba92673a07f_1ad3ccd86fb37f3070d1be2ba92673a07f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structhid__report__sent__event_ad3ccd86fb37f3070d1be2ba92673a07f_1ad3ccd86fb37f3070d1be2ba92673a07f" kindref="member">subscriber</ref>;<sp/></highlight></codeline>
+<codeline lineno="59" refid="structhid__report__sent__event_aa7bc4859cf26904be7327947dd1570e2_1aa7bc4859cf26904be7327947dd1570e2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structhid__report__sent__event_aa7bc4859cf26904be7327947dd1570e2_1aa7bc4859cf26904be7327947dd1570e2" kindref="member">report_id</ref>;<sp/></highlight></codeline>
+<codeline lineno="60" refid="structhid__report__sent__event_aedf87bcc51878fd8b801b278dac60ff9_1aedf87bcc51878fd8b801b278dac60ff9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structhid__report__sent__event_aedf87bcc51878fd8b801b278dac60ff9_1aedf87bcc51878fd8b801b278dac60ff9" kindref="member">error</ref>;<sp/></highlight></codeline>
+<codeline lineno="61"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><ref refid="group__event__manager_gade0652b21cddf1a6b4d58e668b402caa_1gade0652b21cddf1a6b4d58e668b402caa" kindref="member">EVENT_TYPE_DECLARE</ref>(<ref refid="structhid__report__sent__event" kindref="compound">hid_report_sent_event</ref>);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="structhid__report__subscription__event" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structhid__report__subscription__event" kindref="compound">hid_report_subscription_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="68" refid="structhid__report__subscription__event_a70788a89b94771fc4a244758caae7a72_1a70788a89b94771fc4a244758caae7a72" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structevent__header" kindref="compound">event_header</ref><sp/><ref refid="structhid__report__subscription__event_a70788a89b94771fc4a244758caae7a72_1a70788a89b94771fc4a244758caae7a72" kindref="member">header</ref>;<sp/></highlight></codeline>
+<codeline lineno="70" refid="structhid__report__subscription__event_a2186194dd15315aa3bee1900684f216c_1a2186194dd15315aa3bee1900684f216c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structhid__report__subscription__event_a2186194dd15315aa3bee1900684f216c_1a2186194dd15315aa3bee1900684f216c" kindref="member">subscriber</ref>;<sp/></highlight></codeline>
+<codeline lineno="71" refid="structhid__report__subscription__event_a2939b3d0df9f0b6bc9b466245ab19079_1a2939b3d0df9f0b6bc9b466245ab19079" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structhid__report__subscription__event_a2939b3d0df9f0b6bc9b466245ab19079_1a2939b3d0df9f0b6bc9b466245ab19079" kindref="member">report_id</ref>;<sp/></highlight></codeline>
+<codeline lineno="72" refid="structhid__report__subscription__event_ac2b96c32bc4f606e62f814e1d8fc0abf_1ac2b96c32bc4f606e62f814e1d8fc0abf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structhid__report__subscription__event_ac2b96c32bc4f606e62f814e1d8fc0abf_1ac2b96c32bc4f606e62f814e1d8fc0abf" kindref="member">enabled</ref>;<sp/></highlight></codeline>
+<codeline lineno="73"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><ref refid="group__event__manager_gade0652b21cddf1a6b4d58e668b402caa_1gade0652b21cddf1a6b4d58e668b402caa" kindref="member">EVENT_TYPE_DECLARE</ref>(<ref refid="structhid__report__subscription__event" kindref="compound">hid_report_subscription_event</ref>);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_HID_EVENT_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/src/events/hid_event.h"/>
+  </compounddef>
+</doxygen>

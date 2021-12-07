@@ -1,0 +1,314 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__sensor__types__photometry" kind="group">
+    <compoundname>bt_mesh_sensor_types_photometry</compoundname>
+    <title>Photometry sensor types</title>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__photometry_1ga4e9e61abb2a0b5411a8f20e6f2320be1" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_present_amb_light_level</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_present_amb_light_level</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present ambient light level</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Present Ambient Light Level<itemizedlist>
+<listitem><para>Unit: Lux</para>
+</listitem><listitem><para>Encoding: 24 bit unsigned scalar (Resolution: 0.01 lx)</para>
+</listitem><listitem><para>Range: 0 to 167772.13 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1009" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="1009" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__photometry_1ga3033513661c51f2ca8b8a8d9bd9c6421" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_initial_cie_1931_chromaticity_coords</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_initial_cie_1931_chromaticity_coords</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initial CIE-1931 chromaticity coordinates</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Chromaticity x-coordinate<itemizedlist>
+<listitem><para>Unit: <emphasis>unitless</emphasis></para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1/65536)</para>
+</listitem><listitem><para>Range: 0 to 0.99998</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Chromaticity y-coordinate<itemizedlist>
+<listitem><para>Unit: <emphasis>unitless</emphasis></para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1/65536)</para>
+</listitem><listitem><para>Range: 0 to 0.99998 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1024" column="1" declfile="include/bluetooth/mesh/sensor_types.h" declline="1024" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__photometry_1gab418e21483d7d5b30c764d842052fb34" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_present_cie_1931_chromaticity_coords</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_present_cie_1931_chromaticity_coords</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present CIE-1931 chromaticity coordinates</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Chromaticity x-coordinate<itemizedlist>
+<listitem><para>Unit: <emphasis>unitless</emphasis></para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1/65536)</para>
+</listitem><listitem><para>Range: 0 to 0.99998</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Chromaticity y-coordinate<itemizedlist>
+<listitem><para>Unit: <emphasis>unitless</emphasis></para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1/65536)</para>
+</listitem><listitem><para>Range: 0 to 0.99998 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1039" column="1" declfile="include/bluetooth/mesh/sensor_types.h" declline="1039" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__photometry_1gabc7e29aab1b126ff29636b14f6b7f021" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_initial_correlated_col_temp</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_initial_correlated_col_temp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initial correlated color temperature</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Initial Correlated Color Temperature<itemizedlist>
+<listitem><para>Unit: Kelvin</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1 K)</para>
+</listitem><listitem><para>Range: 0 to 65533 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1050" column="1" declfile="include/bluetooth/mesh/sensor_types.h" declline="1050" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__photometry_1ga8c279dd1dc1d99863faf2d581a799d14" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_present_correlated_col_temp</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_present_correlated_col_temp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present correlated color temperature</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Present Correlated Color Temperature<itemizedlist>
+<listitem><para>Unit: Kelvin</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1 K)</para>
+</listitem><listitem><para>Range: 0 to 65533 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1061" column="1" declfile="include/bluetooth/mesh/sensor_types.h" declline="1061" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__photometry_1gae5c34ac73de86bdc3cc1be4c438aa1ab" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_present_illuminance</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_present_illuminance</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present illuminance</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Present Illuminance<itemizedlist>
+<listitem><para>Unit: Lux</para>
+</listitem><listitem><para>Encoding: 24 bit unsigned scalar (Resolution: 0.01 lx)</para>
+</listitem><listitem><para>Range: 0 to 167772.13 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1071" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="1071" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__photometry_1gad2da070b3ae3f0b186d648e5e94773c7" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_initial_luminous_flux</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_initial_luminous_flux</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initial luminous flux</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Initial Luminous Flux<itemizedlist>
+<listitem><para>Unit: Lumen</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1 lm)</para>
+</listitem><listitem><para>Range: 0 to 65533 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1081" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="1081" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__photometry_1gae6b05b4f32b18fdfcf4574531b43916b" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_present_luminous_flux</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_present_luminous_flux</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present luminous flux</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Present Luminous Flux<itemizedlist>
+<listitem><para>Unit: Lumen</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1 lm)</para>
+</listitem><listitem><para>Range: 0 to 65533 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1091" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="1091" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__photometry_1ga0e1250aa021c32971a4d9932195cd283" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_initial_planckian_distance</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_initial_planckian_distance</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initial planckian distance</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Initial Planckian Distance<itemizedlist>
+<listitem><para>Unit: <emphasis>unitless</emphasis></para>
+</listitem><listitem><para>Encoding: 16 bit signed scalar (Resolution: 1/100000)</para>
+</listitem><listitem><para>Range: -0.05 to 0.05 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1102" column="1" declfile="include/bluetooth/mesh/sensor_types.h" declline="1102" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__photometry_1ga92136c2a0ef8fd7c111fc28d3736eac6" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_present_planckian_distance</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_present_planckian_distance</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present planckian distance</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Present Planckian Distance<itemizedlist>
+<listitem><para>Unit: <emphasis>unitless</emphasis></para>
+</listitem><listitem><para>Encoding: 16 bit signed scalar (Resolution: 1/100000)</para>
+</listitem><listitem><para>Range: -0.05 to 0.05 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1113" column="1" declfile="include/bluetooth/mesh/sensor_types.h" declline="1113" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__photometry_1ga2dcd732570e654186f40c4a8188aef51" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_rel_exposure_time_in_an_illuminance_range</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_rel_exposure_time_in_an_illuminance_range</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Relative exposure time in an illuminance range</para>
+<para>This sensor type supports series access. The series X-axis is measured in Lux.</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Relative value<itemizedlist>
+<listitem><para>Unit: Percent</para>
+</listitem><listitem><para>Encoding: 8 bit unsigned scalar (Resolution: 0.5 %)</para>
+</listitem><listitem><para>Range: 0 to 100.0</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Minimum Illuminance<itemizedlist>
+<listitem><para>Unit: Lux</para>
+</listitem><listitem><para>Encoding: 24 bit unsigned scalar (Resolution: 0.01 lx)</para>
+</listitem><listitem><para>Range: 0 to 167772.13</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Maximum Illuminance<itemizedlist>
+<listitem><para>Unit: Lux</para>
+</listitem><listitem><para>Encoding: 24 bit unsigned scalar (Resolution: 0.01 lx)</para>
+</listitem><listitem><para>Range: 0 to 167772.13 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1135" column="1" declfile="include/bluetooth/mesh/sensor_types.h" declline="1135" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__photometry_1gafb422e0a03995973d0a959abbe6878fa" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_tot_light_exposure_time</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_tot_light_exposure_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Total light exposure time</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Total Light Exposure Time<itemizedlist>
+<listitem><para>Unit: Hours</para>
+</listitem><listitem><para>Encoding: 24 bit unsigned scalar (Resolution: 0.1 hours)</para>
+</listitem><listitem><para>Range: 0 to 1677721.3 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1145" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="1145" declcolumn="39"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

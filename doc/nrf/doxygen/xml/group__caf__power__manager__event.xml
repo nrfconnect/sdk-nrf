@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__caf__power__manager__event" kind="group">
+    <compoundname>caf_power_manager_event</compoundname>
+    <title>CAF Power Manager Event</title>
+    <innerclass refid="structpower__manager__restrict__event" prot="public">power_manager_restrict_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__caf__power__manager__event_1gacc919dc5eaa5c53a0daf966249c8ac96" prot="public" static="no" strong="no">
+        <type></type>
+        <name>power_manager_level</name>
+        <enumvalue id="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1ggacc919dc5eaa5c53a0daf966249c8ac96a6cf4e645873823cd0d1c46325addb7a0" prot="public">
+          <name>POWER_MANAGER_LEVEL_ALIVE</name>
+          <initializer>= -1</initializer>
+          <briefdescription>
+<para>Stay alive. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1ggacc919dc5eaa5c53a0daf966249c8ac96ad07a0cf46024c9bf253c393ecbd7a619" prot="public">
+          <name>POWER_MANAGER_LEVEL_SUSPENDED</name>
+          <briefdescription>
+<para>Suspend but do not go to power off. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1ggacc919dc5eaa5c53a0daf966249c8ac96a304b28ebb6e4caf42a1764f9357cc84e" prot="public">
+          <name>POWER_MANAGER_LEVEL_OFF</name>
+          <briefdescription>
+<para>Go to full power off. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1ggacc919dc5eaa5c53a0daf966249c8ac96a5a782d247c32ffee8415ea8344f9e607" prot="public">
+          <name>POWER_MANAGER_LEVEL_MAX</name>
+          <briefdescription>
+<para>Number of supported levels. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Available power levels. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The power levels provided by the power manager. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/power_manager_event.h" line="29" column="1" bodyfile="include/caf/events/power_manager_event.h" bodystart="29" bodyend="46"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__caf__power__manager__event_1ga4967f0a8ae0ffcba9fac9c8dc8400eaa" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void power_manager_restrict</definition>
+        <argsstring>(size_t module_idx, enum power_manager_level lvl)</argsstring>
+        <name>power_manager_restrict</name>
+        <param>
+          <type>size_t</type>
+          <declname>module_idx</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1gacc919dc5eaa5c53a0daf966249c8ac96" kindref="member">power_manager_level</ref></type>
+          <declname>lvl</declname>
+        </param>
+        <briefdescription>
+<para>Set the deepest power sleep mode allowed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>module_idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the module </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>lvl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximal allowed mode </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/power_manager_event.h" line="79" column="20" bodyfile="include/caf/events/power_manager_event.h" bodystart="79" bodyend="86"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>CAF Power Manager Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

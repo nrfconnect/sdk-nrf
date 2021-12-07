@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__ic__identity__reg" kind="group">
+    <compoundname>st25r3911b_ic_identity_reg</compoundname>
+    <title>IC Identity</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__ic__identity__reg_1ga3568ff0419d83493fa9cde0dce2a8f51" prot="public" static="no">
+        <name>ST25R3911B_REG_IC_IDENTITY_IC_REV</name>
+        <initializer>BIT(0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="714" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="714" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__ic__identity__reg_1gae19c8feb2f755c629d4601d30b7e6687" prot="public" static="no">
+        <name>ST25R3911B_REG_IC_IDENTITY_IC_REV_MASK</name>
+        <initializer>(0x03)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="715" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="715" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__ic__identity__reg_1ga7f009c27d61e81742824f5b2646da219" prot="public" static="no">
+        <name>ST25R3911B_REG_IC_IDENTITY_IC_TYPE</name>
+        <initializer>BIT(3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="716" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="716" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__ic__identity__reg_1ga8d75ce4871c3d24c8cbab6436ed05da7" prot="public" static="no">
+        <name>ST25R3911B_REG_IC_IDENTITY_IC_TYPE_MASK</name>
+        <initializer>(0xF1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="717" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="717" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Register bits </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,669 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="location_8h" kind="file" language="C++">
+    <compoundname>location.h</compoundname>
+    <includes local="no">stdbool.h</includes>
+    <includes local="no">stddef.h</includes>
+    <includes local="no">stdint.h</includes>
+    <includedby refid="wifi__service_8h" local="no">lib/location/wifi/wifi_service.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/modem/location.h</label>
+        <link refid="location_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stdbool.h</label>
+      </node>
+      <node id="3">
+        <label>stddef.h</label>
+      </node>
+      <node id="4">
+        <label>stdint.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>include/modem/location.h</label>
+        <link refid="location_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>lib/location/wifi/wifi_here_rest.h</label>
+        <link refid="wifi__here__rest_8h"/>
+      </node>
+      <node id="4">
+        <label>lib/location/wifi/wifi_nrf_cloud_rest.h</label>
+        <link refid="wifi__nrf__cloud__rest_8h"/>
+      </node>
+      <node id="2">
+        <label>lib/location/wifi/wifi_service.h</label>
+        <link refid="wifi__service_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>lib/location/wifi/wifi_skyhook_rest.h</label>
+        <link refid="wifi__skyhook__rest_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structlocation__datetime" prot="public">location_datetime</innerclass>
+    <innerclass refid="structlocation__data" prot="public">location_data</innerclass>
+    <innerclass refid="structlocation__event__data" prot="public">location_event_data</innerclass>
+    <innerclass refid="structlocation__gnss__config" prot="public">location_gnss_config</innerclass>
+    <innerclass refid="structlocation__cellular__config" prot="public">location_cellular_config</innerclass>
+    <innerclass refid="structlocation__wifi__config" prot="public">location_wifi_config</innerclass>
+    <innerclass refid="structlocation__method__config" prot="public">location_method_config</innerclass>
+    <innerclass refid="structlocation__config" prot="public">location_config</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1gaf90edf6d88c090d3e8276ce08903aa23" prot="public" static="no" strong="no">
+        <type></type>
+        <name>location_method</name>
+        <enumvalue id="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1ggaf90edf6d88c090d3e8276ce08903aa23a053f7548cda4066dc441b505e7519e38" prot="public">
+          <name>LOCATION_METHOD_CELLULAR</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>LTE cellular positioning. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1ggaf90edf6d88c090d3e8276ce08903aa23ad1acb2a85e993474589e59a3cc7f8385" prot="public">
+          <name>LOCATION_METHOD_GNSS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Global Navigation Satellite System (GNSS). </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1ggaf90edf6d88c090d3e8276ce08903aa23aab98ee76ddf33adef6e1b48e69ff9e8f" prot="public">
+          <name>LOCATION_METHOD_WIFI</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Wi-Fi positioning. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Location method. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="29" column="1" bodyfile="include/modem/location.h" bodystart="29" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__location_gaf80a37a2073df0cebf87479799e2e9b2_1gaf80a37a2073df0cebf87479799e2e9b2" prot="public" static="no" strong="no">
+        <type></type>
+        <name>location_event_id</name>
+        <enumvalue id="group__location_gaf80a37a2073df0cebf87479799e2e9b2_1ggaf80a37a2073df0cebf87479799e2e9b2a9965b6c4b604a2e8692a7b2ef03b20bb" prot="public">
+          <name>LOCATION_EVT_LOCATION</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Location update. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__location_gaf80a37a2073df0cebf87479799e2e9b2_1ggaf80a37a2073df0cebf87479799e2e9b2aed7f3594fb89a73d73b92de3c2320510" prot="public">
+          <name>LOCATION_EVT_TIMEOUT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Getting location timed out. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__location_gaf80a37a2073df0cebf87479799e2e9b2_1ggaf80a37a2073df0cebf87479799e2e9b2a7afe51200524d1b6fbd9d51f8deaf9d9" prot="public">
+          <name>LOCATION_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>An error occurred when trying to get the location. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__location_gaf80a37a2073df0cebf87479799e2e9b2_1ggaf80a37a2073df0cebf87479799e2e9b2a68f849167bb110099b8e7dd024486c35" prot="public">
+          <name>LOCATION_EVT_GNSS_ASSISTANCE_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>GNSS is requesting assistance data. Application should obtain the data and send it to <ref refid="group__location_ga7541c07045e27a3fd556c6064c3059a9_1ga7541c07045e27a3fd556c6064c3059a9" kindref="member">location_agps_data_process()</ref>. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event IDs. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="39" column="1" bodyfile="include/modem/location.h" bodystart="39" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__location_gaedb56e1b41aaf462ff8f1382a82ee498_1gaedb56e1b41aaf462ff8f1382a82ee498" prot="public" static="no" strong="no">
+        <type></type>
+        <name>location_accuracy</name>
+        <enumvalue id="group__location_gaedb56e1b41aaf462ff8f1382a82ee498_1ggaedb56e1b41aaf462ff8f1382a82ee498a021f82f21d726b60fe502b89c6a0b8e1" prot="public">
+          <name>LOCATION_ACCURACY_LOW</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Allow lower accuracy to conserve power. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__location_gaedb56e1b41aaf462ff8f1382a82ee498_1ggaedb56e1b41aaf462ff8f1382a82ee498adb68f95b909cc74390e4971e07a5d8f2" prot="public">
+          <name>LOCATION_ACCURACY_NORMAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Normal accuracy. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Location accuracy. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="54" column="1" bodyfile="include/modem/location.h" bodystart="54" bodyend="59"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__location_ga065818dd61883219339120739cf46c7d_1ga065818dd61883219339120739cf46c7d" prot="public" static="no" strong="no">
+        <type></type>
+        <name>location_service</name>
+        <enumvalue id="group__location_ga065818dd61883219339120739cf46c7d_1gga065818dd61883219339120739cf46c7da7a9f6b274dd868e2207018caead4abdb" prot="public">
+          <name>LOCATION_SERVICE_ANY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Use any location service that has been configured to be available. This is useful when only one service is configured but can also be used even if several services are available. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__location_ga065818dd61883219339120739cf46c7d_1gga065818dd61883219339120739cf46c7da531179b7dfe592985920bc42f536f24a" prot="public">
+          <name>LOCATION_SERVICE_NRF_CLOUD</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>nRF Cloud location service. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__location_ga065818dd61883219339120739cf46c7d_1gga065818dd61883219339120739cf46c7dadbc3fe150a93c16f35f9ebd27f4d80dd" prot="public">
+          <name>LOCATION_SERVICE_HERE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>HERE location service. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__location_ga065818dd61883219339120739cf46c7d_1gga065818dd61883219339120739cf46c7dae459eac195b1144fadc09df62cea3a8b" prot="public">
+          <name>LOCATION_SERVICE_SKYHOOK</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Skyhook location service. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__location_ga065818dd61883219339120739cf46c7d_1gga065818dd61883219339120739cf46c7da375546f5e2d5cbfe6acb7d613f307093" prot="public">
+          <name>LOCATION_SERVICE_POLTE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Polte location service. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Location service. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="62" column="1" bodyfile="include/modem/location.h" bodystart="62" bodyend="77"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__location_gab537a6011cb1d01b5aaf30c770b2dfb9_1gab537a6011cb1d01b5aaf30c770b2dfb9" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* location_event_handler_t) (const struct location_event_data *event_data)</definition>
+        <argsstring>)(const struct location_event_data *event_data)</argsstring>
+        <name>location_event_handler_t</name>
+        <briefdescription>
+<para>Event handler prototype. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">event_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="215" column="9" bodyfile="include/modem/location.h" bodystart="215" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__location_gaf2694b8546f0ca5ba8fe8d5a8fcc5ffa_1gaf2694b8546f0ca5ba8fe8d5a8fcc5ffa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int location_init</definition>
+        <argsstring>(location_event_handler_t event_handler)</argsstring>
+        <name>location_init</name>
+        <param>
+          <type><ref refid="group__location_gab537a6011cb1d01b5aaf30c770b2dfb9_1gab537a6011cb1d01b5aaf30c770b2dfb9" kindref="member">location_event_handler_t</ref></type>
+          <declname>event_handler</declname>
+        </param>
+        <briefdescription>
+<para>Initializes the library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Initializes the library and sets the event handler function. The first call to this function must be called before going to LTE normal mode. This can be called multiple times, which sets the event handler again.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">event_handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event handler function.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, or negative error code on failure. </para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given event_handler is NULL. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Failed to obtain Wi-Fi interface. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="230" column="5" declfile="include/modem/location.h" declline="230" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__location_gad240207e5dec3509c1e07db80e15953f_1gad240207e5dec3509c1e07db80e15953f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int location_request</definition>
+        <argsstring>(const struct location_config *config)</argsstring>
+        <name>location_request</name>
+        <param>
+          <type>const struct <ref refid="structlocation__config" kindref="compound">location_config</ref> *</type>
+          <declname>config</declname>
+        </param>
+        <briefdescription>
+<para>Requests the current position or starts periodic position updates. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Requests the current position using the given configuration. Depending on the configuration, a single position or periodic position updates are given. If the position request is successful, the results are delivered to the event handler function in LOCATION_EVT_LOCATION event. Otherwise LOCATION_EVT_TIMEOUT or LOCATION_EVT_ERROR event is triggered.</para>
+<para>In periodic mode, position update is always attempted after the configured interval regardless of the outcome of any previous attempt. Periodic position updates can be stopped by calling location_cancel().</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">config</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Used configuration or NULL to get a single position update with the default configuration. Default configuration has the following location methods in priority order (if they are enabled in library configuration): GNSS, Wi-Fi and Cellular.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, or negative error code on failure. </para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EPERM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Library not initialized. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EBUSY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Previous location request still ongoing. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid configuration given. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="255" column="5" declfile="include/modem/location.h" declline="255" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__location_ga7ccc76b7895707d67b64fa516c029c4f_1ga7ccc76b7895707d67b64fa516c029c4f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int location_request_cancel</definition>
+        <argsstring>(void)</argsstring>
+        <name>location_request_cancel</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Cancels periodic position updates. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>0 on success, or negative error code on failure. </para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EPERM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Library not initialized. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="263" column="5" declfile="include/modem/location.h" declline="263" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__location_gaa2acf9a8fab52e2ee4b60c3677a016f8_1gaa2acf9a8fab52e2ee4b60c3677a016f8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void location_config_defaults_set</definition>
+        <argsstring>(struct location_config *config, uint8_t methods_count, enum location_method *method_types)</argsstring>
+        <name>location_config_defaults_set</name>
+        <param>
+          <type>struct <ref refid="structlocation__config" kindref="compound">location_config</ref> *</type>
+          <declname>config</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>methods_count</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1gaf90edf6d88c090d3e8276ce08903aa23" kindref="member">location_method</ref> *</type>
+          <declname>method_types</declname>
+        </param>
+        <briefdescription>
+<para>Sets the default values to a given configuration. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">config</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Configuration to be supplied with default values. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">methods_count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of location methods. This must not exceed CONFIG_LOCATION_METHODS_LIST_SIZE. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">method_types</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>List of location method types in priority order. Location methods with these types are initialized with default values into given configuration. List size must be as given in &apos;methods_count&apos;. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="275" column="6" declfile="include/modem/location.h" declline="275" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__location_gacaf5f6d605cfc1231e59270984a62593_1gacaf5f6d605cfc1231e59270984a62593" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const char *</type>
+        <definition>const char * location_method_str</definition>
+        <argsstring>(enum location_method method)</argsstring>
+        <name>location_method_str</name>
+        <param>
+          <type>enum <ref refid="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1gaf90edf6d88c090d3e8276ce08903aa23" kindref="member">location_method</ref></type>
+          <declname>method</declname>
+        </param>
+        <briefdescription>
+<para>Return location method as a string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">method</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Location method.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Location method in string format. Returns &quot;Unknown&quot; if given method is not known. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="287" column="12" declfile="include/modem/location.h" declline="287" declcolumn="12"/>
+      </memberdef>
+      <memberdef kind="function" id="group__location_ga7541c07045e27a3fd556c6064c3059a9_1ga7541c07045e27a3fd556c6064c3059a9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int location_agps_data_process</definition>
+        <argsstring>(const char *buf, size_t buf_len)</argsstring>
+        <name>location_agps_data_process</name>
+        <param>
+          <type>const char *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buf_len</declname>
+        </param>
+        <briefdescription>
+<para>Feed in A-GPS data to be processed by library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If Location library is not receiving A-GPS assistance data directly from nRF Cloud, it throws event LOCATION_EVT_GNSS_ASSISTANCE_REQUEST when assistance is needed. Once application has obtained the assistance data it can be handed over to Location library using this function.</para>
+<para>Note that the data must be formatted similarly to the nRF Cloud A-GPS data, see for example nrf_cloud_agps_schema_v1.h.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data received. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">buf_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer size of data to be processed.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, or negative error code on failure. </para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given buffer NULL or buffer length zero. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="305" column="5" declfile="include/modem/location.h" declline="305" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Public APIs for the Location library. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>LOCATION_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LOCATION_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdbool.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stddef.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdint.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;nrf_modem_gnss.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1gaf90edf6d88c090d3e8276ce08903aa23" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1gaf90edf6d88c090d3e8276ce08903aa23" kindref="member">location_method</ref><sp/>{</highlight></codeline>
+<codeline lineno="31" refid="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1ggaf90edf6d88c090d3e8276ce08903aa23a053f7548cda4066dc441b505e7519e38" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1ggaf90edf6d88c090d3e8276ce08903aa23a053f7548cda4066dc441b505e7519e38" kindref="member">LOCATION_METHOD_CELLULAR</ref><sp/>=<sp/>1,</highlight></codeline>
+<codeline lineno="33" refid="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1ggaf90edf6d88c090d3e8276ce08903aa23ad1acb2a85e993474589e59a3cc7f8385" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1ggaf90edf6d88c090d3e8276ce08903aa23ad1acb2a85e993474589e59a3cc7f8385" kindref="member">LOCATION_METHOD_GNSS</ref>,</highlight></codeline>
+<codeline lineno="35" refid="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1ggaf90edf6d88c090d3e8276ce08903aa23aab98ee76ddf33adef6e1b48e69ff9e8f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1ggaf90edf6d88c090d3e8276ce08903aa23aab98ee76ddf33adef6e1b48e69ff9e8f" kindref="member">LOCATION_METHOD_WIFI</ref>,</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="group__location_gaf80a37a2073df0cebf87479799e2e9b2_1gaf80a37a2073df0cebf87479799e2e9b2" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__location_gaf80a37a2073df0cebf87479799e2e9b2_1gaf80a37a2073df0cebf87479799e2e9b2" kindref="member">location_event_id</ref><sp/>{</highlight></codeline>
+<codeline lineno="41" refid="group__location_gaf80a37a2073df0cebf87479799e2e9b2_1ggaf80a37a2073df0cebf87479799e2e9b2a9965b6c4b604a2e8692a7b2ef03b20bb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__location_gaf80a37a2073df0cebf87479799e2e9b2_1ggaf80a37a2073df0cebf87479799e2e9b2a9965b6c4b604a2e8692a7b2ef03b20bb" kindref="member">LOCATION_EVT_LOCATION</ref>,</highlight></codeline>
+<codeline lineno="43" refid="group__location_gaf80a37a2073df0cebf87479799e2e9b2_1ggaf80a37a2073df0cebf87479799e2e9b2aed7f3594fb89a73d73b92de3c2320510" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__location_gaf80a37a2073df0cebf87479799e2e9b2_1ggaf80a37a2073df0cebf87479799e2e9b2aed7f3594fb89a73d73b92de3c2320510" kindref="member">LOCATION_EVT_TIMEOUT</ref>,</highlight></codeline>
+<codeline lineno="45" refid="group__location_gaf80a37a2073df0cebf87479799e2e9b2_1ggaf80a37a2073df0cebf87479799e2e9b2a7afe51200524d1b6fbd9d51f8deaf9d9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__location_gaf80a37a2073df0cebf87479799e2e9b2_1ggaf80a37a2073df0cebf87479799e2e9b2a7afe51200524d1b6fbd9d51f8deaf9d9" kindref="member">LOCATION_EVT_ERROR</ref>,</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__location_gaf80a37a2073df0cebf87479799e2e9b2_1ggaf80a37a2073df0cebf87479799e2e9b2a68f849167bb110099b8e7dd024486c35" kindref="member">LOCATION_EVT_GNSS_ASSISTANCE_REQUEST</ref></highlight></codeline>
+<codeline lineno="51" refid="group__location_gaf80a37a2073df0cebf87479799e2e9b2_1ggaf80a37a2073df0cebf87479799e2e9b2a68f849167bb110099b8e7dd024486c35" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="group__location_gaedb56e1b41aaf462ff8f1382a82ee498_1gaedb56e1b41aaf462ff8f1382a82ee498" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__location_gaedb56e1b41aaf462ff8f1382a82ee498_1gaedb56e1b41aaf462ff8f1382a82ee498" kindref="member">location_accuracy</ref><sp/>{</highlight></codeline>
+<codeline lineno="56" refid="group__location_gaedb56e1b41aaf462ff8f1382a82ee498_1ggaedb56e1b41aaf462ff8f1382a82ee498a021f82f21d726b60fe502b89c6a0b8e1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__location_gaedb56e1b41aaf462ff8f1382a82ee498_1ggaedb56e1b41aaf462ff8f1382a82ee498a021f82f21d726b60fe502b89c6a0b8e1" kindref="member">LOCATION_ACCURACY_LOW</ref>,</highlight></codeline>
+<codeline lineno="58" refid="group__location_gaedb56e1b41aaf462ff8f1382a82ee498_1ggaedb56e1b41aaf462ff8f1382a82ee498adb68f95b909cc74390e4971e07a5d8f2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__location_gaedb56e1b41aaf462ff8f1382a82ee498_1ggaedb56e1b41aaf462ff8f1382a82ee498adb68f95b909cc74390e4971e07a5d8f2" kindref="member">LOCATION_ACCURACY_NORMAL</ref>,</highlight></codeline>
+<codeline lineno="59"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="group__location_ga065818dd61883219339120739cf46c7d_1ga065818dd61883219339120739cf46c7d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__location_ga065818dd61883219339120739cf46c7d_1ga065818dd61883219339120739cf46c7d" kindref="member">location_service</ref><sp/>{</highlight></codeline>
+<codeline lineno="68" refid="group__location_ga065818dd61883219339120739cf46c7d_1gga065818dd61883219339120739cf46c7da7a9f6b274dd868e2207018caead4abdb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__location_ga065818dd61883219339120739cf46c7d_1gga065818dd61883219339120739cf46c7da7a9f6b274dd868e2207018caead4abdb" kindref="member">LOCATION_SERVICE_ANY</ref>,</highlight></codeline>
+<codeline lineno="70" refid="group__location_ga065818dd61883219339120739cf46c7d_1gga065818dd61883219339120739cf46c7da531179b7dfe592985920bc42f536f24a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__location_ga065818dd61883219339120739cf46c7d_1gga065818dd61883219339120739cf46c7da531179b7dfe592985920bc42f536f24a" kindref="member">LOCATION_SERVICE_NRF_CLOUD</ref>,</highlight></codeline>
+<codeline lineno="72" refid="group__location_ga065818dd61883219339120739cf46c7d_1gga065818dd61883219339120739cf46c7dadbc3fe150a93c16f35f9ebd27f4d80dd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__location_ga065818dd61883219339120739cf46c7d_1gga065818dd61883219339120739cf46c7dadbc3fe150a93c16f35f9ebd27f4d80dd" kindref="member">LOCATION_SERVICE_HERE</ref>,</highlight></codeline>
+<codeline lineno="74" refid="group__location_ga065818dd61883219339120739cf46c7d_1gga065818dd61883219339120739cf46c7dae459eac195b1144fadc09df62cea3a8b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__location_ga065818dd61883219339120739cf46c7d_1gga065818dd61883219339120739cf46c7dae459eac195b1144fadc09df62cea3a8b" kindref="member">LOCATION_SERVICE_SKYHOOK</ref>,</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__location_ga065818dd61883219339120739cf46c7d_1gga065818dd61883219339120739cf46c7da375546f5e2d5cbfe6acb7d613f307093" kindref="member">LOCATION_SERVICE_POLTE</ref></highlight></codeline>
+<codeline lineno="77" refid="group__location_ga065818dd61883219339120739cf46c7d_1gga065818dd61883219339120739cf46c7da375546f5e2d5cbfe6acb7d613f307093" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80" refid="structlocation__datetime" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlocation__datetime" kindref="compound">location_datetime</ref><sp/>{</highlight></codeline>
+<codeline lineno="82" refid="structlocation__datetime_aa125d2ddf67f7bd0c8a99b92dbc50c84_1aa125d2ddf67f7bd0c8a99b92dbc50c84" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structlocation__datetime_aa125d2ddf67f7bd0c8a99b92dbc50c84_1aa125d2ddf67f7bd0c8a99b92dbc50c84" kindref="member">valid</ref>;</highlight></codeline>
+<codeline lineno="84" refid="structlocation__datetime_ad3c9beb7686511631aeddf2fc865bbf9_1ad3c9beb7686511631aeddf2fc865bbf9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structlocation__datetime_ad3c9beb7686511631aeddf2fc865bbf9_1ad3c9beb7686511631aeddf2fc865bbf9" kindref="member">year</ref>;</highlight></codeline>
+<codeline lineno="86" refid="structlocation__datetime_af5ea25d0d24a74c87e7377a5f25b19d8_1af5ea25d0d24a74c87e7377a5f25b19d8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structlocation__datetime_af5ea25d0d24a74c87e7377a5f25b19d8_1af5ea25d0d24a74c87e7377a5f25b19d8" kindref="member">month</ref>;</highlight></codeline>
+<codeline lineno="88" refid="structlocation__datetime_a078da19bfdc91c3bbb25ec36e58c0d18_1a078da19bfdc91c3bbb25ec36e58c0d18" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structlocation__datetime_a078da19bfdc91c3bbb25ec36e58c0d18_1a078da19bfdc91c3bbb25ec36e58c0d18" kindref="member">day</ref>;</highlight></codeline>
+<codeline lineno="90" refid="structlocation__datetime_acf066c55ed0c225defb18912110b2b4e_1acf066c55ed0c225defb18912110b2b4e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structlocation__datetime_acf066c55ed0c225defb18912110b2b4e_1acf066c55ed0c225defb18912110b2b4e" kindref="member">hour</ref>;</highlight></codeline>
+<codeline lineno="92" refid="structlocation__datetime_aab3ffaa02bc6fbcfe9bb62c099df3551_1aab3ffaa02bc6fbcfe9bb62c099df3551" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structlocation__datetime_aab3ffaa02bc6fbcfe9bb62c099df3551_1aab3ffaa02bc6fbcfe9bb62c099df3551" kindref="member">minute</ref>;</highlight></codeline>
+<codeline lineno="94" refid="structlocation__datetime_a0ac984f75db1b2b8dea62671f4ce0fca_1a0ac984f75db1b2b8dea62671f4ce0fca" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structlocation__datetime_a0ac984f75db1b2b8dea62671f4ce0fca_1a0ac984f75db1b2b8dea62671f4ce0fca" kindref="member">second</ref>;</highlight></codeline>
+<codeline lineno="96" refid="structlocation__datetime_a9098ac7d7f97182a364a43246bfbcd7c_1a9098ac7d7f97182a364a43246bfbcd7c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structlocation__datetime_a9098ac7d7f97182a364a43246bfbcd7c_1a9098ac7d7f97182a364a43246bfbcd7c" kindref="member">ms</ref>;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100" refid="structlocation__data" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlocation__data" kindref="compound">location_data</ref><sp/>{</highlight></codeline>
+<codeline lineno="102" refid="structlocation__data_aeb8eed3a0ced9090f3c84e1f03aefa6f_1aeb8eed3a0ced9090f3c84e1f03aefa6f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1gaf90edf6d88c090d3e8276ce08903aa23" kindref="member">location_method</ref><sp/><ref refid="structlocation__data_aeb8eed3a0ced9090f3c84e1f03aefa6f_1aeb8eed3a0ced9090f3c84e1f03aefa6f" kindref="member">method</ref>;</highlight></codeline>
+<codeline lineno="104" refid="structlocation__data_a04c85e8103a7db5503370f4a820e51da_1a04c85e8103a7db5503370f4a820e51da" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structlocation__data_a04c85e8103a7db5503370f4a820e51da_1a04c85e8103a7db5503370f4a820e51da" kindref="member">latitude</ref>;</highlight></codeline>
+<codeline lineno="106" refid="structlocation__data_a584a33b7a163f69795c9bd80b05730ed_1a584a33b7a163f69795c9bd80b05730ed" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structlocation__data_a584a33b7a163f69795c9bd80b05730ed_1a584a33b7a163f69795c9bd80b05730ed" kindref="member">longitude</ref>;</highlight></codeline>
+<codeline lineno="108" refid="structlocation__data_a359b0f79b3c05804a5c7fdc4eb9b6ac5_1a359b0f79b3c05804a5c7fdc4eb9b6ac5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/><ref refid="structlocation__data_a359b0f79b3c05804a5c7fdc4eb9b6ac5_1a359b0f79b3c05804a5c7fdc4eb9b6ac5" kindref="member">accuracy</ref>;</highlight></codeline>
+<codeline lineno="110" refid="structlocation__data_ae97fdfebf485ff401351ab9de5665a90_1ae97fdfebf485ff401351ab9de5665a90" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlocation__datetime" kindref="compound">location_datetime</ref><sp/><ref refid="structlocation__data_ae97fdfebf485ff401351ab9de5665a90_1ae97fdfebf485ff401351ab9de5665a90" kindref="member">datetime</ref>;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114" refid="structlocation__event__data" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlocation__event__data" kindref="compound">location_event_data</ref><sp/>{</highlight></codeline>
+<codeline lineno="116" refid="structlocation__event__data_ae79b6cc39c056d9601f186610ab33473_1ae79b6cc39c056d9601f186610ab33473" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__location_gaf80a37a2073df0cebf87479799e2e9b2_1gaf80a37a2073df0cebf87479799e2e9b2" kindref="member">location_event_id</ref><sp/><ref refid="structlocation__event__data_ae79b6cc39c056d9601f186610ab33473_1ae79b6cc39c056d9601f186610ab33473" kindref="member">id</ref>;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">union<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="120" refid="structlocation__event__data_afe6bbab7060513a40a732ff0108e79e9_1afe6bbab7060513a40a732ff0108e79e9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlocation__data" kindref="compound">location_data</ref><sp/><ref refid="structlocation__event__data_afe6bbab7060513a40a732ff0108e79e9_1afe6bbab7060513a40a732ff0108e79e9" kindref="member">location</ref>;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">nrf_modem_gnss_agps_data_frame<sp/>request;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="130"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133" refid="structlocation__gnss__config" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlocation__gnss__config" kindref="compound">location_gnss_config</ref><sp/>{</highlight></codeline>
+<codeline lineno="146" refid="structlocation__gnss__config_a9aa5c24f7c35af7080b5de643f4f034a_1a9aa5c24f7c35af7080b5de643f4f034a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structlocation__gnss__config_a9aa5c24f7c35af7080b5de643f4f034a_1a9aa5c24f7c35af7080b5de643f4f034a" kindref="member">timeout</ref>;</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149" refid="structlocation__gnss__config_a43c2987d4accda47ff0ad2ebf2488a63_1a43c2987d4accda47ff0ad2ebf2488a63" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__location_gaedb56e1b41aaf462ff8f1382a82ee498_1gaedb56e1b41aaf462ff8f1382a82ee498" kindref="member">location_accuracy</ref><sp/><ref refid="structlocation__gnss__config_a43c2987d4accda47ff0ad2ebf2488a63_1a43c2987d4accda47ff0ad2ebf2488a63" kindref="member">accuracy</ref>;</highlight></codeline>
+<codeline lineno="150"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153" refid="structlocation__cellular__config" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlocation__cellular__config" kindref="compound">location_cellular_config</ref><sp/>{</highlight></codeline>
+<codeline lineno="158" refid="structlocation__cellular__config_a1277c2dddf09e988237366e42c3c9ea7_1a1277c2dddf09e988237366e42c3c9ea7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structlocation__cellular__config_a1277c2dddf09e988237366e42c3c9ea7_1a1277c2dddf09e988237366e42c3c9ea7" kindref="member">timeout</ref>;</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161" refid="structlocation__cellular__config_a18262f8b0a4910e80348e67ff337601b_1a18262f8b0a4910e80348e67ff337601b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__location_ga065818dd61883219339120739cf46c7d_1ga065818dd61883219339120739cf46c7d" kindref="member">location_service</ref><sp/><ref refid="structlocation__cellular__config_a18262f8b0a4910e80348e67ff337601b_1a18262f8b0a4910e80348e67ff337601b" kindref="member">service</ref>;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165" refid="structlocation__wifi__config" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlocation__wifi__config" kindref="compound">location_wifi_config</ref><sp/>{</highlight></codeline>
+<codeline lineno="170" refid="structlocation__wifi__config_a386be33a8135fec81d1f3cc6a65b369e_1a386be33a8135fec81d1f3cc6a65b369e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structlocation__wifi__config_a386be33a8135fec81d1f3cc6a65b369e_1a386be33a8135fec81d1f3cc6a65b369e" kindref="member">timeout</ref>;</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173" refid="structlocation__wifi__config_a5066e1ef753736683c0585904091aaad_1a5066e1ef753736683c0585904091aaad" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__location_ga065818dd61883219339120739cf46c7d_1ga065818dd61883219339120739cf46c7d" kindref="member">location_service</ref><sp/><ref refid="structlocation__wifi__config_a5066e1ef753736683c0585904091aaad_1a5066e1ef753736683c0585904091aaad" kindref="member">service</ref>;</highlight></codeline>
+<codeline lineno="174"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="177" refid="structlocation__method__config" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlocation__method__config" kindref="compound">location_method_config</ref><sp/>{</highlight></codeline>
+<codeline lineno="179" refid="structlocation__method__config_a543124295142a64d18d0c20734087945_1a543124295142a64d18d0c20734087945" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1gaf90edf6d88c090d3e8276ce08903aa23" kindref="member">location_method</ref><sp/><ref refid="structlocation__method__config_a543124295142a64d18d0c20734087945_1a543124295142a64d18d0c20734087945" kindref="member">method</ref>;</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">union<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="182" refid="structlocation__method__config_a8d7a32020e259dd1921130bb6f6a8876_1a8d7a32020e259dd1921130bb6f6a8876" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlocation__cellular__config" kindref="compound">location_cellular_config</ref><sp/><ref refid="structlocation__method__config_a8d7a32020e259dd1921130bb6f6a8876_1a8d7a32020e259dd1921130bb6f6a8876" kindref="member">cellular</ref>;</highlight></codeline>
+<codeline lineno="184" refid="structlocation__method__config_a5b0a004260eba4542a5934f974235fed_1a5b0a004260eba4542a5934f974235fed" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlocation__gnss__config" kindref="compound">location_gnss_config</ref><sp/><ref refid="structlocation__method__config_a5b0a004260eba4542a5934f974235fed_1a5b0a004260eba4542a5934f974235fed" kindref="member">gnss</ref>;</highlight></codeline>
+<codeline lineno="186" refid="structlocation__method__config_ab9fc4256284a7d286355bed63ff8511f_1ab9fc4256284a7d286355bed63ff8511f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlocation__wifi__config" kindref="compound">location_wifi_config</ref><sp/><ref refid="structlocation__method__config_ab9fc4256284a7d286355bed63ff8511f_1ab9fc4256284a7d286355bed63ff8511f" kindref="member">wifi</ref>;</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="188"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="191" refid="structlocation__config" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlocation__config" kindref="compound">location_config</ref><sp/>{</highlight></codeline>
+<codeline lineno="193" refid="structlocation__config_a818fc777fbd1297cb7c584cf8f3bb1ae_1a818fc777fbd1297cb7c584cf8f3bb1ae" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structlocation__config_a818fc777fbd1297cb7c584cf8f3bb1ae_1a818fc777fbd1297cb7c584cf8f3bb1ae" kindref="member">methods_count</ref>;</highlight></codeline>
+<codeline lineno="200" refid="structlocation__config_a06a6714b2ecbcdf4ad04b91337cef7d0_1a06a6714b2ecbcdf4ad04b91337cef7d0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlocation__method__config" kindref="compound">location_method_config</ref><sp/><ref refid="structlocation__config_a06a6714b2ecbcdf4ad04b91337cef7d0_1a06a6714b2ecbcdf4ad04b91337cef7d0" kindref="member">methods</ref>[CONFIG_LOCATION_METHODS_LIST_SIZE];</highlight></codeline>
+<codeline lineno="207" refid="structlocation__config_aff21c2ca8d733007bfdc0739bfa2cdd6_1aff21c2ca8d733007bfdc0739bfa2cdd6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structlocation__config_aff21c2ca8d733007bfdc0739bfa2cdd6_1aff21c2ca8d733007bfdc0739bfa2cdd6" kindref="member">interval</ref>;</highlight></codeline>
+<codeline lineno="208"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
+<codeline lineno="215" refid="group__location_gab537a6011cb1d01b5aaf30c770b2dfb9_1gab537a6011cb1d01b5aaf30c770b2dfb9" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__location_gab537a6011cb1d01b5aaf30c770b2dfb9_1gab537a6011cb1d01b5aaf30c770b2dfb9" kindref="member">location_event_handler_t</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlocation__event__data" kindref="compound">location_event_data</ref><sp/>*event_data);</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"></highlight></codeline>
+<codeline lineno="230" refid="group__location_gaf2694b8546f0ca5ba8fe8d5a8fcc5ffa_1gaf2694b8546f0ca5ba8fe8d5a8fcc5ffa" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__location_gaf2694b8546f0ca5ba8fe8d5a8fcc5ffa_1gaf2694b8546f0ca5ba8fe8d5a8fcc5ffa" kindref="member">location_init</ref>(<ref refid="group__location_gab537a6011cb1d01b5aaf30c770b2dfb9_1gab537a6011cb1d01b5aaf30c770b2dfb9" kindref="member">location_event_handler_t</ref><sp/>event_handler);</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"></highlight></codeline>
+<codeline lineno="255" refid="group__location_gad240207e5dec3509c1e07db80e15953f_1gad240207e5dec3509c1e07db80e15953f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__location_gad240207e5dec3509c1e07db80e15953f_1gad240207e5dec3509c1e07db80e15953f" kindref="member">location_request</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlocation__config" kindref="compound">location_config</ref><sp/>*config);</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"></highlight></codeline>
+<codeline lineno="263" refid="group__location_ga7ccc76b7895707d67b64fa516c029c4f_1ga7ccc76b7895707d67b64fa516c029c4f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__location_ga7ccc76b7895707d67b64fa516c029c4f_1ga7ccc76b7895707d67b64fa516c029c4f" kindref="member">location_request_cancel</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"></highlight></codeline>
+<codeline lineno="275" refid="group__location_gaa2acf9a8fab52e2ee4b60c3677a016f8_1gaa2acf9a8fab52e2ee4b60c3677a016f8" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__location_gaa2acf9a8fab52e2ee4b60c3677a016f8_1gaa2acf9a8fab52e2ee4b60c3677a016f8" kindref="member">location_config_defaults_set</ref>(</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlocation__config" kindref="compound">location_config</ref><sp/>*config,</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>methods_count,</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1gaf90edf6d88c090d3e8276ce08903aa23" kindref="member">location_method</ref><sp/>*method_types);</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"></highlight></codeline>
+<codeline lineno="287" refid="group__location_gacaf5f6d605cfc1231e59270984a62593_1gacaf5f6d605cfc1231e59270984a62593" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="group__location_gacaf5f6d605cfc1231e59270984a62593_1gacaf5f6d605cfc1231e59270984a62593" kindref="member">location_method_str</ref>(</highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1gaf90edf6d88c090d3e8276ce08903aa23" kindref="member">location_method</ref><sp/>method);</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"></highlight></codeline>
+<codeline lineno="305" refid="group__location_ga7541c07045e27a3fd556c6064c3059a9_1ga7541c07045e27a3fd556c6064c3059a9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__location_ga7541c07045e27a3fd556c6064c3059a9_1ga7541c07045e27a3fd556c6064c3059a9" kindref="member">location_agps_data_process</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*buf,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>buf_len);</highlight></codeline>
+<codeline lineno="306"><highlight class="normal"></highlight></codeline>
+<codeline lineno="309"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="310"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="312"><highlight class="normal"></highlight></codeline>
+<codeline lineno="313"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>LOCATION_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/modem/location.h"/>
+  </compounddef>
+</doxygen>

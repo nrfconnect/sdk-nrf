@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlocation__utils__modem__params__info" kind="struct" language="C++" prot="public">
+    <compoundname>location_utils_modem_params_info</compoundname>
+    <includes refid="location__utils_8h" local="no">location_utils.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlocation__utils__modem__params__info_a88b3dd693a7b264c46123bfeadb7b5b5_1a88b3dd693a7b264c46123bfeadb7b5b5" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int location_utils_modem_params_info::mcc</definition>
+        <argsstring></argsstring>
+        <name>mcc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Mobile Country Code. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_utils.h" line="13" column="5" bodyfile="lib/location/location_utils.h" bodystart="13" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__utils__modem__params__info_a9cbe92b0aaf92bc887b3b466f25f2352_1a9cbe92b0aaf92bc887b3b466f25f2352" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int location_utils_modem_params_info::mnc</definition>
+        <argsstring></argsstring>
+        <name>mnc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Mobile Network Code. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_utils.h" line="16" column="5" bodyfile="lib/location/location_utils.h" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__utils__modem__params__info_aeb71205b7b011f62f2b6e580aeb747d7_1aeb71205b7b011f62f2b6e580aeb747d7" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t location_utils_modem_params_info::cell_id</definition>
+        <argsstring></argsstring>
+        <name>cell_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>E-UTRAN cell ID </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_utils.h" line="19" column="10" bodyfile="lib/location/location_utils.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__utils__modem__params__info_a49994037a42f0789145169232e4a6c5d_1a49994037a42f0789145169232e4a6c5d" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t location_utils_modem_params_info::tac</definition>
+        <argsstring></argsstring>
+        <name>tac</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Tracking area code. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_utils.h" line="22" column="10" bodyfile="lib/location/location_utils.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__utils__modem__params__info_ad96b2ae6f5f0c400890792d9c0b81739_1ad96b2ae6f5f0c400890792d9c0b81739" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t location_utils_modem_params_info::phys_cell_id</definition>
+        <argsstring></argsstring>
+        <name>phys_cell_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Physical cell ID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_utils.h" line="25" column="10" bodyfile="lib/location/location_utils.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Modem parameters. </para>
+    </detaileddescription>
+    <location file="lib/location/location_utils.h" line="11" column="1" bodyfile="lib/location/location_utils.h" bodystart="11" bodyend="26"/>
+    <listofallmembers>
+      <member refid="structlocation__utils__modem__params__info_aeb71205b7b011f62f2b6e580aeb747d7_1aeb71205b7b011f62f2b6e580aeb747d7" prot="public" virt="non-virtual"><scope>location_utils_modem_params_info</scope><name>cell_id</name></member>
+      <member refid="structlocation__utils__modem__params__info_a88b3dd693a7b264c46123bfeadb7b5b5_1a88b3dd693a7b264c46123bfeadb7b5b5" prot="public" virt="non-virtual"><scope>location_utils_modem_params_info</scope><name>mcc</name></member>
+      <member refid="structlocation__utils__modem__params__info_a9cbe92b0aaf92bc887b3b466f25f2352_1a9cbe92b0aaf92bc887b3b466f25f2352" prot="public" virt="non-virtual"><scope>location_utils_modem_params_info</scope><name>mnc</name></member>
+      <member refid="structlocation__utils__modem__params__info_ad96b2ae6f5f0c400890792d9c0b81739_1ad96b2ae6f5f0c400890792d9c0b81739" prot="public" virt="non-virtual"><scope>location_utils_modem_params_info</scope><name>phys_cell_id</name></member>
+      <member refid="structlocation__utils__modem__params__info_a49994037a42f0789145169232e4a6c5d_1a49994037a42f0789145169232e4a6c5d" prot="public" virt="non-virtual"><scope>location_utils_modem_params_info</scope><name>tac</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

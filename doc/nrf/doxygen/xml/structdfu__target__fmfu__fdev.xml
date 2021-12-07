@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structdfu__target__fmfu__fdev" kind="struct" language="C++" prot="public">
+    <compoundname>dfu_target_fmfu_fdev</compoundname>
+    <includes refid="dfu__target__full__modem_8h" local="no">dfu_target_full_modem.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structdfu__target__fmfu__fdev_a54c7c50c9394f7eb01898762e4e3a752_1a54c7c50c9394f7eb01898762e4e3a752" prot="public" static="no" mutable="no">
+        <type>const struct device *</type>
+        <definition>const struct device* dfu_target_fmfu_fdev::dev</definition>
+        <argsstring></argsstring>
+        <name>dev</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_full_modem.h" line="28" column="19" bodyfile="include/dfu/dfu_target_full_modem.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdfu__target__fmfu__fdev_ae3023ff58d555e7ce7f8067302aa8249_1ae3023ff58d555e7ce7f8067302aa8249" prot="public" static="no" mutable="no">
+        <type>off_t</type>
+        <definition>off_t dfu_target_fmfu_fdev::offset</definition>
+        <argsstring></argsstring>
+        <name>offset</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_full_modem.h" line="31" column="7" bodyfile="include/dfu/dfu_target_full_modem.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdfu__target__fmfu__fdev_a1897b36316c4091046fe742bc9d3a5b8_1a1897b36316c4091046fe742bc9d3a5b8" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t dfu_target_fmfu_fdev::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_full_modem.h" line="37" column="8" bodyfile="include/dfu/dfu_target_full_modem.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/dfu/dfu_target_full_modem.h" line="26" column="1" bodyfile="include/dfu/dfu_target_full_modem.h" bodystart="26" bodyend="38"/>
+    <listofallmembers>
+      <member refid="structdfu__target__fmfu__fdev_a54c7c50c9394f7eb01898762e4e3a752_1a54c7c50c9394f7eb01898762e4e3a752" prot="public" virt="non-virtual"><scope>dfu_target_fmfu_fdev</scope><name>dev</name></member>
+      <member refid="structdfu__target__fmfu__fdev_ae3023ff58d555e7ce7f8067302aa8249_1ae3023ff58d555e7ce7f8067302aa8249" prot="public" virt="non-virtual"><scope>dfu_target_fmfu_fdev</scope><name>offset</name></member>
+      <member refid="structdfu__target__fmfu__fdev_a1897b36316c4091046fe742bc9d3a5b8_1a1897b36316c4091046fe742bc9d3a5b8" prot="public" virt="non-virtual"><scope>dfu_target_fmfu_fdev</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

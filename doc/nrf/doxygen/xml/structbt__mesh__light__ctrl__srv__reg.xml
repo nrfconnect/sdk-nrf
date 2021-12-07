@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__ctrl__srv__reg" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_ctrl_srv_reg</compoundname>
+    <includes refid="light__ctrl__srv_8h" local="no">light_ctrl_srv.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__srv__reg_a4827edd66e35e9eb916cc563b5a2f281_1a4827edd66e35e9eb916cc563b5a2f281" prot="public" static="no" mutable="no">
+        <type>struct k_work_delayable</type>
+        <definition>struct k_work_delayable bt_mesh_light_ctrl_srv_reg::timer</definition>
+        <argsstring></argsstring>
+        <name>timer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Regulator step timer </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="118" column="23" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__srv__reg_a5008c68a8dde858c7f22764c2578de11_1a5008c68a8dde858c7f22764c2578de11" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float bt_mesh_light_ctrl_srv_reg::i</definition>
+        <argsstring></argsstring>
+        <name>i</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Internal integral sum. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="120" column="7" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__srv__reg_a73528da0e96edf97ddf19d08cea3ef2b_1a73528da0e96edf97ddf19d08cea3ef2b" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_light_ctrl_srv_reg::prev</definition>
+        <argsstring></argsstring>
+        <name>prev</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Previous output </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="122" column="10" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__srv__reg_a53016b4a6567f319d798ffae88d172e3_1a53016b4a6567f319d798ffae88d172e3" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__light__ctrl__srv__reg__cfg" kindref="compound">bt_mesh_light_ctrl_srv_reg_cfg</ref></type>
+        <definition>struct bt_mesh_light_ctrl_srv_reg_cfg bt_mesh_light_ctrl_srv_reg::cfg</definition>
+        <argsstring></argsstring>
+        <name>cfg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Regulator configuration </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="124" column="37" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Illumination regulator </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_mesh_light_ctrl_srv_reg</label>
+        <link refid="structbt__mesh__light__ctrl__srv__reg"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>cfg</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_mesh_light_ctrl_srv_reg_cfg</label>
+        <link refid="structbt__mesh__light__ctrl__srv__reg__cfg"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="116" column="1" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="116" bodyend="125"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__ctrl__srv__reg_a53016b4a6567f319d798ffae88d172e3_1a53016b4a6567f319d798ffae88d172e3" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_srv_reg</scope><name>cfg</name></member>
+      <member refid="structbt__mesh__light__ctrl__srv__reg_a5008c68a8dde858c7f22764c2578de11_1a5008c68a8dde858c7f22764c2578de11" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_srv_reg</scope><name>i</name></member>
+      <member refid="structbt__mesh__light__ctrl__srv__reg_a73528da0e96edf97ddf19d08cea3ef2b_1a73528da0e96edf97ddf19d08cea3ef2b" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_srv_reg</scope><name>prev</name></member>
+      <member refid="structbt__mesh__light__ctrl__srv__reg_a4827edd66e35e9eb916cc563b5a2f281_1a4827edd66e35e9eb916cc563b5a2f281" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_srv_reg</scope><name>timer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

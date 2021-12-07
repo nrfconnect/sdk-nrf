@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="buttons__sim__def_8h" kind="file" language="C++">
+    <compoundname>buttons_sim_def.h</compoundname>
+    <includes refid="key__id_8h" local="no">caf/key_id.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/nrf52840dk_nrf52840/buttons_sim_def.h</label>
+        <link refid="buttons__sim__def_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>caf/key_id.h</label>
+        <link refid="key__id_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>sys/util.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="buttons__sim__def_8h_a86f7ec5ef18b9548c4fce5bd25d3336e_1a86f7ec5ef18b9548c4fce5bd25d3336e" prot="public" static="no" mutable="no">
+        <type>const struct @76</type>
+        <definition>const struct @76 buttons_sim_def_include_once</definition>
+        <argsstring></argsstring>
+        <name>buttons_sim_def_include_once</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840dk_nrf52840/buttons_sim_def.h" line="16" column="42"/>
+      </memberdef>
+      <memberdef kind="variable" id="buttons__sim__def_8h_a20fe8fb670ee452121e561378e74d540_1a20fe8fb670ee452121e561378e74d540" prot="public" static="yes" mutable="no">
+        <type>const uint16_t</type>
+        <definition>const uint16_t simulated_key_sequence[]</definition>
+        <argsstring>[]</argsstring>
+        <name>simulated_key_sequence</name>
+        <initializer>= {
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x11), 
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x12), 
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x15), 
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x07), 
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x0C), 
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x06), 
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00, 0x2C), 
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840dk_nrf52840/buttons_sim_def.h" line="18" column="23" bodyfile="applications/nrf_desktop/configuration/nrf52840dk_nrf52840/buttons_sim_def.h" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="key__id_8h" kindref="compound">caf/key_id.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>configuration<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>from<sp/>buttons_sim<sp/>module</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*<sp/>and<sp/>holds<sp/>information<sp/>about<sp/>generated<sp/>button<sp/>presses<sp/>sequence.</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>structure<sp/>enforces<sp/>the<sp/>header<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>in<sp/>the<sp/>build.</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*<sp/>Violating<sp/>this<sp/>requirement<sp/>triggers<sp/>a<sp/>multiple<sp/>definition<sp/>error<sp/>at<sp/>link<sp/>time.</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16" refid="buttons__sim__def_8h_a86f7ec5ef18b9548c4fce5bd25d3336e_1a86f7ec5ef18b9548c4fce5bd25d3336e" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{}<sp/><ref refid="buttons__sim__def_8h_a86f7ec5ef18b9548c4fce5bd25d3336e_1a86f7ec5ef18b9548c4fce5bd25d3336e" kindref="member">buttons_sim_def_include_once</ref>;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="buttons__sim__def_8h_a20fe8fb670ee452121e561378e74d540_1a20fe8fb670ee452121e561378e74d540" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>uint16_t<sp/><ref refid="buttons__sim__def_8h_a20fe8fb670ee452121e561378e74d540_1a20fe8fb670ee452121e561378e74d540" kindref="member">simulated_key_sequence</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x11),<sp/></highlight><highlight class="comment">/*<sp/>N<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x12),<sp/></highlight><highlight class="comment">/*<sp/>O<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x15),<sp/></highlight><highlight class="comment">/*<sp/>R<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x07),<sp/></highlight><highlight class="comment">/*<sp/>D<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x0C),<sp/></highlight><highlight class="comment">/*<sp/>I<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x06),<sp/></highlight><highlight class="comment">/*<sp/>C<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x00,<sp/>0x2C),<sp/></highlight><highlight class="comment">/*<sp/>spacebar<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/nrf52840dk_nrf52840/buttons_sim_def.h"/>
+  </compounddef>
+</doxygen>

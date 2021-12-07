@@ -1,0 +1,445 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="hw__unique__key_8h" kind="file" language="C++">
+    <compoundname>hw_unique_key.h</compoundname>
+    <includes local="no">stdbool.h</includes>
+    <includedby refid="hw__unique__key__internal_8h" local="no">lib/hw_unique_key/hw_unique_key_internal.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/hw_unique_key.h</label>
+        <link refid="hw__unique__key_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stdbool.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>include/hw_unique_key.h</label>
+        <link refid="hw__unique__key_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>lib/hw_unique_key/hw_unique_key_internal.h</label>
+        <link refid="hw__unique__key__internal_8h"/>
+      </node>
+    </invincdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__hw__unique__key_ga3106b1c7cf6f42f7e9175d8d3da9d6b7_1ga3106b1c7cf6f42f7e9175d8d3da9d6b7" prot="public" static="no">
+        <name>HUK_HAS_KMU</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/hw_unique_key.h" line="38" column="9" bodyfile="include/hw_unique_key.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__hw__unique__key_ga7044769049e13ecfaca657fd6e882854_1ga7044769049e13ecfaca657fd6e882854" prot="public" static="no">
+        <name>HUK_SIZE_BYTES</name>
+        <initializer>(HUK_SIZE_WORDS * 4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/hw_unique_key.h" line="55" column="9" bodyfile="include/hw_unique_key.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__hw__unique__key_ga73bd9af92716c6eafcd65b42f4e8b064_1ga73bd9af92716c6eafcd65b42f4e8b064" prot="public" static="no">
+        <name>ERR_HUK_MISSING</name>
+        <initializer>0x15500</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/hw_unique_key.h" line="56" column="9" bodyfile="include/hw_unique_key.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__hw__unique__key_ga57608247781e03c7e2c58d8a9963ba46_1ga57608247781e03c7e2c58d8a9963ba46" prot="public" static="no">
+        <name>KMU_SELECT_SLOT</name>
+        <param><defname>KEYSLOT</defname></param>
+        <initializer>(uint32_t)((KEYSLOT) + 1) /* NRF_KMU KEYSLOT are 1-indexed. */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/hw_unique_key.h" line="73" column="9" bodyfile="include/hw_unique_key.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__hw__unique__key_ga382d8696f6adec5f05569a95bb2d8201_1ga382d8696f6adec5f05569a95bb2d8201" prot="public" static="no" strong="no">
+        <type></type>
+        <name>hw_unique_key_slot</name>
+        <enumvalue id="group__hw__unique__key_ga382d8696f6adec5f05569a95bb2d8201_1gga382d8696f6adec5f05569a95bb2d8201af73932bb322cb5223dd27a969463b523" prot="public">
+          <name>HUK_KEYSLOT_MKEK</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__hw__unique__key_ga382d8696f6adec5f05569a95bb2d8201_1gga382d8696f6adec5f05569a95bb2d8201aaf9eb3006e676cdb35cb8b29640835df" prot="public">
+          <name>HUK_KEYSLOT_MEXT</name>
+          <initializer>= 4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/hw_unique_key.h" line="64" column="1" bodyfile="include/hw_unique_key.h" bodystart="64" bodyend="71"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__hw__unique__key_gaafebed6474b6904d4cfd09498d28d4e5_1gaafebed6474b6904d4cfd09498d28d4e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void hw_unique_key_write</definition>
+        <argsstring>(enum hw_unique_key_slot kmu_slot, const uint8_t *key)</argsstring>
+        <name>hw_unique_key_write</name>
+        <param>
+          <type>enum <ref refid="group__hw__unique__key_ga382d8696f6adec5f05569a95bb2d8201_1ga382d8696f6adec5f05569a95bb2d8201" kindref="member">hw_unique_key_slot</ref></type>
+          <declname>kmu_slot</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>key</declname>
+        </param>
+        <briefdescription>
+<para>Write a Hardware Unique Key to the KMU. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This can only be done once (until a mass erase happens). This function waits for the flash operation to finish before returning. Panic on failure.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">kmu_slot</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The keyslot to write to, see HUK_KEYSLOT_*. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">key</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The key to write. Must be <ref refid="group__hw__unique__key_ga7044769049e13ecfaca657fd6e882854_1ga7044769049e13ecfaca657fd6e882854" kindref="member">HUK_SIZE_BYTES</ref> bytes long. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/hw_unique_key.h" line="85" column="6" declfile="include/hw_unique_key.h" declline="85" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__hw__unique__key_gac46a9be0a4a78a51a33b05a97082c81f_1gac46a9be0a4a78a51a33b05a97082c81f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool hw_unique_key_is_written</definition>
+        <argsstring>(enum hw_unique_key_slot kmu_slot)</argsstring>
+        <name>hw_unique_key_is_written</name>
+        <param>
+          <type>enum <ref refid="group__hw__unique__key_ga382d8696f6adec5f05569a95bb2d8201_1ga382d8696f6adec5f05569a95bb2d8201" kindref="member">hw_unique_key_slot</ref></type>
+          <declname>kmu_slot</declname>
+        </param>
+        <briefdescription>
+<para>Check whether a Hardware Unique Key has been written to the KMU. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">kmu_slot</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The keyslot to check, see HUK_KEYSLOT_*.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if a HUK has been written to the specified keyslot, </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>otherwise. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/hw_unique_key.h" line="104" column="6" declfile="include/hw_unique_key.h" declline="104" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__hw__unique__key_ga759799320ff7f7e46adbb7b0e7937146_1ga759799320ff7f7e46adbb7b0e7937146" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool hw_unique_key_are_any_written</definition>
+        <argsstring>(void)</argsstring>
+        <name>hw_unique_key_are_any_written</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Check whether any Hardware Unique Keys are written to the KMU. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if one or more HUKs are written </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if all HUKs are unwritten. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/hw_unique_key.h" line="112" column="6" declfile="include/hw_unique_key.h" declline="112" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__hw__unique__key_ga6bd665a33bfe79f5ddcc3cb58fac2e53_1ga6bd665a33bfe79f5ddcc3cb58fac2e53" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int hw_unique_key_derive_key</definition>
+        <argsstring>(enum hw_unique_key_slot kmu_slot, const uint8_t *context, size_t context_size, uint8_t const *label, size_t label_size, uint8_t *output, uint32_t output_size)</argsstring>
+        <name>hw_unique_key_derive_key</name>
+        <param>
+          <type>enum <ref refid="group__hw__unique__key_ga382d8696f6adec5f05569a95bb2d8201_1ga382d8696f6adec5f05569a95bb2d8201" kindref="member">hw_unique_key_slot</ref></type>
+          <declname>kmu_slot</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>context</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>context_size</declname>
+        </param>
+        <param>
+          <type>uint8_t const *</type>
+          <declname>label</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>label_size</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>output_size</declname>
+        </param>
+        <briefdescription>
+<para>Derive a key from the specified HUK, using the nrf_cc3xx_platform API. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>See nrf_cc3xx_platform_kmu_shadow_key_derive() for more info.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">kmu_slot</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Keyslot to derive from. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for key derivation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">context_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of context. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">label</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Label for key derivation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">label_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of label. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The derived key. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">output_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>on success </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ERR_HUK_MISSING</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the slot has not been written. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>otherwise, an error from nrf_cc3xx_platform_kmu_shadow_key_derive() </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/hw_unique_key.h" line="143" column="5" declfile="include/hw_unique_key.h" declline="143" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>HW_UNIQUE_KEY_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>HW_UNIQUE_KEY_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdbool.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__ZEPHYR__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;autoconf.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_HAS_HW_NRF_KMU</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>#define<sp/>HUK_HAS_KMU</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_HAS_HW_NRF_CC310</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>#define<sp/>HUK_HAS_CC310</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_HAS_HW_NRF_CC312</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>#define<sp/>HUK_HAS_CC312</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#else<sp/></highlight><highlight class="comment">/*<sp/>__ZEPHYR__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="group__hw__unique__key_ga3106b1c7cf6f42f7e9175d8d3da9d6b7_1ga3106b1c7cf6f42f7e9175d8d3da9d6b7" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>HUK_HAS_KMU</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>NRF9160_XXAA</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>#define<sp/>HUK_HAS_CC310</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>NRF5340_XXAA_APPLICATION</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>#define<sp/>HUK_HAS_CC312</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>__ZEPHYR__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>HUK_HAS_CC310</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>HUK_SIZE_WORDS<sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="preprocessor">#elif<sp/>defined(HUK_HAS_CC312)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>HUK_SIZE_WORDS<sp/>8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="preprocessor">#error<sp/>This<sp/>library<sp/>requires<sp/>CryptoCell<sp/>to<sp/>be<sp/>available.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="group__hw__unique__key_ga7044769049e13ecfaca657fd6e882854_1ga7044769049e13ecfaca657fd6e882854" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>HUK_SIZE_BYTES<sp/>(HUK_SIZE_WORDS<sp/>*<sp/>4)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="group__hw__unique__key_ga73bd9af92716c6eafcd65b42f4e8b064_1ga73bd9af92716c6eafcd65b42f4e8b064" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ERR_HUK_MISSING<sp/>0x15500</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>The<sp/>available<sp/>slots.<sp/>KDR<sp/>is<sp/>always<sp/>available,<sp/>while<sp/>the<sp/>MKEK<sp/>and<sp/>MEXT</highlight></codeline>
+<codeline lineno="60"><highlight class="comment"><sp/>*<sp/>keys<sp/>are<sp/>only<sp/>stored<sp/>when<sp/>there<sp/>is<sp/>a<sp/>KMU,<sp/>since<sp/>without<sp/>a<sp/>key,<sp/>the<sp/>key</highlight></codeline>
+<codeline lineno="61"><highlight class="comment"><sp/>*<sp/>store<sp/>must<sp/>be<sp/>locked<sp/>after<sp/>booting,<sp/>and<sp/>the<sp/>KDR<sp/>is<sp/>the<sp/>only<sp/>key<sp/>that<sp/>can</highlight></codeline>
+<codeline lineno="62"><highlight class="comment"><sp/>*<sp/>live<sp/>in<sp/>the<sp/>CC<sp/>HW<sp/>for<sp/>the<sp/>entire<sp/>boot<sp/>cycle<sp/>of<sp/>the<sp/>device.</highlight></codeline>
+<codeline lineno="63"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="group__hw__unique__key_ga382d8696f6adec5f05569a95bb2d8201_1ga382d8696f6adec5f05569a95bb2d8201" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__hw__unique__key_ga382d8696f6adec5f05569a95bb2d8201_1ga382d8696f6adec5f05569a95bb2d8201" kindref="member">hw_unique_key_slot</ref><sp/>{</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>HUK_HAS_KMU</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>HUK_KEYSLOT_KDR<sp/><sp/>=<sp/>0,<sp/></highlight><highlight class="comment">/*<sp/>Device<sp/>Root<sp/>Key<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="group__hw__unique__key_ga382d8696f6adec5f05569a95bb2d8201_1gga382d8696f6adec5f05569a95bb2d8201af73932bb322cb5223dd27a969463b523" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__hw__unique__key_ga382d8696f6adec5f05569a95bb2d8201_1gga382d8696f6adec5f05569a95bb2d8201af73932bb322cb5223dd27a969463b523" kindref="member">HUK_KEYSLOT_MKEK</ref><sp/>=<sp/>2,<sp/></highlight><highlight class="comment">/*<sp/>Master<sp/>Key<sp/>Encryption<sp/>Key<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="group__hw__unique__key_ga382d8696f6adec5f05569a95bb2d8201_1gga382d8696f6adec5f05569a95bb2d8201aaf9eb3006e676cdb35cb8b29640835df" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__hw__unique__key_ga382d8696f6adec5f05569a95bb2d8201_1gga382d8696f6adec5f05569a95bb2d8201aaf9eb3006e676cdb35cb8b29640835df" kindref="member">HUK_KEYSLOT_MEXT</ref><sp/>=<sp/>4,<sp/></highlight><highlight class="comment">/*<sp/>Master<sp/>External<sp/>Storage<sp/>Encryption<sp/>Key<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="group__hw__unique__key_ga57608247781e03c7e2c58d8a9963ba46_1ga57608247781e03c7e2c58d8a9963ba46" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>KMU_SELECT_SLOT(KEYSLOT)<sp/>(uint32_t)((KEYSLOT)<sp/>+<sp/>1)<sp/></highlight><highlight class="comment">/*<sp/>NRF_KMU<sp/>KEYSLOT<sp/>are<sp/>1-indexed.<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="group__hw__unique__key_gaafebed6474b6904d4cfd09498d28d4e5_1gaafebed6474b6904d4cfd09498d28d4e5" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__hw__unique__key_gaafebed6474b6904d4cfd09498d28d4e5_1gaafebed6474b6904d4cfd09498d28d4e5" kindref="member">hw_unique_key_write</ref>(</highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__hw__unique__key_ga382d8696f6adec5f05569a95bb2d8201_1ga382d8696f6adec5f05569a95bb2d8201" kindref="member">hw_unique_key_slot</ref><sp/>kmu_slot,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*key);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_HW_UNIQUE_KEY_RANDOM</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>hw_unique_key_write_random(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>CONFIG_HW_UNIQUE_KEY_RANDOM<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104" refid="group__hw__unique__key_gac46a9be0a4a78a51a33b05a97082c81f_1gac46a9be0a4a78a51a33b05a97082c81f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__hw__unique__key_gac46a9be0a4a78a51a33b05a97082c81f_1gac46a9be0a4a78a51a33b05a97082c81f" kindref="member">hw_unique_key_is_written</ref>(</highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__hw__unique__key_ga382d8696f6adec5f05569a95bb2d8201_1ga382d8696f6adec5f05569a95bb2d8201" kindref="member">hw_unique_key_slot</ref><sp/>kmu_slot);</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112" refid="group__hw__unique__key_ga759799320ff7f7e46adbb7b0e7937146_1ga759799320ff7f7e46adbb7b0e7937146" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__hw__unique__key_ga759799320ff7f7e46adbb7b0e7937146_1ga759799320ff7f7e46adbb7b0e7937146" kindref="member">hw_unique_key_are_any_written</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_HAS_HW_NRF_ACL</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>hw_unique_key_load_kdr(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>CONFIG_HAS_HW_NRF_ACL<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143" refid="group__hw__unique__key_ga6bd665a33bfe79f5ddcc3cb58fac2e53_1ga6bd665a33bfe79f5ddcc3cb58fac2e53" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__hw__unique__key_ga6bd665a33bfe79f5ddcc3cb58fac2e53_1ga6bd665a33bfe79f5ddcc3cb58fac2e53" kindref="member">hw_unique_key_derive_key</ref>(</highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__hw__unique__key_ga382d8696f6adec5f05569a95bb2d8201_1ga382d8696f6adec5f05569a95bb2d8201" kindref="member">hw_unique_key_slot</ref><sp/>kmu_slot,</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*context,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>context_size,</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>*label,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>label_size,</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*output,<sp/>uint32_t<sp/>output_size);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>HW_UNIQUE_KEY_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/hw_unique_key.h"/>
+  </compounddef>
+</doxygen>

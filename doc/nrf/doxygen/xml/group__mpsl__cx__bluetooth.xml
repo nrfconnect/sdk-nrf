@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__mpsl__cx__bluetooth" kind="group">
+    <compoundname>mpsl_cx_bluetooth</compoundname>
+    <title>MPSL Coexistence configuration for Bluetooth Radio Coexistence</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__mpsl__cx__bluetooth_1ga1d89748aebe09ba978acc328f57fbe8e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>int32_t mpsl_cx_bt_interface_3wire_config_set</definition>
+        <argsstring>(void)</argsstring>
+        <name>mpsl_cx_bt_interface_3wire_config_set</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Configures the Bluetooth Radio Coexistence interface. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function sets device interface parameters for the Coexistence module. The module is used to control PTA interface through the given pins and resources.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Coexistence interface successfully configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-NRF_EPERM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Coexistence interface is not available. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/mpsl/mpsl_cx_config_bluetooth.h" line="31" column="9" declfile="include/mpsl/mpsl_cx_config_bluetooth.h" declline="31" declcolumn="9"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__ble__ctrl__event" kind="group">
+    <compoundname>ble_ctrl_event</compoundname>
+    <title>BLE Control Event</title>
+    <innerclass refid="structble__ctrl__event" prot="public">ble_ctrl_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__ble__ctrl__event_1gacd73b04d8538a7d6e8c9784a79bd91a4" prot="public" static="no" strong="no">
+        <type></type>
+        <name>ble_ctrl_cmd</name>
+        <enumvalue id="group__ble__ctrl__event_gacd73b04d8538a7d6e8c9784a79bd91a4_1ggacd73b04d8538a7d6e8c9784a79bd91a4a0a2cba2b82dcfb1ffd4297461788c3e5" prot="public">
+          <name>BLE_CTRL_ENABLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ble__ctrl__event_gacd73b04d8538a7d6e8c9784a79bd91a4_1ggacd73b04d8538a7d6e8c9784a79bd91a4a4ce12d0a528f7f38f489b29c843f175c" prot="public">
+          <name>BLE_CTRL_DISABLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ble__ctrl__event_gacd73b04d8538a7d6e8c9784a79bd91a4_1ggacd73b04d8538a7d6e8c9784a79bd91a4aee2f1c2067c9ea01792c3e0a330dfb3e" prot="public">
+          <name>BLE_CTRL_NAME_UPDATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/ble_ctrl_event.h" line="26" column="1" bodyfile="applications/connectivity_bridge/src/events/ble_ctrl_event.h" bodystart="26" bodyend="30"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>BLE Control Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

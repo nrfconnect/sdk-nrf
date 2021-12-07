@@ -1,0 +1,179 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="debug__module__event_8h" kind="file" language="C++">
+    <compoundname>debug_module_event.h</compoundname>
+    <includes refid="event__manager_8h" local="no">event_manager.h</includes>
+    <includes refid="event__manager__profiler_8h" local="no">event_manager_profiler.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/asset_tracker_v2/src/events/debug_module_event.h</label>
+        <link refid="debug__module__event_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>event_manager.h</label>
+        <link refid="event__manager_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>event_manager_profiler.h</label>
+        <link refid="event__manager__profiler_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>profiler.h</label>
+        <link refid="profiler_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>event_manager_priv.h</label>
+      </node>
+      <node id="12">
+        <label>event_manager_profiler_priv.h</label>
+      </node>
+      <node id="7">
+        <label>logging/log_ctrl.h</label>
+      </node>
+      <node id="6">
+        <label>sys/__assert.h</label>
+      </node>
+      <node id="5">
+        <label>sys/reboot.h</label>
+      </node>
+      <node id="10">
+        <label>sys/util.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr.h</label>
+      </node>
+      <node id="4">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structdebug__module__memfault__data" prot="public">debug_module_memfault_data</innerclass>
+    <innerclass refid="structdebug__module__event" prot="public">debug_module_event</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__debug__module__event_ga1dac0bec5981d12f204c8432460eec39_1ga1dac0bec5981d12f204c8432460eec39" prot="public" static="no">
+        <name>MEMFAULT_BUFFER_SIZE_MAX</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/debug_module_event.h" line="26" column="10" bodyfile="applications/asset_tracker_v2/src/events/debug_module_event.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__debug__module__event_ga00d96ddf87d2eb2b7094133150238799_1ga00d96ddf87d2eb2b7094133150238799" prot="public" static="no" strong="no">
+        <type></type>
+        <name>debug_module_event_type</name>
+        <enumvalue id="group__debug__module__event_ga00d96ddf87d2eb2b7094133150238799_1gga00d96ddf87d2eb2b7094133150238799a0aec778a173bb4b30039b3a4153b95e3" prot="public">
+          <name>DEBUG_EVT_MEMFAULT_DATA_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Event carrying memfault data that should be forwarded via the configured cloud backend to Memfault cloud. Only sent if CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT is enabled. Payload is of type <ref refid="structdebug__module__memfault__data" kindref="compound">debug_module_memfault_data</ref>. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__debug__module__event_ga00d96ddf87d2eb2b7094133150238799_1gga00d96ddf87d2eb2b7094133150238799a2c2f95d05e536b56cb20084079fac008" prot="public">
+          <name>DEBUG_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Event submitted by the debug module upon an irrecoverable error. The event includes a code indicating the cause of error. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/debug_module_event.h" line="29" column="1" bodyfile="applications/asset_tracker_v2/src/events/debug_module_event.h" bodystart="29" bodyend="41"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_DEBUG_MODULE_EVENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_DEBUG_MODULE_EVENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="event__manager_8h" kindref="compound">event_manager.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="event__manager__profiler_8h" kindref="compound">event_manager_profiler.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MEMFAULT_BUFFER_SIZE_MAX<sp/>CONFIG_DEBUG_MODULE_MEMFAULT_CHUNK_SIZE_MAX</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="group__debug__module__event_ga1dac0bec5981d12f204c8432460eec39_1ga1dac0bec5981d12f204c8432460eec39" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MEMFAULT_BUFFER_SIZE_MAX<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>if<sp/>defined(CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT)<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="group__debug__module__event_ga00d96ddf87d2eb2b7094133150238799_1ga00d96ddf87d2eb2b7094133150238799" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__debug__module__event_ga00d96ddf87d2eb2b7094133150238799_1ga00d96ddf87d2eb2b7094133150238799" kindref="member">debug_module_event_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="35" refid="group__debug__module__event_ga00d96ddf87d2eb2b7094133150238799_1gga00d96ddf87d2eb2b7094133150238799a0aec778a173bb4b30039b3a4153b95e3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__debug__module__event_ga00d96ddf87d2eb2b7094133150238799_1gga00d96ddf87d2eb2b7094133150238799a0aec778a173bb4b30039b3a4153b95e3" kindref="member">DEBUG_EVT_MEMFAULT_DATA_READY</ref>,</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__debug__module__event_ga00d96ddf87d2eb2b7094133150238799_1gga00d96ddf87d2eb2b7094133150238799a2c2f95d05e536b56cb20084079fac008" kindref="member">DEBUG_EVT_ERROR</ref></highlight></codeline>
+<codeline lineno="41" refid="group__debug__module__event_ga00d96ddf87d2eb2b7094133150238799_1gga00d96ddf87d2eb2b7094133150238799a2c2f95d05e536b56cb20084079fac008" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="structdebug__module__memfault__data" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structdebug__module__memfault__data" kindref="compound">debug_module_memfault_data</ref><sp/>{</highlight></codeline>
+<codeline lineno="44" refid="structdebug__module__memfault__data_afcf22be3ff141d37164458d31bb5e180_1afcf22be3ff141d37164458d31bb5e180" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structdebug__module__memfault__data_afcf22be3ff141d37164458d31bb5e180_1afcf22be3ff141d37164458d31bb5e180" kindref="member">buf</ref>[<ref refid="group__debug__module__event_ga1dac0bec5981d12f204c8432460eec39_1ga1dac0bec5981d12f204c8432460eec39" kindref="member">MEMFAULT_BUFFER_SIZE_MAX</ref>];</highlight></codeline>
+<codeline lineno="45" refid="structdebug__module__memfault__data_a4d953abf4e815f014991b52ee20277f2_1a4d953abf4e815f014991b52ee20277f2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structdebug__module__memfault__data_a4d953abf4e815f014991b52ee20277f2_1a4d953abf4e815f014991b52ee20277f2" kindref="member">len</ref>;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="structdebug__module__event" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structdebug__module__event" kindref="compound">debug_module_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="50" refid="structdebug__module__event_a72ad0996d270bb61073eb67dc423fd71_1a72ad0996d270bb61073eb67dc423fd71" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structevent__header" kindref="compound">event_header</ref><sp/><ref refid="structdebug__module__event_a72ad0996d270bb61073eb67dc423fd71_1a72ad0996d270bb61073eb67dc423fd71" kindref="member">header</ref>;</highlight></codeline>
+<codeline lineno="51" refid="structdebug__module__event_a7e71c3cf16fb7a12160a3ab4cdbbee6d_1a7e71c3cf16fb7a12160a3ab4cdbbee6d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__debug__module__event_ga00d96ddf87d2eb2b7094133150238799_1ga00d96ddf87d2eb2b7094133150238799" kindref="member">debug_module_event_type</ref><sp/><ref refid="structdebug__module__event_a7e71c3cf16fb7a12160a3ab4cdbbee6d_1a7e71c3cf16fb7a12160a3ab4cdbbee6d" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">union<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="54" refid="structdebug__module__event_ad6b359ccbe1851684d34474d90bd4e8b_1ad6b359ccbe1851684d34474d90bd4e8b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structdebug__module__memfault__data" kindref="compound">debug_module_memfault_data</ref><sp/><ref refid="structdebug__module__event_ad6b359ccbe1851684d34474d90bd4e8b_1ad6b359ccbe1851684d34474d90bd4e8b" kindref="member">memfault</ref>;</highlight></codeline>
+<codeline lineno="55" refid="structdebug__module__event_a624f2742bef174bbaf00439cbe5fb372_1a624f2742bef174bbaf00439cbe5fb372" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structdebug__module__event_a624f2742bef174bbaf00439cbe5fb372_1a624f2742bef174bbaf00439cbe5fb372" kindref="member">err</ref>;</highlight></codeline>
+<codeline lineno="56" refid="structdebug__module__event_acab7267de6f968cef6f039f44c2f9ade_1acab7267de6f968cef6f039f44c2f9ade" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/><ref refid="structdebug__module__event_acab7267de6f968cef6f039f44c2f9ade_1acab7267de6f968cef6f039f44c2f9ade" kindref="member">data</ref>;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><ref refid="group__event__manager_gade0652b21cddf1a6b4d58e668b402caa_1gade0652b21cddf1a6b4d58e668b402caa" kindref="member">EVENT_TYPE_DECLARE</ref>(<ref refid="structdebug__module__event" kindref="compound">debug_module_event</ref>);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_DEBUG_MODULE_EVENT_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/asset_tracker_v2/src/events/debug_module_event.h"/>
+  </compounddef>
+</doxygen>

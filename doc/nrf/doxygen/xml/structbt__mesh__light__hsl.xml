@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__hsl" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_hsl</compoundname>
+    <includes refid="light__hsl_8h" local="no">light_hsl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__hsl_a092227958a05a3545f64a7ab063696da_1a092227958a05a3545f64a7ab063696da" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_light_hsl::lightness</definition>
+        <argsstring></argsstring>
+        <name>lightness</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Lightness level </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl.h" line="33" column="10" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__hsl_a7c1c4ddb17b14d77c676e9f8618c86de_1a7c1c4ddb17b14d77c676e9f8618c86de" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_light_hsl::hue</definition>
+        <argsstring></argsstring>
+        <name>hue</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Hue level </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl.h" line="35" column="10" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__hsl_ae4d23e2030d6189f3ce0abd68941c6f1_1ae4d23e2030d6189f3ce0abd68941c6f1" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_light_hsl::saturation</definition>
+        <argsstring></argsstring>
+        <name>saturation</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Saturation level </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl.h" line="37" column="10" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Common Light HSL parameters </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/light_hsl.h" line="31" column="1" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="31" bodyend="38"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__hsl_a7c1c4ddb17b14d77c676e9f8618c86de_1a7c1c4ddb17b14d77c676e9f8618c86de" prot="public" virt="non-virtual"><scope>bt_mesh_light_hsl</scope><name>hue</name></member>
+      <member refid="structbt__mesh__light__hsl_a092227958a05a3545f64a7ab063696da_1a092227958a05a3545f64a7ab063696da" prot="public" virt="non-virtual"><scope>bt_mesh_light_hsl</scope><name>lightness</name></member>
+      <member refid="structbt__mesh__light__hsl_ae4d23e2030d6189f3ce0abd68941c6f1_1ae4d23e2030d6189f3ce0abd68941c6f1" prot="public" virt="non-virtual"><scope>bt_mesh_light_hsl</scope><name>saturation</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

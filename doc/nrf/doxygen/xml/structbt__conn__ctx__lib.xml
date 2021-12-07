@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__conn__ctx__lib" kind="struct" language="C++" prot="public">
+    <compoundname>bt_conn_ctx_lib</compoundname>
+    <includes refid="conn__ctx_8h" local="no">conn_ctx.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__conn__ctx__lib_a3648b415f815381b2aea8355f406ad59_1a3648b415f815381b2aea8355f406ad59" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__conn__ctx" kindref="compound">bt_conn_ctx</ref></type>
+        <definition>struct bt_conn_ctx bt_conn_ctx_lib::ctx[CONFIG_BT_MAX_CONN]</definition>
+        <argsstring>[CONFIG_BT_MAX_CONN]</argsstring>
+        <name>ctx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Connection contexts. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/conn_ctx.h" line="55" column="18" bodyfile="include/bluetooth/conn_ctx.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__conn__ctx__lib_a7aa81f1b5f501d6e47464f5213a8965b_1a7aa81f1b5f501d6e47464f5213a8965b" prot="public" static="no" mutable="no">
+        <type>struct k_mutex *const</type>
+        <definition>struct k_mutex* const bt_conn_ctx_lib::mutex</definition>
+        <argsstring></argsstring>
+        <name>mutex</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Context data mutex that ensures that only one connection context is manipulated at a time. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/conn_ctx.h" line="59" column="21" bodyfile="include/bluetooth/conn_ctx.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__conn__ctx__lib_a6b58b530501b9d597c77efe001ccfe0e_1a6b58b530501b9d597c77efe001ccfe0e" prot="public" static="no" mutable="no">
+        <type>struct k_mem_slab *const</type>
+        <definition>struct k_mem_slab* const bt_conn_ctx_lib::mem_slab</definition>
+        <argsstring></argsstring>
+        <name>mem_slab</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Memory slab instance where the memory is allocated. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/conn_ctx.h" line="62" column="24" bodyfile="include/bluetooth/conn_ctx.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Bluetooth connection context library structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_conn_ctx</label>
+        <link refid="structbt__conn__ctx"/>
+      </node>
+      <node id="1">
+        <label>bt_conn_ctx_lib</label>
+        <link refid="structbt__conn__ctx__lib"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>ctx</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/conn_ctx.h" line="53" column="1" bodyfile="include/bluetooth/conn_ctx.h" bodystart="53" bodyend="63"/>
+    <listofallmembers>
+      <member refid="structbt__conn__ctx__lib_a3648b415f815381b2aea8355f406ad59_1a3648b415f815381b2aea8355f406ad59" prot="public" virt="non-virtual"><scope>bt_conn_ctx_lib</scope><name>ctx</name></member>
+      <member refid="structbt__conn__ctx__lib_a6b58b530501b9d597c77efe001ccfe0e_1a6b58b530501b9d597c77efe001ccfe0e" prot="public" virt="non-virtual"><scope>bt_conn_ctx_lib</scope><name>mem_slab</name></member>
+      <member refid="structbt__conn__ctx__lib_a7aa81f1b5f501d6e47464f5213a8965b_1a7aa81f1b5f501d6e47464f5213a8965b" prot="public" virt="non-virtual"><scope>bt_conn_ctx_lib</scope><name>mutex</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

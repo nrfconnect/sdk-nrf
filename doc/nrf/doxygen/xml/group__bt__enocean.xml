@@ -1,0 +1,385 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__enocean" kind="group">
+    <compoundname>bt_enocean</compoundname>
+    <title>Bluetooth EnOcean library API</title>
+    <innerclass refid="structbt__enocean__sensor__data" prot="public">bt_enocean_sensor_data</innerclass>
+    <innerclass refid="structbt__enocean__device" prot="public">bt_enocean_device</innerclass>
+    <innerclass refid="structbt__enocean__callbacks" prot="public">bt_enocean_callbacks</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__enocean_1gaafdee8cdc0ee7c4008c159137fdcc6e8" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_enocean_button_action</name>
+        <enumvalue id="group__bt__enocean_gaafdee8cdc0ee7c4008c159137fdcc6e8_1ggaafdee8cdc0ee7c4008c159137fdcc6e8ac73ca348b89a06cee34da71fa7b63d2f" prot="public">
+          <name>BT_ENOCEAN_BUTTON_RELEASE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Buttons were released. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__enocean_gaafdee8cdc0ee7c4008c159137fdcc6e8_1ggaafdee8cdc0ee7c4008c159137fdcc6e8a1a295de2baea99e94214608f1f6bceed" prot="public">
+          <name>BT_ENOCEAN_BUTTON_PRESS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Buttons were pressed. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Type of button event </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="55" column="1" bodyfile="include/bluetooth/enocean.h" bodystart="55" bodyend="58"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__bt__enocean_1ga5c30ded525763e33f60cc12a5622d0c3" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_enocean_foreach_cb_t) (struct bt_enocean_device *dev, void *user_data)</definition>
+        <argsstring>)(struct bt_enocean_device *dev, void *user_data)</argsstring>
+        <name>bt_enocean_foreach_cb_t</name>
+        <briefdescription>
+<para>Visitor callback for <ref refid="group__bt__enocean_gabb1d91da2d36fa0cf7f74b1643edfa29_1gabb1d91da2d36fa0cf7f74b1643edfa29" kindref="member">bt_enocean_foreach</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dev</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>EnOcean device </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>user_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>User data passed to <ref refid="group__bt__enocean_gabb1d91da2d36fa0cf7f74b1643edfa29_1gabb1d91da2d36fa0cf7f74b1643edfa29" kindref="member">bt_enocean_foreach</ref>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="131" column="9" bodyfile="include/bluetooth/enocean.h" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__enocean_1ga7b223a92de11209c650e3315d8842fb3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_enocean_init</definition>
+        <argsstring>(const struct bt_enocean_callbacks *cb)</argsstring>
+        <name>bt_enocean_init</name>
+        <param>
+          <type>const struct <ref refid="structbt__enocean__callbacks" kindref="compound">bt_enocean_callbacks</ref> *</type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the EnOcean subsystem. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of callbacks to receive events with. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="138" column="6" declfile="include/bluetooth/enocean.h" declline="138" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__enocean_1ga7331d8866b7e55b80a305ef22f3b997b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_enocean_commissioning_enable</definition>
+        <argsstring>(void)</argsstring>
+        <name>bt_enocean_commissioning_enable</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Enable automatic commissioning. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function must be called for the module to start accepting commissioning packets. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="145" column="6" declfile="include/bluetooth/enocean.h" declline="145" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__enocean_1ga96e2a772cd76b4c729a190cd33d75b74" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_enocean_commissioning_disable</definition>
+        <argsstring>(void)</argsstring>
+        <name>bt_enocean_commissioning_disable</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Disable automatic commissioning. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Automatic commissioning will be disabled until <ref refid="group__bt__enocean_ga7331d8866b7e55b80a305ef22f3b997b_1ga7331d8866b7e55b80a305ef22f3b997b" kindref="member">bt_enocean_commissioning_enable</ref> is called. Manual commissioning through <ref refid="group__bt__enocean_gae2d4e50c29ebf89f790c1551af94e374_1gae2d4e50c29ebf89f790c1551af94e374" kindref="member">bt_enocean_commission</ref> is unaffected. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="153" column="6" declfile="include/bluetooth/enocean.h" declline="153" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__enocean_1gae2d4e50c29ebf89f790c1551af94e374" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_enocean_commission</definition>
+        <argsstring>(const bt_addr_le_t *addr, const uint8_t key[16], uint32_t seq)</argsstring>
+        <name>bt_enocean_commission</name>
+        <param>
+          <type>const bt_addr_le_t *</type>
+          <declname>addr</declname>
+        </param>
+        <param>
+          <type>const uint8_t</type>
+          <declname>key</declname>
+          <array>[16]</array>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>seq</declname>
+        </param>
+        <briefdescription>
+<para>Manually commission an EnOcean device. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Allows devices to be commissioned based on out of band data, like NFC or QR codes.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>addr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Address of the commissioned device. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>key</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Encryption key for the commissioned device. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>seq</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Most recent sequence number of the device.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has been successfully commissioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EEXIST</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This device has already been commissioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>There&apos;s not enough space to commission a new device. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ECANCELED</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The commissioning callback rejected the device. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EBUSY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Failed allocating persistent storage data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="170" column="5" declfile="include/bluetooth/enocean.h" declline="170" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__enocean_1ga512be4829717d9a3bd06b8cbf22988fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_enocean_decommission</definition>
+        <argsstring>(struct bt_enocean_device *dev)</argsstring>
+        <name>bt_enocean_decommission</name>
+        <param>
+          <type>struct <ref refid="structbt__enocean__device" kindref="compound">bt_enocean_device</ref> *</type>
+          <declname>dev</declname>
+        </param>
+        <briefdescription>
+<para>Forget an EnOcean device. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Removes the EnOcean device&apos;s security information, freeing up space for new devices. May be used directly in the <emphasis>bt_enocean_callbacks::commissioning</emphasis> callback to reject a device before it gets commissioned.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dev</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Device to forget. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="182" column="6" declfile="include/bluetooth/enocean.h" declline="182" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__enocean_1gabb1d91da2d36fa0cf7f74b1643edfa29" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_enocean_foreach</definition>
+        <argsstring>(bt_enocean_foreach_cb_t cb, void *user_data)</argsstring>
+        <name>bt_enocean_foreach</name>
+        <param>
+          <type><ref refid="group__bt__enocean_ga5c30ded525763e33f60cc12a5622d0c3_1ga5c30ded525763e33f60cc12a5622d0c3" kindref="member">bt_enocean_foreach_cb_t</ref></type>
+          <declname>cb</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>user_data</declname>
+        </param>
+        <briefdescription>
+<para>Call the given callback for each commissioned enocean device. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback to call for each device </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>user_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>User data to pass to the callback.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The number of devices visited. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="191" column="10" declfile="include/bluetooth/enocean.h" declline="191" declcolumn="10"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__enocean_1gab62d797a74f3e78195c3095719dfad4d" prot="public" static="no">
+        <name>BT_ENOCEAN_SWITCH_OA</name>
+        <initializer>BIT(0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Double rocker switch top left button (OA) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="23" column="9" bodyfile="include/bluetooth/enocean.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__enocean_1gacc1e62078abbc9a22ce506927d06de7e" prot="public" static="no">
+        <name>BT_ENOCEAN_SWITCH_IA</name>
+        <initializer>BIT(1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Double rocker switch bottom left button (IA) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="25" column="9" bodyfile="include/bluetooth/enocean.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__enocean_1gafcf9f009b023ea565e00ed2743ad6a15" prot="public" static="no">
+        <name>BT_ENOCEAN_SWITCH_OB</name>
+        <initializer>BIT(2)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Double rocker switch top right button (OB) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="27" column="9" bodyfile="include/bluetooth/enocean.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__enocean_1gaf32955c5a932ad26b9fc654f8c7da968" prot="public" static="no">
+        <name>BT_ENOCEAN_SWITCH_IB</name>
+        <initializer>BIT(3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Double rocker switch bottom right button (IB) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="29" column="9" bodyfile="include/bluetooth/enocean.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__enocean_1ga1720badcad37d9a0677ea1659953bb61" prot="public" static="no">
+        <name>BT_ENOCEAN_SWITCH_O</name>
+        <initializer><ref refid="group__bt__enocean_gafcf9f009b023ea565e00ed2743ad6a15_1gafcf9f009b023ea565e00ed2743ad6a15" kindref="member">BT_ENOCEAN_SWITCH_OB</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Single rocker switch top button (O) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="32" column="9" bodyfile="include/bluetooth/enocean.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__enocean_1gaff693820abebdcd6ac5db79cdfd2bab4" prot="public" static="no">
+        <name>BT_ENOCEAN_SWITCH_I</name>
+        <initializer><ref refid="group__bt__enocean_gaf32955c5a932ad26b9fc654f8c7da968_1gaf32955c5a932ad26b9fc654f8c7da968" kindref="member">BT_ENOCEAN_SWITCH_IB</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Single rocker switch bottom button (I) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="34" column="9" bodyfile="include/bluetooth/enocean.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for interacting with EnOcean Bluetooth wall switches and sensors. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__plvl__set" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_plvl_set</compoundname>
+    <includes refid="gen__plvl_8h" local="no">gen_plvl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__plvl__set_a76b7af2972e4067af7bbe2629a5398f3_1a76b7af2972e4067af7bbe2629a5398f3" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_plvl_set::power_lvl</definition>
+        <argsstring></argsstring>
+        <name>power_lvl</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Power Level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl.h" line="26" column="10" bodyfile="include/bluetooth/mesh/gen_plvl.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__set_a988e5058fa6497b8849a254cdf473e6d_1a988e5058fa6497b8849a254cdf473e6d" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref> *</type>
+        <definition>const struct bt_mesh_model_transition* bt_mesh_plvl_set::transition</definition>
+        <argsstring></argsstring>
+        <name>transition</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transition time parameters for the state change, or NULL.</para>
+<para>When sending, setting the transition to NULL makes the receiver use its default transition time parameters, or 0 if no default transition time is set. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl.h" line="34" column="37" bodyfile="include/bluetooth/mesh/gen_plvl.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Power Level set message parameters. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_mesh_model_transition</label>
+        <link refid="structbt__mesh__model__transition"/>
+      </node>
+      <node id="1">
+        <label>bt_mesh_plvl_set</label>
+        <link refid="structbt__mesh__plvl__set"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>transition</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/gen_plvl.h" line="24" column="1" bodyfile="include/bluetooth/mesh/gen_plvl.h" bodystart="24" bodyend="35"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__plvl__set_a76b7af2972e4067af7bbe2629a5398f3_1a76b7af2972e4067af7bbe2629a5398f3" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_set</scope><name>power_lvl</name></member>
+      <member refid="structbt__mesh__plvl__set_a988e5058fa6497b8849a254cdf473e6d_1a988e5058fa6497b8849a254cdf473e6d" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_set</scope><name>transition</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

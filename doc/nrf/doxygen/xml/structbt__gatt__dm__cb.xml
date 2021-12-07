@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__gatt__dm__cb" kind="struct" language="C++" prot="public">
+    <compoundname>bt_gatt_dm_cb</compoundname>
+    <includes refid="gatt__dm_8h" local="no">gatt_dm.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__gatt__dm__cb_a12804c5776589567db21fc57e1085b6b_1a12804c5776589567db21fc57e1085b6b" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_gatt_dm_cb::completed) (struct bt_gatt_dm *dm, void *context)</definition>
+        <argsstring>)(struct bt_gatt_dm *dm, void *context)</argsstring>
+        <name>completed</name>
+        <briefdescription>
+<para>Discovery completed callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The discovery procedure has completed successfully.</para>
+<para><simplesect kind="note"><para>You must release the discovery data with <ref refid="group__bt__gatt__dm_ga559dac5698864a7c66be8104a673d240_1ga559dac5698864a7c66be8104a673d240" kindref="member">bt_gatt_dm_data_release</ref> if you want to start another discovery.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery Manager instance </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The value passed to <emphasis>gatt_db_discovery_start()</emphasis> </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_dm.h" line="63" column="1" bodyfile="include/bluetooth/gatt_dm.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__gatt__dm__cb_aa3e88057b9c6437149238c2ad9a99538_1aa3e88057b9c6437149238c2ad9a99538" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_gatt_dm_cb::service_not_found) (struct bt_conn *conn, void *context)</definition>
+        <argsstring>)(struct bt_conn *conn, void *context)</argsstring>
+        <name>service_not_found</name>
+        <briefdescription>
+<para>Service not found callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The targeted service could not be found during the discovery.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connection object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The value passed to <emphasis>gatt_db_discovery_start()</emphasis> </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_dm.h" line="74" column="1" bodyfile="include/bluetooth/gatt_dm.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__gatt__dm__cb_a29e0a679cb5bdceca7661f4ce5dc14e7_1a29e0a679cb5bdceca7661f4ce5dc14e7" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_gatt_dm_cb::error_found) (struct bt_conn *conn, int err, void *context)</definition>
+        <argsstring>)(struct bt_conn *conn, int err, void *context)</argsstring>
+        <name>error_found</name>
+        <briefdescription>
+<para>Discovery error found callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The discovery procedure has failed.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connection object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The error code. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The value passed to <emphasis>gatt_db_discovery_start()</emphasis> </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_dm.h" line="86" column="1" bodyfile="include/bluetooth/gatt_dm.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Discovery callback structure. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This structure is used for tracking the result of a discovery. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/gatt_dm.h" line="50" column="1" bodyfile="include/bluetooth/gatt_dm.h" bodystart="50" bodyend="89"/>
+    <listofallmembers>
+      <member refid="structbt__gatt__dm__cb_a12804c5776589567db21fc57e1085b6b_1a12804c5776589567db21fc57e1085b6b" prot="public" virt="non-virtual"><scope>bt_gatt_dm_cb</scope><name>completed</name></member>
+      <member refid="structbt__gatt__dm__cb_a29e0a679cb5bdceca7661f4ce5dc14e7_1a29e0a679cb5bdceca7661f4ce5dc14e7" prot="public" virt="non-virtual"><scope>bt_gatt_dm_cb</scope><name>error_found</name></member>
+      <member refid="structbt__gatt__dm__cb_aa3e88057b9c6437149238c2ad9a99538_1aa3e88057b9c6437149238c2ad9a99538" prot="public" virt="non-virtual"><scope>bt_gatt_dm_cb</scope><name>service_not_found</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

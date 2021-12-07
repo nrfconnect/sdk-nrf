@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_5f556e73c48e6b9f60ad371731aca138" kind="dir">
+    <compoundname>applications/machine_learning/src/events</compoundname>
+    <innerfile refid="ei__data__forwarder__event_8h">ei_data_forwarder_event.h</innerfile>
+    <innerfile refid="ml__result__event_8h">ml_result_event.h</innerfile>
+    <innerfile refid="ml__state__event_8h">ml_state_event.h</innerfile>
+    <innerfile refid="sensor__sim__event_8h">sensor_sim_event.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/machine_learning/src/events/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__onoff__srv" kind="group">
+    <compoundname>bt_mesh_onoff_srv</compoundname>
+    <title>Generic OnOff Server model</title>
+    <innerclass refid="structbt__mesh__onoff__srv__handlers" prot="public">bt_mesh_onoff_srv_handlers</innerclass>
+    <innerclass refid="structbt__mesh__onoff__srv" prot="public">bt_mesh_onoff_srv</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__onoff__srv_1gab5885cf398a89d5ff7a951d3a4f2a254" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_onoff_srv_pub</definition>
+        <argsstring>(struct bt_mesh_onoff_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_onoff_status *status)</argsstring>
+        <name>bt_mesh_onoff_srv_pub</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__onoff__srv" kindref="compound">bt_mesh_onoff_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__onoff__status" kindref="compound">bt_mesh_onoff_status</ref> *</type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+<para>Publish the Generic OnOff Server model status. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Asynchronously publishes a Generic OnOff status message with the configured publish parameters.</para>
+<para><simplesect kind="note"><para>This API is only used for publishing unprompted status messages. Response messages for get and set messages are handled internally.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server instance to publish on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to send with the default publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current status.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully published a Generic OnOff Status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_onoff_srv.h" line="128" column="5" declfile="include/bluetooth/mesh/gen_onoff_srv.h" declline="128" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__onoff__srv_1ga2740ed46b33f82bea0a7c95fbed91719" prot="public" static="no">
+        <name>BT_MESH_ONOFF_SRV_INIT</name>
+        <param><defname>_handlers</defname></param>
+        <initializer>	{                                                                      \
+		.handlers = _handlers,                                         \
+	}</initializer>
+        <briefdescription>
+<para>Init parameters for a <ref refid="group__bt__mesh__onoff__srv" kindref="compound">Generic OnOff Server model</ref> instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_handlers</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>State access handlers to use in the model instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_onoff_srv.h" line="33" column="9" bodyfile="include/bluetooth/mesh/gen_onoff_srv.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__onoff__srv_1ga54dd5c38b8014b3cc42f2ea68cda40d8" prot="public" static="no">
+        <name>BT_MESH_MODEL_ONOFF_SRV</name>
+        <param><defname>_srv</defname></param>
+        <initializer>	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_ONOFF_SRV,                       \
+			 _bt_mesh_onoff_srv_op, &amp;(_srv)-&gt;pub,                  \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__onoff__srv" kindref="compound">bt_mesh_onoff_srv</ref>,     \
+						 _srv),                        \
+			 &amp;_bt_mesh_onoff_srv_cb)</initializer>
+        <briefdescription>
+<para>Generic OnOff Server model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__onoff__srv" kindref="compound">Generic OnOff Server model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_onoff_srv.h" line="44" column="9" bodyfile="include/bluetooth/mesh/gen_onoff_srv.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Generic OnOff Server model. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

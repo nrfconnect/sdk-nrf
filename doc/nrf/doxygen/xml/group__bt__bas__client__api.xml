@@ -1,0 +1,539 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__bas__client__api" kind="group">
+    <compoundname>bt_bas_client_api</compoundname>
+    <title>Battery Service Client API</title>
+    <innerclass refid="structbt__bas__periodic__read" prot="public">bt_bas_periodic_read</innerclass>
+    <innerclass refid="structbt__bas__client" prot="public">bt_bas_client</innerclass>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__bt__bas__client__api_1gac958a84eb3b24bbdcbe2183b64d74b08" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_bas_notify_cb) (struct bt_bas_client *bas, uint8_t battery_level)</definition>
+        <argsstring>)(struct bt_bas_client *bas, uint8_t battery_level)</argsstring>
+        <name>bt_bas_notify_cb</name>
+        <briefdescription>
+<para>Value notification callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is called every time the server sends a notification for a changed value.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bas</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>BAS Client object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>battery_level</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The notified battery level value, or <ref refid="group__bt__bas__client__api_gadd0f0675764f260baa752908370f945d_1gadd0f0675764f260baa752908370f945d" kindref="member">BT_BAS_VAL_INVALID</ref> if the notification was interrupted by the server (NULL received from the stack). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="55" column="9" bodyfile="include/bluetooth/services/bas_client.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bt__bas__client__api_1ga91c37379f6a337c12b22b3cfc92c2552" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_bas_read_cb) (struct bt_bas_client *bas, uint8_t battery_level, int err)</definition>
+        <argsstring>)(struct bt_bas_client *bas, uint8_t battery_level, int err)</argsstring>
+        <name>bt_bas_read_cb</name>
+        <briefdescription>
+<para>Read complete callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is called when the read operation finishes.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bas</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>BAS Client object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>battery_level</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The battery level value that was read. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ATT error code or 0. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="67" column="9" bodyfile="include/bluetooth/services/bas_client.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__bas__client__api_1ga6f2ad4420fb8a8fc3f4b2541d858f9a9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_bas_client_init</definition>
+        <argsstring>(struct bt_bas_client *bas)</argsstring>
+        <name>bt_bas_client_init</name>
+        <param>
+          <type>struct <ref refid="structbt__bas__client" kindref="compound">bt_bas_client</ref> *</type>
+          <declname>bas</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the BAS Client instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>You must call this function on the BAS Client object before any other function.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bas</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>BAS Client object. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="117" column="6" declfile="include/bluetooth/services/bas_client.h" declline="117" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__bas__client__api_1ga300fff61dd069404ed5d27ddf7e038aa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_bas_handles_assign</definition>
+        <argsstring>(struct bt_gatt_dm *dm, struct bt_bas_client *bas)</argsstring>
+        <name>bt_bas_handles_assign</name>
+        <param>
+          <type>struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__bas__client" kindref="compound">bt_bas_client</ref> *</type>
+          <declname>bas</declname>
+        </param>
+        <briefdescription>
+<para>Assign handles to the BAS Client instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function should be called when a connection with a peer has been established, to associate the connection to this instance of the module. This makes it possible to handle multiple connections and associate each connection to a particular instance of this module. The GATT attribute handles are provided by the GATT Discovery Manager.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bas</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>BAS Client object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>(-ENOTSUP)</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Special error code used when the UUID of the service does not match the expected UUID. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="136" column="5" declfile="include/bluetooth/services/bas_client.h" declline="136" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__bas__client__api_1ga37eb8d3a7097827d9f4cef6b8a231729" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_bas_subscribe_battery_level</definition>
+        <argsstring>(struct bt_bas_client *bas, bt_bas_notify_cb func)</argsstring>
+        <name>bt_bas_subscribe_battery_level</name>
+        <param>
+          <type>struct <ref refid="structbt__bas__client" kindref="compound">bt_bas_client</ref> *</type>
+          <declname>bas</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__bas__client__api_gac958a84eb3b24bbdcbe2183b64d74b08_1gac958a84eb3b24bbdcbe2183b64d74b08" kindref="member">bt_bas_notify_cb</ref></type>
+          <declname>func</declname>
+        </param>
+        <briefdescription>
+<para>Subscribe to the battery level value change notification. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bas</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>BAS Client object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback function handler.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOTSUP</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Special error code used if the connected server does not support notifications. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="150" column="5" declfile="include/bluetooth/services/bas_client.h" declline="150" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__bas__client__api_1gad2ee1865e4df8c3cd8299c652925e6af" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_bas_unsubscribe_battery_level</definition>
+        <argsstring>(struct bt_bas_client *bas)</argsstring>
+        <name>bt_bas_unsubscribe_battery_level</name>
+        <param>
+          <type>struct <ref refid="structbt__bas__client" kindref="compound">bt_bas_client</ref> *</type>
+          <declname>bas</declname>
+        </param>
+        <briefdescription>
+<para>Remove the subscription. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bas</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>BAS Client object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="161" column="5" declfile="include/bluetooth/services/bas_client.h" declline="161" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__bas__client__api_1ga59fc48f82776d7c472f72127944f027e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct bt_conn *</type>
+        <definition>struct bt_conn * bt_bas_conn</definition>
+        <argsstring>(const struct bt_bas_client *bas)</argsstring>
+        <name>bt_bas_conn</name>
+        <param>
+          <type>const struct <ref refid="structbt__bas__client" kindref="compound">bt_bas_client</ref> *</type>
+          <declname>bas</declname>
+        </param>
+        <briefdescription>
+<para>Get the connection object that is used with a given BAS Client. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bas</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>BAS Client object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Connection object. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="170" column="14" declfile="include/bluetooth/services/bas_client.h" declline="170" declcolumn="14"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__bas__client__api_1ga761f0f3ac21ef3a60c1a2233cca5e6f9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_bas_read_battery_level</definition>
+        <argsstring>(struct bt_bas_client *bas, bt_bas_read_cb func)</argsstring>
+        <name>bt_bas_read_battery_level</name>
+        <param>
+          <type>struct <ref refid="structbt__bas__client" kindref="compound">bt_bas_client</ref> *</type>
+          <declname>bas</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__bas__client__api_ga91c37379f6a337c12b22b3cfc92c2552_1ga91c37379f6a337c12b22b3cfc92c2552" kindref="member">bt_bas_read_cb</ref></type>
+          <declname>func</declname>
+        </param>
+        <briefdescription>
+<para>Read the battery level value from the device. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function sends a read request to the connected device.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bas</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>BAS Client object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The callback function.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="184" column="5" declfile="include/bluetooth/services/bas_client.h" declline="184" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__bas__client__api_1ga13437ec656baa9ed19366be5be8e8f31" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_bas_get_last_battery_level</definition>
+        <argsstring>(struct bt_bas_client *bas)</argsstring>
+        <name>bt_bas_get_last_battery_level</name>
+        <param>
+          <type>struct <ref refid="structbt__bas__client" kindref="compound">bt_bas_client</ref> *</type>
+          <declname>bas</declname>
+        </param>
+        <briefdescription>
+<para>Get the last known battery level. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function returns the last known battery level value. The battery level is stored when a notification or read response is received.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bas</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>BAS Client object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Battery level or negative error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="197" column="5" declfile="include/bluetooth/services/bas_client.h" declline="197" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__bas__client__api_1gab2d986df26611a67a8c58d7ab26785c8" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool bt_bas_notify_supported</definition>
+        <argsstring>(struct bt_bas_client *bas)</argsstring>
+        <name>bt_bas_notify_supported</name>
+        <param>
+          <type>struct <ref refid="structbt__bas__client" kindref="compound">bt_bas_client</ref> *</type>
+          <declname>bas</declname>
+        </param>
+        <briefdescription>
+<para>Check whether notification is supported by the service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bas</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>BAS Client object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If notifications are supported. Otherwise, <computeroutput>false</computeroutput> is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="207" column="20" bodyfile="include/bluetooth/services/bas_client.h" bodystart="207" bodyend="210"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__bas__client__api_1ga0b3e03b6e5af403d4562d04e4313cd15" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_bas_start_per_read_battery_level</definition>
+        <argsstring>(struct bt_bas_client *bas, int32_t interval, bt_bas_notify_cb func)</argsstring>
+        <name>bt_bas_start_per_read_battery_level</name>
+        <param>
+          <type>struct <ref refid="structbt__bas__client" kindref="compound">bt_bas_client</ref> *</type>
+          <declname>bas</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>interval</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__bas__client__api_gac958a84eb3b24bbdcbe2183b64d74b08_1gac958a84eb3b24bbdcbe2183b64d74b08" kindref="member">bt_bas_notify_cb</ref></type>
+          <declname>func</declname>
+        </param>
+        <briefdescription>
+<para>Periodically read the battery level value from the device with specific time interval. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bas</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>BAS Client object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>interval</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Characteristic Read interval in milliseconds. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The callback function.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="223" column="5" declfile="include/bluetooth/services/bas_client.h" declline="223" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__bas__client__api_1ga03ed6c99453ab89d5d15d34ce52f4402" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_bas_stop_per_read_battery_level</definition>
+        <argsstring>(struct bt_bas_client *bas)</argsstring>
+        <name>bt_bas_stop_per_read_battery_level</name>
+        <param>
+          <type>struct <ref refid="structbt__bas__client" kindref="compound">bt_bas_client</ref> *</type>
+          <declname>bas</declname>
+        </param>
+        <briefdescription>
+<para>Stop periodic reading of the battery value from the device. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bas</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>BAS Client object. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="232" column="6" declfile="include/bluetooth/services/bas_client.h" declline="232" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__bas__client__api_1gadd0f0675764f260baa752908370f945d" prot="public" static="no">
+        <name>BT_BAS_VAL_INVALID</name>
+        <initializer>(255)</initializer>
+        <briefdescription>
+<para>Value that shows that the battery level is invalid. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This value is stored in the BAS Client object when the battery level information is unknown.</para>
+<para>The same value is used to mark the fact that a notification has been aborted (see <ref refid="group__bt__bas__client__api_gac958a84eb3b24bbdcbe2183b64d74b08_1gac958a84eb3b24bbdcbe2183b64d74b08" kindref="member">bt_bas_notify_cb</ref>). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="32" column="9" bodyfile="include/bluetooth/services/bas_client.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__bas__client__api_1gada131f19070c87be5d2e3a5481912dbd" prot="public" static="no">
+        <name>BT_BAS_VAL_MAX</name>
+        <initializer>(100)</initializer>
+        <briefdescription>
+<para>Maximum allowed value for battery level. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Any value above that limit is treated as invalid. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="39" column="9" bodyfile="include/bluetooth/services/bas_client.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Bluetooth LE GATT Battery Service (BAS) Client. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

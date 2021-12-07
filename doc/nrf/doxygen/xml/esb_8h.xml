@@ -1,0 +1,1554 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="esb_8h" kind="file" language="C++">
+    <compoundname>esb.h</compoundname>
+    <includes local="no">errno.h</includes>
+    <includes local="no">sys/util.h</includes>
+    <includes local="no">nrf.h</includes>
+    <includes local="no">stdbool.h</includes>
+    <includes local="no">zephyr/types.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/esb.h</label>
+        <link refid="esb_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>errno.h</label>
+      </node>
+      <node id="4">
+        <label>nrf.h</label>
+      </node>
+      <node id="5">
+        <label>stdbool.h</label>
+      </node>
+      <node id="3">
+        <label>sys/util.h</label>
+      </node>
+      <node id="6">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structesb__payload" prot="public">esb_payload</innerclass>
+    <innerclass refid="structesb__evt" prot="public">esb_evt</innerclass>
+    <innerclass refid="structesb__config" prot="public">esb_config</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__esb_gaa668f03ea00837c47f99f229c8d1dcc5_1gaa668f03ea00837c47f99f229c8d1dcc5" prot="public" static="no">
+        <name>ESB_EVT_IRQ</name>
+        <initializer>SWI0_IRQn</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The ESB event IRQ number when running on an nRF5 device. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="36" column="9" bodyfile="include/esb.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__esb_ga1be1192ee03dbbe0389d3e8aff6e8229_1ga1be1192ee03dbbe0389d3e8aff6e8229" prot="public" static="no">
+        <name>ESB_EVT_IRQHandler</name>
+        <initializer>SWI0_IRQHandler</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The handler for <ref refid="group__esb_gaa668f03ea00837c47f99f229c8d1dcc5_1gaa668f03ea00837c47f99f229c8d1dcc5" kindref="member">ESB_EVT_IRQ</ref> when running on an nRF5 device. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="38" column="9" bodyfile="include/esb.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__esb_ga9e8b1a6ed0ab8ac850a3884ed4fb8e09_1ga9e8b1a6ed0ab8ac850a3884ed4fb8e09" prot="public" static="no">
+        <name>ESB_DEFAULT_CONFIG</name>
+        <initializer>	{                                                                      \
+		.protocol = <ref refid="group__esb_gae9e0aeeb3f862ea99c5cd947bc0843f8_1ggae9e0aeeb3f862ea99c5cd947bc0843f8ad8b76d6f3f9dec026a3942ff157d321d" kindref="member">ESB_PROTOCOL_ESB_DPL</ref>,                              \
+		.mode = <ref refid="group__esb_ga070ae9b6c3f8e3d3a9f8df0c00ddfc56_1gga070ae9b6c3f8e3d3a9f8df0c00ddfc56a14c025de7009958e87c5a7f4e3c8d7e2" kindref="member">ESB_MODE_PTX</ref>,					       \
+		.event_handler = 0,					       \
+		.bitrate = <ref refid="group__esb_ga76b7c73f543bd1a22a4a47ac65ca08ca_1gga76b7c73f543bd1a22a4a47ac65ca08caab6d0b12ab4893d0e310c7cf8925027be" kindref="member">ESB_BITRATE_2MBPS</ref>,				       \
+		.crc = <ref refid="group__esb_ga448149f151eba42eb8995d3affc475dc_1gga448149f151eba42eb8995d3affc475dca76b92d19af5c16ffcdad4c05ceb38202" kindref="member">ESB_CRC_16BIT</ref>,					       \
+		.tx_output_power = <ref refid="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a55265077937a224bc1aedbc1613b9379" kindref="member">ESB_TX_POWER_0DBM</ref>,			       \
+		.retransmit_delay = 600,				       \
+		.retransmit_count = 3,					       \
+		.tx_mode = <ref refid="group__esb_ga3b230160a9a606617133c4e0a8eb043a_1gga3b230160a9a606617133c4e0a8eb043aabbef49c7379d1fd906525871101b8763" kindref="member">ESB_TXMODE_AUTO</ref>,				       \
+		.payload_length = 32,					       \
+		.selective_auto_ack = false                                    \
+	}</initializer>
+        <briefdescription>
+<para>Default radio parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Roughly equal to the nRF24Lxx default parameters except for CRC, which is set to 16 bit, and protocol, which is set to DPL. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="46" column="9" bodyfile="include/esb.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__esb_ga7891d7170d01cef666f7d250b5260b63_1ga7891d7170d01cef666f7d250b5260b63" prot="public" static="no">
+        <name>ESB_LEGACY_CONFIG</name>
+        <initializer>	{                                                                      \
+		.protocol = <ref refid="group__esb_gae9e0aeeb3f862ea99c5cd947bc0843f8_1ggae9e0aeeb3f862ea99c5cd947bc0843f8a171ce6b235591836c8f774736e7a6bb3" kindref="member">ESB_PROTOCOL_ESB</ref>,				       \
+		.mode = <ref refid="group__esb_ga070ae9b6c3f8e3d3a9f8df0c00ddfc56_1gga070ae9b6c3f8e3d3a9f8df0c00ddfc56a14c025de7009958e87c5a7f4e3c8d7e2" kindref="member">ESB_MODE_PTX</ref>,					       \
+		.event_handler = 0,					       \
+		.bitrate = <ref refid="group__esb_ga76b7c73f543bd1a22a4a47ac65ca08ca_1gga76b7c73f543bd1a22a4a47ac65ca08caab6d0b12ab4893d0e310c7cf8925027be" kindref="member">ESB_BITRATE_2MBPS</ref>,				       \
+		.crc = <ref refid="group__esb_ga448149f151eba42eb8995d3affc475dc_1gga448149f151eba42eb8995d3affc475dcab990c30f11d2aecbc05c70c4bf80b5e0" kindref="member">ESB_CRC_8BIT</ref>,					       \
+		.tx_output_power = <ref refid="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a55265077937a224bc1aedbc1613b9379" kindref="member">ESB_TX_POWER_0DBM</ref>,			       \
+		.retransmit_delay = 600,				       \
+		.retransmit_count = 3,					       \
+		.tx_mode = <ref refid="group__esb_ga3b230160a9a606617133c4e0a8eb043a_1gga3b230160a9a606617133c4e0a8eb043aabbef49c7379d1fd906525871101b8763" kindref="member">ESB_TXMODE_AUTO</ref>,				       \
+		.payload_length = 32,					       \
+		.selective_auto_ack = false                                    \
+	}</initializer>
+        <briefdescription>
+<para>Default legacy radio parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Identical to the nRF24Lxx defaults. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="65" column="9" bodyfile="include/esb.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__esb_gacd6d909d72fbfad5ba2112a10fcec4df_1gacd6d909d72fbfad5ba2112a10fcec4df" prot="public" static="no">
+        <name>ESB_CREATE_PAYLOAD</name>
+        <param><defname>_pipe</defname></param>
+        <param><defname>...</defname></param>
+        <initializer>	{                                                                      \
+		.pipe = _pipe,                                                 \
+		.length = NUM_VA_ARGS_LESS_1(_pipe, __VA_ARGS__),	       \
+		.data = {						       \
+			__VA_ARGS__                                            \
+		}                                                              \
+	}</initializer>
+        <briefdescription>
+<para>Macro to create an initializer for a TX data packet. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro generates an initializer.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_pipe</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The pipe to use for the data packet. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Comma separated list of character data to put in the TX buffer. Supported values consist of 1 to 63 characters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Initializer that sets up the pipe, length, and byte array for content of the TX data. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="92" column="9" bodyfile="include/esb.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__esb_gae9e0aeeb3f862ea99c5cd947bc0843f8_1gae9e0aeeb3f862ea99c5cd947bc0843f8" prot="public" static="no" strong="no">
+        <type></type>
+        <name>esb_protocol</name>
+        <enumvalue id="group__esb_gae9e0aeeb3f862ea99c5cd947bc0843f8_1ggae9e0aeeb3f862ea99c5cd947bc0843f8a171ce6b235591836c8f774736e7a6bb3" prot="public">
+          <name>ESB_PROTOCOL_ESB</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Fixed payload length. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__esb_gae9e0aeeb3f862ea99c5cd947bc0843f8_1ggae9e0aeeb3f862ea99c5cd947bc0843f8ad8b76d6f3f9dec026a3942ff157d321d" prot="public">
+          <name>ESB_PROTOCOL_ESB_DPL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Dynamic payload length. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Enhanced ShockBurst protocols. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="102" column="1" bodyfile="include/esb.h" bodystart="102" bodyend="105"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__esb_ga070ae9b6c3f8e3d3a9f8df0c00ddfc56_1ga070ae9b6c3f8e3d3a9f8df0c00ddfc56" prot="public" static="no" strong="no">
+        <type></type>
+        <name>esb_mode</name>
+        <enumvalue id="group__esb_ga070ae9b6c3f8e3d3a9f8df0c00ddfc56_1gga070ae9b6c3f8e3d3a9f8df0c00ddfc56a14c025de7009958e87c5a7f4e3c8d7e2" prot="public">
+          <name>ESB_MODE_PTX</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Primary transmitter mode. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__esb_ga070ae9b6c3f8e3d3a9f8df0c00ddfc56_1gga070ae9b6c3f8e3d3a9f8df0c00ddfc56adb136f79bb2f1e4d1b94c879a001ff96" prot="public">
+          <name>ESB_MODE_PRX</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Primary receiver mode. <linebreak/>
+ </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Enhanced ShockBurst modes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="108" column="1" bodyfile="include/esb.h" bodystart="108" bodyend="111"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__esb_ga76b7c73f543bd1a22a4a47ac65ca08ca_1ga76b7c73f543bd1a22a4a47ac65ca08ca" prot="public" static="no" strong="no">
+        <type></type>
+        <name>esb_bitrate</name>
+        <enumvalue id="group__esb_ga76b7c73f543bd1a22a4a47ac65ca08ca_1gga76b7c73f543bd1a22a4a47ac65ca08caa47063019a5ae95648ee988bf07fd3313" prot="public">
+          <name>ESB_BITRATE_1MBPS</name>
+          <initializer>= RADIO_MODE_MODE_Nrf_1Mbit</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>1 Mb radio mode. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__esb_ga76b7c73f543bd1a22a4a47ac65ca08ca_1gga76b7c73f543bd1a22a4a47ac65ca08caab6d0b12ab4893d0e310c7cf8925027be" prot="public">
+          <name>ESB_BITRATE_2MBPS</name>
+          <initializer>= RADIO_MODE_MODE_Nrf_2Mbit</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>2 Mb radio mode. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__esb_ga76b7c73f543bd1a22a4a47ac65ca08ca_1gga76b7c73f543bd1a22a4a47ac65ca08caabba5763f29770d72644a7bb9f63e81d2" prot="public">
+          <name>ESB_BITRATE_250KBPS</name>
+          <initializer>= RADIO_MODE_MODE_Nrf_250Kbit</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>250 Kb radio mode. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__esb_ga76b7c73f543bd1a22a4a47ac65ca08ca_1gga76b7c73f543bd1a22a4a47ac65ca08caa76788ed5bb047a9e7f15803f60a328f6" prot="public">
+          <name>ESB_BITRATE_1MBPS_BLE</name>
+          <initializer>= RADIO_MODE_MODE_Ble_1Mbit</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>1 Mb radio mode using <emphasis>Bluetooth</emphasis> low energy radio parameters. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Enhanced ShockBurst bitrate modes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="114" column="1" bodyfile="include/esb.h" bodystart="114" bodyend="130"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__esb_ga448149f151eba42eb8995d3affc475dc_1ga448149f151eba42eb8995d3affc475dc" prot="public" static="no" strong="no">
+        <type></type>
+        <name>esb_crc</name>
+        <enumvalue id="group__esb_ga448149f151eba42eb8995d3affc475dc_1gga448149f151eba42eb8995d3affc475dca76b92d19af5c16ffcdad4c05ceb38202" prot="public">
+          <name>ESB_CRC_16BIT</name>
+          <initializer>= RADIO_CRCCNF_LEN_Two</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Use two-byte CRC. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__esb_ga448149f151eba42eb8995d3affc475dc_1gga448149f151eba42eb8995d3affc475dcab990c30f11d2aecbc05c70c4bf80b5e0" prot="public">
+          <name>ESB_CRC_8BIT</name>
+          <initializer>= RADIO_CRCCNF_LEN_One</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Use one-byte CRC. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__esb_ga448149f151eba42eb8995d3affc475dc_1gga448149f151eba42eb8995d3affc475dca6b850a079c289e961eecb96fcfb057a1" prot="public">
+          <name>ESB_CRC_OFF</name>
+          <initializer>= RADIO_CRCCNF_LEN_Disabled</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Disable CRC. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Enhanced ShockBurst CRC modes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="133" column="1" bodyfile="include/esb.h" bodystart="133" bodyend="137"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__esb_ga8a9f66935228905e38d225c792901701_1ga8a9f66935228905e38d225c792901701" prot="public" static="no" strong="no">
+        <type></type>
+        <name>esb_tx_power</name>
+        <enumvalue id="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a550fce8a629dc30d9942794c18a07b31" prot="public">
+          <name>ESB_TX_POWER_4DBM</name>
+          <initializer>= RADIO_TXPOWER_TXPOWER_Pos4dBm</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>4 dBm radio transmit power. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a55265077937a224bc1aedbc1613b9379" prot="public">
+          <name>ESB_TX_POWER_0DBM</name>
+          <initializer>= RADIO_TXPOWER_TXPOWER_0dBm</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>0 dBm radio transmit power. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a2437b63c69929252bbc25c4e5d381d45" prot="public">
+          <name>ESB_TX_POWER_NEG4DBM</name>
+          <initializer>= RADIO_TXPOWER_TXPOWER_Neg4dBm</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>-4 dBm radio transmit power. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701aacab7b4478de7d76aea17fffb2929439" prot="public">
+          <name>ESB_TX_POWER_NEG8DBM</name>
+          <initializer>= RADIO_TXPOWER_TXPOWER_Neg8dBm</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>-8 dBm radio transmit power. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a41e36b350973eb7b4e229aa08acdadc6" prot="public">
+          <name>ESB_TX_POWER_NEG12DBM</name>
+          <initializer>= RADIO_TXPOWER_TXPOWER_Neg12dBm</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>-12 dBm radio transmit power. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701adeb5f80a5fa7b9007404af1bfe2be6fd" prot="public">
+          <name>ESB_TX_POWER_NEG16DBM</name>
+          <initializer>= RADIO_TXPOWER_TXPOWER_Neg16dBm</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>-16 dBm radio transmit power. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a6eb9eb03123e7185b4c40748863ab4c8" prot="public">
+          <name>ESB_TX_POWER_NEG20DBM</name>
+          <initializer>= RADIO_TXPOWER_TXPOWER_Neg20dBm</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>-20 dBm radio transmit power. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a2a4d75012d989403809bcaf080bef0c0" prot="public">
+          <name>ESB_TX_POWER_NEG30DBM</name>
+          <initializer>= RADIO_TXPOWER_TXPOWER_Neg30dBm</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>-30 dBm radio transmit power. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a068f9d76d0518d95ee7595d470941d51" prot="public">
+          <name>ESB_TX_POWER_NEG40DBM</name>
+          <initializer>= RADIO_TXPOWER_TXPOWER_Neg40dBm</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>-40 dBm radio transmit power. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Enhanced ShockBurst radio transmission power modes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="140" column="1" bodyfile="include/esb.h" bodystart="140" bodyend="165"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__esb_ga3b230160a9a606617133c4e0a8eb043a_1ga3b230160a9a606617133c4e0a8eb043a" prot="public" static="no" strong="no">
+        <type></type>
+        <name>esb_tx_mode</name>
+        <enumvalue id="group__esb_ga3b230160a9a606617133c4e0a8eb043a_1gga3b230160a9a606617133c4e0a8eb043aabbef49c7379d1fd906525871101b8763" prot="public">
+          <name>ESB_TXMODE_AUTO</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Automatic TX mode: When the TX FIFO contains packets and the radio is idle, packets are sent automatically. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__esb_ga3b230160a9a606617133c4e0a8eb043a_1gga3b230160a9a606617133c4e0a8eb043aa32a6ebe683adf8e47c88937c149db309" prot="public">
+          <name>ESB_TXMODE_MANUAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Manual TX mode: Packets are not sent until <ref refid="group__esb_ga302a70a8c64264d6ae6e49dda12a14a3_1ga302a70a8c64264d6ae6e49dda12a14a3" kindref="member">esb_start_tx</ref> is called. This mode can be used to ensure consistent packet timing. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__esb_ga3b230160a9a606617133c4e0a8eb043a_1gga3b230160a9a606617133c4e0a8eb043aad515d09304d25d9c338a81b9d69770f0" prot="public">
+          <name>ESB_TXMODE_MANUAL_START</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Manual start TX mode: Packets are not sent until <ref refid="group__esb_ga302a70a8c64264d6ae6e49dda12a14a3_1ga302a70a8c64264d6ae6e49dda12a14a3" kindref="member">esb_start_tx</ref> is called. Then, transmission continues automatically until the TX FIFO is empty. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Enhanced ShockBurst transmission modes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="168" column="1" bodyfile="include/esb.h" bodystart="168" bodyend="182"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__esb_ga4ba19219b64bdcd34f7ca2e47a170b2b_1ga4ba19219b64bdcd34f7ca2e47a170b2b" prot="public" static="no" strong="no">
+        <type></type>
+        <name>esb_evt_id</name>
+        <enumvalue id="group__esb_ga4ba19219b64bdcd34f7ca2e47a170b2b_1gga4ba19219b64bdcd34f7ca2e47a170b2ba59190d7d1eb6ff4f8f5736636039ada6" prot="public">
+          <name>ESB_EVENT_TX_SUCCESS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Event triggered on TX success. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__esb_ga4ba19219b64bdcd34f7ca2e47a170b2b_1gga4ba19219b64bdcd34f7ca2e47a170b2ba840fceb538e7b3fedbf80870ed7d5210" prot="public">
+          <name>ESB_EVENT_TX_FAILED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Event triggered on TX failure. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__esb_ga4ba19219b64bdcd34f7ca2e47a170b2b_1gga4ba19219b64bdcd34f7ca2e47a170b2bac546798e9b77aa3365db858d3289df12" prot="public">
+          <name>ESB_EVENT_RX_RECEIVED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Event triggered on RX received. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Enhanced ShockBurst event IDs. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="185" column="1" bodyfile="include/esb.h" bodystart="185" bodyend="189"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__esb_ga80f8a9ac0e0473e0b7bbb3911c1752d6_1ga80f8a9ac0e0473e0b7bbb3911c1752d6" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* esb_event_handler) (const struct esb_evt *event)</definition>
+        <argsstring>)(const struct esb_evt *event)</argsstring>
+        <name>esb_event_handler</name>
+        <briefdescription>
+<para>Event handler prototype. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="215" column="9" bodyfile="include/esb.h" bodystart="215" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__esb_gaf916614073f44427dcc65b31bf408a4b_1gaf916614073f44427dcc65b31bf408a4b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_init</definition>
+        <argsstring>(const struct esb_config *config)</argsstring>
+        <name>esb_init</name>
+        <param>
+          <type>const struct <ref refid="structesb__config" kindref="compound">esb_config</ref> *</type>
+          <declname>config</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the Enhanced ShockBurst module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>config</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters for initializing the module.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Zero on success or (negative) error code otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="253" column="5" declfile="include/esb.h" declline="253" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_gac0c41d17ab4ab2f2b6abafe10d9fd3e8_1gac0c41d17ab4ab2f2b6abafe10d9fd3e8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_suspend</definition>
+        <argsstring>(void)</argsstring>
+        <name>esb_suspend</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Suspend the Enhanced ShockBurst module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Calling this function stops ongoing communications without changing the queues.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="263" column="5" declfile="include/esb.h" declline="263" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_gaf452342a02aa8dad7ced301f0005e26b_1gaf452342a02aa8dad7ced301f0005e26b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void esb_disable</definition>
+        <argsstring>(void)</argsstring>
+        <name>esb_disable</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Disable the Enhanced ShockBurst module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Calling this function disables the Enhanced ShockBurst module immediately. Doing so might stop ongoing communications.</para>
+<para><simplesect kind="note"><para>All queues are flushed by this function. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="273" column="6" declfile="include/esb.h" declline="273" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_gad3da27c142d61fdb274eab2e93a6e0b2_1gad3da27c142d61fdb274eab2e93a6e0b2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool esb_is_idle</definition>
+        <argsstring>(void)</argsstring>
+        <name>esb_is_idle</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Check if the Enhanced ShockBurst module is idle. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>True if the module is idle, false otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="279" column="6" declfile="include/esb.h" declline="279" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_ga797c77faf18f3be090a783d5c2f44f42_1ga797c77faf18f3be090a783d5c2f44f42" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_write_payload</definition>
+        <argsstring>(const struct esb_payload *payload)</argsstring>
+        <name>esb_write_payload</name>
+        <param>
+          <type>const struct <ref refid="structesb__payload" kindref="compound">esb_payload</ref> *</type>
+          <declname>payload</declname>
+        </param>
+        <briefdescription>
+<para>Write a payload for transmission or acknowledgement. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function writes a payload that is added to the queue. When the module is in PTX mode, the payload is queued for a regular transmission. When the module is in PRX mode, the payload is queued for when a packet is received that requires an acknowledgement with payload.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">payload</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The payload.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="293" column="5" declfile="include/esb.h" declline="293" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_ga2be16f940f464fdc39ddd710d3ed6197_1ga2be16f940f464fdc39ddd710d3ed6197" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_read_rx_payload</definition>
+        <argsstring>(struct esb_payload *payload)</argsstring>
+        <name>esb_read_rx_payload</name>
+        <param>
+          <type>struct <ref refid="structesb__payload" kindref="compound">esb_payload</ref> *</type>
+          <declname>payload</declname>
+        </param>
+        <briefdescription>
+<para>Read a payload. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">payload</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The payload to be received.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="302" column="5" declfile="include/esb.h" declline="302" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_ga302a70a8c64264d6ae6e49dda12a14a3_1ga302a70a8c64264d6ae6e49dda12a14a3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_start_tx</definition>
+        <argsstring>(void)</argsstring>
+        <name>esb_start_tx</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Start transmitting data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="309" column="5" declfile="include/esb.h" declline="309" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_ga0a048a857c2150ef94a65b6bae0c244b_1ga0a048a857c2150ef94a65b6bae0c244b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_start_rx</definition>
+        <argsstring>(void)</argsstring>
+        <name>esb_start_rx</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Start receiving data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="316" column="5" declfile="include/esb.h" declline="316" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_ga4222224724143f35d1e40e4667bed77c_1ga4222224724143f35d1e40e4667bed77c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_stop_rx</definition>
+        <argsstring>(void)</argsstring>
+        <name>esb_stop_rx</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Stop data reception. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="323" column="5" declfile="include/esb.h" declline="323" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_gacd2ad50500639ff55479ec454173f8c9_1gacd2ad50500639ff55479ec454173f8c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_flush_tx</definition>
+        <argsstring>(void)</argsstring>
+        <name>esb_flush_tx</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Flush the TX buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function clears the TX FIFO buffer.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="332" column="5" declfile="include/esb.h" declline="332" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_gae2198296f66f071b552e44adda9f3bd4_1gae2198296f66f071b552e44adda9f3bd4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_pop_tx</definition>
+        <argsstring>(void)</argsstring>
+        <name>esb_pop_tx</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Pop the first item from the TX buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="339" column="5" declfile="include/esb.h" declline="339" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_gaebce7ca62a83a0a3fcbc94e2f83952d2_1gaebce7ca62a83a0a3fcbc94e2f83952d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_flush_rx</definition>
+        <argsstring>(void)</argsstring>
+        <name>esb_flush_rx</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Flush the RX buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="346" column="5" declfile="include/esb.h" declline="346" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_ga676878cff398b57c1c7593610f37ad0c_1ga676878cff398b57c1c7593610f37ad0c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_set_address_length</definition>
+        <argsstring>(uint8_t length)</argsstring>
+        <name>esb_set_address_length</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>length</declname>
+        </param>
+        <briefdescription>
+<para>Set the length of the address. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the ESB address (in bytes).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="355" column="5" declfile="include/esb.h" declline="355" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_ga29df501fac454070a89fa63070f27b1e_1ga29df501fac454070a89fa63070f27b1e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_set_base_address_0</definition>
+        <argsstring>(const uint8_t *addr)</argsstring>
+        <name>esb_set_base_address_0</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>addr</declname>
+        </param>
+        <briefdescription>
+<para>Set the base address for pipe 0. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">addr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Address.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="364" column="5" declfile="include/esb.h" declline="364" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_gaf7933fdf9e969c78967f0e4d64b4695f_1gaf7933fdf9e969c78967f0e4d64b4695f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_set_base_address_1</definition>
+        <argsstring>(const uint8_t *addr)</argsstring>
+        <name>esb_set_base_address_1</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>addr</declname>
+        </param>
+        <briefdescription>
+<para>Set the base address for pipe 1 to pipe 7. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">addr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Address.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="373" column="5" declfile="include/esb.h" declline="373" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_ga2f964e75f30681055f42a6b7e7f47ef4_1ga2f964e75f30681055f42a6b7e7f47ef4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_set_prefixes</definition>
+        <argsstring>(const uint8_t *prefixes, uint8_t num_pipes)</argsstring>
+        <name>esb_set_prefixes</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>prefixes</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>num_pipes</declname>
+        </param>
+        <briefdescription>
+<para>Set the number of pipes and the pipe prefix addresses. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function configures the number of available pipes, enables the pipes, and sets their prefix addresses.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">prefixes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Prefixes for each pipe. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">num_pipes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of pipes. Must be less than or equal to <verbatim>embed:rst:inline :kconfig:`CONFIG_ESB_PIPE_COUNT` </verbatim>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="387" column="5" declfile="include/esb.h" declline="387" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_gafd890e07130be78d1baf53b689deab3b_1gafd890e07130be78d1baf53b689deab3b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_enable_pipes</definition>
+        <argsstring>(uint8_t enable_mask)</argsstring>
+        <name>esb_enable_pipes</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>enable_mask</declname>
+        </param>
+        <briefdescription>
+<para>Enable select pipes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The <computeroutput>enable_mask</computeroutput> parameter must contain the same number of pipes as has been configured with <ref refid="group__esb_ga2f964e75f30681055f42a6b7e7f47ef4_1ga2f964e75f30681055f42a6b7e7f47ef4" kindref="member">esb_set_prefixes</ref>. This number may not be greater than the number defined by <verbatim>embed:rst:inline :kconfig:`CONFIG_ESB_PIPE_COUNT` </verbatim></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>enable_mask</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bitfield mask to enable or disable pipes. Setting a bit to 0 disables the pipe. Setting a bit to 1 enables the pipe.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="402" column="5" declfile="include/esb.h" declline="402" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_ga5fab89c6e8a62a16f0255862fc9df32e_1ga5fab89c6e8a62a16f0255862fc9df32e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_update_prefix</definition>
+        <argsstring>(uint8_t pipe, uint8_t prefix)</argsstring>
+        <name>esb_update_prefix</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>pipe</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>prefix</declname>
+        </param>
+        <briefdescription>
+<para>Update pipe prefix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>pipe</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pipe for which to set the prefix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>prefix</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Prefix to set for the pipe.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="412" column="5" declfile="include/esb.h" declline="412" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_ga7d0b12b1f2e63e9994f93e0feb7e0e47_1ga7d0b12b1f2e63e9994f93e0feb7e0e47" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_set_rf_channel</definition>
+        <argsstring>(uint32_t channel)</argsstring>
+        <name>esb_set_rf_channel</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>channel</declname>
+        </param>
+        <briefdescription>
+<para>Set the channel to use for the radio. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The module must be in an idle state to call this function. As a PTX, the application must wait for an idle state and as a PRX, the application must stop RX before changing the channel. After changing the channel, operation can be resumed.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">channel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel to use for radio.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="426" column="5" declfile="include/esb.h" declline="426" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_gaf2b720598e4f1ee264a8c4cc2e2286dc_1gaf2b720598e4f1ee264a8c4cc2e2286dc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_get_rf_channel</definition>
+        <argsstring>(uint32_t *channel)</argsstring>
+        <name>esb_get_rf_channel</name>
+        <param>
+          <type>uint32_t *</type>
+          <declname>channel</declname>
+        </param>
+        <briefdescription>
+<para>Get the current radio channel. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">channel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel number.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="435" column="5" declfile="include/esb.h" declline="435" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_ga4f66f57bafd5034d96774f515c16755a_1ga4f66f57bafd5034d96774f515c16755a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_set_tx_power</definition>
+        <argsstring>(enum esb_tx_power tx_output_power)</argsstring>
+        <name>esb_set_tx_power</name>
+        <param>
+          <type>enum <ref refid="group__esb_ga8a9f66935228905e38d225c792901701_1ga8a9f66935228905e38d225c792901701" kindref="member">esb_tx_power</ref></type>
+          <declname>tx_output_power</declname>
+        </param>
+        <briefdescription>
+<para>Set the radio output power. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">tx_output_power</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output power.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="444" column="5" declfile="include/esb.h" declline="444" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_ga00203f240b393df49100fddf33fe1124_1ga00203f240b393df49100fddf33fe1124" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_set_retransmit_delay</definition>
+        <argsstring>(uint16_t delay)</argsstring>
+        <name>esb_set_retransmit_delay</name>
+        <param>
+          <type>uint16_t</type>
+          <declname>delay</declname>
+        </param>
+        <briefdescription>
+<para>Set the packet retransmit delay. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">delay</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Delay between retransmissions.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="453" column="5" declfile="include/esb.h" declline="453" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_gaa467090803b438e49d89a8095c9edcd7_1gaa467090803b438e49d89a8095c9edcd7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_set_retransmit_count</definition>
+        <argsstring>(uint16_t count)</argsstring>
+        <name>esb_set_retransmit_count</name>
+        <param>
+          <type>uint16_t</type>
+          <declname>count</declname>
+        </param>
+        <briefdescription>
+<para>Set the number of retransmission attempts. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of retransmissions.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="462" column="5" declfile="include/esb.h" declline="462" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_ga807dbca85ef56d936c582083540f1bf1_1ga807dbca85ef56d936c582083540f1bf1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_set_bitrate</definition>
+        <argsstring>(enum esb_bitrate bitrate)</argsstring>
+        <name>esb_set_bitrate</name>
+        <param>
+          <type>enum <ref refid="group__esb_ga76b7c73f543bd1a22a4a47ac65ca08ca_1ga76b7c73f543bd1a22a4a47ac65ca08ca" kindref="member">esb_bitrate</ref></type>
+          <declname>bitrate</declname>
+        </param>
+        <briefdescription>
+<para>Set the radio bitrate. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">bitrate</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Radio bitrate.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="471" column="5" declfile="include/esb.h" declline="471" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__esb_ga996ce2c9899ba38327dfce826aaf2033_1ga996ce2c9899ba38327dfce826aaf2033" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int esb_reuse_pid</definition>
+        <argsstring>(uint8_t pipe)</argsstring>
+        <name>esb_reuse_pid</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>pipe</declname>
+        </param>
+        <briefdescription>
+<para>Reuse a packet ID for a specific pipe. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The ESB protocol uses a 2-bit sequence number (packet ID) to identify retransmitted packets. By default, the packet ID is incremented for every uploaded packet. Use this function to prevent this and send two different packets with the same packet ID.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">pipe</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pipe.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="485" column="5" declfile="include/esb.h" declline="485" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2018<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>__ESB_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>__ESB_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;errno.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/util.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;nrf.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdbool.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(CONFIG_SOC_NRF5340_CPUNET)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ESB_EVT_IRQ<sp/>EGU0_IRQn</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ESB_EVT_IRQHandler<sp/>EGU0_IRQHandler</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="group__esb_gaa668f03ea00837c47f99f229c8d1dcc5_1gaa668f03ea00837c47f99f229c8d1dcc5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ESB_EVT_IRQ<sp/>SWI0_IRQn</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="group__esb_ga1be1192ee03dbbe0389d3e8aff6e8229_1ga1be1192ee03dbbe0389d3e8aff6e8229" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ESB_EVT_IRQHandler<sp/>SWI0_IRQHandler</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="group__esb_ga9e8b1a6ed0ab8ac850a3884ed4fb8e09_1ga9e8b1a6ed0ab8ac850a3884ed4fb8e09" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ESB_DEFAULT_CONFIG<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="47"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="48"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.protocol<sp/>=<sp/>ESB_PROTOCOL_ESB_DPL,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="49"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.mode<sp/>=<sp/>ESB_MODE_PTX,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="50"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.event_handler<sp/>=<sp/>0,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="51"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.bitrate<sp/>=<sp/>ESB_BITRATE_2MBPS,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="52"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.crc<sp/>=<sp/>ESB_CRC_16BIT,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="53"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.tx_output_power<sp/>=<sp/>ESB_TX_POWER_0DBM,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="54"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.retransmit_delay<sp/>=<sp/>600,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="55"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.retransmit_count<sp/>=<sp/>3,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="56"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.tx_mode<sp/>=<sp/>ESB_TXMODE_AUTO,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="57"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.payload_length<sp/>=<sp/>32,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="58"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.selective_auto_ack<sp/>=<sp/>false<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="59"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65" refid="group__esb_ga7891d7170d01cef666f7d250b5260b63_1ga7891d7170d01cef666f7d250b5260b63" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ESB_LEGACY_CONFIG<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="66"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="67"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.protocol<sp/>=<sp/>ESB_PROTOCOL_ESB,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="68"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.mode<sp/>=<sp/>ESB_MODE_PTX,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="69"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.event_handler<sp/>=<sp/>0,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="70"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.bitrate<sp/>=<sp/>ESB_BITRATE_2MBPS,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="71"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.crc<sp/>=<sp/>ESB_CRC_8BIT,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="72"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.tx_output_power<sp/>=<sp/>ESB_TX_POWER_0DBM,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="73"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.retransmit_delay<sp/>=<sp/>600,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="74"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.retransmit_count<sp/>=<sp/>3,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="75"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.tx_mode<sp/>=<sp/>ESB_TXMODE_AUTO,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="76"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.payload_length<sp/>=<sp/>32,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="77"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.selective_auto_ack<sp/>=<sp/>false<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="78"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="group__esb_gacd6d909d72fbfad5ba2112a10fcec4df_1gacd6d909d72fbfad5ba2112a10fcec4df" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ESB_CREATE_PAYLOAD(_pipe,<sp/>...)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="93"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="94"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.pipe<sp/>=<sp/>_pipe,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="95"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.length<sp/>=<sp/>NUM_VA_ARGS_LESS_1(_pipe,<sp/>__VA_ARGS__),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="96"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.data<sp/>=<sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="97"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__VA_ARGS__<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="98"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="99"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102" refid="group__esb_gae9e0aeeb3f862ea99c5cd947bc0843f8_1gae9e0aeeb3f862ea99c5cd947bc0843f8" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__esb_gae9e0aeeb3f862ea99c5cd947bc0843f8_1gae9e0aeeb3f862ea99c5cd947bc0843f8" kindref="member">esb_protocol</ref><sp/>{</highlight></codeline>
+<codeline lineno="103" refid="group__esb_gae9e0aeeb3f862ea99c5cd947bc0843f8_1ggae9e0aeeb3f862ea99c5cd947bc0843f8a171ce6b235591836c8f774736e7a6bb3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_gae9e0aeeb3f862ea99c5cd947bc0843f8_1ggae9e0aeeb3f862ea99c5cd947bc0843f8a171ce6b235591836c8f774736e7a6bb3" kindref="member">ESB_PROTOCOL_ESB</ref>,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_gae9e0aeeb3f862ea99c5cd947bc0843f8_1ggae9e0aeeb3f862ea99c5cd947bc0843f8ad8b76d6f3f9dec026a3942ff157d321d" kindref="member">ESB_PROTOCOL_ESB_DPL</ref><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="105" refid="group__esb_gae9e0aeeb3f862ea99c5cd947bc0843f8_1ggae9e0aeeb3f862ea99c5cd947bc0843f8ad8b76d6f3f9dec026a3942ff157d321d" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108" refid="group__esb_ga070ae9b6c3f8e3d3a9f8df0c00ddfc56_1ga070ae9b6c3f8e3d3a9f8df0c00ddfc56" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga070ae9b6c3f8e3d3a9f8df0c00ddfc56_1ga070ae9b6c3f8e3d3a9f8df0c00ddfc56" kindref="member">esb_mode</ref><sp/>{</highlight></codeline>
+<codeline lineno="109" refid="group__esb_ga070ae9b6c3f8e3d3a9f8df0c00ddfc56_1gga070ae9b6c3f8e3d3a9f8df0c00ddfc56a14c025de7009958e87c5a7f4e3c8d7e2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga070ae9b6c3f8e3d3a9f8df0c00ddfc56_1gga070ae9b6c3f8e3d3a9f8df0c00ddfc56a14c025de7009958e87c5a7f4e3c8d7e2" kindref="member">ESB_MODE_PTX</ref>,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga070ae9b6c3f8e3d3a9f8df0c00ddfc56_1gga070ae9b6c3f8e3d3a9f8df0c00ddfc56adb136f79bb2f1e4d1b94c879a001ff96" kindref="member">ESB_MODE_PRX</ref><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="111" refid="group__esb_ga070ae9b6c3f8e3d3a9f8df0c00ddfc56_1gga070ae9b6c3f8e3d3a9f8df0c00ddfc56adb136f79bb2f1e4d1b94c879a001ff96" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114" refid="group__esb_ga76b7c73f543bd1a22a4a47ac65ca08ca_1ga76b7c73f543bd1a22a4a47ac65ca08ca" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga76b7c73f543bd1a22a4a47ac65ca08ca_1ga76b7c73f543bd1a22a4a47ac65ca08ca" kindref="member">esb_bitrate</ref><sp/>{</highlight></codeline>
+<codeline lineno="116" refid="group__esb_ga76b7c73f543bd1a22a4a47ac65ca08ca_1gga76b7c73f543bd1a22a4a47ac65ca08caa47063019a5ae95648ee988bf07fd3313" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga76b7c73f543bd1a22a4a47ac65ca08ca_1gga76b7c73f543bd1a22a4a47ac65ca08caa47063019a5ae95648ee988bf07fd3313" kindref="member">ESB_BITRATE_1MBPS</ref><sp/>=<sp/>RADIO_MODE_MODE_Nrf_1Mbit,</highlight></codeline>
+<codeline lineno="118" refid="group__esb_ga76b7c73f543bd1a22a4a47ac65ca08ca_1gga76b7c73f543bd1a22a4a47ac65ca08caab6d0b12ab4893d0e310c7cf8925027be" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga76b7c73f543bd1a22a4a47ac65ca08ca_1gga76b7c73f543bd1a22a4a47ac65ca08caab6d0b12ab4893d0e310c7cf8925027be" kindref="member">ESB_BITRATE_2MBPS</ref><sp/>=<sp/>RADIO_MODE_MODE_Nrf_2Mbit,</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>!(defined(CONFIG_SOC_NRF52840)<sp/>||<sp/>defined(CONFIG_SOC_NRF52810)<sp/>||<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="120"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>defined(CONFIG_SOC_NRF52811)<sp/>||<sp/>defined(CONFIG_SOC_NRF5340_CPUNET))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122" refid="group__esb_ga76b7c73f543bd1a22a4a47ac65ca08ca_1gga76b7c73f543bd1a22a4a47ac65ca08caabba5763f29770d72644a7bb9f63e81d2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga76b7c73f543bd1a22a4a47ac65ca08ca_1gga76b7c73f543bd1a22a4a47ac65ca08caabba5763f29770d72644a7bb9f63e81d2" kindref="member">ESB_BITRATE_250KBPS</ref><sp/>=<sp/>RADIO_MODE_MODE_Nrf_250Kbit,</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125" refid="group__esb_ga76b7c73f543bd1a22a4a47ac65ca08ca_1gga76b7c73f543bd1a22a4a47ac65ca08caa76788ed5bb047a9e7f15803f60a328f6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga76b7c73f543bd1a22a4a47ac65ca08ca_1gga76b7c73f543bd1a22a4a47ac65ca08caa76788ed5bb047a9e7f15803f60a328f6" kindref="member">ESB_BITRATE_1MBPS_BLE</ref><sp/>=<sp/>RADIO_MODE_MODE_Ble_1Mbit,</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(CONFIG_SOC_SERIES_NRF52X)<sp/>||<sp/>defined(CONFIG_SOC_NRF5340_CPUNET)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ESB_BITRATE_2MBPS_BLE<sp/>=<sp/>4,</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133" refid="group__esb_ga448149f151eba42eb8995d3affc475dc_1ga448149f151eba42eb8995d3affc475dc" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga448149f151eba42eb8995d3affc475dc_1ga448149f151eba42eb8995d3affc475dc" kindref="member">esb_crc</ref><sp/>{</highlight></codeline>
+<codeline lineno="134" refid="group__esb_ga448149f151eba42eb8995d3affc475dc_1gga448149f151eba42eb8995d3affc475dca76b92d19af5c16ffcdad4c05ceb38202" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga448149f151eba42eb8995d3affc475dc_1gga448149f151eba42eb8995d3affc475dca76b92d19af5c16ffcdad4c05ceb38202" kindref="member">ESB_CRC_16BIT</ref><sp/>=<sp/>RADIO_CRCCNF_LEN_Two,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="135" refid="group__esb_ga448149f151eba42eb8995d3affc475dc_1gga448149f151eba42eb8995d3affc475dcab990c30f11d2aecbc05c70c4bf80b5e0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga448149f151eba42eb8995d3affc475dc_1gga448149f151eba42eb8995d3affc475dcab990c30f11d2aecbc05c70c4bf80b5e0" kindref="member">ESB_CRC_8BIT</ref><sp/>=<sp/>RADIO_CRCCNF_LEN_One,<sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga448149f151eba42eb8995d3affc475dc_1gga448149f151eba42eb8995d3affc475dca6b850a079c289e961eecb96fcfb057a1" kindref="member">ESB_CRC_OFF</ref><sp/>=<sp/>RADIO_CRCCNF_LEN_Disabled<sp/></highlight></codeline>
+<codeline lineno="137" refid="group__esb_ga448149f151eba42eb8995d3affc475dc_1gga448149f151eba42eb8995d3affc475dca6b850a079c289e961eecb96fcfb057a1" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140" refid="group__esb_ga8a9f66935228905e38d225c792901701_1ga8a9f66935228905e38d225c792901701" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga8a9f66935228905e38d225c792901701_1ga8a9f66935228905e38d225c792901701" kindref="member">esb_tx_power</ref><sp/>{</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>!defined(CONFIG_SOC_NRF5340_CPUNET)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="143" refid="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a550fce8a629dc30d9942794c18a07b31" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a550fce8a629dc30d9942794c18a07b31" kindref="member">ESB_TX_POWER_4DBM</ref><sp/>=<sp/>RADIO_TXPOWER_TXPOWER_Pos4dBm,</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(CONFIG_SOC_SERIES_NRF52X)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ESB_TX_POWER_3DBM<sp/>=<sp/>RADIO_TXPOWER_TXPOWER_Pos3dBm,</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="150" refid="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a55265077937a224bc1aedbc1613b9379" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a55265077937a224bc1aedbc1613b9379" kindref="member">ESB_TX_POWER_0DBM</ref><sp/>=<sp/>RADIO_TXPOWER_TXPOWER_0dBm,</highlight></codeline>
+<codeline lineno="152" refid="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a2437b63c69929252bbc25c4e5d381d45" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a2437b63c69929252bbc25c4e5d381d45" kindref="member">ESB_TX_POWER_NEG4DBM</ref><sp/>=<sp/>RADIO_TXPOWER_TXPOWER_Neg4dBm,</highlight></codeline>
+<codeline lineno="154" refid="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701aacab7b4478de7d76aea17fffb2929439" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701aacab7b4478de7d76aea17fffb2929439" kindref="member">ESB_TX_POWER_NEG8DBM</ref><sp/>=<sp/>RADIO_TXPOWER_TXPOWER_Neg8dBm,</highlight></codeline>
+<codeline lineno="156" refid="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a41e36b350973eb7b4e229aa08acdadc6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a41e36b350973eb7b4e229aa08acdadc6" kindref="member">ESB_TX_POWER_NEG12DBM</ref><sp/>=<sp/>RADIO_TXPOWER_TXPOWER_Neg12dBm,</highlight></codeline>
+<codeline lineno="158" refid="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701adeb5f80a5fa7b9007404af1bfe2be6fd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701adeb5f80a5fa7b9007404af1bfe2be6fd" kindref="member">ESB_TX_POWER_NEG16DBM</ref><sp/>=<sp/>RADIO_TXPOWER_TXPOWER_Neg16dBm,</highlight></codeline>
+<codeline lineno="160" refid="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a6eb9eb03123e7185b4c40748863ab4c8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a6eb9eb03123e7185b4c40748863ab4c8" kindref="member">ESB_TX_POWER_NEG20DBM</ref><sp/>=<sp/>RADIO_TXPOWER_TXPOWER_Neg20dBm,</highlight></codeline>
+<codeline lineno="162" refid="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a2a4d75012d989403809bcaf080bef0c0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a2a4d75012d989403809bcaf080bef0c0" kindref="member">ESB_TX_POWER_NEG30DBM</ref><sp/>=<sp/>RADIO_TXPOWER_TXPOWER_Neg30dBm,</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a068f9d76d0518d95ee7595d470941d51" kindref="member">ESB_TX_POWER_NEG40DBM</ref><sp/>=<sp/>RADIO_TXPOWER_TXPOWER_Neg40dBm</highlight></codeline>
+<codeline lineno="165" refid="group__esb_ga8a9f66935228905e38d225c792901701_1gga8a9f66935228905e38d225c792901701a068f9d76d0518d95ee7595d470941d51" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
+<codeline lineno="168" refid="group__esb_ga3b230160a9a606617133c4e0a8eb043a_1ga3b230160a9a606617133c4e0a8eb043a" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga3b230160a9a606617133c4e0a8eb043a_1ga3b230160a9a606617133c4e0a8eb043a" kindref="member">esb_tx_mode</ref><sp/>{</highlight></codeline>
+<codeline lineno="172" refid="group__esb_ga3b230160a9a606617133c4e0a8eb043a_1gga3b230160a9a606617133c4e0a8eb043aabbef49c7379d1fd906525871101b8763" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga3b230160a9a606617133c4e0a8eb043a_1gga3b230160a9a606617133c4e0a8eb043aabbef49c7379d1fd906525871101b8763" kindref="member">ESB_TXMODE_AUTO</ref>,</highlight></codeline>
+<codeline lineno="176" refid="group__esb_ga3b230160a9a606617133c4e0a8eb043a_1gga3b230160a9a606617133c4e0a8eb043aa32a6ebe683adf8e47c88937c149db309" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga3b230160a9a606617133c4e0a8eb043a_1gga3b230160a9a606617133c4e0a8eb043aa32a6ebe683adf8e47c88937c149db309" kindref="member">ESB_TXMODE_MANUAL</ref>,</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga3b230160a9a606617133c4e0a8eb043a_1gga3b230160a9a606617133c4e0a8eb043aad515d09304d25d9c338a81b9d69770f0" kindref="member">ESB_TXMODE_MANUAL_START</ref></highlight></codeline>
+<codeline lineno="182" refid="group__esb_ga3b230160a9a606617133c4e0a8eb043a_1gga3b230160a9a606617133c4e0a8eb043aad515d09304d25d9c338a81b9d69770f0" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185" refid="group__esb_ga4ba19219b64bdcd34f7ca2e47a170b2b_1ga4ba19219b64bdcd34f7ca2e47a170b2b" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga4ba19219b64bdcd34f7ca2e47a170b2b_1ga4ba19219b64bdcd34f7ca2e47a170b2b" kindref="member">esb_evt_id</ref><sp/>{</highlight></codeline>
+<codeline lineno="186" refid="group__esb_ga4ba19219b64bdcd34f7ca2e47a170b2b_1gga4ba19219b64bdcd34f7ca2e47a170b2ba59190d7d1eb6ff4f8f5736636039ada6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga4ba19219b64bdcd34f7ca2e47a170b2b_1gga4ba19219b64bdcd34f7ca2e47a170b2ba59190d7d1eb6ff4f8f5736636039ada6" kindref="member">ESB_EVENT_TX_SUCCESS</ref>,<sp/></highlight></codeline>
+<codeline lineno="187" refid="group__esb_ga4ba19219b64bdcd34f7ca2e47a170b2b_1gga4ba19219b64bdcd34f7ca2e47a170b2ba840fceb538e7b3fedbf80870ed7d5210" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga4ba19219b64bdcd34f7ca2e47a170b2b_1gga4ba19219b64bdcd34f7ca2e47a170b2ba840fceb538e7b3fedbf80870ed7d5210" kindref="member">ESB_EVENT_TX_FAILED</ref>,<sp/><sp/></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga4ba19219b64bdcd34f7ca2e47a170b2b_1gga4ba19219b64bdcd34f7ca2e47a170b2bac546798e9b77aa3365db858d3289df12" kindref="member">ESB_EVENT_RX_RECEIVED</ref><sp/></highlight></codeline>
+<codeline lineno="189" refid="group__esb_ga4ba19219b64bdcd34f7ca2e47a170b2b_1gga4ba19219b64bdcd34f7ca2e47a170b2bac546798e9b77aa3365db858d3289df12" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight></codeline>
+<codeline lineno="196" refid="structesb__payload" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structesb__payload" kindref="compound">esb_payload</ref><sp/>{</highlight></codeline>
+<codeline lineno="197" refid="structesb__payload_a96cd3b980ac4b9a5741ad867e30ef9e8_1a96cd3b980ac4b9a5741ad867e30ef9e8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structesb__payload_a96cd3b980ac4b9a5741ad867e30ef9e8_1a96cd3b980ac4b9a5741ad867e30ef9e8" kindref="member">length</ref>;<sp/></highlight></codeline>
+<codeline lineno="198" refid="structesb__payload_ab48b8982de6676821515598ee632026f_1ab48b8982de6676821515598ee632026f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structesb__payload_ab48b8982de6676821515598ee632026f_1ab48b8982de6676821515598ee632026f" kindref="member">pipe</ref>;<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="199" refid="structesb__payload_aae5f5fe38804078b5287bcd0c015d9a6_1aae5f5fe38804078b5287bcd0c015d9a6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int8_t<sp/><ref refid="structesb__payload_aae5f5fe38804078b5287bcd0c015d9a6_1aae5f5fe38804078b5287bcd0c015d9a6" kindref="member">rssi</ref>;<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="200" refid="structesb__payload_a412729c61c54fcb1a143ce37ba904378_1a412729c61c54fcb1a143ce37ba904378" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structesb__payload_a412729c61c54fcb1a143ce37ba904378_1a412729c61c54fcb1a143ce37ba904378" kindref="member">noack</ref>;<sp/><sp/></highlight></codeline>
+<codeline lineno="204" refid="structesb__payload_a84dc554d8a04d9fe1545dd990e9b6acb_1a84dc554d8a04d9fe1545dd990e9b6acb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structesb__payload_a84dc554d8a04d9fe1545dd990e9b6acb_1a84dc554d8a04d9fe1545dd990e9b6acb" kindref="member">pid</ref>;<sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="205" refid="structesb__payload_a637a29c68106cb7737a76207e88302a5_1a637a29c68106cb7737a76207e88302a5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structesb__payload_a637a29c68106cb7737a76207e88302a5_1a637a29c68106cb7737a76207e88302a5" kindref="member">data</ref>[CONFIG_ESB_MAX_PAYLOAD_LENGTH];<sp/></highlight></codeline>
+<codeline lineno="206"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight></codeline>
+<codeline lineno="209" refid="structesb__evt" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structesb__evt" kindref="compound">esb_evt</ref><sp/>{</highlight></codeline>
+<codeline lineno="210" refid="structesb__evt_aa91068c7f45106fb3f11b45d22f1b06f_1aa91068c7f45106fb3f11b45d22f1b06f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga4ba19219b64bdcd34f7ca2e47a170b2b_1ga4ba19219b64bdcd34f7ca2e47a170b2b" kindref="member">esb_evt_id</ref><sp/><ref refid="structesb__evt_aa91068c7f45106fb3f11b45d22f1b06f_1aa91068c7f45106fb3f11b45d22f1b06f" kindref="member">evt_id</ref>;<sp/></highlight></codeline>
+<codeline lineno="211" refid="structesb__evt_a0a6b9396097560202971df2f91fe6352_1a0a6b9396097560202971df2f91fe6352" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structesb__evt_a0a6b9396097560202971df2f91fe6352_1a0a6b9396097560202971df2f91fe6352" kindref="member">tx_attempts</ref>;<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="212"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight></codeline>
+<codeline lineno="215" refid="group__esb_ga80f8a9ac0e0473e0b7bbb3911c1752d6_1ga80f8a9ac0e0473e0b7bbb3911c1752d6" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__esb_ga80f8a9ac0e0473e0b7bbb3911c1752d6_1ga80f8a9ac0e0473e0b7bbb3911c1752d6" kindref="member">esb_event_handler</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structesb__evt" kindref="compound">esb_evt</ref><sp/>*event);</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"></highlight></codeline>
+<codeline lineno="218" refid="structesb__config" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structesb__config" kindref="compound">esb_config</ref><sp/>{</highlight></codeline>
+<codeline lineno="219" refid="structesb__config_a6267f8b5937dea39e1f83487dcef34dd_1a6267f8b5937dea39e1f83487dcef34dd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__esb_gae9e0aeeb3f862ea99c5cd947bc0843f8_1gae9e0aeeb3f862ea99c5cd947bc0843f8" kindref="member">esb_protocol</ref><sp/><ref refid="structesb__config_a6267f8b5937dea39e1f83487dcef34dd_1a6267f8b5937dea39e1f83487dcef34dd" kindref="member">protocol</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="220" refid="structesb__config_ade02aecdbbbc694c7bcbf772e1a9dacd_1ade02aecdbbbc694c7bcbf772e1a9dacd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga070ae9b6c3f8e3d3a9f8df0c00ddfc56_1ga070ae9b6c3f8e3d3a9f8df0c00ddfc56" kindref="member">esb_mode</ref><sp/><ref refid="structesb__config_ade02aecdbbbc694c7bcbf772e1a9dacd_1ade02aecdbbbc694c7bcbf772e1a9dacd" kindref="member">mode</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="221" refid="structesb__config_a57be663dfd4144b2b7f9b6f2414ae0a5_1a57be663dfd4144b2b7f9b6f2414ae0a5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__esb_ga80f8a9ac0e0473e0b7bbb3911c1752d6_1ga80f8a9ac0e0473e0b7bbb3911c1752d6" kindref="member">esb_event_handler</ref><sp/><ref refid="structesb__config_a57be663dfd4144b2b7f9b6f2414ae0a5_1a57be663dfd4144b2b7f9b6f2414ae0a5" kindref="member">event_handler</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>General<sp/>RF<sp/>parameters<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="223" refid="structesb__config_aa0ab15d2e1dd895ad63785d024ada9d9_1aa0ab15d2e1dd895ad63785d024ada9d9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga76b7c73f543bd1a22a4a47ac65ca08ca_1ga76b7c73f543bd1a22a4a47ac65ca08ca" kindref="member">esb_bitrate</ref><sp/><ref refid="structesb__config_aa0ab15d2e1dd895ad63785d024ada9d9_1aa0ab15d2e1dd895ad63785d024ada9d9" kindref="member">bitrate</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="224" refid="structesb__config_acf7dfdfce03aaf200c8d7de952906a90_1acf7dfdfce03aaf200c8d7de952906a90" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga448149f151eba42eb8995d3affc475dc_1ga448149f151eba42eb8995d3affc475dc" kindref="member">esb_crc</ref><sp/><ref refid="structesb__config_acf7dfdfce03aaf200c8d7de952906a90_1acf7dfdfce03aaf200c8d7de952906a90" kindref="member">crc</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="225" refid="structesb__config_a37d9f4962efc8bae0800c81e4da0e77c_1a37d9f4962efc8bae0800c81e4da0e77c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga8a9f66935228905e38d225c792901701_1ga8a9f66935228905e38d225c792901701" kindref="member">esb_tx_power</ref><sp/><ref refid="structesb__config_a37d9f4962efc8bae0800c81e4da0e77c_1a37d9f4962efc8bae0800c81e4da0e77c" kindref="member">tx_output_power</ref>;<sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="227" refid="structesb__config_abcfff89c53644ec973cf91a2ca31a738_1abcfff89c53644ec973cf91a2ca31a738" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structesb__config_abcfff89c53644ec973cf91a2ca31a738_1abcfff89c53644ec973cf91a2ca31a738" kindref="member">retransmit_delay</ref>;<sp/></highlight></codeline>
+<codeline lineno="230" refid="structesb__config_ae1369358e3e00b4def6e1ffb02a33af1_1ae1369358e3e00b4def6e1ffb02a33af1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structesb__config_ae1369358e3e00b4def6e1ffb02a33af1_1ae1369358e3e00b4def6e1ffb02a33af1" kindref="member">retransmit_count</ref>;<sp/></highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Control<sp/>settings<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="235" refid="structesb__config_afae249c879404b4dcbf1a71d298ff18f_1afae249c879404b4dcbf1a71d298ff18f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga3b230160a9a606617133c4e0a8eb043a_1ga3b230160a9a606617133c4e0a8eb043a" kindref="member">esb_tx_mode</ref><sp/><ref refid="structesb__config_afae249c879404b4dcbf1a71d298ff18f_1afae249c879404b4dcbf1a71d298ff18f" kindref="member">tx_mode</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="237" refid="structesb__config_a378ed3398c783889226c2a83ac05ad2f_1a378ed3398c783889226c2a83ac05ad2f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structesb__config_a378ed3398c783889226c2a83ac05ad2f_1a378ed3398c783889226c2a83ac05ad2f" kindref="member">payload_length</ref>;<sp/></highlight></codeline>
+<codeline lineno="240" refid="structesb__config_a76e386432caeb92db893cebd7e75e8a8_1a76e386432caeb92db893cebd7e75e8a8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structesb__config_a76e386432caeb92db893cebd7e75e8a8_1a76e386432caeb92db893cebd7e75e8a8" kindref="member">selective_auto_ack</ref>;<sp/></highlight></codeline>
+<codeline lineno="245"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"></highlight></codeline>
+<codeline lineno="253" refid="group__esb_gaf916614073f44427dcc65b31bf408a4b_1gaf916614073f44427dcc65b31bf408a4b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_gaf916614073f44427dcc65b31bf408a4b_1gaf916614073f44427dcc65b31bf408a4b" kindref="member">esb_init</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structesb__config" kindref="compound">esb_config</ref><sp/>*config);</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"></highlight></codeline>
+<codeline lineno="263" refid="group__esb_gac0c41d17ab4ab2f2b6abafe10d9fd3e8_1gac0c41d17ab4ab2f2b6abafe10d9fd3e8" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_gac0c41d17ab4ab2f2b6abafe10d9fd3e8_1gac0c41d17ab4ab2f2b6abafe10d9fd3e8" kindref="member">esb_suspend</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"></highlight></codeline>
+<codeline lineno="273" refid="group__esb_gaf452342a02aa8dad7ced301f0005e26b_1gaf452342a02aa8dad7ced301f0005e26b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__esb_gaf452342a02aa8dad7ced301f0005e26b_1gaf452342a02aa8dad7ced301f0005e26b" kindref="member">esb_disable</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"></highlight></codeline>
+<codeline lineno="279" refid="group__esb_gad3da27c142d61fdb274eab2e93a6e0b2_1gad3da27c142d61fdb274eab2e93a6e0b2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__esb_gad3da27c142d61fdb274eab2e93a6e0b2_1gad3da27c142d61fdb274eab2e93a6e0b2" kindref="member">esb_is_idle</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"></highlight></codeline>
+<codeline lineno="293" refid="group__esb_ga797c77faf18f3be090a783d5c2f44f42_1ga797c77faf18f3be090a783d5c2f44f42" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga797c77faf18f3be090a783d5c2f44f42_1ga797c77faf18f3be090a783d5c2f44f42" kindref="member">esb_write_payload</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structesb__payload" kindref="compound">esb_payload</ref><sp/>*payload);</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"></highlight></codeline>
+<codeline lineno="302" refid="group__esb_ga2be16f940f464fdc39ddd710d3ed6197_1ga2be16f940f464fdc39ddd710d3ed6197" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga2be16f940f464fdc39ddd710d3ed6197_1ga2be16f940f464fdc39ddd710d3ed6197" kindref="member">esb_read_rx_payload</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structesb__payload" kindref="compound">esb_payload</ref><sp/>*payload);</highlight></codeline>
+<codeline lineno="303"><highlight class="normal"></highlight></codeline>
+<codeline lineno="309" refid="group__esb_ga302a70a8c64264d6ae6e49dda12a14a3_1ga302a70a8c64264d6ae6e49dda12a14a3" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga302a70a8c64264d6ae6e49dda12a14a3_1ga302a70a8c64264d6ae6e49dda12a14a3" kindref="member">esb_start_tx</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="310"><highlight class="normal"></highlight></codeline>
+<codeline lineno="316" refid="group__esb_ga0a048a857c2150ef94a65b6bae0c244b_1ga0a048a857c2150ef94a65b6bae0c244b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga0a048a857c2150ef94a65b6bae0c244b_1ga0a048a857c2150ef94a65b6bae0c244b" kindref="member">esb_start_rx</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="317"><highlight class="normal"></highlight></codeline>
+<codeline lineno="323" refid="group__esb_ga4222224724143f35d1e40e4667bed77c_1ga4222224724143f35d1e40e4667bed77c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga4222224724143f35d1e40e4667bed77c_1ga4222224724143f35d1e40e4667bed77c" kindref="member">esb_stop_rx</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="324"><highlight class="normal"></highlight></codeline>
+<codeline lineno="332" refid="group__esb_gacd2ad50500639ff55479ec454173f8c9_1gacd2ad50500639ff55479ec454173f8c9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_gacd2ad50500639ff55479ec454173f8c9_1gacd2ad50500639ff55479ec454173f8c9" kindref="member">esb_flush_tx</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="333"><highlight class="normal"></highlight></codeline>
+<codeline lineno="339" refid="group__esb_gae2198296f66f071b552e44adda9f3bd4_1gae2198296f66f071b552e44adda9f3bd4" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_gae2198296f66f071b552e44adda9f3bd4_1gae2198296f66f071b552e44adda9f3bd4" kindref="member">esb_pop_tx</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="340"><highlight class="normal"></highlight></codeline>
+<codeline lineno="346" refid="group__esb_gaebce7ca62a83a0a3fcbc94e2f83952d2_1gaebce7ca62a83a0a3fcbc94e2f83952d2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_gaebce7ca62a83a0a3fcbc94e2f83952d2_1gaebce7ca62a83a0a3fcbc94e2f83952d2" kindref="member">esb_flush_rx</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="347"><highlight class="normal"></highlight></codeline>
+<codeline lineno="355" refid="group__esb_ga676878cff398b57c1c7593610f37ad0c_1ga676878cff398b57c1c7593610f37ad0c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga676878cff398b57c1c7593610f37ad0c_1ga676878cff398b57c1c7593610f37ad0c" kindref="member">esb_set_address_length</ref>(uint8_t<sp/>length);</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"></highlight></codeline>
+<codeline lineno="364" refid="group__esb_ga29df501fac454070a89fa63070f27b1e_1ga29df501fac454070a89fa63070f27b1e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga29df501fac454070a89fa63070f27b1e_1ga29df501fac454070a89fa63070f27b1e" kindref="member">esb_set_base_address_0</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*addr);</highlight></codeline>
+<codeline lineno="365"><highlight class="normal"></highlight></codeline>
+<codeline lineno="373" refid="group__esb_gaf7933fdf9e969c78967f0e4d64b4695f_1gaf7933fdf9e969c78967f0e4d64b4695f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_gaf7933fdf9e969c78967f0e4d64b4695f_1gaf7933fdf9e969c78967f0e4d64b4695f" kindref="member">esb_set_base_address_1</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*addr);</highlight></codeline>
+<codeline lineno="374"><highlight class="normal"></highlight></codeline>
+<codeline lineno="387" refid="group__esb_ga2f964e75f30681055f42a6b7e7f47ef4_1ga2f964e75f30681055f42a6b7e7f47ef4" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga2f964e75f30681055f42a6b7e7f47ef4_1ga2f964e75f30681055f42a6b7e7f47ef4" kindref="member">esb_set_prefixes</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*prefixes,<sp/>uint8_t<sp/>num_pipes);</highlight></codeline>
+<codeline lineno="388"><highlight class="normal"></highlight></codeline>
+<codeline lineno="402" refid="group__esb_gafd890e07130be78d1baf53b689deab3b_1gafd890e07130be78d1baf53b689deab3b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_gafd890e07130be78d1baf53b689deab3b_1gafd890e07130be78d1baf53b689deab3b" kindref="member">esb_enable_pipes</ref>(uint8_t<sp/>enable_mask);</highlight></codeline>
+<codeline lineno="403"><highlight class="normal"></highlight></codeline>
+<codeline lineno="412" refid="group__esb_ga5fab89c6e8a62a16f0255862fc9df32e_1ga5fab89c6e8a62a16f0255862fc9df32e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga5fab89c6e8a62a16f0255862fc9df32e_1ga5fab89c6e8a62a16f0255862fc9df32e" kindref="member">esb_update_prefix</ref>(uint8_t<sp/>pipe,<sp/>uint8_t<sp/>prefix);</highlight></codeline>
+<codeline lineno="413"><highlight class="normal"></highlight></codeline>
+<codeline lineno="426" refid="group__esb_ga7d0b12b1f2e63e9994f93e0feb7e0e47_1ga7d0b12b1f2e63e9994f93e0feb7e0e47" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga7d0b12b1f2e63e9994f93e0feb7e0e47_1ga7d0b12b1f2e63e9994f93e0feb7e0e47" kindref="member">esb_set_rf_channel</ref>(uint32_t<sp/>channel);</highlight></codeline>
+<codeline lineno="427"><highlight class="normal"></highlight></codeline>
+<codeline lineno="435" refid="group__esb_gaf2b720598e4f1ee264a8c4cc2e2286dc_1gaf2b720598e4f1ee264a8c4cc2e2286dc" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_gaf2b720598e4f1ee264a8c4cc2e2286dc_1gaf2b720598e4f1ee264a8c4cc2e2286dc" kindref="member">esb_get_rf_channel</ref>(uint32_t<sp/>*channel);</highlight></codeline>
+<codeline lineno="436"><highlight class="normal"></highlight></codeline>
+<codeline lineno="444" refid="group__esb_ga4f66f57bafd5034d96774f515c16755a_1ga4f66f57bafd5034d96774f515c16755a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga4f66f57bafd5034d96774f515c16755a_1ga4f66f57bafd5034d96774f515c16755a" kindref="member">esb_set_tx_power</ref>(</highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga8a9f66935228905e38d225c792901701_1ga8a9f66935228905e38d225c792901701" kindref="member">esb_tx_power</ref><sp/>tx_output_power);</highlight></codeline>
+<codeline lineno="445"><highlight class="normal"></highlight></codeline>
+<codeline lineno="453" refid="group__esb_ga00203f240b393df49100fddf33fe1124_1ga00203f240b393df49100fddf33fe1124" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga00203f240b393df49100fddf33fe1124_1ga00203f240b393df49100fddf33fe1124" kindref="member">esb_set_retransmit_delay</ref>(uint16_t<sp/>delay);</highlight></codeline>
+<codeline lineno="454"><highlight class="normal"></highlight></codeline>
+<codeline lineno="462" refid="group__esb_gaa467090803b438e49d89a8095c9edcd7_1gaa467090803b438e49d89a8095c9edcd7" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_gaa467090803b438e49d89a8095c9edcd7_1gaa467090803b438e49d89a8095c9edcd7" kindref="member">esb_set_retransmit_count</ref>(uint16_t<sp/>count);</highlight></codeline>
+<codeline lineno="463"><highlight class="normal"></highlight></codeline>
+<codeline lineno="471" refid="group__esb_ga807dbca85ef56d936c582083540f1bf1_1ga807dbca85ef56d936c582083540f1bf1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga807dbca85ef56d936c582083540f1bf1_1ga807dbca85ef56d936c582083540f1bf1" kindref="member">esb_set_bitrate</ref>(</highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga76b7c73f543bd1a22a4a47ac65ca08ca_1ga76b7c73f543bd1a22a4a47ac65ca08ca" kindref="member">esb_bitrate</ref><sp/>bitrate);</highlight></codeline>
+<codeline lineno="472"><highlight class="normal"></highlight></codeline>
+<codeline lineno="485" refid="group__esb_ga996ce2c9899ba38327dfce826aaf2033_1ga996ce2c9899ba38327dfce826aaf2033" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__esb_ga996ce2c9899ba38327dfce826aaf2033_1ga996ce2c9899ba38327dfce826aaf2033" kindref="member">esb_reuse_pid</ref>(uint8_t<sp/>pipe);</highlight></codeline>
+<codeline lineno="486"><highlight class="normal"></highlight></codeline>
+<codeline lineno="489"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="490"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="491"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="492"><highlight class="normal"></highlight></codeline>
+<codeline lineno="493"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>ESB<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/esb.h"/>
+  </compounddef>
+</doxygen>

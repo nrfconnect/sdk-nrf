@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__light__hsl" kind="group">
+    <compoundname>bt_mesh_light_hsl</compoundname>
+    <title>Light HSL models</title>
+    <innerclass refid="structbt__mesh__light__hsl" prot="public">bt_mesh_light_hsl</innerclass>
+    <innerclass refid="structbt__mesh__light__hue__sat" prot="public">bt_mesh_light_hue_sat</innerclass>
+    <innerclass refid="structbt__mesh__light__hsl__params" prot="public">bt_mesh_light_hsl_params</innerclass>
+    <innerclass refid="structbt__mesh__light__hue__delta" prot="public">bt_mesh_light_hue_delta</innerclass>
+    <innerclass refid="structbt__mesh__light__hue__move" prot="public">bt_mesh_light_hue_move</innerclass>
+    <innerclass refid="structbt__mesh__light__hsl__status" prot="public">bt_mesh_light_hsl_status</innerclass>
+    <innerclass refid="structbt__mesh__light__hue" prot="public">bt_mesh_light_hue</innerclass>
+    <innerclass refid="structbt__mesh__light__sat" prot="public">bt_mesh_light_sat</innerclass>
+    <innerclass refid="structbt__mesh__light__hue__status" prot="public">bt_mesh_light_hue_status</innerclass>
+    <innerclass refid="structbt__mesh__light__sat__status" prot="public">bt_mesh_light_sat_status</innerclass>
+    <innerclass refid="structbt__mesh__light__hsl__range" prot="public">bt_mesh_light_hsl_range</innerclass>
+    <innerclass refid="structbt__mesh__light__hue__sat__range" prot="public">bt_mesh_light_hue_sat_range</innerclass>
+    <innerclass refid="structbt__mesh__light__hsl__range__status" prot="public">bt_mesh_light_hsl_range_status</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__light__hsl_1ga8c41b9bd053dde6564ff782c6be19f12" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_light_hsl_to_rgb</definition>
+        <argsstring>(const struct bt_mesh_light_hsl *hsl, enum bt_mesh_rgb_ch ch)</argsstring>
+        <name>bt_mesh_light_hsl_to_rgb</name>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__light__hsl" kindref="compound">bt_mesh_light_hsl</ref> *</type>
+          <declname>hsl</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__bt__mesh__model__types_ga66950f368812a669ec1ceb3e3af6a02c_1ga66950f368812a669ec1ceb3e3af6a02c" kindref="member">bt_mesh_rgb_ch</ref></type>
+          <declname>ch</declname>
+        </param>
+        <briefdescription>
+<para>Convert HSL to a 16 bit RGB channel value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Uses the standard conversion formula to convert HSL to RGB, as described in <ulink url="https://en.wikipedia.org/wiki/HSL_and_HSV#HSL_to_RGB">https://en.wikipedia.org/wiki/HSL_and_HSV#HSL_to_RGB</ulink>. Note that the accuracy of the conversion depends on the characteristics of the light source hardware, and may need correction for each channel.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">hsl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HSL value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ch</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>RGB color channel.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The value of the chosen RGB channel for the given HSL value. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl.h" line="190" column="10" declfile="include/bluetooth/mesh/light_hsl.h" declline="190" declcolumn="10"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__light__hsl_1ga90792694de7a358fd1efa17abd86ee5e" prot="public" static="no">
+        <name>BT_MESH_LIGHT_HSL_MIN</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl.h" line="23" column="9" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__light__hsl_1ga8d238b6f6d899eea4a6a36a86fd13438" prot="public" static="no">
+        <name>BT_MESH_LIGHT_HSL_MAX</name>
+        <initializer>UINT16_MAX</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl.h" line="24" column="9" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__light__hsl_1gaef4a7c65cf4d866162c21b5ebe955b6f" prot="public" static="no">
+        <name>BT_MESH_LIGHT_HSL_OP_RANGE_DEFAULT</name>
+        <initializer>	{                                                                      \
+		.min = <ref refid="group__bt__mesh__light__hsl_ga90792694de7a358fd1efa17abd86ee5e_1ga90792694de7a358fd1efa17abd86ee5e" kindref="member">BT_MESH_LIGHT_HSL_MIN</ref>, .max = <ref refid="group__bt__mesh__light__hsl_ga8d238b6f6d899eea4a6a36a86fd13438_1ga8d238b6f6d899eea4a6a36a86fd13438" kindref="member">BT_MESH_LIGHT_HSL_MAX</ref>,    \
+	}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl.h" line="25" column="9" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Light HSL models. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

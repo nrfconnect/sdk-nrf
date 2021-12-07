@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__t4t__apdu__status" kind="group">
+    <compoundname>nfc_t4t_apdu_status</compoundname>
+    <title>Status codes contained in R-APDU</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__t4t__apdu__status_1gabc885e4cf9477403ac0f3131ff8ed844" prot="public" static="no">
+        <name>NFC_T4T_APDU_RAPDU_STATUS_CMD_COMPLETED</name>
+        <initializer>0x9000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Command completed successfully. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="49" column="9" bodyfile="include/nfc/t4t/apdu.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t4t__apdu__status_1ga45ad56c261ba3d5e9cf16cfac2f93c1b" prot="public" static="no">
+        <name>NFC_T4T_APDU_RAPDU_STATUS_SEL_ITEM_NOT_FOUND</name>
+        <initializer>0x6A82</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Selected item has not been found. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="52" column="9" bodyfile="include/nfc/t4t/apdu.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_2d58ac5eb3c0f1d43464bf00cc5964b4" kind="dir">
+    <compoundname>include/nfc/t4t</compoundname>
+    <innerfile refid="apdu_8h">apdu.h</innerfile>
+    <innerfile refid="cc__file_8h">cc_file.h</innerfile>
+    <innerfile refid="hl__procedure_8h">hl_procedure.h</innerfile>
+    <innerfile refid="isodep_8h">isodep.h</innerfile>
+    <innerfile refid="ndef__file_8h">ndef_file.h</innerfile>
+    <innerfile refid="t4t_2tlv__block_8h">tlv_block.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/nfc/t4t/"/>
+  </compounddef>
+</doxygen>

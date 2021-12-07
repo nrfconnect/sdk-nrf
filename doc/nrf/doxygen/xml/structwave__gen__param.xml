@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structwave__gen__param" kind="struct" language="C++" prot="public">
+    <compoundname>wave_gen_param</compoundname>
+    <includes refid="wave__gen_8h" local="no">wave_gen.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structwave__gen__param_aaf86acd1bf75dd5a1725efd0452a3b94_1aaf86acd1bf75dd5a1725efd0452a3b94" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__wave__gen_gaeb5f3200375b475d760feffbfce4c5a5_1gaeb5f3200375b475d760feffbfce4c5a5" kindref="member">wave_gen_type</ref></type>
+        <definition>enum wave_gen_type wave_gen_param::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Type of the wave signal. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/wave_gen.h" line="42" column="19" bodyfile="include/wave_gen.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structwave__gen__param_a8d534f93c4bdff01a738739a5e21b1b0_1a8d534f93c4bdff01a738739a5e21b1b0" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t wave_gen_param::period_ms</definition>
+        <argsstring></argsstring>
+        <name>period_ms</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Period of the wave signal [ms]. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/wave_gen.h" line="45" column="10" bodyfile="include/wave_gen.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structwave__gen__param_a7c9c974a8f374f8b6de6addbc2a90d50_1a7c9c974a8f374f8b6de6addbc2a90d50" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double wave_gen_param::offset</definition>
+        <argsstring></argsstring>
+        <name>offset</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Offset of the wave signal. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/wave_gen.h" line="48" column="8" bodyfile="include/wave_gen.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structwave__gen__param_ade571c19396614d3a333b14439d1ca86_1ade571c19396614d3a333b14439d1ca86" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double wave_gen_param::amplitude</definition>
+        <argsstring></argsstring>
+        <name>amplitude</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Amplitude of the wave signal. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/wave_gen.h" line="51" column="8" bodyfile="include/wave_gen.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structwave__gen__param_ad9aa73df0a58ba03d8dda6cb795abc2a_1ad9aa73df0a58ba03d8dda6cb795abc2a" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double wave_gen_param::noise</definition>
+        <argsstring></argsstring>
+        <name>noise</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Amplitue of the added noise signal. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/wave_gen.h" line="54" column="8" bodyfile="include/wave_gen.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Generated wave parameters. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/wave_gen.h" line="40" column="1" bodyfile="include/wave_gen.h" bodystart="40" bodyend="55"/>
+    <listofallmembers>
+      <member refid="structwave__gen__param_ade571c19396614d3a333b14439d1ca86_1ade571c19396614d3a333b14439d1ca86" prot="public" virt="non-virtual"><scope>wave_gen_param</scope><name>amplitude</name></member>
+      <member refid="structwave__gen__param_ad9aa73df0a58ba03d8dda6cb795abc2a_1ad9aa73df0a58ba03d8dda6cb795abc2a" prot="public" virt="non-virtual"><scope>wave_gen_param</scope><name>noise</name></member>
+      <member refid="structwave__gen__param_a7c9c974a8f374f8b6de6addbc2a90d50_1a7c9c974a8f374f8b6de6addbc2a90d50" prot="public" virt="non-virtual"><scope>wave_gen_param</scope><name>offset</name></member>
+      <member refid="structwave__gen__param_a8d534f93c4bdff01a738739a5e21b1b0_1a8d534f93c4bdff01a738739a5e21b1b0" prot="public" virt="non-virtual"><scope>wave_gen_param</scope><name>period_ms</name></member>
+      <member refid="structwave__gen__param_aaf86acd1bf75dd5a1725efd0452a3b94_1aaf86acd1bf75dd5a1725efd0452a3b94" prot="public" virt="non-virtual"><scope>wave_gen_param</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

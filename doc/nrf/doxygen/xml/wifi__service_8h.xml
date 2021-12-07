@@ -1,0 +1,205 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="wifi__service_8h" kind="file" language="C++">
+    <compoundname>wifi_service.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <includes local="no">net/wifi.h</includes>
+    <includes refid="location_8h" local="no">modem/location.h</includes>
+    <includedby refid="wifi__here__rest_8h" local="yes">lib/location/wifi/wifi_here_rest.h</includedby>
+    <includedby refid="wifi__nrf__cloud__rest_8h" local="yes">lib/location/wifi/wifi_nrf_cloud_rest.h</includedby>
+    <includedby refid="wifi__skyhook__rest_8h" local="yes">lib/location/wifi/wifi_skyhook_rest.h</includedby>
+    <incdepgraph>
+      <node id="4">
+        <label>modem/location.h</label>
+        <link refid="location_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>lib/location/wifi/wifi_service.h</label>
+        <link refid="wifi__service_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>net/wifi.h</label>
+      </node>
+      <node id="5">
+        <label>stdbool.h</label>
+      </node>
+      <node id="6">
+        <label>stddef.h</label>
+      </node>
+      <node id="7">
+        <label>stdint.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>lib/location/wifi/wifi_here_rest.h</label>
+        <link refid="wifi__here__rest_8h"/>
+      </node>
+      <node id="3">
+        <label>lib/location/wifi/wifi_nrf_cloud_rest.h</label>
+        <link refid="wifi__nrf__cloud__rest_8h"/>
+      </node>
+      <node id="1">
+        <label>lib/location/wifi/wifi_service.h</label>
+        <link refid="wifi__service_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>lib/location/wifi/wifi_skyhook_rest.h</label>
+        <link refid="wifi__skyhook__rest_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structwifi__scanning__result__info" prot="public">wifi_scanning_result_info</innerclass>
+    <innerclass refid="structrest__wifi__pos__request" prot="public">rest_wifi_pos_request</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="wifi__service_8h_ac748f088bbad22bef6625cf43b29634d_1ac748f088bbad22bef6625cf43b29634d" prot="public" static="no">
+        <name>REST_WIFI_MIN_TIMEOUT_MS</name>
+        <initializer>1500</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/wifi/wifi_service.h" line="20" column="9" bodyfile="lib/location/wifi/wifi_service.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="wifi__service_8h_a6f032b47f0e23b20c1c873dc148e272c_1a6f032b47f0e23b20c1c873dc148e272c" prot="public" static="no">
+        <name>WIFI_MAC_ADDR_STR_LEN</name>
+        <initializer>17</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/wifi/wifi_service.h" line="21" column="9" bodyfile="lib/location/wifi/wifi_service.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="wifi__service_8h_a2f8714f2831b233f7553704f7142e030_1a2f8714f2831b233f7553704f7142e030" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int rest_services_wifi_location_get</definition>
+        <argsstring>(enum location_service service, const struct rest_wifi_pos_request *request, struct location_data *result)</argsstring>
+        <name>rest_services_wifi_location_get</name>
+        <param>
+          <type>enum <ref refid="group__location_ga065818dd61883219339120739cf46c7d_1ga065818dd61883219339120739cf46c7d" kindref="member">location_service</ref></type>
+          <declname>service</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structrest__wifi__pos__request" kindref="compound">rest_wifi_pos_request</ref> *</type>
+          <declname>request</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structlocation__data" kindref="compound">location_data</ref> *</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+<para>Wi-Fi location request by using Wi-Fi positioning service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">service</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Used Wi-Fi positioning service. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">request</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to be provided in API call. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">result</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parsed results of API response.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/wifi/wifi_service.h" line="50" column="5" declfile="lib/location/wifi/wifi_service.h" declline="50" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>REST API for Wi-Fi positioning. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>WIFI_SERVICE_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>WIFI_SERVICE_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;net/wifi.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="location_8h" kindref="compound">modem/location.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20" refid="wifi__service_8h_ac748f088bbad22bef6625cf43b29634d_1ac748f088bbad22bef6625cf43b29634d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>REST_WIFI_MIN_TIMEOUT_MS<sp/>1500</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="wifi__service_8h_a6f032b47f0e23b20c1c873dc148e272c_1a6f032b47f0e23b20c1c873dc148e272c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>WIFI_MAC_ADDR_STR_LEN<sp/>17</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="structwifi__scanning__result__info" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structwifi__scanning__result__info" kindref="compound">wifi_scanning_result_info</ref><sp/>{</highlight></codeline>
+<codeline lineno="25" refid="structwifi__scanning__result__info_a04d91bfd09054990412c652be4fad352_1a04d91bfd09054990412c652be4fad352" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structwifi__scanning__result__info_a04d91bfd09054990412c652be4fad352_1a04d91bfd09054990412c652be4fad352" kindref="member">mac_addr_str</ref>[<ref refid="wifi__service_8h_a6f032b47f0e23b20c1c873dc148e272c_1a6f032b47f0e23b20c1c873dc148e272c" kindref="member">WIFI_MAC_ADDR_STR_LEN</ref><sp/>+<sp/>1];</highlight></codeline>
+<codeline lineno="26" refid="structwifi__scanning__result__info_a17902f0083d3b19b05c51851cd2f06ba_1a17902f0083d3b19b05c51851cd2f06ba" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structwifi__scanning__result__info_a17902f0083d3b19b05c51851cd2f06ba_1a17902f0083d3b19b05c51851cd2f06ba" kindref="member">ssid_str</ref>[WIFI_SSID_MAX_LEN<sp/>+<sp/>1];</highlight></codeline>
+<codeline lineno="27" refid="structwifi__scanning__result__info_a035ff71d343cd8c77ba1426906e9b039_1a035ff71d343cd8c77ba1426906e9b039" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structwifi__scanning__result__info_a035ff71d343cd8c77ba1426906e9b039_1a035ff71d343cd8c77ba1426906e9b039" kindref="member">channel</ref>;</highlight></codeline>
+<codeline lineno="28" refid="structwifi__scanning__result__info_a04d6246452b855f207d61c2232d9c41e_1a04d6246452b855f207d61c2232d9c41e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int8_t<sp/><ref refid="structwifi__scanning__result__info_a04d6246452b855f207d61c2232d9c41e_1a04d6246452b855f207d61c2232d9c41e" kindref="member">rssi</ref>;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="structrest__wifi__pos__request" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structrest__wifi__pos__request" kindref="compound">rest_wifi_pos_request</ref><sp/>{</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structwifi__scanning__result__info" kindref="compound">wifi_scanning_result_info</ref></highlight></codeline>
+<codeline lineno="35" refid="structrest__wifi__pos__request_a9c954d6d9fb650d1db8d7cceab92a8be_1a9c954d6d9fb650d1db8d7cceab92a8be" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structrest__wifi__pos__request_a9c954d6d9fb650d1db8d7cceab92a8be_1a9c954d6d9fb650d1db8d7cceab92a8be" kindref="member">scanning_results</ref>[CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT];</highlight></codeline>
+<codeline lineno="36" refid="structrest__wifi__pos__request_ad6360f3db7badaf8f8df9543abe4172f_1ad6360f3db7badaf8f8df9543abe4172f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structrest__wifi__pos__request_ad6360f3db7badaf8f8df9543abe4172f_1ad6360f3db7badaf8f8df9543abe4172f" kindref="member">wifi_scanning_result_count</ref>;<sp/></highlight><highlight class="comment">/*<sp/>Count<sp/>of<sp/>wifi<sp/>access<sp/>points<sp/>returned<sp/>in<sp/>scanning<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="structrest__wifi__pos__request_a0a1ac02e5cb9147bda09397fcfd866f9_1a0a1ac02e5cb9147bda09397fcfd866f9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int32_t<sp/><ref refid="structrest__wifi__pos__request_a0a1ac02e5cb9147bda09397fcfd866f9_1a0a1ac02e5cb9147bda09397fcfd866f9" kindref="member">timeout_ms</ref>;<sp/></highlight><highlight class="comment">/*<sp/>REST<sp/>request<sp/>timeout<sp/>(in<sp/>mseconds)<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="wifi__service_8h_a2f8714f2831b233f7553704f7142e030_1a2f8714f2831b233f7553704f7142e030" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="wifi__service_8h_a2f8714f2831b233f7553704f7142e030_1a2f8714f2831b233f7553704f7142e030" kindref="member">rest_services_wifi_location_get</ref>(</highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__location_ga065818dd61883219339120739cf46c7d_1ga065818dd61883219339120739cf46c7d" kindref="member">location_service</ref><sp/>service,</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structrest__wifi__pos__request" kindref="compound">rest_wifi_pos_request</ref><sp/>*request,</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlocation__data" kindref="compound">location_data</ref><sp/>*result);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>WIFI_SERVICE_H<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="lib/location/wifi/wifi_service.h"/>
+  </compounddef>
+</doxygen>

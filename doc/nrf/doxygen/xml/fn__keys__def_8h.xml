@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="fn__keys__def_8h" kind="file" language="C++">
+    <compoundname>fn_keys_def.h</compoundname>
+    <includes refid="key__id_8h" local="no">caf/key_id.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/nrf52kbd_nrf52832/fn_keys_def.h</label>
+        <link refid="fn__keys__def_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>caf/key_id.h</label>
+        <link refid="key__id_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>sys/util.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="fn__keys__def_8h_aab99e42327de0061e1cb3435de61a345_1aab99e42327de0061e1cb3435de61a345" prot="public" static="no" mutable="no">
+        <type>const struct @107</type>
+        <definition>const struct @107 fn_key_def_include_once</definition>
+        <argsstring></argsstring>
+        <name>fn_key_def_include_once</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52kbd_nrf52832/fn_keys_def.h" line="16" column="37"/>
+      </memberdef>
+      <memberdef kind="variable" id="fn__keys__def_8h_a94d8b4dc10efcdf77d3f75eb54cc8b73_1a94d8b4dc10efcdf77d3f75eb54cc8b73" prot="public" static="yes" mutable="no">
+        <type>const uint16_t</type>
+        <definition>const uint16_t fn_keys[]</definition>
+        <argsstring>[]</argsstring>
+        <name>fn_keys</name>
+        <initializer>= {
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x01, 0x03), 
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x03, 0x01), 
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x03, 0x03), 
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x03, 0x0A), 
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x05, 0x0A), 
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x06, 0x02), 
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x06, 0x03), 
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x06, 0x0A), 
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x06, 0x0C), 
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x06, 0x0D), 
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x06, 0x0E), 
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x07, 0x0A), 
+	<ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x07, 0x0D), 
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52kbd_nrf52832/fn_keys_def.h" line="18" column="23" bodyfile="applications/nrf_desktop/configuration/nrf52kbd_nrf52832/fn_keys_def.h" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="key__id_8h" kindref="compound">caf/key_id.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>configuration<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>from<sp/>fn_keys<sp/>module<sp/>and<sp/>holds</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*<sp/>information<sp/>about<sp/>key<sp/>with<sp/>alternate<sp/>functions.</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>structure<sp/>enforces<sp/>the<sp/>header<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>in<sp/>the<sp/>build.</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*<sp/>Violating<sp/>this<sp/>requirement<sp/>triggers<sp/>a<sp/>multiple<sp/>definition<sp/>error<sp/>at<sp/>link<sp/>time.</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16" refid="fn__keys__def_8h_aab99e42327de0061e1cb3435de61a345_1aab99e42327de0061e1cb3435de61a345" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{}<sp/><ref refid="fn__keys__def_8h_aab99e42327de0061e1cb3435de61a345_1aab99e42327de0061e1cb3435de61a345" kindref="member">fn_key_def_include_once</ref>;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="fn__keys__def_8h_a94d8b4dc10efcdf77d3f75eb54cc8b73_1a94d8b4dc10efcdf77d3f75eb54cc8b73" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint16_t<sp/><ref refid="fn__keys__def_8h_a94d8b4dc10efcdf77d3f75eb54cc8b73_1a94d8b4dc10efcdf77d3f75eb54cc8b73" kindref="member">fn_keys</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x01,<sp/>0x03),<sp/></highlight><highlight class="comment">/*<sp/>f3<sp/>-&gt;<sp/>e-mail<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x03,<sp/>0x01),<sp/></highlight><highlight class="comment">/*<sp/>esc<sp/>-&gt;<sp/>fn<sp/>lock<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x03,<sp/>0x03),<sp/></highlight><highlight class="comment">/*<sp/>f4<sp/>-&gt;<sp/>calculator<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x03,<sp/>0x0A),<sp/></highlight><highlight class="comment">/*<sp/>f11<sp/>-&gt;<sp/>play/pause<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x05,<sp/>0x0A),<sp/></highlight><highlight class="comment">/*<sp/>f12<sp/>-&gt;<sp/>next<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x06,<sp/>0x02),<sp/></highlight><highlight class="comment">/*<sp/>f1<sp/>-&gt;<sp/>sleep<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x06,<sp/>0x03),<sp/></highlight><highlight class="comment">/*<sp/>f2<sp/>-&gt;<sp/>internet<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x06,<sp/>0x0A),<sp/></highlight><highlight class="comment">/*<sp/>f9<sp/>-&gt;<sp/>find<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x06,<sp/>0x0C),<sp/></highlight><highlight class="comment">/*<sp/>insert<sp/>-&gt;<sp/>prt<sp/>scr<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x06,<sp/>0x0D),<sp/></highlight><highlight class="comment">/*<sp/>page<sp/>up<sp/>-&gt;<sp/>scroll<sp/>lock<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x06,<sp/>0x0E),<sp/></highlight><highlight class="comment">/*<sp/>home<sp/>-&gt;<sp/>pause<sp/>break<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x07,<sp/>0x0A),<sp/></highlight><highlight class="comment">/*<sp/>f10<sp/>-&gt;<sp/>previous<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="key__id_8h_a3ad020fc1e6e6e51c9a0ba6a9ac12987_1a3ad020fc1e6e6e51c9a0ba6a9ac12987" kindref="member">KEY_ID</ref>(0x07,<sp/>0x0D),<sp/></highlight><highlight class="comment">/*<sp/>page<sp/>down<sp/>-&gt;<sp/>peer<sp/>control<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/nrf52kbd_nrf52832/fn_keys_def.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__onoff__set" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_onoff_set</compoundname>
+    <includes refid="gen__onoff_8h" local="no">gen_onoff.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__onoff__set_a05cda8c2bead89b37df5e19bcf3e80bf_1a05cda8c2bead89b37df5e19bcf3e80bf" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool bt_mesh_onoff_set::on_off</definition>
+        <argsstring></argsstring>
+        <name>on_off</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>State to set. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_onoff.h" line="26" column="6" bodyfile="include/bluetooth/mesh/gen_onoff.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__onoff__set_a52f7b3dc452d4566165ef1c864c64c25_1a52f7b3dc452d4566165ef1c864c64c25" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref> *</type>
+        <definition>const struct bt_mesh_model_transition* bt_mesh_onoff_set::transition</definition>
+        <argsstring></argsstring>
+        <name>transition</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transition time parameters for the state change, or NULL.</para>
+<para>When sending, setting the transition to NULL makes the receiver use its default transition time parameters, or 0 if no default transition time is set. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_onoff.h" line="34" column="37" bodyfile="include/bluetooth/mesh/gen_onoff.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Mandatory parameters for the Generic OnOff Set message. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_mesh_model_transition</label>
+        <link refid="structbt__mesh__model__transition"/>
+      </node>
+      <node id="1">
+        <label>bt_mesh_onoff_set</label>
+        <link refid="structbt__mesh__onoff__set"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>transition</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/gen_onoff.h" line="24" column="1" bodyfile="include/bluetooth/mesh/gen_onoff.h" bodystart="24" bodyend="35"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__onoff__set_a05cda8c2bead89b37df5e19bcf3e80bf_1a05cda8c2bead89b37df5e19bcf3e80bf" prot="public" virt="non-virtual"><scope>bt_mesh_onoff_set</scope><name>on_off</name></member>
+      <member refid="structbt__mesh__onoff__set_a52f7b3dc452d4566165ef1c864c64c25_1a52f7b3dc452d4566165ef1c864c64c25" prot="public" virt="non-virtual"><scope>bt_mesh_onoff_set</scope><name>transition</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

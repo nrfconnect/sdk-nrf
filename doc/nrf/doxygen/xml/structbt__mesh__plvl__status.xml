@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__plvl__status" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_plvl_status</compoundname>
+    <includes refid="gen__plvl_8h" local="no">gen_plvl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__plvl__status_a34aca1e4d9453c003559c946d488524f_1a34aca1e4d9453c003559c946d488524f" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_plvl_status::current</definition>
+        <argsstring></argsstring>
+        <name>current</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current Power Level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl.h" line="40" column="10" bodyfile="include/bluetooth/mesh/gen_plvl.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__status_a9d14c123b57b90b31826e86513d70f63_1a9d14c123b57b90b31826e86513d70f63" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_plvl_status::target</definition>
+        <argsstring></argsstring>
+        <name>target</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Target Power Level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl.h" line="42" column="10" bodyfile="include/bluetooth/mesh/gen_plvl.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__status_ad03d7331d597379fdb3d032a98cbe880_1ad03d7331d597379fdb3d032a98cbe880" prot="public" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t bt_mesh_plvl_status::remaining_time</definition>
+        <argsstring></argsstring>
+        <name>remaining_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Time remaining of the ongoing transition in milliseconds, or <emphasis>SYS_FOREVER_MS</emphasis>. If there&apos;s no ongoing transition, <computeroutput>remaining_time</computeroutput> is 0. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl.h" line="48" column="9" bodyfile="include/bluetooth/mesh/gen_plvl.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Power Level status message parameters. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/gen_plvl.h" line="38" column="1" bodyfile="include/bluetooth/mesh/gen_plvl.h" bodystart="38" bodyend="49"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__plvl__status_a34aca1e4d9453c003559c946d488524f_1a34aca1e4d9453c003559c946d488524f" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_status</scope><name>current</name></member>
+      <member refid="structbt__mesh__plvl__status_ad03d7331d597379fdb3d032a98cbe880_1ad03d7331d597379fdb3d032a98cbe880" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_status</scope><name>remaining_time</name></member>
+      <member refid="structbt__mesh__plvl__status_a9d14c123b57b90b31826e86513d70f63_1a9d14c123b57b90b31826e86513d70f63" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_status</scope><name>target</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

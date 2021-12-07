@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__cap__sensor__disp__reg" kind="group">
+    <compoundname>st25r3911b_cap_sensor_disp_reg</compoundname>
+    <title>Capacitive Sensor</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__cap__sensor__disp__reg_1ga90488be5e9232e942264cffe4c338661" prot="public" static="no">
+        <name>ST25R3911B_REG_CAP_SENSOR_DISP_CS_CAL_ERR</name>
+        <initializer>BIT(1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="613" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="613" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__cap__sensor__disp__reg_1gadafd90689b645514ee530d0b105bc334" prot="public" static="no">
+        <name>ST25R3911B_REG_CAP_SENSOR_DISP_CS_CAL_END</name>
+        <initializer>BIT(2)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="614" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="614" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__cap__sensor__disp__reg_1gad9a5b8b4c1533743bcb07feb40ead1c1" prot="public" static="no">
+        <name>ST25R3911B_REG_CAP_SENSOR_DISP_CS_CAL0</name>
+        <initializer>BIT(3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="615" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="615" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__cap__sensor__disp__reg_1ga397ddfb77fe372ab7afad9ed269a2a14" prot="public" static="no">
+        <name>ST25R3911B_REG_CAP_SENSOR_DISP_CS_CAL1</name>
+        <initializer>BIT(4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="616" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="616" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__cap__sensor__disp__reg_1ga5bc216316c5dff332ad62854380bae54" prot="public" static="no">
+        <name>ST25R3911B_REG_CAP_SENSOR_DISP_CS_CAL2</name>
+        <initializer>BIT(5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="617" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="617" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__cap__sensor__disp__reg_1ga511d47962ae0b8a7f1628e172b80124f" prot="public" static="no">
+        <name>ST25R3911B_REG_CAP_SENSOR_DISP_CS_CAL3</name>
+        <initializer>BIT(6)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="618" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="618" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__cap__sensor__disp__reg_1ga882c0b84db7c5389176a93b0bf967538" prot="public" static="no">
+        <name>ST25R3911B_REG_CAP_SENSOR_DISP_CS_CAL4</name>
+        <initializer>BIT(7)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="619" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="619" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Display Register bits </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

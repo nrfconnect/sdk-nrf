@@ -1,0 +1,152 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structparser" kind="struct" language="C++" prot="public">
+    <compoundname>parser</compoundname>
+    <includes refid="lib_2sms_2parser_8h" local="no">parser.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structparser_ada941225d3bb6165239ceae344705b2e_1ada941225d3bb6165239ceae344705b2e" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t parser::buf_pos</definition>
+        <argsstring></argsstring>
+        <name>buf_pos</name>
+        <briefdescription>
+<para>Iterator type of state information on where the parsing is proceeding. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/parser.h" line="57" column="9" bodyfile="lib/sms/parser.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structparser_a728300c75489862dafd817a8c6e7282a_1a728300c75489862dafd817a8c6e7282a" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t parser::buf[180]</definition>
+        <argsstring>[180]</argsstring>
+        <name>buf</name>
+        <briefdescription>
+<para>Parser data buffer that is processed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/parser.h" line="59" column="9" bodyfile="lib/sms/parser.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structparser_ad4cb32c15f5a8d3075eb98b7169e1e2a_1ad4cb32c15f5a8d3075eb98b7169e1e2a" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t parser::buf_size</definition>
+        <argsstring></argsstring>
+        <name>buf_size</name>
+        <briefdescription>
+<para>Size of the actual data in buf. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/parser.h" line="61" column="10" bodyfile="lib/sms/parser.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structparser_ac18d68c75f1e34d59952a28c9cb324f9_1ac18d68c75f1e34d59952a28c9cb324f9" prot="public" static="no" mutable="no">
+        <type>uint8_t *</type>
+        <definition>uint8_t* parser::payload</definition>
+        <argsstring></argsstring>
+        <name>payload</name>
+        <briefdescription>
+<para>Payload output buffer that is processed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/parser.h" line="64" column="9" bodyfile="lib/sms/parser.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structparser_a6c5af311f2a79ba892fed1cb8f5e59f4_1a6c5af311f2a79ba892fed1cb8f5e59f4" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t parser::payload_buf_size</definition>
+        <argsstring></argsstring>
+        <name>payload_buf_size</name>
+        <briefdescription>
+<para>Payload output buffer size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/parser.h" line="66" column="9" bodyfile="lib/sms/parser.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structparser_ab1ace0c68e2cd7b0b001b077ba1fbb1a_1ab1ace0c68e2cd7b0b001b077ba1fbb1a" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t parser::payload_pos</definition>
+        <argsstring></argsstring>
+        <name>payload_pos</name>
+        <briefdescription>
+<para>Index to the start of the payload within buf. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/parser.h" line="68" column="9" bodyfile="lib/sms/parser.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structparser_a5a311170a75a0e52a4b731b2cd7a1c06_1a5a311170a75a0e52a4b731b2cd7a1c06" prot="public" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* parser::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+<para>Data structure to hold the parsed information. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/parser.h" line="71" column="6" bodyfile="lib/sms/parser.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structparser_a7ba891964f9c3e1891ee17226fcf6f63_1a7ba891964f9c3e1891ee17226fcf6f63" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structparser__api" kindref="compound">parser_api</ref> *</type>
+        <definition>struct parser_api* parser::api</definition>
+        <argsstring></argsstring>
+        <name>api</name>
+        <briefdescription>
+<para>Functions defining the functionality of this specific parser. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/parser.h" line="74" column="17" bodyfile="lib/sms/parser.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Set of parser variables needed for parser framework to operate. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Holds state information about the parsing as it proceeds by passing this structure to functions storing relevant information out of the parser buffers.</para>
+<para>Parser contains sub parsers that are available through <ref refid="structparser__api" kindref="compound">parser_api</ref> and its get_parsers function. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>parser</label>
+        <link refid="structparser"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>api</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>parser_api</label>
+        <link refid="structparser__api"/>
+      </node>
+    </collaborationgraph>
+    <location file="lib/sms/parser.h" line="55" column="1" bodyfile="lib/sms/parser.h" bodystart="55" bodyend="75"/>
+    <listofallmembers>
+      <member refid="structparser_a7ba891964f9c3e1891ee17226fcf6f63_1a7ba891964f9c3e1891ee17226fcf6f63" prot="public" virt="non-virtual"><scope>parser</scope><name>api</name></member>
+      <member refid="structparser_a728300c75489862dafd817a8c6e7282a_1a728300c75489862dafd817a8c6e7282a" prot="public" virt="non-virtual"><scope>parser</scope><name>buf</name></member>
+      <member refid="structparser_ada941225d3bb6165239ceae344705b2e_1ada941225d3bb6165239ceae344705b2e" prot="public" virt="non-virtual"><scope>parser</scope><name>buf_pos</name></member>
+      <member refid="structparser_ad4cb32c15f5a8d3075eb98b7169e1e2a_1ad4cb32c15f5a8d3075eb98b7169e1e2a" prot="public" virt="non-virtual"><scope>parser</scope><name>buf_size</name></member>
+      <member refid="structparser_a5a311170a75a0e52a4b731b2cd7a1c06_1a5a311170a75a0e52a4b731b2cd7a1c06" prot="public" virt="non-virtual"><scope>parser</scope><name>data</name></member>
+      <member refid="structparser_ac18d68c75f1e34d59952a28c9cb324f9_1ac18d68c75f1e34d59952a28c9cb324f9" prot="public" virt="non-virtual"><scope>parser</scope><name>payload</name></member>
+      <member refid="structparser_a6c5af311f2a79ba892fed1cb8f5e59f4_1a6c5af311f2a79ba892fed1cb8f5e59f4" prot="public" virt="non-virtual"><scope>parser</scope><name>payload_buf_size</name></member>
+      <member refid="structparser_ab1ace0c68e2cd7b0b001b077ba1fbb1a_1ab1ace0c68e2cd7b0b001b077ba1fbb1a" prot="public" virt="non-virtual"><scope>parser</scope><name>payload_pos</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

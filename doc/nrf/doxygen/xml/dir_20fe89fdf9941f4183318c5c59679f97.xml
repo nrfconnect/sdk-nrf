@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_20fe89fdf9941f4183318c5c59679f97" kind="dir">
+    <compoundname>lib/sms</compoundname>
+    <innerfile refid="lib_2sms_2parser_8h">parser.h</innerfile>
+    <innerfile refid="sms__at_8h">sms_at.h</innerfile>
+    <innerfile refid="sms__deliver_8h">sms_deliver.h</innerfile>
+    <innerfile refid="sms__internal_8h">sms_internal.h</innerfile>
+    <innerfile refid="sms__submit_8h">sms_submit.h</innerfile>
+    <innerfile refid="string__conversion_8h">string_conversion.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/sms/"/>
+  </compounddef>
+</doxygen>

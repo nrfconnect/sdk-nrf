@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_silvair_enocean_srv::bt_mesh_silvair_enocean_button</compoundname>
+    <includes refid="silvair__enocean__srv_8h" local="no">silvair_enocean_srv.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_ae7cb64966f005a3d1502f9d17dcf1a7b_1ae7cb64966f005a3d1502f9d17dcf1a7b" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__lvl__cli" kindref="compound">bt_mesh_lvl_cli</ref></type>
+        <definition>struct bt_mesh_lvl_cli bt_mesh_silvair_enocean_srv::bt_mesh_silvair_enocean_button::lvl</definition>
+        <argsstring></argsstring>
+        <name>lvl</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Generic Level Client instance </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="57" column="22" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_a5b8baf44118314d154d53d4a85c16547_1a5b8baf44118314d154d53d4a85c16547" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__onoff__cli" kindref="compound">bt_mesh_onoff_cli</ref></type>
+        <definition>struct bt_mesh_onoff_cli bt_mesh_silvair_enocean_srv::bt_mesh_silvair_enocean_button::onoff</definition>
+        <argsstring></argsstring>
+        <name>onoff</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Generic OnOff Client instance </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="59" column="24" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_ab2ca0e4a303d29af616dc2bbbb7acde7_1ab2ca0e4a303d29af616dc2bbbb7acde7" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__mesh__silvair__enocean__srv_ga7e067bd42554b3d83a274db92de3bb4f_1ga7e067bd42554b3d83a274db92de3bb4f" kindref="member">bt_mesh_silvair_enocean_state</ref></type>
+        <definition>enum bt_mesh_silvair_enocean_state bt_mesh_silvair_enocean_srv::bt_mesh_silvair_enocean_button::state</definition>
+        <argsstring></argsstring>
+        <name>state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current state of the state machine </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="61" column="35" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_a4db20f6c5e021aa4252dcfc7da546f08_1a4db20f6c5e021aa4252dcfc7da546f08" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool bt_mesh_silvair_enocean_srv::bt_mesh_silvair_enocean_button::target</definition>
+        <argsstring></argsstring>
+        <name>target</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Target on/off in the state machine </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="63" column="6" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_aa1fe6c94489a4fc398c5cd3be66d9e88_1aa1fe6c94489a4fc398c5cd3be66d9e88" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int bt_mesh_silvair_enocean_srv::bt_mesh_silvair_enocean_button::tick_count</definition>
+        <argsstring></argsstring>
+        <name>tick_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Tick counter </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="65" column="5" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_a6fb9c8a75d4fd11895ace27646bc3bf3_1a6fb9c8a75d4fd11895ace27646bc3bf3" prot="public" static="no" mutable="no">
+        <type>struct k_work_delayable</type>
+        <definition>struct k_work_delayable bt_mesh_silvair_enocean_srv::bt_mesh_silvair_enocean_button::timer</definition>
+        <argsstring></argsstring>
+        <name>timer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Timer used for state machine timeouts </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="67" column="23" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>State for each button controlled by this instance </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_mesh_lvl_cli</label>
+        <link refid="structbt__mesh__lvl__cli"/>
+      </node>
+      <node id="3">
+        <label>bt_mesh_onoff_cli</label>
+        <link refid="structbt__mesh__onoff__cli"/>
+      </node>
+      <node id="1">
+        <label>bt_mesh_silvair_enocean_srv::bt_mesh_silvair_enocean_button</label>
+        <link refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>lvl</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>onoff</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="55" column="1" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="55" bodyend="68"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_ae7cb64966f005a3d1502f9d17dcf1a7b_1ae7cb64966f005a3d1502f9d17dcf1a7b" prot="public" virt="non-virtual"><scope>bt_mesh_silvair_enocean_srv::bt_mesh_silvair_enocean_button</scope><name>lvl</name></member>
+      <member refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_a5b8baf44118314d154d53d4a85c16547_1a5b8baf44118314d154d53d4a85c16547" prot="public" virt="non-virtual"><scope>bt_mesh_silvair_enocean_srv::bt_mesh_silvair_enocean_button</scope><name>onoff</name></member>
+      <member refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_ab2ca0e4a303d29af616dc2bbbb7acde7_1ab2ca0e4a303d29af616dc2bbbb7acde7" prot="public" virt="non-virtual"><scope>bt_mesh_silvair_enocean_srv::bt_mesh_silvair_enocean_button</scope><name>state</name></member>
+      <member refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_a4db20f6c5e021aa4252dcfc7da546f08_1a4db20f6c5e021aa4252dcfc7da546f08" prot="public" virt="non-virtual"><scope>bt_mesh_silvair_enocean_srv::bt_mesh_silvair_enocean_button</scope><name>target</name></member>
+      <member refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_aa1fe6c94489a4fc398c5cd3be66d9e88_1aa1fe6c94489a4fc398c5cd3be66d9e88" prot="public" virt="non-virtual"><scope>bt_mesh_silvair_enocean_srv::bt_mesh_silvair_enocean_button</scope><name>tick_count</name></member>
+      <member refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_a6fb9c8a75d4fd11895ace27646bc3bf3_1a6fb9c8a75d4fd11895ace27646bc3bf3" prot="public" virt="non-virtual"><scope>bt_mesh_silvair_enocean_srv::bt_mesh_silvair_enocean_button</scope><name>timer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

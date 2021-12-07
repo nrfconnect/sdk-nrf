@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_2fa1ed3146d6c2b96c5cfe4341985326" kind="dir">
+    <compoundname>include/net</compoundname>
+    <innerfile refid="aws__fota_8h">aws_fota.h</innerfile>
+    <innerfile refid="aws__iot_8h">aws_iot.h</innerfile>
+    <innerfile refid="aws__jobs_8h">aws_jobs.h</innerfile>
+    <innerfile refid="azure__fota_8h">azure_fota.h</innerfile>
+    <innerfile refid="azure__iot__hub_8h">azure_iot_hub.h</innerfile>
+    <innerfile refid="cloud_8h">cloud.h</innerfile>
+    <innerfile refid="coap__utils_8h">coap_utils.h</innerfile>
+    <innerfile refid="download__client_8h">download_client.h</innerfile>
+    <innerfile refid="fota__download_8h">fota_download.h</innerfile>
+    <innerfile refid="ftp__client_8h">ftp_client.h</innerfile>
+    <innerfile refid="icalendar__parser_8h">icalendar_parser.h</innerfile>
+    <innerfile refid="lwm2m__client__utils_8h">lwm2m_client_utils.h</innerfile>
+    <innerfile refid="lwm2m__client__utils__fota_8h">lwm2m_client_utils_fota.h</innerfile>
+    <innerfile refid="multicell__location_8h">multicell_location.h</innerfile>
+    <innerfile refid="nrf__cloud_8h">nrf_cloud.h</innerfile>
+    <innerfile refid="nrf__cloud__agps_8h">nrf_cloud_agps.h</innerfile>
+    <innerfile refid="nrf__cloud__cell__pos_8h">nrf_cloud_cell_pos.h</innerfile>
+    <innerfile refid="nrf__cloud__pgps_8h">nrf_cloud_pgps.h</innerfile>
+    <innerfile refid="nrf__cloud__rest_8h">nrf_cloud_rest.h</innerfile>
+    <innerfile refid="rest__client_8h">rest_client.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/"/>
+  </compounddef>
+</doxygen>

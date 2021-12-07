@@ -1,0 +1,793 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="hrs__client_8h" kind="file" language="C++">
+    <compoundname>hrs_client.h</compoundname>
+    <includes local="no">bluetooth/conn.h</includes>
+    <includes refid="gatt__dm_8h" local="no">bluetooth/gatt_dm.h</includes>
+    <includes local="no">bluetooth/gatt.h</includes>
+    <includes local="no">sys/atomic.h</includes>
+    <incdepgraph>
+      <node id="3">
+        <label>bluetooth/gatt_dm.h</label>
+        <link refid="gatt__dm_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/services/hrs_client.h</label>
+        <link refid="hrs__client_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bluetooth/conn.h</label>
+      </node>
+      <node id="4">
+        <label>bluetooth/gatt.h</label>
+      </node>
+      <node id="5">
+        <label>bluetooth/uuid.h</label>
+      </node>
+      <node id="6">
+        <label>sys/atomic.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structbt__hrs__flags" prot="public">bt_hrs_flags</innerclass>
+    <innerclass refid="structbt__hrs__client__measurement" prot="public">bt_hrs_client_measurement</innerclass>
+    <innerclass refid="structbt__hrs__client__hr__meas" prot="public">bt_hrs_client_hr_meas</innerclass>
+    <innerclass refid="structbt__hrs__client__body__sensor__location" prot="public">bt_hrs_client_body_sensor_location</innerclass>
+    <innerclass refid="structbt__hrs__client__control__point" prot="public">bt_hrs_client_control_point</innerclass>
+    <innerclass refid="structbt__hrs__client" prot="public">bt_hrs_client</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__hrs__client_ga165d9500ead143cd3f5468aa1a35b217_1ga165d9500ead143cd3f5468aa1a35b217" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_hrs_client_error</name>
+        <enumvalue id="group__bt__hrs__client_ga165d9500ead143cd3f5468aa1a35b217_1gga165d9500ead143cd3f5468aa1a35b217aeabbabcebb17f3341ffde8c6cc7fb67b" prot="public">
+          <name>BT_HRS_CLIENT_ERROR_CP_NOT_SUPPORTED</name>
+          <initializer>= 0x80</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Control Point value not supported. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Heart Rate Service error codes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This service defines the following Attribute Protocol Application error codes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="31" column="1" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="31" bodyend="34"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__hrs__client_ga8d129c45a884ae37fe1310a444e01be2_1ga8d129c45a884ae37fe1310a444e01be2" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_hrs_client_cp_value</name>
+        <enumvalue id="group__bt__hrs__client_ga8d129c45a884ae37fe1310a444e01be2_1gga8d129c45a884ae37fe1310a444e01be2af45e4977ef70f94412f0b2df0a11442e" prot="public">
+          <name>BT_HRS_CLIENT_CP_VALUE_RESET_EE</name>
+          <initializer>= 0x01</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Resets the value if the Energy Expended field in the Heart Rate Measurement characteristic to 0. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Heart Rate Control Point values. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The values of the Control Point characteristic. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="40" column="1" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="40" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1ga56b4343372d80f7c3536661593fbee4e" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_hrs_client_sensor_location</name>
+        <enumvalue id="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4ea8730394f2ff1a23de0c242788da338a1" prot="public">
+          <name>BT_HRS_CLIENT_SENSOR_LOCATION_OTHER</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Body Sensor Location: Other. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4eabf448e5b433f010a8ac6f4ed4ac09600" prot="public">
+          <name>BT_HRS_CLIENT_SENSOR_LOCATION_CHEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Body Sensor Location: Chest. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4eaa4575d7d026ac2195311d1194297651f" prot="public">
+          <name>BT_HRS_CLIENT_SENSOR_LOCATION_WRIST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Body Sensor Location: Wrist. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4ea5c440d702318170ecea4217720b5b3a3" prot="public">
+          <name>BT_HRS_CLIENT_SENSOR_LOCATION_FINGER</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Body Sensor Location: Finger. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4ea8e2b992c4419a2e1dc321f83f50d6219" prot="public">
+          <name>BT_HRS_CLIENT_SENSOR_LOCATION_HAND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Body Sensor Location: Hand. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4ead15bf8c6ce2d8134cea39d0b3a0fe3d5" prot="public">
+          <name>BT_HRS_CLIENT_SENSOR_LOCATION_EAR_LOBE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Body Sensor Location: Ear Lobe. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4ead842a1c89d815b49e397a2397d54bcf5" prot="public">
+          <name>BT_HRS_CLIENT_SENSOR_LOCATION_FOOT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Body Sensor Location: Foot. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Body sensor location values. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="49" column="1" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="49" bodyend="70"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__bt__hrs__client_gaec515d6f25a509ccd8555ee2a738a75a_1gaec515d6f25a509ccd8555ee2a738a75a" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_hrs_client_notify_cb) (struct bt_hrs_client *hrs_c, const struct bt_hrs_client_measurement *meas, int err)</definition>
+        <argsstring>)(struct bt_hrs_client *hrs_c, const struct bt_hrs_client_measurement *meas, int err)</argsstring>
+        <name>bt_hrs_client_notify_cb</name>
+        <briefdescription>
+<para>Heart Rate Measurement notification callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is called every time the client receives a notification with Heart Rate Measuremet data.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">hrs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Heart Rate Service Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">meas</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Heart Rate Measurement received data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>0 if the notification is valid. Otherwise, contains a (negative) error code. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="130" column="9" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bt__hrs__client_gab4248c568ece617ea55eb142e4f9255f_1gab4248c568ece617ea55eb142e4f9255f" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_hrs_client_read_sensor_location_cb) (struct bt_hrs_client *hrs_c, enum bt_hrs_client_sensor_location location, int err)</definition>
+        <argsstring>)(struct bt_hrs_client *hrs_c, enum bt_hrs_client_sensor_location location, int err)</argsstring>
+        <name>bt_hrs_client_read_sensor_location_cb</name>
+        <briefdescription>
+<para>Heart Rate Body Sensor Location read callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">hrs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Heart Rate Service Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">location</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Body Sensor Location value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>0 if read operation succeeded and data is valid. Otherwise, contains an error code. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="141" column="9" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bt__hrs__client_ga02cb8730039dddc547cb0aeb24c18f01_1ga02cb8730039dddc547cb0aeb24c18f01" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_hrs_client_write_cb) (struct bt_hrs_client *hrs_c, uint8_t err)</definition>
+        <argsstring>)(struct bt_hrs_client *hrs_c, uint8_t err)</argsstring>
+        <name>bt_hrs_client_write_cb</name>
+        <briefdescription>
+<para>Heart Rate Control Point write callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">hrs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Heart Rate client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>0 if write operation succeeded. Otherwise, contains an error code. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="151" column="9" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__hrs__client_ga81b724343210e9f8308861ce26099e6f_1ga81b724343210e9f8308861ce26099e6f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hrs_client_init</definition>
+        <argsstring>(struct bt_hrs_client *hrs_c)</argsstring>
+        <name>bt_hrs_client_init</name>
+        <param>
+          <type>struct <ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref> *</type>
+          <declname>hrs_c</declname>
+        </param>
+        <briefdescription>
+<para>Function for initializing the Heart Rate Service Client. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">hrs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Heart Rate Service Client instance. This structure must be supplied by the application. It is initialized by this function and will later be used to identify this particular client instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the client was initialized successfully. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="226" column="5" declfile="include/bluetooth/services/hrs_client.h" declline="226" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hrs__client_ga77829bcc3ad6873784c48257b5910806_1ga77829bcc3ad6873784c48257b5910806" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hrs_client_measurement_subscribe</definition>
+        <argsstring>(struct bt_hrs_client *hrs_c, bt_hrs_client_notify_cb notify_cb)</argsstring>
+        <name>bt_hrs_client_measurement_subscribe</name>
+        <param>
+          <type>struct <ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref> *</type>
+          <declname>hrs_c</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__hrs__client_gaec515d6f25a509ccd8555ee2a738a75a_1gaec515d6f25a509ccd8555ee2a738a75a" kindref="member">bt_hrs_client_notify_cb</ref></type>
+          <declname>notify_cb</declname>
+        </param>
+        <briefdescription>
+<para>Subscribe to Heart Rate Measurement notification. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function writes CCC descriptor of the Heart Rate Measurement characteristic to enable notification.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">hrs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Heart Rate Service Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">notify_cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Notification callback.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="239" column="5" declfile="include/bluetooth/services/hrs_client.h" declline="239" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hrs__client_ga141ab200a0a4d190437404e3de24859b_1ga141ab200a0a4d190437404e3de24859b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hrs_client_measurement_unsubscribe</definition>
+        <argsstring>(struct bt_hrs_client *hrs_c)</argsstring>
+        <name>bt_hrs_client_measurement_unsubscribe</name>
+        <param>
+          <type>struct <ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref> *</type>
+          <declname>hrs_c</declname>
+        </param>
+        <briefdescription>
+<para>Remove subscription to the Heart Rate Measurement notification. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function writes CCC descriptor of the Heart Rate Measurement characteristic to disable notification.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">hrs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Heart Rate Service Client instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="252" column="5" declfile="include/bluetooth/services/hrs_client.h" declline="252" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hrs__client_ga57e06ab9812c029b14dcc37426604ffe_1ga57e06ab9812c029b14dcc37426604ffe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hrs_client_sensor_location_read</definition>
+        <argsstring>(struct bt_hrs_client *hrs_c, bt_hrs_client_read_sensor_location_cb read_cb)</argsstring>
+        <name>bt_hrs_client_sensor_location_read</name>
+        <param>
+          <type>struct <ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref> *</type>
+          <declname>hrs_c</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__hrs__client_gab4248c568ece617ea55eb142e4f9255f_1gab4248c568ece617ea55eb142e4f9255f" kindref="member">bt_hrs_client_read_sensor_location_cb</ref></type>
+          <declname>read_cb</declname>
+        </param>
+        <briefdescription>
+<para>Read Body Sensor Location characteristic. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">hrs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Heart Rate Service Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">read_cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Read complete callback.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="262" column="5" declfile="include/bluetooth/services/hrs_client.h" declline="262" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hrs__client_ga0e632c61ac69d9a5a7e3405ec75a7099_1ga0e632c61ac69d9a5a7e3405ec75a7099" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool bt_hrs_client_has_sensor_location</definition>
+        <argsstring>(struct bt_hrs_client *hrs_c)</argsstring>
+        <name>bt_hrs_client_has_sensor_location</name>
+        <param>
+          <type>struct <ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref> *</type>
+          <declname>hrs_c</declname>
+        </param>
+        <briefdescription>
+<para>Check if Heart Rate Service has the Body Sensor Location characteristic. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function can be called after <ref refid="group__bt__hrs__client_ga63ae1d9e57447b0fdbe0819376a1151a_1ga63ae1d9e57447b0fdbe0819376a1151a" kindref="member">bt_hrs_client_handles_assign</ref> to check if the Body Sensor Location characteristic was found during service discovery.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the Body Sensor Location is found. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the Body Sensor Location is not found. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="273" column="6" declfile="include/bluetooth/services/hrs_client.h" declline="273" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hrs__client_gac2239f1d07844a83f4fec8cf74761138_1gac2239f1d07844a83f4fec8cf74761138" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hrs_client_control_point_write</definition>
+        <argsstring>(struct bt_hrs_client *hrs_c, enum bt_hrs_client_cp_value value, bt_hrs_client_write_cb write_cb)</argsstring>
+        <name>bt_hrs_client_control_point_write</name>
+        <param>
+          <type>struct <ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref> *</type>
+          <declname>hrs_c</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__bt__hrs__client_ga8d129c45a884ae37fe1310a444e01be2_1ga8d129c45a884ae37fe1310a444e01be2" kindref="member">bt_hrs_client_cp_value</ref></type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__hrs__client_ga02cb8730039dddc547cb0aeb24c18f01_1ga02cb8730039dddc547cb0aeb24c18f01" kindref="member">bt_hrs_client_write_cb</ref></type>
+          <declname>write_cb</declname>
+        </param>
+        <briefdescription>
+<para>Write Heart Rate Control Point characteristic. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">hrs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Heart Rate Service Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Control Point value to write. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">write_cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Write complete callback.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="284" column="5" declfile="include/bluetooth/services/hrs_client.h" declline="284" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hrs__client_gaa65948722d04f56b7a3c8f991686b365_1gaa65948722d04f56b7a3c8f991686b365" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool bt_hrs_client_has_control_point</definition>
+        <argsstring>(struct bt_hrs_client *hrs_c)</argsstring>
+        <name>bt_hrs_client_has_control_point</name>
+        <param>
+          <type>struct <ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref> *</type>
+          <declname>hrs_c</declname>
+        </param>
+        <briefdescription>
+<para>Check if Heart Rate Service has the Heart Rate Control Point characteristic. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function can be called after <ref refid="group__bt__hrs__client_ga63ae1d9e57447b0fdbe0819376a1151a_1ga63ae1d9e57447b0fdbe0819376a1151a" kindref="member">bt_hrs_client_handles_assign</ref> to check if the Heart Rate Control Pointcharacteristic was found during service discovery.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the Heart Rate Control Point is found. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the Heart Rate Control Point is not found. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="296" column="6" declfile="include/bluetooth/services/hrs_client.h" declline="296" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hrs__client_ga63ae1d9e57447b0fdbe0819376a1151a_1ga63ae1d9e57447b0fdbe0819376a1151a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hrs_client_handles_assign</definition>
+        <argsstring>(struct bt_gatt_dm *dm, struct bt_hrs_client *hrs_c)</argsstring>
+        <name>bt_hrs_client_handles_assign</name>
+        <param>
+          <type>struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref> *</type>
+          <declname>hrs_c</declname>
+        </param>
+        <briefdescription>
+<para>Function for assigning handles to Heart Rate Service Client instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Call this function when a link has been established with a peer to associate the link to this instance of the module. This makes it possible to handle several links and associate each link to a particular instance of this module.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">hrs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Heart Rate Service Client instance for associating the link.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation is successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="311" column="5" declfile="include/bluetooth/services/hrs_client.h" declline="311" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_HRS_CLIENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_HRS_CLIENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/conn.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="gatt__dm_8h" kindref="compound">bluetooth/gatt_dm.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/gatt.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/atomic.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="group__bt__hrs__client_ga165d9500ead143cd3f5468aa1a35b217_1ga165d9500ead143cd3f5468aa1a35b217" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__hrs__client_ga165d9500ead143cd3f5468aa1a35b217_1ga165d9500ead143cd3f5468aa1a35b217" kindref="member">bt_hrs_client_error</ref><sp/>{</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__hrs__client_ga165d9500ead143cd3f5468aa1a35b217_1gga165d9500ead143cd3f5468aa1a35b217aeabbabcebb17f3341ffde8c6cc7fb67b" kindref="member">BT_HRS_CLIENT_ERROR_CP_NOT_SUPPORTED</ref><sp/>=<sp/>0x80</highlight></codeline>
+<codeline lineno="34" refid="group__bt__hrs__client_ga165d9500ead143cd3f5468aa1a35b217_1gga165d9500ead143cd3f5468aa1a35b217aeabbabcebb17f3341ffde8c6cc7fb67b" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="group__bt__hrs__client_ga8d129c45a884ae37fe1310a444e01be2_1ga8d129c45a884ae37fe1310a444e01be2" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__hrs__client_ga8d129c45a884ae37fe1310a444e01be2_1ga8d129c45a884ae37fe1310a444e01be2" kindref="member">bt_hrs_client_cp_value</ref><sp/>{</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__hrs__client_ga8d129c45a884ae37fe1310a444e01be2_1gga8d129c45a884ae37fe1310a444e01be2af45e4977ef70f94412f0b2df0a11442e" kindref="member">BT_HRS_CLIENT_CP_VALUE_RESET_EE</ref><sp/>=<sp/>0x01</highlight></codeline>
+<codeline lineno="45" refid="group__bt__hrs__client_ga8d129c45a884ae37fe1310a444e01be2_1gga8d129c45a884ae37fe1310a444e01be2af45e4977ef70f94412f0b2df0a11442e" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1ga56b4343372d80f7c3536661593fbee4e" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1ga56b4343372d80f7c3536661593fbee4e" kindref="member">bt_hrs_client_sensor_location</ref><sp/>{</highlight></codeline>
+<codeline lineno="51" refid="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4ea8730394f2ff1a23de0c242788da338a1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4ea8730394f2ff1a23de0c242788da338a1" kindref="member">BT_HRS_CLIENT_SENSOR_LOCATION_OTHER</ref>,</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4eabf448e5b433f010a8ac6f4ed4ac09600" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4eabf448e5b433f010a8ac6f4ed4ac09600" kindref="member">BT_HRS_CLIENT_SENSOR_LOCATION_CHEST</ref>,</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4eaa4575d7d026ac2195311d1194297651f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4eaa4575d7d026ac2195311d1194297651f" kindref="member">BT_HRS_CLIENT_SENSOR_LOCATION_WRIST</ref>,</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4ea5c440d702318170ecea4217720b5b3a3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4ea5c440d702318170ecea4217720b5b3a3" kindref="member">BT_HRS_CLIENT_SENSOR_LOCATION_FINGER</ref>,</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63" refid="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4ea8e2b992c4419a2e1dc321f83f50d6219" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4ea8e2b992c4419a2e1dc321f83f50d6219" kindref="member">BT_HRS_CLIENT_SENSOR_LOCATION_HAND</ref>,</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4ead15bf8c6ce2d8134cea39d0b3a0fe3d5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4ead15bf8c6ce2d8134cea39d0b3a0fe3d5" kindref="member">BT_HRS_CLIENT_SENSOR_LOCATION_EAR_LOBE</ref>,</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4ead842a1c89d815b49e397a2397d54bcf5" kindref="member">BT_HRS_CLIENT_SENSOR_LOCATION_FOOT</ref></highlight></codeline>
+<codeline lineno="70" refid="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4ead842a1c89d815b49e397a2397d54bcf5" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="structbt__hrs__flags" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__hrs__flags" kindref="compound">bt_hrs_flags</ref><sp/>{</highlight></codeline>
+<codeline lineno="76" refid="structbt__hrs__flags_aef21c114024749ffb8743bdca18d1739_1aef21c114024749ffb8743bdca18d1739" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__hrs__flags_aef21c114024749ffb8743bdca18d1739_1aef21c114024749ffb8743bdca18d1739" kindref="member">value_format</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="structbt__hrs__flags_a4177e7bd96aa57132265afa9c6585090_1a4177e7bd96aa57132265afa9c6585090" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__hrs__flags_a4177e7bd96aa57132265afa9c6585090_1a4177e7bd96aa57132265afa9c6585090" kindref="member">sensor_contact_detected</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="structbt__hrs__flags_af96162fa484944f2dc1e6f58e4cdbde2_1af96162fa484944f2dc1e6f58e4cdbde2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__hrs__flags_af96162fa484944f2dc1e6f58e4cdbde2_1af96162fa484944f2dc1e6f58e4cdbde2" kindref="member">sensor_contact_supported</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="structbt__hrs__flags_a0ea2492fa18ea2437c765ae19ef9c8bb_1a0ea2492fa18ea2437c765ae19ef9c8bb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__hrs__flags_a0ea2492fa18ea2437c765ae19ef9c8bb_1a0ea2492fa18ea2437c765ae19ef9c8bb" kindref="member">energy_expended_present</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="structbt__hrs__flags_ab544a63926570cce8348ffed16c914fc_1ab544a63926570cce8348ffed16c914fc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__hrs__flags_ab544a63926570cce8348ffed16c914fc_1ab544a63926570cce8348ffed16c914fc" kindref="member">rr_intervals_present</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="structbt__hrs__client__measurement" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__hrs__client__measurement" kindref="compound">bt_hrs_client_measurement</ref><sp/>{</highlight></codeline>
+<codeline lineno="95" refid="structbt__hrs__client__measurement_ad76b5e24aae01ced5c1e03112089a871_1ad76b5e24aae01ced5c1e03112089a871" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__hrs__flags" kindref="compound">bt_hrs_flags</ref><sp/><ref refid="structbt__hrs__client__measurement_ad76b5e24aae01ced5c1e03112089a871_1ad76b5e24aae01ced5c1e03112089a871" kindref="member">flags</ref>;</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98" refid="structbt__hrs__client__measurement_a85c6860ccaed52cfd4f51d11a77d7dbb_1a85c6860ccaed52cfd4f51d11a77d7dbb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__hrs__client__measurement_a85c6860ccaed52cfd4f51d11a77d7dbb_1a85c6860ccaed52cfd4f51d11a77d7dbb" kindref="member">rr_intervals_count</ref>;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104" refid="structbt__hrs__client__measurement_ad455927df8c3cd13c668294e7bb61b1b_1ad455927df8c3cd13c668294e7bb61b1b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__hrs__client__measurement_ad455927df8c3cd13c668294e7bb61b1b_1ad455927df8c3cd13c668294e7bb61b1b" kindref="member">rr_intervals</ref>[CONFIG_BT_HRS_CLIENT_RR_INTERVALS_COUNT];</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107" refid="structbt__hrs__client__measurement_a8397ad60debee12feb7c7e4f213afdd1_1a8397ad60debee12feb7c7e4f213afdd1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__hrs__client__measurement_a8397ad60debee12feb7c7e4f213afdd1_1a8397ad60debee12feb7c7e4f213afdd1" kindref="member">hr_value</ref>;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112" refid="structbt__hrs__client__measurement_a7430f9ba421bb267efe87acc6cefb9fd_1a7430f9ba421bb267efe87acc6cefb9fd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__hrs__client__measurement_a7430f9ba421bb267efe87acc6cefb9fd_1a7430f9ba421bb267efe87acc6cefb9fd" kindref="member">energy_expended</ref>;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Helper<sp/>forward<sp/>structure<sp/>declaration<sp/>representing<sp/>Heart<sp/>Rate<sp/>Service<sp/>Client<sp/>instance.</highlight></codeline>
+<codeline lineno="116"><highlight class="comment"><sp/>*<sp/>Needed<sp/>for<sp/>callback<sp/>declaration<sp/>that<sp/>are<sp/>using<sp/>instance<sp/>structure<sp/>as<sp/>argument.</highlight></codeline>
+<codeline lineno="117"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref>;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130" refid="group__bt__hrs__client_gaec515d6f25a509ccd8555ee2a738a75a_1gaec515d6f25a509ccd8555ee2a738a75a" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__bt__hrs__client_gaec515d6f25a509ccd8555ee2a738a75a_1gaec515d6f25a509ccd8555ee2a738a75a" kindref="member">bt_hrs_client_notify_cb</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref><sp/>*hrs_c,</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__hrs__client__measurement" kindref="compound">bt_hrs_client_measurement</ref><sp/>*meas,</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>err);</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141" refid="group__bt__hrs__client_gab4248c568ece617ea55eb142e4f9255f_1gab4248c568ece617ea55eb142e4f9255f" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__bt__hrs__client_gab4248c568ece617ea55eb142e4f9255f_1gab4248c568ece617ea55eb142e4f9255f" kindref="member">bt_hrs_client_read_sensor_location_cb</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref><sp/>*hrs_c,</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1ga56b4343372d80f7c3536661593fbee4e" kindref="member">bt_hrs_client_sensor_location</ref><sp/>location,</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>err);</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="151" refid="group__bt__hrs__client_ga02cb8730039dddc547cb0aeb24c18f01_1ga02cb8730039dddc547cb0aeb24c18f01" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__bt__hrs__client_ga02cb8730039dddc547cb0aeb24c18f01_1ga02cb8730039dddc547cb0aeb24c18f01" kindref="member">bt_hrs_client_write_cb</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref><sp/>*hrs_c,</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>err);</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156" refid="structbt__hrs__client__hr__meas" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__hrs__client__hr__meas" kindref="compound">bt_hrs_client_hr_meas</ref><sp/>{</highlight></codeline>
+<codeline lineno="158" refid="structbt__hrs__client__hr__meas_a68b576539e84fe995f671cd8b3d9d76a_1a68b576539e84fe995f671cd8b3d9d76a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__hrs__client__hr__meas_a68b576539e84fe995f671cd8b3d9d76a_1a68b576539e84fe995f671cd8b3d9d76a" kindref="member">handle</ref>;</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161" refid="structbt__hrs__client__hr__meas_a2162e13e850f3b603d187f7679072a50_1a2162e13e850f3b603d187f7679072a50" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__hrs__client__hr__meas_a2162e13e850f3b603d187f7679072a50_1a2162e13e850f3b603d187f7679072a50" kindref="member">ccc_handle</ref>;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="164" refid="structbt__hrs__client__hr__meas_a340cd9164d3eebf35f2de4d9e2994872_1a340cd9164d3eebf35f2de4d9e2994872" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_gatt_subscribe_params<sp/><ref refid="structbt__hrs__client__hr__meas_a340cd9164d3eebf35f2de4d9e2994872_1a340cd9164d3eebf35f2de4d9e2994872" kindref="member">notify_params</ref>;</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight></codeline>
+<codeline lineno="167" refid="structbt__hrs__client__hr__meas_a4276756bb81b291d50edf72eba352f20_1a4276756bb81b291d50edf72eba352f20" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__hrs__client_gaec515d6f25a509ccd8555ee2a738a75a_1gaec515d6f25a509ccd8555ee2a738a75a" kindref="member">bt_hrs_client_notify_cb</ref><sp/><ref refid="structbt__hrs__client__hr__meas_a4276756bb81b291d50edf72eba352f20_1a4276756bb81b291d50edf72eba352f20" kindref="member">notify_cb</ref>;</highlight></codeline>
+<codeline lineno="168"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight></codeline>
+<codeline lineno="172" refid="structbt__hrs__client__body__sensor__location" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__hrs__client__body__sensor__location" kindref="compound">bt_hrs_client_body_sensor_location</ref><sp/>{</highlight></codeline>
+<codeline lineno="174" refid="structbt__hrs__client__body__sensor__location_a0811062657e672a9ef94c478891ec78b_1a0811062657e672a9ef94c478891ec78b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__hrs__client__body__sensor__location_a0811062657e672a9ef94c478891ec78b_1a0811062657e672a9ef94c478891ec78b" kindref="member">handle</ref>;</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="177" refid="structbt__hrs__client__body__sensor__location_af0b7e10feb5f5e5116dfc51bd7823d6b_1af0b7e10feb5f5e5116dfc51bd7823d6b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_gatt_read_params<sp/><ref refid="structbt__hrs__client__body__sensor__location_af0b7e10feb5f5e5116dfc51bd7823d6b_1af0b7e10feb5f5e5116dfc51bd7823d6b" kindref="member">read_params</ref>;</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="180" refid="structbt__hrs__client__body__sensor__location_a6f8908522679aca1de4b7ad6f2ba9ea5_1a6f8908522679aca1de4b7ad6f2ba9ea5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__hrs__client_gab4248c568ece617ea55eb142e4f9255f_1gab4248c568ece617ea55eb142e4f9255f" kindref="member">bt_hrs_client_read_sensor_location_cb</ref><sp/><ref refid="structbt__hrs__client__body__sensor__location_a6f8908522679aca1de4b7ad6f2ba9ea5_1a6f8908522679aca1de4b7ad6f2ba9ea5" kindref="member">read_cb</ref>;</highlight></codeline>
+<codeline lineno="181"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185" refid="structbt__hrs__client__control__point" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__hrs__client__control__point" kindref="compound">bt_hrs_client_control_point</ref><sp/>{</highlight></codeline>
+<codeline lineno="187" refid="structbt__hrs__client__control__point_a9a8fa8576f5b98a30c6fa72dde48ab8b_1a9a8fa8576f5b98a30c6fa72dde48ab8b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__hrs__client__control__point_a9a8fa8576f5b98a30c6fa72dde48ab8b_1a9a8fa8576f5b98a30c6fa72dde48ab8b" kindref="member">handle</ref>;</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight></codeline>
+<codeline lineno="190" refid="structbt__hrs__client__control__point_a5f5b7cb78c83af2b1adede433fcbfee6_1a5f5b7cb78c83af2b1adede433fcbfee6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_gatt_write_params<sp/><ref refid="structbt__hrs__client__control__point_a5f5b7cb78c83af2b1adede433fcbfee6_1a5f5b7cb78c83af2b1adede433fcbfee6" kindref="member">write_params</ref>;</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight></codeline>
+<codeline lineno="193" refid="structbt__hrs__client__control__point_ad297588e4e8316343ab0bcf4d839fc7f_1ad297588e4e8316343ab0bcf4d839fc7f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__hrs__client_ga02cb8730039dddc547cb0aeb24c18f01_1ga02cb8730039dddc547cb0aeb24c18f01" kindref="member">bt_hrs_client_write_cb</ref><sp/><ref refid="structbt__hrs__client__control__point_ad297588e4e8316343ab0bcf4d839fc7f_1ad297588e4e8316343ab0bcf4d839fc7f" kindref="member">write_cb</ref>;</highlight></codeline>
+<codeline lineno="194"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight></codeline>
+<codeline lineno="199" refid="structbt__hrs__client" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref><sp/>{</highlight></codeline>
+<codeline lineno="201" refid="structbt__hrs__client_a0daebbf359136ff17419224b3e098672_1a0daebbf359136ff17419224b3e098672" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_conn<sp/>*<ref refid="structbt__hrs__client_a0daebbf359136ff17419224b3e098672_1a0daebbf359136ff17419224b3e098672" kindref="member">conn</ref>;</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight></codeline>
+<codeline lineno="204" refid="structbt__hrs__client_a4d415fbee795f76546689d56bd5fec84_1a4d415fbee795f76546689d56bd5fec84" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__hrs__client__hr__meas" kindref="compound">bt_hrs_client_hr_meas</ref><sp/><ref refid="structbt__hrs__client_a4d415fbee795f76546689d56bd5fec84_1a4d415fbee795f76546689d56bd5fec84" kindref="member">measurement_char</ref>;</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight></codeline>
+<codeline lineno="207" refid="structbt__hrs__client_ae9e2fd9b3852083faf6d830fc49118bd_1ae9e2fd9b3852083faf6d830fc49118bd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__hrs__client__body__sensor__location" kindref="compound">bt_hrs_client_body_sensor_location</ref><sp/><ref refid="structbt__hrs__client_ae9e2fd9b3852083faf6d830fc49118bd_1ae9e2fd9b3852083faf6d830fc49118bd" kindref="member">sensor_location_char</ref>;</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight></codeline>
+<codeline lineno="210" refid="structbt__hrs__client_a106f76aa1fac79deb638c14d6b049766_1a106f76aa1fac79deb638c14d6b049766" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__hrs__client__control__point" kindref="compound">bt_hrs_client_control_point</ref><sp/><ref refid="structbt__hrs__client_a106f76aa1fac79deb638c14d6b049766_1a106f76aa1fac79deb638c14d6b049766" kindref="member">cp_char</ref>;</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight></codeline>
+<codeline lineno="213" refid="structbt__hrs__client_a34a5dbe85203f75d054ace82eb24ff5e_1a34a5dbe85203f75d054ace82eb24ff5e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>atomic_t<sp/><ref refid="structbt__hrs__client_a34a5dbe85203f75d054ace82eb24ff5e_1a34a5dbe85203f75d054ace82eb24ff5e" kindref="member">state</ref>;</highlight></codeline>
+<codeline lineno="214"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"></highlight></codeline>
+<codeline lineno="226" refid="group__bt__hrs__client_ga81b724343210e9f8308861ce26099e6f_1ga81b724343210e9f8308861ce26099e6f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__hrs__client_ga81b724343210e9f8308861ce26099e6f_1ga81b724343210e9f8308861ce26099e6f" kindref="member">bt_hrs_client_init</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref><sp/>*hrs_c);</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"></highlight></codeline>
+<codeline lineno="239" refid="group__bt__hrs__client_ga77829bcc3ad6873784c48257b5910806_1ga77829bcc3ad6873784c48257b5910806" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__hrs__client_ga77829bcc3ad6873784c48257b5910806_1ga77829bcc3ad6873784c48257b5910806" kindref="member">bt_hrs_client_measurement_subscribe</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref><sp/>*hrs_c,</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__hrs__client_gaec515d6f25a509ccd8555ee2a738a75a_1gaec515d6f25a509ccd8555ee2a738a75a" kindref="member">bt_hrs_client_notify_cb</ref><sp/>notify_cb);</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"></highlight></codeline>
+<codeline lineno="252" refid="group__bt__hrs__client_ga141ab200a0a4d190437404e3de24859b_1ga141ab200a0a4d190437404e3de24859b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__hrs__client_ga141ab200a0a4d190437404e3de24859b_1ga141ab200a0a4d190437404e3de24859b" kindref="member">bt_hrs_client_measurement_unsubscribe</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref><sp/>*hrs_c);</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"></highlight></codeline>
+<codeline lineno="262" refid="group__bt__hrs__client_ga57e06ab9812c029b14dcc37426604ffe_1ga57e06ab9812c029b14dcc37426604ffe" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__hrs__client_ga57e06ab9812c029b14dcc37426604ffe_1ga57e06ab9812c029b14dcc37426604ffe" kindref="member">bt_hrs_client_sensor_location_read</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref><sp/>*hrs_c,</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__hrs__client_gab4248c568ece617ea55eb142e4f9255f_1gab4248c568ece617ea55eb142e4f9255f" kindref="member">bt_hrs_client_read_sensor_location_cb</ref><sp/>read_cb);</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"></highlight></codeline>
+<codeline lineno="273" refid="group__bt__hrs__client_ga0e632c61ac69d9a5a7e3405ec75a7099_1ga0e632c61ac69d9a5a7e3405ec75a7099" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__bt__hrs__client_ga0e632c61ac69d9a5a7e3405ec75a7099_1ga0e632c61ac69d9a5a7e3405ec75a7099" kindref="member">bt_hrs_client_has_sensor_location</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref><sp/>*hrs_c);</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"></highlight></codeline>
+<codeline lineno="284" refid="group__bt__hrs__client_gac2239f1d07844a83f4fec8cf74761138_1gac2239f1d07844a83f4fec8cf74761138" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__hrs__client_gac2239f1d07844a83f4fec8cf74761138_1gac2239f1d07844a83f4fec8cf74761138" kindref="member">bt_hrs_client_control_point_write</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref><sp/>*hrs_c,</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__hrs__client_ga8d129c45a884ae37fe1310a444e01be2_1ga8d129c45a884ae37fe1310a444e01be2" kindref="member">bt_hrs_client_cp_value</ref><sp/>value,</highlight></codeline>
+<codeline lineno="286"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__hrs__client_ga02cb8730039dddc547cb0aeb24c18f01_1ga02cb8730039dddc547cb0aeb24c18f01" kindref="member">bt_hrs_client_write_cb</ref><sp/><ref refid="structbt__hrs__client__control__point_ad297588e4e8316343ab0bcf4d839fc7f_1ad297588e4e8316343ab0bcf4d839fc7f" kindref="member">write_cb</ref>);</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"></highlight></codeline>
+<codeline lineno="296" refid="group__bt__hrs__client_gaa65948722d04f56b7a3c8f991686b365_1gaa65948722d04f56b7a3c8f991686b365" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__bt__hrs__client_gaa65948722d04f56b7a3c8f991686b365_1gaa65948722d04f56b7a3c8f991686b365" kindref="member">bt_hrs_client_has_control_point</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref><sp/>*hrs_c);</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"></highlight></codeline>
+<codeline lineno="311" refid="group__bt__hrs__client_ga63ae1d9e57447b0fdbe0819376a1151a_1ga63ae1d9e57447b0fdbe0819376a1151a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__hrs__client_ga63ae1d9e57447b0fdbe0819376a1151a_1ga63ae1d9e57447b0fdbe0819376a1151a" kindref="member">bt_hrs_client_handles_assign</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_gatt_dm<sp/>*dm,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref><sp/>*hrs_c);</highlight></codeline>
+<codeline lineno="312"><highlight class="normal"></highlight></codeline>
+<codeline lineno="313"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="314"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="315"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="316"><highlight class="normal"></highlight></codeline>
+<codeline lineno="321"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_HRS_CLIENT_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/services/hrs_client.h"/>
+  </compounddef>
+</doxygen>

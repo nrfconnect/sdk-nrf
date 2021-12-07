@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__t4t__isodep__cb" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_t4t_isodep_cb</compoundname>
+    <includes refid="isodep_8h" local="no">isodep.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__t4t__isodep__cb_a5d347f8dd108daeb92d897a106ae9de5_1a5d347f8dd108daeb92d897a106ae9de5" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* nfc_t4t_isodep_cb::data_received) (const uint8_t *data, size_t data_len)</definition>
+        <argsstring>)(const uint8_t *data, size_t data_len)</argsstring>
+        <name>data_received</name>
+        <briefdescription>
+<para>ISO-DEP data received callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The data exchange over ISO-DEP protocol is completed successfully.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the received data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Received data length. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="124" column="1" bodyfile="include/nfc/t4t/isodep.h" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__isodep__cb_a933f0d21b349a8083f866e9db0b31440_1a933f0d21b349a8083f866e9db0b31440" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* nfc_t4t_isodep_cb::selected) (const struct nfc_t4t_isodep_tag *t4t_tag)</definition>
+        <argsstring>)(const struct nfc_t4t_isodep_tag *t4t_tag)</argsstring>
+        <name>selected</name>
+        <briefdescription>
+<para>Type 4 Tag ISO-DEP selected callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A valid ATS frame from the tag was received. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="130" column="1" bodyfile="include/nfc/t4t/isodep.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__isodep__cb_a93ef1d446e099407eb65f75542dec7a0_1a93ef1d446e099407eb65f75542dec7a0" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* nfc_t4t_isodep_cb::deselected) (void)</definition>
+        <argsstring>)(void)</argsstring>
+        <name>deselected</name>
+        <briefdescription>
+<para>Type 4 Tag ISO-DEP deselected callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A valid Deselect Response from the tag was received. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="136" column="1" bodyfile="include/nfc/t4t/isodep.h" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__isodep__cb_a381a164c51d60ab9d47f5ebec4281c93_1a381a164c51d60ab9d47f5ebec4281c93" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* nfc_t4t_isodep_cb::ready_to_send) (uint8_t *data, size_t data_len, uint32_t ftd)</definition>
+        <argsstring>)(uint8_t *data, size_t data_len, uint32_t ftd)</argsstring>
+        <name>ready_to_send</name>
+        <briefdescription>
+<para>ISO-DEP data ready to send a callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>After receiving this callback, ISO-DEP protocol data should be sent by the Reader/Writer.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to data to send by Reader/Writer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data length. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ftd</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum frame delay time. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="147" column="1" bodyfile="include/nfc/t4t/isodep.h" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__isodep__cb_aa2e2e8c0ad37b234333236f27efba90c_1aa2e2e8c0ad37b234333236f27efba90c" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* nfc_t4t_isodep_cb::error) (int err)</definition>
+        <argsstring>)(int err)</argsstring>
+        <name>error</name>
+        <briefdescription>
+<para>ISO-DEP error callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>ISO-DEP transfer has failed. Called when ISO-DEP protocol error occurred. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="154" column="1" bodyfile="include/nfc/t4t/isodep.h" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>ISO-DEP Protocol callback structure. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This structure is used to control data exchange over ISO-DEP Protocol. </para>
+    </detaileddescription>
+    <location file="include/nfc/t4t/isodep.h" line="115" column="1" bodyfile="include/nfc/t4t/isodep.h" bodystart="115" bodyend="155"/>
+    <listofallmembers>
+      <member refid="structnfc__t4t__isodep__cb_a5d347f8dd108daeb92d897a106ae9de5_1a5d347f8dd108daeb92d897a106ae9de5" prot="public" virt="non-virtual"><scope>nfc_t4t_isodep_cb</scope><name>data_received</name></member>
+      <member refid="structnfc__t4t__isodep__cb_a93ef1d446e099407eb65f75542dec7a0_1a93ef1d446e099407eb65f75542dec7a0" prot="public" virt="non-virtual"><scope>nfc_t4t_isodep_cb</scope><name>deselected</name></member>
+      <member refid="structnfc__t4t__isodep__cb_aa2e2e8c0ad37b234333236f27efba90c_1aa2e2e8c0ad37b234333236f27efba90c" prot="public" virt="non-virtual"><scope>nfc_t4t_isodep_cb</scope><name>error</name></member>
+      <member refid="structnfc__t4t__isodep__cb_a381a164c51d60ab9d47f5ebec4281c93_1a381a164c51d60ab9d47f5ebec4281c93" prot="public" virt="non-virtual"><scope>nfc_t4t_isodep_cb</scope><name>ready_to_send</name></member>
+      <member refid="structnfc__t4t__isodep__cb_a933f0d21b349a8083f866e9db0b31440_1a933f0d21b349a8083f866e9db0b31440" prot="public" virt="non-virtual"><scope>nfc_t4t_isodep_cb</scope><name>selected</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__dfu__smp" kind="struct" language="C++" prot="public">
+    <compoundname>bt_dfu_smp</compoundname>
+    <includes refid="dfu__smp_8h" local="no">dfu_smp.h</includes>
+    <innerclass refid="structbt__dfu__smp_1_1bt__dfu__smp__cbs" prot="public">bt_dfu_smp::bt_dfu_smp_cbs</innerclass>
+    <innerclass refid="structbt__dfu__smp_1_1bt__dfu__smp__handles" prot="public">bt_dfu_smp::bt_dfu_smp_handles</innerclass>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__dfu__smp_aefd40c290d903fdf132fac279f2c8696_1aefd40c290d903fdf132fac279f2c8696" prot="public" static="no" mutable="no">
+        <type>struct bt_conn *</type>
+        <definition>struct bt_conn* bt_dfu_smp::conn</definition>
+        <argsstring></argsstring>
+        <name>conn</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Connection object. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="119" column="14" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__dfu__smp_ab33c7965f015f685d62c573c730904ed_1ab33c7965f015f685d62c573c730904ed" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__dfu__smp_1_1bt__dfu__smp__handles" kindref="compound">bt_dfu_smp::bt_dfu_smp_handles</ref></type>
+        <definition>struct bt_dfu_smp::bt_dfu_smp_handles bt_dfu_smp::handles</definition>
+        <argsstring></argsstring>
+        <name>handles</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="126" column="9"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__dfu__smp_a82ce2b68ed56d49403f8503d03711aee_1a82ce2b68ed56d49403f8503d03711aee" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__dfu__smp__rsp__state" kindref="compound">bt_dfu_smp_rsp_state</ref></type>
+        <definition>struct bt_dfu_smp_rsp_state bt_dfu_smp::rsp_state</definition>
+        <argsstring></argsstring>
+        <name>rsp_state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current response state. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="128" column="27" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__dfu__smp_a566642980f86abeff0eea0da98504059_1a566642980f86abeff0eea0da98504059" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__dfu__smp_1_1bt__dfu__smp__cbs" kindref="compound">bt_dfu_smp::bt_dfu_smp_cbs</ref></type>
+        <definition>struct bt_dfu_smp::bt_dfu_smp_cbs bt_dfu_smp::cbs</definition>
+        <argsstring></argsstring>
+        <name>cbs</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="142" column="5"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__dfu__smp_a930d11f5bf0aaf3cac9618f93d30594d_1a930d11f5bf0aaf3cac9618f93d30594d" prot="public" static="no" mutable="no">
+        <type>struct bt_gatt_subscribe_params</type>
+        <definition>struct bt_gatt_subscribe_params bt_dfu_smp::notification_params</definition>
+        <argsstring></argsstring>
+        <name>notification_params</name>
+        <briefdescription>
+<para>Response notification parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>These parameters are set for the SMP response notification.</para>
+<para>The status of the notification is reflected by the <computeroutput>notify</computeroutput> field. Notifications must be enabled before the command is sent. This is handled automatically by the library. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="151" column="31" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>DFU SMP Client structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_dfu_smp</label>
+        <link refid="structbt__dfu__smp"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>handles</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>rsp_state</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>cbs</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bt_dfu_smp::bt_dfu_smp_cbs</label>
+        <link refid="structbt__dfu__smp_1_1bt__dfu__smp__cbs"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>error_cb</edgelabel>
+          <edgelabel>rsp_part</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_dfu_smp::bt_dfu_smp_handles</label>
+        <link refid="structbt__dfu__smp_1_1bt__dfu__smp__handles"/>
+      </node>
+      <node id="3">
+        <label>bt_dfu_smp_rsp_state</label>
+        <link refid="structbt__dfu__smp__rsp__state"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/dfu_smp.h" line="117" column="1" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="117" bodyend="152"/>
+    <listofallmembers>
+      <member refid="structbt__dfu__smp_a566642980f86abeff0eea0da98504059_1a566642980f86abeff0eea0da98504059" prot="public" virt="non-virtual"><scope>bt_dfu_smp</scope><name>cbs</name></member>
+      <member refid="structbt__dfu__smp_aefd40c290d903fdf132fac279f2c8696_1aefd40c290d903fdf132fac279f2c8696" prot="public" virt="non-virtual"><scope>bt_dfu_smp</scope><name>conn</name></member>
+      <member refid="structbt__dfu__smp_ab33c7965f015f685d62c573c730904ed_1ab33c7965f015f685d62c573c730904ed" prot="public" virt="non-virtual"><scope>bt_dfu_smp</scope><name>handles</name></member>
+      <member refid="structbt__dfu__smp_a930d11f5bf0aaf3cac9618f93d30594d_1a930d11f5bf0aaf3cac9618f93d30594d" prot="public" virt="non-virtual"><scope>bt_dfu_smp</scope><name>notification_params</name></member>
+      <member refid="structbt__dfu__smp_a82ce2b68ed56d49403f8503d03711aee_1a82ce2b68ed56d49403f8503d03711aee" prot="public" virt="non-virtual"><scope>bt_dfu_smp</scope><name>rsp_state</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

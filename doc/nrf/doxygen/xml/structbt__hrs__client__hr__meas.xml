@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__hrs__client__hr__meas" kind="struct" language="C++" prot="public">
+    <compoundname>bt_hrs_client_hr_meas</compoundname>
+    <includes refid="hrs__client_8h" local="no">hrs_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__hrs__client__hr__meas_a68b576539e84fe995f671cd8b3d9d76a_1a68b576539e84fe995f671cd8b3d9d76a" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_hrs_client_hr_meas::handle</definition>
+        <argsstring></argsstring>
+        <name>handle</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Value handle. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="158" column="10" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hrs__client__hr__meas_a2162e13e850f3b603d187f7679072a50_1a2162e13e850f3b603d187f7679072a50" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_hrs_client_hr_meas::ccc_handle</definition>
+        <argsstring></argsstring>
+        <name>ccc_handle</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handle of the characteristic CCC descriptor. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="161" column="10" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="161" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hrs__client__hr__meas_a340cd9164d3eebf35f2de4d9e2994872_1a340cd9164d3eebf35f2de4d9e2994872" prot="public" static="no" mutable="no">
+        <type>struct bt_gatt_subscribe_params</type>
+        <definition>struct bt_gatt_subscribe_params bt_hrs_client_hr_meas::notify_params</definition>
+        <argsstring></argsstring>
+        <name>notify_params</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>GATT subscribe parameters for notification. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="164" column="31" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="164" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hrs__client__hr__meas_a4276756bb81b291d50edf72eba352f20_1a4276756bb81b291d50edf72eba352f20" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__hrs__client_gaec515d6f25a509ccd8555ee2a738a75a_1gaec515d6f25a509ccd8555ee2a738a75a" kindref="member">bt_hrs_client_notify_cb</ref></type>
+        <definition>bt_hrs_client_notify_cb bt_hrs_client_hr_meas::notify_cb</definition>
+        <argsstring></argsstring>
+        <name>notify_cb</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Notification callback. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="167" column="25" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="167" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Heart Rate Measurement characteristic structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_hrs_client</label>
+        <link refid="structbt__hrs__client"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>measurement_char</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>sensor_location_char</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>cp_char</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bt_hrs_client_body_sensor_location</label>
+        <link refid="structbt__hrs__client__body__sensor__location"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>read_cb</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bt_hrs_client_control_point</label>
+        <link refid="structbt__hrs__client__control__point"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>write_cb</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>bt_hrs_client_hr_meas</label>
+        <link refid="structbt__hrs__client__hr__meas"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>notify_cb</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/hrs_client.h" line="156" column="1" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="156" bodyend="168"/>
+    <listofallmembers>
+      <member refid="structbt__hrs__client__hr__meas_a2162e13e850f3b603d187f7679072a50_1a2162e13e850f3b603d187f7679072a50" prot="public" virt="non-virtual"><scope>bt_hrs_client_hr_meas</scope><name>ccc_handle</name></member>
+      <member refid="structbt__hrs__client__hr__meas_a68b576539e84fe995f671cd8b3d9d76a_1a68b576539e84fe995f671cd8b3d9d76a" prot="public" virt="non-virtual"><scope>bt_hrs_client_hr_meas</scope><name>handle</name></member>
+      <member refid="structbt__hrs__client__hr__meas_a4276756bb81b291d50edf72eba352f20_1a4276756bb81b291d50edf72eba352f20" prot="public" virt="non-virtual"><scope>bt_hrs_client_hr_meas</scope><name>notify_cb</name></member>
+      <member refid="structbt__hrs__client__hr__meas_a340cd9164d3eebf35f2de4d9e2994872_1a340cd9164d3eebf35f2de4d9e2994872" prot="public" virt="non-virtual"><scope>bt_hrs_client_hr_meas</scope><name>notify_params</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

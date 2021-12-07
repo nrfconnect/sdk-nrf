@@ -1,0 +1,183 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlte__lc__cell" kind="struct" language="C++" prot="public">
+    <compoundname>lte_lc_cell</compoundname>
+    <includes refid="lte__lc_8h" local="no">lte_lc.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlte__lc__cell_afc4628ea3e38144d2c66443a4063ae2c_1afc4628ea3e38144d2c66443a4063ae2c" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int lte_lc_cell::mcc</definition>
+        <argsstring></argsstring>
+        <name>mcc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Mobile Country Code. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="270" column="5" bodyfile="include/modem/lte_lc.h" bodystart="270" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__cell_acdaa002be5ba8e8d1adc3bf9697bdf2d_1acdaa002be5ba8e8d1adc3bf9697bdf2d" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int lte_lc_cell::mnc</definition>
+        <argsstring></argsstring>
+        <name>mnc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Mobile Network Code. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="273" column="5" bodyfile="include/modem/lte_lc.h" bodystart="273" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__cell_ae7f487411ce13cf1ca9d79808aaf03ef_1ae7f487411ce13cf1ca9d79808aaf03ef" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t lte_lc_cell::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>E-UTRAN cell ID, range 0 - LTE_LC_CELL_EUTRAN_ID_MAX </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="276" column="10" bodyfile="include/modem/lte_lc.h" bodystart="276" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__cell_a559f7c3786cdb0df5fe9aaba5881a3a3_1a559f7c3786cdb0df5fe9aaba5881a3a3" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t lte_lc_cell::tac</definition>
+        <argsstring></argsstring>
+        <name>tac</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Tracking area code. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="279" column="10" bodyfile="include/modem/lte_lc.h" bodystart="279" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__cell_a72fdd3a071a1a1a0dec1f37bc9f8af84_1a72fdd3a071a1a1a0dec1f37bc9f8af84" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t lte_lc_cell::earfcn</definition>
+        <argsstring></argsstring>
+        <name>earfcn</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>EARFCN of the neighbour cell, per 3GPP TS 36.101. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="282" column="10" bodyfile="include/modem/lte_lc.h" bodystart="282" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__cell_a68bcffe0ead17bdd0cbbc91a5566dea3_1a68bcffe0ead17bdd0cbbc91a5566dea3" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t lte_lc_cell::timing_advance</definition>
+        <argsstring></argsstring>
+        <name>timing_advance</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Timing advance decimal value. Range [0..20512, TIMING_ADVANCE_NOT_VALID = 65535].</para>
+<para>Note: Timing advance may be reported from past measurements. The parameters <computeroutput>timing_advance_meas_time</computeroutput> and <computeroutput>measurement_time</computeroutput> can be used to evaluate if the parameter is usable. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="291" column="10" bodyfile="include/modem/lte_lc.h" bodystart="291" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__cell_a4bae7c71512c869cf2f19ccd95f15003_1a4bae7c71512c869cf2f19ccd95f15003" prot="public" static="no" mutable="no">
+        <type>uint64_t</type>
+        <definition>uint64_t lte_lc_cell::timing_advance_meas_time</definition>
+        <argsstring></argsstring>
+        <name>timing_advance_meas_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Timing advance measurement time in milliseconds, calculated from modem boot time. Range 0 - 18 446 744 073 709 551 614 ms.</para>
+<para>For modem firmware versions &gt;= 1.3.1, timing advance measurement time may be reported from the modem. This means that timing advance data may now also be available in neighbor cell measurements done in RRC idle, even though the timing advance data was captured in RRC connected. If the value is not reported by the modem, it is set to 0. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="303" column="10" bodyfile="include/modem/lte_lc.h" bodystart="303" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__cell_a028dc5397fe828df2f43a2af4d710941_1a028dc5397fe828df2f43a2af4d710941" prot="public" static="no" mutable="no">
+        <type>uint64_t</type>
+        <definition>uint64_t lte_lc_cell::measurement_time</definition>
+        <argsstring></argsstring>
+        <name>measurement_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Measurement time of serving cell in milliseconds. Range 0 - 18 446 744 073 709 551 614 ms. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="308" column="10" bodyfile="include/modem/lte_lc.h" bodystart="308" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__cell_a87c6f7ea07c3e34f5e045fd5185cff01_1a87c6f7ea07c3e34f5e045fd5185cff01" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t lte_lc_cell::phys_cell_id</definition>
+        <argsstring></argsstring>
+        <name>phys_cell_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Physical cell ID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="311" column="10" bodyfile="include/modem/lte_lc.h" bodystart="311" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__cell_adf51419011df02f93cebd1bc1da78b69_1adf51419011df02f93cebd1bc1da78b69" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t lte_lc_cell::rsrp</definition>
+        <argsstring></argsstring>
+        <name>rsrp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>RSRP of the neighbor cell. -17: RSRP &lt; -156 dBm -16: -156 ≤ RSRP &lt; -155 dBm ... -3: -143 ≤ RSRP &lt; -142 dBm -2: -142 ≤ RSRP &lt; -141 dBm -1: -141 ≤ RSRP &lt; -140 dBm 0: RSRP &lt; -140 dBm 1: -140 ≤ RSRP &lt; -139 dBm 2: -139 ≤ RSRP &lt; -138 dBm ... 95: -46 ≤ RSRP &lt; -45 dBm 96: -45 ≤ RSRP &lt; -44 dBm 97: -44 ≤ RSRP dBm 255: not known or not detectable </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="329" column="9" bodyfile="include/modem/lte_lc.h" bodystart="329" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__cell_a8790d07fd7122afdbc97864927f6dd49_1a8790d07fd7122afdbc97864927f6dd49" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t lte_lc_cell::rsrq</definition>
+        <argsstring></argsstring>
+        <name>rsrq</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>RSRQ of the neighbor cell. -30: RSRQ &lt; -34 dB -29: -34 ≤ RSRQ &lt; -33.5 dB ... -2: -20.5 ≤ RSRQ &lt; -20 dB -1: -20 ≤ RSRQ &lt; -19.5 dB 0: RSRQ &lt; -19.5 dB 1: -19.5 ≤ RSRQ &lt; -19 dB 2: -19 ≤ RSRQ &lt; -18.5 dB ... 32: -4 ≤ RSRQ &lt; -3.5 dB 33: -3.5 ≤ RSRQ &lt; -3 dB 34: -3 ≤ RSRQ dB 35: -3 ≤ RSRQ &lt; -2.5 dB 36: -2.5 ≤ RSRQ &lt; -2 dB ... 45: 2 ≤ RSRQ &lt; 2.5 dB 46: 2.5 ≤ RSRQ dB 255: not known or not detectable. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="351" column="9" bodyfile="include/modem/lte_lc.h" bodystart="351" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/modem/lte_lc.h" line="268" column="1" bodyfile="include/modem/lte_lc.h" bodystart="268" bodyend="352"/>
+    <listofallmembers>
+      <member refid="structlte__lc__cell_a72fdd3a071a1a1a0dec1f37bc9f8af84_1a72fdd3a071a1a1a0dec1f37bc9f8af84" prot="public" virt="non-virtual"><scope>lte_lc_cell</scope><name>earfcn</name></member>
+      <member refid="structlte__lc__cell_ae7f487411ce13cf1ca9d79808aaf03ef_1ae7f487411ce13cf1ca9d79808aaf03ef" prot="public" virt="non-virtual"><scope>lte_lc_cell</scope><name>id</name></member>
+      <member refid="structlte__lc__cell_afc4628ea3e38144d2c66443a4063ae2c_1afc4628ea3e38144d2c66443a4063ae2c" prot="public" virt="non-virtual"><scope>lte_lc_cell</scope><name>mcc</name></member>
+      <member refid="structlte__lc__cell_a028dc5397fe828df2f43a2af4d710941_1a028dc5397fe828df2f43a2af4d710941" prot="public" virt="non-virtual"><scope>lte_lc_cell</scope><name>measurement_time</name></member>
+      <member refid="structlte__lc__cell_acdaa002be5ba8e8d1adc3bf9697bdf2d_1acdaa002be5ba8e8d1adc3bf9697bdf2d" prot="public" virt="non-virtual"><scope>lte_lc_cell</scope><name>mnc</name></member>
+      <member refid="structlte__lc__cell_a87c6f7ea07c3e34f5e045fd5185cff01_1a87c6f7ea07c3e34f5e045fd5185cff01" prot="public" virt="non-virtual"><scope>lte_lc_cell</scope><name>phys_cell_id</name></member>
+      <member refid="structlte__lc__cell_adf51419011df02f93cebd1bc1da78b69_1adf51419011df02f93cebd1bc1da78b69" prot="public" virt="non-virtual"><scope>lte_lc_cell</scope><name>rsrp</name></member>
+      <member refid="structlte__lc__cell_a8790d07fd7122afdbc97864927f6dd49_1a8790d07fd7122afdbc97864927f6dd49" prot="public" virt="non-virtual"><scope>lte_lc_cell</scope><name>rsrq</name></member>
+      <member refid="structlte__lc__cell_a559f7c3786cdb0df5fe9aaba5881a3a3_1a559f7c3786cdb0df5fe9aaba5881a3a3" prot="public" virt="non-virtual"><scope>lte_lc_cell</scope><name>tac</name></member>
+      <member refid="structlte__lc__cell_a68bcffe0ead17bdd0cbbc91a5566dea3_1a68bcffe0ead17bdd0cbbc91a5566dea3" prot="public" virt="non-virtual"><scope>lte_lc_cell</scope><name>timing_advance</name></member>
+      <member refid="structlte__lc__cell_a4bae7c71512c869cf2f19ccd95f15003_1a4bae7c71512c869cf2f19ccd95f15003" prot="public" virt="non-virtual"><scope>lte_lc_cell</scope><name>timing_advance_meas_time</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

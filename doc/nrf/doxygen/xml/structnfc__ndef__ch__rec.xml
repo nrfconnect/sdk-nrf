@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__ndef__ch__rec" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_ndef_ch_rec</compoundname>
+    <includes refid="ndef_2ch_8h" local="no">ch.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__ndef__ch__rec_a8c21a98978da6786dd1d18823ecd8a33_1a8c21a98978da6786dd1d18823ecd8a33" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_ndef_ch_rec::major_version</definition>
+        <argsstring></argsstring>
+        <name>major_version</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Major version number of the supported Connection Handover specification. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="141" column="9" bodyfile="include/nfc/ndef/ch.h" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__ch__rec_ad3d6f9e66adc098f8b56bab03b540b8e_1ad3d6f9e66adc098f8b56bab03b540b8e" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_ndef_ch_rec::minor_version</definition>
+        <argsstring></argsstring>
+        <name>minor_version</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Minor version number of the supported Connection Handover specification. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="146" column="9" bodyfile="include/nfc/ndef/ch.h" bodystart="146" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__ch__rec_a72e2347939630eb3469a1e215466f2d6_1a72e2347939630eb3469a1e215466f2d6" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref> *</type>
+        <definition>struct nfc_ndef_msg_desc* nfc_ndef_ch_rec::local_records</definition>
+        <argsstring></argsstring>
+        <name>local_records</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to a message encapsulating local records. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="149" column="24" bodyfile="include/nfc/ndef/ch.h" bodystart="149" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Handover Select record payload descriptor. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>nfc_ndef_ch_rec</label>
+        <link refid="structnfc__ndef__ch__rec"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>local_records</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>nfc_ndef_msg_desc</label>
+        <link refid="structnfc__ndef__msg__desc"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>record</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>nfc_ndef_record_desc</label>
+        <link refid="structnfc__ndef__record__desc"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/nfc/ndef/ch.h" line="137" column="1" bodyfile="include/nfc/ndef/ch.h" bodystart="137" bodyend="150"/>
+    <listofallmembers>
+      <member refid="structnfc__ndef__ch__rec_a72e2347939630eb3469a1e215466f2d6_1a72e2347939630eb3469a1e215466f2d6" prot="public" virt="non-virtual"><scope>nfc_ndef_ch_rec</scope><name>local_records</name></member>
+      <member refid="structnfc__ndef__ch__rec_a8c21a98978da6786dd1d18823ecd8a33_1a8c21a98978da6786dd1d18823ecd8a33" prot="public" virt="non-virtual"><scope>nfc_ndef_ch_rec</scope><name>major_version</name></member>
+      <member refid="structnfc__ndef__ch__rec_ad3d6f9e66adc098f8b56bab03b540b8e_1ad3d6f9e66adc098f8b56bab03b540b8e" prot="public" virt="non-virtual"><scope>nfc_ndef_ch_rec</scope><name>minor_version</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

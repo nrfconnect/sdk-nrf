@@ -1,0 +1,250 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__sensor__srv" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_sensor_srv</compoundname>
+    <includes refid="sensor__srv_8h" local="no">sensor_srv.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__sensor__srv_aa660d46e2d199061f48d2f816b21e907_1aa660d46e2d199061f48d2f816b21e907" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__sensor" kindref="compound">bt_mesh_sensor</ref> *const  *</type>
+        <definition>struct bt_mesh_sensor* const* bt_mesh_sensor_srv::sensor_array</definition>
+        <argsstring></argsstring>
+        <name>sensor_array</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sensors owned by this server. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_srv.h" line="63" column="27" bodyfile="include/bluetooth/mesh/sensor_srv.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__srv_a437d549c56530b25b0c3701c72b43bcd_1a437d549c56530b25b0c3701c72b43bcd" prot="public" static="no" mutable="no">
+        <type>sys_slist_t</type>
+        <definition>sys_slist_t bt_mesh_sensor_srv::sensors</definition>
+        <argsstring></argsstring>
+        <name>sensors</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Ordered linked list of sensors. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_srv.h" line="65" column="13" bodyfile="include/bluetooth/mesh/sensor_srv.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__srv_afa797f6050d5c22fd6ddcd4b357441f4_1afa797f6050d5c22fd6ddcd4b357441f4" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_sensor_srv::seq</definition>
+        <argsstring></argsstring>
+        <name>seq</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Publish sequence counter </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_srv.h" line="67" column="10" bodyfile="include/bluetooth/mesh/sensor_srv.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__srv_a3f2574ff47034fbd31e11302c89fa8e6_1a3f2574ff47034fbd31e11302c89fa8e6" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_sensor_srv::sensor_count</definition>
+        <argsstring></argsstring>
+        <name>sensor_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of sensors. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_srv.h" line="69" column="9" bodyfile="include/bluetooth/mesh/sensor_srv.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__srv_a09f3098bed5b7e540724cf5fe35818c2_1a09f3098bed5b7e540724cf5fe35818c2" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model_pub</type>
+        <definition>struct bt_mesh_model_pub bt_mesh_sensor_srv::pub</definition>
+        <argsstring></argsstring>
+        <name>pub</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Publish parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_srv.h" line="76" column="24" bodyfile="include/bluetooth/mesh/sensor_srv.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__srv_a7eeb3780af16591dea6f4a28232b92f6_1a7eeb3780af16591dea6f4a28232b92f6" prot="public" static="no" mutable="no">
+        <type>struct net_buf_simple</type>
+        <definition>struct net_buf_simple bt_mesh_sensor_srv::pub_buf</definition>
+        <argsstring></argsstring>
+        <name>pub_buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_srv.h" line="78" column="21" bodyfile="include/bluetooth/mesh/sensor_srv.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__srv_afa89c6205cbf095e9fbe5c0869ddbd69_1afa89c6205cbf095e9fbe5c0869ddbd69" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_sensor_srv::pub_data[BT_MESH_MODEL_BUF_LEN( BT_MESH_SENSOR_OP_STATUS,(CONFIG_BT_MESH_SENSOR_SRV_SENSORS_MAX * BT_MESH_SENSOR_STATUS_MAXLEN))]</definition>
+        <argsstring>[BT_MESH_MODEL_BUF_LEN(BT_MESH_SENSOR_OP_STATUS,(CONFIG_BT_MESH_SENSOR_SRV_SENSORS_MAX *BT_MESH_SENSOR_STATUS_MAXLEN))]</argsstring>
+        <name>pub_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_srv.h" line="80" column="9" bodyfile="include/bluetooth/mesh/sensor_srv.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__srv_a5f6557fca80c234de454839ac9543304_1a5f6557fca80c234de454839ac9543304" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model_pub</type>
+        <definition>struct bt_mesh_model_pub bt_mesh_sensor_srv::setup_pub</definition>
+        <argsstring></argsstring>
+        <name>setup_pub</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Publish parameters for the setup server. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_srv.h" line="85" column="24" bodyfile="include/bluetooth/mesh/sensor_srv.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__srv_a064eff7b90e9602b867c32edd6ea85fb_1a064eff7b90e9602b867c32edd6ea85fb" prot="public" static="no" mutable="no">
+        <type>struct net_buf_simple</type>
+        <definition>struct net_buf_simple bt_mesh_sensor_srv::setup_pub_buf</definition>
+        <argsstring></argsstring>
+        <name>setup_pub_buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_srv.h" line="87" column="21" bodyfile="include/bluetooth/mesh/sensor_srv.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__srv_ac477edca8d2521c386e94ce6da9e6fe5_1ac477edca8d2521c386e94ce6da9e6fe5" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_sensor_srv::setup_pub_data[MAX( BT_MESH_MODEL_BUF_LEN( BT_MESH_SENSOR_OP_SETTING_STATUS, BT_MESH_SENSOR_MSG_MAXLEN_SETTING_STATUS), BT_MESH_MODEL_BUF_LEN( BT_MESH_SENSOR_OP_CADENCE_STATUS, BT_MESH_SENSOR_MSG_MAXLEN_CADENCE_STATUS))]</definition>
+        <argsstring>[MAX(BT_MESH_MODEL_BUF_LEN(BT_MESH_SENSOR_OP_SETTING_STATUS, BT_MESH_SENSOR_MSG_MAXLEN_SETTING_STATUS), BT_MESH_MODEL_BUF_LEN(BT_MESH_SENSOR_OP_CADENCE_STATUS, BT_MESH_SENSOR_MSG_MAXLEN_CADENCE_STATUS))]</argsstring>
+        <name>setup_pub_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_srv.h" line="89" column="9" bodyfile="include/bluetooth/mesh/sensor_srv.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__srv_aa4c41f690cfe38314c3871b2cd16f87c_1aa4c41f690cfe38314c3871b2cd16f87c" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model *</type>
+        <definition>struct bt_mesh_model* bt_mesh_sensor_srv::model</definition>
+        <argsstring></argsstring>
+        <name>model</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Composition data model pointer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_srv.h" line="97" column="20" bodyfile="include/bluetooth/mesh/sensor_srv.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Sensor server instance. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_mesh_sensor</label>
+        <link refid="structbt__mesh__sensor"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>descriptor</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>list</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>series</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>threshold</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bt_mesh_sensor_channel</label>
+        <link refid="structbt__mesh__sensor__channel"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>format</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>bt_mesh_sensor_column</label>
+        <link refid="structbt__mesh__sensor__column"/>
+      </node>
+      <node id="6">
+        <label>bt_mesh_sensor_descriptor</label>
+        <link refid="structbt__mesh__sensor__descriptor"/>
+      </node>
+      <node id="5">
+        <label>bt_mesh_sensor_format</label>
+        <link refid="structbt__mesh__sensor__format"/>
+      </node>
+      <node id="8">
+        <label>bt_mesh_sensor_series</label>
+        <link refid="structbt__mesh__sensor__series"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>columns</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>bt_mesh_sensor_setting</label>
+        <link refid="structbt__mesh__sensor__setting"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>bt_mesh_sensor_srv</label>
+        <link refid="structbt__mesh__sensor__srv"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>sensor_array</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>bt_mesh_sensor_threshold</label>
+        <link refid="structbt__mesh__sensor__threshold"/>
+      </node>
+      <node id="3">
+        <label>bt_mesh_sensor_type</label>
+        <link refid="structbt__mesh__sensor__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>channels</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/sensor_srv.h" line="61" column="1" bodyfile="include/bluetooth/mesh/sensor_srv.h" bodystart="61" bodyend="98"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__sensor__srv_aa4c41f690cfe38314c3871b2cd16f87c_1aa4c41f690cfe38314c3871b2cd16f87c" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_srv</scope><name>model</name></member>
+      <member refid="structbt__mesh__sensor__srv_a09f3098bed5b7e540724cf5fe35818c2_1a09f3098bed5b7e540724cf5fe35818c2" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_srv</scope><name>pub</name></member>
+      <member refid="structbt__mesh__sensor__srv_a7eeb3780af16591dea6f4a28232b92f6_1a7eeb3780af16591dea6f4a28232b92f6" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_srv</scope><name>pub_buf</name></member>
+      <member refid="structbt__mesh__sensor__srv_afa89c6205cbf095e9fbe5c0869ddbd69_1afa89c6205cbf095e9fbe5c0869ddbd69" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_srv</scope><name>pub_data</name></member>
+      <member refid="structbt__mesh__sensor__srv_aa660d46e2d199061f48d2f816b21e907_1aa660d46e2d199061f48d2f816b21e907" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_srv</scope><name>sensor_array</name></member>
+      <member refid="structbt__mesh__sensor__srv_a3f2574ff47034fbd31e11302c89fa8e6_1a3f2574ff47034fbd31e11302c89fa8e6" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_srv</scope><name>sensor_count</name></member>
+      <member refid="structbt__mesh__sensor__srv_a437d549c56530b25b0c3701c72b43bcd_1a437d549c56530b25b0c3701c72b43bcd" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_srv</scope><name>sensors</name></member>
+      <member refid="structbt__mesh__sensor__srv_afa797f6050d5c22fd6ddcd4b357441f4_1afa797f6050d5c22fd6ddcd4b357441f4" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_srv</scope><name>seq</name></member>
+      <member refid="structbt__mesh__sensor__srv_a5f6557fca80c234de454839ac9543304_1a5f6557fca80c234de454839ac9543304" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_srv</scope><name>setup_pub</name></member>
+      <member refid="structbt__mesh__sensor__srv_a064eff7b90e9602b867c32edd6ea85fb_1a064eff7b90e9602b867c32edd6ea85fb" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_srv</scope><name>setup_pub_buf</name></member>
+      <member refid="structbt__mesh__sensor__srv_ac477edca8d2521c386e94ce6da9e6fe5_1ac477edca8d2521c386e94ce6da9e6fe5" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_srv</scope><name>setup_pub_data</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

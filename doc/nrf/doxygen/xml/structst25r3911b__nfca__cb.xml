@@ -1,0 +1,189 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structst25r3911b__nfca__cb" kind="struct" language="C++" prot="public">
+    <compoundname>st25r3911b_nfca_cb</compoundname>
+    <includes refid="st25r3911b__nfca_8h" local="no">st25r3911b_nfca.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structst25r3911b__nfca__cb_a914b4714fb882541c3d7c9e494423d2f_1a914b4714fb882541c3d7c9e494423d2f" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* st25r3911b_nfca_cb::field_on) (void)</definition>
+        <argsstring>)(void)</argsstring>
+        <name>field_on</name>
+        <briefdescription>
+<para>Field on indication callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Field is on, reader is ready to next operation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="125" column="1" bodyfile="include/st25r3911b_nfca.h" bodystart="125" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structst25r3911b__nfca__cb_a2123e1490a67304f9256f6a54f9a3ef3_1a2123e1490a67304f9256f6a54f9a3ef3" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* st25r3911b_nfca_cb::field_off) (void)</definition>
+        <argsstring>)(void)</argsstring>
+        <name>field_off</name>
+        <briefdescription>
+<para>Field off indication callback. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="129" column="1" bodyfile="include/st25r3911b_nfca.h" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structst25r3911b__nfca__cb_a82e4b61d476d29c66cfc2ffda526f631_1a82e4b61d476d29c66cfc2ffda526f631" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* st25r3911b_nfca_cb::tag_detected) (const struct st25r3911b_nfca_sens_resp *sens_resp)</definition>
+        <argsstring>)(const struct st25r3911b_nfca_sens_resp *sens_resp)</argsstring>
+        <name>tag_detected</name>
+        <briefdescription>
+<para>Tag detected callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The SENS response is received.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>sens_resp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response to ALL request or SENS request. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="137" column="1" bodyfile="include/st25r3911b_nfca.h" bodystart="137" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structst25r3911b__nfca__cb_a8311a395a826e0b9fde29b8c78562098_1a8311a395a826e0b9fde29b8c78562098" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* st25r3911b_nfca_cb::anticollision_completed) (const struct st25r3911b_nfca_tag_info *tag_info, int err)</definition>
+        <argsstring>)(const struct st25r3911b_nfca_tag_info *tag_info, int err)</argsstring>
+        <name>anticollision_completed</name>
+        <briefdescription>
+<para>Collision resolution procedure completed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>tag_info</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>NFC-A Tag information. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Procedure error. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="144" column="1" bodyfile="include/st25r3911b_nfca.h" bodystart="144" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structst25r3911b__nfca__cb_a1f7c2cb79d7969e01f4626f0c9bef892_1a1f7c2cb79d7969e01f4626f0c9bef892" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* st25r3911b_nfca_cb::transfer_completed) (const uint8_t *data, size_t len, int err)</definition>
+        <argsstring>)(const uint8_t *data, size_t len, int err)</argsstring>
+        <name>transfer_completed</name>
+        <briefdescription>
+<para>NFC-A transceive operation completed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Received data from tag. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Received data length. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Transfer error. If 0, the transfer was successful. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="153" column="1" bodyfile="include/st25r3911b_nfca.h" bodystart="153" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structst25r3911b__nfca__cb_a616b6941748306200c5adf7a965a5b60_1a616b6941748306200c5adf7a965a5b60" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* st25r3911b_nfca_cb::rx_timeout) (bool tag_sleep)</definition>
+        <argsstring>)(bool tag_sleep)</argsstring>
+        <name>rx_timeout</name>
+        <briefdescription>
+<para>NFC-A receive time-out. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>tag_sleep</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If set, the tag is in sleep mode. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="159" column="1" bodyfile="include/st25r3911b_nfca.h" bodystart="159" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structst25r3911b__nfca__cb_a717acbd44271ab3592f45379b26de0e1_1a717acbd44271ab3592f45379b26de0e1" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* st25r3911b_nfca_cb::tag_sleep) (void)</definition>
+        <argsstring>)(void)</argsstring>
+        <name>tag_sleep</name>
+        <briefdescription>
+<para>NFC-A tag sleep state notification. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="163" column="1" bodyfile="include/st25r3911b_nfca.h" bodystart="163" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>NFC-A callback. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This structure is used for tracking and synchronized NFC-A operation. </para>
+    </detaileddescription>
+    <location file="include/st25r3911b_nfca.h" line="120" column="1" bodyfile="include/st25r3911b_nfca.h" bodystart="120" bodyend="164"/>
+    <listofallmembers>
+      <member refid="structst25r3911b__nfca__cb_a8311a395a826e0b9fde29b8c78562098_1a8311a395a826e0b9fde29b8c78562098" prot="public" virt="non-virtual"><scope>st25r3911b_nfca_cb</scope><name>anticollision_completed</name></member>
+      <member refid="structst25r3911b__nfca__cb_a2123e1490a67304f9256f6a54f9a3ef3_1a2123e1490a67304f9256f6a54f9a3ef3" prot="public" virt="non-virtual"><scope>st25r3911b_nfca_cb</scope><name>field_off</name></member>
+      <member refid="structst25r3911b__nfca__cb_a914b4714fb882541c3d7c9e494423d2f_1a914b4714fb882541c3d7c9e494423d2f" prot="public" virt="non-virtual"><scope>st25r3911b_nfca_cb</scope><name>field_on</name></member>
+      <member refid="structst25r3911b__nfca__cb_a616b6941748306200c5adf7a965a5b60_1a616b6941748306200c5adf7a965a5b60" prot="public" virt="non-virtual"><scope>st25r3911b_nfca_cb</scope><name>rx_timeout</name></member>
+      <member refid="structst25r3911b__nfca__cb_a82e4b61d476d29c66cfc2ffda526f631_1a82e4b61d476d29c66cfc2ffda526f631" prot="public" virt="non-virtual"><scope>st25r3911b_nfca_cb</scope><name>tag_detected</name></member>
+      <member refid="structst25r3911b__nfca__cb_a717acbd44271ab3592f45379b26de0e1_1a717acbd44271ab3592f45379b26de0e1" prot="public" virt="non-virtual"><scope>st25r3911b_nfca_cb</scope><name>tag_sleep</name></member>
+      <member refid="structst25r3911b__nfca__cb_a1f7c2cb79d7969e01f4626f0c9bef892_1a1f7c2cb79d7969e01f4626f0c9bef892" prot="public" virt="non-virtual"><scope>st25r3911b_nfca_cb</scope><name>transfer_completed</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

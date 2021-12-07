@@ -1,0 +1,322 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="scheduler__srv_8h" kind="file" language="C++">
+    <compoundname>scheduler_srv.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <includes refid="time__srv_8h" local="no">bluetooth/mesh/time_srv.h</includes>
+    <includes refid="scene__srv_8h" local="no">bluetooth/mesh/scene_srv.h</includes>
+    <includes refid="scheduler_8h" local="no">bluetooth/mesh/scheduler.h</includes>
+    <includedby refid="models_8h" local="no">include/bluetooth/mesh/models.h</includedby>
+    <incdepgraph>
+      <node id="7">
+        <label>bluetooth/mesh/model_types.h</label>
+        <link refid="model__types_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>bluetooth/mesh/scene.h</label>
+        <link refid="scene_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>bluetooth/mesh/scene_srv.h</label>
+        <link refid="scene__srv_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>bluetooth/mesh/scheduler.h</label>
+        <link refid="scheduler_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/mesh/scheduler_srv.h</label>
+        <link refid="scheduler__srv_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bluetooth/mesh/time.h</label>
+        <link refid="time_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/mesh/time_srv.h</label>
+        <link refid="time__srv_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>bluetooth/mesh.h</label>
+      </node>
+      <node id="10">
+        <label>settings/settings.h</label>
+      </node>
+      <node id="12">
+        <label>sys/slist.h</label>
+      </node>
+      <node id="11">
+        <label>toolchain/common.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+      <node id="5">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>include/bluetooth/mesh/models.h</label>
+        <link refid="models_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/mesh/scheduler_srv.h</label>
+        <link refid="scheduler__srv_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>include/bluetooth/mesh/vnd/silvair_enocean_srv.h</label>
+        <link refid="silvair__enocean__srv_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structbt__mesh__scheduler__srv" prot="public">bt_mesh_scheduler_srv</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__scheduler__srv_ga3a9c85fabca3e925897a98c9f793fe5f_1ga3a9c85fabca3e925897a98c9f793fe5f" prot="public" static="no">
+        <name>BT_MESH_SCHEDULER_SRV_INIT</name>
+        <param><defname>_action_set_cb</defname></param>
+        <param><defname>_time_srv</defname></param>
+        <initializer>	{                                                                      \
+		.action_set_cb = _action_set_cb, .time_srv = _time_srv,        \
+	}</initializer>
+        <briefdescription>
+<para>Initialization parameters for <ref refid="group__bt__mesh__scheduler__srv" kindref="compound">Scheduler Server model</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_action_set_cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Action Set callback. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_time_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Timer server that is used for action scheduling. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler_srv.h" line="35" column="9" bodyfile="include/bluetooth/mesh/scheduler_srv.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__scheduler__srv_ga7e357ee07da7bc0eb045db6077101c9e_1ga7e357ee07da7bc0eb045db6077101c9e" prot="public" static="no">
+        <name>BT_MESH_MODEL_SCHEDULER_SRV</name>
+        <param><defname>_srv</defname></param>
+        <initializer>	<ref refid="group__bt__mesh__scene__srv_gaafb98fd13ba00ab41fc90def2fb1f550_1gaafb98fd13ba00ab41fc90def2fb1f550" kindref="member">BT_MESH_MODEL_SCENE_SRV</ref>(&amp;(_srv)-&gt;scene_srv),                           \
+	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_SCHEDULER_SRV,                       \
+			_bt_mesh_scheduler_srv_op,                             \
+			&amp;(_srv)-&gt;pub,                                          \
+			BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__scheduler__srv" kindref="compound">bt_mesh_scheduler_srv</ref>,  \
+						_srv),                         \
+			&amp;_bt_mesh_scheduler_srv_cb),                           \
+	BT_MESH_MODEL(BT_MESH_MODEL_ID_SCHEDULER_SETUP_SRV,                    \
+			_bt_mesh_scheduler_setup_srv_op,                       \
+			NULL,                                                  \
+			BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__scheduler__srv" kindref="compound">bt_mesh_scheduler_srv</ref>,  \
+						_srv))</initializer>
+        <briefdescription>
+<para>Scheduler Server model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>If the Scheduler model is registered on the element then the Scene model shouldn&apos;t. The Scheduler model includes already the Scene model.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__scheduler__srv" kindref="compound">Scheduler Server model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler_srv.h" line="50" column="9" bodyfile="include/bluetooth/mesh/scheduler_srv.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__scheduler__srv_gacff2b7b1f5e022154e11185480c75f52_1gacff2b7b1f5e022154e11185480c75f52" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_scheduler_srv_time_update</definition>
+        <argsstring>(struct bt_mesh_scheduler_srv *srv)</argsstring>
+        <name>bt_mesh_scheduler_srv_time_update</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scheduler__srv" kindref="compound">bt_mesh_scheduler_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <briefdescription>
+<para>Update time of the scheduled action. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This API is required to update time if referenced time server updated Time Zone <ref refid="group__bt__mesh__time__srv_gade0ce76afb492f00de0f118ad38d8a5b_1ggade0ce76afb492f00de0f118ad38d8a5baa6eda533aa9b02af67726a3e9cb6408f" kindref="member">BT_MESH_TIME_SRV_ZONE_UPDATE</ref> or UTC <ref refid="group__bt__mesh__time__srv_gade0ce76afb492f00de0f118ad38d8a5b_1ggade0ce76afb492f00de0f118ad38d8a5bae92c707ae44482990a44253ec4f23030" kindref="member">BT_MESH_TIME_SRV_UTC_UPDATE</ref>.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scheduler server model.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully updated time of the ongoing action. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid parameters. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler_srv.h" line="128" column="5" declfile="include/bluetooth/mesh/scheduler_srv.h" declline="128" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_MESH_SCHEDULER_SRV_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_SRV_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="time__srv_8h" kindref="compound">bluetooth/mesh/time_srv.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="scene__srv_8h" kindref="compound">bluetooth/mesh/scene_srv.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="scheduler_8h" kindref="compound">bluetooth/mesh/scheduler.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__scheduler__srv" kindref="compound">bt_mesh_scheduler_srv</ref>;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="group__bt__mesh__scheduler__srv_ga3a9c85fabca3e925897a98c9f793fe5f_1ga3a9c85fabca3e925897a98c9f793fe5f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCHEDULER_SRV_INIT(_action_set_cb,<sp/>_time_srv)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="36"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="37"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.action_set_cb<sp/>=<sp/>_action_set_cb,<sp/>.time_srv<sp/>=<sp/>_time_srv,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="38"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="group__bt__mesh__scheduler__srv_ga7e357ee07da7bc0eb045db6077101c9e_1ga7e357ee07da7bc0eb045db6077101c9e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_MODEL_SCHEDULER_SRV(_srv)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="51"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_SCENE_SRV(&amp;(_srv)-&gt;scene_srv),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="52"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_SCHEDULER_SRV,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="53"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_bt_mesh_scheduler_srv_op,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="54"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;(_srv)-&gt;pub,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="55"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_USER_DATA(struct<sp/>bt_mesh_scheduler_srv,<sp/><sp/>\</highlight></codeline>
+<codeline lineno="56"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_srv),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="57"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;_bt_mesh_scheduler_srv_cb),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="58"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL(BT_MESH_MODEL_ID_SCHEDULER_SETUP_SRV,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="59"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_bt_mesh_scheduler_setup_srv_op,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="60"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="61"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_USER_DATA(struct<sp/>bt_mesh_scheduler_srv,<sp/><sp/>\</highlight></codeline>
+<codeline lineno="62"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_srv))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65" refid="structbt__mesh__scheduler__srv" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__scheduler__srv" kindref="compound">bt_mesh_scheduler_srv</ref><sp/>{</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Scheduled<sp/>work.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="structbt__mesh__scheduler__srv_aed4aee000b77ca53149e088b04de27c9_1aed4aee000b77ca53149e088b04de27c9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">k_work_delayable<sp/><ref refid="structbt__mesh__scheduler__srv_aed4aee000b77ca53149e088b04de27c9_1aed4aee000b77ca53149e088b04de27c9" kindref="member">delayed_work</ref>;</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Calculated<sp/>TAI-time<sp/>for<sp/>action<sp/>items.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__time__tai" kindref="compound">bt_mesh_time_tai</ref></highlight></codeline>
+<codeline lineno="72" refid="structbt__mesh__scheduler__srv_a7c6b015b8c39f3f8a4fe7ace89c41b1b_1a7c6b015b8c39f3f8a4fe7ace89c41b1b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structbt__mesh__scheduler__srv_a7c6b015b8c39f3f8a4fe7ace89c41b1b_1a7c6b015b8c39f3f8a4fe7ace89c41b1b" kindref="member">sched_tai</ref>[<ref refid="group__bt__mesh__scheduler_ga38ce2d588a77844623e981f13993ffa4_1ga38ce2d588a77844623e981f13993ffa4" kindref="member">BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT</ref>];</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Index<sp/>of<sp/>the<sp/>ongoing<sp/>action.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="structbt__mesh__scheduler__srv_ae34079f1df0554cb7288470e3af201cf_1ae34079f1df0554cb7288470e3af201cf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__scheduler__srv_ae34079f1df0554cb7288470e3af201cf_1ae34079f1df0554cb7288470e3af201cf" kindref="member">idx</ref>;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Bit<sp/>field<sp/>indicating<sp/>active<sp/>entries</highlight></codeline>
+<codeline lineno="76"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<sp/>in<sp/>the<sp/>Schedule<sp/>Register.</highlight></codeline>
+<codeline lineno="77"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="structbt__mesh__scheduler__srv_aeb7aee04b7a854d4ef449217104372a5_1aeb7aee04b7a854d4ef449217104372a5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__mesh__scheduler__srv_aeb7aee04b7a854d4ef449217104372a5_1aeb7aee04b7a854d4ef449217104372a5" kindref="member">active_bitmap</ref>;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>The<sp/>Schedule<sp/>Register<sp/>state<sp/>is<sp/>a<sp/>16-entry,</highlight></codeline>
+<codeline lineno="80"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<sp/>zero-based,<sp/>indexed<sp/>array</highlight></codeline>
+<codeline lineno="81"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__schedule__entry" kindref="compound">bt_mesh_schedule_entry</ref></highlight></codeline>
+<codeline lineno="83" refid="structbt__mesh__scheduler__srv_a5617f2802612743c05993dfafb1a4ed3_1a5617f2802612743c05993dfafb1a4ed3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structbt__mesh__scheduler__srv_a5617f2802612743c05993dfafb1a4ed3_1a5617f2802612743c05993dfafb1a4ed3" kindref="member">sch_reg</ref>[<ref refid="group__bt__mesh__scheduler_ga38ce2d588a77844623e981f13993ffa4_1ga38ce2d588a77844623e981f13993ffa4" kindref="member">BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT</ref>];</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="86" refid="structbt__mesh__scheduler__srv_a7aaa761fc38e7ce6b22aabfbd76d784d_1a7aaa761fc38e7ce6b22aabfbd76d784d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model<sp/>*<ref refid="structbt__mesh__scheduler__srv_a7aaa761fc38e7ce6b22aabfbd76d784d_1a7aaa761fc38e7ce6b22aabfbd76d784d" kindref="member">model</ref>;</highlight></codeline>
+<codeline lineno="88" refid="structbt__mesh__scheduler__srv_a872ec6d4017f66e4ea758948d3dc0585_1a872ec6d4017f66e4ea758948d3dc0585" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_pub<sp/><ref refid="structbt__mesh__scheduler__srv_a872ec6d4017f66e4ea758948d3dc0585_1a872ec6d4017f66e4ea758948d3dc0585" kindref="member">pub</ref>;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Publication<sp/>buffer<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="structbt__mesh__scheduler__srv_a8880fe1ff8b8b82495e3f5bebd83ecd8_1a8880fe1ff8b8b82495e3f5bebd83ecd8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">net_buf_simple<sp/><ref refid="structbt__mesh__scheduler__srv_a8880fe1ff8b8b82495e3f5bebd83ecd8_1a8880fe1ff8b8b82495e3f5bebd83ecd8" kindref="member">pub_buf</ref>;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Publication<sp/>data<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="structbt__mesh__scheduler__srv_a7da0b84b0ee339c2c11fbad2493b79d4_1a7da0b84b0ee339c2c11fbad2493b79d4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__scheduler__srv_a7da0b84b0ee339c2c11fbad2493b79d4_1a7da0b84b0ee339c2c11fbad2493b79d4" kindref="member">pub_data</ref>[</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_BUF_LEN(BT_MESH_SCHEDULER_OP_ACTION_STATUS,</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_SCHEDULER_MSG_LEN_ACTION_STATUS)];</highlight></codeline>
+<codeline lineno="96" refid="structbt__mesh__scheduler__srv_a96b787b4ee4598c7044f3b71e48862fc_1a96b787b4ee4598c7044f3b71e48862fc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref><sp/>*<ref refid="structbt__mesh__scheduler__srv_a96b787b4ee4598c7044f3b71e48862fc_1a96b787b4ee4598c7044f3b71e48862fc" kindref="member">time_srv</ref>;</highlight></codeline>
+<codeline lineno="98" refid="structbt__mesh__scheduler__srv_ab9d5618ab447e430c03fffb3c1d8b7e3_1ab9d5618ab447e430c03fffb3c1d8b7e3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__scene__srv" kindref="compound">bt_mesh_scene_srv</ref><sp/><ref refid="structbt__mesh__scheduler__srv_ab9d5618ab447e430c03fffb3c1d8b7e3_1ab9d5618ab447e430c03fffb3c1d8b7e3" kindref="member">scene_srv</ref>;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111" refid="structbt__mesh__scheduler__srv_aebd847cdb3bd7d5e7f6d2686b4810244_1aebd847cdb3bd7d5e7f6d2686b4810244" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__scheduler__srv_aebd847cdb3bd7d5e7f6d2686b4810244_1aebd847cdb3bd7d5e7f6d2686b4810244" kindref="member">action_set_cb</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__scheduler__srv" kindref="compound">bt_mesh_scheduler_srv</ref><sp/>*srv,</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__scheduler__srv_ae34079f1df0554cb7288470e3af201cf_1ae34079f1df0554cb7288470e3af201cf" kindref="member">idx</ref>,</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__schedule__entry" kindref="compound">bt_mesh_schedule_entry</ref><sp/>*entry);</highlight></codeline>
+<codeline lineno="115"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128" refid="group__bt__mesh__scheduler__srv_gacff2b7b1f5e022154e11185480c75f52_1gacff2b7b1f5e022154e11185480c75f52" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__scheduler__srv_gacff2b7b1f5e022154e11185480c75f52_1gacff2b7b1f5e022154e11185480c75f52" kindref="member">bt_mesh_scheduler_srv_time_update</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__scheduler__srv" kindref="compound">bt_mesh_scheduler_srv</ref><sp/>*srv);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_cb<sp/>_bt_mesh_scheduler_srv_cb;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_op<sp/>_bt_mesh_scheduler_srv_op[];</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_op<sp/>_bt_mesh_scheduler_setup_srv_op[];</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_MESH_SCHEDULER_SRV_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/mesh/scheduler_srv.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlte__param" kind="struct" language="C++" prot="public">
+    <compoundname>lte_param</compoundname>
+    <includes refid="modem__info_8h" local="no">modem_info.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlte__param_a071b8949a6cd3cec6b454004ddedb55c_1a071b8949a6cd3cec6b454004ddedb55c" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t lte_param::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The retrieved value. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="72" column="10" bodyfile="include/modem/modem_info.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__param_a6cc2ab2985ad7762e5156ba8a7b67c45_1a6cc2ab2985ad7762e5156ba8a7b67c45" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char lte_param::value_string[100]</definition>
+        <argsstring>[100]</argsstring>
+        <name>value_string</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The retrieved value in string format. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="73" column="6" bodyfile="include/modem/modem_info.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__param_afb9661be827808cffbb1e75aff4303bf_1afb9661be827808cffbb1e75aff4303bf" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* lte_param::data_name</definition>
+        <argsstring></argsstring>
+        <name>data_name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The name of the information type. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="74" column="6" bodyfile="include/modem/modem_info.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__param_aef4e6b09704498c2f554f92de54c7b53_1aef4e6b09704498c2f554f92de54c7b53" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__modem__info_gab0ea94d2aa315f7a7fc9ececee2419c5_1gab0ea94d2aa315f7a7fc9ececee2419c5" kindref="member">modem_info</ref></type>
+        <definition>enum modem_info lte_param::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The information type. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="75" column="16" bodyfile="include/modem/modem_info.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>LTE parameter data. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/modem/modem_info.h" line="71" column="1" bodyfile="include/modem/modem_info.h" bodystart="71" bodyend="76"/>
+    <listofallmembers>
+      <member refid="structlte__param_afb9661be827808cffbb1e75aff4303bf_1afb9661be827808cffbb1e75aff4303bf" prot="public" virt="non-virtual"><scope>lte_param</scope><name>data_name</name></member>
+      <member refid="structlte__param_aef4e6b09704498c2f554f92de54c7b53_1aef4e6b09704498c2f554f92de54c7b53" prot="public" virt="non-virtual"><scope>lte_param</scope><name>type</name></member>
+      <member refid="structlte__param_a071b8949a6cd3cec6b454004ddedb55c_1a071b8949a6cd3cec6b454004ddedb55c" prot="public" virt="non-virtual"><scope>lte_param</scope><name>value</name></member>
+      <member refid="structlte__param_a6cc2ab2985ad7762e5156ba8a7b67c45_1a6cc2ab2985ad7762e5156ba8a7b67c45" prot="public" virt="non-virtual"><scope>lte_param</scope><name>value_string</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

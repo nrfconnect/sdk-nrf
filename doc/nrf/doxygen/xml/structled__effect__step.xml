@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structled__effect__step" kind="struct" language="C++" prot="public">
+    <compoundname>led_effect_step</compoundname>
+    <includes refid="applications_2asset__tracker_2src_2ui_2include_2led__effect_8h" local="no">led_effect.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structled__effect__step_a040804b5edbe7a477c8a3b932853a070_1a040804b5edbe7a477c8a3b932853a070" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structled__color" kindref="compound">led_color</ref></type>
+        <definition>struct led_color led_effect_step::color</definition>
+        <argsstring></argsstring>
+        <name>color</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>LED color at the end of the step. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/led_effect.h" line="27" column="16" bodyfile="applications/asset_tracker/src/ui/include/led_effect.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structled__effect__step_a1f80908c0c43a9e77979ba5bb2cc7a4b_1a1f80908c0c43a9e77979ba5bb2cc7a4b" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t led_effect_step::substep_count</definition>
+        <argsstring></argsstring>
+        <name>substep_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of substeps. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/led_effect.h" line="28" column="10" bodyfile="applications/asset_tracker/src/ui/include/led_effect.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structled__effect__step_ab406b480148e94ae9c951dd243b5ce47_1ab406b480148e94ae9c951dd243b5ce47" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t led_effect_step::substep_time</definition>
+        <argsstring></argsstring>
+        <name>substep_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Duration of a single substep. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/led_effect.h" line="29" column="10" bodyfile="applications/asset_tracker/src/ui/include/led_effect.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Single step of a LED effect. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>During a single step, color of LED changes from the color before the step to the color defined in the step. The color update may be done in multiple substeps to achieve smooth, gradual change. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>led_color</label>
+        <link refid="structled__color"/>
+      </node>
+      <node id="1">
+        <label>led_effect_step</label>
+        <link refid="structled__effect__step"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>color</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/asset_tracker/src/ui/include/led_effect.h" line="26" column="1" bodyfile="applications/asset_tracker/src/ui/include/led_effect.h" bodystart="26" bodyend="30"/>
+    <listofallmembers>
+      <member refid="structled__effect__step_a040804b5edbe7a477c8a3b932853a070_1a040804b5edbe7a477c8a3b932853a070" prot="public" virt="non-virtual"><scope>led_effect_step</scope><name>color</name></member>
+      <member refid="structled__effect__step_a1f80908c0c43a9e77979ba5bb2cc7a4b_1a1f80908c0c43a9e77979ba5bb2cc7a4b" prot="public" virt="non-virtual"><scope>led_effect_step</scope><name>substep_count</name></member>
+      <member refid="structled__effect__step_ab406b480148e94ae9c951dd243b5ce47_1ab406b480148e94ae9c951dd243b5ce47" prot="public" virt="non-virtual"><scope>led_effect_step</scope><name>substep_time</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

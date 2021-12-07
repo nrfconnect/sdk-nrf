@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__hrs__client" kind="struct" language="C++" prot="public">
+    <compoundname>bt_hrs_client</compoundname>
+    <includes refid="hrs__client_8h" local="no">hrs_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__hrs__client_a0daebbf359136ff17419224b3e098672_1a0daebbf359136ff17419224b3e098672" prot="public" static="no" mutable="no">
+        <type>struct bt_conn *</type>
+        <definition>struct bt_conn* bt_hrs_client::conn</definition>
+        <argsstring></argsstring>
+        <name>conn</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Connection object. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="201" column="14" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="201" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hrs__client_a4d415fbee795f76546689d56bd5fec84_1a4d415fbee795f76546689d56bd5fec84" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__hrs__client__hr__meas" kindref="compound">bt_hrs_client_hr_meas</ref></type>
+        <definition>struct bt_hrs_client_hr_meas bt_hrs_client::measurement_char</definition>
+        <argsstring></argsstring>
+        <name>measurement_char</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Heart Rate Measurement characteristic. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="204" column="28" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="204" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hrs__client_ae9e2fd9b3852083faf6d830fc49118bd_1ae9e2fd9b3852083faf6d830fc49118bd" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__hrs__client__body__sensor__location" kindref="compound">bt_hrs_client_body_sensor_location</ref></type>
+        <definition>struct bt_hrs_client_body_sensor_location bt_hrs_client::sensor_location_char</definition>
+        <argsstring></argsstring>
+        <name>sensor_location_char</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sensor Body Location characteristic. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="207" column="41" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="207" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hrs__client_a106f76aa1fac79deb638c14d6b049766_1a106f76aa1fac79deb638c14d6b049766" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__hrs__client__control__point" kindref="compound">bt_hrs_client_control_point</ref></type>
+        <definition>struct bt_hrs_client_control_point bt_hrs_client::cp_char</definition>
+        <argsstring></argsstring>
+        <name>cp_char</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Heart Rate Control Point characteristic. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="210" column="34" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="210" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hrs__client_a34a5dbe85203f75d054ace82eb24ff5e_1a34a5dbe85203f75d054ace82eb24ff5e" prot="public" static="no" mutable="no">
+        <type>atomic_t</type>
+        <definition>atomic_t bt_hrs_client::state</definition>
+        <argsstring></argsstring>
+        <name>state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Internal state. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="213" column="10" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="213" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Heart Rate Service Client instance structure. This structure contains status information for the client. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_hrs_client</label>
+        <link refid="structbt__hrs__client"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>measurement_char</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>sensor_location_char</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>cp_char</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bt_hrs_client_body_sensor_location</label>
+        <link refid="structbt__hrs__client__body__sensor__location"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>read_cb</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bt_hrs_client_control_point</label>
+        <link refid="structbt__hrs__client__control__point"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>write_cb</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_hrs_client_hr_meas</label>
+        <link refid="structbt__hrs__client__hr__meas"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>notify_cb</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/hrs_client.h" line="199" column="1" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="199" bodyend="214"/>
+    <listofallmembers>
+      <member refid="structbt__hrs__client_a0daebbf359136ff17419224b3e098672_1a0daebbf359136ff17419224b3e098672" prot="public" virt="non-virtual"><scope>bt_hrs_client</scope><name>conn</name></member>
+      <member refid="structbt__hrs__client_a106f76aa1fac79deb638c14d6b049766_1a106f76aa1fac79deb638c14d6b049766" prot="public" virt="non-virtual"><scope>bt_hrs_client</scope><name>cp_char</name></member>
+      <member refid="structbt__hrs__client_a4d415fbee795f76546689d56bd5fec84_1a4d415fbee795f76546689d56bd5fec84" prot="public" virt="non-virtual"><scope>bt_hrs_client</scope><name>measurement_char</name></member>
+      <member refid="structbt__hrs__client_ae9e2fd9b3852083faf6d830fc49118bd_1ae9e2fd9b3852083faf6d830fc49118bd" prot="public" virt="non-virtual"><scope>bt_hrs_client</scope><name>sensor_location_char</name></member>
+      <member refid="structbt__hrs__client_a34a5dbe85203f75d054ace82eb24ff5e_1a34a5dbe85203f75d054ace82eb24ff5e" prot="public" virt="non-virtual"><scope>bt_hrs_client</scope><name>state</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

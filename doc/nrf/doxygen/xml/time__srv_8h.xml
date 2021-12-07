@@ -1,0 +1,836 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="time__srv_8h" kind="file" language="C++">
+    <compoundname>time_srv.h</compoundname>
+    <includes refid="time_8h" local="no">bluetooth/mesh/time.h</includes>
+    <includes refid="model__types_8h" local="no">bluetooth/mesh/model_types.h</includes>
+    <includedby refid="models_8h" local="no">include/bluetooth/mesh/models.h</includedby>
+    <includedby refid="scheduler__srv_8h" local="no">include/bluetooth/mesh/scheduler_srv.h</includedby>
+    <incdepgraph>
+      <node id="5">
+        <label>bluetooth/mesh/model_types.h</label>
+        <link refid="model__types_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bluetooth/mesh/time.h</label>
+        <link refid="time_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/mesh/time_srv.h</label>
+        <link refid="time__srv_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bluetooth/mesh.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>include/bluetooth/mesh/models.h</label>
+        <link refid="models_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>include/bluetooth/mesh/scheduler_srv.h</label>
+        <link refid="scheduler__srv_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/mesh/time_srv.h</label>
+        <link refid="time__srv_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>include/bluetooth/mesh/vnd/silvair_enocean_srv.h</label>
+        <link refid="silvair__enocean__srv_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structbt__mesh__time__srv__data" prot="public">bt_mesh_time_srv_data</innerclass>
+    <innerclass refid="structbt__mesh__time__srv" prot="public">bt_mesh_time_srv</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__time__srv_ga4c67fa63cbee3ff36aff1c079a04c8e0_1ga4c67fa63cbee3ff36aff1c079a04c8e0" prot="public" static="no">
+        <name>BT_MESH_TIME_SRV_INIT</name>
+        <param><defname>_time_update_cb</defname></param>
+        <initializer>	{                                                                      \
+		.time_update_cb = _time_update_cb,                             \
+		.pub = { .update = _bt_mesh_time_srv_update_handler,           \
+			 .msg = NET_BUF_SIMPLE(BT_MESH_MODEL_BUF_LEN(          \
+				 BT_MESH_TIME_OP_TIME_SET,                     \
+				 BT_MESH_TIME_MSG_LEN_TIME_SET)) },            \
+	}</initializer>
+        <briefdescription>
+<para>Initialization parameters for a <ref refid="group__bt__mesh__time__srv" kindref="compound">Time Server model</ref> instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_time_update_cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time update callback (optional). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time_srv.h" line="35" column="9" bodyfile="include/bluetooth/mesh/time_srv.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__time__srv_gafd3bd74c8f2b5dff38cbcbf97e469ba2_1gafd3bd74c8f2b5dff38cbcbf97e469ba2" prot="public" static="no">
+        <name>BT_MESH_MODEL_TIME_SRV</name>
+        <param><defname>_srv</defname></param>
+        <initializer>	BT_MESH_MODEL_CB(                                                      \
+		BT_MESH_MODEL_ID_TIME_SRV, _bt_mesh_time_srv_op, &amp;(_srv)-&gt;pub, \
+		BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref>, _srv),        \
+		&amp;_bt_mesh_time_srv_cb),                                        \
+	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_TIME_SETUP_SRV,                      \
+		_bt_mesh_time_setup_srv_op,                                    \
+		&amp;(_srv)-&gt;setup_pub,                                            \
+		BT_MESH_MODEL_USER_DATA(                                       \
+		struct <ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref>, _srv),                                \
+		&amp;_bt_mesh_time_setup_srv_cb)</initializer>
+        <briefdescription>
+<para>Time Server model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__time__srv" kindref="compound">Time Server model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time_srv.h" line="50" column="9" bodyfile="include/bluetooth/mesh/time_srv.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__mesh__time__srv_gade0ce76afb492f00de0f118ad38d8a5b_1gade0ce76afb492f00de0f118ad38d8a5b" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_time_update_types</name>
+        <enumvalue id="group__bt__mesh__time__srv_gade0ce76afb492f00de0f118ad38d8a5b_1ggade0ce76afb492f00de0f118ad38d8a5ba3cae6e2bc01576f36e1320e9acc3f691" prot="public">
+          <name>BT_MESH_TIME_SRV_STATUS_UPDATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Status update </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__time__srv_gade0ce76afb492f00de0f118ad38d8a5b_1ggade0ce76afb492f00de0f118ad38d8a5ba93af83079b6e8dbb1c76cec783a2cc76" prot="public">
+          <name>BT_MESH_TIME_SRV_SET_UPDATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Set update </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__time__srv_gade0ce76afb492f00de0f118ad38d8a5b_1ggade0ce76afb492f00de0f118ad38d8a5baa6eda533aa9b02af67726a3e9cb6408f" prot="public">
+          <name>BT_MESH_TIME_SRV_ZONE_UPDATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Zone update </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__time__srv_gade0ce76afb492f00de0f118ad38d8a5b_1ggade0ce76afb492f00de0f118ad38d8a5bae92c707ae44482990a44253ec4f23030" prot="public">
+          <name>BT_MESH_TIME_SRV_UTC_UPDATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>UTC update </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Time srv update types </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time_srv.h" line="63" column="1" bodyfile="include/bluetooth/mesh/time_srv.h" bodystart="63" bodyend="72"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__time__srv_ga62e10f9d355844de8f2a1b5b38d03427_1ga62e10f9d355844de8f2a1b5b38d03427" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_time_srv_time_status_send</definition>
+        <argsstring>(struct bt_mesh_time_srv *srv, struct bt_mesh_msg_ctx *ctx)</argsstring>
+        <name>bt_mesh_time_srv_time_status_send</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <briefdescription>
+<para>Publish an unsolicited Time Status message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time Server instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to publish with the configured parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 Successfully published the current Light state. </para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time_srv.h" line="135" column="5" declfile="include/bluetooth/mesh/time_srv.h" declline="135" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__time__srv_ga04c345f77959b997b20735a21c19884d_1ga04c345f77959b997b20735a21c19884d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_time_srv_status</definition>
+        <argsstring>(struct bt_mesh_time_srv *srv, uint64_t uptime, struct bt_mesh_time_status *status)</argsstring>
+        <name>bt_mesh_time_srv_status</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>uint64_t</type>
+          <declname>uptime</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__time__status" kindref="compound">bt_mesh_time_status</ref> *</type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+<para>Get the time status at a given uptime. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the device uptime (from <computeroutput>k_uptime_get</computeroutput>) to TAI time.</para>
+<para><simplesect kind="note"><para>This function does not support status lookups for uptimes that occurred before the last received set- or status update. In addition, lookups for uptimes that happened before <computeroutput>k_uptime_get</computeroutput> must be used with caution, since there is no guarantee that the output data is fully reliable.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time Server instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">uptime</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Uptime at the desired point in time. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device&apos;s Time Status at the given uptime.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully retrieved the Time status. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid uptime input. Asking for status that is in the past. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time_srv.h" line="156" column="5" declfile="include/bluetooth/mesh/time_srv.h" declline="156" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__time__srv_ga559d9c0ae1996b08eedab04a48f4b89c_1ga559d9c0ae1996b08eedab04a48f4b89c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int64_t</type>
+        <definition>int64_t bt_mesh_time_srv_mktime</definition>
+        <argsstring>(struct bt_mesh_time_srv *srv, struct tm *timeptr)</argsstring>
+        <name>bt_mesh_time_srv_mktime</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct tm *</type>
+          <declname>timeptr</declname>
+        </param>
+        <briefdescription>
+<para>Get the device uptime at a given local time. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This function does not support lookups for local time that occurred before the TAI-time of the last received set- or status update. In addition, lookups for local time that happened before <computeroutput>k_uptime_get</computeroutput> must be used with caution, since there is no guarantee that the output data is fully reliable.</para>
+</simplesect>
+<simplesect kind="note"><para>Whenever a zone or UTC change makes the local time jump forward in time, i.e. for day light savings adjustments, we get a situation where some points in time will occur twice on the local timeline. If the user where to input a local time that is affected by these changes the respons uptime will reflect the input local time added with the new adjustment. Example: A time zone change is scheduled 12:00:00 a clock an arbitrary day to set the local clock forward by one hour. If the user requests the uptime for 12:00:05 at that same day, the returned uptime will be the same as if the user inputted the local time 13:00:05 of that day.</para>
+</simplesect>
+<simplesect kind="note"><para>Whenever a zone or UTC change makes the local time jump backwards in time, i.e. for day light savings adjustments, we get a situation where some points in time never will on the local timeline. If the user where to input a local time that is affected by these changes the respons uptime will reflect the local time instance that happens last. Example: A time zone change is scheduled 12:00:00 a clock an arbitrary day to set the local clock back one hour. If the user requests the uptime for 12:00:00 at that same day, the returned uptime will reflect the local time that under normal circumstances would be 13:00:00 that day.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time Server instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">timeptr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Local time at the desired point.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>Positive</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>uptime if successful, otherwise negative error value. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time_srv.h" line="195" column="9" declfile="include/bluetooth/mesh/time_srv.h" declline="195" declcolumn="9"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__time__srv_gabd325957689dffd5050eab42f601818b_1gabd325957689dffd5050eab42f601818b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct tm *</type>
+        <definition>struct tm * bt_mesh_time_srv_localtime_r</definition>
+        <argsstring>(struct bt_mesh_time_srv *srv, int64_t uptime, struct tm *timeptr)</argsstring>
+        <name>bt_mesh_time_srv_localtime_r</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>int64_t</type>
+          <declname>uptime</declname>
+        </param>
+        <param>
+          <type>struct tm *</type>
+          <declname>timeptr</declname>
+        </param>
+        <briefdescription>
+<para>Get the device local time at a given uptime. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This function does not support local time lookups for uptimes that occurred before the last received set- or status update. In addition, lookups for uptimes that happened before <computeroutput>k_uptime_get</computeroutput> must be used with caution, since there is no guarantee that the output data is fully reliable.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time Server instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">uptime</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Uptime at the desired point in time. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">timeptr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device&apos;s local time at the given uptime.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>Pointer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to time struct if successful, NULL otherwise. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time_srv.h" line="211" column="9" declfile="include/bluetooth/mesh/time_srv.h" declline="211" declcolumn="9"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__time__srv_ga5b4327b3e3ab62146049d2744e2e5138_1ga5b4327b3e3ab62146049d2744e2e5138" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct tm *</type>
+        <definition>struct tm * bt_mesh_time_srv_localtime</definition>
+        <argsstring>(struct bt_mesh_time_srv *srv, int64_t uptime)</argsstring>
+        <name>bt_mesh_time_srv_localtime</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>int64_t</type>
+          <declname>uptime</declname>
+        </param>
+        <briefdescription>
+<para>Get the device local time at a given uptime. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This function does not support local time lookups for uptimes that occurred before the last received set- or status update. In addition, lookups for uptimes that happened before <computeroutput>k_uptime_get</computeroutput> must be used with caution, since there is no guarantee that the output data is fully reliable.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time Server instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">uptime</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Uptime at the desired point in time.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>Pointer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to time struct if successful, NULL otherwise. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time_srv.h" line="227" column="9" declfile="include/bluetooth/mesh/time_srv.h" declline="227" declcolumn="9"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__time__srv_ga0f3b87cf7a70d8a8793152685f1f30a2_1ga0f3b87cf7a70d8a8793152685f1f30a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint64_t</type>
+        <definition>uint64_t bt_mesh_time_srv_uncertainty_get</definition>
+        <argsstring>(struct bt_mesh_time_srv *srv, int64_t uptime)</argsstring>
+        <name>bt_mesh_time_srv_uncertainty_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>int64_t</type>
+          <declname>uptime</declname>
+        </param>
+        <briefdescription>
+<para>Get the device time uncertainty at a given uptime. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This function does not support uncertainty lookups for uptimes that occurred before the last received set- or status update.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time Server instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">uptime</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Uptime at the desired point in time.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>Positive</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>uncertainty if successful, negative error code otherwise. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time_srv.h" line="240" column="10" declfile="include/bluetooth/mesh/time_srv.h" declline="240" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__time__srv_ga7899cd944855825c8de5795df0ee3e1e_1ga7899cd944855825c8de5795df0ee3e1e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_mesh_time_srv_time_set</definition>
+        <argsstring>(struct bt_mesh_time_srv *srv, int64_t uptime, const struct bt_mesh_time_status *status)</argsstring>
+        <name>bt_mesh_time_srv_time_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>int64_t</type>
+          <declname>uptime</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__time__status" kindref="compound">bt_mesh_time_status</ref> *</type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+<para>Set the TAI status parameters for the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This is an alternative way to set parameters for the Time Server instance. In most cases these parameters will be configured remotely by a Time Client or a neigbouring Time Server.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time Server instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">uptime</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Desired uptime to set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Desired status configuration. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time_srv.h" line="253" column="6" declfile="include/bluetooth/mesh/time_srv.h" declline="253" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__time__srv_ga1ecf7b9878683976e6ec47ff166be2d1_1ga1ecf7b9878683976e6ec47ff166be2d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_mesh_time_srv_time_zone_change_set</definition>
+        <argsstring>(struct bt_mesh_time_srv *srv, const struct bt_mesh_time_zone_change *data)</argsstring>
+        <name>bt_mesh_time_srv_time_zone_change_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__time__zone__change" kindref="compound">bt_mesh_time_zone_change</ref> *</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Set the zone change parameters for the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This is an alternative way to set parameters for the Time Server instance. In most cases these parameters will be configured remotely by a Time Client or a neigbouring Time Server.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time Server instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Desired zone change configuration. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time_srv.h" line="265" column="6" declfile="include/bluetooth/mesh/time_srv.h" declline="265" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__time__srv_ga9f4fecda8a403f5203818c06ea32d40d_1ga9f4fecda8a403f5203818c06ea32d40d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_mesh_time_srv_tai_utc_change_set</definition>
+        <argsstring>(struct bt_mesh_time_srv *srv, const struct bt_mesh_time_tai_utc_change *data)</argsstring>
+        <name>bt_mesh_time_srv_tai_utc_change_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__time__tai__utc__change" kindref="compound">bt_mesh_time_tai_utc_change</ref> *</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Set the TAI UTC change parameters for the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This is an alternative way to set parameters for the Time Server instance. In most cases these parameters will be configured remotely by a Time Client or a neigbouring Time Server.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time Server instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Desired TAI UTC change configuration. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time_srv.h" line="278" column="6" declfile="include/bluetooth/mesh/time_srv.h" declline="278" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__time__srv_ga6cacd2ae3712e070db603c211e1fbdc8_1ga6cacd2ae3712e070db603c211e1fbdc8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_mesh_time_srv_role_set</definition>
+        <argsstring>(struct bt_mesh_time_srv *srv, enum bt_mesh_time_role role)</argsstring>
+        <name>bt_mesh_time_srv_role_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__bt__mesh__time_ga1952fe4bd180eb64253acb1f7deb00a4_1ga1952fe4bd180eb64253acb1f7deb00a4" kindref="member">bt_mesh_time_role</ref></type>
+          <declname>role</declname>
+        </param>
+        <briefdescription>
+<para>Set the role parameter for the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This is an alternative way to set parameters for the Time Server instance. In most cases these parameters will be configured remotely by a Time Client or a neigbouring Time Server.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time Server instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">role</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Desired role configuration. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time_srv.h" line="291" column="6" declfile="include/bluetooth/mesh/time_srv.h" declline="291" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_MESH_TIME_SRV_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_SRV_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="time_8h" kindref="compound">bluetooth/mesh/time.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="model__types_8h" kindref="compound">bluetooth/mesh/model_types.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="time_8h" kindref="compound">time.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref>;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">tm;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="group__bt__mesh__time__srv_ga4c67fa63cbee3ff36aff1c079a04c8e0_1ga4c67fa63cbee3ff36aff1c079a04c8e0" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_SRV_INIT(_time_update_cb)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="36"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="37"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.time_update_cb<sp/>=<sp/>_time_update_cb,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="38"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.pub<sp/>=<sp/>{<sp/>.update<sp/>=<sp/>_bt_mesh_time_srv_update_handler,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="39"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.msg<sp/>=<sp/>NET_BUF_SIMPLE(BT_MESH_MODEL_BUF_LEN(<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="40"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_TIME_OP_TIME_SET,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="41"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_TIME_MSG_LEN_TIME_SET))<sp/>},<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="42"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="group__bt__mesh__time__srv_gafd3bd74c8f2b5dff38cbcbf97e469ba2_1gafd3bd74c8f2b5dff38cbcbf97e469ba2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_MODEL_TIME_SRV(_srv)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="51"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_CB(<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="52"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_ID_TIME_SRV,<sp/>_bt_mesh_time_srv_op,<sp/>&amp;(_srv)-&gt;pub,<sp/>\</highlight></codeline>
+<codeline lineno="53"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_USER_DATA(struct<sp/>bt_mesh_time_srv,<sp/>_srv),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="54"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;_bt_mesh_time_srv_cb),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="55"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_TIME_SETUP_SRV,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="56"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_bt_mesh_time_setup_srv_op,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="57"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;(_srv)-&gt;setup_pub,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="58"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_USER_DATA(<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="59"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>struct<sp/>bt_mesh_time_srv,<sp/>_srv),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="60"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;_bt_mesh_time_setup_srv_cb)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63" refid="group__bt__mesh__time__srv_gade0ce76afb492f00de0f118ad38d8a5b_1gade0ce76afb492f00de0f118ad38d8a5b" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__time__srv_gade0ce76afb492f00de0f118ad38d8a5b_1gade0ce76afb492f00de0f118ad38d8a5b" kindref="member">bt_mesh_time_update_types</ref><sp/>{</highlight></codeline>
+<codeline lineno="65" refid="group__bt__mesh__time__srv_gade0ce76afb492f00de0f118ad38d8a5b_1ggade0ce76afb492f00de0f118ad38d8a5ba3cae6e2bc01576f36e1320e9acc3f691" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__time__srv_gade0ce76afb492f00de0f118ad38d8a5b_1ggade0ce76afb492f00de0f118ad38d8a5ba3cae6e2bc01576f36e1320e9acc3f691" kindref="member">BT_MESH_TIME_SRV_STATUS_UPDATE</ref>,</highlight></codeline>
+<codeline lineno="67" refid="group__bt__mesh__time__srv_gade0ce76afb492f00de0f118ad38d8a5b_1ggade0ce76afb492f00de0f118ad38d8a5ba93af83079b6e8dbb1c76cec783a2cc76" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__time__srv_gade0ce76afb492f00de0f118ad38d8a5b_1ggade0ce76afb492f00de0f118ad38d8a5ba93af83079b6e8dbb1c76cec783a2cc76" kindref="member">BT_MESH_TIME_SRV_SET_UPDATE</ref>,</highlight></codeline>
+<codeline lineno="69" refid="group__bt__mesh__time__srv_gade0ce76afb492f00de0f118ad38d8a5b_1ggade0ce76afb492f00de0f118ad38d8a5baa6eda533aa9b02af67726a3e9cb6408f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__time__srv_gade0ce76afb492f00de0f118ad38d8a5b_1ggade0ce76afb492f00de0f118ad38d8a5baa6eda533aa9b02af67726a3e9cb6408f" kindref="member">BT_MESH_TIME_SRV_ZONE_UPDATE</ref>,</highlight></codeline>
+<codeline lineno="71" refid="group__bt__mesh__time__srv_gade0ce76afb492f00de0f118ad38d8a5b_1ggade0ce76afb492f00de0f118ad38d8a5bae92c707ae44482990a44253ec4f23030" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__time__srv_gade0ce76afb492f00de0f118ad38d8a5b_1ggade0ce76afb492f00de0f118ad38d8a5bae92c707ae44482990a44253ec4f23030" kindref="member">BT_MESH_TIME_SRV_UTC_UPDATE</ref>,</highlight></codeline>
+<codeline lineno="72"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="structbt__mesh__time__srv__data" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__time__srv__data" kindref="compound">bt_mesh_time_srv_data</ref><sp/>{</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>State<sp/>at<sp/>last<sp/>sync<sp/>point<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Device<sp/>uptime<sp/>at<sp/>last<sp/>sync<sp/>point<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="structbt__mesh__time__srv__data_a5cb4266f0c0c3cef0f13c0c5844ccadd_1a5cb4266f0c0c3cef0f13c0c5844ccadd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int64_t<sp/><ref refid="structbt__mesh__time__srv__data_a5cb4266f0c0c3cef0f13c0c5844ccadd_1a5cb4266f0c0c3cef0f13c0c5844ccadd" kindref="member">uptime</ref>;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Time<sp/>status<sp/>at<sp/>last<sp/>sync<sp/>point<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81" refid="structbt__mesh__time__srv__data_ad42c91d096cf8860150d912a226ec40f_1ad42c91d096cf8860150d912a226ec40f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__time__status" kindref="compound">bt_mesh_time_status</ref><sp/><ref refid="structbt__mesh__time__srv__data_ad42c91d096cf8860150d912a226ec40f_1ad42c91d096cf8860150d912a226ec40f" kindref="member">status</ref>;</highlight></codeline>
+<codeline lineno="82" refid="structbt__mesh__time__srv__data_a6c7149f8d34ebdf319327a024519a482_1a6c7149f8d34ebdf319327a024519a482" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/><ref refid="structbt__mesh__time__srv__data_a6c7149f8d34ebdf319327a024519a482_1a6c7149f8d34ebdf319327a024519a482" kindref="member">sync</ref>;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Zone<sp/>change<sp/>update<sp/>context<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84" refid="structbt__mesh__time__srv__data_ae22768560ed62f27bd7ea625dbd904e1_1ae22768560ed62f27bd7ea625dbd904e1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__time__zone__change" kindref="compound">bt_mesh_time_zone_change</ref><sp/><ref refid="structbt__mesh__time__srv__data_ae22768560ed62f27bd7ea625dbd904e1_1ae22768560ed62f27bd7ea625dbd904e1" kindref="member">time_zone_change</ref>;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>UTC-delta<sp/>change<sp/>update<sp/>context<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="structbt__mesh__time__srv__data_a394b2dfa625accbc0593f8ff947eaa61_1a394b2dfa625accbc0593f8ff947eaa61" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__time__tai__utc__change" kindref="compound">bt_mesh_time_tai_utc_change</ref><sp/><ref refid="structbt__mesh__time__srv__data_a394b2dfa625accbc0593f8ff947eaa61_1a394b2dfa625accbc0593f8ff947eaa61" kindref="member">tai_utc_change</ref>;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>The<sp/>Time<sp/>Role<sp/>of<sp/>the<sp/>Server<sp/>instance<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="structbt__mesh__time__srv__data_a75c2f91d4e65794b8354cba028dc7b07_1a75c2f91d4e65794b8354cba028dc7b07" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__time_ga1952fe4bd180eb64253acb1f7deb00a4_1ga1952fe4bd180eb64253acb1f7deb00a4" kindref="member">bt_mesh_time_role</ref><sp/><ref refid="structbt__mesh__time__srv__data_a75c2f91d4e65794b8354cba028dc7b07_1a75c2f91d4e65794b8354cba028dc7b07" kindref="member">role</ref>;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="structbt__mesh__time__srv" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref><sp/>{</highlight></codeline>
+<codeline lineno="97" refid="structbt__mesh__time__srv_a5398e84f82b3d8e0a82233d43600dead_1a5398e84f82b3d8e0a82233d43600dead" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model<sp/>*<ref refid="structbt__mesh__time__srv_a5398e84f82b3d8e0a82233d43600dead_1a5398e84f82b3d8e0a82233d43600dead" kindref="member">model</ref>;</highlight></codeline>
+<codeline lineno="99" refid="structbt__mesh__time__srv_ac887184ec7666a3e72b8abbf893b57e8_1ac887184ec7666a3e72b8abbf893b57e8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_pub<sp/><ref refid="structbt__mesh__time__srv_ac887184ec7666a3e72b8abbf893b57e8_1ac887184ec7666a3e72b8abbf893b57e8" kindref="member">pub</ref>;</highlight></codeline>
+<codeline lineno="101" refid="structbt__mesh__time__srv_a1ccad4c82a83c6acec148b737215640d_1a1ccad4c82a83c6acec148b737215640d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_pub<sp/><ref refid="structbt__mesh__time__srv_a1ccad4c82a83c6acec148b737215640d_1a1ccad4c82a83c6acec148b737215640d" kindref="member">setup_pub</ref>;</highlight></codeline>
+<codeline lineno="103" refid="structbt__mesh__time__srv_a668083b6eb7f051b826c193a6240c64b_1a668083b6eb7f051b826c193a6240c64b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ack_ctx<sp/><ref refid="structbt__mesh__time__srv_a668083b6eb7f051b826c193a6240c64b_1a668083b6eb7f051b826c193a6240c64b" kindref="member">ack_ctx</ref>;</highlight></codeline>
+<codeline lineno="105" refid="structbt__mesh__time__srv_a8fcb5151ce2bdf60c2512e8d2edeb43e_1a8fcb5151ce2bdf60c2512e8d2edeb43e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__time__srv__data" kindref="compound">bt_mesh_time_srv_data</ref><sp/><ref refid="structbt__mesh__time__srv_a8fcb5151ce2bdf60c2512e8d2edeb43e_1a8fcb5151ce2bdf60c2512e8d2edeb43e" kindref="member">data</ref>;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119" refid="structbt__mesh__time__srv_a6621331e40ab7d2e8d401bbdaf518355_1a6621331e40ab7d2e8d401bbdaf518355" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__time__srv_a6621331e40ab7d2e8d401bbdaf518355_1a6621331e40ab7d2e8d401bbdaf518355" kindref="member">time_update_cb</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref><sp/>*srv,</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__time__srv_gade0ce76afb492f00de0f118ad38d8a5b_1gade0ce76afb492f00de0f118ad38d8a5b" kindref="member">bt_mesh_time_update_types</ref><sp/>type);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135" refid="group__bt__mesh__time__srv_ga62e10f9d355844de8f2a1b5b38d03427_1ga62e10f9d355844de8f2a1b5b38d03427" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__time__srv_ga62e10f9d355844de8f2a1b5b38d03427_1ga62e10f9d355844de8f2a1b5b38d03427" kindref="member">bt_mesh_time_srv_time_status_send</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref><sp/>*srv,</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx);</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156" refid="group__bt__mesh__time__srv_ga04c345f77959b997b20735a21c19884d_1ga04c345f77959b997b20735a21c19884d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__time__srv_ga04c345f77959b997b20735a21c19884d_1ga04c345f77959b997b20735a21c19884d" kindref="member">bt_mesh_time_srv_status</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref><sp/>*srv,<sp/>uint64_t<sp/>uptime,</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__time__status" kindref="compound">bt_mesh_time_status</ref><sp/>*status);</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="195" refid="group__bt__mesh__time__srv_ga559d9c0ae1996b08eedab04a48f4b89c_1ga559d9c0ae1996b08eedab04a48f4b89c" refkind="member"><highlight class="normal">int64_t<sp/><ref refid="group__bt__mesh__time__srv_ga559d9c0ae1996b08eedab04a48f4b89c_1ga559d9c0ae1996b08eedab04a48f4b89c" kindref="member">bt_mesh_time_srv_mktime</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref><sp/>*srv,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>tm<sp/>*timeptr);</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight></codeline>
+<codeline lineno="211" refid="group__bt__mesh__time__srv_gabd325957689dffd5050eab42f601818b_1gabd325957689dffd5050eab42f601818b" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">tm<sp/>*<ref refid="group__bt__mesh__time__srv_gabd325957689dffd5050eab42f601818b_1gabd325957689dffd5050eab42f601818b" kindref="member">bt_mesh_time_srv_localtime_r</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref><sp/>*srv,</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int64_t<sp/>uptime,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>tm<sp/>*timeptr);</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight></codeline>
+<codeline lineno="227" refid="group__bt__mesh__time__srv_ga5b4327b3e3ab62146049d2744e2e5138_1ga5b4327b3e3ab62146049d2744e2e5138" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">tm<sp/>*<ref refid="group__bt__mesh__time__srv_ga5b4327b3e3ab62146049d2744e2e5138_1ga5b4327b3e3ab62146049d2744e2e5138" kindref="member">bt_mesh_time_srv_localtime</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref><sp/>*srv,</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int64_t<sp/>uptime);</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight></codeline>
+<codeline lineno="240" refid="group__bt__mesh__time__srv_ga0f3b87cf7a70d8a8793152685f1f30a2_1ga0f3b87cf7a70d8a8793152685f1f30a2" refkind="member"><highlight class="normal">uint64_t<sp/><ref refid="group__bt__mesh__time__srv_ga0f3b87cf7a70d8a8793152685f1f30a2_1ga0f3b87cf7a70d8a8793152685f1f30a2" kindref="member">bt_mesh_time_srv_uncertainty_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref><sp/>*srv,</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int64_t<sp/>uptime);</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"></highlight></codeline>
+<codeline lineno="253" refid="group__bt__mesh__time__srv_ga7899cd944855825c8de5795df0ee3e1e_1ga7899cd944855825c8de5795df0ee3e1e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__time__srv_ga7899cd944855825c8de5795df0ee3e1e_1ga7899cd944855825c8de5795df0ee3e1e" kindref="member">bt_mesh_time_srv_time_set</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref><sp/>*srv,<sp/>int64_t<sp/>uptime,</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__time__status" kindref="compound">bt_mesh_time_status</ref><sp/>*status);</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"></highlight></codeline>
+<codeline lineno="265" refid="group__bt__mesh__time__srv_ga1ecf7b9878683976e6ec47ff166be2d1_1ga1ecf7b9878683976e6ec47ff166be2d1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__time__srv_ga1ecf7b9878683976e6ec47ff166be2d1_1ga1ecf7b9878683976e6ec47ff166be2d1" kindref="member">bt_mesh_time_srv_time_zone_change_set</ref>(</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref><sp/>*srv,</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__time__zone__change" kindref="compound">bt_mesh_time_zone_change</ref><sp/>*data);</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"></highlight></codeline>
+<codeline lineno="278" refid="group__bt__mesh__time__srv_ga9f4fecda8a403f5203818c06ea32d40d_1ga9f4fecda8a403f5203818c06ea32d40d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__time__srv_ga9f4fecda8a403f5203818c06ea32d40d_1ga9f4fecda8a403f5203818c06ea32d40d" kindref="member">bt_mesh_time_srv_tai_utc_change_set</ref>(</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref><sp/>*srv,</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__time__tai__utc__change" kindref="compound">bt_mesh_time_tai_utc_change</ref><sp/>*data);</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"></highlight></codeline>
+<codeline lineno="291" refid="group__bt__mesh__time__srv_ga6cacd2ae3712e070db603c211e1fbdc8_1ga6cacd2ae3712e070db603c211e1fbdc8" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__time__srv_ga6cacd2ae3712e070db603c211e1fbdc8_1ga6cacd2ae3712e070db603c211e1fbdc8" kindref="member">bt_mesh_time_srv_role_set</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__time__srv" kindref="compound">bt_mesh_time_srv</ref><sp/>*srv,</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__time_ga1952fe4bd180eb64253acb1f7deb00a4_1ga1952fe4bd180eb64253acb1f7deb00a4" kindref="member">bt_mesh_time_role</ref><sp/>role);</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"></highlight></codeline>
+<codeline lineno="295"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_op<sp/>_bt_mesh_time_srv_op[];</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_op<sp/>_bt_mesh_time_setup_srv_op[];</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_cb<sp/>_bt_mesh_time_srv_cb;</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_cb<sp/>_bt_mesh_time_setup_srv_cb;</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>_bt_mesh_time_srv_update_handler(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_model<sp/>*model);</highlight></codeline>
+<codeline lineno="302"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="303"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="304"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="305"><highlight class="normal"></highlight></codeline>
+<codeline lineno="306"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_MESH_TIME_SRV_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="307"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/mesh/time_srv.h"/>
+  </compounddef>
+</doxygen>

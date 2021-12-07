@@ -1,0 +1,980 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="nrf__cloud__rest_8h" kind="file" language="C++">
+    <compoundname>nrf_cloud_rest.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <includes refid="nrf__cloud_8h" local="no">net/nrf_cloud.h</includes>
+    <includes refid="nrf__cloud__pgps_8h" local="no">net/nrf_cloud_pgps.h</includes>
+    <includes refid="nrf__cloud__cell__pos_8h" local="no">net/nrf_cloud_cell_pos.h</includes>
+    <includes refid="lte__lc_8h" local="no">modem/lte_lc.h</includes>
+    <incdepgraph>
+      <node id="11">
+        <label>modem/lte_lc.h</label>
+        <link refid="lte__lc_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>net/nrf_cloud.h</label>
+        <link refid="nrf__cloud_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>net/nrf_cloud_cell_pos.h</label>
+        <link refid="nrf__cloud__cell__pos_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>net/nrf_cloud_pgps.h</label>
+        <link refid="nrf__cloud__pgps_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/net/nrf_cloud_rest.h</label>
+        <link refid="nrf__cloud__rest_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>cJSON.h</label>
+      </node>
+      <node id="5">
+        <label>net/mqtt.h</label>
+      </node>
+      <node id="9">
+        <label>nrf_cloud_agps_schema_v1.h</label>
+      </node>
+      <node id="8">
+        <label>nrf_modem_gnss.h</label>
+      </node>
+      <node id="12">
+        <label>stdbool.h</label>
+      </node>
+      <node id="4">
+        <label>zephyr.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structnrf__cloud__rest__context" prot="public">nrf_cloud_rest_context</innerclass>
+    <innerclass refid="structnrf__cloud__rest__cell__pos__request" prot="public">nrf_cloud_rest_cell_pos_request</innerclass>
+    <innerclass refid="structnrf__cloud__rest__agps__request" prot="public">nrf_cloud_rest_agps_request</innerclass>
+    <innerclass refid="structnrf__cloud__rest__agps__result" prot="public">nrf_cloud_rest_agps_result</innerclass>
+    <innerclass refid="structnrf__cloud__rest__pgps__request" prot="public">nrf_cloud_rest_pgps_request</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nrf__cloud__rest_ga2f82e95f212467869352d33721d6568b_1ga2f82e95f212467869352d33721d6568b" prot="public" static="no">
+        <name>NRF_CLOUD_REST_TIMEOUT_MINIMUM</name>
+        <initializer>(5000)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="52" column="9" bodyfile="include/net/nrf_cloud_rest.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__rest_gaf1194544cf52decf230bdb7e0298724a_1gaf1194544cf52decf230bdb7e0298724a" prot="public" static="no">
+        <name>NRF_CLOUD_REST_TIMEOUT_NONE</name>
+        <initializer>(SYS_FOREVER_MS)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="53" column="9" bodyfile="include/net/nrf_cloud_rest.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__rest__pgps__omit_ga2cb512b0dcf33abfeab11e2319a6afa2_1ga2cb512b0dcf33abfeab11e2319a6afa2" prot="public" static="no">
+        <name>NRF_CLOUD_REST_PGPS_REQ_NO_COUNT</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="138" column="9" bodyfile="include/net/nrf_cloud_rest.h" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__rest__pgps__omit_gaf9b169290acdc6b3604dc0661d9809bb_1gaf9b169290acdc6b3604dc0661d9809bb" prot="public" static="no">
+        <name>NRF_CLOUD_REST_PGPS_REQ_NO_INTERVAL</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="139" column="9" bodyfile="include/net/nrf_cloud_rest.h" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__rest__pgps__omit_gae9fb0312d6e782b0fe86b61d01be50bb_1gae9fb0312d6e782b0fe86b61d01be50bb" prot="public" static="no">
+        <name>NRF_CLOUD_REST_PGPS_REQ_NO_GPS_DAY</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="140" column="9" bodyfile="include/net/nrf_cloud_rest.h" bodystart="140" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__rest__pgps__omit_ga063287e3aa1ccd8b6f7bd0a30621a10b_1ga063287e3aa1ccd8b6f7bd0a30621a10b" prot="public" static="no">
+        <name>NRF_CLOUD_REST_PGPS_REQ_NO_GPS_TOD</name>
+        <initializer>(-1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="141" column="9" bodyfile="include/net/nrf_cloud_rest.h" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1gab56e61555902e6af10dec34fb4cd84d3" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_http_status</name>
+        <enumvalue id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a741e56ecf683ba639f69c1602434fbcf" prot="public">
+          <name>NRF_CLOUD_HTTP_STATUS_UNHANDLED</name>
+          <initializer>= -1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a6be89d775839e005d3a57583a979129f" prot="public">
+          <name>NRF_CLOUD_HTTP_STATUS_NONE</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3af7ab2047103db3adb4afcdb39b3e1cb6" prot="public">
+          <name>NRF_CLOUD_HTTP_STATUS_OK</name>
+          <initializer>= 200</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3aeb941ecde83bca07b030c1acae81c0ca" prot="public">
+          <name>NRF_CLOUD_HTTP_STATUS_ACCEPTED</name>
+          <initializer>= 202</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3ab30f1f52798f842f098cf3981366fc04" prot="public">
+          <name>NRF_CLOUD_HTTP_STATUS_PARTIAL</name>
+          <initializer>= 206</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a48502900d1915528165b4fcbdfb7895f" prot="public">
+          <name>NRF_CLOUD_HTTP_STATUS_BAD_REQ</name>
+          <initializer>= 400</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3ab6b07ce8469ea9831fe50a329d002243" prot="public">
+          <name>NRF_CLOUD_HTTP_STATUS_UNAUTH</name>
+          <initializer>= 401</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3ab8fbae4fd4ecc3d405164bdbbd990548" prot="public">
+          <name>NRF_CLOUD_HTTP_STATUS_FORBIDDEN</name>
+          <initializer>= 403</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a1bbf1a485cf8785dbf48d5b55715dfa6" prot="public">
+          <name>NRF_CLOUD_HTTP_STATUS_NOT_FOUND</name>
+          <initializer>= 404</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a6c12b39fb25d0ced6c9c9ff7a5db4e42" prot="public">
+          <name>NRF_CLOUD_HTTP_STATUS_BAD_RANGE</name>
+          <initializer>= 416</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a70870b71df849a433ef7f311362d3ee8" prot="public">
+          <name>NRF_CLOUD_HTTP_STATUS_UNPROC_ENTITY</name>
+          <initializer>= 422</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>HTTP status codes returned from nRF Cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="30" column="1" bodyfile="include/net/nrf_cloud_rest.h" bodystart="30" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__nrf__cloud__rest_gae86b26f442c457eb58a896bfde29525d_1gae86b26f442c457eb58a896bfde29525d" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_rest_agps_req_type</name>
+        <enumvalue id="group__nrf__cloud__rest_gae86b26f442c457eb58a896bfde29525d_1ggae86b26f442c457eb58a896bfde29525da71b17eabbf312dbb6b398254468fc52b" prot="public">
+          <name>NRF_CLOUD_REST_AGPS_REQ_ASSISTANCE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gae86b26f442c457eb58a896bfde29525d_1ggae86b26f442c457eb58a896bfde29525daed21779a7d9b160b66619300f5cbc268" prot="public">
+          <name>NRF_CLOUD_REST_AGPS_REQ_LOCATION</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gae86b26f442c457eb58a896bfde29525d_1ggae86b26f442c457eb58a896bfde29525da3a2e6d197d8251d39ed06f907843778e" prot="public">
+          <name>NRF_CLOUD_REST_AGPS_REQ_CUSTOM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gae86b26f442c457eb58a896bfde29525d_1ggae86b26f442c457eb58a896bfde29525dad64949cc2b67e5cc7e9bb6a35ce7a8e9" prot="public">
+          <name>NRF_CLOUD_REST_AGPS_REQ_UNSPECIFIED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>nRF Cloud AGPS REST request types </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="45" column="1" bodyfile="include/net/nrf_cloud_rest.h" bodystart="45" bodyend="50"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nrf__cloud__rest_ga420b5296e2ae43769a9d84b59ab4506b_1ga420b5296e2ae43769a9d84b59ab4506b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_rest_cell_pos_get</definition>
+        <argsstring>(struct nrf_cloud_rest_context *const rest_ctx, struct nrf_cloud_rest_cell_pos_request const *const request, struct nrf_cloud_cell_pos_result *const result)</argsstring>
+        <name>nrf_cloud_rest_cell_pos_get</name>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref> *const</type>
+          <declname>rest_ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__cell__pos__request" kindref="compound">nrf_cloud_rest_cell_pos_request</ref> const *const</type>
+          <declname>request</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__cell__pos__result" kindref="compound">nrf_cloud_cell_pos_result</ref> *const</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+<para>nRF Cloud location request. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">rest_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for communicating with nRF Cloud&apos;s REST API. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">request</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to be provided in API call. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">result</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional; parsed results of API response. If NULL, user should inspect the response buffer of <ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="164" column="5" declfile="include/net/nrf_cloud_rest.h" declline="164" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__rest_gab8b1fbcffb31d7c921e421c59e195036_1gab8b1fbcffb31d7c921e421c59e195036" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_rest_agps_data_get</definition>
+        <argsstring>(struct nrf_cloud_rest_context *const rest_ctx, struct nrf_cloud_rest_agps_request const *const request, struct nrf_cloud_rest_agps_result *const result)</argsstring>
+        <name>nrf_cloud_rest_agps_data_get</name>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref> *const</type>
+          <declname>rest_ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__agps__request" kindref="compound">nrf_cloud_rest_agps_request</ref> const *const</type>
+          <declname>request</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__agps__result" kindref="compound">nrf_cloud_rest_agps_result</ref> *const</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+<para>nRF Cloud Assisted GPS (A-GPS) data request. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">rest_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for communicating with nRF Cloud&apos;s REST API. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">request</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to be provided in API call. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">result</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional; Additional buffer for A-GPS data. This is necessary when the A-GPS data from the cloud is larger than the fragment size specified by rest_ctx-&gt;fragment_size.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. If result is NULL and the A-GPS data is larger than the fragment size specified by rest_ctx-&gt;fragment_size, a positive value is returned, which indicates the size (in bytes) of the necessary result buffer. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="185" column="5" declfile="include/net/nrf_cloud_rest.h" declline="185" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__rest_gaeb169e79dac93c396a7795a83be6083f_1gaeb169e79dac93c396a7795a83be6083f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_rest_pgps_data_get</definition>
+        <argsstring>(struct nrf_cloud_rest_context *const rest_ctx, struct nrf_cloud_rest_pgps_request const *const request)</argsstring>
+        <name>nrf_cloud_rest_pgps_data_get</name>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref> *const</type>
+          <declname>rest_ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__pgps__request" kindref="compound">nrf_cloud_rest_pgps_request</ref> const *const</type>
+          <declname>request</declname>
+        </param>
+        <briefdescription>
+<para>nRF Cloud Predicted GPS (P-GPS) data request. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">rest_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for communicating with nRF Cloud&apos;s REST API. If successful, rest_ctx-&gt;result will point to the P-GPS data; which, along with rest_ctx-&gt;response_len, can be passed into <ref refid="group__nrf__cloud__pgps_gae5554df8baf4bb437a59a4d0a4d86b56_1gae5554df8baf4bb437a59a4d0a4d86b56" kindref="member">nrf_cloud_pgps_process</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">request</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to be provided in API call.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="201" column="5" declfile="include/net/nrf_cloud_rest.h" declline="201" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__rest_ga5f5d935edf5976c41a663f7f36a301de_1ga5f5d935edf5976c41a663f7f36a301de" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_rest_fota_job_get</definition>
+        <argsstring>(struct nrf_cloud_rest_context *const rest_ctx, const char *const device_id, struct nrf_cloud_fota_job_info *const job)</argsstring>
+        <name>nrf_cloud_rest_fota_job_get</name>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref> *const</type>
+          <declname>rest_ctx</declname>
+        </param>
+        <param>
+          <type>const char *const</type>
+          <declname>device_id</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__fota__job__info" kindref="compound">nrf_cloud_fota_job_info</ref> *const</type>
+          <declname>job</declname>
+        </param>
+        <briefdescription>
+<para>Requests nRF Cloud FOTA job info for the specified device. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">rest_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for communicating with nRF Cloud&apos;s REST API. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">device_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated, unique device ID registered with nRF Cloud. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">job</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional; parsed job info. If no job exists, type will be set to invalid. If a job exists, user must call <ref refid="group__nrf__cloud__rest_ga79bd2cac2bd63307c0a60d240014ed1a_1ga79bd2cac2bd63307c0a60d240014ed1a" kindref="member">nrf_cloud_rest_fota_job_free</ref> to free the memory allocated by this function. If NULL, user should inspect the response buffer of <ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="220" column="5" declfile="include/net/nrf_cloud_rest.h" declline="220" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__rest_ga79bd2cac2bd63307c0a60d240014ed1a_1ga79bd2cac2bd63307c0a60d240014ed1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nrf_cloud_rest_fota_job_free</definition>
+        <argsstring>(struct nrf_cloud_fota_job_info *const job)</argsstring>
+        <name>nrf_cloud_rest_fota_job_free</name>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__fota__job__info" kindref="compound">nrf_cloud_fota_job_info</ref> *const</type>
+          <declname>job</declname>
+        </param>
+        <briefdescription>
+<para>Frees memory allocated by <ref refid="group__nrf__cloud__rest_ga5f5d935edf5976c41a663f7f36a301de_1ga5f5d935edf5976c41a663f7f36a301de" kindref="member">nrf_cloud_rest_fota_job_get</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">job</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Job info to be freed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="229" column="6" declfile="include/net/nrf_cloud_rest.h" declline="229" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__rest_gad2e2ca1af04e95d35ac00d81d4ff8e4d_1gad2e2ca1af04e95d35ac00d81d4ff8e4d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_rest_fota_job_update</definition>
+        <argsstring>(struct nrf_cloud_rest_context *const rest_ctx, const char *const device_id, const char *const job_id, const enum nrf_cloud_fota_status status, const char *const details)</argsstring>
+        <name>nrf_cloud_rest_fota_job_update</name>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref> *const</type>
+          <declname>rest_ctx</declname>
+        </param>
+        <param>
+          <type>const char *const</type>
+          <declname>device_id</declname>
+        </param>
+        <param>
+          <type>const char *const</type>
+          <declname>job_id</declname>
+        </param>
+        <param>
+          <type>const enum <ref refid="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1ga1359b0c3333f11b0d06aa46f99e3668d" kindref="member">nrf_cloud_fota_status</ref></type>
+          <declname>status</declname>
+        </param>
+        <param>
+          <type>const char *const</type>
+          <declname>details</declname>
+        </param>
+        <briefdescription>
+<para>Updates the status of the specified nRF Cloud FOTA job. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">rest_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for communicating with nRF Cloud&apos;s REST API. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">device_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated, unique device ID registered with nRF Cloud. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">job_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated FOTA job identifier. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Status of the FOTA job. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">details</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated string containing details of the job, such as an error description.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="245" column="5" declfile="include/net/nrf_cloud_rest.h" declline="245" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__rest_gad575f3df8503223bff51af61d6e80ca6_1gad575f3df8503223bff51af61d6e80ca6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_rest_shadow_state_update</definition>
+        <argsstring>(struct nrf_cloud_rest_context *const rest_ctx, const char *const device_id, const char *const shadow_json)</argsstring>
+        <name>nrf_cloud_rest_shadow_state_update</name>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref> *const</type>
+          <declname>rest_ctx</declname>
+        </param>
+        <param>
+          <type>const char *const</type>
+          <declname>device_id</declname>
+        </param>
+        <param>
+          <type>const char *const</type>
+          <declname>shadow_json</declname>
+        </param>
+        <briefdescription>
+<para>Updates the device&apos;s &quot;state&quot; in the shadow via the UpdateDeviceState endpoint. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">rest_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for communicating with nRF Cloud&apos;s REST API. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">device_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated, unique device ID registered with nRF Cloud. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">shadow_json</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated JSON string to be written to the device&apos;s shadow.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="259" column="5" declfile="include/net/nrf_cloud_rest.h" declline="259" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__rest_gab0a0f687ff6c44dcce68a8be5f996d08_1gab0a0f687ff6c44dcce68a8be5f996d08" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_rest_shadow_service_info_update</definition>
+        <argsstring>(struct nrf_cloud_rest_context *const rest_ctx, const char *const device_id, const struct nrf_cloud_svc_info *const svc_inf)</argsstring>
+        <name>nrf_cloud_rest_shadow_service_info_update</name>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref> *const</type>
+          <declname>rest_ctx</declname>
+        </param>
+        <param>
+          <type>const char *const</type>
+          <declname>device_id</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structnrf__cloud__svc__info" kindref="compound">nrf_cloud_svc_info</ref> *const</type>
+          <declname>svc_inf</declname>
+        </param>
+        <briefdescription>
+<para>Updates the device&apos;s &quot;ServiceInfo&quot; in the shadow. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">rest_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for communicating with nRF Cloud&apos;s REST API. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">device_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated, unique device ID registered with nRF Cloud. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">svc_inf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Service info items to be updated in the shadow.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="272" column="5" declfile="include/net/nrf_cloud_rest.h" declline="272" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__rest_ga4e2db47098a71a3f197ae5a40cba488c_1ga4e2db47098a71a3f197ae5a40cba488c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_rest_disconnect</definition>
+        <argsstring>(struct nrf_cloud_rest_context *const rest_ctx)</argsstring>
+        <name>nrf_cloud_rest_disconnect</name>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref> *const</type>
+          <declname>rest_ctx</declname>
+        </param>
+        <briefdescription>
+<para>Closes the connection to the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">rest_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for communicating with nRF Cloud&apos;s REST API.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="283" column="5" declfile="include/net/nrf_cloud_rest.h" declline="283" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__rest_ga9bb4886ebcbc44acdb56f4644862b365_1ga9bb4886ebcbc44acdb56f4644862b365" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_rest_jitp</definition>
+        <argsstring>(const sec_tag_t nrf_cloud_sec_tag)</argsstring>
+        <name>nrf_cloud_rest_jitp</name>
+        <param>
+          <type>const sec_tag_t</type>
+          <declname>nrf_cloud_sec_tag</declname>
+        </param>
+        <briefdescription>
+<para>Performs just-in-time provisioning (JITP) with nRF Cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>After a device has been provisioned with nRF Cloud, it must be associated with an nRF Cloud account before using any other functions in this library.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">nrf_cloud_sec_tag</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Modem sec_tag containing nRF Cloud JITP credentials</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful; wait 30s before associating device with nRF Cloud account. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>1</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Device is already provisioned. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="298" column="5" declfile="include/net/nrf_cloud_rest.h" declline="298" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>nRF Cloud REST API. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NRF_CLOUD_REST_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_REST_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nrf__cloud_8h" kindref="compound">net/nrf_cloud.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nrf__cloud__pgps_8h" kindref="compound">net/nrf_cloud_pgps.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nrf__cloud__cell__pos_8h" kindref="compound">net/nrf_cloud_cell_pos.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="lte__lc_8h" kindref="compound">modem/lte_lc.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1gab56e61555902e6af10dec34fb4cd84d3" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1gab56e61555902e6af10dec34fb4cd84d3" kindref="member">nrf_cloud_http_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="31" refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a741e56ecf683ba639f69c1602434fbcf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a741e56ecf683ba639f69c1602434fbcf" kindref="member">NRF_CLOUD_HTTP_STATUS_UNHANDLED</ref><sp/>=<sp/>-1,</highlight></codeline>
+<codeline lineno="32" refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a6be89d775839e005d3a57583a979129f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a6be89d775839e005d3a57583a979129f" kindref="member">NRF_CLOUD_HTTP_STATUS_NONE</ref><sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="33" refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3af7ab2047103db3adb4afcdb39b3e1cb6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3af7ab2047103db3adb4afcdb39b3e1cb6" kindref="member">NRF_CLOUD_HTTP_STATUS_OK</ref><sp/>=<sp/>200,</highlight></codeline>
+<codeline lineno="34" refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3aeb941ecde83bca07b030c1acae81c0ca" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3aeb941ecde83bca07b030c1acae81c0ca" kindref="member">NRF_CLOUD_HTTP_STATUS_ACCEPTED</ref><sp/>=<sp/>202,</highlight></codeline>
+<codeline lineno="35" refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3ab30f1f52798f842f098cf3981366fc04" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3ab30f1f52798f842f098cf3981366fc04" kindref="member">NRF_CLOUD_HTTP_STATUS_PARTIAL</ref><sp/>=<sp/>206,</highlight></codeline>
+<codeline lineno="36" refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a48502900d1915528165b4fcbdfb7895f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a48502900d1915528165b4fcbdfb7895f" kindref="member">NRF_CLOUD_HTTP_STATUS_BAD_REQ</ref><sp/>=<sp/>400,</highlight></codeline>
+<codeline lineno="37" refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3ab6b07ce8469ea9831fe50a329d002243" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3ab6b07ce8469ea9831fe50a329d002243" kindref="member">NRF_CLOUD_HTTP_STATUS_UNAUTH</ref><sp/>=<sp/>401,</highlight></codeline>
+<codeline lineno="38" refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3ab8fbae4fd4ecc3d405164bdbbd990548" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3ab8fbae4fd4ecc3d405164bdbbd990548" kindref="member">NRF_CLOUD_HTTP_STATUS_FORBIDDEN</ref><sp/>=<sp/>403,</highlight></codeline>
+<codeline lineno="39" refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a1bbf1a485cf8785dbf48d5b55715dfa6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a1bbf1a485cf8785dbf48d5b55715dfa6" kindref="member">NRF_CLOUD_HTTP_STATUS_NOT_FOUND</ref><sp/>=<sp/>404,</highlight></codeline>
+<codeline lineno="40" refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a6c12b39fb25d0ced6c9c9ff7a5db4e42" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a6c12b39fb25d0ced6c9c9ff7a5db4e42" kindref="member">NRF_CLOUD_HTTP_STATUS_BAD_RANGE</ref><sp/>=<sp/>416,</highlight></codeline>
+<codeline lineno="41" refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a70870b71df849a433ef7f311362d3ee8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a70870b71df849a433ef7f311362d3ee8" kindref="member">NRF_CLOUD_HTTP_STATUS_UNPROC_ENTITY</ref><sp/>=<sp/>422,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="group__nrf__cloud__rest_gae86b26f442c457eb58a896bfde29525d_1gae86b26f442c457eb58a896bfde29525d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__rest_gae86b26f442c457eb58a896bfde29525d_1gae86b26f442c457eb58a896bfde29525d" kindref="member">nrf_cloud_rest_agps_req_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="46" refid="group__nrf__cloud__rest_gae86b26f442c457eb58a896bfde29525d_1ggae86b26f442c457eb58a896bfde29525da71b17eabbf312dbb6b398254468fc52b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__rest_gae86b26f442c457eb58a896bfde29525d_1ggae86b26f442c457eb58a896bfde29525da71b17eabbf312dbb6b398254468fc52b" kindref="member">NRF_CLOUD_REST_AGPS_REQ_ASSISTANCE</ref>,</highlight></codeline>
+<codeline lineno="47" refid="group__nrf__cloud__rest_gae86b26f442c457eb58a896bfde29525d_1ggae86b26f442c457eb58a896bfde29525daed21779a7d9b160b66619300f5cbc268" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__rest_gae86b26f442c457eb58a896bfde29525d_1ggae86b26f442c457eb58a896bfde29525daed21779a7d9b160b66619300f5cbc268" kindref="member">NRF_CLOUD_REST_AGPS_REQ_LOCATION</ref>,</highlight></codeline>
+<codeline lineno="48" refid="group__nrf__cloud__rest_gae86b26f442c457eb58a896bfde29525d_1ggae86b26f442c457eb58a896bfde29525da3a2e6d197d8251d39ed06f907843778e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__rest_gae86b26f442c457eb58a896bfde29525d_1ggae86b26f442c457eb58a896bfde29525da3a2e6d197d8251d39ed06f907843778e" kindref="member">NRF_CLOUD_REST_AGPS_REQ_CUSTOM</ref>,</highlight></codeline>
+<codeline lineno="49" refid="group__nrf__cloud__rest_gae86b26f442c457eb58a896bfde29525d_1ggae86b26f442c457eb58a896bfde29525dad64949cc2b67e5cc7e9bb6a35ce7a8e9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__rest_gae86b26f442c457eb58a896bfde29525d_1ggae86b26f442c457eb58a896bfde29525dad64949cc2b67e5cc7e9bb6a35ce7a8e9" kindref="member">NRF_CLOUD_REST_AGPS_REQ_UNSPECIFIED</ref>,</highlight></codeline>
+<codeline lineno="50"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="group__nrf__cloud__rest_ga2f82e95f212467869352d33721d6568b_1ga2f82e95f212467869352d33721d6568b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_REST_TIMEOUT_MINIMUM<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(5000)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="group__nrf__cloud__rest_gaf1194544cf52decf230bdb7e0298724a_1gaf1194544cf52decf230bdb7e0298724a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_REST_TIMEOUT_NONE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(SYS_FOREVER_MS)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="structnrf__cloud__rest__context" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref><sp/>{</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="structnrf__cloud__rest__context_a9351ecfa665b4c8131d57841450e4d4c_1a9351ecfa665b4c8131d57841450e4d4c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__rest__context_a9351ecfa665b4c8131d57841450e4d4c_1a9351ecfa665b4c8131d57841450e4d4c" kindref="member">connect_socket</ref>;</highlight></codeline>
+<codeline lineno="66" refid="structnrf__cloud__rest__context_a41687c736d36d7e82eb609f9dd0d4aab_1a41687c736d36d7e82eb609f9dd0d4aab" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__rest__context_a41687c736d36d7e82eb609f9dd0d4aab_1a41687c736d36d7e82eb609f9dd0d4aab" kindref="member">keep_alive</ref>;</highlight></codeline>
+<codeline lineno="73" refid="structnrf__cloud__rest__context_a98c6b831205a2aec8c6cc9c0ae16553a_1a98c6b831205a2aec8c6cc9c0ae16553a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int32_t<sp/><ref refid="structnrf__cloud__rest__context_a98c6b831205a2aec8c6cc9c0ae16553a_1a98c6b831205a2aec8c6cc9c0ae16553a" kindref="member">timeout_ms</ref>;</highlight></codeline>
+<codeline lineno="80" refid="structnrf__cloud__rest__context_af2c9b7b5d40289890bcc5dd4b839f86a_1af2c9b7b5d40289890bcc5dd4b839f86a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structnrf__cloud__rest__context_af2c9b7b5d40289890bcc5dd4b839f86a_1af2c9b7b5d40289890bcc5dd4b839f86a" kindref="member">auth</ref>;</highlight></codeline>
+<codeline lineno="87" refid="structnrf__cloud__rest__context_a763005650fd231440da028aed6543b3d_1a763005650fd231440da028aed6543b3d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structnrf__cloud__rest__context_a763005650fd231440da028aed6543b3d_1a763005650fd231440da028aed6543b3d" kindref="member">rx_buf</ref>;</highlight></codeline>
+<codeline lineno="89" refid="structnrf__cloud__rest__context_aab212d4a7b3558d46db765dc7bc6953a_1aab212d4a7b3558d46db765dc7bc6953a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__rest__context_aab212d4a7b3558d46db765dc7bc6953a_1aab212d4a7b3558d46db765dc7bc6953a" kindref="member">rx_buf_len</ref>;</highlight></codeline>
+<codeline lineno="95" refid="structnrf__cloud__rest__context_a9724cff484a7ed60940bbbfae8a2f0e5_1a9724cff484a7ed60940bbbfae8a2f0e5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__rest__context_a9724cff484a7ed60940bbbfae8a2f0e5_1a9724cff484a7ed60940bbbfae8a2f0e5" kindref="member">fragment_size</ref>;</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99" refid="structnrf__cloud__rest__context_af254608d3260bd9c8efbd3f9400de70f_1af254608d3260bd9c8efbd3f9400de70f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1gab56e61555902e6af10dec34fb4cd84d3" kindref="member">nrf_cloud_http_status</ref><sp/><ref refid="structnrf__cloud__rest__context_af254608d3260bd9c8efbd3f9400de70f_1af254608d3260bd9c8efbd3f9400de70f" kindref="member">status</ref>;</highlight></codeline>
+<codeline lineno="101" refid="structnrf__cloud__rest__context_a924b44deace6e00a596b83dd6ddfdd67_1a924b44deace6e00a596b83dd6ddfdd67" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structnrf__cloud__rest__context_a924b44deace6e00a596b83dd6ddfdd67_1a924b44deace6e00a596b83dd6ddfdd67" kindref="member">response</ref>;</highlight></codeline>
+<codeline lineno="103" refid="structnrf__cloud__rest__context_a51f7a5ed92afe4fb2c715094775554d2_1a51f7a5ed92afe4fb2c715094775554d2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__rest__context_a51f7a5ed92afe4fb2c715094775554d2_1a51f7a5ed92afe4fb2c715094775554d2" kindref="member">response_len</ref>;</highlight></codeline>
+<codeline lineno="105" refid="structnrf__cloud__rest__context_a457a519a7974ecc1a9a8e3dffba776f8_1a457a519a7974ecc1a9a8e3dffba776f8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__rest__context_a457a519a7974ecc1a9a8e3dffba776f8_1a457a519a7974ecc1a9a8e3dffba776f8" kindref="member">total_response_len</ref>;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109" refid="structnrf__cloud__rest__cell__pos__request" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__rest__cell__pos__request" kindref="compound">nrf_cloud_rest_cell_pos_request</ref><sp/>{</highlight></codeline>
+<codeline lineno="111" refid="structnrf__cloud__rest__cell__pos__request_ac4b4f6ae3c2318018af778523fd0fd6a_1ac4b4f6ae3c2318018af778523fd0fd6a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__lc__cells__info" kindref="compound">lte_lc_cells_info</ref><sp/>*<ref refid="structnrf__cloud__rest__cell__pos__request_ac4b4f6ae3c2318018af778523fd0fd6a_1ac4b4f6ae3c2318018af778523fd0fd6a" kindref="member">net_info</ref>;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115" refid="structnrf__cloud__rest__agps__request" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__rest__agps__request" kindref="compound">nrf_cloud_rest_agps_request</ref><sp/>{</highlight></codeline>
+<codeline lineno="116" refid="structnrf__cloud__rest__agps__request_a981b495457bd72eb589d264b67419dd3_1a981b495457bd72eb589d264b67419dd3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__rest_gae86b26f442c457eb58a896bfde29525d_1gae86b26f442c457eb58a896bfde29525d" kindref="member">nrf_cloud_rest_agps_req_type</ref><sp/><ref refid="structnrf__cloud__rest__agps__request_a981b495457bd72eb589d264b67419dd3_1a981b495457bd72eb589d264b67419dd3" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="118" refid="structnrf__cloud__rest__agps__request_ad43eb9113e98e5e209bacbadb33c0253_1ad43eb9113e98e5e209bacbadb33c0253" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">nrf_modem_gnss_agps_data_frame<sp/>*<ref refid="structnrf__cloud__rest__agps__request_ad43eb9113e98e5e209bacbadb33c0253_1ad43eb9113e98e5e209bacbadb33c0253" kindref="member">agps_req</ref>;</highlight></codeline>
+<codeline lineno="122" refid="structnrf__cloud__rest__agps__request_a5ac24501b246207334a4fc6193bb3edb_1a5ac24501b246207334a4fc6193bb3edb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__lc__cells__info" kindref="compound">lte_lc_cells_info</ref><sp/>*<ref refid="structnrf__cloud__rest__agps__request_a5ac24501b246207334a4fc6193bb3edb_1a5ac24501b246207334a4fc6193bb3edb" kindref="member">net_info</ref>;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126" refid="structnrf__cloud__rest__agps__result" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__rest__agps__result" kindref="compound">nrf_cloud_rest_agps_result</ref><sp/>{</highlight></codeline>
+<codeline lineno="128" refid="structnrf__cloud__rest__agps__result_a534bbc6f8b4f0c6249117eed61767c9c_1a534bbc6f8b4f0c6249117eed61767c9c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structnrf__cloud__rest__agps__result_a534bbc6f8b4f0c6249117eed61767c9c_1a534bbc6f8b4f0c6249117eed61767c9c" kindref="member">buf</ref>;</highlight></codeline>
+<codeline lineno="130" refid="structnrf__cloud__rest__agps__result_a218aa8df684cb3aefe44b25d2c24a13e_1a218aa8df684cb3aefe44b25d2c24a13e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__rest__agps__result_a218aa8df684cb3aefe44b25d2c24a13e_1a218aa8df684cb3aefe44b25d2c24a13e" kindref="member">buf_sz</ref>;</highlight></codeline>
+<codeline lineno="132" refid="structnrf__cloud__rest__agps__result_a737d6e4bb4815ccb1977dd4a8ae29bbc_1a737d6e4bb4815ccb1977dd4a8ae29bbc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__rest__agps__result_a737d6e4bb4815ccb1977dd4a8ae29bbc_1a737d6e4bb4815ccb1977dd4a8ae29bbc" kindref="member">agps_sz</ref>;</highlight></codeline>
+<codeline lineno="133"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138" refid="group__nrf__cloud__rest__pgps__omit_ga2cb512b0dcf33abfeab11e2319a6afa2_1ga2cb512b0dcf33abfeab11e2319a6afa2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_REST_PGPS_REQ_NO_COUNT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139" refid="group__nrf__cloud__rest__pgps__omit_gaf9b169290acdc6b3604dc0661d9809bb_1gaf9b169290acdc6b3604dc0661d9809bb" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_REST_PGPS_REQ_NO_INTERVAL<sp/><sp/><sp/><sp/><sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="140" refid="group__nrf__cloud__rest__pgps__omit_gae9fb0312d6e782b0fe86b61d01be50bb_1gae9fb0312d6e782b0fe86b61d01be50bb" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_REST_PGPS_REQ_NO_GPS_DAY<sp/><sp/><sp/><sp/><sp/><sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141" refid="group__nrf__cloud__rest__pgps__omit_ga063287e3aa1ccd8b6f7bd0a30621a10b_1ga063287e3aa1ccd8b6f7bd0a30621a10b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_REST_PGPS_REQ_NO_GPS_TOD<sp/><sp/><sp/><sp/><sp/><sp/>(-1)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145" refid="structnrf__cloud__rest__pgps__request" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__rest__pgps__request" kindref="compound">nrf_cloud_rest_pgps_request</ref><sp/>{</highlight></codeline>
+<codeline lineno="149" refid="structnrf__cloud__rest__pgps__request_a85cb707333de29b151dbafa730afe7af_1a85cb707333de29b151dbafa730afe7af" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structgps__pgps__request" kindref="compound">gps_pgps_request</ref><sp/>*<ref refid="structnrf__cloud__rest__pgps__request_a85cb707333de29b151dbafa730afe7af_1a85cb707333de29b151dbafa730afe7af" kindref="member">pgps_req</ref>;</highlight></codeline>
+<codeline lineno="150"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="164" refid="group__nrf__cloud__rest_ga420b5296e2ae43769a9d84b59ab4506b_1ga420b5296e2ae43769a9d84b59ab4506b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__rest_ga420b5296e2ae43769a9d84b59ab4506b_1ga420b5296e2ae43769a9d84b59ab4506b" kindref="member">nrf_cloud_rest_cell_pos_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rest_ctx,</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__rest__cell__pos__request" kindref="compound">nrf_cloud_rest_cell_pos_request</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>request,</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__cell__pos__result" kindref="compound">nrf_cloud_cell_pos_result</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>result);</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185" refid="group__nrf__cloud__rest_gab8b1fbcffb31d7c921e421c59e195036_1gab8b1fbcffb31d7c921e421c59e195036" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__rest_gab8b1fbcffb31d7c921e421c59e195036_1gab8b1fbcffb31d7c921e421c59e195036" kindref="member">nrf_cloud_rest_agps_data_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rest_ctx,</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__rest__agps__request" kindref="compound">nrf_cloud_rest_agps_request</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>request,</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__rest__agps__result" kindref="compound">nrf_cloud_rest_agps_result</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>result);</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight></codeline>
+<codeline lineno="201" refid="group__nrf__cloud__rest_gaeb169e79dac93c396a7795a83be6083f_1gaeb169e79dac93c396a7795a83be6083f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__rest_gaeb169e79dac93c396a7795a83be6083f_1gaeb169e79dac93c396a7795a83be6083f" kindref="member">nrf_cloud_rest_pgps_data_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rest_ctx,</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__rest__pgps__request" kindref="compound">nrf_cloud_rest_pgps_request</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>request);</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight></codeline>
+<codeline lineno="220" refid="group__nrf__cloud__rest_ga5f5d935edf5976c41a663f7f36a301de_1ga5f5d935edf5976c41a663f7f36a301de" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__rest_ga5f5d935edf5976c41a663f7f36a301de_1ga5f5d935edf5976c41a663f7f36a301de" kindref="member">nrf_cloud_rest_fota_job_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rest_ctx,</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>device_id,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__fota__job__info" kindref="compound">nrf_cloud_fota_job_info</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>job);</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight></codeline>
+<codeline lineno="229" refid="group__nrf__cloud__rest_ga79bd2cac2bd63307c0a60d240014ed1a_1ga79bd2cac2bd63307c0a60d240014ed1a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__rest_ga79bd2cac2bd63307c0a60d240014ed1a_1ga79bd2cac2bd63307c0a60d240014ed1a" kindref="member">nrf_cloud_rest_fota_job_free</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__fota__job__info" kindref="compound">nrf_cloud_fota_job_info</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>job);</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight></codeline>
+<codeline lineno="245" refid="group__nrf__cloud__rest_gad2e2ca1af04e95d35ac00d81d4ff8e4d_1gad2e2ca1af04e95d35ac00d81d4ff8e4d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__rest_gad2e2ca1af04e95d35ac00d81d4ff8e4d_1gad2e2ca1af04e95d35ac00d81d4ff8e4d" kindref="member">nrf_cloud_rest_fota_job_update</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rest_ctx,</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>device_id,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>job_id,</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1ga1359b0c3333f11b0d06aa46f99e3668d" kindref="member">nrf_cloud_fota_status</ref><sp/>status,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>details);</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"></highlight></codeline>
+<codeline lineno="259" refid="group__nrf__cloud__rest_gad575f3df8503223bff51af61d6e80ca6_1gad575f3df8503223bff51af61d6e80ca6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__rest_gad575f3df8503223bff51af61d6e80ca6_1gad575f3df8503223bff51af61d6e80ca6" kindref="member">nrf_cloud_rest_shadow_state_update</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rest_ctx,</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>device_id,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>shadow_json);</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"></highlight></codeline>
+<codeline lineno="272" refid="group__nrf__cloud__rest_gab0a0f687ff6c44dcce68a8be5f996d08_1gab0a0f687ff6c44dcce68a8be5f996d08" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__rest_gab0a0f687ff6c44dcce68a8be5f996d08_1gab0a0f687ff6c44dcce68a8be5f996d08" kindref="member">nrf_cloud_rest_shadow_service_info_update</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rest_ctx,</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>device_id,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__svc__info" kindref="compound">nrf_cloud_svc_info</ref><sp/>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>svc_inf);</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"></highlight></codeline>
+<codeline lineno="283" refid="group__nrf__cloud__rest_ga4e2db47098a71a3f197ae5a40cba488c_1ga4e2db47098a71a3f197ae5a40cba488c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__rest_ga4e2db47098a71a3f197ae5a40cba488c_1ga4e2db47098a71a3f197ae5a40cba488c" kindref="member">nrf_cloud_rest_disconnect</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rest_ctx);</highlight></codeline>
+<codeline lineno="284"><highlight class="normal"></highlight></codeline>
+<codeline lineno="298" refid="group__nrf__cloud__rest_ga9bb4886ebcbc44acdb56f4644862b365_1ga9bb4886ebcbc44acdb56f4644862b365" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__rest_ga9bb4886ebcbc44acdb56f4644862b365_1ga9bb4886ebcbc44acdb56f4644862b365" kindref="member">nrf_cloud_rest_jitp</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>sec_tag_t<sp/>nrf_cloud_sec_tag);</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"></highlight></codeline>
+<codeline lineno="302"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="303"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="304"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="305"><highlight class="normal"></highlight></codeline>
+<codeline lineno="306"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>NRF_CLOUD_REST_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/net/nrf_cloud_rest.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,213 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structrest__client__req__context" kind="struct" language="C++" prot="public">
+    <compoundname>rest_client_req_context</compoundname>
+    <includes refid="rest__client_8h" local="no">rest_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structrest__client__req__context_ab894f7a0b44980396e5d3ef13f278cf9_1ab894f7a0b44980396e5d3ef13f278cf9" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int rest_client_req_context::connect_socket</definition>
+        <argsstring></argsstring>
+        <name>connect_socket</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Socket identifier for the connection. When using the default value, the library will open a new socket connection. Default: REST_CLIENT_SCKT_CONNECT. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="50" column="5" bodyfile="include/net/rest_client.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structrest__client__req__context_a39de871a91584ccee123c7c9e9718471_1a39de871a91584ccee123c7c9e9718471" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool rest_client_req_context::keep_alive</definition>
+        <argsstring></argsstring>
+        <name>keep_alive</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Defines whether the connection should remain after API call. Default: false. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="53" column="6" bodyfile="include/net/rest_client.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structrest__client__req__context_aee7d61410bd589b637c6228a3c3aceaa_1aee7d61410bd589b637c6228a3c3aceaa" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int rest_client_req_context::sec_tag</definition>
+        <argsstring></argsstring>
+        <name>sec_tag</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Security tag. Default: REST_CLIENT_SEC_TAG_NO_SEC. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="56" column="5" bodyfile="include/net/rest_client.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structrest__client__req__context_a1cae11f32bf4ee4a1660d2b86b02ec16_1a1cae11f32bf4ee4a1660d2b86b02ec16" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int rest_client_req_context::tls_peer_verify</definition>
+        <argsstring></argsstring>
+        <name>tls_peer_verify</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates the preference for peer verification. Initialize to REST_CLIENT_TLS_DEFAULT_PEER_VERIFY and the default (TLS_PEER_VERIFY_REQUIRED) is used. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="62" column="5" bodyfile="include/net/rest_client.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structrest__client__req__context_a0fc59fcb279b93478226e2b8b55ab075_1a0fc59fcb279b93478226e2b8b55ab075" prot="public" static="no" mutable="no">
+        <type>enum http_method</type>
+        <definition>enum http_method rest_client_req_context::http_method</definition>
+        <argsstring></argsstring>
+        <name>http_method</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Used HTTP method. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="65" column="17" bodyfile="include/net/rest_client.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structrest__client__req__context_a2628acd8ab199726ece91495a19bee45_1a2628acd8ab199726ece91495a19bee45" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* rest_client_req_context::host</definition>
+        <argsstring></argsstring>
+        <name>host</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Hostname or IP address to be used in the request. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="68" column="12" bodyfile="include/net/rest_client.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structrest__client__req__context_a7c472025d45b464587495919a1821dc6_1a7c472025d45b464587495919a1821dc6" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t rest_client_req_context::port</definition>
+        <argsstring></argsstring>
+        <name>port</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Port number to be used in the request. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="71" column="10" bodyfile="include/net/rest_client.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structrest__client__req__context_abffe63f73535e24ad8b327e125ccefac_1abffe63f73535e24ad8b327e125ccefac" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* rest_client_req_context::url</definition>
+        <argsstring></argsstring>
+        <name>url</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The URL for this request, for example: /index.html </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="74" column="12" bodyfile="include/net/rest_client.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structrest__client__req__context_a5d3ce7259443e8ca5985cfa9f90085a7_1a5d3ce7259443e8ca5985cfa9f90085a7" prot="public" static="no" mutable="no">
+        <type>const char **</type>
+        <definition>const char** rest_client_req_context::header_fields</definition>
+        <argsstring></argsstring>
+        <name>header_fields</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The HTTP header fields. Similar to the Zephyr HTTP client. This is a NULL-terminated list of header fields. May be NULL. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="79" column="12" bodyfile="include/net/rest_client.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structrest__client__req__context_aa006c7a399d35fa9742cf27aa832140c_1aa006c7a399d35fa9742cf27aa832140c" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* rest_client_req_context::body</definition>
+        <argsstring></argsstring>
+        <name>body</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Payload/body, may be NULL. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="82" column="12" bodyfile="include/net/rest_client.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structrest__client__req__context_abbc7ff1c124923d8557e0c3273a48ef6_1abbc7ff1c124923d8557e0c3273a48ef6" prot="public" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t rest_client_req_context::timeout_ms</definition>
+        <argsstring></argsstring>
+        <name>timeout_ms</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>User-defined timeout value for receiving response data. Default: CONFIG_REST_CLIENT_REST_REQUEST_TIMEOUT. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="87" column="9" bodyfile="include/net/rest_client.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structrest__client__req__context_aac2c6577f6dd6a76e43f1a01043d19b5_1aac2c6577f6dd6a76e43f1a01043d19b5" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* rest_client_req_context::resp_buff</definition>
+        <argsstring></argsstring>
+        <name>resp_buff</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>User-allocated buffer for receiving API response. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="90" column="6" bodyfile="include/net/rest_client.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structrest__client__req__context_a9536c9f7ba05b8f0c777f46da9fc9ef4_1a9536c9f7ba05b8f0c777f46da9fc9ef4" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t rest_client_req_context::resp_buff_len</definition>
+        <argsstring></argsstring>
+        <name>resp_buff_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>User-defined size of resp_buff. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="93" column="8" bodyfile="include/net/rest_client.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>REST client request context. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Input parameters for using the REST client API should be filled into this structure before calling <ref refid="group__rest__client_gaf17c5ae9504203d57ff28b51aa6ec78e_1gaf17c5ae9504203d57ff28b51aa6ec78e" kindref="member">rest_client_request</ref>. </para>
+    </detaileddescription>
+    <location file="include/net/rest_client.h" line="46" column="1" bodyfile="include/net/rest_client.h" bodystart="46" bodyend="94"/>
+    <listofallmembers>
+      <member refid="structrest__client__req__context_aa006c7a399d35fa9742cf27aa832140c_1aa006c7a399d35fa9742cf27aa832140c" prot="public" virt="non-virtual"><scope>rest_client_req_context</scope><name>body</name></member>
+      <member refid="structrest__client__req__context_ab894f7a0b44980396e5d3ef13f278cf9_1ab894f7a0b44980396e5d3ef13f278cf9" prot="public" virt="non-virtual"><scope>rest_client_req_context</scope><name>connect_socket</name></member>
+      <member refid="structrest__client__req__context_a5d3ce7259443e8ca5985cfa9f90085a7_1a5d3ce7259443e8ca5985cfa9f90085a7" prot="public" virt="non-virtual"><scope>rest_client_req_context</scope><name>header_fields</name></member>
+      <member refid="structrest__client__req__context_a2628acd8ab199726ece91495a19bee45_1a2628acd8ab199726ece91495a19bee45" prot="public" virt="non-virtual"><scope>rest_client_req_context</scope><name>host</name></member>
+      <member refid="structrest__client__req__context_a0fc59fcb279b93478226e2b8b55ab075_1a0fc59fcb279b93478226e2b8b55ab075" prot="public" virt="non-virtual"><scope>rest_client_req_context</scope><name>http_method</name></member>
+      <member refid="structrest__client__req__context_a39de871a91584ccee123c7c9e9718471_1a39de871a91584ccee123c7c9e9718471" prot="public" virt="non-virtual"><scope>rest_client_req_context</scope><name>keep_alive</name></member>
+      <member refid="structrest__client__req__context_a7c472025d45b464587495919a1821dc6_1a7c472025d45b464587495919a1821dc6" prot="public" virt="non-virtual"><scope>rest_client_req_context</scope><name>port</name></member>
+      <member refid="structrest__client__req__context_aac2c6577f6dd6a76e43f1a01043d19b5_1aac2c6577f6dd6a76e43f1a01043d19b5" prot="public" virt="non-virtual"><scope>rest_client_req_context</scope><name>resp_buff</name></member>
+      <member refid="structrest__client__req__context_a9536c9f7ba05b8f0c777f46da9fc9ef4_1a9536c9f7ba05b8f0c777f46da9fc9ef4" prot="public" virt="non-virtual"><scope>rest_client_req_context</scope><name>resp_buff_len</name></member>
+      <member refid="structrest__client__req__context_aee7d61410bd589b637c6228a3c3aceaa_1aee7d61410bd589b637c6228a3c3aceaa" prot="public" virt="non-virtual"><scope>rest_client_req_context</scope><name>sec_tag</name></member>
+      <member refid="structrest__client__req__context_abbc7ff1c124923d8557e0c3273a48ef6_1abbc7ff1c124923d8557e0c3273a48ef6" prot="public" virt="non-virtual"><scope>rest_client_req_context</scope><name>timeout_ms</name></member>
+      <member refid="structrest__client__req__context_a1cae11f32bf4ee4a1660d2b86b02ec16_1a1cae11f32bf4ee4a1660d2b86b02ec16" prot="public" virt="non-virtual"><scope>rest_client_req_context</scope><name>tls_peer_verify</name></member>
+      <member refid="structrest__client__req__context_abffe63f73535e24ad8b327e125ccefac_1abffe63f73535e24ad8b327e125ccefac" prot="public" virt="non-virtual"><scope>rest_client_req_context</scope><name>url</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

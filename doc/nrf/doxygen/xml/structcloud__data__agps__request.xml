@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structcloud__data__agps__request" kind="struct" language="C++" prot="public">
+    <compoundname>cloud_data_agps_request</compoundname>
+    <includes refid="v2_2src_2cloud_2cloud__codec_2cloud__codec_8h" local="no">cloud_codec.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structcloud__data__agps__request_ae82cc3ef743f7dc6397bfcad09b5b4dc_1ae82cc3ef743f7dc6397bfcad09b5b4dc" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int cloud_data_agps_request::mcc</definition>
+        <argsstring></argsstring>
+        <name>mcc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Mobile Country Code </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="206" column="5" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="206" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__agps__request_addbe5b825bd9a1521e29923322a77bcd_1addbe5b825bd9a1521e29923322a77bcd" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int cloud_data_agps_request::mnc</definition>
+        <argsstring></argsstring>
+        <name>mnc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Mobile Network Code </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="208" column="5" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="208" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__agps__request_a0ae2ac97b0e0174b9e756cb7ba74f80d_1a0ae2ac97b0e0174b9e756cb7ba74f80d" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t cloud_data_agps_request::cell</definition>
+        <argsstring></argsstring>
+        <name>cell</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Cell ID </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="210" column="10" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="210" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__agps__request_a82104246654cd759d47e18ba70320a9b_1a82104246654cd759d47e18ba70320a9b" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t cloud_data_agps_request::area</definition>
+        <argsstring></argsstring>
+        <name>area</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Area Code </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="212" column="10" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="212" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__agps__request_a9e1e350ae71c8bf548ba94f4d71a1c8d_1a9e1e350ae71c8bf548ba94f4d71a1c8d" prot="public" static="no" mutable="no">
+        <type>struct nrf_modem_gnss_agps_data_frame</type>
+        <definition>struct nrf_modem_gnss_agps_data_frame cloud_data_agps_request::request</definition>
+        <argsstring></argsstring>
+        <name>request</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>AGPS request types </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="214" column="37" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="214" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__agps__request_a485a229d66e7c88806e2a069e2ff9fda_1a485a229d66e7c88806e2a069e2ff9fda" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool cloud_data_agps_request::queued</definition>
+        <argsstring></argsstring>
+        <name>queued</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Flag signifying that the data entry is to be encoded. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="216" column="6" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="216" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="204" column="1" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="204" bodyend="217"/>
+    <listofallmembers>
+      <member refid="structcloud__data__agps__request_a82104246654cd759d47e18ba70320a9b_1a82104246654cd759d47e18ba70320a9b" prot="public" virt="non-virtual"><scope>cloud_data_agps_request</scope><name>area</name></member>
+      <member refid="structcloud__data__agps__request_a0ae2ac97b0e0174b9e756cb7ba74f80d_1a0ae2ac97b0e0174b9e756cb7ba74f80d" prot="public" virt="non-virtual"><scope>cloud_data_agps_request</scope><name>cell</name></member>
+      <member refid="structcloud__data__agps__request_ae82cc3ef743f7dc6397bfcad09b5b4dc_1ae82cc3ef743f7dc6397bfcad09b5b4dc" prot="public" virt="non-virtual"><scope>cloud_data_agps_request</scope><name>mcc</name></member>
+      <member refid="structcloud__data__agps__request_addbe5b825bd9a1521e29923322a77bcd_1addbe5b825bd9a1521e29923322a77bcd" prot="public" virt="non-virtual"><scope>cloud_data_agps_request</scope><name>mnc</name></member>
+      <member refid="structcloud__data__agps__request_a485a229d66e7c88806e2a069e2ff9fda_1a485a229d66e7c88806e2a069e2ff9fda" prot="public" virt="non-virtual"><scope>cloud_data_agps_request</scope><name>queued</name></member>
+      <member refid="structcloud__data__agps__request_a9e1e350ae71c8bf548ba94f4d71a1c8d_1a9e1e350ae71c8bf548ba94f4d71a1c8d" prot="public" virt="non-virtual"><scope>cloud_data_agps_request</scope><name>request</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

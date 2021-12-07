@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__dfu__smp_1_1bt__dfu__smp__handles" kind="struct" language="C++" prot="public">
+    <compoundname>bt_dfu_smp::bt_dfu_smp_handles</compoundname>
+    <includes refid="dfu__smp_8h" local="no">dfu_smp.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__dfu__smp_1_1bt__dfu__smp__handles_a063af8077b80ff1635552062b9c8539b_1a063af8077b80ff1635552062b9c8539b" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_dfu_smp::bt_dfu_smp_handles::smp</definition>
+        <argsstring></argsstring>
+        <name>smp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>SMP characteristic value handle. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="123" column="10" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__dfu__smp_1_1bt__dfu__smp__handles_ae9da22de9a84fef4b9c4943c19e464e5_1ae9da22de9a84fef4b9c4943c19e464e5" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_dfu_smp::bt_dfu_smp_handles::smp_ccc</definition>
+        <argsstring></argsstring>
+        <name>smp_ccc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>SMP characteristic CCC handle. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="125" column="10" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="125" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Handles. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/services/dfu_smp.h" line="121" column="1" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="121" bodyend="126"/>
+    <listofallmembers>
+      <member refid="structbt__dfu__smp_1_1bt__dfu__smp__handles_a063af8077b80ff1635552062b9c8539b_1a063af8077b80ff1635552062b9c8539b" prot="public" virt="non-virtual"><scope>bt_dfu_smp::bt_dfu_smp_handles</scope><name>smp</name></member>
+      <member refid="structbt__dfu__smp_1_1bt__dfu__smp__handles_ae9da22de9a84fef4b9c4943c19e464e5_1ae9da22de9a84fef4b9c4943c19e464e5" prot="public" virt="non-virtual"><scope>bt_dfu_smp::bt_dfu_smp_handles</scope><name>smp_ccc</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

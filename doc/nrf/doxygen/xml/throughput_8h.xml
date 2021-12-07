@@ -1,0 +1,362 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="throughput_8h" kind="file" language="C++">
+    <compoundname>throughput.h</compoundname>
+    <includes local="no">bluetooth/uuid.h</includes>
+    <includes local="no">bluetooth/conn.h</includes>
+    <includes refid="gatt__dm_8h" local="no">bluetooth/gatt_dm.h</includes>
+    <incdepgraph>
+      <node id="4">
+        <label>bluetooth/gatt_dm.h</label>
+        <link refid="gatt__dm_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/services/throughput.h</label>
+        <link refid="throughput_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/conn.h</label>
+      </node>
+      <node id="5">
+        <label>bluetooth/gatt.h</label>
+      </node>
+      <node id="2">
+        <label>bluetooth/uuid.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structbt__throughput__metrics" prot="public">bt_throughput_metrics</innerclass>
+    <innerclass refid="structbt__throughput__cb" prot="public">bt_throughput_cb</innerclass>
+    <innerclass refid="structbt__throughput" prot="public">bt_throughput</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__throughput_ga7187672ced825954bb12354076c8ef51_1ga7187672ced825954bb12354076c8ef51" prot="public" static="no">
+        <name>BT_UUID_THROUGHPUT_CHAR</name>
+        <initializer>BT_UUID_DECLARE_16(0x1524)</initializer>
+        <briefdescription>
+<para>Throughput Characteristic UUID. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="87" column="9" bodyfile="include/bluetooth/services/throughput.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__throughput_ga68b3d45d886052165552639fd1ab553f_1ga68b3d45d886052165552639fd1ab553f" prot="public" static="no">
+        <name>BT_UUID_THROUGHPUT_VAL</name>
+        <initializer>	BT_UUID_128_ENCODE(0x0483dadd, 0x6c9d, 0x6ca9, 0x5d41, 0x03ad4fff4abb)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="89" column="9" bodyfile="include/bluetooth/services/throughput.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__throughput_ga28a47872e339bafe35f0813f7cc0a9c1_1ga28a47872e339bafe35f0813f7cc0a9c1" prot="public" static="no">
+        <name>BT_UUID_THROUGHPUT</name>
+        <initializer>	BT_UUID_DECLARE_128(<ref refid="group__bt__throughput_ga68b3d45d886052165552639fd1ab553f_1ga68b3d45d886052165552639fd1ab553f" kindref="member">BT_UUID_THROUGHPUT_VAL</ref>)</initializer>
+        <briefdescription>
+<para>Throughput Service UUID. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="93" column="9" bodyfile="include/bluetooth/services/throughput.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__throughput_gabfc3460b865c543868d0175233abb034_1gabfc3460b865c543868d0175233abb034" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_throughput_init</definition>
+        <argsstring>(struct bt_throughput *throughput, const struct bt_throughput_cb *cb)</argsstring>
+        <name>bt_throughput_init</name>
+        <param>
+          <type>struct <ref refid="structbt__throughput" kindref="compound">bt_throughput</ref> *</type>
+          <declname>throughput</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__throughput__cb" kindref="compound">bt_throughput_cb</ref> *</type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the GATT Throughput Service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">throughput</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Throughput Service instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callbacks.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="104" column="5" declfile="include/bluetooth/services/throughput.h" declline="104" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__throughput_gaa046d42f46309608f286d92fed48d75e_1gaa046d42f46309608f286d92fed48d75e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_throughput_handles_assign</definition>
+        <argsstring>(struct bt_gatt_dm *dm, struct bt_throughput *throughput)</argsstring>
+        <name>bt_throughput_handles_assign</name>
+        <param>
+          <type>struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__throughput" kindref="compound">bt_throughput</ref> *</type>
+          <declname>throughput</declname>
+        </param>
+        <briefdescription>
+<para>Assign handles to the Throughput Service instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function should be called when a link with a peer has been established, to associate the link to this instance of the module. This makes it possible to handle several links and associate each link to a particular instance of this module. The GATT attribute handles are provided by the GATT Discovery Manager.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">throughput</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Throughput Service instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>(-ENOTSUP)</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Special error code used when the UUID of the service does not match the expected UUID. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="123" column="5" declfile="include/bluetooth/services/throughput.h" declline="123" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__throughput_ga1d89f749dcd282a71f5b00f8a6991c78_1ga1d89f749dcd282a71f5b00f8a6991c78" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_throughput_read</definition>
+        <argsstring>(struct bt_throughput *throughput)</argsstring>
+        <name>bt_throughput_read</name>
+        <param>
+          <type>struct <ref refid="structbt__throughput" kindref="compound">bt_throughput</ref> *</type>
+          <declname>throughput</declname>
+        </param>
+        <briefdescription>
+<para>Read data from the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This procedure is asynchronous.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">throughput</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Throughput Service instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="135" column="5" declfile="include/bluetooth/services/throughput.h" declline="135" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__throughput_ga9b1a986f13a950bac84cfbc5d5a31c5e_1ga9b1a986f13a950bac84cfbc5d5a31c5e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_throughput_write</definition>
+        <argsstring>(struct bt_throughput *throughput, const uint8_t *data, uint16_t len)</argsstring>
+        <name>bt_throughput_write</name>
+        <param>
+          <type>struct <ref refid="structbt__throughput" kindref="compound">bt_throughput</ref> *</type>
+          <declname>throughput</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Write data to the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">throughput</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Throughput Service instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data length.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="146" column="5" declfile="include/bluetooth/services/throughput.h" declline="146" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2018<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_THROUGHPUT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_THROUGHPUT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/uuid.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/conn.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="gatt__dm_8h" kindref="compound">bluetooth/gatt_dm.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="structbt__throughput__metrics" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__throughput__metrics" kindref="compound">bt_throughput_metrics</ref><sp/>{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="structbt__throughput__metrics_a5bdb015ff2ac8f7acf089ed06276262c_1a5bdb015ff2ac8f7acf089ed06276262c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__throughput__metrics_a5bdb015ff2ac8f7acf089ed06276262c_1a5bdb015ff2ac8f7acf089ed06276262c" kindref="member">write_count</ref>;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="structbt__throughput__metrics_af8c7d300bb204748608de3f45718fcc4_1af8c7d300bb204748608de3f45718fcc4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__throughput__metrics_af8c7d300bb204748608de3f45718fcc4_1af8c7d300bb204748608de3f45718fcc4" kindref="member">write_len</ref>;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="structbt__throughput__metrics_a5f1ecd011264e20b404cbddba21092eb_1a5f1ecd011264e20b404cbddba21092eb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__throughput__metrics_a5f1ecd011264e20b404cbddba21092eb_1a5f1ecd011264e20b404cbddba21092eb" kindref="member">write_rate</ref>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="structbt__throughput__cb" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__throughput__cb" kindref="compound">bt_throughput_cb</ref><sp/>{</highlight></codeline>
+<codeline lineno="50" refid="structbt__throughput__cb_a9aab0083011cbc85210d6ceefbfb8550_1a9aab0083011cbc85210d6ceefbfb8550" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>(*<ref refid="structbt__throughput__cb_a9aab0083011cbc85210d6ceefbfb8550_1a9aab0083011cbc85210d6ceefbfb8550" kindref="member">data_read</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__throughput__metrics" kindref="compound">bt_throughput_metrics</ref><sp/>*met);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="structbt__throughput__cb_af27a095ef360eb3850be34a870077cd1_1af27a095ef360eb3850be34a870077cd1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structbt__throughput__cb_af27a095ef360eb3850be34a870077cd1_1af27a095ef360eb3850be34a870077cd1" kindref="member">data_received</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__throughput__metrics" kindref="compound">bt_throughput_metrics</ref><sp/>*met);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="structbt__throughput__cb_a9eca40b47d1e32b1b15f1c0dcda8963c_1a9eca40b47d1e32b1b15f1c0dcda8963c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structbt__throughput__cb_a9eca40b47d1e32b1b15f1c0dcda8963c_1a9eca40b47d1e32b1b15f1c0dcda8963c" kindref="member">data_send</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__throughput__metrics" kindref="compound">bt_throughput_metrics</ref><sp/>*met);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="structbt__throughput" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__throughput" kindref="compound">bt_throughput</ref><sp/>{</highlight></codeline>
+<codeline lineno="74" refid="structbt__throughput_acb8c33825fa7a8be089972bc69135c56_1acb8c33825fa7a8be089972bc69135c56" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__throughput_acb8c33825fa7a8be089972bc69135c56_1acb8c33825fa7a8be089972bc69135c56" kindref="member">char_handle</ref>;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77" refid="structbt__throughput_a5004c58550c130312aebd71e78dea82a_1a5004c58550c130312aebd71e78dea82a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_gatt_read_params<sp/><ref refid="structbt__throughput_a5004c58550c130312aebd71e78dea82a_1a5004c58550c130312aebd71e78dea82a" kindref="member">read_params</ref>;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80" refid="structbt__throughput_a111cf3eae21d913fdefa7b275a2522da_1a111cf3eae21d913fdefa7b275a2522da" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__throughput__cb" kindref="compound">bt_throughput_cb</ref><sp/>*<ref refid="structbt__throughput_a111cf3eae21d913fdefa7b275a2522da_1a111cf3eae21d913fdefa7b275a2522da" kindref="member">cb</ref>;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83" refid="structbt__throughput_af0eee8167c526248666a76b3607b0827_1af0eee8167c526248666a76b3607b0827" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_conn<sp/>*<ref refid="structbt__throughput_af0eee8167c526248666a76b3607b0827_1af0eee8167c526248666a76b3607b0827" kindref="member">conn</ref>;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87" refid="group__bt__throughput_ga7187672ced825954bb12354076c8ef51_1ga7187672ced825954bb12354076c8ef51" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_THROUGHPUT_CHAR<sp/>BT_UUID_DECLARE_16(0x1524)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89" refid="group__bt__throughput_ga68b3d45d886052165552639fd1ab553f_1ga68b3d45d886052165552639fd1ab553f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_THROUGHPUT_VAL<sp/>\</highlight></codeline>
+<codeline lineno="90"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_UUID_128_ENCODE(0x0483dadd,<sp/>0x6c9d,<sp/>0x6ca9,<sp/>0x5d41,<sp/>0x03ad4fff4abb)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="group__bt__throughput_ga28a47872e339bafe35f0813f7cc0a9c1_1ga28a47872e339bafe35f0813f7cc0a9c1" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_THROUGHPUT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="94"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_UUID_DECLARE_128(BT_UUID_THROUGHPUT_VAL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104" refid="group__bt__throughput_gabfc3460b865c543868d0175233abb034_1gabfc3460b865c543868d0175233abb034" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__throughput_gabfc3460b865c543868d0175233abb034_1gabfc3460b865c543868d0175233abb034" kindref="member">bt_throughput_init</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__throughput" kindref="compound">bt_throughput</ref><sp/>*throughput,</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__throughput__cb" kindref="compound">bt_throughput_cb</ref><sp/>*cb);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123" refid="group__bt__throughput_gaa046d42f46309608f286d92fed48d75e_1gaa046d42f46309608f286d92fed48d75e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__throughput_gaa046d42f46309608f286d92fed48d75e_1gaa046d42f46309608f286d92fed48d75e" kindref="member">bt_throughput_handles_assign</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_gatt_dm<sp/>*dm,</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__throughput" kindref="compound">bt_throughput</ref><sp/>*throughput);</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135" refid="group__bt__throughput_ga1d89f749dcd282a71f5b00f8a6991c78_1ga1d89f749dcd282a71f5b00f8a6991c78" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__throughput_ga1d89f749dcd282a71f5b00f8a6991c78_1ga1d89f749dcd282a71f5b00f8a6991c78" kindref="member">bt_throughput_read</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__throughput" kindref="compound">bt_throughput</ref><sp/>*throughput);</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146" refid="group__bt__throughput_ga9b1a986f13a950bac84cfbc5d5a31c5e_1ga9b1a986f13a950bac84cfbc5d5a31c5e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__throughput_ga9b1a986f13a950bac84cfbc5d5a31c5e_1ga9b1a986f13a950bac84cfbc5d5a31c5e" kindref="member">bt_throughput_write</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__throughput" kindref="compound">bt_throughput</ref><sp/>*throughput,</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*data,<sp/>uint16_t<sp/>len);</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_THROUGHPUT_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/services/throughput.h"/>
+  </compounddef>
+</doxygen>

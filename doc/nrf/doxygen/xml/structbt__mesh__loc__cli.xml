@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__loc__cli" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_loc_cli</compoundname>
+    <includes refid="gen__loc__cli_8h" local="no">gen_loc_cli.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__loc__cli_ae506c144f295642327b2d9fd96d0c627_1ae506c144f295642327b2d9fd96d0c627" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__loc__cli__handlers" kindref="compound">bt_mesh_loc_cli_handlers</ref> *const</type>
+        <definition>const struct bt_mesh_loc_cli_handlers* const bt_mesh_loc_cli::handlers</definition>
+        <argsstring></argsstring>
+        <name>handlers</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler function structure </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc_cli.h" line="83" column="43" bodyfile="include/bluetooth/mesh/gen_loc_cli.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__loc__cli_ad1deb2f730c0ca7594c7673767eb2066_1ad1deb2f730c0ca7594c7673767eb2066" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_msg_ack_ctx</type>
+        <definition>struct bt_mesh_msg_ack_ctx bt_mesh_loc_cli::ack_ctx</definition>
+        <argsstring></argsstring>
+        <name>ack_ctx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Response context for tracking acknowledged messages. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc_cli.h" line="85" column="26" bodyfile="include/bluetooth/mesh/gen_loc_cli.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__loc__cli_ac0f5f5c542ef244b0547467483439ca0_1ac0f5f5c542ef244b0547467483439ca0" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model_pub</type>
+        <definition>struct bt_mesh_model_pub bt_mesh_loc_cli::pub</definition>
+        <argsstring></argsstring>
+        <name>pub</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Publish parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc_cli.h" line="87" column="24" bodyfile="include/bluetooth/mesh/gen_loc_cli.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__loc__cli_a5335261a4f36955a1534a154c7eb6345_1a5335261a4f36955a1534a154c7eb6345" prot="public" static="no" mutable="no">
+        <type>struct net_buf_simple</type>
+        <definition>struct net_buf_simple bt_mesh_loc_cli::pub_buf</definition>
+        <argsstring></argsstring>
+        <name>pub_buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc_cli.h" line="89" column="21" bodyfile="include/bluetooth/mesh/gen_loc_cli.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__loc__cli_adc7cd8e924f0c707526bd4b48d1449ab_1adc7cd8e924f0c707526bd4b48d1449ab" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_loc_cli::pub_data[BT_MESH_MODEL_BUF_LEN(BT_MESH_LOC_OP_GLOBAL_SET, BT_MESH_LOC_MSG_LEN_GLOBAL_SET)]</definition>
+        <argsstring>[BT_MESH_MODEL_BUF_LEN(BT_MESH_LOC_OP_GLOBAL_SET, BT_MESH_LOC_MSG_LEN_GLOBAL_SET)]</argsstring>
+        <name>pub_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc_cli.h" line="91" column="9" bodyfile="include/bluetooth/mesh/gen_loc_cli.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__loc__cli_a13769f5ef290a1841a668c64a7b1acae_1a13769f5ef290a1841a668c64a7b1acae" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model *</type>
+        <definition>struct bt_mesh_model* bt_mesh_loc_cli::model</definition>
+        <argsstring></argsstring>
+        <name>model</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Composition data model entry pointer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc_cli.h" line="94" column="20" bodyfile="include/bluetooth/mesh/gen_loc_cli.h" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Generic Location Client structure.</para>
+<para>Should be initialized with the <ref refid="group__bt__mesh__loc__cli_gaa923154f07e75aa675b48a1e25f82a9f_1gaa923154f07e75aa675b48a1e25f82a9f" kindref="member">BT_MESH_LOC_CLI_INIT</ref> macro. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_mesh_loc_cli</label>
+        <link refid="structbt__mesh__loc__cli"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>handlers</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_mesh_loc_cli_handlers</label>
+        <link refid="structbt__mesh__loc__cli__handlers"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/gen_loc_cli.h" line="81" column="1" bodyfile="include/bluetooth/mesh/gen_loc_cli.h" bodystart="81" bodyend="95"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__loc__cli_ad1deb2f730c0ca7594c7673767eb2066_1ad1deb2f730c0ca7594c7673767eb2066" prot="public" virt="non-virtual"><scope>bt_mesh_loc_cli</scope><name>ack_ctx</name></member>
+      <member refid="structbt__mesh__loc__cli_ae506c144f295642327b2d9fd96d0c627_1ae506c144f295642327b2d9fd96d0c627" prot="public" virt="non-virtual"><scope>bt_mesh_loc_cli</scope><name>handlers</name></member>
+      <member refid="structbt__mesh__loc__cli_a13769f5ef290a1841a668c64a7b1acae_1a13769f5ef290a1841a668c64a7b1acae" prot="public" virt="non-virtual"><scope>bt_mesh_loc_cli</scope><name>model</name></member>
+      <member refid="structbt__mesh__loc__cli_ac0f5f5c542ef244b0547467483439ca0_1ac0f5f5c542ef244b0547467483439ca0" prot="public" virt="non-virtual"><scope>bt_mesh_loc_cli</scope><name>pub</name></member>
+      <member refid="structbt__mesh__loc__cli_a5335261a4f36955a1534a154c7eb6345_1a5335261a4f36955a1534a154c7eb6345" prot="public" virt="non-virtual"><scope>bt_mesh_loc_cli</scope><name>pub_buf</name></member>
+      <member refid="structbt__mesh__loc__cli_adc7cd8e924f0c707526bd4b48d1449ab_1adc7cd8e924f0c707526bd4b48d1449ab" prot="public" virt="non-virtual"><scope>bt_mesh_loc_cli</scope><name>pub_data</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

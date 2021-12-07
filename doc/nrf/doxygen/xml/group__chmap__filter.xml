@@ -1,0 +1,832 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__chmap__filter" kind="group">
+    <compoundname>chmap_filter</compoundname>
+    <title>Channel map filtering</title>
+    <innerclass refid="structchmap__filter__params" prot="public">chmap_filter_params</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__chmap__filter_1ga5066b477033e43707bbc4d3cccfb29fb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const char *</type>
+        <definition>const char * chmap_filter_version</definition>
+        <argsstring>(void)</argsstring>
+        <name>chmap_filter_version</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Get library version number. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Pointer to null-terminated version string </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="137" column="12" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="137" declcolumn="12"/>
+      </memberdef>
+      <memberdef kind="function" id="group__chmap__filter_1ga2dd39c05fd79b008c1ba1f6ad2014834" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void chmap_filter_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>chmap_filter_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize channel map filter library. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="141" column="6" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="141" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__chmap__filter_1ga62a4abcc2b9c0257b5cca7cbd08bbe02" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int chmap_filter_instance_init</definition>
+        <argsstring>(struct chmap_instance *p_inst, size_t size)</argsstring>
+        <name>chmap_filter_instance_init</name>
+        <param>
+          <type>struct chmap_instance *</type>
+          <declname>p_inst</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+<para>Initialize channel map filter instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Sufficient memory should be supplied to hold filter state. Allocate <ref refid="group__chmap__filter_gad80ff4edba0fcd81459b5a16fae1a2ae_1gad80ff4edba0fcd81459b5a16fae1a2ae" kindref="member">CHMAP_FILTER_INST_SIZE</ref> bytes for this purpose.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">p_inst</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to instance buffer </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of instance buffer</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>when successful </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if buffer is too small </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="154" column="5" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="154" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__chmap__filter_1ga06e754d82e54d70bae1a263880cfdc54" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void chmap_filter_crc_update</definition>
+        <argsstring>(struct chmap_instance *p_inst, uint8_t ch_idx, uint16_t crc_ok, uint8_t crc_error)</argsstring>
+        <name>chmap_filter_crc_update</name>
+        <param>
+          <type>struct chmap_instance *</type>
+          <declname>p_inst</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>ch_idx</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>crc_ok</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>crc_error</declname>
+        </param>
+        <briefdescription>
+<para>Update channel CRC information. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Should not preempt <ref refid="group__chmap__filter_ga44e940fc848a8c21f82c4c7b130d6332_1ga44e940fc848a8c21f82c4c7b130d6332" kindref="member">chmap_filter_process</ref></para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">p_inst</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel map instance pointer </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ch_idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>BLE channel index </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">crc_ok</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>CRC ok count </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">crc_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>CRC error count </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="165" column="6" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="165" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__chmap__filter_1ga44e940fc848a8c21f82c4c7b130d6332" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool chmap_filter_process</definition>
+        <argsstring>(struct chmap_instance *p_inst)</argsstring>
+        <name>chmap_filter_process</name>
+        <param>
+          <type>struct chmap_instance *</type>
+          <declname>p_inst</declname>
+        </param>
+        <briefdescription>
+<para>Process channel map filter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">p_inst</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel map instance pointer</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true when channel map update is recommended </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="177" column="6" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="177" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__chmap__filter_1ga38bde8021efbc13f5cca821a8d475608" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint8_t *</type>
+        <definition>uint8_t * chmap_filter_suggested_map_get</definition>
+        <argsstring>(struct chmap_instance *p_inst)</argsstring>
+        <name>chmap_filter_suggested_map_get</name>
+        <param>
+          <type>struct chmap_instance *</type>
+          <declname>p_inst</declname>
+        </param>
+        <briefdescription>
+<para>Get suggested channel map. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">p_inst</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel map instance pointer</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>pointer to <emphasis>CHMAP_BLE_BITMAP_SIZE</emphasis> sized channel map array </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="185" column="9" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="185" declcolumn="9"/>
+      </memberdef>
+      <memberdef kind="function" id="group__chmap__filter_1ga999d5af9bce9ccc91218b91886ec2eb5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void chmap_filter_suggested_map_confirm</definition>
+        <argsstring>(struct chmap_instance *p_inst)</argsstring>
+        <name>chmap_filter_suggested_map_confirm</name>
+        <param>
+          <type>struct chmap_instance *</type>
+          <declname>p_inst</declname>
+        </param>
+        <briefdescription>
+<para>Confirm that suggested channel map has been applied. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is used to keep internal state consistent with actual channel map used. There will always be a brief period of inconsistency when a new channel map is applied, which is to be expected.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">p_inst</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel map instance pointer </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="196" column="6" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="196" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__chmap__filter_1ga9ebb7692b6c2adc87cb6be454e65852d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void chmap_filter_params_get</definition>
+        <argsstring>(struct chmap_instance *p_inst, struct chmap_filter_params *p_params)</argsstring>
+        <name>chmap_filter_params_get</name>
+        <param>
+          <type>struct chmap_instance *</type>
+          <declname>p_inst</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structchmap__filter__params" kindref="compound">chmap_filter_params</ref> *</type>
+          <declname>p_params</declname>
+        </param>
+        <briefdescription>
+<para>Get dynamic parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">p_inst</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel map instance pointer </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">p_params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to hold parameter values </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="203" column="6" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="203" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__chmap__filter_1ga53a86d53c364ffac375956eafd28db18" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int chmap_filter_params_set</definition>
+        <argsstring>(struct chmap_instance *p_inst, struct chmap_filter_params *p_params)</argsstring>
+        <name>chmap_filter_params_set</name>
+        <param>
+          <type>struct chmap_instance *</type>
+          <declname>p_inst</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structchmap__filter__params" kindref="compound">chmap_filter_params</ref> *</type>
+          <declname>p_params</declname>
+        </param>
+        <briefdescription>
+<para>Set dynamic parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Parameter update follow the read-modify-write pattern. Use <ref refid="group__chmap__filter_ga9ebb7692b6c2adc87cb6be454e65852d_1ga9ebb7692b6c2adc87cb6be454e65852d" kindref="member">chmap_filter_params_get</ref> to get the full set of parameters, make desired adjustments, then <ref refid="group__chmap__filter_ga53a86d53c364ffac375956eafd28db18_1ga53a86d53c364ffac375956eafd28db18" kindref="member">chmap_filter_params_set</ref> to set updated parameters.</para>
+<para><simplesect kind="note"><para>Parameters will be applied when <ref refid="group__chmap__filter_ga44e940fc848a8c21f82c4c7b130d6332_1ga44e940fc848a8c21f82c4c7b130d6332" kindref="member">chmap_filter_process</ref> is called.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">p_inst</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel map instance pointer </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">p_params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer that holds parameter values</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>when successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if one or more parameters are invalid. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="222" column="5" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="222" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__chmap__filter_1gac7523275969401313dd2f0f84939ea46" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint16_t</type>
+        <definition>uint16_t chmap_filter_wifi_blacklist_get</definition>
+        <argsstring>(void)</argsstring>
+        <name>chmap_filter_wifi_blacklist_get</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Get bitmask of currently blacklisted wifi channels. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>As blacklist updates happen asynchronously, <ref refid="group__chmap__filter_ga44e940fc848a8c21f82c4c7b130d6332_1ga44e940fc848a8c21f82c4c7b130d6332" kindref="member">chmap_filter_process</ref> needs to run after <ref refid="group__chmap__filter_ga4e969aba29960434f0aaacf5b19b097c_1ga4e969aba29960434f0aaacf5b19b097c" kindref="member">chmap_filter_blacklist_set</ref> for the information returned from this function to be valid.</para>
+</simplesect>
+<simplesect kind="return"><para>Bitmask of wifi channels. E.g. channel 6 and channel 8 = (1 &lt;&lt; 6) | (1 &lt;&lt; 8) = 320 </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="236" column="10" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="236" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="group__chmap__filter_1ga4e969aba29960434f0aaacf5b19b097c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int chmap_filter_blacklist_set</definition>
+        <argsstring>(struct chmap_instance *p_inst, uint16_t blacklist)</argsstring>
+        <name>chmap_filter_blacklist_set</name>
+        <param>
+          <type>struct chmap_instance *</type>
+          <declname>p_inst</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>blacklist</declname>
+        </param>
+        <briefdescription>
+<para>Set wifi channels blacklist. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>One or more channels can be blacklisted. It does not matter if channels overlap. The blacklist will not be accepted if the total number of blacklisted BLE channels exceeds the minimum channel count param.</para>
+<para><simplesect kind="note"><para>Blacklist can be partially added if more than one channel is blacklisted and function return is non-zero. Use <ref refid="group__chmap__filter_gac7523275969401313dd2f0f84939ea46_1gac7523275969401313dd2f0f84939ea46" kindref="member">chmap_filter_wifi_blacklist_get</ref> to confirm.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">p_inst</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel map instance pointer </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">blacklist</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bitfield of blacklisted wifi channels. E.g. wifi channel 6 = (1 &lt;&lt; 6)</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>when successful, </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if blacklist exceeds minimum channel count. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="256" column="5" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="256" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__chmap__filter_1ga727c52ee3ad1d5edf55e53625e0f1433" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int chmap_filter_chn_info_get</definition>
+        <argsstring>(struct chmap_instance *p_inst, uint8_t chn_idx, uint8_t *p_state, int16_t *p_rating, uint8_t *p_freq)</argsstring>
+        <name>chmap_filter_chn_info_get</name>
+        <param>
+          <type>struct chmap_instance *</type>
+          <declname>p_inst</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>chn_idx</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>p_state</declname>
+        </param>
+        <param>
+          <type>int16_t *</type>
+          <declname>p_rating</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>p_freq</declname>
+        </param>
+        <briefdescription>
+<para>Get BLE channel information. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">p_inst</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel map instance pointer </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">chn_idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bluetooth channel index (0-36) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">p_state</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to hold state value </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">p_rating</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to hold rating value </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">p_freq</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to hold frequency value [2400 + x MHz]</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>when successful </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if p_inst or chn_idx is invalid </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="269" column="5" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="269" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__chmap__filter_1ga052a6fdda58a4406e6052e59ae3403a8" prot="public" static="no">
+        <name>CHMAP_WLAN_802_11GN_CENTER_FREQS</name>
+        <initializer>	{12, 17, 22, 27, 32, 37, 42, 47, 52, 57, 62, 67}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="37" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1gae4ed884f006fe8ef2c8a124fe91e9769" prot="public" static="no">
+        <name>CHMAP_WLAN_802_11GN_CENTER_FREQ_COUNT</name>
+        <initializer>12</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="39" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1ga7064e76b24603b7ccf4bb6653a3b338d" prot="public" static="no">
+        <name>CHMAP_WLAN_802_11GN_CHANNEL_WIDTH_MHz</name>
+        <initializer>20</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="40" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1ga432ea2a9a94af227c04bfcd748672102" prot="public" static="no">
+        <name>CHMAP_BLE_CHANNEL_COUNT</name>
+        <initializer>37</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="43" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1ga51d636c85cca5987648f57106dddc7da" prot="public" static="no">
+        <name>CHMAP_BLE_BITMASK_SIZE</name>
+        <initializer>5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="44" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1gafec564fa44c872ecb4cc8de386ce62b5" prot="public" static="no">
+        <name>CHMAP_BLE_BITMASK_DEFAULT</name>
+        <initializer>{0xFF, 0xFF, 0xFF, 0xFF, 0x1F}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="45" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1gad80ff4edba0fcd81459b5a16fae1a2ae" prot="public" static="no">
+        <name>CHMAP_FILTER_INST_SIZE</name>
+        <initializer>580</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="48" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1gafd82cc95d9aca5313a502a737c63e043" prot="public" static="no">
+        <name>CHMAP_PARAM_DYN_EVAL_TARGET</name>
+        <initializer>10</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="52" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1ga15d6334428135e0cd132969ef23583ab" prot="public" static="no">
+        <name>CHMAP_PARAM_DYN_BLOCK_INCREASE</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="55" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1gaecabe6e2d968a24fbac68bce40cd0f67" prot="public" static="no">
+        <name>DEFAULT_PARAM_MAINTENANCE_SAMPLE_COUNT</name>
+        <initializer>2000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="58" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1gadddbb4fd258c62f4a62cc7d54eca6552" prot="public" static="no">
+        <name>DEFAULT_PARAM_INITIAL_RATING</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="59" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1ga73c182478b5072ccfc62c6fe3d6da1b7" prot="public" static="no">
+        <name>DEFAULT_PARAM_BLE_MIN_CHANNEL_COUNT</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="60" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1ga6d80787e512866061995aca946e091bd" prot="public" static="no">
+        <name>DEFAULT_PARAM_BLE_WIFI_KEEPOUT_DURATION</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="61" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1ga74278255a36ab7dc7191f0537b284a59" prot="public" static="no">
+        <name>DEFAULT_PARAM_EVAL_MAX_COUNT</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="62" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1ga57df878e4728ce329ec062f783245853" prot="public" static="no">
+        <name>DEFAULT_PARAM_EVAL_DURATION</name>
+        <initializer>5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="63" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1ga4b70184f07ef813310738a3219a94f78" prot="public" static="no">
+        <name>DEFAULT_PARAM_EVAL_KEEPOUT_DURATION</name>
+        <initializer>300</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="64" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1ga3576b2f571c8a491795327410c53d051" prot="public" static="no">
+        <name>DEFAULT_PARAM_DYN_DURATIONS</name>
+        <initializer>true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="65" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1ga36ac65ff0e6fe517fe86168b624dd1b2" prot="public" static="no">
+        <name>DEFAULT_PARAM_BLE_WEIGHT_CRC_OK</name>
+        <initializer>100  /* = 1.0 */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="67" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1ga1e7e942d8a62f8b13b2567ff1c6f9a9e" prot="public" static="no">
+        <name>DEFAULT_PARAM_BLE_WEIGHT_CRC_ERROR</name>
+        <initializer>-100 /* = -1.0 */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="68" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1gaaa59550e6ea71860fb5639f42be00e15" prot="public" static="no">
+        <name>DEFAULT_PARAM_BLE_RATING_TRIM</name>
+        <initializer>49   /* = 0.49 */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="69" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1gad6c0c4723856419eb0c4c3643db1a74d" prot="public" static="no">
+        <name>DEFAULT_PARAM_BLE_BLOCK_THRESHOLD</name>
+        <initializer>25   /* = 0.25 */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="70" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1gad4369fb2a7bc175dd8780943a1c71b50" prot="public" static="no">
+        <name>DEFAULT_PARAM_WIFI_RATING_INC</name>
+        <initializer>400  /* = 4.0 */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="71" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1gacf838c224087d7b88b6ce85e0c55c9dd" prot="public" static="no">
+        <name>DEFAULT_PARAM_WIFI_PRESENT_THRESHOLD</name>
+        <initializer>90   /* = 0.9 */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="72" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1gaa38d1ee38ccb6000997ed1bd156fb782" prot="public" static="no">
+        <name>DEFAULT_PARAM_WIFI_ACTIVE_THRESHOLD</name>
+        <initializer>75   /* = 0.75 */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="73" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1ga5b464204e354eb32bc67a35ebd8742a2" prot="public" static="no">
+        <name>DEFAULT_PARAM_WIFI_RATING_TRIM</name>
+        <initializer>50   /* = 0.5 */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="74" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_1gaf0e6c94b4fa8923dc91b3ed9b41c78d5" prot="public" static="no">
+        <name>DEFAULT_PARAM_EVAL_SUCCESS_THRESHOLD</name>
+        <initializer>85   /* = 0.85 */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="75" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Utility used to filter QoS information (per-channel CRC status) with the purpose of generating a suitable BLE channel map. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Input to the library is CRC information. This information is used to assign ratings to each BLE channel. Single channels with poor ratings, or blocks of channels affected by wifi are removed from the channel map recommendation.</para>
+<para><simplesect kind="note"><para>The library is not thread-safe. Apart from the &quot;get&quot; functions, functions must not be called while <ref refid="group__chmap__filter_ga44e940fc848a8c21f82c4c7b130d6332_1ga44e940fc848a8c21f82c4c7b130d6332" kindref="member">chmap_filter_process</ref> is running </para>
+</simplesect>
+</para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

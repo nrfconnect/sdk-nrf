@@ -1,0 +1,667 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="uri__rec_8h" kind="file" language="C++">
+    <compoundname>uri_rec.h</compoundname>
+    <includes local="no">stddef.h</includes>
+    <includes local="no">zephyr/types.h</includes>
+    <includes refid="record_8h" local="no">nfc/ndef/record.h</includes>
+    <includedby refid="uri__msg_8h" local="no">include/nfc/ndef/uri_msg.h</includedby>
+    <incdepgraph>
+      <node id="4">
+        <label>nfc/ndef/record.h</label>
+        <link refid="record_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/nfc/ndef/uri_rec.h</label>
+        <link refid="uri__rec_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stddef.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>include/nfc/ndef/uri_msg.h</label>
+        <link refid="uri__msg_8h"/>
+      </node>
+      <node id="1">
+        <label>include/nfc/ndef/uri_rec.h</label>
+        <link refid="uri__rec_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structnfc__ndef__uri__rec__payload" prot="public">nfc_ndef_uri_rec_payload</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__uri__rec_ga44fda21eba781a1cb6d384e9f913f280_1ga44fda21eba781a1cb6d384e9f913f280" prot="public" static="no">
+        <name>NFC_NDEF_URI_RECORD_DESC_DEF</name>
+        <param><defname>name</defname></param>
+        <param><defname>uri_id_code_arg</defname></param>
+        <param><defname>uri_data_arg</defname></param>
+        <param><defname>uri_data_len_arg</defname></param>
+        <initializer>	struct <ref refid="structnfc__ndef__uri__rec__payload" kindref="compound">nfc_ndef_uri_rec_payload</ref> name##_ndef_uri_record_payload_desc =  \
+	{								       \
+		.uri_id_code = (uri_id_code_arg),			       \
+		.uri_data = (uri_data_arg),				       \
+		.uri_data_len = (uri_data_len_arg)			       \
+	};								       \
+									       \
+	<ref refid="group__nfc__ndef__record_ga981ac373f5af603b36c7ab2c488785a6_1ga981ac373f5af603b36c7ab2c488785a6" kindref="member">NFC_NDEF_GENERIC_RECORD_DESC_DEF</ref>(name,				       \
+					 <ref refid="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1gga2091295307fa8161219648a88df172a8ace6c9ee74852eebbdb1421e85c4e0041" kindref="member">TNF_WELL_KNOWN</ref>,		       \
+					 NULL,				       \
+					 0,				       \
+					 &amp;<ref refid="group__nfc__uri__rec_gae782b8bf4180fc877ba4a772ad02cc48_1gae782b8bf4180fc877ba4a772ad02cc48" kindref="member">nfc_ndef_uri_rec_type</ref>,	       \
+					 sizeof(<ref refid="group__nfc__uri__rec_gae782b8bf4180fc877ba4a772ad02cc48_1gae782b8bf4180fc877ba4a772ad02cc48" kindref="member">nfc_ndef_uri_rec_type</ref>),	       \
+					 <ref refid="group__nfc__uri__rec_ga76cf1fa933fa4c56cbe564004b4b3d45_1ga76cf1fa933fa4c56cbe564004b4b3d45" kindref="member">nfc_ndef_uri_rec_payload_encode</ref>,      \
+					 &amp;name##_ndef_uri_record_payload_desc) \</initializer>
+        <briefdescription>
+<para>Macro for generating a description of a URI record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro initializes an instance of an NFC NDEF record description of a URI record.</para>
+<para><simplesect kind="note"><para>The record descriptor is declared as automatic variable, which implies that the NDEF message encoding (see <ref refid="group__nfc__uri__msg_ga06d396d07a2755050a6cd5b2ad3c3c69_1ga06d396d07a2755050a6cd5b2ad3c3c69" kindref="member">nfc_ndef_uri_msg_encode</ref>) must be done in the same variable scope.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name for accessing record descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>uri_id_code_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>URI identifier code that defines the protocol field of the URI. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>uri_data_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the URI string. The string should not contain the protocol field if the protocol was specified in <computeroutput>uri_id_code</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>uri_data_len_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the URI string. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/uri_rec.h" line="132" column="9" bodyfile="include/nfc/ndef/uri_rec.h" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__uri__rec_gae1ea87dbabad0a650f582c9b55ab9c6e_1gae1ea87dbabad0a650f582c9b55ab9c6e" prot="public" static="no">
+        <name>NFC_NDEF_URI_RECORD_DESC</name>
+        <param><defname>name</defname></param>
+        <initializer><ref refid="group__nfc__ndef__record_ga854ffeb62045f58c823adedf3f0ed615_1ga854ffeb62045f58c823adedf3f0ed615" kindref="member">NFC_NDEF_GENERIC_RECORD_DESC</ref>(name)</initializer>
+        <briefdescription>
+<para>Macro for accessing the NFC NDEF URI record descriptor instance that was created with <ref refid="group__nfc__uri__rec_ga44fda21eba781a1cb6d384e9f913f280_1ga44fda21eba781a1cb6d384e9f913f280" kindref="member">NFC_NDEF_URI_RECORD_DESC_DEF</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/uri_rec.h" line="153" column="9" bodyfile="include/nfc/ndef/uri_rec.h" bodystart="153" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1gaf49d5f61e9463ac4e64651658a499595" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nfc_ndef_uri_rec_id</name>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a20ab44a33575068d559978b354cbdfd0" prot="public">
+          <name>NFC_URI_NONE</name>
+          <initializer>= 0x00</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>No prepending is done. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a6afc6a368da81b895e5b11616039a9d6" prot="public">
+          <name>NFC_URI_HTTP_WWW</name>
+          <initializer>= 0x01</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;http://www.&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a6e2d2827e59a99a1f879ec7fbc903fe6" prot="public">
+          <name>NFC_URI_HTTPS_WWW</name>
+          <initializer>= 0x02</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;https://www.&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595acb62fe459f6b7d4f79e35688e56fdb15" prot="public">
+          <name>NFC_URI_HTTP</name>
+          <initializer>= 0x03</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;http:&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a050999db68d71d389264657b945db7ac" prot="public">
+          <name>NFC_URI_HTTPS</name>
+          <initializer>= 0x04</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;https:&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a48d4b55802ac21e606268772852f9098" prot="public">
+          <name>NFC_URI_TEL</name>
+          <initializer>= 0x05</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;tel:&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595ae0a3ef286c6f01b1c1cb83eb294df8ec" prot="public">
+          <name>NFC_URI_MAILTO</name>
+          <initializer>= 0x06</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;mailto:&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595ace4c52c7d57984bf74a2fe324dfc6eb6" prot="public">
+          <name>NFC_URI_FTP_ANONYMOUS</name>
+          <initializer>= 0x07</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;ftp://anonymous:anonymous@&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a2d2c3f00336548c170b400be23589903" prot="public">
+          <name>NFC_URI_FTP_FTP</name>
+          <initializer>= 0x08</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;ftp://ftp.&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a411303f61f1a662c7eed3c07242f891a" prot="public">
+          <name>NFC_URI_FTPS</name>
+          <initializer>= 0x09</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;ftps://&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595adb9a27aef3ec247cecdb525ea0555d13" prot="public">
+          <name>NFC_URI_SFTP</name>
+          <initializer>= 0x0A</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;sftp://&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595aac6465eb25490995b7ecf61dff027841" prot="public">
+          <name>NFC_URI_SMB</name>
+          <initializer>= 0x0B</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;smb://&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a42ed2c95fb746f82746ecffc88fb7f12" prot="public">
+          <name>NFC_URI_NFS</name>
+          <initializer>= 0x0C</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;nfs://&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a1cd42f36a346442109b709c9f1f867ea" prot="public">
+          <name>NFC_URI_FTP</name>
+          <initializer>= 0x0D</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;ftp://&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595aa7d834caeb35a8cf245bb6bc3674ea17" prot="public">
+          <name>NFC_URI_DAV</name>
+          <initializer>= 0x0E</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;dav://&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595aee9e9d001f0b69a4385083126019cafc" prot="public">
+          <name>NFC_URI_NEWS</name>
+          <initializer>= 0x0F</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;news:&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a00c3db773263de3dfb9ba356656947cd" prot="public">
+          <name>NFC_URI_TELNET</name>
+          <initializer>= 0x10</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;telnet://&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595aa4ad8cd3f0815d67cced98986eb38dc3" prot="public">
+          <name>NFC_URI_IMAP</name>
+          <initializer>= 0x11</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;imap:&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595adfbd3ae27af09b42e8a0538f3c7f6e0c" prot="public">
+          <name>NFC_URI_RTSP</name>
+          <initializer>= 0x12</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;rtsp://&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a78224ec2905963ad9bae4061c2bb04ec" prot="public">
+          <name>NFC_URI_URN</name>
+          <initializer>= 0x13</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;urn:&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595ad4bffcee5bf9d13fa690292f1a5cec0f" prot="public">
+          <name>NFC_URI_POP</name>
+          <initializer>= 0x14</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;pop:&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595af856ea81b9fd62a3361071663bef08e3" prot="public">
+          <name>NFC_URI_SIP</name>
+          <initializer>= 0x15</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;sip:&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a5d166575efdddd787ac257bbaf8b86ab" prot="public">
+          <name>NFC_URI_SIPS</name>
+          <initializer>= 0x16</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;sips:&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595afd7dbdd67646a8632804fb1f4227aff9" prot="public">
+          <name>NFC_URI_TFTP</name>
+          <initializer>= 0x17</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;tftp:&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a8dc3a5d044e6167c9276a11c988785d8" prot="public">
+          <name>NFC_URI_BTSPP</name>
+          <initializer>= 0x18</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;btspp://&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595ad29ae38893890754fb8712f92a475768" prot="public">
+          <name>NFC_URI_BTL2CAP</name>
+          <initializer>= 0x19</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;btl2cap://&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595abd6f111f2f33ce42c4c7056e467b0bfa" prot="public">
+          <name>NFC_URI_BTGOEP</name>
+          <initializer>= 0x1A</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;btgoep://&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595aa631aa281c90f538d76a059481af0a6b" prot="public">
+          <name>NFC_URI_TCPOBEX</name>
+          <initializer>= 0x1B</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;tcpobex://&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595afc426b7f93c92a83b0aaabc9597b6b5d" prot="public">
+          <name>NFC_URI_IRDAOBEX</name>
+          <initializer>= 0x1C</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;irdaobex://&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595afb3fe54faccf6d3876b7d28b065a1fcf" prot="public">
+          <name>NFC_URI_FILE</name>
+          <initializer>= 0x1D</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;file://&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595aa7c12d381d2c83083bcef6dcebb70ba3" prot="public">
+          <name>NFC_URI_URN_EPC_ID</name>
+          <initializer>= 0x1E</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;urn:epc:id:&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a432ce58c5fe20b004e9d2976f00b060a" prot="public">
+          <name>NFC_URI_URN_EPC_TAG</name>
+          <initializer>= 0x1F</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;urn:epc:tag:&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a48859c31090a175b30cce9f70badb0da" prot="public">
+          <name>NFC_URI_URN_EPC_PAT</name>
+          <initializer>= 0x20</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;urn:epc:pat:&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a6641f4fbf865cfeda876ca01d1c64e5f" prot="public">
+          <name>NFC_URI_URN_EPC_RAW</name>
+          <initializer>= 0x21</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;urn:epc:raw:&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595ae677f492bd1917bc064dd81fa04b673a" prot="public">
+          <name>NFC_URI_URN_EPC</name>
+          <initializer>= 0x22</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;urn:epc:&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a31380661cd516e6207ba91960104842b" prot="public">
+          <name>NFC_URI_URN_NFC</name>
+          <initializer>= 0x23</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>&quot;urn:nfc:&quot; </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595af23c6e0d26db2a81612d97166592ddf4" prot="public">
+          <name>NFC_URI_RFU</name>
+          <initializer>= 0xFF</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>No prepending is done. Reserved for future use. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>URI identifier codes according to &quot;URI Record Type Definition&quot; (denotation &quot;NFCForum-TS-RTD_URI_1.0&quot; published on 2006-07-24) chapter 3.2.2. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/uri_rec.h" line="32" column="1" bodyfile="include/nfc/ndef/uri_rec.h" bodystart="32" bodyend="72"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__nfc__uri__rec_gae782b8bf4180fc877ba4a772ad02cc48_1gae782b8bf4180fc877ba4a772ad02cc48" prot="public" static="no" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t nfc_ndef_uri_rec_type</definition>
+        <argsstring></argsstring>
+        <name>nfc_ndef_uri_rec_type</name>
+        <briefdescription>
+<para>External reference to the type field of the URI record, defined in the file <computeroutput>uri_rec.c</computeroutput>. It is used in the <ref refid="group__nfc__uri__rec_ga44fda21eba781a1cb6d384e9f913f280_1ga44fda21eba781a1cb6d384e9f913f280" kindref="member">NFC_NDEF_URI_RECORD_DESC_DEF</ref> macro. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/uri_rec.h" line="91" column="22" declfile="include/nfc/ndef/uri_rec.h" declline="91" declcolumn="22"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__uri__rec_ga76cf1fa933fa4c56cbe564004b4b3d45_1ga76cf1fa933fa4c56cbe564004b4b3d45" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_uri_rec_payload_encode</definition>
+        <argsstring>(struct nfc_ndef_uri_rec_payload *input, uint8_t *buff, uint32_t *len)</argsstring>
+        <name>nfc_ndef_uri_rec_payload_encode</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__uri__rec__payload" kindref="compound">nfc_ndef_uri_rec_payload</ref> *</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buff</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Construct the payload for a URI record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function encodes the payload according to the URI record definition. It implements an API compatible with <ref refid="group__nfc__ndef__record_ga1ccae5f0330b1b9b31af6efd37a8aeb8_1ga1ccae5f0330b1b9b31af6efd37a8aeb8" kindref="member">payload_constructor_t</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the description of the payload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buff</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to payload destination. If NULL, function will calculate the expected size of the URI record payload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of available memory to write as input. Size of generated payload as output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the payload was encoded successfully. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the predicted payload size is bigger than the provided buffer space. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/uri_rec.h" line="109" column="5" declfile="include/nfc/ndef/uri_rec.h" declline="109" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2018<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NFC_NDEF_URI_REC_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_NDEF_URI_REC_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stddef.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="record_8h" kindref="compound">nfc/ndef/record.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1gaf49d5f61e9463ac4e64651658a499595" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1gaf49d5f61e9463ac4e64651658a499595" kindref="member">nfc_ndef_uri_rec_id</ref><sp/>{</highlight></codeline>
+<codeline lineno="33" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a20ab44a33575068d559978b354cbdfd0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a20ab44a33575068d559978b354cbdfd0" kindref="member">NFC_URI_NONE</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x00,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="34" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a6afc6a368da81b895e5b11616039a9d6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a6afc6a368da81b895e5b11616039a9d6" kindref="member">NFC_URI_HTTP_WWW</ref><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x01,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="35" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a6e2d2827e59a99a1f879ec7fbc903fe6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a6e2d2827e59a99a1f879ec7fbc903fe6" kindref="member">NFC_URI_HTTPS_WWW</ref><sp/><sp/><sp/><sp/><sp/>=<sp/>0x02,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="36" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595acb62fe459f6b7d4f79e35688e56fdb15" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595acb62fe459f6b7d4f79e35688e56fdb15" kindref="member">NFC_URI_HTTP</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x03,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="37" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a050999db68d71d389264657b945db7ac" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a050999db68d71d389264657b945db7ac" kindref="member">NFC_URI_HTTPS</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x04,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="38" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a48d4b55802ac21e606268772852f9098" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a48d4b55802ac21e606268772852f9098" kindref="member">NFC_URI_TEL</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x05,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="39" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595ae0a3ef286c6f01b1c1cb83eb294df8ec" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595ae0a3ef286c6f01b1c1cb83eb294df8ec" kindref="member">NFC_URI_MAILTO</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x06,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="40" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595ace4c52c7d57984bf74a2fe324dfc6eb6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595ace4c52c7d57984bf74a2fe324dfc6eb6" kindref="member">NFC_URI_FTP_ANONYMOUS</ref><sp/>=<sp/>0x07,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="41" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a2d2c3f00336548c170b400be23589903" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a2d2c3f00336548c170b400be23589903" kindref="member">NFC_URI_FTP_FTP</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x08,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="42" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a411303f61f1a662c7eed3c07242f891a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a411303f61f1a662c7eed3c07242f891a" kindref="member">NFC_URI_FTPS</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x09,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="43" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595adb9a27aef3ec247cecdb525ea0555d13" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595adb9a27aef3ec247cecdb525ea0555d13" kindref="member">NFC_URI_SFTP</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x0A,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="44" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595aac6465eb25490995b7ecf61dff027841" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595aac6465eb25490995b7ecf61dff027841" kindref="member">NFC_URI_SMB</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x0B,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="45" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a42ed2c95fb746f82746ecffc88fb7f12" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a42ed2c95fb746f82746ecffc88fb7f12" kindref="member">NFC_URI_NFS</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x0C,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="46" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a1cd42f36a346442109b709c9f1f867ea" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a1cd42f36a346442109b709c9f1f867ea" kindref="member">NFC_URI_FTP</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x0D,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="47" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595aa7d834caeb35a8cf245bb6bc3674ea17" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595aa7d834caeb35a8cf245bb6bc3674ea17" kindref="member">NFC_URI_DAV</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x0E,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="48" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595aee9e9d001f0b69a4385083126019cafc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595aee9e9d001f0b69a4385083126019cafc" kindref="member">NFC_URI_NEWS</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x0F,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="49" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a00c3db773263de3dfb9ba356656947cd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a00c3db773263de3dfb9ba356656947cd" kindref="member">NFC_URI_TELNET</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x10,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="50" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595aa4ad8cd3f0815d67cced98986eb38dc3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595aa4ad8cd3f0815d67cced98986eb38dc3" kindref="member">NFC_URI_IMAP</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x11,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="51" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595adfbd3ae27af09b42e8a0538f3c7f6e0c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595adfbd3ae27af09b42e8a0538f3c7f6e0c" kindref="member">NFC_URI_RTSP</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x12,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="52" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a78224ec2905963ad9bae4061c2bb04ec" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a78224ec2905963ad9bae4061c2bb04ec" kindref="member">NFC_URI_URN</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x13,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="53" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595ad4bffcee5bf9d13fa690292f1a5cec0f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595ad4bffcee5bf9d13fa690292f1a5cec0f" kindref="member">NFC_URI_POP</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x14,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="54" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595af856ea81b9fd62a3361071663bef08e3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595af856ea81b9fd62a3361071663bef08e3" kindref="member">NFC_URI_SIP</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x15,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="55" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a5d166575efdddd787ac257bbaf8b86ab" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a5d166575efdddd787ac257bbaf8b86ab" kindref="member">NFC_URI_SIPS</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x16,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="56" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595afd7dbdd67646a8632804fb1f4227aff9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595afd7dbdd67646a8632804fb1f4227aff9" kindref="member">NFC_URI_TFTP</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x17,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="57" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a8dc3a5d044e6167c9276a11c988785d8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a8dc3a5d044e6167c9276a11c988785d8" kindref="member">NFC_URI_BTSPP</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x18,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="58" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595ad29ae38893890754fb8712f92a475768" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595ad29ae38893890754fb8712f92a475768" kindref="member">NFC_URI_BTL2CAP</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x19,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="59" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595abd6f111f2f33ce42c4c7056e467b0bfa" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595abd6f111f2f33ce42c4c7056e467b0bfa" kindref="member">NFC_URI_BTGOEP</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x1A,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="60" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595aa631aa281c90f538d76a059481af0a6b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595aa631aa281c90f538d76a059481af0a6b" kindref="member">NFC_URI_TCPOBEX</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x1B,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="61" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595afc426b7f93c92a83b0aaabc9597b6b5d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595afc426b7f93c92a83b0aaabc9597b6b5d" kindref="member">NFC_URI_IRDAOBEX</ref><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x1C,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="62" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595afb3fe54faccf6d3876b7d28b065a1fcf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595afb3fe54faccf6d3876b7d28b065a1fcf" kindref="member">NFC_URI_FILE</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x1D,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="63" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595aa7c12d381d2c83083bcef6dcebb70ba3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595aa7c12d381d2c83083bcef6dcebb70ba3" kindref="member">NFC_URI_URN_EPC_ID</ref><sp/><sp/><sp/><sp/>=<sp/>0x1E,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="64" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a432ce58c5fe20b004e9d2976f00b060a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a432ce58c5fe20b004e9d2976f00b060a" kindref="member">NFC_URI_URN_EPC_TAG</ref><sp/><sp/><sp/>=<sp/>0x1F,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="65" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a48859c31090a175b30cce9f70badb0da" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a48859c31090a175b30cce9f70badb0da" kindref="member">NFC_URI_URN_EPC_PAT</ref><sp/><sp/><sp/>=<sp/>0x20,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="66" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a6641f4fbf865cfeda876ca01d1c64e5f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a6641f4fbf865cfeda876ca01d1c64e5f" kindref="member">NFC_URI_URN_EPC_RAW</ref><sp/><sp/><sp/>=<sp/>0x21,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="67" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595ae677f492bd1917bc064dd81fa04b673a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595ae677f492bd1917bc064dd81fa04b673a" kindref="member">NFC_URI_URN_EPC</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x22,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="68" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a31380661cd516e6207ba91960104842b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595a31380661cd516e6207ba91960104842b" kindref="member">NFC_URI_URN_NFC</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x23,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595af23c6e0d26db2a81612d97166592ddf4" kindref="member">NFC_URI_RFU</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0xFF<sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="72" refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1ggaf49d5f61e9463ac4e64651658a499595af23c6e0d26db2a81612d97166592ddf4" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77" refid="structnfc__ndef__uri__rec__payload" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__ndef__uri__rec__payload" kindref="compound">nfc_ndef_uri_rec_payload</ref><sp/>{</highlight></codeline>
+<codeline lineno="79" refid="structnfc__ndef__uri__rec__payload_a7a9a94ea65f31968be22d68a13128059_1a7a9a94ea65f31968be22d68a13128059" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1gaf49d5f61e9463ac4e64651658a499595" kindref="member">nfc_ndef_uri_rec_id</ref><sp/><ref refid="structnfc__ndef__uri__rec__payload_a7a9a94ea65f31968be22d68a13128059_1a7a9a94ea65f31968be22d68a13128059" kindref="member">uri_id_code</ref>;</highlight></codeline>
+<codeline lineno="81" refid="structnfc__ndef__uri__rec__payload_a45736201dc3d802345c2abdfb5046a09_1a45736201dc3d802345c2abdfb5046a09" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>*<ref refid="structnfc__ndef__uri__rec__payload_a45736201dc3d802345c2abdfb5046a09_1a45736201dc3d802345c2abdfb5046a09" kindref="member">uri_data</ref>;</highlight></codeline>
+<codeline lineno="83" refid="structnfc__ndef__uri__rec__payload_a1b6db4ca26cf72b4a46fe4c6b254c0c2_1a1b6db4ca26cf72b4a46fe4c6b254c0c2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnfc__ndef__uri__rec__payload_a1b6db4ca26cf72b4a46fe4c6b254c0c2_1a1b6db4ca26cf72b4a46fe4c6b254c0c2" kindref="member">uri_data_len</ref>;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/><ref refid="group__nfc__uri__rec_gae782b8bf4180fc877ba4a772ad02cc48_1gae782b8bf4180fc877ba4a772ad02cc48" kindref="member">nfc_ndef_uri_rec_type</ref>;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109" refid="group__nfc__uri__rec_ga76cf1fa933fa4c56cbe564004b4b3d45_1ga76cf1fa933fa4c56cbe564004b4b3d45" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__uri__rec_ga76cf1fa933fa4c56cbe564004b4b3d45_1ga76cf1fa933fa4c56cbe564004b4b3d45" kindref="member">nfc_ndef_uri_rec_payload_encode</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__ndef__uri__rec__payload" kindref="compound">nfc_ndef_uri_rec_payload</ref><sp/>*input,</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*buff,</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/>*len);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129" refid="group__nfc__uri__rec_ga44fda21eba781a1cb6d384e9f913f280_1ga44fda21eba781a1cb6d384e9f913f280" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_NDEF_URI_RECORD_DESC_DEF(name,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="130"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uri_id_code_arg,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="131"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uri_data_arg,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="132"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uri_data_len_arg)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="133"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>struct<sp/>nfc_ndef_uri_rec_payload<sp/>name##_ndef_uri_record_payload_desc<sp/>=<sp/><sp/>\</highlight></codeline>
+<codeline lineno="134"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="135"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.uri_id_code<sp/>=<sp/>(uri_id_code_arg),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="136"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.uri_data<sp/>=<sp/>(uri_data_arg),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="137"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.uri_data_len<sp/>=<sp/>(uri_data_len_arg)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="138"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="139"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="140"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NFC_NDEF_GENERIC_RECORD_DESC_DEF(name,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="141"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TNF_WELL_KNOWN,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="142"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="143"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="144"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;nfc_ndef_uri_rec_type,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="145"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sizeof(nfc_ndef_uri_rec_type),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="146"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>nfc_ndef_uri_rec_payload_encode,<sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="147"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;name##_ndef_uri_record_payload_desc)<sp/>\</highlight></codeline>
+<codeline lineno="148"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="153" refid="group__nfc__uri__rec_gae1ea87dbabad0a650f582c9b55ab9c6e_1gae1ea87dbabad0a650f582c9b55ab9c6e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_NDEF_URI_RECORD_DESC(name)<sp/>NFC_NDEF_GENERIC_RECORD_DESC(name)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>NFC_NDEF_URI_REC_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/nfc/ndef/uri_rec.h"/>
+  </compounddef>
+</doxygen>

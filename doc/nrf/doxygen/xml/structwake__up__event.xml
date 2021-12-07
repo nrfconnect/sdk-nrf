@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structwake__up__event" kind="struct" language="C++" prot="public">
+    <compoundname>wake_up_event</compoundname>
+    <includes refid="include_2caf_2events_2power__event_8h" local="no">power_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structwake__up__event_aa4b8d3bc55de3efbc2346ba37b96f968_1aa4b8d3bc55de3efbc2346ba37b96f968" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header wake_up_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event header. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/power_event.h" line="81" column="19" bodyfile="include/caf/events/power_event.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Wake up event. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The wake up event is submitted to trigger exiting the suspended state.</para>
+<para>The wake up event can be submitted by any application module after the application is suspended. The event can be submitted for example on button press or sensor trigger.</para>
+<para>Every application module that handles wake up event should exit suspended state, turn on functionalities disabled on <ref refid="structpower__down__event" kindref="compound">power_down_event</ref> and submit <ref refid="structmodule__state__event" kindref="compound">module_state_event</ref> with state set to MODULE_STATE_READY. If the module is already woken up, it should ignore the event. The module must not consume the wake up event to ensure that other listeners will be informed.</para>
+<para>The module that controls power management of the application should be an only early subscriber for the wake up event. This module can consume the wake up events to prevent waking up the application modules after fatal error.</para>
+<para><simplesect kind="note"><para>For more information about suspending modules see <ref refid="structpower__down__event" kindref="compound">power_down_event</ref>. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>wake_up_event</label>
+        <link refid="structwake__up__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/caf/events/power_event.h" line="79" column="1" bodyfile="include/caf/events/power_event.h" bodystart="79" bodyend="82"/>
+    <listofallmembers>
+      <member refid="structwake__up__event_aa4b8d3bc55de3efbc2346ba37b96f968_1aa4b8d3bc55de3efbc2346ba37b96f968" prot="public" virt="non-virtual"><scope>wake_up_event</scope><name>header</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

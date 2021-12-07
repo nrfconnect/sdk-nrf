@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__ndef__payload__type__common" kind="group">
+    <compoundname>nfc_ndef_payload_type_common</compoundname>
+    <title>Standard NDEF Record Type definitions</title>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__nfc__ndef__payload__type__common_1ga6c2146c462cf9d1b3870787526f9e5f2" prot="public" static="no" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t nfc_ndef_le_oob_rec_type_field[32]</definition>
+        <argsstring>[32]</argsstring>
+        <name>nfc_ndef_le_oob_rec_type_field</name>
+        <briefdescription>
+<para>External reference to the type field of the Bluetooth LE Carrier Configuration NDEF Record, defined in the file <computeroutput>payload_type_common.c</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/payload_type_common.h" line="28" column="22" declfile="include/nfc/ndef/payload_type_common.h" declline="28" declcolumn="22"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__nfc__ndef__payload__type__common_1ga46b2a223a7018b74e5c3e51756d0c45a" prot="public" static="no" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t nfc_ndef_ch_hs_rec_type_field[2]</definition>
+        <argsstring>[2]</argsstring>
+        <name>nfc_ndef_ch_hs_rec_type_field</name>
+        <briefdescription>
+<para>An external reference to the type field of the Handover Select record, defined in the file <computeroutput>ch_rec.c</computeroutput>. It is used in the <emphasis>NFC_NDEF_HS_RECORD_DESC_DEF</emphasis> macro. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/payload_type_common.h" line="35" column="22" declfile="include/nfc/ndef/payload_type_common.h" declline="35" declcolumn="22"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__nfc__ndef__payload__type__common_1ga1762b1c00180f8c6a6ac0aad0056518c" prot="public" static="no" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t nfc_ndef_ch_hr_rec_type_field[2]</definition>
+        <argsstring>[2]</argsstring>
+        <name>nfc_ndef_ch_hr_rec_type_field</name>
+        <briefdescription>
+<para>An external reference to the type field of the Handover Request record, defined in the file <computeroutput>ch_rec.c</computeroutput>. It is used in the <emphasis>NFC_NDEF_HR_RECORD_DESC_DEF</emphasis> macro. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/payload_type_common.h" line="42" column="22" declfile="include/nfc/ndef/payload_type_common.h" declline="42" declcolumn="22"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__nfc__ndef__payload__type__common_1ga56dc6cf879a0320b1bebc5e56e5225f0" prot="public" static="no" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t nfc_ndef_ch_hm_rec_type_field[2]</definition>
+        <argsstring>[2]</argsstring>
+        <name>nfc_ndef_ch_hm_rec_type_field</name>
+        <briefdescription>
+<para>An external reference to the type field of the Handover Mediation Record, defined in the file <computeroutput>ch_rec.c</computeroutput>. It is used in the <emphasis>NFC_NDEF_HM_RECORD_DESC_DEF</emphasis> macro. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/payload_type_common.h" line="49" column="22" declfile="include/nfc/ndef/payload_type_common.h" declline="49" declcolumn="22"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__nfc__ndef__payload__type__common_1ga356cf6db87faed83de1ecdc7fba60ccf" prot="public" static="no" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t nfc_ndef_ch_hi_rec_type_field[2]</definition>
+        <argsstring>[2]</argsstring>
+        <name>nfc_ndef_ch_hi_rec_type_field</name>
+        <briefdescription>
+<para>An external reference to the type field of the Handover Initiate Record, defined in the file <computeroutput>ch_rec.c</computeroutput>. It is used in the <emphasis>NFC_NDEF_HI_RECORD_DESC_DEF</emphasis> macro. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/payload_type_common.h" line="56" column="22" declfile="include/nfc/ndef/payload_type_common.h" declline="56" declcolumn="22"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__nfc__ndef__payload__type__common_1gaf1e06dd8b54c94e8df05404ba133a873" prot="public" static="no" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t nfc_ndef_ch_hc_rec_type_field[2]</definition>
+        <argsstring>[2]</argsstring>
+        <name>nfc_ndef_ch_hc_rec_type_field</name>
+        <briefdescription>
+<para>An external reference to the type field of the Handover Carrier Record, defined in the file <computeroutput>ch_rec.c</computeroutput>. It is used in the <emphasis>NFC_NDEF_HC_RECORD_DESC_DEF</emphasis> macro. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/payload_type_common.h" line="63" column="22" declfile="include/nfc/ndef/payload_type_common.h" declline="63" declcolumn="22"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__nfc__ndef__payload__type__common_1gac33d03589d981f9a97dc99b3d68cceba" prot="public" static="no" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t nfc_ndef_ch_ac_rec_type_field[2]</definition>
+        <argsstring>[2]</argsstring>
+        <name>nfc_ndef_ch_ac_rec_type_field</name>
+        <briefdescription>
+<para>External reference to the type field of the Alternative Carrier Record, defined in the file <computeroutput>ch_rec.c</computeroutput>. It is used in the <emphasis>NFC_NDEF_AC_RECORD_DESC_DEF</emphasis> macro. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/payload_type_common.h" line="70" column="22" declfile="include/nfc/ndef/payload_type_common.h" declline="70" declcolumn="22"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__nfc__ndef__payload__type__common_1gaf76826f114751c827cad9f3e21aa20d6" prot="public" static="no" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t nfc_ndef_ch_cr_rec_type_field[2]</definition>
+        <argsstring>[2]</argsstring>
+        <name>nfc_ndef_ch_cr_rec_type_field</name>
+        <briefdescription>
+<para>External reference to the type field of the Collision Resolution Record, defined in the file <computeroutput>ch_rec.c</computeroutput>. It is used in the <emphasis>NFC_NDEF_CR_RECORD_DESC_DEF</emphasis> macro. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/payload_type_common.h" line="77" column="22" declfile="include/nfc/ndef/payload_type_common.h" declline="77" declcolumn="22"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Set of standard NDEF Record Types defined in NFC Forum specifications. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

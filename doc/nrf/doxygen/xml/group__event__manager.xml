@@ -1,0 +1,492 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__event__manager" kind="group">
+    <compoundname>event_manager</compoundname>
+    <title>Event Manager</title>
+    <innerclass refid="structevent__header" prot="public">event_header</innerclass>
+    <innerclass refid="structevent__dyndata" prot="public">event_dyndata</innerclass>
+    <innerclass refid="structevent__listener" prot="public">event_listener</innerclass>
+    <innerclass refid="structevent__subscriber" prot="public">event_subscriber</innerclass>
+    <innerclass refid="structevent__type" prot="public">event_type</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__event__manager_1ga0c9e3d6e6b436d63d061f0e40ecaffd1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int event_manager_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>event_manager_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initialize the Event Manager.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="255" column="5" declfile="include/event_manager.h" declline="255" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__manager_1gafe39c37822a04ae2c39c160b4fd0c852" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void event_manager_trace_event_execution</definition>
+        <argsstring>(const struct event_header *eh, bool is_start)</argsstring>
+        <name>event_manager_trace_event_execution</name>
+        <param>
+          <type>const struct <ref refid="structevent__header" kindref="compound">event_header</ref> *</type>
+          <declname>eh</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>is_start</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Trace event execution. The behavior of this function depends on the actual implementation. The default implementation of this function is no-operation. It is annotated as weak and is meant to be overridden by layer adding support for profiling mechanism. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="264" column="6" declfile="include/event_manager.h" declline="264" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__manager_1ga27f401786c70ded5b2390e8deabc21e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void event_manager_trace_event_submission</definition>
+        <argsstring>(const struct event_header *eh, const void *trace_info)</argsstring>
+        <name>event_manager_trace_event_submission</name>
+        <param>
+          <type>const struct <ref refid="structevent__header" kindref="compound">event_header</ref> *</type>
+          <declname>eh</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>trace_info</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Trace event submission. The behavior of this function depends on the actual implementation. The default implementation of this function is no-operation. It is annotated as weak and is meant to be overridden by layer adding support for profiling mechanism. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="274" column="6" declfile="include/event_manager.h" declline="274" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__manager_1gadf3cd5fecf83da0c40942c6db1cda488" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int event_manager_trace_event_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>event_manager_trace_event_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initialize tracing in the Event Manager. The behavior of this function depends on the actual implementation. The default implementation of this function is no-operation. It is annotated as weak and is meant to be overridden by layer adding support for profiling mechanism. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="284" column="5" declfile="include/event_manager.h" declline="284" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__manager_1ga162e79cf772042d5b5952085484f6527" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void * event_manager_alloc</definition>
+        <argsstring>(size_t size)</argsstring>
+        <name>event_manager_alloc</name>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Allocate event. The behavior of this function depends on the actual implementation. The default implementation of this function is same as k_malloc. It is annotated as weak and can be overridden by user.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Amount of memory requested (in bytes). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>Address</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>of the allocated memory if successful, otherwise NULL. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="294" column="6" declfile="include/event_manager.h" declline="294" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__manager_1ga1b09d8c208df9307158a8b619ddbba1b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void event_manager_free</definition>
+        <argsstring>(void *addr)</argsstring>
+        <name>event_manager_free</name>
+        <param>
+          <type>void *</type>
+          <declname>addr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Free memory occupied by the event. The behavior of this function depends on the actual implementation. The default implementation of this function is same as k_free. It is annotated as weak and can be overridden by user.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>addr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to previously allocated memory. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="304" column="6" declfile="include/event_manager.h" declline="304" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__event__manager_1ga96c7ab295dbe0ce8942a0b8d79c582a5" prot="public" static="no">
+        <name>SUBS_PRIO_MIN</name>
+        <initializer>_SUBS_PRIO_FIRST</initializer>
+        <briefdescription>
+<para>Index of the highest subscriber priority level. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="40" column="9" bodyfile="include/event_manager.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__event__manager_1gae8a5357eb01f3075e30af2bc301b5ec2" prot="public" static="no">
+        <name>SUBS_PRIO_MAX</name>
+        <initializer>_SUBS_PRIO_FINAL</initializer>
+        <briefdescription>
+<para>Index of the lowest subscriber priority level. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="47" column="9" bodyfile="include/event_manager.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__event__manager_1ga444591066723c2427db7eb61ee7c3c1f" prot="public" static="no">
+        <name>SUBS_PRIO_COUNT</name>
+        <initializer>(<ref refid="group__event__manager_gae8a5357eb01f3075e30af2bc301b5ec2_1gae8a5357eb01f3075e30af2bc301b5ec2" kindref="member">SUBS_PRIO_MAX</ref> - <ref refid="group__event__manager_ga96c7ab295dbe0ce8942a0b8d79c582a5_1ga96c7ab295dbe0ce8942a0b8d79c582a5" kindref="member">SUBS_PRIO_MIN</ref> + 1)</initializer>
+        <briefdescription>
+<para>Number of subscriber priority levels. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="54" column="9" bodyfile="include/event_manager.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__event__manager_1ga490c892c4aced8be6dfbd9b2c3981a14" prot="public" static="no">
+        <name>EVENT_LISTENER</name>
+        <param><defname>lname</defname></param>
+        <param><defname>cb_fn</defname></param>
+        <initializer>_EVENT_LISTENER(lname, cb_fn)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Create an event listener object.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>lname</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Module name. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cb_fn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the event handler function. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="144" column="9" bodyfile="include/event_manager.h" bodystart="144" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__event__manager_1ga8b189ec06cd4b0f110318468ada2b156" prot="public" static="no">
+        <name>EVENT_SUBSCRIBE_EARLY</name>
+        <param><defname>lname</defname></param>
+        <param><defname>ename</defname></param>
+        <initializer>	_EVENT_SUBSCRIBE(lname, ename, _SUBS_PRIO_ID(_SUBS_PRIO_FIRST))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Subscribe a listener to the early notification list for an event type.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>lname</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the listener. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ename</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the event. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="153" column="9" bodyfile="include/event_manager.h" bodystart="153" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__event__manager_1gaebf66fb07cb3f6ae2a536ce0bf5ae52d" prot="public" static="no">
+        <name>EVENT_SUBSCRIBE</name>
+        <param><defname>lname</defname></param>
+        <param><defname>ename</defname></param>
+        <initializer>	_EVENT_SUBSCRIBE(lname, ename, _SUBS_PRIO_ID(_SUBS_PRIO_NORMAL))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Subscribe a listener to the normal notification list for an event type.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>lname</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the listener. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ename</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the event. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="163" column="9" bodyfile="include/event_manager.h" bodystart="163" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__event__manager_1ga5df81526cfcfcf51c6042038f7117b1f" prot="public" static="no">
+        <name>EVENT_SUBSCRIBE_FINAL</name>
+        <param><defname>lname</defname></param>
+        <param><defname>ename</defname></param>
+        <initializer>	_EVENT_SUBSCRIBE(lname, ename, _SUBS_PRIO_ID(_SUBS_PRIO_FINAL));			\
+	const struct {} _CONCAT(_CONCAT(__event_subscriber_, ename), final_sub_redefined) = {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Subscribe a listener to an event type as final module that is being notified.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>lname</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the listener. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ename</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the event. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="173" column="9" bodyfile="include/event_manager.h" bodystart="173" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__event__manager_1gade0652b21cddf1a6b4d58e668b402caa" prot="public" static="no">
+        <name>EVENT_TYPE_DECLARE</name>
+        <param><defname>ename</defname></param>
+        <initializer>_EVENT_TYPE_DECLARE(ename)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Declare an event type.</para>
+<para>This macro provides declarations required for an event to be used by other modules.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ename</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the event. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="185" column="9" bodyfile="include/event_manager.h" bodystart="185" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__event__manager_1ga557f549af5f03066299fbae982899c7f" prot="public" static="no">
+        <name>EVENT_TYPE_DYNDATA_DECLARE</name>
+        <param><defname>ename</defname></param>
+        <initializer>_EVENT_TYPE_DYNDATA_DECLARE(ename)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Declare an event type with dynamic data size.</para>
+<para>This macro provides declarations required for an event to be used by other modules. Declared event will use dynamic data.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ename</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the event. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="196" column="9" bodyfile="include/event_manager.h" bodystart="196" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__event__manager_1gad3f0814a48a4023a3cb6f87bd6f7beaf" prot="public" static="no">
+        <name>EVENT_TYPE_DEFINE</name>
+        <param><defname>ename</defname></param>
+        <param><defname>init_log_en</defname></param>
+        <param><defname>log_fn</defname></param>
+        <param><defname>ev_info_struct</defname></param>
+        <initializer>	_EVENT_TYPE_DEFINE(ename, init_log_en, log_fn, ev_info_struct)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Define an event type.</para>
+<para>This macro defines an event type. In addition, it defines functions specific to the event type and the event type structure.</para>
+<para>For every defined event, the following functions are created, where <emphasis>event_type</emphasis> is replaced with the given event type name <computeroutput>ename</computeroutput> (for example, <ref refid="structbutton__event" kindref="compound">button_event</ref>):<itemizedlist>
+<listitem><para>new_<emphasis>event_type</emphasis> - Allocates an event of a given type.</para>
+</listitem><listitem><para>is_<emphasis>event_type</emphasis> - Checks if the event header that is provided as argument represents the given event type.</para>
+</listitem><listitem><para>cast_<emphasis>event_type</emphasis> - Casts the event header that is provided as argument to an event of the given type.</para>
+</listitem></itemizedlist>
+</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ename</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the event. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>init_log_en</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bool indicating if the event is logged by default. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>log_fn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Function to stringify an event of this type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ev_info_struct</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data structure describing the event type. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="219" column="9" bodyfile="include/event_manager.h" bodystart="219" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__event__manager_1ga0a8c0d6c739e186520447ec8c935106d" prot="public" static="no">
+        <name>ASSERT_EVENT_ID</name>
+        <param><defname>id</defname></param>
+        <initializer>	__ASSERT_NO_MSG((id &gt;= __start_event_types) &amp;&amp; (id &lt; __stop_event_types))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Verify if an event ID is valid.</para>
+<para>The pointer to an event type structure is used as its ID. This macro validates that the provided pointer is within the range where event type structures are defined.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ID. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="231" column="9" bodyfile="include/event_manager.h" bodystart="231" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__event__manager_1ga5fb4d859ba408c80abc899d18bb626e4" prot="public" static="no">
+        <name>EVENT_SUBMIT</name>
+        <param><defname>event</defname></param>
+        <initializer>_event_submit(&amp;event-&gt;header)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Submit an event.</para>
+<para>This helper macro simplifies the event submission.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>event</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the event object. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="248" column="9" bodyfile="include/event_manager.h" bodystart="248" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Event Manager. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

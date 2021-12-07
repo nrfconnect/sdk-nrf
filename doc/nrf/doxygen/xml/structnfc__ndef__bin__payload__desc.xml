@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__ndef__bin__payload__desc" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_ndef_bin_payload_desc</compoundname>
+    <includes refid="record_8h" local="no">record.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__ndef__bin__payload__desc_a3e860904b28f06ae127230e7a5082a83_1a3e860904b28f06ae127230e7a5082a83" prot="public" static="no" mutable="no">
+        <type>uint8_t const  *</type>
+        <definition>uint8_t const* nfc_ndef_bin_payload_desc::payload</definition>
+        <argsstring></argsstring>
+        <name>payload</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the buffer with the data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="129" column="15" bodyfile="include/nfc/ndef/record.h" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__bin__payload__desc_a1339407b28fb89e1f92ac314dae8d8e4_1a1339407b28fb89e1f92ac314dae8d8e4" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t nfc_ndef_bin_payload_desc::payload_length</definition>
+        <argsstring></argsstring>
+        <name>payload_length</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of data in bytes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="130" column="10" bodyfile="include/nfc/ndef/record.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Binary data descriptor containing the payload for the record. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/nfc/ndef/record.h" line="128" column="1" bodyfile="include/nfc/ndef/record.h" bodystart="128" bodyend="131"/>
+    <listofallmembers>
+      <member refid="structnfc__ndef__bin__payload__desc_a3e860904b28f06ae127230e7a5082a83_1a3e860904b28f06ae127230e7a5082a83" prot="public" virt="non-virtual"><scope>nfc_ndef_bin_payload_desc</scope><name>payload</name></member>
+      <member refid="structnfc__ndef__bin__payload__desc_a1339407b28fb89e1f92ac314dae8d8e4_1a1339407b28fb89e1f92ac314dae8d8e4" prot="public" virt="non-virtual"><scope>nfc_ndef_bin_payload_desc</scope><name>payload_length</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

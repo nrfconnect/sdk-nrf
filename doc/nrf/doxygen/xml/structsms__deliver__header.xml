@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structsms__deliver__header" kind="struct" language="C++" prot="public">
+    <compoundname>sms_deliver_header</compoundname>
+    <includes refid="sms_8h" local="no">sms.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structsms__deliver__header_a5250db6d80f3f495670f892643b0ed06_1a5250db6d80f3f495670f892643b0ed06" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structsms__time" kindref="compound">sms_time</ref></type>
+        <definition>struct sms_time sms_deliver_header::time</definition>
+        <argsstring></argsstring>
+        <name>time</name>
+        <briefdescription>
+<para>Timestamp. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="115" column="15" bodyfile="include/modem/sms.h" bodystart="115" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsms__deliver__header_ae9742593413d2111ef5bc157f0929a9b_1ae9742593413d2111ef5bc157f0929a9b" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structsms__address" kindref="compound">sms_address</ref></type>
+        <definition>struct sms_address sms_deliver_header::originating_address</definition>
+        <argsstring></argsstring>
+        <name>originating_address</name>
+        <briefdescription>
+<para>Originating address, i.e., phone number. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="117" column="18" bodyfile="include/modem/sms.h" bodystart="117" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsms__deliver__header_ab1c7ed705e46c86a561711b58d0dacdb_1ab1c7ed705e46c86a561711b58d0dacdb" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structsms__udh__app__port" kindref="compound">sms_udh_app_port</ref></type>
+        <definition>struct sms_udh_app_port sms_deliver_header::app_port</definition>
+        <argsstring></argsstring>
+        <name>app_port</name>
+        <briefdescription>
+<para>Application port addressing information. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="119" column="23" bodyfile="include/modem/sms.h" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsms__deliver__header_a78bbea3e9cf89ef73aeade299fcb8a78_1a78bbea3e9cf89ef73aeade299fcb8a78" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structsms__udh__concat" kindref="compound">sms_udh_concat</ref></type>
+        <definition>struct sms_udh_concat sms_deliver_header::concatenated</definition>
+        <argsstring></argsstring>
+        <name>concatenated</name>
+        <briefdescription>
+<para>Concatenated short message information. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="121" column="21" bodyfile="include/modem/sms.h" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>SMS-DELIVER message header. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This is for incoming SMS message and more specifically SMS-DELIVER message specified in 3GPP TS 23.040. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>sms_address</label>
+        <link refid="structsms__address"/>
+      </node>
+      <node id="1">
+        <label>sms_deliver_header</label>
+        <link refid="structsms__deliver__header"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>time</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>originating_address</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>app_port</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>concatenated</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>sms_time</label>
+        <link refid="structsms__time"/>
+      </node>
+      <node id="4">
+        <label>sms_udh_app_port</label>
+        <link refid="structsms__udh__app__port"/>
+      </node>
+      <node id="5">
+        <label>sms_udh_concat</label>
+        <link refid="structsms__udh__concat"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/modem/sms.h" line="113" column="1" bodyfile="include/modem/sms.h" bodystart="113" bodyend="122"/>
+    <listofallmembers>
+      <member refid="structsms__deliver__header_ab1c7ed705e46c86a561711b58d0dacdb_1ab1c7ed705e46c86a561711b58d0dacdb" prot="public" virt="non-virtual"><scope>sms_deliver_header</scope><name>app_port</name></member>
+      <member refid="structsms__deliver__header_a78bbea3e9cf89ef73aeade299fcb8a78_1a78bbea3e9cf89ef73aeade299fcb8a78" prot="public" virt="non-virtual"><scope>sms_deliver_header</scope><name>concatenated</name></member>
+      <member refid="structsms__deliver__header_ae9742593413d2111ef5bc157f0929a9b_1ae9742593413d2111ef5bc157f0929a9b" prot="public" virt="non-virtual"><scope>sms_deliver_header</scope><name>originating_address</name></member>
+      <member refid="structsms__deliver__header_a5250db6d80f3f495670f892643b0ed06_1a5250db6d80f3f495670f892643b0ed06" prot="public" virt="non-virtual"><scope>sms_deliver_header</scope><name>time</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

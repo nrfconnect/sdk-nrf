@@ -1,0 +1,272 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__interrupts" kind="group">
+    <compoundname>st25r3911b_interrupts</compoundname>
+    <title>ST25R3911B NFC Reader interrupts</title>
+    <innergroup refid="group__st25r3911b__irq__def">ST25R3911B interrupts definition</innergroup>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__st25r3911b__interrupts_1ga1efc786a5aa67dae2e2167984e4c1c32" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_irq_init</definition>
+        <argsstring>(struct k_sem *irq_sem)</argsstring>
+        <name>st25r3911b_irq_init</name>
+        <param>
+          <type>struct k_sem *</type>
+          <declname>irq_sem</declname>
+        </param>
+        <briefdescription>
+<para>Initialize NFC Reader interrupts. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The NFC Reader informs about interruptions by a rising edge on the pin. This function initializes the GPIO interface to handle this.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">irq_sem</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Semaphore needed to synchronize processing interrupts from other context.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="74" column="5" declfile="lib/st25r3911b/st25r3911b_interrupt.h" declline="74" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__interrupts_1gad850f0c2bc6cc240e053cee826581966" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_irq_modify</definition>
+        <argsstring>(uint32_t clr_mask, uint32_t set_mask)</argsstring>
+        <name>st25r3911b_irq_modify</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>clr_mask</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>set_mask</declname>
+        </param>
+        <briefdescription>
+<para>Modify NFC Reader interrupts. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function modifies the currently enabled interrupts. The set mask covers the clear mask, which means that first, interrupts from the clear mask are disabled, and then interrupts from the set mask are enabled. The mask can be composed of several interrupts. For example: <computeroutput>mask = ST25R3911B_IRQ_MASK_PAR | ST25R3911B_IRQ_MASK_CRC</computeroutput></para>
+<para>See <ref refid="group__st25r3911b__irq__def" kindref="compound">ST25R3911B interrupts definition</ref> for available interrupts.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">clr_mask</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interrupts clear mask. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set_mask</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interrupts set mask.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="93" column="5" declfile="lib/st25r3911b/st25r3911b_interrupt.h" declline="93" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__interrupts_1ga05660a3a9b35fe3718269aa24decdd29" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_irq_enable</definition>
+        <argsstring>(uint32_t mask)</argsstring>
+        <name>st25r3911b_irq_enable</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>mask</declname>
+        </param>
+        <briefdescription>
+<para>Enable NFC Reader interrupts. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The interrupts mask can be composed of several interrupts (see <ref refid="group__st25r3911b__irq__def" kindref="compound">ST25R3911B interrupts definition</ref>).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">mask</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interrupts to enable mask.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="105" column="5" declfile="lib/st25r3911b/st25r3911b_interrupt.h" declline="105" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__interrupts_1ga95b756d12d03f54acd1a4e29e5a99ccd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_irq_disable</definition>
+        <argsstring>(uint32_t mask)</argsstring>
+        <name>st25r3911b_irq_disable</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>mask</declname>
+        </param>
+        <briefdescription>
+<para>Disable NFC Reader interrupts. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The interrupts mask can be composed of several interrupts (see <ref refid="group__st25r3911b__irq__def" kindref="compound">ST25R3911B interrupts definition</ref>).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">mask</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interrupts to disable mask.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="117" column="5" declfile="lib/st25r3911b/st25r3911b_interrupt.h" declline="117" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__interrupts_1ga62675ef6f9e2a111b16ed3c6d962ca46" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r39_irq_clear</definition>
+        <argsstring>(void)</argsstring>
+        <name>st25r39_irq_clear</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Clear NFC Reader interrupts status. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Interrupts are cleared by reading NFC Reader interrupts registers.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="127" column="5" declfile="lib/st25r3911b/st25r3911b_interrupt.h" declline="127" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__interrupts_1gae18f90d958eeb1ac08145a4f111c3337" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint32_t</type>
+        <definition>uint32_t st25r3911b_irq_wait_for_irq</definition>
+        <argsstring>(uint32_t mask, int32_t timeout)</argsstring>
+        <name>st25r3911b_irq_wait_for_irq</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>mask</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>timeout</declname>
+        </param>
+        <briefdescription>
+<para>Wait for NFC Reader interrupts. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function can wait for one interrupt or for several (defined by a mask). It returns after an interrupt occurs or after a time-out.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">mask</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interrupts mask (see <ref refid="group__st25r3911b__irq__def" kindref="compound">ST25R3911B interrupts definition</ref>). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">timeout</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Wait time in milliseconds.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Interrupts status. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="140" column="10" declfile="lib/st25r3911b/st25r3911b_interrupt.h" declline="140" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__interrupts_1ga61609d145f7b5b31a4b0d5774fbba729" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint32_t</type>
+        <definition>uint32_t st25r3911b_irq_read</definition>
+        <argsstring>(void)</argsstring>
+        <name>st25r3911b_irq_read</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Read NFC Reader interrupts status. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Three interrupts status registers are read and their status is returned.</para>
+<para><simplesect kind="return"><para>Interrupts status. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="149" column="10" declfile="lib/st25r3911b/st25r3911b_interrupt.h" declline="149" declcolumn="10"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the ST25R3911B NFC Reader interrupts. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__io__conf1__reg" kind="group">
+    <compoundname>st25r3911b_io_conf1_reg</compoundname>
+    <title>IO Configuration</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__io__conf1__reg_1gaf218c655cb6bccad12c1ededa9947dad" prot="public" static="no">
+        <name>ST25R3911B_REG_IO_CONF1_LF_CLK_OFF</name>
+        <initializer>BIT(0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="140" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="140" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__io__conf1__reg_1ga587931719ae02ea249d513cd61a72e22" prot="public" static="no">
+        <name>ST25R3911B_REG_IO_CONF1_OUT_CL0</name>
+        <initializer>BIT(1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="141" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__io__conf1__reg_1gafa311d596545e30cf14ef0367b50cd02" prot="public" static="no">
+        <name>ST25R3911B_REG_IO_CONF1_OUT_CL1</name>
+        <initializer>BIT(2)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="142" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__io__conf1__reg_1ga2c006111912b5a28f0df42914a67b6c7" prot="public" static="no">
+        <name>ST25R3911B_REG_IO_CONF1_OSC</name>
+        <initializer>BIT(3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="143" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="143" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__io__conf1__reg_1ga2d3a1deb6c61fbf0e866c63ca258741e" prot="public" static="no">
+        <name>ST25R3911B_REG_IO_CONF1_FIFO_LT</name>
+        <initializer>BIT(4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="144" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="144" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__io__conf1__reg_1ga82c9453f178bf62fa30e6457d8c3aad5" prot="public" static="no">
+        <name>ST25R3911B_REG_IO_CONF1_FIFO_LR</name>
+        <initializer>BIT(5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="145" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__io__conf1__reg_1gad2cce6373fcd9b7836e4ce379797e182" prot="public" static="no">
+        <name>ST25R3911B_REG_IO_CONF1_RFO_2</name>
+        <initializer>BIT(6)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="146" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="146" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__io__conf1__reg_1gacd8482af57cc0e821d9d2ed99caf220a" prot="public" static="no">
+        <name>ST25R3911B_REG_IO_CONF1_SINGLE</name>
+        <initializer>BIT(7)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="147" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Register 1 bits </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

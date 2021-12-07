@@ -1,0 +1,283 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__t4t__apdu" kind="group">
+    <compoundname>nfc_t4t_apdu</compoundname>
+    <title>APDU reader and writer</title>
+    <innerclass refid="structnfc__t4t__apdu__data" prot="public">nfc_t4t_apdu_data</innerclass>
+    <innerclass refid="structnfc__t4t__apdu__comm" prot="public">nfc_t4t_apdu_comm</innerclass>
+    <innerclass refid="structnfc__t4t__apdu__resp" prot="public">nfc_t4t_apdu_resp</innerclass>
+    <innergroup refid="group__nfc__t4t__apdu__select">Parameters for selecting</innergroup>
+    <innergroup refid="group__nfc__t4t__apdu__status">Status codes contained in R-APDU</innergroup>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nfc__t4t__apdu_1ga994247eb772c9326ca42fcf5e52bfba9" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nfc_t4t_apdu_comm_ins</name>
+        <enumvalue id="group__nfc__t4t__apdu_ga994247eb772c9326ca42fcf5e52bfba9_1gga994247eb772c9326ca42fcf5e52bfba9a61597d8bb9a68e8f2c73d22d086d2179" prot="public">
+          <name>NFC_T4T_APDU_COMM_INS_SELECT</name>
+          <initializer>= 0xA4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Code used for selecting EF or NDEF application. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__apdu_ga994247eb772c9326ca42fcf5e52bfba9_1gga994247eb772c9326ca42fcf5e52bfba9a4634f9be4f40fe176d55da7bd6f79594" prot="public">
+          <name>NFC_T4T_APDU_COMM_INS_READ</name>
+          <initializer>= 0xB0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Code used for selecting EF or NDEF application. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__apdu_ga994247eb772c9326ca42fcf5e52bfba9_1gga994247eb772c9326ca42fcf5e52bfba9a36c9ee6c37e50e6e519473d17af44f3b" prot="public">
+          <name>NFC_T4T_APDU_COMM_INS_UPDATE</name>
+          <initializer>= 0xD6</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Code used for selecting EF or NDEF application. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Possible instruction codes in C-APDU. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="60" column="1" bodyfile="include/nfc/t4t/apdu.h" bodystart="60" bodyend="69"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__t4t__apdu_1ga91294c3b073226d1c0a5d6090275b0c1" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void nfc_t4t_apdu_comm_clear</definition>
+        <argsstring>(struct nfc_t4t_apdu_comm *cmd_apdu)</argsstring>
+        <name>nfc_t4t_apdu_comm_clear</name>
+        <param>
+          <type>struct <ref refid="structnfc__t4t__apdu__comm" kindref="compound">nfc_t4t_apdu_comm</ref> *</type>
+          <declname>cmd_apdu</declname>
+        </param>
+        <briefdescription>
+<para>Clear a C-APDU descriptor and restore its default values. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cmd_apdu</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to C-APDU descriptor. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="160" column="20" bodyfile="include/nfc/t4t/apdu.h" bodystart="160" bodyend="163" declfile="include/nfc/t4t/apdu.h" declline="114" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__apdu_1ga5e25603711d5b9c3be82555c9bbeccfb" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void nfc_t4t_apdu_resp_clear</definition>
+        <argsstring>(struct nfc_t4t_apdu_resp *resp_apdu)</argsstring>
+        <name>nfc_t4t_apdu_resp_clear</name>
+        <param>
+          <type>struct <ref refid="structnfc__t4t__apdu__resp" kindref="compound">nfc_t4t_apdu_resp</ref> *</type>
+          <declname>resp_apdu</declname>
+        </param>
+        <briefdescription>
+<para>Clearing an R-APDU descriptor and restore its default values. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">resp_apdu</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to R-APDU descriptor. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="165" column="20" bodyfile="include/nfc/t4t/apdu.h" bodystart="165" bodyend="168" declfile="include/nfc/t4t/apdu.h" declline="120" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__apdu_1gad638e04ca41c269740abb698b15a8103" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_apdu_comm_encode</definition>
+        <argsstring>(const struct nfc_t4t_apdu_comm *cmd_apdu, uint8_t *raw_data, uint16_t *len)</argsstring>
+        <name>nfc_t4t_apdu_comm_encode</name>
+        <param>
+          <type>const struct <ref refid="structnfc__t4t__apdu__comm" kindref="compound">nfc_t4t_apdu_comm</ref> *</type>
+          <declname>cmd_apdu</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>raw_data</declname>
+        </param>
+        <param>
+          <type>uint16_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Encode C-APDU. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function encodes C-APDU according to the provided descriptor.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cmd_apdu</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the C-APDU descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">raw_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer with encoded C-APDU. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the available memory for the C-APDU as input. Size of the generated C-APDU as output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="134" column="5" declfile="include/nfc/t4t/apdu.h" declline="134" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__apdu_1gaf1fb2bbeb4e2f08330e39f65aeb21d56" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_apdu_resp_decode</definition>
+        <argsstring>(struct nfc_t4t_apdu_resp *resp_apdu, const uint8_t *raw_data, uint16_t len)</argsstring>
+        <name>nfc_t4t_apdu_resp_decode</name>
+        <param>
+          <type>struct <ref refid="structnfc__t4t__apdu__resp" kindref="compound">nfc_t4t_apdu_resp</ref> *</type>
+          <declname>resp_apdu</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>raw_data</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Decode R-APDU. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function decodes buffer with encoded R-APDU and stores results in the R-APDU descriptor.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">resp_apdu</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the R-APDU descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">raw_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer with encoded R-APDU. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of of the buffer with encoded R-APDU.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="149" column="5" declfile="include/nfc/t4t/apdu.h" declline="149" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__apdu_1ga6c4f28f9e19157ea088dbf699141e40d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_t4t_apdu_resp_printout</definition>
+        <argsstring>(const struct nfc_t4t_apdu_resp *resp_apdu)</argsstring>
+        <name>nfc_t4t_apdu_resp_printout</name>
+        <param>
+          <type>const struct <ref refid="structnfc__t4t__apdu__resp" kindref="compound">nfc_t4t_apdu_resp</ref> *</type>
+          <declname>resp_apdu</declname>
+        </param>
+        <briefdescription>
+<para>Print an R-APDU descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function prints an R-APDU descriptor.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">resp_apdu</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the R-APDU descriptor. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="158" column="6" declfile="include/nfc/t4t/apdu.h" declline="158" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__t4t__apdu_1ga3e9a815e319138d9dde7ba24e93e2842" prot="public" static="no">
+        <name>NFC_T4T_APDU_CLASS_BYTE_NO_SECURE_MSG</name>
+        <initializer>0x00</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Class byte indicating no secure messaging, used in C-APDU. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="26" column="9" bodyfile="include/nfc/t4t/apdu.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>APDU reader and writer for Type 4 Tag communication. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_4fe5cf12322eb0f9892753dc20f1484c" kind="dir">
+    <compoundname>include/drivers</compoundname>
+    <innerfile refid="gps_8h">gps.h</innerfile>
+    <innerfile refid="sensor__sim_8h">sensor_sim.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/drivers/"/>
+  </compounddef>
+</doxygen>

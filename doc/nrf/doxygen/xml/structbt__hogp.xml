@@ -1,0 +1,333 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__hogp" kind="struct" language="C++" prot="public">
+    <compoundname>bt_hogp</compoundname>
+    <includes refid="hogp_8h" local="no">hogp.h</includes>
+    <innerclass refid="structbt__hogp_1_1bt__hogp__handlers" prot="public">bt_hogp::bt_hogp_handlers</innerclass>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__hogp_a1949bbc5fd973619e91e223f5daae99c_1a1949bbc5fd973619e91e223f5daae99c" prot="public" static="no" mutable="no">
+        <type>struct bt_conn *</type>
+        <definition>struct bt_conn* bt_hogp::conn</definition>
+        <argsstring></argsstring>
+        <name>conn</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Connection object. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="156" column="14" bodyfile="include/bluetooth/services/hogp.h" bodystart="156" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp_a11158a2022b25ceda89ae92e5f8ce5fa_1a11158a2022b25ceda89ae92e5f8ce5fa" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__hids__info" kindref="compound">bt_hids_info</ref></type>
+        <definition>struct bt_hids_info bt_hogp::info_val</definition>
+        <argsstring></argsstring>
+        <name>info_val</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>HIDS client information. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="158" column="19" bodyfile="include/bluetooth/services/hogp.h" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp_ac3d0e60d2057eb1016d31eb1ff1bbf6b_1ac3d0e60d2057eb1016d31eb1ff1bbf6b" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__hogp_1_1bt__hogp__handlers" kindref="compound">bt_hogp::bt_hogp_handlers</ref></type>
+        <definition>struct bt_hogp::bt_hogp_handlers bt_hogp::handlers</definition>
+        <argsstring></argsstring>
+        <name>handlers</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="169" column="10"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp_ab1114c68e8cc1fcab7e4e4290a003411_1ab1114c68e8cc1fcab7e4e4290a003411" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__hogp_gaf54d197d81f1cb498f1e68a0081ebe07_1gaf54d197d81f1cb498f1e68a0081ebe07" kindref="member">bt_hogp_ready_cb</ref></type>
+        <definition>bt_hogp_ready_cb bt_hogp::ready_cb</definition>
+        <argsstring></argsstring>
+        <name>ready_cb</name>
+        <briefdescription>
+<para>Callback for HIDS client ready (see <ref refid="group__bt__hogp_gaf54d197d81f1cb498f1e68a0081ebe07_1gaf54d197d81f1cb498f1e68a0081ebe07" kindref="member">bt_hogp_ready_cb</ref>). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="174" column="18" bodyfile="include/bluetooth/services/hogp.h" bodystart="174" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp_a9fb1a4623b2cac6c6e4a22d99708fb01_1a9fb1a4623b2cac6c6e4a22d99708fb01" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__hogp_gaa400ad3c297b4234c09269ec4362b980_1gaa400ad3c297b4234c09269ec4362b980" kindref="member">bt_hogp_prep_fail_cb</ref></type>
+        <definition>bt_hogp_prep_fail_cb bt_hogp::prep_error_cb</definition>
+        <argsstring></argsstring>
+        <name>prep_error_cb</name>
+        <briefdescription>
+<para>Callback for HIDS client preparation failed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="178" column="22" bodyfile="include/bluetooth/services/hogp.h" bodystart="178" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp_af3abd49b3c4f97cfbbe80d9706ce78d1_1af3abd49b3c4f97cfbbe80d9706ce78d1" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__hogp_gae538730256abee4e677df9753f440fb7_1gae538730256abee4e677df9753f440fb7" kindref="member">bt_hogp_pm_update_cb</ref></type>
+        <definition>bt_hogp_pm_update_cb bt_hogp::pm_update_cb</definition>
+        <argsstring></argsstring>
+        <name>pm_update_cb</name>
+        <briefdescription>
+<para>Callback for protocol mode updated. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="182" column="22" bodyfile="include/bluetooth/services/hogp.h" bodystart="182" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp_afd1604df528edd21be798ec46d75bd8c_1afd1604df528edd21be798ec46d75bd8c" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__hogp_ga178dbe3c54eb57554e207b6b8974e2ff_1ga178dbe3c54eb57554e207b6b8974e2ff" kindref="member">bt_hogp_map_cb</ref></type>
+        <definition>bt_hogp_map_cb bt_hogp::map_cb</definition>
+        <argsstring></argsstring>
+        <name>map_cb</name>
+        <briefdescription>
+<para>Callback for report map data chunk received. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="186" column="16" bodyfile="include/bluetooth/services/hogp.h" bodystart="186" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp_a1f377e124e06c75502ad445d35dd3246_1a1f377e124e06c75502ad445d35dd3246" prot="public" static="no" mutable="no">
+        <type>struct bt_gatt_read_params</type>
+        <definition>struct bt_gatt_read_params bt_hogp::read_params</definition>
+        <argsstring></argsstring>
+        <name>read_params</name>
+        <briefdescription>
+<para>Internal read parameters used when reading Protocol Mode or Report Map. This struct might also be used during initialization. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="structbt__hogp_a36f674b59797544d66b5d3d69ad0756a_1a36f674b59797544d66b5d3d69ad0756a" kindref="member">bt_hogp::read_params_sem</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="194" column="26" bodyfile="include/bluetooth/services/hogp.h" bodystart="194" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp_a36f674b59797544d66b5d3d69ad0756a_1a36f674b59797544d66b5d3d69ad0756a" prot="public" static="no" mutable="no">
+        <type>struct k_sem</type>
+        <definition>struct k_sem bt_hogp::read_params_sem</definition>
+        <argsstring></argsstring>
+        <name>read_params_sem</name>
+        <briefdescription>
+<para>The semaphore for common read parameters protection. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This semaphore must be used when <ref refid="structbt__hogp_a1f377e124e06c75502ad445d35dd3246_1a1f377e124e06c75502ad445d35dd3246" kindref="member">bt_hogp::read_params</ref> can be used. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="201" column="12" bodyfile="include/bluetooth/services/hogp.h" bodystart="201" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp_a93b2d6574e22e615128ec01b26d3ede9_1a93b2d6574e22e615128ec01b26d3ede9" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hogp::rep_idx</definition>
+        <argsstring></argsstring>
+        <name>rep_idx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>During the initialization process, all reports reference information is read. This structure helps tracking the current state of this process. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="209" column="9" bodyfile="include/bluetooth/services/hogp.h" bodystart="209" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp_ad423ef87f293f0cca7e25d5e1549b673_1ad423ef87f293f0cca7e25d5e1549b673" prot="public" static="no" mutable="no">
+        <type>struct bt_hogp::@139</type>
+        <definition>struct bt_hogp::@139 bt_hogp::init_repref</definition>
+        <argsstring></argsstring>
+        <name>init_repref</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="210" column="13"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp_a8f564d399f7f169fc4e3ab40e46972c7_1a8f564d399f7f169fc4e3ab40e46972c7" prot="public" static="no" mutable="no">
+        <type>struct bt_hogp_rep_info *</type>
+        <definition>struct bt_hogp_rep_info* bt_hogp::kbd_inp</definition>
+        <argsstring></argsstring>
+        <name>kbd_inp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Keyboard input boot report. Input and Output keyboard reports come in pairs. It is not valid that only one of the keyboard reports is present. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="218" column="23" bodyfile="include/bluetooth/services/hogp.h" bodystart="218" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp_a96f07b06e53ab1aa21fb1a42aacd7f69_1a96f07b06e53ab1aa21fb1a42aacd7f69" prot="public" static="no" mutable="no">
+        <type>struct bt_hogp_rep_info *</type>
+        <definition>struct bt_hogp_rep_info* bt_hogp::kbd_out</definition>
+        <argsstring></argsstring>
+        <name>kbd_out</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Keyboard output boot report. Input and Output keyboard reports come in pairs. It is not valid that only one of the keyboard reports is present. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="223" column="23" bodyfile="include/bluetooth/services/hogp.h" bodystart="223" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp_a9de6189e88429bce0b7ae1c94c85c5ee_1a9de6189e88429bce0b7ae1c94c85c5ee" prot="public" static="no" mutable="no">
+        <type>struct bt_hogp_rep_info *</type>
+        <definition>struct bt_hogp_rep_info* bt_hogp::mouse_inp</definition>
+        <argsstring></argsstring>
+        <name>mouse_inp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Mouse input boot report. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="225" column="23" bodyfile="include/bluetooth/services/hogp.h" bodystart="225" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp_a908a61640e269f8f640a7b45e3398b4e_1a908a61640e269f8f640a7b45e3398b4e" prot="public" static="no" mutable="no">
+        <type>struct bt_hogp::@140</type>
+        <definition>struct bt_hogp::@140 bt_hogp::rep_boot</definition>
+        <argsstring></argsstring>
+        <name>rep_boot</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="226" column="10"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp_a4eaece7349c0941c0e054afaf5dbb420_1a4eaece7349c0941c0e054afaf5dbb420" prot="public" static="no" mutable="no">
+        <type>struct bt_hogp_rep_info **</type>
+        <definition>struct bt_hogp_rep_info** bt_hogp::rep_info</definition>
+        <argsstring></argsstring>
+        <name>rep_info</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Array of report information structures. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="228" column="23" bodyfile="include/bluetooth/services/hogp.h" bodystart="228" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp_afe31ab9d0cd687a8951311fce85f6902_1afe31ab9d0cd687a8951311fce85f6902" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hogp::rep_count</definition>
+        <argsstring></argsstring>
+        <name>rep_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of records. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="230" column="9" bodyfile="include/bluetooth/services/hogp.h" bodystart="230" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp_a8094c2549a449d2f71fa14b6218070be_1a8094c2549a449d2f71fa14b6218070be" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool bt_hogp::ready</definition>
+        <argsstring></argsstring>
+        <name>ready</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current state. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="232" column="6" bodyfile="include/bluetooth/services/hogp.h" bodystart="232" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp_a141b93231a69db8f6507e8448b866dfc_1a141b93231a69db8f6507e8448b866dfc" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__hids_ga7bf00e4f8e959a950b8c8b82ccc3cf05_1ga7bf00e4f8e959a950b8c8b82ccc3cf05" kindref="member">bt_hids_pm</ref></type>
+        <definition>enum bt_hids_pm bt_hogp::pm</definition>
+        <argsstring></argsstring>
+        <name>pm</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current protocol mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="234" column="16" bodyfile="include/bluetooth/services/hogp.h" bodystart="234" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>HOGP object. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="note"><para>This structure is defined here to allow the user to allocate the memory for it in an application-dependent manner. Do not use any of the fields here directly, but use the accessor functions. There are accessors for every field you might need. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_hids_info</label>
+        <link refid="structbt__hids__info"/>
+      </node>
+      <node id="1">
+        <label>bt_hogp</label>
+        <link refid="structbt__hogp"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>info_val</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>handlers</edgelabel>
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>map_cb</edgelabel>
+          <edgelabel>pm_update_cb</edgelabel>
+          <edgelabel>prep_error_cb</edgelabel>
+          <edgelabel>ready_cb</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bt_hogp::bt_hogp_handlers</label>
+        <link refid="structbt__hogp_1_1bt__hogp__handlers"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/hogp.h" line="154" column="1" bodyfile="include/bluetooth/services/hogp.h" bodystart="154" bodyend="235"/>
+    <listofallmembers>
+      <member refid="structbt__hogp_a1949bbc5fd973619e91e223f5daae99c_1a1949bbc5fd973619e91e223f5daae99c" prot="public" virt="non-virtual"><scope>bt_hogp</scope><name>conn</name></member>
+      <member refid="structbt__hogp_ac3d0e60d2057eb1016d31eb1ff1bbf6b_1ac3d0e60d2057eb1016d31eb1ff1bbf6b" prot="public" virt="non-virtual"><scope>bt_hogp</scope><name>handlers</name></member>
+      <member refid="structbt__hogp_a11158a2022b25ceda89ae92e5f8ce5fa_1a11158a2022b25ceda89ae92e5f8ce5fa" prot="public" virt="non-virtual"><scope>bt_hogp</scope><name>info_val</name></member>
+      <member refid="structbt__hogp_ad423ef87f293f0cca7e25d5e1549b673_1ad423ef87f293f0cca7e25d5e1549b673" prot="public" virt="non-virtual"><scope>bt_hogp</scope><name>init_repref</name></member>
+      <member refid="structbt__hogp_a8f564d399f7f169fc4e3ab40e46972c7_1a8f564d399f7f169fc4e3ab40e46972c7" prot="public" virt="non-virtual"><scope>bt_hogp</scope><name>kbd_inp</name></member>
+      <member refid="structbt__hogp_a96f07b06e53ab1aa21fb1a42aacd7f69_1a96f07b06e53ab1aa21fb1a42aacd7f69" prot="public" virt="non-virtual"><scope>bt_hogp</scope><name>kbd_out</name></member>
+      <member refid="structbt__hogp_afd1604df528edd21be798ec46d75bd8c_1afd1604df528edd21be798ec46d75bd8c" prot="public" virt="non-virtual"><scope>bt_hogp</scope><name>map_cb</name></member>
+      <member refid="structbt__hogp_a9de6189e88429bce0b7ae1c94c85c5ee_1a9de6189e88429bce0b7ae1c94c85c5ee" prot="public" virt="non-virtual"><scope>bt_hogp</scope><name>mouse_inp</name></member>
+      <member refid="structbt__hogp_a141b93231a69db8f6507e8448b866dfc_1a141b93231a69db8f6507e8448b866dfc" prot="public" virt="non-virtual"><scope>bt_hogp</scope><name>pm</name></member>
+      <member refid="structbt__hogp_af3abd49b3c4f97cfbbe80d9706ce78d1_1af3abd49b3c4f97cfbbe80d9706ce78d1" prot="public" virt="non-virtual"><scope>bt_hogp</scope><name>pm_update_cb</name></member>
+      <member refid="structbt__hogp_a9fb1a4623b2cac6c6e4a22d99708fb01_1a9fb1a4623b2cac6c6e4a22d99708fb01" prot="public" virt="non-virtual"><scope>bt_hogp</scope><name>prep_error_cb</name></member>
+      <member refid="structbt__hogp_a1f377e124e06c75502ad445d35dd3246_1a1f377e124e06c75502ad445d35dd3246" prot="public" virt="non-virtual"><scope>bt_hogp</scope><name>read_params</name></member>
+      <member refid="structbt__hogp_a36f674b59797544d66b5d3d69ad0756a_1a36f674b59797544d66b5d3d69ad0756a" prot="public" virt="non-virtual"><scope>bt_hogp</scope><name>read_params_sem</name></member>
+      <member refid="structbt__hogp_a8094c2549a449d2f71fa14b6218070be_1a8094c2549a449d2f71fa14b6218070be" prot="public" virt="non-virtual"><scope>bt_hogp</scope><name>ready</name></member>
+      <member refid="structbt__hogp_ab1114c68e8cc1fcab7e4e4290a003411_1ab1114c68e8cc1fcab7e4e4290a003411" prot="public" virt="non-virtual"><scope>bt_hogp</scope><name>ready_cb</name></member>
+      <member refid="structbt__hogp_a908a61640e269f8f640a7b45e3398b4e_1a908a61640e269f8f640a7b45e3398b4e" prot="public" virt="non-virtual"><scope>bt_hogp</scope><name>rep_boot</name></member>
+      <member refid="structbt__hogp_afe31ab9d0cd687a8951311fce85f6902_1afe31ab9d0cd687a8951311fce85f6902" prot="public" virt="non-virtual"><scope>bt_hogp</scope><name>rep_count</name></member>
+      <member refid="structbt__hogp_a93b2d6574e22e615128ec01b26d3ede9_1a93b2d6574e22e615128ec01b26d3ede9" prot="public" virt="non-virtual"><scope>bt_hogp</scope><name>rep_idx</name></member>
+      <member refid="structbt__hogp_a4eaece7349c0941c0e054afaf5dbb420_1a4eaece7349c0941c0e054afaf5dbb420" prot="public" virt="non-virtual"><scope>bt_hogp</scope><name>rep_info</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

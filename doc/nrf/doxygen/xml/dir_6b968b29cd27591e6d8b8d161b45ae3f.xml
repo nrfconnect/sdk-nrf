@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_6b968b29cd27591e6d8b8d161b45ae3f" kind="dir">
+    <compoundname>applications/connectivity_bridge/src</compoundname>
+    <innerdir refid="dir_5168967913d11e301c2cf924aaf8b025">applications/connectivity_bridge/src/events</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/connectivity_bridge/src/"/>
+  </compounddef>
+</doxygen>

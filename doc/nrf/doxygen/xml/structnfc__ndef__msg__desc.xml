@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__ndef__msg__desc" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_ndef_msg_desc</compoundname>
+    <includes refid="msg_8h" local="no">msg.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__ndef__msg__desc_abcbd24138a652a09dbafe511d95387ec_1abcbd24138a652a09dbafe511d95387ec" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> const  **</type>
+        <definition>struct nfc_ndef_record_desc const** nfc_ndef_msg_desc::record</definition>
+        <argsstring></argsstring>
+        <name>record</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to an array of pointers to NDEF record descriptors. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/msg.h" line="32" column="27" bodyfile="include/nfc/ndef/msg.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__msg__desc_a292f3be4429e9bfb665dc6cfba53ae44_1a292f3be4429e9bfb665dc6cfba53ae44" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t nfc_ndef_msg_desc::max_record_count</definition>
+        <argsstring></argsstring>
+        <name>max_record_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of elements in the allocated record array, which defines the maximum number of records within the NDEF message. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/msg.h" line="36" column="10" bodyfile="include/nfc/ndef/msg.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__msg__desc_a48589b91b15d8c7900051568ecb24c91_1a48589b91b15d8c7900051568ecb24c91" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t nfc_ndef_msg_desc::record_count</definition>
+        <argsstring></argsstring>
+        <name>record_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of records in the NDEF message. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/msg.h" line="38" column="10" bodyfile="include/nfc/ndef/msg.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>NDEF message descriptor. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>nfc_ndef_msg_desc</label>
+        <link refid="structnfc__ndef__msg__desc"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>record</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>nfc_ndef_record_desc</label>
+        <link refid="structnfc__ndef__record__desc"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/nfc/ndef/msg.h" line="30" column="1" bodyfile="include/nfc/ndef/msg.h" bodystart="30" bodyend="39"/>
+    <listofallmembers>
+      <member refid="structnfc__ndef__msg__desc_a292f3be4429e9bfb665dc6cfba53ae44_1a292f3be4429e9bfb665dc6cfba53ae44" prot="public" virt="non-virtual"><scope>nfc_ndef_msg_desc</scope><name>max_record_count</name></member>
+      <member refid="structnfc__ndef__msg__desc_abcbd24138a652a09dbafe511d95387ec_1abcbd24138a652a09dbafe511d95387ec" prot="public" virt="non-virtual"><scope>nfc_ndef_msg_desc</scope><name>record</name></member>
+      <member refid="structnfc__ndef__msg__desc_a48589b91b15d8c7900051568ecb24c91_1a48589b91b15d8c7900051568ecb24c91" prot="public" virt="non-virtual"><scope>nfc_ndef_msg_desc</scope><name>record_count</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

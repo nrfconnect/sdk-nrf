@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="selector__hw_8h" kind="file" language="C++">
+    <compoundname>selector_hw.h</compoundname>
+    <includes refid="gpio__pins_8h" local="no">caf/gpio_pins.h</includes>
+    <includedby refid="selector__hw__def_8h" local="yes">applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/selector_hw_def.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/common/selector_hw.h</label>
+        <link refid="selector__hw_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>caf/gpio_pins.h</label>
+        <link refid="gpio__pins_8h"/>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/common/selector_hw.h</label>
+        <link refid="selector__hw_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/selector_hw_def.h</label>
+        <link refid="selector__hw__def_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structselector__config" prot="public">selector_config</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_SELECTOR_HW_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_SELECTOR_HW_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="gpio__pins_8h" kindref="compound">caf/gpio_pins.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12" refid="structselector__config" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structselector__config" kindref="compound">selector_config</ref><sp/>{</highlight></codeline>
+<codeline lineno="13" refid="structselector__config_ad308b6dea76ad12accbb8747697c6b68_1ad308b6dea76ad12accbb8747697c6b68" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structselector__config_ad308b6dea76ad12accbb8747697c6b68_1ad308b6dea76ad12accbb8747697c6b68" kindref="member">id</ref>;</highlight></codeline>
+<codeline lineno="14" refid="structselector__config_accd52292d385424849cb163065bc38f0_1accd52292d385424849cb163065bc38f0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structgpio__pin" kindref="compound">gpio_pin</ref><sp/>*<ref refid="structselector__config_accd52292d385424849cb163065bc38f0_1accd52292d385424849cb163065bc38f0" kindref="member">pins</ref>;</highlight></codeline>
+<codeline lineno="15" refid="structselector__config_afe550f336eae1232bdf2499616be2a87_1afe550f336eae1232bdf2499616be2a87" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structselector__config_afe550f336eae1232bdf2499616be2a87_1afe550f336eae1232bdf2499616be2a87" kindref="member">pins_size</ref>;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_SELECTOR_HW_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/common/selector_hw.h"/>
+  </compounddef>
+</doxygen>

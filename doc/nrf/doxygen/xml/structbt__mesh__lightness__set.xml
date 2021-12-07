@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__lightness__set" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_lightness_set</compoundname>
+    <includes refid="lightness_8h" local="no">lightness.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__lightness__set_a0bd0f63579e3b1ae94e5ef42373cf821_1a0bd0f63579e3b1ae94e5ef42373cf821" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_lightness_set::lvl</definition>
+        <argsstring></argsstring>
+        <name>lvl</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Lightness level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness.h" line="32" column="10" bodyfile="include/bluetooth/mesh/lightness.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__set_a35b3b05e0f5c6d89c17450e14b9cc257_1a35b3b05e0f5c6d89c17450e14b9cc257" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref> *</type>
+        <definition>const struct bt_mesh_model_transition* bt_mesh_lightness_set::transition</definition>
+        <argsstring></argsstring>
+        <name>transition</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transition time parameters for the state change, or NULL.</para>
+<para>When sending, setting the transition to NULL makes the receiver use its default transition time parameters, or 0 if no default transition time is set. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness.h" line="40" column="37" bodyfile="include/bluetooth/mesh/lightness.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Lightness set message parameters. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_mesh_lightness_set</label>
+        <link refid="structbt__mesh__lightness__set"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>transition</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_mesh_model_transition</label>
+        <link refid="structbt__mesh__model__transition"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/lightness.h" line="30" column="1" bodyfile="include/bluetooth/mesh/lightness.h" bodystart="30" bodyend="41"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__lightness__set_a0bd0f63579e3b1ae94e5ef42373cf821_1a0bd0f63579e3b1ae94e5ef42373cf821" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_set</scope><name>lvl</name></member>
+      <member refid="structbt__mesh__lightness__set_a35b3b05e0f5c6d89c17450e14b9cc257_1a35b3b05e0f5c6d89c17450e14b9cc257" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_set</scope><name>transition</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

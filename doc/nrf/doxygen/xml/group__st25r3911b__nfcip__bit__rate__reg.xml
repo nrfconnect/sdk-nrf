@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__nfcip__bit__rate__reg" kind="group">
+    <compoundname>st25r3911b_nfcip_bit_rate_reg</compoundname>
+    <title>NFCIP Bit Rate</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__nfcip__bit__rate__reg_1gac58ae6782005d542c9d1e46d47974cd9" prot="public" static="no">
+        <name>ST25R3911B_REG_NFCIP_BIT_RATE_NFC_RATE0</name>
+        <initializer>BIT(4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="436" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="436" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__nfcip__bit__rate__reg_1gac0afeb1e6dfb304236aac4fe2f851422" prot="public" static="no">
+        <name>ST25R3911B_REG_NFCIP_BIT_RATE_NFC_RATE1</name>
+        <initializer>BIT(5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="437" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="437" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__nfcip__bit__rate__reg_1gac7a7a34933aa1dd29ef39540b0416557" prot="public" static="no">
+        <name>ST25R3911B_REG_NFCIP_BIT_RATE_NFC_RATE2</name>
+        <initializer>BIT(6)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="438" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="438" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__nfcip__bit__rate__reg_1ga57eb7bc6ad090a58867a734eb85b6430" prot="public" static="no">
+        <name>ST25R3911B_REG_NFCIP_BIT_RATE_NFC_RATE3</name>
+        <initializer>BIT(7)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="439" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="439" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Detection Display Register bits </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,240 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="shell__bt__nus_8h" kind="file" language="C++">
+    <compoundname>shell_bt_nus.h</compoundname>
+    <includes local="no">shell/shell.h</includes>
+    <includes local="no">bluetooth/conn.h</includes>
+    <includes refid="nus_8h" local="no">bluetooth/services/nus.h</includes>
+    <includes local="no">sys/ring_buffer.h</includes>
+    <incdepgraph>
+      <node id="4">
+        <label>bluetooth/services/nus.h</label>
+        <link refid="nus_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/shell/shell_bt_nus.h</label>
+        <link refid="shell__bt__nus_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/conn.h</label>
+      </node>
+      <node id="7">
+        <label>bluetooth/gatt.h</label>
+      </node>
+      <node id="6">
+        <label>bluetooth/uuid.h</label>
+      </node>
+      <node id="2">
+        <label>shell/shell.h</label>
+      </node>
+      <node id="8">
+        <label>sys/ring_buffer.h</label>
+      </node>
+      <node id="5">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structshell__bt__nus__ctrl__blk" prot="public">shell_bt_nus_ctrl_blk</innerclass>
+    <innerclass refid="structshell__bt__nus" prot="public">shell_bt_nus</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__shell__bt__nus_ga1f6d5aca8a1b5c9e83ac9b358236d030_1ga1f6d5aca8a1b5c9e83ac9b358236d030" prot="public" static="no">
+        <name>SHELL_BT_NUS_DEFINE</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_tx_ringbuf_size</defname></param>
+        <param><defname>_rx_ringbuf_size</defname></param>
+        <initializer>	static struct <ref refid="structshell__bt__nus__ctrl__blk" kindref="compound">shell_bt_nus_ctrl_blk</ref> _name##_ctrl_blk;		\
+	RING_BUF_DECLARE(_name##_tx_ringbuf, _tx_ringbuf_size);		\
+	RING_BUF_DECLARE(_name##_rx_ringbuf, _rx_ringbuf_size);		\
+	static const struct <ref refid="structshell__bt__nus" kindref="compound">shell_bt_nus</ref> _name##_shell_bt_nus = {	\
+		.ctrl_blk = &amp;_name##_ctrl_blk,				\
+		.tx_ringbuf = &amp;_name##_tx_ringbuf,			\
+		.rx_ringbuf = &amp;_name##_rx_ringbuf,			\
+	};								\
+	struct shell_transport _name = {				\
+		.api = &amp;<ref refid="group__shell__bt__nus_ga2d5e05db031c5cf1324e6254affb9f5f_1ga2d5e05db031c5cf1324e6254affb9f5f" kindref="member">shell_bt_nus_transport_api</ref>,			\
+		.ctx = (struct <ref refid="structshell__bt__nus" kindref="compound">shell_bt_nus</ref> *)&amp;_name##_shell_bt_nus	\
+	}</initializer>
+        <briefdescription>
+<para>Macro for creating an instance of the module. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/shell/shell_bt_nus.h" line="44" column="9" bodyfile="include/shell/shell_bt_nus.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__shell__bt__nus_ga2d5e05db031c5cf1324e6254affb9f5f_1ga2d5e05db031c5cf1324e6254affb9f5f" prot="public" static="no" mutable="no">
+        <type>const struct shell_transport_api</type>
+        <definition>const struct shell_transport_api shell_bt_nus_transport_api</definition>
+        <argsstring></argsstring>
+        <name>shell_bt_nus_transport_api</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/shell/shell_bt_nus.h" line="26" column="39" declfile="include/shell/shell_bt_nus.h" declline="26" declcolumn="39"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__shell__bt__nus_gad81e3b88456b7ebb230d963c3fbde53a_1gad81e3b88456b7ebb230d963c3fbde53a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int shell_bt_nus_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>shell_bt_nus_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize the NUS shell transport instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function initializes a shell thread and the Nordic UART Service.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/shell/shell_bt_nus.h" line="66" column="5" declfile="include/shell/shell_bt_nus.h" declline="66" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__shell__bt__nus_ga6948adf5ea1a565f2d97b304917cd081_1ga6948adf5ea1a565f2d97b304917cd081" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void shell_bt_nus_enable</definition>
+        <argsstring>(struct bt_conn *conn)</argsstring>
+        <name>shell_bt_nus_enable</name>
+        <param>
+          <type>struct bt_conn *</type>
+          <declname>conn</declname>
+        </param>
+        <briefdescription>
+<para>Enable the NUS shell transport instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function should be called when the connection is established.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connection handle. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/shell/shell_bt_nus.h" line="75" column="6" declfile="include/shell/shell_bt_nus.h" declline="75" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__shell__bt__nus_gae36e210956395ed80f3cb137c245cc02_1gae36e210956395ed80f3cb137c245cc02" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void shell_bt_nus_disable</definition>
+        <argsstring>(void)</argsstring>
+        <name>shell_bt_nus_disable</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Disable the NUS shell transport instance. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/shell/shell_bt_nus.h" line="80" column="6" declfile="include/shell/shell_bt_nus.h" declline="80" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>SHELL_BT_NUS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SHELL_BT_NUS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;shell/shell.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/conn.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nus_8h" kindref="compound">bluetooth/services/nus.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/ring_buffer.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">shell_transport_api<sp/><ref refid="group__shell__bt__nus_ga2d5e05db031c5cf1324e6254affb9f5f_1ga2d5e05db031c5cf1324e6254affb9f5f" kindref="member">shell_bt_nus_transport_api</ref>;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="structshell__bt__nus__ctrl__blk" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structshell__bt__nus__ctrl__blk" kindref="compound">shell_bt_nus_ctrl_blk</ref><sp/>{</highlight></codeline>
+<codeline lineno="30" refid="structshell__bt__nus__ctrl__blk_a3e550d58a1a466bb281ab81699ca319d_1a3e550d58a1a466bb281ab81699ca319d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_conn<sp/>*<ref refid="structshell__bt__nus__ctrl__blk_a3e550d58a1a466bb281ab81699ca319d_1a3e550d58a1a466bb281ab81699ca319d" kindref="member">conn</ref>;</highlight></codeline>
+<codeline lineno="31" refid="structshell__bt__nus__ctrl__blk_a55899761d2385c739b4fc2385be3cd3b_1a55899761d2385c739b4fc2385be3cd3b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>atomic_t<sp/><ref refid="structshell__bt__nus__ctrl__blk_a55899761d2385c739b4fc2385be3cd3b_1a55899761d2385c739b4fc2385be3cd3b" kindref="member">tx_busy</ref>;</highlight></codeline>
+<codeline lineno="32" refid="structshell__bt__nus__ctrl__blk_ae9e8136937977f3d8be9b4b591cc4d14_1ae9e8136937977f3d8be9b4b591cc4d14" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>shell_transport_handler_t<sp/><ref refid="structshell__bt__nus__ctrl__blk_ae9e8136937977f3d8be9b4b591cc4d14_1ae9e8136937977f3d8be9b4b591cc4d14" kindref="member">handler</ref>;</highlight></codeline>
+<codeline lineno="33" refid="structshell__bt__nus__ctrl__blk_acaa0c730e79e51adbb1b8d8045197a0d_1acaa0c730e79e51adbb1b8d8045197a0d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structshell__bt__nus__ctrl__blk_acaa0c730e79e51adbb1b8d8045197a0d_1acaa0c730e79e51adbb1b8d8045197a0d" kindref="member">context</ref>;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="structshell__bt__nus" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structshell__bt__nus" kindref="compound">shell_bt_nus</ref><sp/>{</highlight></codeline>
+<codeline lineno="38" refid="structshell__bt__nus_a3b08289fda73b76f6787fa32c50e3263_1a3b08289fda73b76f6787fa32c50e3263" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structshell__bt__nus__ctrl__blk" kindref="compound">shell_bt_nus_ctrl_blk</ref><sp/>*<ref refid="structshell__bt__nus_a3b08289fda73b76f6787fa32c50e3263_1a3b08289fda73b76f6787fa32c50e3263" kindref="member">ctrl_blk</ref>;</highlight></codeline>
+<codeline lineno="39" refid="structshell__bt__nus_a7f67b67ac3682d8328fdab1ec9a96626_1a7f67b67ac3682d8328fdab1ec9a96626" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">ring_buf<sp/>*<ref refid="structshell__bt__nus_a7f67b67ac3682d8328fdab1ec9a96626_1a7f67b67ac3682d8328fdab1ec9a96626" kindref="member">tx_ringbuf</ref>;</highlight></codeline>
+<codeline lineno="40" refid="structshell__bt__nus_a35e5cdc43e920e93e831258359f48530_1a35e5cdc43e920e93e831258359f48530" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">ring_buf<sp/>*<ref refid="structshell__bt__nus_a35e5cdc43e920e93e831258359f48530_1a35e5cdc43e920e93e831258359f48530" kindref="member">rx_ringbuf</ref>;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="group__shell__bt__nus_ga1f6d5aca8a1b5c9e83ac9b358236d030_1ga1f6d5aca8a1b5c9e83ac9b358236d030" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SHELL_BT_NUS_DEFINE(_name,<sp/>_tx_ringbuf_size,<sp/>_rx_ringbuf_size)<sp/><sp/>\</highlight></codeline>
+<codeline lineno="45"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>static<sp/>struct<sp/>shell_bt_nus_ctrl_blk<sp/>_name##_ctrl_blk;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="46"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>RING_BUF_DECLARE(_name##_tx_ringbuf,<sp/>_tx_ringbuf_size);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="47"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>RING_BUF_DECLARE(_name##_rx_ringbuf,<sp/>_rx_ringbuf_size);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="48"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>static<sp/>const<sp/>struct<sp/>shell_bt_nus<sp/>_name##_shell_bt_nus<sp/>=<sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="49"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.ctrl_blk<sp/>=<sp/>&amp;_name##_ctrl_blk,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="50"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.tx_ringbuf<sp/>=<sp/>&amp;_name##_tx_ringbuf,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="51"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.rx_ringbuf<sp/>=<sp/>&amp;_name##_rx_ringbuf,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="52"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="53"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>struct<sp/>shell_transport<sp/>_name<sp/>=<sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="54"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.api<sp/>=<sp/>&amp;shell_bt_nus_transport_api,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="55"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.ctx<sp/>=<sp/>(struct<sp/>shell_bt_nus<sp/>*)&amp;_name##_shell_bt_nus<sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="56"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="group__shell__bt__nus_gad81e3b88456b7ebb230d963c3fbde53a_1gad81e3b88456b7ebb230d963c3fbde53a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__shell__bt__nus_gad81e3b88456b7ebb230d963c3fbde53a_1gad81e3b88456b7ebb230d963c3fbde53a" kindref="member">shell_bt_nus_init</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="group__shell__bt__nus_ga6948adf5ea1a565f2d97b304917cd081_1ga6948adf5ea1a565f2d97b304917cd081" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__shell__bt__nus_ga6948adf5ea1a565f2d97b304917cd081_1ga6948adf5ea1a565f2d97b304917cd081" kindref="member">shell_bt_nus_enable</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_conn<sp/>*conn);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80" refid="group__shell__bt__nus_gae36e210956395ed80f3cb137c245cc02_1gae36e210956395ed80f3cb137c245cc02" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__shell__bt__nus_gae36e210956395ed80f3cb137c245cc02_1gae36e210956395ed80f3cb137c245cc02" kindref="member">shell_bt_nus_disable</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>SHELL_BT_NUS_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/shell/shell_bt_nus.h"/>
+  </compounddef>
+</doxygen>

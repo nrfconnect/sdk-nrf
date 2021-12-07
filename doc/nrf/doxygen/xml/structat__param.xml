@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structat__param" kind="struct" language="C++" prot="public">
+    <compoundname>at_param</compoundname>
+    <includes refid="at__params_8h" local="no">at_params.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structat__param_a6329d22ff3adc8c3fd5aa85c737a250e_1a6329d22ff3adc8c3fd5aa85c737a250e" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__at__params_gaa0448600e795221ad6b218cf40329c8b_1gaa0448600e795221ad6b218cf40329c8b" kindref="member">at_param_type</ref></type>
+        <definition>enum at_param_type at_param::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="61" column="19" bodyfile="include/modem/at_params.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structat__param_a1299069c97b48d9558db7c972bab88ec_1a1299069c97b48d9558db7c972bab88ec" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t at_param::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="62" column="8" bodyfile="include/modem/at_params.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structat__param_ae8e6bf22d48b0d30c638fca2810a5732_1ae8e6bf22d48b0d30c638fca2810a5732" prot="public" static="no" mutable="no">
+        <type>union <ref refid="unionat__param__value" kindref="compound">at_param_value</ref></type>
+        <definition>union at_param_value at_param::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="63" column="21" bodyfile="include/modem/at_params.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A parameter is defined with a type, length and value. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>at_param</label>
+        <link refid="structat__param"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>value</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>at_param_value</label>
+        <link refid="unionat__param__value"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/modem/at_params.h" line="60" column="1" bodyfile="include/modem/at_params.h" bodystart="60" bodyend="64"/>
+    <listofallmembers>
+      <member refid="structat__param_a1299069c97b48d9558db7c972bab88ec_1a1299069c97b48d9558db7c972bab88ec" prot="public" virt="non-virtual"><scope>at_param</scope><name>size</name></member>
+      <member refid="structat__param_a6329d22ff3adc8c3fd5aa85c737a250e_1a6329d22ff3adc8c3fd5aa85c737a250e" prot="public" virt="non-virtual"><scope>at_param</scope><name>type</name></member>
+      <member refid="structat__param_ae8e6bf22d48b0d30c638fca2810a5732_1ae8e6bf22d48b0d30c638fca2810a5732" prot="public" virt="non-virtual"><scope>at_param</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

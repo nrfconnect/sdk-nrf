@@ -1,0 +1,300 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__irq__def" kind="group">
+    <compoundname>st25r3911b_irq_def</compoundname>
+    <title>ST25R3911B interrupts definition</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1gaf7f934eba1e5c03ea9895889f23745b3" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_ALL</name>
+        <initializer>(0xFFFFFFUL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="29" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1ga3eada2d8b79f56809eb0fb9b2323dabc" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_NONE</name>
+        <initializer>(0UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="30" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1ga894ed14c11d5435a9a9c7b3fd92c4612" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_OSC</name>
+        <initializer>(0x80UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="31" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1ga0c8117ce8d9f3e76fe170e819a40ef30" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_FWL</name>
+        <initializer>(0x40UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="32" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1gacb49e10ac0092ac53f023009d415b054" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_RXS</name>
+        <initializer>(0x20UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="33" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1gac00faf89dac208b704d1c5582b08847c" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_RXE</name>
+        <initializer>(0x10UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="34" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1ga01a6c5860a79c153a64c281a102ead81" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_TXE</name>
+        <initializer>(0x08UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="35" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1gaba702304c78d07e754a1e73a7f95fb54" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_COL</name>
+        <initializer>(0x04UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="36" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1gac4a6a5d0de28ff99c7e7f83ef746efd0" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_TIM</name>
+        <initializer>(0x02UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="37" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1ga8a001dfaf3236ee999e28a41e0566bff" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_ERR</name>
+        <initializer>(0x01UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="38" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1ga5aca1535f423aae4b0a1dc7b855f4c20" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_DCT</name>
+        <initializer>(0x8000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="40" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1ga89babf704577e708a25664bfaf8e549c" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_NRE</name>
+        <initializer>(0x4000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="41" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1ga258ce444ed4b48aa1b957f4142f28b72" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_GPE</name>
+        <initializer>(0x2000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="42" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1ga89503c3b79155d55d61f6c0cf901b890" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_EON</name>
+        <initializer>(0x1000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="43" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1gafcac1a1c748ba93f6f3ddb0cf51d3642" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_EOF</name>
+        <initializer>(0x0800UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="44" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1ga2a8201ea99f3db308f2998fae557e648" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_CAC</name>
+        <initializer>(0x0400UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="45" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1ga17c24b1d9c09aae0583d6306f08e64b8" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_CAT</name>
+        <initializer>(0x0200UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="46" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1gafb99d149af956359b358eed0ec3b99ee" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_NFCT</name>
+        <initializer>(0x0100UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="47" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1gad0b6c033cd7fb05aeac7ad9f9cbd147d" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_CRC</name>
+        <initializer>(0x800000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="49" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1ga4d3a181c6f30a1eb1adaef2126d782eb" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_PAR</name>
+        <initializer>(0x400000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="50" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1gafcb20d5c9fe62f63291aa684f0647071" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_ERR2</name>
+        <initializer>(0x200000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="51" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1gae02b5fc4697625c5d14293e763e32c47" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_ERR1</name>
+        <initializer>(0x100000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="52" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1ga5df2c378611afdb14be9ace049d46171" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_WT</name>
+        <initializer>(0x080000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="53" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1gab8283cf016975990637203e7d8eb3680" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_WAM</name>
+        <initializer>(0x040000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="54" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1gaead70569a7c4191f517edf45e6ca707e" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_WPH</name>
+        <initializer>(0x020000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="55" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_1gac6395ee88a20d4c291d3e7c8b1a47e8b" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_WCAP</name>
+        <initializer>(0x010000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="56" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Interrupts are grouped in three registers. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

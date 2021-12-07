@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__gain__reduction__state__reg" kind="group">
+    <compoundname>st25r3911b_gain_reduction_state_reg</compoundname>
+    <title>Gain Reduction</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__gain__reduction__state__reg_1ga8d8107d0aa6115abf1d24dc296072dd0" prot="public" static="no">
+        <name>ST25R3911B_REG_GAIN_REDUCTION_STATE_GS_PM0</name>
+        <initializer>BIT(0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="579" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="579" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__gain__reduction__state__reg_1ga4cdd7a982b2d67efa9fd763ab3365660" prot="public" static="no">
+        <name>ST25R3911B_REG_GAIN_REDUCTION_STATE_GS_PM1</name>
+        <initializer>BIT(1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="580" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="580" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__gain__reduction__state__reg_1gabb6ce2deb0742529e67db81ed761cc30" prot="public" static="no">
+        <name>ST25R3911B_REG_GAIN_REDUCTION_STATE_GS_PM2</name>
+        <initializer>BIT(2)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="581" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="581" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__gain__reduction__state__reg_1gab058242a393472357014f6caf1fcc09a" prot="public" static="no">
+        <name>ST25R3911B_REG_GAIN_REDUCTION_STATE_GS_PM3</name>
+        <initializer>BIT(3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="582" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="582" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__gain__reduction__state__reg_1gaed78cf7452d8d5373c8c13b442445f6c" prot="public" static="no">
+        <name>ST25R3911B_REG_GAIN_REDUCTION_STATE_GS_AM0</name>
+        <initializer>BIT(4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="583" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="583" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__gain__reduction__state__reg_1gaedbcb00eeb1a5beb8576f696c00d304a" prot="public" static="no">
+        <name>ST25R3911B_REG_GAIN_REDUCTION_STATE_GS_AM1</name>
+        <initializer>BIT(5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="584" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="584" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__gain__reduction__state__reg_1ga8b70dfbfc6c4ddd7eabe38eaaedd2c82" prot="public" static="no">
+        <name>ST25R3911B_REG_GAIN_REDUCTION_STATE_GS_AM2</name>
+        <initializer>BIT(6)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="585" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="585" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__gain__reduction__state__reg_1ga4409fe26fb94e5b4dac2d5328d273f3f" prot="public" static="no">
+        <name>ST25R3911B_REG_GAIN_REDUCTION_STATE_GS_AM3</name>
+        <initializer>BIT(7)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="586" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="586" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>State Register bits </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

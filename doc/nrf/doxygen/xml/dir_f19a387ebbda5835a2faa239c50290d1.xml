@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_f19a387ebbda5835a2faa239c50290d1" kind="dir">
+    <compoundname>subsys/zigbee/osif</compoundname>
+    <innerfile refid="zb__nrf__platform_8h">zb_nrf_platform.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="subsys/zigbee/osif/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_a31fafd9fa67fd4346423000aaebd27a" kind="dir">
+    <compoundname>applications/nrf_desktop/src/events</compoundname>
+    <innerfile refid="battery__event_8h">battery_event.h</innerfile>
+    <innerfile refid="ble__event_8h">ble_event.h</innerfile>
+    <innerfile refid="config__event_8h">config_event.h</innerfile>
+    <innerfile refid="cpu__load__event_8h">cpu_load_event.h</innerfile>
+    <innerfile refid="hid__event_8h">hid_event.h</innerfile>
+    <innerfile refid="hids__event_8h">hids_event.h</innerfile>
+    <innerfile refid="motion__event_8h">motion_event.h</innerfile>
+    <innerfile refid="passkey__event_8h">passkey_event.h</innerfile>
+    <innerfile refid="selector__event_8h">selector_event.h</innerfile>
+    <innerfile refid="usb__event_8h">usb_event.h</innerfile>
+    <innerfile refid="wheel__event_8h">wheel_event.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/nrf_desktop/src/events/"/>
+  </compounddef>
+</doxygen>

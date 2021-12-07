@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__hids__boot__mouse__inp__rep" kind="struct" language="C++" prot="public">
+    <compoundname>bt_hids_boot_mouse_inp_rep</compoundname>
+    <includes refid="hids_8h" local="no">hids.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__hids__boot__mouse__inp__rep_aa03efbde9a901f703f3b2e77e25942f4_1aa03efbde9a901f703f3b2e77e25942f4" prot="public" static="no" mutable="no">
+        <type>struct _bt_gatt_ccc</type>
+        <definition>struct _bt_gatt_ccc bt_hids_boot_mouse_inp_rep::ccc</definition>
+        <argsstring></argsstring>
+        <name>ccc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>CCC descriptor. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="274" column="19" bodyfile="include/bluetooth/services/hids.h" bodystart="274" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__boot__mouse__inp__rep_a13b865afca3f54cf9b66a6b2510a9c67_1a13b865afca3f54cf9b66a6b2510a9c67" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_boot_mouse_inp_rep::att_ind</definition>
+        <argsstring></argsstring>
+        <name>att_ind</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Index in the service attribute array. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="277" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="277" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__boot__mouse__inp__rep_a31c46471a82673356a7e435c165d1b65_1a31c46471a82673356a7e435c165d1b65" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__hids_gab1b327abc112792947b20763cb1b8936_1gab1b327abc112792947b20763cb1b8936" kindref="member">bt_hids_notify_handler_t</ref></type>
+        <definition>bt_hids_notify_handler_t bt_hids_boot_mouse_inp_rep::handler</definition>
+        <argsstring></argsstring>
+        <name>handler</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Callback with the notification event. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="280" column="26" bodyfile="include/bluetooth/services/hids.h" bodystart="280" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Boot Mouse Input Report. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/hids.h" line="272" column="1" bodyfile="include/bluetooth/services/hids.h" bodystart="272" bodyend="281"/>
+    <listofallmembers>
+      <member refid="structbt__hids__boot__mouse__inp__rep_a13b865afca3f54cf9b66a6b2510a9c67_1a13b865afca3f54cf9b66a6b2510a9c67" prot="public" virt="non-virtual"><scope>bt_hids_boot_mouse_inp_rep</scope><name>att_ind</name></member>
+      <member refid="structbt__hids__boot__mouse__inp__rep_aa03efbde9a901f703f3b2e77e25942f4_1aa03efbde9a901f703f3b2e77e25942f4" prot="public" virt="non-virtual"><scope>bt_hids_boot_mouse_inp_rep</scope><name>ccc</name></member>
+      <member refid="structbt__hids__boot__mouse__inp__rep_a31c46471a82673356a7e435c165d1b65_1a31c46471a82673356a7e435c165d1b65" prot="public" virt="non-virtual"><scope>bt_hids_boot_mouse_inp_rep</scope><name>handler</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

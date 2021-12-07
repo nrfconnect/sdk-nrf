@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__sensor__types__warranty__and__service" kind="group">
+    <compoundname>bt_mesh_sensor_types_warranty_and_service</compoundname>
+    <title>Warranty and service</title>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__warranty__and__service_1ga10a16a54c963447a2897059aa68b30d0" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_gain</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_gain</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sensor Gain</para>
+<para>This sensor type should be used as a sensor setting.</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Sensor Gain<itemizedlist>
+<listitem><para>Unit: <emphasis>unitless</emphasis></para>
+</listitem><listitem><para>Encoding: 32 bit float </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1324" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="1324" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__warranty__and__service_1gad75881cb9be68bd854351d28407b0fa8" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_rel_dev_runtime_in_a_generic_level_range</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_rel_dev_runtime_in_a_generic_level_range</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Relative device runtime in a generic level range</para>
+<para>This sensor type supports series access. The series X-axis is unitless.</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Relative Value<itemizedlist>
+<listitem><para>Unit: Percent</para>
+</listitem><listitem><para>Encoding: 8 bit unsigned scalar (Resolution: 0.5 %)</para>
+</listitem><listitem><para>Range: 0 to 100.0</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Minimum Generic Level<itemizedlist>
+<listitem><para>Unit: <emphasis>unitless</emphasis></para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1)</para>
+</listitem><listitem><para>Range: 0 to 65535</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Maximum Generic Level<itemizedlist>
+<listitem><para>Unit: <emphasis>unitless</emphasis></para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1)</para>
+</listitem><listitem><para>Range: 0 to 65535 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="1346" column="1" declfile="include/bluetooth/mesh/sensor_types.h" declline="1346" declcolumn="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>sensor types </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

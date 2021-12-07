@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structpdn__pdp__opt" kind="struct" language="C++" prot="public">
+    <compoundname>pdn_pdp_opt</compoundname>
+    <includes refid="pdn_8h" local="no">pdn.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structpdn__pdp__opt_a1bb1b6c865c86f2bfb3068fa5d88b3a5_1a1bb1b6c865c86f2bfb3068fa5d88b3a5" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t pdn_pdp_opt::ip4_addr_alloc</definition>
+        <argsstring></argsstring>
+        <name>ip4_addr_alloc</name>
+        <briefdescription>
+<para>IPv4 address allocation. 0 – IPv4 address via Non-access Stratum (NAS) signaling (default) 1 – IPv4 address via Dynamic Host Configuration Protocol (DHCP) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/pdn.h" line="40" column="9" bodyfile="include/modem/pdn.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structpdn__pdp__opt_ac71560c987d7f5e201c816a4c6070d6b_1ac71560c987d7f5e201c816a4c6070d6b" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t pdn_pdp_opt::nslpi</definition>
+        <argsstring></argsstring>
+        <name>nslpi</name>
+        <briefdescription>
+<para>NAS Signalling Low Priority Indication. 0 – Use Non-access Stratum (NAS) Signalling Low Priority Indication (NSLPI) value from configuration (default) 1 – Use value &quot;Not configured&quot; for NAS Signalling Low Priority Indication. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/pdn.h" line="47" column="9" bodyfile="include/modem/pdn.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structpdn__pdp__opt_a6baca8ef2479c84982ad18a6d784e280_1a6baca8ef2479c84982ad18a6d784e280" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t pdn_pdp_opt::secure_pco</definition>
+        <argsstring></argsstring>
+        <name>secure_pco</name>
+        <briefdescription>
+<para>Protected transmission of Protocol Configuration Options (PCO). 0 – Protected transmission of PCO is not requested (default) 1 – Protected transmission of PCO is requested. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/pdn.h" line="53" column="9" bodyfile="include/modem/pdn.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Additional PDP Context configuration options. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/modem/pdn.h" line="34" column="1" bodyfile="include/modem/pdn.h" bodystart="34" bodyend="54"/>
+    <listofallmembers>
+      <member refid="structpdn__pdp__opt_a1bb1b6c865c86f2bfb3068fa5d88b3a5_1a1bb1b6c865c86f2bfb3068fa5d88b3a5" prot="public" virt="non-virtual"><scope>pdn_pdp_opt</scope><name>ip4_addr_alloc</name></member>
+      <member refid="structpdn__pdp__opt_ac71560c987d7f5e201c816a4c6070d6b_1ac71560c987d7f5e201c816a4c6070d6b" prot="public" virt="non-virtual"><scope>pdn_pdp_opt</scope><name>nslpi</name></member>
+      <member refid="structpdn__pdp__opt_a6baca8ef2479c84982ad18a6d784e280_1a6baca8ef2479c84982ad18a6d784e280" prot="public" virt="non-virtual"><scope>pdn_pdp_opt</scope><name>secure_pco</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

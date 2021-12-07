@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__lvl" kind="group">
+    <compoundname>bt_mesh_lvl</compoundname>
+    <title>Bluetooth mesh Generic Level models</title>
+    <innerclass refid="structbt__mesh__lvl__set" prot="public">bt_mesh_lvl_set</innerclass>
+    <innerclass refid="structbt__mesh__lvl__delta__set" prot="public">bt_mesh_lvl_delta_set</innerclass>
+    <innerclass refid="structbt__mesh__lvl__move__set" prot="public">bt_mesh_lvl_move_set</innerclass>
+    <innerclass refid="structbt__mesh__lvl__status" prot="public">bt_mesh_lvl_status</innerclass>
+    <innergroup refid="group__bt__mesh__lvl__srv">Bluetooth mesh Generic Level Server model</innergroup>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__lvl_1ga80faf45ebedb469969a9d3d5001f247d" prot="public" static="no">
+        <name>BT_MESH_LVL_MIN</name>
+        <initializer>INT16_MIN</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Generic Level minimum value. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl.h" line="24" column="9" bodyfile="include/bluetooth/mesh/gen_lvl.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__lvl_1ga87e011f7c72e0fb3b52072c17cc98e81" prot="public" static="no">
+        <name>BT_MESH_LVL_MAX</name>
+        <initializer>INT16_MAX</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Generic Level maximum value. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl.h" line="26" column="9" bodyfile="include/bluetooth/mesh/gen_lvl.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Common API for the Bluetooth mesh Generic Level models. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

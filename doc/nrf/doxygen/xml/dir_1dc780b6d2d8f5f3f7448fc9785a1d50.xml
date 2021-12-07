@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_1dc780b6d2d8f5f3f7448fc9785a1d50" kind="dir">
+    <compoundname>applications/nrf_desktop/configuration/common</compoundname>
+    <innerfile refid="nrf__desktop_2configuration_2common_2ble__adv__def_8h">ble_adv_def.h</innerfile>
+    <innerfile refid="dev__descr_8h">dev_descr.h</innerfile>
+    <innerfile refid="hid__keyboard__leds_8h">hid_keyboard_leds.h</innerfile>
+    <innerfile refid="hid__keymap_8h">hid_keymap.h</innerfile>
+    <innerfile refid="hid__report__consumer__ctrl_8h">hid_report_consumer_ctrl.h</innerfile>
+    <innerfile refid="hid__report__desc_8h">hid_report_desc.h</innerfile>
+    <innerfile refid="hid__report__keyboard_8h">hid_report_keyboard.h</innerfile>
+    <innerfile refid="hid__report__mouse_8h">hid_report_mouse.h</innerfile>
+    <innerfile refid="hid__report__system__ctrl_8h">hid_report_system_ctrl.h</innerfile>
+    <innerfile refid="hid__report__user__config_8h">hid_report_user_config.h</innerfile>
+    <innerfile refid="nrf__desktop_2configuration_2common_2led__state_8h">led_state.h</innerfile>
+    <innerfile refid="motion__sensor_8h">motion_sensor.h</innerfile>
+    <innerfile refid="passkey__buttons_8h">passkey_buttons.h</innerfile>
+    <innerfile refid="port__state_8h">port_state.h</innerfile>
+    <innerfile refid="selector__hw_8h">selector_hw.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/nrf_desktop/configuration/common/"/>
+  </compounddef>
+</doxygen>

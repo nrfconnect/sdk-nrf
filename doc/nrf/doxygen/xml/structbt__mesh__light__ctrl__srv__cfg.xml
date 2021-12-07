@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__ctrl__srv__cfg" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_ctrl_srv_cfg</compoundname>
+    <includes refid="light__ctrl__srv_8h" local="no">light_ctrl_srv.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__srv__cfg_ab4f9bbaad222c3d5d13badc18b839a02_1ab4f9bbaad222c3d5d13badc18b839a02" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_mesh_light_ctrl_srv_cfg::occupancy_delay</definition>
+        <argsstring></argsstring>
+        <name>occupancy_delay</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Delay from occupancy detected until light turns on. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="82" column="10" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__srv__cfg_a6704b5e114bc6f8ac1c335c0b8fcb494_1a6704b5e114bc6f8ac1c335c0b8fcb494" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_mesh_light_ctrl_srv_cfg::fade_on</definition>
+        <argsstring></argsstring>
+        <name>fade_on</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transition time to On state. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="84" column="10" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__srv__cfg_aea90a818998b74508e2eea077a50151a_1aea90a818998b74508e2eea077a50151a" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_mesh_light_ctrl_srv_cfg::on</definition>
+        <argsstring></argsstring>
+        <name>on</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Time in On state. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="86" column="10" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__srv__cfg_a0d486330c60fdf4acff7afd41b6c6edc_1a0d486330c60fdf4acff7afd41b6c6edc" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_mesh_light_ctrl_srv_cfg::fade_prolong</definition>
+        <argsstring></argsstring>
+        <name>fade_prolong</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transition time to Prolong state. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="88" column="10" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__srv__cfg_a1c0b3e89b341b21016918025a838b772_1a1c0b3e89b341b21016918025a838b772" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_mesh_light_ctrl_srv_cfg::prolong</definition>
+        <argsstring></argsstring>
+        <name>prolong</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Time in Prolong state. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="90" column="10" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__srv__cfg_a02f1e69f39109ec5e14adb07aab3c3e4_1a02f1e69f39109ec5e14adb07aab3c3e4" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_mesh_light_ctrl_srv_cfg::fade_standby_auto</definition>
+        <argsstring></argsstring>
+        <name>fade_standby_auto</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transition time to Standby state (in auto mode). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="92" column="10" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__srv__cfg_a8ca9a4034e61dba8fcb0b765e357ca83_1a8ca9a4034e61dba8fcb0b765e357ca83" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_mesh_light_ctrl_srv_cfg::fade_standby_manual</definition>
+        <argsstring></argsstring>
+        <name>fade_standby_manual</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transition time to Standby state (in manual mode). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="94" column="10" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__srv__cfg_af55b5c1be98a4ca4c400cde65167a05b_1af55b5c1be98a4ca4c400cde65167a05b" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_light_ctrl_srv_cfg::light[LIGHT_CTRL_STATE_COUNT]</definition>
+        <argsstring>[LIGHT_CTRL_STATE_COUNT]</argsstring>
+        <name>light</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>State-wise light levels </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="96" column="10" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Light Lightness Control Server configuration. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="80" column="1" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="80" bodyend="97"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__ctrl__srv__cfg_a6704b5e114bc6f8ac1c335c0b8fcb494_1a6704b5e114bc6f8ac1c335c0b8fcb494" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_srv_cfg</scope><name>fade_on</name></member>
+      <member refid="structbt__mesh__light__ctrl__srv__cfg_a0d486330c60fdf4acff7afd41b6c6edc_1a0d486330c60fdf4acff7afd41b6c6edc" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_srv_cfg</scope><name>fade_prolong</name></member>
+      <member refid="structbt__mesh__light__ctrl__srv__cfg_a02f1e69f39109ec5e14adb07aab3c3e4_1a02f1e69f39109ec5e14adb07aab3c3e4" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_srv_cfg</scope><name>fade_standby_auto</name></member>
+      <member refid="structbt__mesh__light__ctrl__srv__cfg_a8ca9a4034e61dba8fcb0b765e357ca83_1a8ca9a4034e61dba8fcb0b765e357ca83" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_srv_cfg</scope><name>fade_standby_manual</name></member>
+      <member refid="structbt__mesh__light__ctrl__srv__cfg_af55b5c1be98a4ca4c400cde65167a05b_1af55b5c1be98a4ca4c400cde65167a05b" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_srv_cfg</scope><name>light</name></member>
+      <member refid="structbt__mesh__light__ctrl__srv__cfg_ab4f9bbaad222c3d5d13badc18b839a02_1ab4f9bbaad222c3d5d13badc18b839a02" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_srv_cfg</scope><name>occupancy_delay</name></member>
+      <member refid="structbt__mesh__light__ctrl__srv__cfg_aea90a818998b74508e2eea077a50151a_1aea90a818998b74508e2eea077a50151a" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_srv_cfg</scope><name>on</name></member>
+      <member refid="structbt__mesh__light__ctrl__srv__cfg_a1c0b3e89b341b21016918025a838b772_1a1c0b3e89b341b21016918025a838b772" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_srv_cfg</scope><name>prolong</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

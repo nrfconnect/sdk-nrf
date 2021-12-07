@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structcloud__data__no__data" kind="struct" language="C++" prot="public">
+    <compoundname>cloud_data_no_data</compoundname>
+    <includes refid="v2_2src_2cloud_2cloud__codec_2cloud__codec_8h" local="no">cloud_codec.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structcloud__data__no__data_a2f5feb4d147e1b869e98273758ef1c5f_1a2f5feb4d147e1b869e98273758ef1c5f" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool cloud_data_no_data::gnss</definition>
+        <argsstring></argsstring>
+        <name>gnss</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If this flag is set GNSS data is not included in sample requests. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="89" column="6" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__no__data_ac06eb9acddb8b5e035ee02f14b12835f_1ac06eb9acddb8b5e035ee02f14b12835f" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool cloud_data_no_data::neighbor_cell</definition>
+        <argsstring></argsstring>
+        <name>neighbor_cell</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If this flag is set neighbor cell data is not included sample requests. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="92" column="6" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Structure containing boolean variables used to enable/disable inclusion of the corresponding data type in sample requests sent out by the application module. </para>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="87" column="1" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="87" bodyend="93"/>
+    <listofallmembers>
+      <member refid="structcloud__data__no__data_a2f5feb4d147e1b869e98273758ef1c5f_1a2f5feb4d147e1b869e98273758ef1c5f" prot="public" virt="non-virtual"><scope>cloud_data_no_data</scope><name>gnss</name></member>
+      <member refid="structcloud__data__no__data_ac06eb9acddb8b5e035ee02f14b12835f_1ac06eb9acddb8b5e035ee02f14b12835f" prot="public" virt="non-virtual"><scope>cloud_data_no_data</scope><name>neighbor_cell</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

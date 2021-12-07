@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="sms__internal_8h" kind="file" language="C++">
+    <compoundname>sms_internal.h</compoundname>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="sms__internal_8h_af7af60bde717fd7f80144664b20d269a_1af7af60bde717fd7f80144664b20d269a" prot="public" static="no">
+        <name>SMS_BUF_TMP_LEN</name>
+        <initializer>512</initializer>
+        <briefdescription>
+<para>Size of the internal buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/sms_internal.h" line="11" column="9" bodyfile="lib/sms/sms_internal.h" bodystart="11" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="sms__internal_8h_aace5c881ff4e8f36df9545ecb0622d2b_1aace5c881ff4e8f36df9545ecb0622d2b" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t sms_buf_tmp[512]</definition>
+        <argsstring>[512]</argsstring>
+        <name>sms_buf_tmp</name>
+        <briefdescription>
+<para>Temporary buffer that can be used in various functions where data buffer is required. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Will be used at least as response buffer for <ref refid="group__at__cmd_ga05555e87ffee000b8dd02c89974be9a7_1ga05555e87ffee000b8dd02c89974be9a7" kindref="member">at_cmd_write()</ref> and <ref refid="group__at__params_gadaac4c6cfef2220d5b92517446d3d70f_1gadaac4c6cfef2220d5b92517446d3d70f" kindref="member">at_params_string_get()</ref>. Be careful when using this internal buffer so that the caller hasn&apos;t already passed the data using the same buffer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/sms_internal.h" line="20" column="16" declfile="lib/sms/sms_internal.h" declline="20" declcolumn="16"/>
+      </memberdef>
+      <memberdef kind="variable" id="sms__internal_8h_afc9312bf53797d1307c9bd1413a3b688_1afc9312bf53797d1307c9bd1413a3b688" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t sms_payload_tmp[SMS_MAX_PAYLOAD_LEN_CHARS]</definition>
+        <argsstring>[SMS_MAX_PAYLOAD_LEN_CHARS]</argsstring>
+        <name>sms_payload_tmp</name>
+        <briefdescription>
+<para>Temporary buffer for SMS payload. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Will be used at least as output for encoding and decoding of SMS payload. However, this is a temporary internal buffer that can be used for other purposes too. Be careful when using this internal buffer so that the caller hasn&apos;t already passed the data using the same buffer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/sms_internal.h" line="30" column="16" declfile="lib/sms/sms_internal.h" declline="30" declcolumn="16"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_SMS_INTERNAL_INCLUDE_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_SMS_INTERNAL_INCLUDE_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11" refid="sms__internal_8h_af7af60bde717fd7f80144664b20d269a_1af7af60bde717fd7f80144664b20d269a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SMS_BUF_TMP_LEN<sp/>512</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>uint8_t<sp/><ref refid="sms__internal_8h_aace5c881ff4e8f36df9545ecb0622d2b_1aace5c881ff4e8f36df9545ecb0622d2b" kindref="member">sms_buf_tmp</ref>[<ref refid="sms__internal_8h_af7af60bde717fd7f80144664b20d269a_1af7af60bde717fd7f80144664b20d269a" kindref="member">SMS_BUF_TMP_LEN</ref>];</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>uint8_t<sp/><ref refid="sms__internal_8h_afc9312bf53797d1307c9bd1413a3b688_1afc9312bf53797d1307c9bd1413a3b688" kindref="member">sms_payload_tmp</ref>[<ref refid="group__sms_ga7106f991c6f4d63d30f1fa284e0666f5_1ga7106f991c6f4d63d30f1fa284e0666f5" kindref="member">SMS_MAX_PAYLOAD_LEN_CHARS</ref>];</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="lib/sms/sms_internal.h"/>
+  </compounddef>
+</doxygen>

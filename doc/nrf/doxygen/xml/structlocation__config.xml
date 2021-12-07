@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlocation__config" kind="struct" language="C++" prot="public">
+    <compoundname>location_config</compoundname>
+    <includes refid="location_8h" local="no">location.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlocation__config_a818fc777fbd1297cb7c584cf8f3bb1ae_1a818fc777fbd1297cb7c584cf8f3bb1ae" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t location_config::methods_count</definition>
+        <argsstring></argsstring>
+        <name>methods_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of location methods in &apos;methods&apos;. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="193" column="9" bodyfile="include/modem/location.h" bodystart="193" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__config_a06a6714b2ecbcdf4ad04b91337cef7d0_1a06a6714b2ecbcdf4ad04b91337cef7d0" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlocation__method__config" kindref="compound">location_method_config</ref></type>
+        <definition>struct location_method_config location_config::methods[CONFIG_LOCATION_METHODS_LIST_SIZE]</definition>
+        <argsstring>[CONFIG_LOCATION_METHODS_LIST_SIZE]</argsstring>
+        <name>methods</name>
+        <briefdescription>
+<para>Selected location methods and associated configurations in priority order. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Index 0 has the highest priority. Number of used methods is indicated in &apos;methods_count&apos; and it can be smaller than the size of this table. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="200" column="29" bodyfile="include/modem/location.h" bodystart="200" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__config_aff21c2ca8d733007bfdc0739bfa2cdd6_1aff21c2ca8d733007bfdc0739bfa2cdd6" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t location_config::interval</definition>
+        <argsstring></argsstring>
+        <name>interval</name>
+        <briefdescription>
+<para>Position update interval in seconds. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Set to 0 for a single position update. For periodic position updates the valid range is 10...65535 seconds. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="207" column="10" bodyfile="include/modem/location.h" bodystart="207" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Location request configuration. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>location_cellular_config</label>
+        <link refid="structlocation__cellular__config"/>
+      </node>
+      <node id="1">
+        <label>location_config</label>
+        <link refid="structlocation__config"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>methods</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>location_gnss_config</label>
+        <link refid="structlocation__gnss__config"/>
+      </node>
+      <node id="2">
+        <label>location_method_config</label>
+        <link refid="structlocation__method__config"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>cellular</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>gnss</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>wifi</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>location_wifi_config</label>
+        <link refid="structlocation__wifi__config"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/modem/location.h" line="191" column="1" bodyfile="include/modem/location.h" bodystart="191" bodyend="208"/>
+    <listofallmembers>
+      <member refid="structlocation__config_aff21c2ca8d733007bfdc0739bfa2cdd6_1aff21c2ca8d733007bfdc0739bfa2cdd6" prot="public" virt="non-virtual"><scope>location_config</scope><name>interval</name></member>
+      <member refid="structlocation__config_a06a6714b2ecbcdf4ad04b91337cef7d0_1a06a6714b2ecbcdf4ad04b91337cef7d0" prot="public" virt="non-virtual"><scope>location_config</scope><name>methods</name></member>
+      <member refid="structlocation__config_a818fc777fbd1297cb7c584cf8f3bb1ae_1a818fc777fbd1297cb7c584cf8f3bb1ae" prot="public" virt="non-virtual"><scope>location_config</scope><name>methods_count</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

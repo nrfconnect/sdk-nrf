@@ -1,0 +1,164 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__t4t__cc__file" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_t4t_cc_file</compoundname>
+    <includes refid="cc__file_8h" local="no">cc_file.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__t4t__cc__file_a0a3d4c3111f78b984f922b75458ea02a_1a0a3d4c3111f78b984f922b75458ea02a" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structnfc__t4t__tlv__block" kindref="compound">nfc_t4t_tlv_block</ref> *</type>
+        <definition>struct nfc_t4t_tlv_block* nfc_t4t_cc_file::tlv_block_array</definition>
+        <argsstring></argsstring>
+        <name>tlv_block_array</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the array for TLV blocks. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/cc_file.h" line="28" column="24" bodyfile="include/nfc/t4t/cc_file.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__cc__file_a130dbc99d432272b9984d48c50fc47a7_1a130dbc99d432272b9984d48c50fc47a7" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t nfc_t4t_cc_file::tlv_count</definition>
+        <argsstring></argsstring>
+        <name>tlv_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of TLV blocks stored in the Type 4 Tag. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/cc_file.h" line="31" column="10" bodyfile="include/nfc/t4t/cc_file.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__cc__file_a658b9470ab47479c0f38e84c2c157e95_1a658b9470ab47479c0f38e84c2c157e95" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t nfc_t4t_cc_file::max_tlv_blocks</definition>
+        <argsstring></argsstring>
+        <name>max_tlv_blocks</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum number of TLV blocks. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/cc_file.h" line="34" column="10" bodyfile="include/nfc/t4t/cc_file.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__cc__file_a1302d3273fd912674c8769f1c488780f_1a1302d3273fd912674c8769f1c488780f" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t nfc_t4t_cc_file::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size (bytes) of a Capability Container including this field. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/cc_file.h" line="37" column="10" bodyfile="include/nfc/t4t/cc_file.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__cc__file_a01b996634e4662ea34272b2e96bd86dd_1a01b996634e4662ea34272b2e96bd86dd" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t nfc_t4t_cc_file::max_rapdu_size</definition>
+        <argsstring></argsstring>
+        <name>max_rapdu_size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>MLe field - maximum R-APDU data size (bytes). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/cc_file.h" line="40" column="10" bodyfile="include/nfc/t4t/cc_file.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__cc__file_ae51029ec0f6b844f8b32d922befa1bcf_1ae51029ec0f6b844f8b32d922befa1bcf" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t nfc_t4t_cc_file::max_capdu_size</definition>
+        <argsstring></argsstring>
+        <name>max_capdu_size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>MLc field - maximum C-APDU data size (bytes). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/cc_file.h" line="43" column="10" bodyfile="include/nfc/t4t/cc_file.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__cc__file_a080231b6f03da957a4700a4cde631859_1a080231b6f03da957a4700a4cde631859" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_t4t_cc_file::major_version</definition>
+        <argsstring></argsstring>
+        <name>major_version</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Major version of the supported Type 4 Tag specification. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/cc_file.h" line="46" column="9" bodyfile="include/nfc/t4t/cc_file.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__cc__file_aac297e59959d80c68aecc65f6ed8deb0_1aac297e59959d80c68aecc65f6ed8deb0" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_t4t_cc_file::minor_version</definition>
+        <argsstring></argsstring>
+        <name>minor_version</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Minor version of the supported Type 4 Tag specification. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/cc_file.h" line="49" column="9" bodyfile="include/nfc/t4t/cc_file.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Descriptor for the Capability Container (CC) file of Type 4 Tag. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>nfc_t4t_cc_file</label>
+        <link refid="structnfc__t4t__cc__file"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>tlv_block_array</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>nfc_t4t_tlv_block</label>
+        <link refid="structnfc__t4t__tlv__block"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>value</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>nfc_t4t_tlv_block_file</label>
+        <link refid="structnfc__t4t__tlv__block__file"/>
+      </node>
+      <node id="3">
+        <label>nfc_t4t_tlv_block_file_control_val</label>
+        <link refid="structnfc__t4t__tlv__block__file__control__val"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>file</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/nfc/t4t/cc_file.h" line="26" column="1" bodyfile="include/nfc/t4t/cc_file.h" bodystart="26" bodyend="50"/>
+    <listofallmembers>
+      <member refid="structnfc__t4t__cc__file_a1302d3273fd912674c8769f1c488780f_1a1302d3273fd912674c8769f1c488780f" prot="public" virt="non-virtual"><scope>nfc_t4t_cc_file</scope><name>len</name></member>
+      <member refid="structnfc__t4t__cc__file_a080231b6f03da957a4700a4cde631859_1a080231b6f03da957a4700a4cde631859" prot="public" virt="non-virtual"><scope>nfc_t4t_cc_file</scope><name>major_version</name></member>
+      <member refid="structnfc__t4t__cc__file_ae51029ec0f6b844f8b32d922befa1bcf_1ae51029ec0f6b844f8b32d922befa1bcf" prot="public" virt="non-virtual"><scope>nfc_t4t_cc_file</scope><name>max_capdu_size</name></member>
+      <member refid="structnfc__t4t__cc__file_a01b996634e4662ea34272b2e96bd86dd_1a01b996634e4662ea34272b2e96bd86dd" prot="public" virt="non-virtual"><scope>nfc_t4t_cc_file</scope><name>max_rapdu_size</name></member>
+      <member refid="structnfc__t4t__cc__file_a658b9470ab47479c0f38e84c2c157e95_1a658b9470ab47479c0f38e84c2c157e95" prot="public" virt="non-virtual"><scope>nfc_t4t_cc_file</scope><name>max_tlv_blocks</name></member>
+      <member refid="structnfc__t4t__cc__file_aac297e59959d80c68aecc65f6ed8deb0_1aac297e59959d80c68aecc65f6ed8deb0" prot="public" virt="non-virtual"><scope>nfc_t4t_cc_file</scope><name>minor_version</name></member>
+      <member refid="structnfc__t4t__cc__file_a0a3d4c3111f78b984f922b75458ea02a_1a0a3d4c3111f78b984f922b75458ea02a" prot="public" virt="non-virtual"><scope>nfc_t4t_cc_file</scope><name>tlv_block_array</name></member>
+      <member refid="structnfc__t4t__cc__file_a130dbc99d432272b9984d48c50fc47a7_1a130dbc99d432272b9984d48c50fc47a7" prot="public" virt="non-virtual"><scope>nfc_t4t_cc_file</scope><name>tlv_count</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

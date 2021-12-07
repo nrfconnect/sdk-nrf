@@ -1,0 +1,233 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nrf__cloud__mqtt__msg__ids" kind="group">
+    <compoundname>nrf_cloud_mqtt_msg_ids</compoundname>
+    <title>MQTT message IDs for nRF Cloud.</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_1ga4af6b3bbc22ecee33cd8e2e88d7d30d1" prot="public" static="no">
+        <name>NCT_MSG_ID_USE_NEXT_INCREMENT</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="29" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_1ga60bfa46b87b05f9e50bb85e9cda58dfb" prot="public" static="no">
+        <name>NCT_MSG_ID_CC_SUB</name>
+        <initializer>100</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="30" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_1ga7469f827de6e03450be6aaecb9500f3b" prot="public" static="no">
+        <name>NCT_MSG_ID_DC_SUB</name>
+        <initializer>101</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="31" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_1gaf20c67874ae9762480a0cb1d0d4e1ba6" prot="public" static="no">
+        <name>NCT_MSG_ID_CG_SUB</name>
+        <initializer>102</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="32" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_1ga7529a72638e30d2e4d94d2ae53db5a95" prot="public" static="no">
+        <name>NCT_MSG_ID_FOTA_SUB</name>
+        <initializer>103</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="33" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_1gab6b0af9ab2b709014b7550691f62367c" prot="public" static="no">
+        <name>NCT_MSG_ID_CC_UNSUB</name>
+        <initializer>150</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="34" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_1ga1632120f0c7a4a98ca8b21b2cc0ad019" prot="public" static="no">
+        <name>NCT_MSG_ID_DC_UNSUB</name>
+        <initializer>151</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="35" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_1ga3345209076894642ff9c6b8cbed3a079" prot="public" static="no">
+        <name>NCT_MSG_ID_CG_UNSUB</name>
+        <initializer>152</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="36" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_1gae3f20f97eaf5e7a7f1dc761a4d3ffc7e" prot="public" static="no">
+        <name>NCT_MSG_ID_FOTA_UNSUB</name>
+        <initializer>153</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="37" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_1ga0d8f71af30667c6a234fdfa3713c16d9" prot="public" static="no">
+        <name>NCT_MSG_ID_STATE_REQUEST</name>
+        <initializer>200</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="38" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_1gae85321cb971e1264dbcfa525b3879fde" prot="public" static="no">
+        <name>NCT_MSG_ID_FOTA_REQUEST</name>
+        <initializer>201</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="39" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_1ga7c14ed995cb2aa93201f07199523f838" prot="public" static="no">
+        <name>NCT_MSG_ID_FOTA_BLE_REQUEST</name>
+        <initializer>202</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="40" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_1gaaf66e7e6f6fbedae765a8417dc077d29" prot="public" static="no">
+        <name>NCT_MSG_ID_STATE_REPORT</name>
+        <initializer>300</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="41" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_1gab6f39cf139077521a9f48982cd1d98cd" prot="public" static="no">
+        <name>NCT_MSG_ID_PAIR_STATUS_REPORT</name>
+        <initializer>301</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="42" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_1gaef138583c1736dc350521d7d88920a30" prot="public" static="no">
+        <name>NCT_MSG_ID_FOTA_REPORT</name>
+        <initializer>302</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="43" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_1ga6666e7983cbdcc2fd8cd4dc7222808a2" prot="public" static="no">
+        <name>NCT_MSG_ID_FOTA_BLE_REPORT</name>
+        <initializer>303</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="44" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_1gafc494e60aa8445a065cc84c87ca9f72d" prot="public" static="no">
+        <name>NCT_MSG_ID_INCREMENT_BEGIN</name>
+        <initializer>1000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="45" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_1ga3ef52df4e0d90ed2e2f4aa204736571b" prot="public" static="no">
+        <name>NCT_MSG_ID_INCREMENT_END</name>
+        <initializer>9999</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="46" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_1ga9f8b89e76e25136540d92b5b08960d08" prot="public" static="no">
+        <name>NCT_MSG_ID_USER_TAG_BEGIN</name>
+        <initializer>(<ref refid="group__nrf__cloud__mqtt__msg__ids_ga3ef52df4e0d90ed2e2f4aa204736571b_1ga3ef52df4e0d90ed2e2f4aa204736571b" kindref="member">NCT_MSG_ID_INCREMENT_END</ref> + 1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="47" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_1gabedf9d074c7a9ec8f9ef5ed82aff7b51" prot="public" static="no">
+        <name>NCT_MSG_ID_USER_TAG_END</name>
+        <initializer>0xFFFF /* MQTT message IDs are uint16_t */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="48" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

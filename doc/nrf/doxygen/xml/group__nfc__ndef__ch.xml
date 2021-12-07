@@ -1,0 +1,1050 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__ndef__ch" kind="group">
+    <compoundname>nfc_ndef_ch</compoundname>
+    <title>Connection Handover records</title>
+    <innerclass refid="structnfc__ndef__ch__hc__rec" prot="public">nfc_ndef_ch_hc_rec</innerclass>
+    <innerclass refid="structnfc__ndef__ch__ac__rec__ref" prot="public">nfc_ndef_ch_ac_rec_ref</innerclass>
+    <innerclass refid="structnfc__ndef__ch__ac__rec" prot="public">nfc_ndef_ch_ac_rec</innerclass>
+    <innerclass refid="structnfc__ndef__ch__cr__rec" prot="public">nfc_ndef_ch_cr_rec</innerclass>
+    <innerclass refid="structnfc__ndef__ch__rec" prot="public">nfc_ndef_ch_rec</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nfc__ndef__ch_1ga8d51ab4bb22b9ba9e2f6c6137ee9eb99" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nfc_ndef_ch_ac_rec_cps</name>
+        <enumvalue id="group__nfc__ndef__ch_ga8d51ab4bb22b9ba9e2f6c6137ee9eb99_1gga8d51ab4bb22b9ba9e2f6c6137ee9eb99afebd846f2151ff49132bdf9efbcb3d9f" prot="public">
+          <name>NFC_AC_CPS_INACTIVE</name>
+          <initializer>= 0x00</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Alternative Carrier inactive. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__ndef__ch_ga8d51ab4bb22b9ba9e2f6c6137ee9eb99_1gga8d51ab4bb22b9ba9e2f6c6137ee9eb99a2130fb2b06b49f2fa148cd8ef56ca06b" prot="public">
+          <name>NFC_AC_CPS_ACTIVE</name>
+          <initializer>= 0x01</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Alternative Carrier active. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__ndef__ch_ga8d51ab4bb22b9ba9e2f6c6137ee9eb99_1gga8d51ab4bb22b9ba9e2f6c6137ee9eb99a7a798eb20042cea05bb91d2aabf2270b" prot="public">
+          <name>NFC_AC_CPS_ACTIVATING</name>
+          <initializer>= 0x02</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Alternative Carrier activating. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__ndef__ch_ga8d51ab4bb22b9ba9e2f6c6137ee9eb99_1gga8d51ab4bb22b9ba9e2f6c6137ee9eb99ab9e9c167328ec384d0d7d1738f04d994" prot="public">
+          <name>NFC_AC_CPS_UNKNOWN</name>
+          <initializer>= 0x03</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Alternative Carrier power status unknown. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Carrier Power State. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Possible Carrier Power State field values in an Alternative Carrier record. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="76" column="1" bodyfile="include/nfc/ndef/ch.h" bodystart="76" bodyend="88"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__ndef__ch_1ga65947bf6856848202b31d66c33f61772" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_ch_rec_payload_encode</definition>
+        <argsstring>(const struct nfc_ndef_ch_rec *ch_rec, uint8_t *buf, uint32_t *len)</argsstring>
+        <name>nfc_ndef_ch_rec_payload_encode</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__ch__rec" kindref="compound">nfc_ndef_ch_rec</ref> *</type>
+          <declname>ch_rec</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Constructor for an NFC Connection Handover generic record payload. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ch_rec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Connection Handover record description. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the payload destination. If NULL, function will calculate the expected size of the Handover Connection record payload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the available memory to write as input. Size of the generated record payload as output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="166" column="5" declfile="include/nfc/ndef/ch.h" declline="166" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__ch_1gaac202d07c7353eae7258c92d99f997ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_ndef_ch_rec_local_record_clear</definition>
+        <argsstring>(struct nfc_ndef_record_desc *ch_rec)</argsstring>
+        <name>nfc_ndef_ch_rec_local_record_clear</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>ch_rec</declname>
+        </param>
+        <briefdescription>
+<para>Function for clearing local records in the NFC NDEF Connection Handover records. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function clears local records of the Connection Handover records.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">ch_rec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Connection Handover record descriptor.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="344" column="6" declfile="include/nfc/ndef/ch.h" declline="344" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__ch_1gadb2af9d1c574a089dc81b2e2f619a84f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_ch_rec_local_record_add</definition>
+        <argsstring>(struct nfc_ndef_record_desc *ch_rec, const struct nfc_ndef_record_desc *local_rec)</argsstring>
+        <name>nfc_ndef_ch_rec_local_record_add</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>ch_rec</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>local_rec</declname>
+        </param>
+        <briefdescription>
+<para>Function for adding a local record to an NFC NDEF Handover Select record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">ch_rec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a Connection Handover record. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">local_rec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a local record to add.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="356" column="5" declfile="include/nfc/ndef/ch.h" declline="356" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__ch_1ga804cc7434a4b88825696faf61ddc41d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_ch_hc_rec_payload_encode</definition>
+        <argsstring>(const struct nfc_ndef_ch_hc_rec *hc_rec, uint8_t *buf, uint32_t *len)</argsstring>
+        <name>nfc_ndef_ch_hc_rec_payload_encode</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__ch__hc__rec" kindref="compound">nfc_ndef_ch_hc_rec</ref> *</type>
+          <declname>hc_rec</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Constructor for an NFC Connection Handover Carrier Record payload. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">hc_rec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Connection Handover Carrier record description. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the payload destination. If NULL, function will calculate the expected size of the Handover Connection Carrier Record payload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the available memory to write as input. Size of the generated record payload as output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="373" column="5" declfile="include/nfc/ndef/ch.h" declline="373" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__ch_1ga848813f7ddaf11532fb920b08275146c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_ch_ac_rec_payload_encode</definition>
+        <argsstring>(const struct nfc_ndef_ch_ac_rec *nfc_rec_ac, uint8_t *buf, uint32_t *len)</argsstring>
+        <name>nfc_ndef_ch_ac_rec_payload_encode</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__ch__ac__rec" kindref="compound">nfc_ndef_ch_ac_rec</ref> *</type>
+          <declname>nfc_rec_ac</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Constructor for an NFC NDEF Alternative Carrier record payload. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">nfc_rec_ac</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Alternative Carrier record description. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the payload destination. If NULL, function will calculate the expected size of the Alternative Carrier record payload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the available memory to write as input. Size of the generated record payload as output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="427" column="5" declfile="include/nfc/ndef/ch.h" declline="427" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__ch_1ga1e653485bf56d183eb49a34bc8163054" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_ndef_ch_ac_rec_auxiliary_data_ref_clear</definition>
+        <argsstring>(struct nfc_ndef_record_desc *ac_rec)</argsstring>
+        <name>nfc_ndef_ch_ac_rec_auxiliary_data_ref_clear</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>ac_rec</declname>
+        </param>
+        <briefdescription>
+<para>Function for clearing an Auxiliary Data Reference in an NFC NDEF Alternative Carrier record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function clears the Auxiliary Data References from the Alternative Carrier record.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">ac_rec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Alternative Carrier record descriptor. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="488" column="6" declfile="include/nfc/ndef/ch.h" declline="488" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__ch_1ga4af3f1301839eaefde9f348cb8e1c588" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_ch_ac_rec_auxiliary_data_ref_add</definition>
+        <argsstring>(struct nfc_ndef_record_desc *ac_rec, const uint8_t *aux_data, uint8_t aux_length)</argsstring>
+        <name>nfc_ndef_ch_ac_rec_auxiliary_data_ref_add</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>ac_rec</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>aux_data</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>aux_length</declname>
+        </param>
+        <briefdescription>
+<para>Function for adding an Auxiliary Data Reference to an NFC NDEF Alternative Carrier record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">ac_rec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to an ac record. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">aux_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Auxiliary Data Reference data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">aux_length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the Auxiliary Data Reference data.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="501" column="5" declfile="include/nfc/ndef/ch.h" declline="501" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__ch_1gad15bcf7040ca8634d4c4572680e10c88" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_ch_cr_rec_payload_encode</definition>
+        <argsstring>(const struct nfc_ndef_ch_cr_rec *nfc_rec_cr, uint8_t *buf, uint32_t *len)</argsstring>
+        <name>nfc_ndef_ch_cr_rec_payload_encode</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__ch__cr__rec" kindref="compound">nfc_ndef_ch_cr_rec</ref> *</type>
+          <declname>nfc_rec_cr</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Constructor for an NFC NDEF Collision Resolution record payload. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">nfc_rec_cr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Collision Resolution record description. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the payload destination. If NULL, function will calculate the expected size of the Collision Resolution record payload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the available memory to write as input. Size of the generated record payload as output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="519" column="5" declfile="include/nfc/ndef/ch.h" declline="519" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__ndef__ch_1gad14a10543ef41e9ceee3081b77355766" prot="public" static="no">
+        <name>NFC_NDEF_CH_REC_TYPE_LENGTH</name>
+        <initializer>2</initializer>
+        <briefdescription>
+<para>Size of the type field of the Connection Handover records. Record types are defined in the file <computeroutput>ch_rec.c</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="34" column="9" bodyfile="include/nfc/ndef/ch.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__ch_1gaa4e4689c2d769b075e82f7fa04ef35db" prot="public" static="no">
+        <name>NFC_NDEF_CH_AC_CPS_MASK</name>
+        <initializer>(<ref refid="group__nfc__ndef__ch_ga8d51ab4bb22b9ba9e2f6c6137ee9eb99_1gga8d51ab4bb22b9ba9e2f6c6137ee9eb99ab9e9c167328ec384d0d7d1738f04d994" kindref="member">NFC_AC_CPS_UNKNOWN</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Mask of Carrier Power State bits in a first ac record byte. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="91" column="9" bodyfile="include/nfc/ndef/ch.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__ch_1gad82842440a55f57d8a31f83c99a98ad4" prot="public" static="no">
+        <name>NFC_NDEF_CH_RECORD_DESC_DEF</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_rec_type_field</defname></param>
+        <param><defname>_major_version</defname></param>
+        <param><defname>_minor_version</defname></param>
+        <param><defname>_max_records</defname></param>
+        <initializer>	<ref refid="group__nfc__ndef__msg_ga912e0302af4c49c3432535b3a44b0166_1ga912e0302af4c49c3432535b3a44b0166" kindref="member">NFC_NDEF_MSG_DEF</ref>(_name, _max_records);				 \
+	struct <ref refid="structnfc__ndef__ch__rec" kindref="compound">nfc_ndef_ch_rec</ref> _name##_nfc_ch_rec = {			 \
+		.major_version = _major_version,			 \
+		.minor_version = _minor_version,			 \
+		.local_records = &amp;<ref refid="group__nfc__ndef__msg_gaa3254c3d074722505b84cbe9c02e957d_1gaa3254c3d074722505b84cbe9c02e957d" kindref="member">NFC_NDEF_MSG</ref>(_name)			 \
+	};								 \
+	<ref refid="group__nfc__ndef__record_ga981ac373f5af603b36c7ab2c488785a6_1ga981ac373f5af603b36c7ab2c488785a6" kindref="member">NFC_NDEF_GENERIC_RECORD_DESC_DEF</ref>(_name,				 \
+					 <ref refid="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1gga2091295307fa8161219648a88df172a8ace6c9ee74852eebbdb1421e85c4e0041" kindref="member">TNF_WELL_KNOWN</ref>,		 \
+					 0,				 \
+					 0,				 \
+					 _rec_type_field,		 \
+					 <ref refid="group__nfc__ndef__ch_gad14a10543ef41e9ceee3081b77355766_1gad14a10543ef41e9ceee3081b77355766" kindref="member">NFC_NDEF_CH_REC_TYPE_LENGTH</ref>,	 \
+					 <ref refid="group__nfc__ndef__ch_ga65947bf6856848202b31d66c33f61772_1ga65947bf6856848202b31d66c33f61772" kindref="member">nfc_ndef_ch_rec_payload_encode</ref>, \
+					 &amp;(_name##_nfc_ch_rec))</initializer>
+        <briefdescription>
+<para>Macro for creating and initializing an NFC NDEF record descriptor for the Connection Handover. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates and initializes an instance of type <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> and an instance of type <ref refid="structnfc__ndef__ch__rec" kindref="compound">nfc_ndef_ch_rec</ref>, which together constitute an instance of a Connection Handover record.</para>
+<para>Use the macro <ref refid="group__nfc__ndef__ch_ga3d102a1b79ed6039152a5c80d523d787_1ga3d102a1b79ed6039152a5c80d523d787" kindref="member">NFC_NDEF_CH_RECORD_DESC</ref> to access the NDEF Connection Handover record descriptor instance.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the created record descriptor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_rec_type_field</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The NFC Forum Well Known Type Connection Handover record type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_major_version</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Major version number of the supported Connection Handover specification. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_minor_version</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minor version number of the supported Connection Handover specification. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_max_records</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of local records. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="194" column="9" bodyfile="include/nfc/ndef/ch.h" bodystart="190" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__ch_1ga03b13b805dba16630f375bbb63b5c201" prot="public" static="no">
+        <name>NFC_NDEF_CH_HS_RECORD_DESC_DEF</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_major_version</defname></param>
+        <param><defname>_minor_version</defname></param>
+        <param><defname>_max_records</defname></param>
+        <initializer>	<ref refid="group__nfc__ndef__ch_gad82842440a55f57d8a31f83c99a98ad4_1gad82842440a55f57d8a31f83c99a98ad4" kindref="member">NFC_NDEF_CH_RECORD_DESC_DEF</ref>(_name,			   \
+				    <ref refid="group__nfc__ndef__payload__type__common_ga46b2a223a7018b74e5c3e51756d0c45a_1ga46b2a223a7018b74e5c3e51756d0c45a" kindref="member">nfc_ndef_ch_hs_rec_type_field</ref>, \
+				    _major_version,		   \
+				    _minor_version,		   \
+				    _max_records)</initializer>
+        <briefdescription>
+<para>Macro for creating and initializing an NFC NDEF record descriptor for a Handover Select record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates and initializes an instance of type <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> and an instance of type <ref refid="structnfc__ndef__ch__rec" kindref="compound">nfc_ndef_ch_rec</ref>, which together constitute an instance of a Handover Select record.</para>
+<para>Use the macro <ref refid="group__nfc__ndef__ch_ga3d102a1b79ed6039152a5c80d523d787_1ga3d102a1b79ed6039152a5c80d523d787" kindref="member">NFC_NDEF_CH_RECORD_DESC</ref> to access the NDEF Handover Select record descriptor instance.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the created record descriptor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_major_version</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Major version number of the supported Connection Handover specification. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_minor_version</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minor version number of the supported Connection Handover specification. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_max_records</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of local records struct (ac records plus optional err record). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="233" column="9" bodyfile="include/nfc/ndef/ch.h" bodystart="230" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__ch_1gab962c075c60a8b687af7a848cd16444a" prot="public" static="no">
+        <name>NFC_NDEF_CH_HR_RECORD_DESC_DEF</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_major_version</defname></param>
+        <param><defname>_minor_version</defname></param>
+        <param><defname>_max_records</defname></param>
+        <initializer>	<ref refid="group__nfc__ndef__ch_gad82842440a55f57d8a31f83c99a98ad4_1gad82842440a55f57d8a31f83c99a98ad4" kindref="member">NFC_NDEF_CH_RECORD_DESC_DEF</ref>(_name,			   \
+				    <ref refid="group__nfc__ndef__payload__type__common_ga1762b1c00180f8c6a6ac0aad0056518c_1ga1762b1c00180f8c6a6ac0aad0056518c" kindref="member">nfc_ndef_ch_hr_rec_type_field</ref>, \
+				    _major_version,		   \
+				    _minor_version,		   \
+				    _max_records)</initializer>
+        <briefdescription>
+<para>Macro for creating and initializing an NFC NDEF record descriptor for a Handover Request record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates and initializes an instance of type <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> and an instance of type <ref refid="structnfc__ndef__ch__rec" kindref="compound">nfc_ndef_ch_rec</ref>, which together constitute an instance of a Handover Request record.</para>
+<para>Use the macro <ref refid="group__nfc__ndef__ch_ga3d102a1b79ed6039152a5c80d523d787_1ga3d102a1b79ed6039152a5c80d523d787" kindref="member">NFC_NDEF_CH_RECORD_DESC</ref> to access the NDEF Handover Request record descriptor instance.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the created record descriptor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_major_version</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Major version number of the supported Connection Handover specification. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_minor_version</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minor version number of the supported Connection Handover specification. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_max_records</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of local records (cr record plus ac records). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="263" column="9" bodyfile="include/nfc/ndef/ch.h" bodystart="260" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__ch_1gae0afd9bc9af8a9c14f9a3273a99acad9" prot="public" static="no">
+        <name>NFC_NDEF_CH_HM_RECORD_DESC_DEF</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_major_version</defname></param>
+        <param><defname>_minor_version</defname></param>
+        <param><defname>_max_records</defname></param>
+        <initializer>	<ref refid="group__nfc__ndef__ch_gad82842440a55f57d8a31f83c99a98ad4_1gad82842440a55f57d8a31f83c99a98ad4" kindref="member">NFC_NDEF_CH_RECORD_DESC_DEF</ref>(_name,			   \
+				    <ref refid="group__nfc__ndef__payload__type__common_ga56dc6cf879a0320b1bebc5e56e5225f0_1ga56dc6cf879a0320b1bebc5e56e5225f0" kindref="member">nfc_ndef_ch_hm_rec_type_field</ref>, \
+				    _major_version,		   \
+				    _minor_version,		   \
+				    _max_records)</initializer>
+        <briefdescription>
+<para>Macro for creating and initializing an NFC NDEF record descriptor for a Handover Mediation record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates and initializes an instance of type <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> and an instance of type <ref refid="structnfc__ndef__ch__rec" kindref="compound">nfc_ndef_ch_rec</ref>, which together constitute an instance of a Handover Mediation record.</para>
+<para>Use the macro <ref refid="group__nfc__ndef__ch_ga3d102a1b79ed6039152a5c80d523d787_1ga3d102a1b79ed6039152a5c80d523d787" kindref="member">NFC_NDEF_CH_RECORD_DESC</ref> to access the NDEF Handover Mediation record descriptor instance.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the created record descriptor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_major_version</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Major version number of the supported Connection Handover specification. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_minor_version</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minor version number of the supported Connection Handover specification. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_max_records</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of local records (ac records). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="293" column="9" bodyfile="include/nfc/ndef/ch.h" bodystart="290" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__ch_1gafe7a97ca33a8e1a6db2f9d8823874390" prot="public" static="no">
+        <name>NFC_NDEF_CH_HI_RECORD_DESC_DEF</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_major_version</defname></param>
+        <param><defname>_minor_version</defname></param>
+        <param><defname>_max_records</defname></param>
+        <initializer>	<ref refid="group__nfc__ndef__ch_gad82842440a55f57d8a31f83c99a98ad4_1gad82842440a55f57d8a31f83c99a98ad4" kindref="member">NFC_NDEF_CH_RECORD_DESC_DEF</ref>(_name,			   \
+				    <ref refid="group__nfc__ndef__payload__type__common_ga356cf6db87faed83de1ecdc7fba60ccf_1ga356cf6db87faed83de1ecdc7fba60ccf" kindref="member">nfc_ndef_ch_hi_rec_type_field</ref>, \
+				    _major_version,		   \
+				    _minor_version,		   \
+				    _max_records)</initializer>
+        <briefdescription>
+<para>Macro for creating and initializing an NFC NDEF record descriptor for a Handover Initiate record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates and initializes an instance of type <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref>.</para>
+<para>Use the macro <ref refid="group__nfc__ndef__ch_ga3d102a1b79ed6039152a5c80d523d787_1ga3d102a1b79ed6039152a5c80d523d787" kindref="member">NFC_NDEF_CH_RECORD_DESC</ref> to access the NDEF Handover Initiate record descriptor instance.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the created record descriptor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_major_version</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Major version number of the supported Connection Handover specification. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_minor_version</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minor version number of the supported Connection Handover specification. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_max_records</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of local records (ac records). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="320" column="9" bodyfile="include/nfc/ndef/ch.h" bodystart="317" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__ch_1ga3d102a1b79ed6039152a5c80d523d787" prot="public" static="no">
+        <name>NFC_NDEF_CH_RECORD_DESC</name>
+        <param><defname>_name</defname></param>
+        <initializer><ref refid="group__nfc__ndef__record_ga854ffeb62045f58c823adedf3f0ed615_1ga854ffeb62045f58c823adedf3f0ed615" kindref="member">NFC_NDEF_GENERIC_RECORD_DESC</ref>(_name)</initializer>
+        <briefdescription>
+<para>Macro for accessing the NFC NDEF Handover Select record descriptor instance that was created with <ref refid="group__nfc__ndef__ch_ga03b13b805dba16630f375bbb63b5c201_1ga03b13b805dba16630f375bbb63b5c201" kindref="member">NFC_NDEF_CH_HS_RECORD_DESC_DEF</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="331" column="9" bodyfile="include/nfc/ndef/ch.h" bodystart="331" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__ch_1gab23245f4d9649852b9fe9eadd3268d95" prot="public" static="no">
+        <name>NFC_NDEF_CH_HC_RECORD_DESC_DEF</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_payload_id</defname></param>
+        <param><defname>_payload_id_length</defname></param>
+        <param><defname>_payload_desc</defname></param>
+        <initializer>									    \
+	<ref refid="group__nfc__ndef__record_ga981ac373f5af603b36c7ab2c488785a6_1ga981ac373f5af603b36c7ab2c488785a6" kindref="member">NFC_NDEF_GENERIC_RECORD_DESC_DEF</ref>(_name,				    \
+					 <ref refid="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1gga2091295307fa8161219648a88df172a8ace6c9ee74852eebbdb1421e85c4e0041" kindref="member">TNF_WELL_KNOWN</ref>,                    \
+					 _payload_id,                       \
+					 _payload_id_length,                \
+					 <ref refid="group__nfc__ndef__payload__type__common_gaf1e06dd8b54c94e8df05404ba133a873_1gaf1e06dd8b54c94e8df05404ba133a873" kindref="member">nfc_ndef_ch_hc_rec_type_field</ref>,     \
+					 <ref refid="group__nfc__ndef__ch_gad14a10543ef41e9ceee3081b77355766_1gad14a10543ef41e9ceee3081b77355766" kindref="member">NFC_NDEF_CH_REC_TYPE_LENGTH</ref>,	    \
+					 <ref refid="group__nfc__ndef__ch_ga804cc7434a4b88825696faf61ddc41d1_1ga804cc7434a4b88825696faf61ddc41d1" kindref="member">nfc_ndef_ch_hc_rec_payload_encode</ref>, \
+					 (_payload_desc))</initializer>
+        <briefdescription>
+<para>Macro for creating and initializing an NFC NDEF record descriptor for the Handover Carrier record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates and initializes an instance of type <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> and an instance of type <ref refid="structnfc__ndef__ch__rec" kindref="compound">nfc_ndef_ch_rec</ref>, which together constitute an instance of a Connection Handover record.</para>
+<para>Use the macro <ref refid="group__nfc__ndef__ch_ga5206c02d95b4891a26f8c912e36f879b_1ga5206c02d95b4891a26f8c912e36f879b" kindref="member">NFC_NDEF_CH_HC_RECORD_DESC</ref> to access the NDEF Connection Handover record descriptor instance.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the created record descriptor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_payload_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ID of the payload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_payload_id_length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the payload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_payload_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the payload. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="396" column="9" bodyfile="include/nfc/ndef/ch.h" bodystart="393" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__ch_1ga5206c02d95b4891a26f8c912e36f879b" prot="public" static="no">
+        <name>NFC_NDEF_CH_HC_RECORD_DESC</name>
+        <param><defname>_name</defname></param>
+        <initializer><ref refid="group__nfc__ndef__record_ga854ffeb62045f58c823adedf3f0ed615_1ga854ffeb62045f58c823adedf3f0ed615" kindref="member">NFC_NDEF_GENERIC_RECORD_DESC</ref>(_name)</initializer>
+        <briefdescription>
+<para>Macro for accessing the NFC NDEF Handover Carrier record descriptor instance that was created with <emphasis>NFC_NDEF_CH_HC_GENERIC_RECORD_DESC_DEF</emphasis>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="411" column="9" bodyfile="include/nfc/ndef/ch.h" bodystart="411" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__ch_1gac11cbe7e33ebd9e2f349e47c04b33bf9" prot="public" static="no">
+        <name>NFC_NDEF_CH_AC_RECORD_DESC_DEF</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_cps</defname></param>
+        <param><defname>_carr_data_ref_len</defname></param>
+        <param><defname>_carr_data_ref</defname></param>
+        <param><defname>_max_aux_data_ref_cnt</defname></param>
+        <initializer>	struct <ref refid="structnfc__ndef__ch__ac__rec__ref" kindref="compound">nfc_ndef_ch_ac_rec_ref</ref>					    \
+		_name##<ref refid="structnfc__ndef__ch__ac__rec__ref" kindref="compound">nfc_ndef_ch_ac_rec_ref</ref>[_max_aux_data_ref_cnt];	    \
+	struct <ref refid="structnfc__ndef__ch__ac__rec" kindref="compound">nfc_ndef_ch_ac_rec</ref>				            \
+		_name##_nfc_ac_rec = {					    \
+		.cps = _cps,						    \
+		.carrier_data_ref = { _carr_data_ref_len, _carr_data_ref }, \
+		.max_aux_data_ref_cnt = _max_aux_data_ref_cnt,		    \
+		.aux_data_ref_cnt = 0,					    \
+		.aux_data_ref = _name##<ref refid="structnfc__ndef__ch__ac__rec__ref" kindref="compound">nfc_ndef_ch_ac_rec_ref</ref>		    \
+	};								    \
+	<ref refid="group__nfc__ndef__record_ga981ac373f5af603b36c7ab2c488785a6_1ga981ac373f5af603b36c7ab2c488785a6" kindref="member">NFC_NDEF_GENERIC_RECORD_DESC_DEF</ref>(_name,				    \
+					 <ref refid="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1gga2091295307fa8161219648a88df172a8ace6c9ee74852eebbdb1421e85c4e0041" kindref="member">TNF_WELL_KNOWN</ref>,		    \
+					 0,				    \
+					 0,				    \
+					 <ref refid="group__nfc__ndef__payload__type__common_gac33d03589d981f9a97dc99b3d68cceba_1gac33d03589d981f9a97dc99b3d68cceba" kindref="member">nfc_ndef_ch_ac_rec_type_field</ref>,     \
+					 <ref refid="group__nfc__ndef__ch_gad14a10543ef41e9ceee3081b77355766_1gad14a10543ef41e9ceee3081b77355766" kindref="member">NFC_NDEF_CH_REC_TYPE_LENGTH</ref>,       \
+					 <ref refid="group__nfc__ndef__ch_ga848813f7ddaf11532fb920b08275146c_1ga848813f7ddaf11532fb920b08275146c" kindref="member">nfc_ndef_ch_ac_rec_payload_encode</ref>, \
+					 &amp;(_name##_nfc_ac_rec))</initializer>
+        <briefdescription>
+<para>Macro for creating and initializing an NFC NDEF record descriptor for an Alternative Carrier record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates and initializes an instance of type <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> and an instance of type <ref refid="structnfc__ndef__ch__ac__rec" kindref="compound">nfc_ndef_ch_ac_rec</ref>, which together constitute an instance of an Alternative Carrier record.</para>
+<para>Use the macro <ref refid="group__nfc__ndef__ch_gaec1e80a045a06c8bbd6608dd128ee37d_1gaec1e80a045a06c8bbd6608dd128ee37d" kindref="member">NFC_NDEF_CH_AC_RECORD_DESC</ref> to access the NDEF Alternative Carrier record descriptor instance.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the created record descriptor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_cps</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Carrier Power State value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_carr_data_ref_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the Carrier Data Reference field. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_carr_data_ref</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Carrier Data Reference field. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_max_aux_data_ref_cnt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of Auxiliary Data Reference fields. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="453" column="9" bodyfile="include/nfc/ndef/ch.h" bodystart="449" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__ch_1gaec1e80a045a06c8bbd6608dd128ee37d" prot="public" static="no">
+        <name>NFC_NDEF_CH_AC_RECORD_DESC</name>
+        <param><defname>_name</defname></param>
+        <initializer><ref refid="group__nfc__ndef__record_ga854ffeb62045f58c823adedf3f0ed615_1ga854ffeb62045f58c823adedf3f0ed615" kindref="member">NFC_NDEF_GENERIC_RECORD_DESC</ref>(_name)</initializer>
+        <briefdescription>
+<para>Macro for accessing the NFC NDEF Alternative Carrier record descriptor instance that was created with <emphasis>NFC_NDEF_AC_RECORD_DESC_DEF</emphasis>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="477" column="9" bodyfile="include/nfc/ndef/ch.h" bodystart="477" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__ch_1ga709736e27277ffe50080ab5108db708c" prot="public" static="no">
+        <name>NFC_NDEF_CH_CR_RECORD_DESC_DEF</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_random_number</defname></param>
+        <initializer>	struct <ref refid="structnfc__ndef__ch__cr__rec" kindref="compound">nfc_ndef_ch_cr_rec</ref>					    \
+		_name##_nfc_cr_rec = {					    \
+		.random = _random_number,				    \
+	};								    \
+	<ref refid="group__nfc__ndef__record_ga981ac373f5af603b36c7ab2c488785a6_1ga981ac373f5af603b36c7ab2c488785a6" kindref="member">NFC_NDEF_GENERIC_RECORD_DESC_DEF</ref>(_name,				    \
+					 <ref refid="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1gga2091295307fa8161219648a88df172a8ace6c9ee74852eebbdb1421e85c4e0041" kindref="member">TNF_WELL_KNOWN</ref>,		    \
+					 0,				    \
+					 0,				    \
+					 <ref refid="group__nfc__ndef__payload__type__common_gaf76826f114751c827cad9f3e21aa20d6_1gaf76826f114751c827cad9f3e21aa20d6" kindref="member">nfc_ndef_ch_cr_rec_type_field</ref>,	    \
+					 <ref refid="group__nfc__ndef__ch_gad14a10543ef41e9ceee3081b77355766_1gad14a10543ef41e9ceee3081b77355766" kindref="member">NFC_NDEF_CH_REC_TYPE_LENGTH</ref>,	    \
+					 <ref refid="group__nfc__ndef__ch_gad15bcf7040ca8634d4c4572680e10c88_1gad15bcf7040ca8634d4c4572680e10c88" kindref="member">nfc_ndef_ch_cr_rec_payload_encode</ref>, \
+					 &amp;(_name##_nfc_cr_rec))</initializer>
+        <briefdescription>
+<para>Macro for creating and initializing an NFC NDEF record descriptor for an Collision Resolution record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates and initializes an instance of type <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> and an instance of type <ref refid="structnfc__ndef__ch__cr__rec" kindref="compound">nfc_ndef_ch_cr_rec</ref>, which together constitute an instance of an Collision Resolution record.</para>
+<para>Use the macro <ref refid="group__nfc__ndef__ch_gadb2dec03ca88d176062cffad8c2b19b7_1gadb2dec03ca88d176062cffad8c2b19b7" kindref="member">NFC_NDEF_CR_RECORD_DESC</ref> to access the NDEF Collision Resolution record descriptor instance.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the created record descriptor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_random_number</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Generated random number required to resolve a collision. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="539" column="9" bodyfile="include/nfc/ndef/ch.h" bodystart="538" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__ch_1gadb2dec03ca88d176062cffad8c2b19b7" prot="public" static="no">
+        <name>NFC_NDEF_CR_RECORD_DESC</name>
+        <param><defname>_name</defname></param>
+        <initializer><ref refid="group__nfc__ndef__record_ga854ffeb62045f58c823adedf3f0ed615_1ga854ffeb62045f58c823adedf3f0ed615" kindref="member">NFC_NDEF_GENERIC_RECORD_DESC</ref>(_name)</initializer>
+        <briefdescription>
+<para>Macro for accessing the NFC NDEF Alternative Carrier record descriptor instance that was created with <ref refid="group__nfc__ndef__ch_ga709736e27277ffe50080ab5108db708c_1ga709736e27277ffe50080ab5108db708c" kindref="member">NFC_NDEF_CH_CR_RECORD_DESC_DEF</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="557" column="9" bodyfile="include/nfc/ndef/ch.h" bodystart="557" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Generation of NFC NDEF Connection Handover records for NDEF messages. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structble__peer__event" kind="struct" language="C++" prot="public">
+    <compoundname>ble_peer_event</compoundname>
+    <includes refid="ble__common__event_8h" local="no">ble_common_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structble__peer__event_a4f2b19959ddf4007122fc2a76257c9cd_1a4f2b19959ddf4007122fc2a76257c9cd" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header ble_peer_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event header. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/ble_common_event.h" line="107" column="19" bodyfile="include/caf/events/ble_common_event.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structble__peer__event_a9e9bd6711867cd2d1ababfbe700c30d8_1a9e9bd6711867cd2d1ababfbe700c30d8" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1gaf960a6979cd9769891c731a932718427" kindref="member">peer_state</ref></type>
+        <definition>enum peer_state ble_peer_event::state</definition>
+        <argsstring></argsstring>
+        <name>state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>State of the Bluetooth LE peer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/ble_common_event.h" line="110" column="16" bodyfile="include/caf/events/ble_common_event.h" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structble__peer__event_a655687e23fbc039b5bcbf446ce8860e1_1a655687e23fbc039b5bcbf446ce8860e1" prot="public" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* ble_peer_event::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>ID used to identify Bluetooth connection - pointer to the bt_conn. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/ble_common_event.h" line="113" column="6" bodyfile="include/caf/events/ble_common_event.h" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Bluetooth LE peer event. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The Bluetooth LE peer event is submitted to inform about state change of a Bluetooth connected peer. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>ble_peer_event</label>
+        <link refid="structble__peer__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/caf/events/ble_common_event.h" line="105" column="1" bodyfile="include/caf/events/ble_common_event.h" bodystart="105" bodyend="114"/>
+    <listofallmembers>
+      <member refid="structble__peer__event_a4f2b19959ddf4007122fc2a76257c9cd_1a4f2b19959ddf4007122fc2a76257c9cd" prot="public" virt="non-virtual"><scope>ble_peer_event</scope><name>header</name></member>
+      <member refid="structble__peer__event_a655687e23fbc039b5bcbf446ce8860e1_1a655687e23fbc039b5bcbf446ce8860e1" prot="public" virt="non-virtual"><scope>ble_peer_event</scope><name>id</name></member>
+      <member refid="structble__peer__event_a9e9bd6711867cd2d1ababfbe700c30d8_1a9e9bd6711867cd2d1ababfbe700c30d8" prot="public" virt="non-virtual"><scope>ble_peer_event</scope><name>state</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

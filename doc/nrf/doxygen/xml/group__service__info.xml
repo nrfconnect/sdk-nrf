@@ -1,0 +1,152 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__service__info" kind="group">
+    <compoundname>service_info</compoundname>
+    <title>API to generate service info JSON for device shadow.</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__service__info_1gaadf1cc8ccc6294a012cb01562e0da627" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int service_info_json_object_encode</definition>
+        <argsstring>(const char *const ui[], const uint32_t ui_count, const char *const fota[], const uint32_t fota_count, const uint16_t fota_version, cJSON *obj_out)</argsstring>
+        <name>service_info_json_object_encode</name>
+        <param>
+          <type>const char *const</type>
+          <declname>ui</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+          <declname>ui_count</declname>
+        </param>
+        <param>
+          <type>const char *const</type>
+          <declname>fota</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+          <declname>fota_count</declname>
+        </param>
+        <param>
+          <type>const uint16_t</type>
+          <declname>fota_version</declname>
+        </param>
+        <param>
+          <type>cJSON *</type>
+          <declname>obj_out</declname>
+        </param>
+        <briefdescription>
+<para>Encode the service info to JSON. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Service info is written to the JSON object.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ui</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of UI strings. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ui_count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of ui strings in the array. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fota</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of FOTA strings. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fota_count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of FOTA strings in the array. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fota_version</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>FOTA version number. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>obj_out</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The JSON object where the data is stored.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/service_info.h" line="39" column="5" declfile="applications/asset_tracker/src/cloud_codec/service_info.h" declline="39" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__service__info_1ga38e19422a6cd0fac277909eefcc2b658" prot="public" static="no">
+        <name>SERVICE_INFO_FOTA_VER_CURRENT</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/service_info.h" line="20" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/service_info.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__service__info_1gacb44118be86b54ddfb0b82576d89e4a3" prot="public" static="no">
+        <name>SERVICE_INFO_FOTA_STR_BOOTLOADER</name>
+        <initializer>&quot;BOOT&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/service_info.h" line="21" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/service_info.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__service__info_1ga28733ce8cd91a27d2237f695b4a62035" prot="public" static="no">
+        <name>SERVICE_INFO_FOTA_STR_MODEM</name>
+        <initializer>&quot;MODEM&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/service_info.h" line="22" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/service_info.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__service__info_1gad710bedf51ced51b46f14ad54022b0e3" prot="public" static="no">
+        <name>SERVICE_INFO_FOTA_STR_APP</name>
+        <initializer>&quot;APP&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/service_info.h" line="23" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/service_info.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

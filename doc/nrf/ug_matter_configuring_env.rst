@@ -112,7 +112,7 @@ To use this setup, you need the following hardware:
 
 For information about how to configure and use the required components, see the following user guides:
 
-* Configuring Thread Border Router on a PC or a Raspberry Pi - see :ref:`ug_thread_tools_tbr` in the |NCS| documentation
+* Configuring Thread Border Router on a PC or a Raspberry Pi - see :ref:`ug_thread_tools_tbr` in the |NCS| documentation.
 * Python Matter controller - See :ref:`ug_matter_tools` for building instructions and :doc:`matter:python_chip_controller_building` in the Matter documentation for information about testing.
 
 .. note::

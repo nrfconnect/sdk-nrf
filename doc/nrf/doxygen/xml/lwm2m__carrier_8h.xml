@@ -1,0 +1,2155 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="lwm2m__carrier_8h" kind="file" language="C++">
+    <compoundname>lwm2m_carrier.h</compoundname>
+    <includes local="no">stdint.h</includes>
+    <includes local="no">stddef.h</includes>
+    <includes local="no">stdbool.h</includes>
+    <includedby refid="src_2carrier__certs_2carrier__certs_8h" local="no">applications/asset_tracker/src/carrier_certs/carrier_certs.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>lib/bin/lwm2m_carrier/include/lwm2m_carrier.h</label>
+        <link refid="lwm2m__carrier_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>stdbool.h</label>
+      </node>
+      <node id="3">
+        <label>stddef.h</label>
+      </node>
+      <node id="2">
+        <label>stdint.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>applications/asset_tracker/src/carrier_certs/carrier_certs.h</label>
+        <link refid="src_2carrier__certs_2carrier__certs_8h"/>
+      </node>
+      <node id="1">
+        <label>lib/bin/lwm2m_carrier/include/lwm2m_carrier.h</label>
+        <link refid="lwm2m__carrier_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structlwm2m__carrier__event__t" prot="public">lwm2m_carrier_event_t</innerclass>
+    <innerclass refid="structlwm2m__carrier__event__deferred__t" prot="public">lwm2m_carrier_event_deferred_t</innerclass>
+    <innerclass refid="structlwm2m__carrier__event__error__t" prot="public">lwm2m_carrier_event_error_t</innerclass>
+    <innerclass refid="structca__cert__tags__t" prot="public">ca_cert_tags_t</innerclass>
+    <innerclass refid="structlwm2m__carrier__config__t" prot="public">lwm2m_carrier_config_t</innerclass>
+      <sectiondef kind="user-defined">
+      <header>LWM2M carrier library events.</header>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_gabbff46d3133c96b784fc4f7b5f8c0bc4_1gabbff46d3133c96b784fc4f7b5f8c0bc4" prot="public" static="no">
+        <name>LWM2M_CARRIER_EVENT_MODEM_INIT</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Modem library initialized. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="29" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_gab17585af10a953e446ec65c3f7e6cd54_1gab17585af10a953e446ec65c3f7e6cd54" prot="public" static="no">
+        <name>LWM2M_CARRIER_EVENT_CONNECTING</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Connecting to the LTE network. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="31" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga2fa790dd564f6152929c663f7582ee24_1ga2fa790dd564f6152929c663f7582ee24" prot="public" static="no">
+        <name>LWM2M_CARRIER_EVENT_CONNECTED</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Connected to the LTE network. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="33" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga9dd279a2022708e720fae351a3b17e3f_1ga9dd279a2022708e720fae351a3b17e3f" prot="public" static="no">
+        <name>LWM2M_CARRIER_EVENT_DISCONNECTING</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Disconnecting from the LTE network. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="35" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_gac12881f9408e9e2f4137b752b1686968_1gac12881f9408e9e2f4137b752b1686968" prot="public" static="no">
+        <name>LWM2M_CARRIER_EVENT_DISCONNECTED</name>
+        <initializer>5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Disconnected from the LTE network. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="37" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga2ccddde3d7e9d5e7a18b4a540b1d71d0_1ga2ccddde3d7e9d5e7a18b4a540b1d71d0" prot="public" static="no">
+        <name>LWM2M_CARRIER_EVENT_BOOTSTRAPPED</name>
+        <initializer>6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>LWM2M carrier bootstrapped. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="39" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga5164e9daaeac55323223b90d7e2fc65e_1ga5164e9daaeac55323223b90d7e2fc65e" prot="public" static="no">
+        <name>LWM2M_CARRIER_EVENT_REGISTERED</name>
+        <initializer>7</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>LWM2M carrier registered. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="41" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_gae705b83e476fa2a3193ff6172ae14b80_1gae705b83e476fa2a3193ff6172ae14b80" prot="public" static="no">
+        <name>LWM2M_CARRIER_EVENT_DEFERRED</name>
+        <initializer>8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>LWM2M carrier operation is deferred. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="43" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_gad8f3b84d54a180080ec8fde185691db0_1gad8f3b84d54a180080ec8fde185691db0" prot="public" static="no">
+        <name>LWM2M_CARRIER_EVENT_FOTA_START</name>
+        <initializer>9</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Modem update started. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="45" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_gae753590105bc408a8b35a1ee1d45d64f_1gae753590105bc408a8b35a1ee1d45d64f" prot="public" static="no">
+        <name>LWM2M_CARRIER_EVENT_REBOOT</name>
+        <initializer>10</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Application will reboot. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="47" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_gaf086a122482bb8742297136adff4ed88_1gaf086a122482bb8742297136adff4ed88" prot="public" static="no">
+        <name>LWM2M_CARRIER_EVENT_LTE_READY</name>
+        <initializer>11</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>LTE network is ready to be used. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="49" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga91dad989cdb163a900d81ba5f5c252b4_1ga91dad989cdb163a900d81ba5f5c252b4" prot="public" static="no">
+        <name>LWM2M_CARRIER_EVENT_ERROR</name>
+        <initializer>20</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>An error occurred. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="51" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga53c1187b35f5526ede76ea5250dbb44d_1ga53c1187b35f5526ede76ea5250dbb44d" prot="public" static="no">
+        <name>LWM2M_CARRIER_EVENT_CERTS_INIT</name>
+        <initializer>30</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>CA certificates need to be initialized. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="53" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="user-defined">
+      <header>LWM2M carrier library event deferred reasons.</header>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_gab762cad7f76a7df48301fef15f2446a9_1gab762cad7f76a7df48301fef15f2446a9" prot="public" static="no">
+        <name>LWM2M_CARRIER_DEFERRED_NO_REASON</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>No reason given. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="71" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga69edf5f5afa8a378e0b359aa7f24230a_1ga69edf5f5afa8a378e0b359aa7f24230a" prot="public" static="no">
+        <name>LWM2M_CARRIER_DEFERRED_PDN_ACTIVATE</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Failed to activate PDN. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="73" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_gafe6b950addc21b95f4ab9f697e06f64a_1gafe6b950addc21b95f4ab9f697e06f64a" prot="public" static="no">
+        <name>LWM2M_CARRIER_DEFERRED_BOOTSTRAP_NO_ROUTE</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>No route to bootstrap server. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="75" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_gaafc9f7156955ac19649ab40b6979fb7f_1gaafc9f7156955ac19649ab40b6979fb7f" prot="public" static="no">
+        <name>LWM2M_CARRIER_DEFERRED_BOOTSTRAP_CONNECT</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Failed to connect to bootstrap server. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="77" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga931996bb403da8229fdfb523bd3e9d55_1ga931996bb403da8229fdfb523bd3e9d55" prot="public" static="no">
+        <name>LWM2M_CARRIER_DEFERRED_BOOTSTRAP_SEQUENCE</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Bootstrap sequence not completed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="79" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga5b051749876afd694e8beda3cf013f79_1ga5b051749876afd694e8beda3cf013f79" prot="public" static="no">
+        <name>LWM2M_CARRIER_DEFERRED_SERVER_NO_ROUTE</name>
+        <initializer>5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>No route to server. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="81" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga9a7364ccdd8b65d2c708a145f939d287_1ga9a7364ccdd8b65d2c708a145f939d287" prot="public" static="no">
+        <name>LWM2M_CARRIER_DEFERRED_SERVER_CONNECT</name>
+        <initializer>6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Failed to connect to server. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="83" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_gac523542a273f0846d7bb33c9af2a68f3_1gac523542a273f0846d7bb33c9af2a68f3" prot="public" static="no">
+        <name>LWM2M_CARRIER_DEFERRED_SERVER_REGISTRATION</name>
+        <initializer>7</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Server registration sequence not completed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="85" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga42814b800fe1722e62c4a0d015d6b755_1ga42814b800fe1722e62c4a0d015d6b755" prot="public" static="no">
+        <name>LWM2M_CARRIER_DEFERRED_SERVICE_UNAVAILABLE</name>
+        <initializer>9</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Server in maintenance mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="87" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="user-defined">
+      <header>LWM2M carrier library event error codes.</header>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_gabfad653f591d69ed982934861edb10c0_1gabfad653f591d69ed982934861edb10c0" prot="public" static="no">
+        <name>LWM2M_CARRIER_ERROR_NO_ERROR</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>&lt; No error. Failed to connect to the LTE network. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="105" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_gaa5177469886616cea711407bbb08c9db_1gaa5177469886616cea711407bbb08c9db" prot="public" static="no">
+        <name>LWM2M_CARRIER_ERROR_CONNECT_FAIL</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Failed to disconnect from the LTE network. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="107" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga15fc277d14bd3b5fe0cfa6bddf2e815a_1ga15fc277d14bd3b5fe0cfa6bddf2e815a" prot="public" static="no">
+        <name>LWM2M_CARRIER_ERROR_DISCONNECT_FAIL</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>LWM2M carrier bootstrap failed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="109" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="109" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga9ad0263915786d346126d0b3404bb917_1ga9ad0263915786d346126d0b3404bb917" prot="public" static="no">
+        <name>LWM2M_CARRIER_ERROR_BOOTSTRAP</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Update package rejected. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="111" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_gac04972179ef6e2fab011b4aff918ebec_1gac04972179ef6e2fab011b4aff918ebec" prot="public" static="no">
+        <name>LWM2M_CARRIER_ERROR_FOTA_PKG</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Protocol error. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="113" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga9e88c221b494f3dc509515524d013a72_1ga9e88c221b494f3dc509515524d013a72" prot="public" static="no">
+        <name>LWM2M_CARRIER_ERROR_FOTA_PROTO</name>
+        <initializer>5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Connection error. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="115" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="115" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga6a648ba012dd404c28ee1280f9c42815_1ga6a648ba012dd404c28ee1280f9c42815" prot="public" static="no">
+        <name>LWM2M_CARRIER_ERROR_FOTA_CONN</name>
+        <initializer>6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Connection lost. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="117" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="117" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga33f15a97562e3596553bfd3e9ad82ccc_1ga33f15a97562e3596553bfd3e9ad82ccc" prot="public" static="no">
+        <name>LWM2M_CARRIER_ERROR_FOTA_CONN_LOST</name>
+        <initializer>7</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Update failed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="119" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga5043997ae2848385ddb2005d62f2d3f2_1ga5043997ae2848385ddb2005d62f2d3f2" prot="public" static="no">
+        <name>LWM2M_CARRIER_ERROR_FOTA_FAIL</name>
+        <initializer>8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Illegal object configuration detected. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="121" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga88c82ba083ca721bbeca274acb4a291b_1ga88c82ba083ca721bbeca274acb4a291b" prot="public" static="no">
+        <name>LWM2M_CARRIER_ERROR_CONFIGURATION</name>
+        <initializer>10</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="123" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="user-defined">
+      <header>LWM2M device power sources types.</header>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga0d9f79c175785b78bedc3456002bbd3c_1ga0d9f79c175785b78bedc3456002bbd3c" prot="public" static="no">
+        <name>LWM2M_CARRIER_POWER_SOURCE_DC</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="140" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="140" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga29052b83b449367bed5e513716d52d3a_1ga29052b83b449367bed5e513716d52d3a" prot="public" static="no">
+        <name>LWM2M_CARRIER_POWER_SOURCE_INTERNAL_BATTERY</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="141" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga9f7808821e040ab2842766428c5256dd_1ga9f7808821e040ab2842766428c5256dd" prot="public" static="no">
+        <name>LWM2M_CARRIER_POWER_SOURCE_EXTERNAL_BATTERY</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="142" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_gad1b99915af32060da78e328c7cfd16b7_1gad1b99915af32060da78e328c7cfd16b7" prot="public" static="no">
+        <name>LWM2M_CARRIER_POWER_SOURCE_ETHERNET</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="143" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="143" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_gaed0b3174193306d07421e40272932c33_1gaed0b3174193306d07421e40272932c33" prot="public" static="no">
+        <name>LWM2M_CARRIER_POWER_SOURCE_USB</name>
+        <initializer>5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="144" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="144" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga32cdc3f52bc4eee420c9fcde22a710a1_1ga32cdc3f52bc4eee420c9fcde22a710a1" prot="public" static="no">
+        <name>LWM2M_CARRIER_POWER_SOURCE_AC</name>
+        <initializer>6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="145" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga4f19e4bd15401379560612689c52246d_1ga4f19e4bd15401379560612689c52246d" prot="public" static="no">
+        <name>LWM2M_CARRIER_POWER_SOURCE_SOLAR</name>
+        <initializer>7</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="146" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="146" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="user-defined">
+      <header>LWM2M device error codes.</header>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga1180f9ac215b3b85cd8eaa1dd0c8568d_1ga1180f9ac215b3b85cd8eaa1dd0c8568d" prot="public" static="no">
+        <name>LWM2M_CARRIER_ERROR_CODE_NO_ERROR</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="153" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="153" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga5be578fa1604937bbb6a4955f04e0f94_1ga5be578fa1604937bbb6a4955f04e0f94" prot="public" static="no">
+        <name>LWM2M_CARRIER_ERROR_CODE_LOW_CHARGE</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="154" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga448aef2da6745171bfcb974781aeac11_1ga448aef2da6745171bfcb974781aeac11" prot="public" static="no">
+        <name>LWM2M_CARRIER_ERROR_CODE_EXTERNAL_SUPPLY_OFF</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="155" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="155" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga08d4809874d8fd9046bac7565adceaab_1ga08d4809874d8fd9046bac7565adceaab" prot="public" static="no">
+        <name>LWM2M_CARRIER_ERROR_CODE_GPS_FAILURE</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="156" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="156" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga5f1c73169b38af7e6343a84c17ed3210_1ga5f1c73169b38af7e6343a84c17ed3210" prot="public" static="no">
+        <name>LWM2M_CARRIER_ERROR_CODE_LOW_SIGNAL</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="157" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga4e549077f04f7ec97557cd18daa5608a_1ga4e549077f04f7ec97557cd18daa5608a" prot="public" static="no">
+        <name>LWM2M_CARRIER_ERROR_CODE_OUT_OF_MEMORY</name>
+        <initializer>5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="158" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga364a04fdf66210cd44d879f6e8efda61_1ga364a04fdf66210cd44d879f6e8efda61" prot="public" static="no">
+        <name>LWM2M_CARRIER_ERROR_CODE_SMS_FAILURE</name>
+        <initializer>6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="159" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="159" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_gac4f840a8c04253e4664c190daf7804e3_1gac4f840a8c04253e4664c190daf7804e3" prot="public" static="no">
+        <name>LWM2M_CARRIER_ERROR_CODE_IP_CONNECTIVITY_FAILURE</name>
+        <initializer>7</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="160" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="160" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga65e3550a72d0a72489d21a39ba124a48_1ga65e3550a72d0a72489d21a39ba124a48" prot="public" static="no">
+        <name>LWM2M_CARRIER_ERROR_CODE_PERIPHERAL_MALFUNCTION</name>
+        <initializer>8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="161" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="161" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="user-defined">
+      <header>LWM2M device battery status.</header>
+      <description><para><simplesect kind="note"><para>These values are only valid for the LWM2M Device INTERNAL_BATTERY if present. </para>
+</simplesect>
+</para>
+</description>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga22194c8be152b8ce7cb0db2559a5479a_1ga22194c8be152b8ce7cb0db2559a5479a" prot="public" static="no">
+        <name>LWM2M_CARRIER_BATTERY_STATUS_NORMAL</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="170" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="170" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_gafd86abbfe6d76074cb57079b799b5dbf_1gafd86abbfe6d76074cb57079b799b5dbf" prot="public" static="no">
+        <name>LWM2M_CARRIER_BATTERY_STATUS_CHARGING</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="171" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="171" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_gaa0ff21c834cd704e8fea45d233d9a20f_1gaa0ff21c834cd704e8fea45d233d9a20f" prot="public" static="no">
+        <name>LWM2M_CARRIER_BATTERY_STATUS_CHARGE_COMPLETE</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="172" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="172" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_gadf9592f84b106e7e1bf413e935e8f8a3_1gadf9592f84b106e7e1bf413e935e8f8a3" prot="public" static="no">
+        <name>LWM2M_CARRIER_BATTERY_STATUS_DAMAGED</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="173" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="173" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga04a0634ab3fcd2beb23a2bd30381b3da_1ga04a0634ab3fcd2beb23a2bd30381b3da" prot="public" static="no">
+        <name>LWM2M_CARRIER_BATTERY_STATUS_LOW_BATTERY</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="174" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="174" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga2c232c3912172f701caa0b60df59fc7e_1ga2c232c3912172f701caa0b60df59fc7e" prot="public" static="no">
+        <name>LWM2M_CARRIER_BATTERY_STATUS_NOT_INSTALLED</name>
+        <initializer>5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="175" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="175" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga92526efa67ebabfdb3c71c3f72c65f22_1ga92526efa67ebabfdb3c71c3f72c65f22" prot="public" static="no">
+        <name>LWM2M_CARRIER_BATTERY_STATUS_UNKNOWN</name>
+        <initializer>6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="176" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="176" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="user-defined">
+      <header>LWM2M portfolio identity types.</header>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga8d7410dd8d21695ca0c00c2ddd885e97_1ga8d7410dd8d21695ca0c00c2ddd885e97" prot="public" static="no">
+        <name>LWM2M_CARRIER_IDENTITY_ID</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="183" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="183" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_gae8a78f78a6389fd19ae2712e4a5fbe00_1gae8a78f78a6389fd19ae2712e4a5fbe00" prot="public" static="no">
+        <name>LWM2M_CARRIER_IDENTITY_MANUFACTURER</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="184" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="184" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga0acfe1e8896a8d9a5f1559d2b90bccb0_1ga0acfe1e8896a8d9a5f1559d2b90bccb0" prot="public" static="no">
+        <name>LWM2M_CARRIER_IDENTITY_MODEL</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="185" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="185" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__carrier__api_ga4ee1402c5b218c1d948e6d33ee2a656f_1ga4ee1402c5b218c1d948e6d33ee2a656f" prot="public" static="no">
+        <name>LWM2M_CARRIER_IDENTITY_SW_VERSION</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="186" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="186" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__lwm2m__carrier__api_ga34b2524106756765352862218cd2b9d3_1ga34b2524106756765352862218cd2b9d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_carrier_init</definition>
+        <argsstring>(const lwm2m_carrier_config_t *config)</argsstring>
+        <name>lwm2m_carrier_init</name>
+        <param>
+          <type>const <ref refid="structlwm2m__carrier__config__t" kindref="compound">lwm2m_carrier_config_t</ref> *</type>
+          <declname>config</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the LWM2M carrier library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">config</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Configuration parameters for the library.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>The library does not copy the contents of pointers in the config parameters. The application has to make sure that the provided parameters are valid throughout the application lifetime (i. e. placed in static memory or in flash).</para>
+</simplesect>
+<simplesect kind="note"><para>The first time this function is called after a modem firmware update, (FOTA) it may take several seconds to return in order to complete the procedure.</para>
+</simplesect>
+<simplesect kind="return"><para>0 on success, negative error code on error. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="234" column="5" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="234" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_gab73e93a035c5a21084d18c1877168cbc_1gab73e93a035c5a21084d18c1877168cbc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void lwm2m_carrier_run</definition>
+        <argsstring>(void)</argsstring>
+        <name>lwm2m_carrier_run</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>LWM2M carrier library main function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is a non-return function, intended to run on a separate thread. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="241" column="6" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="241" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_ga37ac71bff0df3661ea71d43f54fd3b93_1ga37ac71bff0df3661ea71d43f54fd3b93" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void lwm2m_carrier_time_read</definition>
+        <argsstring>(int32_t *utc_time, int *utc_offset, const char **tz)</argsstring>
+        <name>lwm2m_carrier_time_read</name>
+        <param>
+          <type>int32_t *</type>
+          <declname>utc_time</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>utc_offset</declname>
+        </param>
+        <param>
+          <type>const char **</type>
+          <declname>tz</declname>
+        </param>
+        <briefdescription>
+<para>Function to read all time parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">utc_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to time since Epoch in seconds. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">utc_offset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to UTC offset in minutes. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">tz</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to null-terminated timezone string pointer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="250" column="6" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="250" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_gae22f7e9e2dee81144617aee81873923b_1gae22f7e9e2dee81144617aee81873923b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>int32_t lwm2m_carrier_utc_time_read</definition>
+        <argsstring>(void)</argsstring>
+        <name>lwm2m_carrier_utc_time_read</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function to read current UTC time. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This function can be implemented by the application, if custom time management is needed.</para>
+</simplesect>
+<simplesect kind="return"><para>Current UTC time since Epoch in seconds. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="260" column="9" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="260" declcolumn="9"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_ga5ff740a4a840032caa6904aeb1c5dea0_1ga5ff740a4a840032caa6904aeb1c5dea0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_carrier_utc_offset_read</definition>
+        <argsstring>(void)</argsstring>
+        <name>lwm2m_carrier_utc_offset_read</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function to read offset to UTC time. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This function can be implemented by the application, if custom time management is needed.</para>
+</simplesect>
+<simplesect kind="return"><para>UTC offset in minutes. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="270" column="5" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="270" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_gaf891242cb0906cde05271ee417a06839_1gaf891242cb0906cde05271ee417a06839" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const char *</type>
+        <definition>const char * lwm2m_carrier_timezone_read</definition>
+        <argsstring>(void)</argsstring>
+        <name>lwm2m_carrier_timezone_read</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function to read timezone. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This function can be implemented by the application, if custom time management is needed.</para>
+</simplesect>
+<simplesect kind="return"><para>Null-terminated timezone string pointer, IANA Timezone (TZ) database format. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="281" column="12" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="281" declcolumn="12"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_ga442208db8c8c183f0709525fbf82d08c_1ga442208db8c8c183f0709525fbf82d08c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_carrier_utc_time_write</definition>
+        <argsstring>(int32_t time)</argsstring>
+        <name>lwm2m_carrier_utc_time_write</name>
+        <param>
+          <type>int32_t</type>
+          <declname>time</declname>
+        </param>
+        <briefdescription>
+<para>Function to write current UTC time (LWM2M server write operation) </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This function can be implemented by the application, if custom time management is needed.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time since Epoch in seconds.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, negative error code on error. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="293" column="5" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="293" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_ga0f6551d081038a0e444c2390329ea5ee_1ga0f6551d081038a0e444c2390329ea5ee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_carrier_utc_offset_write</definition>
+        <argsstring>(int offset)</argsstring>
+        <name>lwm2m_carrier_utc_offset_write</name>
+        <param>
+          <type>int</type>
+          <declname>offset</declname>
+        </param>
+        <briefdescription>
+<para>Function to write UTC offset (LWM2M server write operation) </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This function can be implemented by the application, if custom time management is needed.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">offset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>UTC offset in minutes.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, negative error code on error. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="305" column="5" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="305" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_ga12e5be234a779a6056e786eca3e86dcd_1ga12e5be234a779a6056e786eca3e86dcd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_carrier_timezone_write</definition>
+        <argsstring>(const char *tz)</argsstring>
+        <name>lwm2m_carrier_timezone_write</name>
+        <param>
+          <type>const char *</type>
+          <declname>tz</declname>
+        </param>
+        <briefdescription>
+<para>Function to write timezone (LWM2M server write operation). </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This function can be implemented by the application, if custom time management is needed.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">tz</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated timezone string pointer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, negative error code on error. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="317" column="5" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="317" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_ga729109fa765c5b870dbe514768cffb44_1ga729109fa765c5b870dbe514768cffb44" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_carrier_event_handler</definition>
+        <argsstring>(const lwm2m_carrier_event_t *event)</argsstring>
+        <name>lwm2m_carrier_event_handler</name>
+        <param>
+          <type>const <ref refid="structlwm2m__carrier__event__t" kindref="compound">lwm2m_carrier_event_t</ref> *</type>
+          <declname>event</declname>
+        </param>
+        <briefdescription>
+<para>LWM2M carrier library event handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function will be called by the LWM2M carrier library whenever some event significant for the application occurs.</para>
+<para><simplesect kind="note"><para>This function has to be implemented by the application.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">event</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>LWM2M carrier event that occurred.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>In case of <computeroutput>LWM2M_CARRIER_EVENT_REBOOT</computeroutput> events if non-zero is returned, the LwM2M carrier library will not reboot the device. The application should to reboot at the earliest convenient time. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="334" column="5" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="334" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_gacb57a62b89e6f352d8251c0037a7c822_1gacb57a62b89e6f352d8251c0037a7c822" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_carrier_avail_power_sources_set</definition>
+        <argsstring>(const uint8_t *power_sources, uint8_t power_source_count)</argsstring>
+        <name>lwm2m_carrier_avail_power_sources_set</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>power_sources</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>power_source_count</declname>
+        </param>
+        <briefdescription>
+<para>Set the available power sources supported and used by the LWM2M device. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>It is necessary to call this function before any other device power source related functions listed in this file, as any updates of voltage/current measurements performed on power sources that have not been reported will be discarded. </para>
+</simplesect>
+<simplesect kind="note"><para>Upon consecutive calls of this function, the corresponding current and voltage measurements will be reset to 0. Similarly, the battery status will be set to UNKNOWN and the battery level to 0%.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">power_sources</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of available device power sources. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">power_source_count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of power sources currently used by the device.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-E2BIG</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the reported number of power sources is bigger than the maximum supported. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If one or more of the power sources are not supported. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the available power sources have been set successfully. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="359" column="5" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="359" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_gadbd557e8a81b4aa01729e76d98581db6_1gadbd557e8a81b4aa01729e76d98581db6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_carrier_power_source_voltage_set</definition>
+        <argsstring>(uint8_t power_source, int32_t value)</argsstring>
+        <name>lwm2m_carrier_power_source_voltage_set</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>power_source</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Set or update the latest voltage measurements made on one of the available device power sources. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>The voltage measurement needs to be specified in millivolts (mV) and is to be assigned to one of the available power sources.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">power_source</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Power source to which the measurement corresponds. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Voltage measurement expressed in mV.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the power source is not supported. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENODEV</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the power source is not listed as an available power source. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the voltage measurements have been updated successfully. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="378" column="5" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="378" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_ga0a6d79f96e43706b0fbfe4c8401daadf_1ga0a6d79f96e43706b0fbfe4c8401daadf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_carrier_power_source_current_set</definition>
+        <argsstring>(uint8_t power_source, int32_t value)</argsstring>
+        <name>lwm2m_carrier_power_source_current_set</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>power_source</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Set or update the latest current measurements made on one of the available device power sources. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>The current measurement needs to be specified in milliamperes (mA) and is to be assigned to one of the available power sources.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">power_source</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Power source to which the measurement corresponds. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current measurement expressed in mA.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the power source is not supported. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENODEV</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the power source is not listed as an available power source. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the current measurements have been updated successfully. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="398" column="5" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="398" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_ga448e246a8ab60019b5345ef56208c31c_1ga448e246a8ab60019b5345ef56208c31c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_carrier_battery_level_set</definition>
+        <argsstring>(uint8_t battery_level)</argsstring>
+        <name>lwm2m_carrier_battery_level_set</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>battery_level</declname>
+        </param>
+        <briefdescription>
+<para>Set or update the latest battery level (internal battery). </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>The battery level is to be specified as a percentage, hence values outside the range 0-100 will be ignored.</para>
+</simplesect>
+<simplesect kind="note"><para>The value is only valid for the Device internal battery if present.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">battery_level</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Internal battery level percentage.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the specified battery level lies outside the 0-100% range. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENODEV</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If internal battery is not listed as an available power source. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the battery level has been updated successfully. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="417" column="5" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="417" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_gaa2d34c8a032beb5dab99a50dfed33c35_1gaa2d34c8a032beb5dab99a50dfed33c35" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_carrier_battery_status_set</definition>
+        <argsstring>(int32_t battery_status)</argsstring>
+        <name>lwm2m_carrier_battery_status_set</name>
+        <param>
+          <type>int32_t</type>
+          <declname>battery_status</declname>
+        </param>
+        <briefdescription>
+<para>Set or update the latest battery status (internal battery). </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>The value is only valid for the Device internal battery.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">battery_status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Internal battery status to be reported.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the battery status is not supported. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENODEV</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If internal battery is not listed as an available power source. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the battery status has been updated successfully. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="431" column="5" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="431" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_ga434fad0a49c02056f6993f5c33fcb159_1ga434fad0a49c02056f6993f5c33fcb159" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_carrier_device_type_set</definition>
+        <argsstring>(const char *device_type)</argsstring>
+        <name>lwm2m_carrier_device_type_set</name>
+        <param>
+          <type>const char *</type>
+          <declname>device_type</declname>
+        </param>
+        <briefdescription>
+<para>Set the LWM2M device type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Type of the LWM2M device specified by the manufacturer.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">device_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null terminated string specifying the type of the LWM2M device.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the input argument is a NULL pointer or an empty string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-E2BIG</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the input string is too long. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If it was not possible to allocate memory storage to hold the string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the device type has been set successfully. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="448" column="5" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="448" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_gafca4592d2639b3c61dd16dbbc54b43fd_1gafca4592d2639b3c61dd16dbbc54b43fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_carrier_hardware_version_set</definition>
+        <argsstring>(const char *hardware_version)</argsstring>
+        <name>lwm2m_carrier_hardware_version_set</name>
+        <param>
+          <type>const char *</type>
+          <declname>hardware_version</declname>
+        </param>
+        <briefdescription>
+<para>Set the LWM2M device hardware version. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>LWM2M device hardware version.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">hardware_version</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null terminated string specifying the hardware version of the LWM2M device.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the input argument is a NULL pointer or an empty string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-E2BIG</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the input string is too long. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If it was not possible to allocate memory storage to hold the string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the hardware version has been set successfully. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="466" column="5" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="466" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_ga3179c6553912ef80d67093da7d3283e2_1ga3179c6553912ef80d67093da7d3283e2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_carrier_software_version_set</definition>
+        <argsstring>(const char *software_version)</argsstring>
+        <name>lwm2m_carrier_software_version_set</name>
+        <param>
+          <type>const char *</type>
+          <declname>software_version</declname>
+        </param>
+        <briefdescription>
+<para>Set the LWM2M device software version. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>High level device software version (application).</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">software_version</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null terminated string specifying the current software version of the LWM2M device.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the input argument is a NULL pointer or an empty string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-E2BIG</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the input string is too long. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If it was not possible to allocate memory storage to hold the string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the software version has been set successfully. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="485" column="5" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="485" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_gaefccef49fb1246fabe8f2271781b8700_1gaefccef49fb1246fabe8f2271781b8700" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_carrier_error_code_add</definition>
+        <argsstring>(int32_t error)</argsstring>
+        <name>lwm2m_carrier_error_code_add</name>
+        <param>
+          <type>int32_t</type>
+          <declname>error</declname>
+        </param>
+        <briefdescription>
+<para>Update the device object instance error code by adding an individual error. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Upon initialization of the device object instance, the error code is specified as 0, indicating no error. The error code is to be updated whenever a new error occurs. </para>
+</simplesect>
+<simplesect kind="note"><para>If the reported error is NO_ERROR, all existing error codes will be reset. </para>
+</simplesect>
+<simplesect kind="note"><para>If the reported error is already present, the error code will remain unchanged.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Individual error to be added.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the error code is not supported. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the error code has been added successfully. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="505" column="5" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="505" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_gaeb8baabf94607cab75791d147598cc7a_1gaeb8baabf94607cab75791d147598cc7a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_carrier_error_code_remove</definition>
+        <argsstring>(int32_t error)</argsstring>
+        <name>lwm2m_carrier_error_code_remove</name>
+        <param>
+          <type>int32_t</type>
+          <declname>error</declname>
+        </param>
+        <briefdescription>
+<para>Update the device object instance error code by removing an individual error. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Upon initialization of the device object instance, the error code is specified as 0, indicating no error. The error code is to be updated whenever an error is no longer present. When all the errors are removed, the error code is specified as 0, hence indicating no error again.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Individual error code to be removed.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the error code is not supported. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOENT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the error to be removed is not present on the error code list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the error has been removed successfully. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="524" column="5" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="524" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_gafcad3ffed4e3fad6ffe9e202a3991a1d_1gafcad3ffed4e3fad6ffe9e202a3991a1d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_carrier_memory_total_set</definition>
+        <argsstring>(uint32_t memory_total)</argsstring>
+        <name>lwm2m_carrier_memory_total_set</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>memory_total</declname>
+        </param>
+        <briefdescription>
+<para>Set the total amount of storage space to store data and software in the LWM2M Device. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>The value is expressed in kilobytes (kB).</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">memory_total</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Total amount of storage space in kilobytes.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>It the reported value is bigger than INT32_MAX. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the total amount of storage space has been set successfully. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="538" column="5" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="538" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_ga2911a4ced890130ad4e1afa13427e737_1ga2911a4ced890130ad4e1afa13427e737" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_carrier_memory_free_read</definition>
+        <argsstring>(void)</argsstring>
+        <name>lwm2m_carrier_memory_free_read</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Read the estimated current available amount of storage space to store data and software in the LWM2M Device. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This function must be implemented by the application in order to support the reporting of memory free, otherwise the returned value will be 0.</para>
+</simplesect>
+<simplesect kind="return"><para>Available amount of storage space expressed in kB. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="550" column="5" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="550" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_ga1680ee9e11b24c3878ceefc1076c10cf_1ga1680ee9e11b24c3878ceefc1076c10cf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_carrier_identity_read</definition>
+        <argsstring>(uint16_t instance_id, uint16_t identity_type, char *buffer, uint16_t *buffer_len)</argsstring>
+        <name>lwm2m_carrier_identity_read</name>
+        <param>
+          <type>uint16_t</type>
+          <declname>instance_id</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>identity_type</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>uint16_t *</type>
+          <declname>buffer_len</declname>
+        </param>
+        <briefdescription>
+<para>Read the Identity field of a given Portfolio object instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>If the provided buffer is NULL, the function will perform a dry run to determine the required buffer size (including the null terminator).</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">instance_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Portfolio object instance identifier. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">identity_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of Identity field to be read. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer where the null-terminated response will be stored. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">buffer_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the provided buffer. Will return the number of bytes of the full response.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-ENOENT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the instance does not exist. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the provided buffer length reference is NULL or the identity type is invalid. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the provided buffer is too small. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="572" column="5" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="572" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_gafeff833fd324ca562910f59189cdc4f3_1gafeff833fd324ca562910f59189cdc4f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_carrier_identity_write</definition>
+        <argsstring>(uint16_t instance_id, uint16_t identity_type, const char *value)</argsstring>
+        <name>lwm2m_carrier_identity_write</name>
+        <param>
+          <type>uint16_t</type>
+          <declname>instance_id</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>identity_type</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Set the corresponding Identity field of a Portfolio object instance to a given value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">instance_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Portfolio object instance identifier. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">identity_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of Identity field to be written. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null terminated string to be written into the Identity field.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EPERM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the specified object instance ID corresponds to the Primary Host identity. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the input argument is a NULL pointer or an empty string, or the identity type is invalid. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOENT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the instance does not exist. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-E2BIG</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the input string is too long. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If it was not possible to allocate memory storage to hold the string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the Identity field has been updated successfully. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="595" column="5" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="595" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__carrier__api_ga206b60a49699e8bd2ad5b92084f90add_1ga206b60a49699e8bd2ad5b92084f90add" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int lwm2m_carrier_portfolio_instance_create</definition>
+        <argsstring>(uint16_t instance_id)</argsstring>
+        <name>lwm2m_carrier_portfolio_instance_create</name>
+        <param>
+          <type>uint16_t</type>
+          <declname>instance_id</declname>
+        </param>
+        <briefdescription>
+<para>Create a new instance of the Portfolio object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">instance_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The identifier to be used for the new instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If it was not possible to create the instance because the maximum number of supported object instances has already been reached. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the provided instance identifier is already in use. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the instance has been created successfully. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="609" column="5" declfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" declline="609" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>LWM2M_CARRIER_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdint.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stddef.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdbool.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="group__lwm2m__carrier__api_gabbff46d3133c96b784fc4f7b5f8c0bc4_1gabbff46d3133c96b784fc4f7b5f8c0bc4" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_EVENT_MODEM_INIT<sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="group__lwm2m__carrier__api_gab17585af10a953e446ec65c3f7e6cd54_1gab17585af10a953e446ec65c3f7e6cd54" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_EVENT_CONNECTING<sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="group__lwm2m__carrier__api_ga2fa790dd564f6152929c663f7582ee24_1ga2fa790dd564f6152929c663f7582ee24" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_EVENT_CONNECTED<sp/><sp/><sp/><sp/><sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="group__lwm2m__carrier__api_ga9dd279a2022708e720fae351a3b17e3f_1ga9dd279a2022708e720fae351a3b17e3f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_EVENT_DISCONNECTING<sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="group__lwm2m__carrier__api_gac12881f9408e9e2f4137b752b1686968_1gac12881f9408e9e2f4137b752b1686968" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_EVENT_DISCONNECTED<sp/><sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="group__lwm2m__carrier__api_ga2ccddde3d7e9d5e7a18b4a540b1d71d0_1ga2ccddde3d7e9d5e7a18b4a540b1d71d0" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_EVENT_BOOTSTRAPPED<sp/><sp/>6</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="group__lwm2m__carrier__api_ga5164e9daaeac55323223b90d7e2fc65e_1ga5164e9daaeac55323223b90d7e2fc65e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_EVENT_REGISTERED<sp/><sp/><sp/><sp/>7</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="group__lwm2m__carrier__api_gae705b83e476fa2a3193ff6172ae14b80_1gae705b83e476fa2a3193ff6172ae14b80" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_EVENT_DEFERRED<sp/><sp/><sp/><sp/><sp/><sp/>8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="group__lwm2m__carrier__api_gad8f3b84d54a180080ec8fde185691db0_1gad8f3b84d54a180080ec8fde185691db0" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_EVENT_FOTA_START<sp/><sp/><sp/><sp/>9</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="group__lwm2m__carrier__api_gae753590105bc408a8b35a1ee1d45d64f_1gae753590105bc408a8b35a1ee1d45d64f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_EVENT_REBOOT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>10</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="group__lwm2m__carrier__api_gaf086a122482bb8742297136adff4ed88_1gaf086a122482bb8742297136adff4ed88" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_EVENT_LTE_READY<sp/><sp/><sp/><sp/><sp/>11</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="group__lwm2m__carrier__api_ga91dad989cdb163a900d81ba5f5c252b4_1ga91dad989cdb163a900d81ba5f5c252b4" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_EVENT_ERROR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>20</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="group__lwm2m__carrier__api_ga53c1187b35f5526ede76ea5250dbb44d_1ga53c1187b35f5526ede76ea5250dbb44d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_EVENT_CERTS_INIT<sp/><sp/><sp/><sp/>30</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="structlwm2m__carrier__event__t" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="61" refid="structlwm2m__carrier__event__t_ab005f98b7b4146a9c852b1de9b2c1717_1ab005f98b7b4146a9c852b1de9b2c1717" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structlwm2m__carrier__event__t_ab005f98b7b4146a9c852b1de9b2c1717_1ab005f98b7b4146a9c852b1de9b2c1717" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="63" refid="structlwm2m__carrier__event__t_a522965aa997066448d6afdf521825843_1a522965aa997066448d6afdf521825843" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structlwm2m__carrier__event__t_a522965aa997066448d6afdf521825843_1a522965aa997066448d6afdf521825843" kindref="member">data</ref>;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal">}<sp/><ref refid="structlwm2m__carrier__event__t" kindref="compound">lwm2m_carrier_event_t</ref>;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71" refid="group__lwm2m__carrier__api_gab762cad7f76a7df48301fef15f2446a9_1gab762cad7f76a7df48301fef15f2446a9" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_DEFERRED_NO_REASON<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="group__lwm2m__carrier__api_ga69edf5f5afa8a378e0b359aa7f24230a_1ga69edf5f5afa8a378e0b359aa7f24230a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_DEFERRED_PDN_ACTIVATE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="group__lwm2m__carrier__api_gafe6b950addc21b95f4ab9f697e06f64a_1gafe6b950addc21b95f4ab9f697e06f64a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_DEFERRED_BOOTSTRAP_NO_ROUTE<sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77" refid="group__lwm2m__carrier__api_gaafc9f7156955ac19649ab40b6979fb7f_1gaafc9f7156955ac19649ab40b6979fb7f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_DEFERRED_BOOTSTRAP_CONNECT<sp/><sp/><sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="group__lwm2m__carrier__api_ga931996bb403da8229fdfb523bd3e9d55_1ga931996bb403da8229fdfb523bd3e9d55" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_DEFERRED_BOOTSTRAP_SEQUENCE<sp/><sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81" refid="group__lwm2m__carrier__api_ga5b051749876afd694e8beda3cf013f79_1ga5b051749876afd694e8beda3cf013f79" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_DEFERRED_SERVER_NO_ROUTE<sp/><sp/><sp/><sp/><sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83" refid="group__lwm2m__carrier__api_ga9a7364ccdd8b65d2c708a145f939d287_1ga9a7364ccdd8b65d2c708a145f939d287" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_DEFERRED_SERVER_CONNECT<sp/><sp/><sp/><sp/><sp/><sp/>6</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="group__lwm2m__carrier__api_gac523542a273f0846d7bb33c9af2a68f3_1gac523542a273f0846d7bb33c9af2a68f3" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_DEFERRED_SERVER_REGISTRATION<sp/>7</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87" refid="group__lwm2m__carrier__api_ga42814b800fe1722e62c4a0d015d6b755_1ga42814b800fe1722e62c4a0d015d6b755" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_DEFERRED_SERVICE_UNAVAILABLE<sp/>9</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="91"><highlight class="comment"><sp/>*<sp/>@brief<sp/>LWM2M<sp/>carrier<sp/>library<sp/>deferred<sp/>event<sp/>structure.</highlight></codeline>
+<codeline lineno="92"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="structlwm2m__carrier__event__deferred__t" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="95" refid="structlwm2m__carrier__event__deferred__t_a65dd7030e89813ae1afdc96b9b67493c_1a65dd7030e89813ae1afdc96b9b67493c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structlwm2m__carrier__event__deferred__t_a65dd7030e89813ae1afdc96b9b67493c_1a65dd7030e89813ae1afdc96b9b67493c" kindref="member">reason</ref>;</highlight></codeline>
+<codeline lineno="97" refid="structlwm2m__carrier__event__deferred__t_ab66b465a2aabe05c255160ad018a12f2_1ab66b465a2aabe05c255160ad018a12f2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int32_t<sp/><ref refid="structlwm2m__carrier__event__deferred__t_ab66b465a2aabe05c255160ad018a12f2_1ab66b465a2aabe05c255160ad018a12f2" kindref="member">timeout</ref>;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal">}<sp/><ref refid="structlwm2m__carrier__event__deferred__t" kindref="compound">lwm2m_carrier_event_deferred_t</ref>;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_ERROR_NO_ERROR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_ERROR_CONNECT_FAIL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_ERROR_DISCONNECT_FAIL<sp/><sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_ERROR_BOOTSTRAP<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_ERROR_FOTA_PKG<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_ERROR_FOTA_PROTO<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_ERROR_FOTA_CONN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>6</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_ERROR_FOTA_CONN_LOST<sp/><sp/><sp/><sp/><sp/><sp/>7</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_ERROR_FOTA_FAIL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123" refid="group__lwm2m__carrier__api_ga88c82ba083ca721bbeca274acb4a291b_1ga88c82ba083ca721bbeca274acb4a291b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_ERROR_CONFIGURATION<sp/><sp/><sp/><sp/><sp/><sp/>10</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129" refid="structlwm2m__carrier__event__error__t" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="131" refid="structlwm2m__carrier__event__error__t_a1402f8671e818220afcb39dcc753bf47_1a1402f8671e818220afcb39dcc753bf47" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structlwm2m__carrier__event__error__t_a1402f8671e818220afcb39dcc753bf47_1a1402f8671e818220afcb39dcc753bf47" kindref="member">code</ref>;</highlight></codeline>
+<codeline lineno="133" refid="structlwm2m__carrier__event__error__t_a6db1cece56adac40eacf3a62b7dc64ac_1a6db1cece56adac40eacf3a62b7dc64ac" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int32_t<sp/><ref refid="structlwm2m__carrier__event__error__t_a6db1cece56adac40eacf3a62b7dc64ac_1a6db1cece56adac40eacf3a62b7dc64ac" kindref="member">value</ref>;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal">}<sp/><ref refid="structlwm2m__carrier__event__error__t" kindref="compound">lwm2m_carrier_event_error_t</ref>;</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140" refid="group__lwm2m__carrier__api_ga0d9f79c175785b78bedc3456002bbd3c_1ga0d9f79c175785b78bedc3456002bbd3c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_POWER_SOURCE_DC<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141" refid="group__lwm2m__carrier__api_ga29052b83b449367bed5e513716d52d3a_1ga29052b83b449367bed5e513716d52d3a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_POWER_SOURCE_INTERNAL_BATTERY<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="142" refid="group__lwm2m__carrier__api_ga9f7808821e040ab2842766428c5256dd_1ga9f7808821e040ab2842766428c5256dd" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_POWER_SOURCE_EXTERNAL_BATTERY<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="143" refid="group__lwm2m__carrier__api_gad1b99915af32060da78e328c7cfd16b7_1gad1b99915af32060da78e328c7cfd16b7" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_POWER_SOURCE_ETHERNET<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="144" refid="group__lwm2m__carrier__api_gaed0b3174193306d07421e40272932c33_1gaed0b3174193306d07421e40272932c33" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_POWER_SOURCE_USB<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145" refid="group__lwm2m__carrier__api_ga32cdc3f52bc4eee420c9fcde22a710a1_1ga32cdc3f52bc4eee420c9fcde22a710a1" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_POWER_SOURCE_AC<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>6</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146" refid="group__lwm2m__carrier__api_ga4f19e4bd15401379560612689c52246d_1ga4f19e4bd15401379560612689c52246d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_POWER_SOURCE_SOLAR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>7</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="153" refid="group__lwm2m__carrier__api_ga1180f9ac215b3b85cd8eaa1dd0c8568d_1ga1180f9ac215b3b85cd8eaa1dd0c8568d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_ERROR_CODE_NO_ERROR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="154" refid="group__lwm2m__carrier__api_ga5be578fa1604937bbb6a4955f04e0f94_1ga5be578fa1604937bbb6a4955f04e0f94" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_ERROR_CODE_LOW_CHARGE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="155" refid="group__lwm2m__carrier__api_ga448aef2da6745171bfcb974781aeac11_1ga448aef2da6745171bfcb974781aeac11" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_ERROR_CODE_EXTERNAL_SUPPLY_OFF<sp/><sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="156" refid="group__lwm2m__carrier__api_ga08d4809874d8fd9046bac7565adceaab_1ga08d4809874d8fd9046bac7565adceaab" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_ERROR_CODE_GPS_FAILURE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="157" refid="group__lwm2m__carrier__api_ga5f1c73169b38af7e6343a84c17ed3210_1ga5f1c73169b38af7e6343a84c17ed3210" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_ERROR_CODE_LOW_SIGNAL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="158" refid="group__lwm2m__carrier__api_ga4e549077f04f7ec97557cd18daa5608a_1ga4e549077f04f7ec97557cd18daa5608a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_ERROR_CODE_OUT_OF_MEMORY<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="159" refid="group__lwm2m__carrier__api_ga364a04fdf66210cd44d879f6e8efda61_1ga364a04fdf66210cd44d879f6e8efda61" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_ERROR_CODE_SMS_FAILURE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>6</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="160" refid="group__lwm2m__carrier__api_gac4f840a8c04253e4664c190daf7804e3_1gac4f840a8c04253e4664c190daf7804e3" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_ERROR_CODE_IP_CONNECTIVITY_FAILURE<sp/>7</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="161" refid="group__lwm2m__carrier__api_ga65e3550a72d0a72489d21a39ba124a48_1ga65e3550a72d0a72489d21a39ba124a48" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_ERROR_CODE_PERIPHERAL_MALFUNCTION<sp/><sp/>8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="170" refid="group__lwm2m__carrier__api_ga22194c8be152b8ce7cb0db2559a5479a_1ga22194c8be152b8ce7cb0db2559a5479a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_BATTERY_STATUS_NORMAL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="171" refid="group__lwm2m__carrier__api_gafd86abbfe6d76074cb57079b799b5dbf_1gafd86abbfe6d76074cb57079b799b5dbf" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_BATTERY_STATUS_CHARGING<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172" refid="group__lwm2m__carrier__api_gaa0ff21c834cd704e8fea45d233d9a20f_1gaa0ff21c834cd704e8fea45d233d9a20f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_BATTERY_STATUS_CHARGE_COMPLETE<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="173" refid="group__lwm2m__carrier__api_gadf9592f84b106e7e1bf413e935e8f8a3_1gadf9592f84b106e7e1bf413e935e8f8a3" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_BATTERY_STATUS_DAMAGED<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="174" refid="group__lwm2m__carrier__api_ga04a0634ab3fcd2beb23a2bd30381b3da_1ga04a0634ab3fcd2beb23a2bd30381b3da" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_BATTERY_STATUS_LOW_BATTERY<sp/><sp/><sp/><sp/><sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="175" refid="group__lwm2m__carrier__api_ga2c232c3912172f701caa0b60df59fc7e_1ga2c232c3912172f701caa0b60df59fc7e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_BATTERY_STATUS_NOT_INSTALLED<sp/><sp/><sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="176" refid="group__lwm2m__carrier__api_ga92526efa67ebabfdb3c71c3f72c65f22_1ga92526efa67ebabfdb3c71c3f72c65f22" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_BATTERY_STATUS_UNKNOWN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>6</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="183" refid="group__lwm2m__carrier__api_ga8d7410dd8d21695ca0c00c2ddd885e97_1ga8d7410dd8d21695ca0c00c2ddd885e97" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_IDENTITY_ID<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="184" refid="group__lwm2m__carrier__api_gae8a78f78a6389fd19ae2712e4a5fbe00_1gae8a78f78a6389fd19ae2712e4a5fbe00" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_IDENTITY_MANUFACTURER<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="185" refid="group__lwm2m__carrier__api_ga0acfe1e8896a8d9a5f1559d2b90bccb0_1ga0acfe1e8896a8d9a5f1559d2b90bccb0" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_IDENTITY_MODEL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="186" refid="group__lwm2m__carrier__api_ga4ee1402c5b218c1d948e6d33ee2a656f_1ga4ee1402c5b218c1d948e6d33ee2a656f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LWM2M_CARRIER_IDENTITY_SW_VERSION<sp/><sp/><sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="193" refid="structca__cert__tags__t" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="195" refid="structca__cert__tags__t_a4e6a5f0e5a7fe441c617efdfbda2890c_1a4e6a5f0e5a7fe441c617efdfbda2890c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*<ref refid="structca__cert__tags__t_a4e6a5f0e5a7fe441c617efdfbda2890c_1a4e6a5f0e5a7fe441c617efdfbda2890c" kindref="member">tags</ref>;</highlight></codeline>
+<codeline lineno="197" refid="structca__cert__tags__t_a199f21eff5ecbb00ea1fcd217d47f941_1a199f21eff5ecbb00ea1fcd217d47f941" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structca__cert__tags__t_a199f21eff5ecbb00ea1fcd217d47f941_1a199f21eff5ecbb00ea1fcd217d47f941" kindref="member">count</ref>;</highlight></codeline>
+<codeline lineno="198"><highlight class="normal">}<sp/><ref refid="structca__cert__tags__t" kindref="compound">ca_cert_tags_t</ref>;</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="203" refid="structlwm2m__carrier__config__t" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="205" refid="structlwm2m__carrier__config__t_ac6580ecd5df54240ec0173fd579e1a12_1ac6580ecd5df54240ec0173fd579e1a12" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structlwm2m__carrier__config__t_ac6580ecd5df54240ec0173fd579e1a12_1ac6580ecd5df54240ec0173fd579e1a12" kindref="member">bootstrap_uri</ref>;</highlight></codeline>
+<codeline lineno="209" refid="structlwm2m__carrier__config__t_a57f3af34abd7efc39af5575cf0124f9f_1a57f3af34abd7efc39af5575cf0124f9f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structlwm2m__carrier__config__t_a57f3af34abd7efc39af5575cf0124f9f_1a57f3af34abd7efc39af5575cf0124f9f" kindref="member">psk</ref>;</highlight></codeline>
+<codeline lineno="211" refid="structlwm2m__carrier__config__t_a4c959e47774fafb815d54449dcb1aec1_1a4c959e47774fafb815d54449dcb1aec1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structlwm2m__carrier__config__t_a4c959e47774fafb815d54449dcb1aec1_1a4c959e47774fafb815d54449dcb1aec1" kindref="member">apn</ref>;</highlight></codeline>
+<codeline lineno="215" refid="structlwm2m__carrier__config__t_a908bab7ed7423d53300076b700c80bd3_1a908bab7ed7423d53300076b700c80bd3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structlwm2m__carrier__config__t_a908bab7ed7423d53300076b700c80bd3_1a908bab7ed7423d53300076b700c80bd3" kindref="member">certification_mode</ref>;</highlight></codeline>
+<codeline lineno="216"><highlight class="normal">}<sp/><ref refid="structlwm2m__carrier__config__t" kindref="compound">lwm2m_carrier_config_t</ref>;</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="234" refid="group__lwm2m__carrier__api_ga34b2524106756765352862218cd2b9d3_1ga34b2524106756765352862218cd2b9d3" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_ga34b2524106756765352862218cd2b9d3_1ga34b2524106756765352862218cd2b9d3" kindref="member">lwm2m_carrier_init</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structlwm2m__carrier__config__t" kindref="compound">lwm2m_carrier_config_t</ref><sp/>*config);</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"></highlight></codeline>
+<codeline lineno="241" refid="group__lwm2m__carrier__api_gab73e93a035c5a21084d18c1877168cbc_1gab73e93a035c5a21084d18c1877168cbc" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_gab73e93a035c5a21084d18c1877168cbc_1gab73e93a035c5a21084d18c1877168cbc" kindref="member">lwm2m_carrier_run</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"></highlight></codeline>
+<codeline lineno="250" refid="group__lwm2m__carrier__api_ga37ac71bff0df3661ea71d43f54fd3b93_1ga37ac71bff0df3661ea71d43f54fd3b93" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_ga37ac71bff0df3661ea71d43f54fd3b93_1ga37ac71bff0df3661ea71d43f54fd3b93" kindref="member">lwm2m_carrier_time_read</ref>(int32_t<sp/>*utc_time,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*utc_offset,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>**tz);</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"></highlight></codeline>
+<codeline lineno="260" refid="group__lwm2m__carrier__api_gae22f7e9e2dee81144617aee81873923b_1gae22f7e9e2dee81144617aee81873923b" refkind="member"><highlight class="normal">int32_t<sp/><ref refid="group__lwm2m__carrier__api_gae22f7e9e2dee81144617aee81873923b_1gae22f7e9e2dee81144617aee81873923b" kindref="member">lwm2m_carrier_utc_time_read</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"></highlight></codeline>
+<codeline lineno="270" refid="group__lwm2m__carrier__api_ga5ff740a4a840032caa6904aeb1c5dea0_1ga5ff740a4a840032caa6904aeb1c5dea0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_ga5ff740a4a840032caa6904aeb1c5dea0_1ga5ff740a4a840032caa6904aeb1c5dea0" kindref="member">lwm2m_carrier_utc_offset_read</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"></highlight></codeline>
+<codeline lineno="281" refid="group__lwm2m__carrier__api_gaf891242cb0906cde05271ee417a06839_1gaf891242cb0906cde05271ee417a06839" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="group__lwm2m__carrier__api_gaf891242cb0906cde05271ee417a06839_1gaf891242cb0906cde05271ee417a06839" kindref="member">lwm2m_carrier_timezone_read</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"></highlight></codeline>
+<codeline lineno="293" refid="group__lwm2m__carrier__api_ga442208db8c8c183f0709525fbf82d08c_1ga442208db8c8c183f0709525fbf82d08c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_ga442208db8c8c183f0709525fbf82d08c_1ga442208db8c8c183f0709525fbf82d08c" kindref="member">lwm2m_carrier_utc_time_write</ref>(int32_t<sp/>time);</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"></highlight></codeline>
+<codeline lineno="305" refid="group__lwm2m__carrier__api_ga0f6551d081038a0e444c2390329ea5ee_1ga0f6551d081038a0e444c2390329ea5ee" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_ga0f6551d081038a0e444c2390329ea5ee_1ga0f6551d081038a0e444c2390329ea5ee" kindref="member">lwm2m_carrier_utc_offset_write</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>offset);</highlight></codeline>
+<codeline lineno="306"><highlight class="normal"></highlight></codeline>
+<codeline lineno="317" refid="group__lwm2m__carrier__api_ga12e5be234a779a6056e786eca3e86dcd_1ga12e5be234a779a6056e786eca3e86dcd" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_ga12e5be234a779a6056e786eca3e86dcd_1ga12e5be234a779a6056e786eca3e86dcd" kindref="member">lwm2m_carrier_timezone_write</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*tz);</highlight></codeline>
+<codeline lineno="318"><highlight class="normal"></highlight></codeline>
+<codeline lineno="334" refid="group__lwm2m__carrier__api_ga729109fa765c5b870dbe514768cffb44_1ga729109fa765c5b870dbe514768cffb44" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_ga729109fa765c5b870dbe514768cffb44_1ga729109fa765c5b870dbe514768cffb44" kindref="member">lwm2m_carrier_event_handler</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structlwm2m__carrier__event__t" kindref="compound">lwm2m_carrier_event_t</ref><sp/>*event);</highlight></codeline>
+<codeline lineno="335"><highlight class="normal"></highlight></codeline>
+<codeline lineno="359" refid="group__lwm2m__carrier__api_gacb57a62b89e6f352d8251c0037a7c822_1gacb57a62b89e6f352d8251c0037a7c822" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_gacb57a62b89e6f352d8251c0037a7c822_1gacb57a62b89e6f352d8251c0037a7c822" kindref="member">lwm2m_carrier_avail_power_sources_set</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*power_sources,<sp/>uint8_t<sp/>power_source_count);</highlight></codeline>
+<codeline lineno="360"><highlight class="normal"></highlight></codeline>
+<codeline lineno="378" refid="group__lwm2m__carrier__api_gadbd557e8a81b4aa01729e76d98581db6_1gadbd557e8a81b4aa01729e76d98581db6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_gadbd557e8a81b4aa01729e76d98581db6_1gadbd557e8a81b4aa01729e76d98581db6" kindref="member">lwm2m_carrier_power_source_voltage_set</ref>(uint8_t<sp/>power_source,<sp/>int32_t<sp/>value);</highlight></codeline>
+<codeline lineno="379"><highlight class="normal"></highlight></codeline>
+<codeline lineno="398" refid="group__lwm2m__carrier__api_ga0a6d79f96e43706b0fbfe4c8401daadf_1ga0a6d79f96e43706b0fbfe4c8401daadf" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_ga0a6d79f96e43706b0fbfe4c8401daadf_1ga0a6d79f96e43706b0fbfe4c8401daadf" kindref="member">lwm2m_carrier_power_source_current_set</ref>(uint8_t<sp/>power_source,<sp/>int32_t<sp/>value);</highlight></codeline>
+<codeline lineno="399"><highlight class="normal"></highlight></codeline>
+<codeline lineno="417" refid="group__lwm2m__carrier__api_ga448e246a8ab60019b5345ef56208c31c_1ga448e246a8ab60019b5345ef56208c31c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_ga448e246a8ab60019b5345ef56208c31c_1ga448e246a8ab60019b5345ef56208c31c" kindref="member">lwm2m_carrier_battery_level_set</ref>(uint8_t<sp/>battery_level);</highlight></codeline>
+<codeline lineno="418"><highlight class="normal"></highlight></codeline>
+<codeline lineno="431" refid="group__lwm2m__carrier__api_gaa2d34c8a032beb5dab99a50dfed33c35_1gaa2d34c8a032beb5dab99a50dfed33c35" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_gaa2d34c8a032beb5dab99a50dfed33c35_1gaa2d34c8a032beb5dab99a50dfed33c35" kindref="member">lwm2m_carrier_battery_status_set</ref>(int32_t<sp/>battery_status);</highlight></codeline>
+<codeline lineno="432"><highlight class="normal"></highlight></codeline>
+<codeline lineno="448" refid="group__lwm2m__carrier__api_ga434fad0a49c02056f6993f5c33fcb159_1ga434fad0a49c02056f6993f5c33fcb159" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_ga434fad0a49c02056f6993f5c33fcb159_1ga434fad0a49c02056f6993f5c33fcb159" kindref="member">lwm2m_carrier_device_type_set</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*device_type);</highlight></codeline>
+<codeline lineno="449"><highlight class="normal"></highlight></codeline>
+<codeline lineno="466" refid="group__lwm2m__carrier__api_gafca4592d2639b3c61dd16dbbc54b43fd_1gafca4592d2639b3c61dd16dbbc54b43fd" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_gafca4592d2639b3c61dd16dbbc54b43fd_1gafca4592d2639b3c61dd16dbbc54b43fd" kindref="member">lwm2m_carrier_hardware_version_set</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*hardware_version);</highlight></codeline>
+<codeline lineno="467"><highlight class="normal"></highlight></codeline>
+<codeline lineno="485" refid="group__lwm2m__carrier__api_ga3179c6553912ef80d67093da7d3283e2_1ga3179c6553912ef80d67093da7d3283e2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_ga3179c6553912ef80d67093da7d3283e2_1ga3179c6553912ef80d67093da7d3283e2" kindref="member">lwm2m_carrier_software_version_set</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*software_version);</highlight></codeline>
+<codeline lineno="486"><highlight class="normal"></highlight></codeline>
+<codeline lineno="505" refid="group__lwm2m__carrier__api_gaefccef49fb1246fabe8f2271781b8700_1gaefccef49fb1246fabe8f2271781b8700" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_gaefccef49fb1246fabe8f2271781b8700_1gaefccef49fb1246fabe8f2271781b8700" kindref="member">lwm2m_carrier_error_code_add</ref>(int32_t<sp/>error);</highlight></codeline>
+<codeline lineno="506"><highlight class="normal"></highlight></codeline>
+<codeline lineno="524" refid="group__lwm2m__carrier__api_gaeb8baabf94607cab75791d147598cc7a_1gaeb8baabf94607cab75791d147598cc7a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_gaeb8baabf94607cab75791d147598cc7a_1gaeb8baabf94607cab75791d147598cc7a" kindref="member">lwm2m_carrier_error_code_remove</ref>(int32_t<sp/>error);</highlight></codeline>
+<codeline lineno="525"><highlight class="normal"></highlight></codeline>
+<codeline lineno="538" refid="group__lwm2m__carrier__api_gafcad3ffed4e3fad6ffe9e202a3991a1d_1gafcad3ffed4e3fad6ffe9e202a3991a1d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_gafcad3ffed4e3fad6ffe9e202a3991a1d_1gafcad3ffed4e3fad6ffe9e202a3991a1d" kindref="member">lwm2m_carrier_memory_total_set</ref>(uint32_t<sp/>memory_total);</highlight></codeline>
+<codeline lineno="539"><highlight class="normal"></highlight></codeline>
+<codeline lineno="550" refid="group__lwm2m__carrier__api_ga2911a4ced890130ad4e1afa13427e737_1ga2911a4ced890130ad4e1afa13427e737" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_ga2911a4ced890130ad4e1afa13427e737_1ga2911a4ced890130ad4e1afa13427e737" kindref="member">lwm2m_carrier_memory_free_read</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="551"><highlight class="normal"></highlight></codeline>
+<codeline lineno="572" refid="group__lwm2m__carrier__api_ga1680ee9e11b24c3878ceefc1076c10cf_1ga1680ee9e11b24c3878ceefc1076c10cf" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_ga1680ee9e11b24c3878ceefc1076c10cf_1ga1680ee9e11b24c3878ceefc1076c10cf" kindref="member">lwm2m_carrier_identity_read</ref>(uint16_t<sp/>instance_id,<sp/>uint16_t<sp/>identity_type,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*buffer,</highlight></codeline>
+<codeline lineno="573"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/>*buffer_len);</highlight></codeline>
+<codeline lineno="574"><highlight class="normal"></highlight></codeline>
+<codeline lineno="595" refid="group__lwm2m__carrier__api_gafeff833fd324ca562910f59189cdc4f3_1gafeff833fd324ca562910f59189cdc4f3" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_gafeff833fd324ca562910f59189cdc4f3_1gafeff833fd324ca562910f59189cdc4f3" kindref="member">lwm2m_carrier_identity_write</ref>(uint16_t<sp/>instance_id,<sp/>uint16_t<sp/>identity_type,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*value);</highlight></codeline>
+<codeline lineno="596"><highlight class="normal"></highlight></codeline>
+<codeline lineno="609" refid="group__lwm2m__carrier__api_ga206b60a49699e8bd2ad5b92084f90add_1ga206b60a49699e8bd2ad5b92084f90add" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__lwm2m__carrier__api_ga206b60a49699e8bd2ad5b92084f90add_1ga206b60a49699e8bd2ad5b92084f90add" kindref="member">lwm2m_carrier_portfolio_instance_create</ref>(uint16_t<sp/>instance_id);</highlight></codeline>
+<codeline lineno="610"><highlight class="normal"></highlight></codeline>
+<codeline lineno="611"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="612"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="613"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="614"><highlight class="normal"></highlight></codeline>
+<codeline lineno="617"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>LWM2M_CARRIER_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h"/>
+  </compounddef>
+</doxygen>

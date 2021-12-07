@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnrf__cloud__pgps__result" kind="struct" language="C++" prot="public">
+    <compoundname>nrf_cloud_pgps_result</compoundname>
+    <includes refid="nrf__cloud__pgps_8h" local="no">nrf_cloud_pgps.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnrf__cloud__pgps__result_a0411cd9486dc33ee51890e4c60f4c5ca_1a0411cd9486dc33ee51890e4c60f4c5ca" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* nrf_cloud_pgps_result::host</definition>
+        <argsstring></argsstring>
+        <name>host</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>User-provided buffer to hold download host name </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="91" column="6" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__pgps__result_a9026033aceec2d1c028326f696cda2b7_1a9026033aceec2d1c028326f696cda2b7" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t nrf_cloud_pgps_result::host_sz</definition>
+        <argsstring></argsstring>
+        <name>host_sz</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of user-provided host buffer </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="93" column="8" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__pgps__result_aad532cb0046cea4830ce1218185d4426_1aad532cb0046cea4830ce1218185d4426" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* nrf_cloud_pgps_result::path</definition>
+        <argsstring></argsstring>
+        <name>path</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>User-provided buffer to hold download path/file name </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="96" column="6" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__pgps__result_a72dabce042ccf5b43b5e3ee42afca56f_1a72dabce042ccf5b43b5e3ee42afca56f" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t nrf_cloud_pgps_result::path_sz</definition>
+        <argsstring></argsstring>
+        <name>path_sz</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of user-provided path buffer </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="98" column="8" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>nRF Cloud Predicted GPS (P-GPS) result; the location of the P-GPS data file which is to be downloaded and provided to <ref refid="group__nrf__cloud__pgps_gae5554df8baf4bb437a59a4d0a4d86b56_1gae5554df8baf4bb437a59a4d0a4d86b56" kindref="member">nrf_cloud_pgps_process()</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/nrf_cloud_pgps.h" line="89" column="1" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="89" bodyend="99"/>
+    <listofallmembers>
+      <member refid="structnrf__cloud__pgps__result_a0411cd9486dc33ee51890e4c60f4c5ca_1a0411cd9486dc33ee51890e4c60f4c5ca" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_result</scope><name>host</name></member>
+      <member refid="structnrf__cloud__pgps__result_a9026033aceec2d1c028326f696cda2b7_1a9026033aceec2d1c028326f696cda2b7" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_result</scope><name>host_sz</name></member>
+      <member refid="structnrf__cloud__pgps__result_aad532cb0046cea4830ce1218185d4426_1aad532cb0046cea4830ce1218185d4426" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_result</scope><name>path</name></member>
+      <member refid="structnrf__cloud__pgps__result_a72dabce042ccf5b43b5e3ee42afca56f_1a72dabce042ccf5b43b5e3ee42afca56f" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_result</scope><name>path_sz</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,192 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__lbs" kind="group">
+    <compoundname>bt_lbs</compoundname>
+    <title>LED Button Service API</title>
+    <innerclass refid="structbt__lbs__cb" prot="public">bt_lbs_cb</innerclass>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__bt__lbs_1ga985260ae276b47a123c131e8fb8b4b9c" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* led_cb_t) (const bool led_state)</definition>
+        <argsstring>)(const bool led_state)</argsstring>
+        <name>led_cb_t</name>
+        <briefdescription>
+<para>Callback type for when an LED state change is received. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/lbs.h" line="40" column="9" bodyfile="include/bluetooth/services/lbs.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bt__lbs_1ga2e599292d9bbc0b8e303e5e6cafd767d" prot="public" static="no">
+        <type>bool(*</type>
+        <definition>typedef bool(* button_cb_t) (void)</definition>
+        <argsstring>)(void)</argsstring>
+        <name>button_cb_t</name>
+        <briefdescription>
+<para>Callback type for when the button state is pulled. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/lbs.h" line="43" column="9" bodyfile="include/bluetooth/services/lbs.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__lbs_1gac4704303723cf374953e2a9f196a2bab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_lbs_init</definition>
+        <argsstring>(struct bt_lbs_cb *callbacks)</argsstring>
+        <name>bt_lbs_init</name>
+        <param>
+          <type>struct <ref refid="structbt__lbs__cb" kindref="compound">bt_lbs_cb</ref> *</type>
+          <declname>callbacks</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the LBS Service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function registers a GATT service with two characteristics: Button and LED. Send notifications for the Button Characteristic to let connected peers know when the button state changes. Write to the LED Characteristic to change the state of the LED on the board.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">callbacks</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Struct containing pointers to callback functions used by the service. This pointer can be NULL if no callback functions are defined.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/lbs.h" line="70" column="5" declfile="include/bluetooth/services/lbs.h" declline="70" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__lbs_1ga28793cf146020ef627fa4d86521866be" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_lbs_send_button_state</definition>
+        <argsstring>(bool button_state)</argsstring>
+        <name>bt_lbs_send_button_state</name>
+        <param>
+          <type>bool</type>
+          <declname>button_state</declname>
+        </param>
+        <briefdescription>
+<para>Send the button state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function sends a binary state, typically the state of a button, to all connected peers.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">button_state</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The state of the button.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/lbs.h" line="82" column="5" declfile="include/bluetooth/services/lbs.h" declline="82" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__lbs_1ga4499e5ddcc8635d8081232ef23aa7afe" prot="public" static="no">
+        <name>BT_UUID_LBS_VAL</name>
+        <initializer>	BT_UUID_128_ENCODE(0x00001523, 0x1212, 0xefde, 0x1523, 0x785feabcd123)</initializer>
+        <briefdescription>
+<para>LBS Service UUID. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/lbs.h" line="23" column="9" bodyfile="include/bluetooth/services/lbs.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__lbs_1gaa4f8dbe4470277df6f5fa89d6cd02481" prot="public" static="no">
+        <name>BT_UUID_LBS_BUTTON_VAL</name>
+        <initializer>	BT_UUID_128_ENCODE(0x00001524, 0x1212, 0xefde, 0x1523, 0x785feabcd123)</initializer>
+        <briefdescription>
+<para>Button Characteristic UUID. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/lbs.h" line="27" column="9" bodyfile="include/bluetooth/services/lbs.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__lbs_1gac20ed2eba15b4547731e177eac00fd45" prot="public" static="no">
+        <name>BT_UUID_LBS_LED_VAL</name>
+        <initializer>	BT_UUID_128_ENCODE(0x00001525, 0x1212, 0xefde, 0x1523, 0x785feabcd123)</initializer>
+        <briefdescription>
+<para>LED Characteristic UUID. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/lbs.h" line="31" column="9" bodyfile="include/bluetooth/services/lbs.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__lbs_1ga3ea49d04ea969879c2983c54ece0f0e7" prot="public" static="no">
+        <name>BT_UUID_LBS</name>
+        <initializer>BT_UUID_DECLARE_128(<ref refid="group__bt__lbs_ga4499e5ddcc8635d8081232ef23aa7afe_1ga4499e5ddcc8635d8081232ef23aa7afe" kindref="member">BT_UUID_LBS_VAL</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/lbs.h" line="35" column="9" bodyfile="include/bluetooth/services/lbs.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__lbs_1ga830e5ee10b9b0dc2767c090f469857e1" prot="public" static="no">
+        <name>BT_UUID_LBS_BUTTON</name>
+        <initializer>BT_UUID_DECLARE_128(<ref refid="group__bt__lbs_gaa4f8dbe4470277df6f5fa89d6cd02481_1gaa4f8dbe4470277df6f5fa89d6cd02481" kindref="member">BT_UUID_LBS_BUTTON_VAL</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/lbs.h" line="36" column="9" bodyfile="include/bluetooth/services/lbs.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__lbs_1gaf6b4252406f6fa83e3475c36d2b7fa3d" prot="public" static="no">
+        <name>BT_UUID_LBS_LED</name>
+        <initializer>BT_UUID_DECLARE_128(<ref refid="group__bt__lbs_gac20ed2eba15b4547731e177eac00fd45_1gac20ed2eba15b4547731e177eac00fd45" kindref="member">BT_UUID_LBS_LED_VAL</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/lbs.h" line="37" column="9" bodyfile="include/bluetooth/services/lbs.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the LED Button Service (LBS). </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

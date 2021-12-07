@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__hrs__client__body__sensor__location" kind="struct" language="C++" prot="public">
+    <compoundname>bt_hrs_client_body_sensor_location</compoundname>
+    <includes refid="hrs__client_8h" local="no">hrs_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__hrs__client__body__sensor__location_a0811062657e672a9ef94c478891ec78b_1a0811062657e672a9ef94c478891ec78b" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_hrs_client_body_sensor_location::handle</definition>
+        <argsstring></argsstring>
+        <name>handle</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Value handle. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="174" column="10" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="174" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hrs__client__body__sensor__location_af0b7e10feb5f5e5116dfc51bd7823d6b_1af0b7e10feb5f5e5116dfc51bd7823d6b" prot="public" static="no" mutable="no">
+        <type>struct bt_gatt_read_params</type>
+        <definition>struct bt_gatt_read_params bt_hrs_client_body_sensor_location::read_params</definition>
+        <argsstring></argsstring>
+        <name>read_params</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Read parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="177" column="26" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="177" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hrs__client__body__sensor__location_a6f8908522679aca1de4b7ad6f2ba9ea5_1a6f8908522679aca1de4b7ad6f2ba9ea5" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__hrs__client_gab4248c568ece617ea55eb142e4f9255f_1gab4248c568ece617ea55eb142e4f9255f" kindref="member">bt_hrs_client_read_sensor_location_cb</ref></type>
+        <definition>bt_hrs_client_read_sensor_location_cb bt_hrs_client_body_sensor_location::read_cb</definition>
+        <argsstring></argsstring>
+        <name>read_cb</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Read complete callback. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="180" column="39" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="180" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Body Sensor Location characteristic structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_hrs_client</label>
+        <link refid="structbt__hrs__client"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>measurement_char</edgelabel>
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>sensor_location_char</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>cp_char</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>bt_hrs_client_body_sensor_location</label>
+        <link refid="structbt__hrs__client__body__sensor__location"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>read_cb</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bt_hrs_client_control_point</label>
+        <link refid="structbt__hrs__client__control__point"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>write_cb</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bt_hrs_client_hr_meas</label>
+        <link refid="structbt__hrs__client__hr__meas"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>notify_cb</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/hrs_client.h" line="172" column="1" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="172" bodyend="181"/>
+    <listofallmembers>
+      <member refid="structbt__hrs__client__body__sensor__location_a0811062657e672a9ef94c478891ec78b_1a0811062657e672a9ef94c478891ec78b" prot="public" virt="non-virtual"><scope>bt_hrs_client_body_sensor_location</scope><name>handle</name></member>
+      <member refid="structbt__hrs__client__body__sensor__location_a6f8908522679aca1de4b7ad6f2ba9ea5_1a6f8908522679aca1de4b7ad6f2ba9ea5" prot="public" virt="non-virtual"><scope>bt_hrs_client_body_sensor_location</scope><name>read_cb</name></member>
+      <member refid="structbt__hrs__client__body__sensor__location_af0b7e10feb5f5e5116dfc51bd7823d6b_1af0b7e10feb5f5e5116dfc51bd7823d6b" prot="public" virt="non-virtual"><scope>bt_hrs_client_body_sensor_location</scope><name>read_params</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

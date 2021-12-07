@@ -1,0 +1,2028 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="lte__lc__helpers_8h" kind="file" language="C++">
+    <compoundname>lte_lc_helpers.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <includes local="no">zephyr/types.h</includes>
+    <includes local="no">string.h</includes>
+    <includes local="no">stdio.h</includes>
+    <includes refid="lte__lc_8h" local="no">modem/lte_lc.h</includes>
+    <includes refid="at__cmd__parser_8h" local="no">modem/at_cmd_parser.h</includes>
+    <includes refid="at__params_8h" local="no">modem/at_params.h</includes>
+    <includes local="no">logging/log.h</includes>
+    <incdepgraph>
+      <node id="8">
+        <label>modem/at_cmd_parser.h</label>
+        <link refid="at__cmd__parser_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>modem/at_params.h</label>
+        <link refid="at__params_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>modem/lte_lc.h</label>
+        <link refid="lte__lc_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>lib/lte_link_control/lte_lc_helpers.h</label>
+        <link refid="lte__lc__helpers_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>logging/log.h</label>
+      </node>
+      <node id="7">
+        <label>stdbool.h</label>
+      </node>
+      <node id="5">
+        <label>stdio.h</label>
+      </node>
+      <node id="9">
+        <label>stdlib.h</label>
+      </node>
+      <node id="4">
+        <label>string.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="lte__lc__helpers_8h_ac30812e089509cb7edafb1d5b08100e0_1ac30812e089509cb7edafb1d5b08100e0" prot="public" static="no">
+        <name>LC_MAX_READ_LENGTH</name>
+        <initializer>128</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="16" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a16e8148ffb553779a167d701c07a37c1_1a16e8148ffb553779a167d701c07a37c1" prot="public" static="no">
+        <name>AT_CMD_SIZE</name>
+        <param><defname>x</defname></param>
+        <initializer>(sizeof(x) - 1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="18" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_ab897dfe0d4ce6bc559c21000323643a8_1ab897dfe0d4ce6bc559c21000323643a8" prot="public" static="no">
+        <name>AT_RESPONSE_PREFIX_INDEX</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="19" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a5538bb745a55d845df694732043c500c_1a5538bb745a55d845df694732043c500c" prot="public" static="no">
+        <name>AT_CFUN_READ</name>
+        <initializer>&quot;AT+CFUN?&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="20" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a878c8ac161c6f8e900ef364d6f05f549_1a878c8ac161c6f8e900ef364d6f05f549" prot="public" static="no">
+        <name>AT_CFUN_RESPONSE_PREFIX</name>
+        <initializer>&quot;+CFUN&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="21" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_af17db744a24ef4030eeac27b13374d29_1af17db744a24ef4030eeac27b13374d29" prot="public" static="no">
+        <name>AT_CFUN_MODE_INDEX</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="22" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a029da2dbdd9b34d6b49e81bf51eb69a5_1a029da2dbdd9b34d6b49e81bf51eb69a5" prot="public" static="no">
+        <name>AT_CFUN_PARAMS_COUNT</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="23" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a3f7d1a938fc032a33c8d0f9d4b6f99f8_1a3f7d1a938fc032a33c8d0f9d4b6f99f8" prot="public" static="no">
+        <name>AT_CFUN_RESPONSE_MAX_LEN</name>
+        <initializer>20</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="24" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a16dcbb90fb62e34ac2071c81e8e63a18_1a16dcbb90fb62e34ac2071c81e8e63a18" prot="public" static="no">
+        <name>AT_CEREG_5</name>
+        <initializer>&quot;AT+CEREG=5&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="25" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_ae8867261c08f6161ed1f2082d955dd18_1ae8867261c08f6161ed1f2082d955dd18" prot="public" static="no">
+        <name>AT_CEREG_READ</name>
+        <initializer>&quot;AT+CEREG?&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="26" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_af944465c38ee02d4074bbb90dd9b4cba_1af944465c38ee02d4074bbb90dd9b4cba" prot="public" static="no">
+        <name>AT_CEREG_RESPONSE_PREFIX</name>
+        <initializer>&quot;+CEREG&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="27" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a0b0f5a03ea52dd1206411972ce15d153_1a0b0f5a03ea52dd1206411972ce15d153" prot="public" static="no">
+        <name>AT_CEREG_PARAMS_COUNT_MAX</name>
+        <initializer>11</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="28" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a6c3ac0b5f49d4711b6b47f4dc7cd7c87_1a6c3ac0b5f49d4711b6b47f4dc7cd7c87" prot="public" static="no">
+        <name>AT_CEREG_REG_STATUS_INDEX</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="29" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a8938f90139d79bad8ae83f90aad5f691_1a8938f90139d79bad8ae83f90aad5f691" prot="public" static="no">
+        <name>AT_CEREG_READ_REG_STATUS_INDEX</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="30" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a0c9f0da4002937eff0de003f8396ffe9_1a0c9f0da4002937eff0de003f8396ffe9" prot="public" static="no">
+        <name>AT_CEREG_TAC_INDEX</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="31" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a8cc46ecbdf80da5033576e0c8d4d5603_1a8cc46ecbdf80da5033576e0c8d4d5603" prot="public" static="no">
+        <name>AT_CEREG_READ_TAC_INDEX</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="32" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a24f66142df5331afead4ce05d1920f4a_1a24f66142df5331afead4ce05d1920f4a" prot="public" static="no">
+        <name>AT_CEREG_CELL_ID_INDEX</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="33" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a5c364e7cbd829d48576bf62ab3206e6c_1a5c364e7cbd829d48576bf62ab3206e6c" prot="public" static="no">
+        <name>AT_CEREG_READ_CELL_ID_INDEX</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="34" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_ad767b9c9a55afc7f9ceddaa0ac531950_1ad767b9c9a55afc7f9ceddaa0ac531950" prot="public" static="no">
+        <name>AT_CEREG_ACT_INDEX</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="35" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_ac13a5847696d22cf4ccdc03fafff5dc0_1ac13a5847696d22cf4ccdc03fafff5dc0" prot="public" static="no">
+        <name>AT_CEREG_READ_ACT_INDEX</name>
+        <initializer>5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="36" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a15035feb6c6ed5bb3cf170f0d5d3484f_1a15035feb6c6ed5bb3cf170f0d5d3484f" prot="public" static="no">
+        <name>AT_CEREG_ACTIVE_TIME_INDEX</name>
+        <initializer>7</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="37" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a3abd374d176295969f6f3266ac735bbf_1a3abd374d176295969f6f3266ac735bbf" prot="public" static="no">
+        <name>AT_CEREG_READ_ACTIVE_TIME_INDEX</name>
+        <initializer>8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="38" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a06702687bd47b433adaef28909df49eb_1a06702687bd47b433adaef28909df49eb" prot="public" static="no">
+        <name>AT_CEREG_TAU_INDEX</name>
+        <initializer>8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="39" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_ac16346d150d4c7b473dcc03687172f2d_1ac16346d150d4c7b473dcc03687172f2d" prot="public" static="no">
+        <name>AT_CEREG_READ_TAU_INDEX</name>
+        <initializer>9</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="40" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a22a387659d9c78effb12944e619913d5_1a22a387659d9c78effb12944e619913d5" prot="public" static="no">
+        <name>AT_CEREG_RESPONSE_MAX_LEN</name>
+        <initializer>80</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="41" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a19f15fb26b8ff0955cb9966c23612f66_1a19f15fb26b8ff0955cb9966c23612f66" prot="public" static="no">
+        <name>AT_XSYSTEMMODE_READ</name>
+        <initializer>&quot;AT%XSYSTEMMODE?&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="42" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_ab7013898149e496c45b22ce1d4e107eb_1ab7013898149e496c45b22ce1d4e107eb" prot="public" static="no">
+        <name>AT_XSYSTEMMODE_RESPONSE_PREFIX</name>
+        <initializer>&quot;%XSYSTEMMODE&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="43" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a16a16e84adb261792404ca7a4a8fd14c_1a16a16e84adb261792404ca7a4a8fd14c" prot="public" static="no">
+        <name>AT_XSYSTEMMODE_PROTO</name>
+        <initializer>&quot;AT%%XSYSTEMMODE=%d,%d,%d,%d&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="44" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a7bd73964cd806918ba53e60d977b9601_1a7bd73964cd806918ba53e60d977b9601" prot="public" static="no">
+        <name>AT_XSYSTEMMODE_READ_LTEM_INDEX</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="47" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_ad82b0c21e0ba17e9d24474bb2b84f589_1ad82b0c21e0ba17e9d24474bb2b84f589" prot="public" static="no">
+        <name>AT_XSYSTEMMODE_READ_NBIOT_INDEX</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="48" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a41c017129c97aaddbdb861ae9d47832c_1a41c017129c97aaddbdb861ae9d47832c" prot="public" static="no">
+        <name>AT_XSYSTEMMODE_READ_GPS_INDEX</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="49" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a29d27ac374667105e2952384a6315b82_1a29d27ac374667105e2952384a6315b82" prot="public" static="no">
+        <name>AT_XSYSTEMMODE_READ_PREFERENCE_INDEX</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="50" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_af9db3eb95d1a316605714b6e785a8758_1af9db3eb95d1a316605714b6e785a8758" prot="public" static="no">
+        <name>AT_XSYSTEMMODE_PARAMS_COUNT</name>
+        <initializer>5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="51" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a2b1e38d73e14bb0089468da3cc40cdf9_1a2b1e38d73e14bb0089468da3cc40cdf9" prot="public" static="no">
+        <name>AT_XSYSTEMMODE_RESPONSE_MAX_LEN</name>
+        <initializer>30</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="52" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a2fb286ff5e6a5c7e1e9e0127c1a31359_1a2fb286ff5e6a5c7e1e9e0127c1a31359" prot="public" static="no">
+        <name>AT_CEDRXS_MODE_INDEX</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="55" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a9754fadd6eb884a5eb6f1c780128e7b3_1a9754fadd6eb884a5eb6f1c780128e7b3" prot="public" static="no">
+        <name>AT_CEDRXS_ACTT_WB</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="56" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a0c38c06ab668636904dee5c1f1b4d5e7_1a0c38c06ab668636904dee5c1f1b4d5e7" prot="public" static="no">
+        <name>AT_CEDRXS_ACTT_NB</name>
+        <initializer>5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="57" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a4ba9aae63b98b2aac2fea72f34f530ac_1a4ba9aae63b98b2aac2fea72f34f530ac" prot="public" static="no">
+        <name>AT_CEDRXP_PARAMS_COUNT_MAX</name>
+        <initializer>6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="60" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a9c83d7f9437af8122421e53868254a9a_1a9c83d7f9437af8122421e53868254a9a" prot="public" static="no">
+        <name>AT_CEDRXP_ACTT_INDEX</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="61" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_aaf1a2cae1a2a5ede21fd66d133ec13d2_1aaf1a2cae1a2a5ede21fd66d133ec13d2" prot="public" static="no">
+        <name>AT_CEDRXP_REQ_EDRX_INDEX</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="62" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_adfc5f16d95e5b2a29c860c2dbd1f2701_1adfc5f16d95e5b2a29c860c2dbd1f2701" prot="public" static="no">
+        <name>AT_CEDRXP_NW_EDRX_INDEX</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="63" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_ad2a32ee4fd6839582534771a98c3ced5_1ad2a32ee4fd6839582534771a98c3ced5" prot="public" static="no">
+        <name>AT_CEDRXP_NW_PTW_INDEX</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="64" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a4ca111da260877c29e14b78d46280b89_1a4ca111da260877c29e14b78d46280b89" prot="public" static="no">
+        <name>AT_CSCON_RESPONSE_PREFIX</name>
+        <initializer>&quot;+CSCON&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="67" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a9b1b8342a7a0b130760e4090141ec121_1a9b1b8342a7a0b130760e4090141ec121" prot="public" static="no">
+        <name>AT_CSCON_PARAMS_COUNT_MAX</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="68" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_abc48c7c06b51cb12c1b32ea363cdc91c_1abc48c7c06b51cb12c1b32ea363cdc91c" prot="public" static="no">
+        <name>AT_CSCON_RRC_MODE_INDEX</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="69" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_aa82472fe54893fc63e1f80b4124e94ea_1aa82472fe54893fc63e1f80b4124e94ea" prot="public" static="no">
+        <name>AT_CSCON_READ_RRC_MODE_INDEX</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="70" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_ab847a9c0687f952a1cee8e395921a885_1ab847a9c0687f952a1cee8e395921a885" prot="public" static="no">
+        <name>AT_XT3412_SUB</name>
+        <initializer>&quot;AT%%XT3412=1,%d,%d&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="73" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a59a7359c741cdc52f790ce074b6f4713_1a59a7359c741cdc52f790ce074b6f4713" prot="public" static="no">
+        <name>AT_XT3412_PARAMS_COUNT_MAX</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="74" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a1fe432677e8a9b84d315ac68bbe4b3d1_1a1fe432677e8a9b84d315ac68bbe4b3d1" prot="public" static="no">
+        <name>AT_XT3412_TIME_INDEX</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="75" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a56d6b263bdeb45027dc126660df0fc0e_1a56d6b263bdeb45027dc126660df0fc0e" prot="public" static="no">
+        <name>T3412_MAX</name>
+        <initializer>35712000000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="76" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_ab61b3325fd582c3c7df23fd6bbbcf2e2_1ab61b3325fd582c3c7df23fd6bbbcf2e2" prot="public" static="no">
+        <name>AT_NCELLMEAS_RESPONSE_PREFIX</name>
+        <initializer>&quot;%NCELLMEAS&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="79" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_aab432a7c0d4b855e9e6448c583f68d46_1aab432a7c0d4b855e9e6448c583f68d46" prot="public" static="no">
+        <name>AT_NCELLMEAS_START</name>
+        <initializer>&quot;AT%%NCELLMEAS&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="80" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_ada13717bc77fa680100a74fe97a9a427_1ada13717bc77fa680100a74fe97a9a427" prot="public" static="no">
+        <name>AT_NCELLMEAS_STOP</name>
+        <initializer>&quot;AT%%NCELLMEASSTOP&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="81" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a1693985066fd7adf3a73b2ef6db3bace_1a1693985066fd7adf3a73b2ef6db3bace" prot="public" static="no">
+        <name>AT_NCELLMEAS_STATUS_INDEX</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="82" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_aefe8a366d41a1d9d90389511b4ff8f87_1aefe8a366d41a1d9d90389511b4ff8f87" prot="public" static="no">
+        <name>AT_NCELLMEAS_STATUS_VALUE_SUCCESS</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="83" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a282c868445fc0718411cdc949a48ddfa_1a282c868445fc0718411cdc949a48ddfa" prot="public" static="no">
+        <name>AT_NCELLMEAS_STATUS_VALUE_FAIL</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="84" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a0b1c9d53d4a456b31aa5388162ced85a_1a0b1c9d53d4a456b31aa5388162ced85a" prot="public" static="no">
+        <name>AT_NCELLMEAS_CELL_ID_INDEX</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="85" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a497f662c9923083dd24bda89499b31c2_1a497f662c9923083dd24bda89499b31c2" prot="public" static="no">
+        <name>AT_NCELLMEAS_PLMN_INDEX</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="86" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_ab443f76ebe0cdabd54a645c1c338305a_1ab443f76ebe0cdabd54a645c1c338305a" prot="public" static="no">
+        <name>AT_NCELLMEAS_TAC_INDEX</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="87" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a24a0ddc8c9b0c838fb02079c3ed7abfb_1a24a0ddc8c9b0c838fb02079c3ed7abfb" prot="public" static="no">
+        <name>AT_NCELLMEAS_TIMING_ADV_INDEX</name>
+        <initializer>5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="88" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a1005f6b459ee897f9b608a92736a4ac6_1a1005f6b459ee897f9b608a92736a4ac6" prot="public" static="no">
+        <name>AT_NCELLMEAS_EARFCN_INDEX</name>
+        <initializer>6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="89" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_afacb5d9b89c537c0e140a6460cb6632b_1afacb5d9b89c537c0e140a6460cb6632b" prot="public" static="no">
+        <name>AT_NCELLMEAS_PHYS_CELL_ID_INDEX</name>
+        <initializer>7</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="90" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a940aab92b785719fc4737332b291644d_1a940aab92b785719fc4737332b291644d" prot="public" static="no">
+        <name>AT_NCELLMEAS_RSRP_INDEX</name>
+        <initializer>8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="91" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_af655211cf60ba24cf9a419d39b3793d5_1af655211cf60ba24cf9a419d39b3793d5" prot="public" static="no">
+        <name>AT_NCELLMEAS_RSRQ_INDEX</name>
+        <initializer>9</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="92" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_ae7cfc8977a650c26fc911a459591a0cb_1ae7cfc8977a650c26fc911a459591a0cb" prot="public" static="no">
+        <name>AT_NCELLMEAS_MEASUREMENT_TIME_INDEX</name>
+        <initializer>10</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="93" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_ad3cc2446202d48fb70a79432bb608c20_1ad3cc2446202d48fb70a79432bb608c20" prot="public" static="no">
+        <name>AT_NCELLMEAS_PRE_NCELLS_PARAMS_COUNT</name>
+        <initializer>11</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="94" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_af6be7dcdc912dbacea52d7833f85ff1c_1af6be7dcdc912dbacea52d7833f85ff1c" prot="public" static="no">
+        <name>AT_NCELLMEAS_N_EARFCN_INDEX</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="98" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a474f33e6ffe4687740ebb6ae0ea9f4e8_1a474f33e6ffe4687740ebb6ae0ea9f4e8" prot="public" static="no">
+        <name>AT_NCELLMEAS_N_PHYS_CELL_ID_INDEX</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="99" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_aba787f65789dad6e3646973c994fd531_1aba787f65789dad6e3646973c994fd531" prot="public" static="no">
+        <name>AT_NCELLMEAS_N_RSRP_INDEX</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="100" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_af950ad0d11610f55e57b451b833bed58_1af950ad0d11610f55e57b451b833bed58" prot="public" static="no">
+        <name>AT_NCELLMEAS_N_RSRQ_INDEX</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="101" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_aa6ea0f1c6c1e5d7833cab1e64b60ae3b_1aa6ea0f1c6c1e5d7833cab1e64b60ae3b" prot="public" static="no">
+        <name>AT_NCELLMEAS_N_TIME_DIFF_INDEX</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="102" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a5abec1315888cf7a619184e6c5bcdee9_1a5abec1315888cf7a619184e6c5bcdee9" prot="public" static="no">
+        <name>AT_NCELLMEAS_N_PARAMS_COUNT</name>
+        <initializer>5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="103" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a323d8648e9db72d032dcb2d73779630e_1a323d8648e9db72d032dcb2d73779630e" prot="public" static="no">
+        <name>AT_NCELLMEAS_N_MAX_ARRAY_SIZE</name>
+        <initializer>CONFIG_LTE_NEIGHBOR_CELLS_MAX</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="104" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a266e502bb07876daa96a1caa3ecdb34a_1a266e502bb07876daa96a1caa3ecdb34a" prot="public" static="no">
+        <name>AT_NCELLMEAS_PARAMS_COUNT_MAX</name>
+        <initializer>	(<ref refid="lte__lc__helpers_8h_ad3cc2446202d48fb70a79432bb608c20_1ad3cc2446202d48fb70a79432bb608c20" kindref="member">AT_NCELLMEAS_PRE_NCELLS_PARAMS_COUNT</ref> +				\
+	 <ref refid="lte__lc__helpers_8h_a5abec1315888cf7a619184e6c5bcdee9_1a5abec1315888cf7a619184e6c5bcdee9" kindref="member">AT_NCELLMEAS_N_PARAMS_COUNT</ref> * CONFIG_LTE_NEIGHBOR_CELLS_MAX)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="106" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a17dbcf435a949ea1bb1b7e0f782a483f_1a17dbcf435a949ea1bb1b7e0f782a483f" prot="public" static="no">
+        <name>AT_XMODEMSLEEP_SUB</name>
+        <initializer>&quot;AT%%XMODEMSLEEP=1,%d,%d&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="111" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a0b549183784a3d1e7f79b4839890c1a7_1a0b549183784a3d1e7f79b4839890c1a7" prot="public" static="no">
+        <name>AT_XMODEMSLEEP_PARAMS_COUNT_MAX</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="112" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a9d7137fef82d2f7c29e4bdf023660e95_1a9d7137fef82d2f7c29e4bdf023660e95" prot="public" static="no">
+        <name>AT_XMODEMSLEEP_TYPE_INDEX</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="113" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a31a3dfd7d5883b3524d15f9c29aceb90_1a31a3dfd7d5883b3524d15f9c29aceb90" prot="public" static="no">
+        <name>AT_XMODEMSLEEP_TIME_INDEX</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="114" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a4892a2734125ab0ac1b1bc7112e5c437_1a4892a2734125ab0ac1b1bc7112e5c437" prot="public" static="no">
+        <name>AT_CONEVAL_READ</name>
+        <initializer>&quot;AT%CONEVAL&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="117" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="117" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a91d71f5422d9da757f6184e5513183e3_1a91d71f5422d9da757f6184e5513183e3" prot="public" static="no">
+        <name>AT_CONEVAL_RESPONSE_PREFIX</name>
+        <initializer>&quot;%CONEVAL&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="118" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_af480c766aa831bcd9e36e3a1322923b7_1af480c766aa831bcd9e36e3a1322923b7" prot="public" static="no">
+        <name>AT_CONEVAL_PREFIX_INDEX</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="119" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a9374c7e3995270ee9674c9abcd0460e1_1a9374c7e3995270ee9674c9abcd0460e1" prot="public" static="no">
+        <name>AT_CONEVAL_RESPONSE_MAX_LEN</name>
+        <initializer>110</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="120" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a787fc498eb947209896b767e743cc71e_1a787fc498eb947209896b767e743cc71e" prot="public" static="no">
+        <name>AT_CONEVAL_PARAMS_MAX</name>
+        <initializer>19</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="121" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a8ee7bf7398e86b43b773235073981429_1a8ee7bf7398e86b43b773235073981429" prot="public" static="no">
+        <name>AT_CONEVAL_RESULT_INDEX</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="122" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_abcd0b8c448643b1df5022cc79d235fa6_1abcd0b8c448643b1df5022cc79d235fa6" prot="public" static="no">
+        <name>AT_CONEVAL_RRC_STATE_INDEX</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="123" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a6306785fc665a972ccc633594935a2f3_1a6306785fc665a972ccc633594935a2f3" prot="public" static="no">
+        <name>AT_CONEVAL_ENERGY_ESTIMATE_INDEX</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="124" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a0c2fb087b4a86d5d9022c366442239bf_1a0c2fb087b4a86d5d9022c366442239bf" prot="public" static="no">
+        <name>AT_CONEVAL_RSRP_INDEX</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="125" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="125" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_ada249a9e60f4d257d0bf87c6f8298cf8_1ada249a9e60f4d257d0bf87c6f8298cf8" prot="public" static="no">
+        <name>AT_CONEVAL_RSRQ_INDEX</name>
+        <initializer>5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="126" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a7214547e7c03c37e5c9c929bf1f72716_1a7214547e7c03c37e5c9c929bf1f72716" prot="public" static="no">
+        <name>AT_CONEVAL_SNR_INDEX</name>
+        <initializer>6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="127" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a6e401921f8a7027350a9213346c9630b_1a6e401921f8a7027350a9213346c9630b" prot="public" static="no">
+        <name>AT_CONEVAL_CELL_ID_INDEX</name>
+        <initializer>7</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="128" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a7ee99770806318b0e5c719104fcb307c_1a7ee99770806318b0e5c719104fcb307c" prot="public" static="no">
+        <name>AT_CONEVAL_PLMN_INDEX</name>
+        <initializer>8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="129" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a1703796e5fa6a19045a155c806921849_1a1703796e5fa6a19045a155c806921849" prot="public" static="no">
+        <name>AT_CONEVAL_PHYSICAL_CELL_ID_INDEX</name>
+        <initializer>9</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="130" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_abbc2ba38e9ad931bf1c9e90d0c67a3db_1abbc2ba38e9ad931bf1c9e90d0c67a3db" prot="public" static="no">
+        <name>AT_CONEVAL_EARFCN_INDEX</name>
+        <initializer>10</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="131" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_aa3b39daba92c57f4615e7f05d601731f_1aa3b39daba92c57f4615e7f05d601731f" prot="public" static="no">
+        <name>AT_CONEVAL_BAND_INDEX</name>
+        <initializer>11</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="132" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a767df83417624e48b74b437aca6a7605_1a767df83417624e48b74b437aca6a7605" prot="public" static="no">
+        <name>AT_CONEVAL_TAU_TRIGGERED_INDEX</name>
+        <initializer>12</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="133" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a37b5c9f89e0da06e5370e695da2af0cc_1a37b5c9f89e0da06e5370e695da2af0cc" prot="public" static="no">
+        <name>AT_CONEVAL_CE_LEVEL_INDEX</name>
+        <initializer>13</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="134" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_acd63171f0e14b7d652d0b34b33a343bd_1acd63171f0e14b7d652d0b34b33a343bd" prot="public" static="no">
+        <name>AT_CONEVAL_TX_POWER_INDEX</name>
+        <initializer>14</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="135" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a52ddd381d006d33c37ce1915d76a1b84_1a52ddd381d006d33c37ce1915d76a1b84" prot="public" static="no">
+        <name>AT_CONEVAL_TX_REPETITIONS_INDEX</name>
+        <initializer>15</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="136" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a2202854df05e7370d04835cc20beae12_1a2202854df05e7370d04835cc20beae12" prot="public" static="no">
+        <name>AT_CONEVAL_RX_REPETITIONS_INDEX</name>
+        <initializer>16</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="137" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="137" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_af56dbf651d2d9d133d69ae12d667353d_1af56dbf651d2d9d133d69ae12d667353d" prot="public" static="no">
+        <name>AT_CONEVAL_DL_PATHLOSS_INDEX</name>
+        <initializer>17</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="138" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a7a6ac42b9ed1e86883be881c0a226faf_1a7a6ac42b9ed1e86883be881c0a226faf" prot="public" static="no">
+        <name>AT_MDMEV_ENABLE</name>
+        <initializer>&quot;AT%%MDMEV=1&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="141" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_acb23716f4a439e62dc5b43924cc86014_1acb23716f4a439e62dc5b43924cc86014" prot="public" static="no">
+        <name>AT_MDMEV_DISABLE</name>
+        <initializer>&quot;AT%%MDMEV=0&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="142" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a4f60c20496b4d660430c050e328160f9_1a4f60c20496b4d660430c050e328160f9" prot="public" static="no">
+        <name>AT_MDMEV_RESPONSE_PREFIX</name>
+        <initializer>&quot;%MDMEV: &quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="143" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="143" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a2733bba0016282828675f956651a3053_1a2733bba0016282828675f956651a3053" prot="public" static="no">
+        <name>AT_MDMEV_OVERHEATED</name>
+        <initializer>&quot;ME OVERHEATED\r\n&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="144" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="144" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_aeecfc1c0d722e5f9ccfd00025214b791_1aeecfc1c0d722e5f9ccfd00025214b791" prot="public" static="no">
+        <name>AT_MDMEV_BATTERY_LOW</name>
+        <initializer>&quot;ME BATTERY LOW\r\n&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="145" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_a0f7e9c003f862103ca104096e1543c73_1a0f7e9c003f862103ca104096e1543c73" prot="public" static="no">
+        <name>AT_MDMEV_SEARCH_STATUS_1</name>
+        <initializer>&quot;SEARCH STATUS 1\r\n&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="146" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="146" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_ae956b3cc771c7f03be5f3767793efb1f_1ae956b3cc771c7f03be5f3767793efb1f" prot="public" static="no">
+        <name>AT_MDMEV_SEARCH_STATUS_2</name>
+        <initializer>&quot;SEARCH STATUS 2\r\n&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="147" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="lte__lc__helpers_8h_ac3aeb1efc0ce3175b7f1e9b4c7771014_1ac3aeb1efc0ce3175b7f1e9b4c7771014" prot="public" static="no">
+        <name>AT_MDMEV_RESET_LOOP</name>
+        <initializer>&quot;RESET LOOP\r\n&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="148" column="9" bodyfile="lib/lte_link_control/lte_lc_helpers.h" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="lte__lc__helpers_8h_ace0c298b77cfb9d75d806c345f6769c9_1ace0c298b77cfb9d75d806c345f6769c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool response_is_valid</definition>
+        <argsstring>(const char *response, size_t response_len, const char *check)</argsstring>
+        <name>response_is_valid</name>
+        <param>
+          <type>const char *</type>
+          <declname>response</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>response_len</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>check</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="159" column="6" declfile="lib/lte_link_control/lte_lc_helpers.h" declline="159" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="lte__lc__helpers_8h_a1d50fe2ab376747e48c0f74a3f816b0b_1a1d50fe2ab376747e48c0f74a3f816b0b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int parse_rrc_mode</definition>
+        <argsstring>(const char *at_response, enum lte_lc_rrc_mode *mode, size_t mode_index)</argsstring>
+        <name>parse_rrc_mode</name>
+        <param>
+          <type>const char *</type>
+          <declname>at_response</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__lte__lc_ga91261e353062129cf610715b32e5cd05_1ga91261e353062129cf610715b32e5cd05" kindref="member">lte_lc_rrc_mode</ref> *</type>
+          <declname>mode</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>mode_index</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="170" column="5" declfile="lib/lte_link_control/lte_lc_helpers.h" declline="170" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="lte__lc__helpers_8h_adda010f4f4cdca875dd4eeca77b0b49d_1adda010f4f4cdca875dd4eeca77b0b49d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int parse_edrx</definition>
+        <argsstring>(const char *at_response, struct lte_lc_edrx_cfg *cfg)</argsstring>
+        <name>parse_edrx</name>
+        <param>
+          <type>const char *</type>
+          <declname>at_response</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structlte__lc__edrx__cfg" kindref="compound">lte_lc_edrx_cfg</ref> *</type>
+          <declname>cfg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="184" column="5" declfile="lib/lte_link_control/lte_lc_helpers.h" declline="184" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="lte__lc__helpers_8h_a8513a1d8cc02d845c54df977afff78f3_1a8513a1d8cc02d845c54df977afff78f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int parse_psm</definition>
+        <argsstring>(const char *active_time_str, const char *tau_ext_str, const char *tau_legacy_str, struct lte_lc_psm_cfg *psm_cfg)</argsstring>
+        <name>parse_psm</name>
+        <param>
+          <type>const char *</type>
+          <declname>active_time_str</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>tau_ext_str</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>tau_legacy_str</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structlte__lc__psm__cfg" kindref="compound">lte_lc_psm_cfg</ref> *</type>
+          <declname>psm_cfg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="197" column="5" declfile="lib/lte_link_control/lte_lc_helpers.h" declline="197" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="lte__lc__helpers_8h_a11b44478e344513ad7608a594a502ba7_1a11b44478e344513ad7608a594a502ba7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int parse_cereg</definition>
+        <argsstring>(const char *at_response, bool is_notif, enum lte_lc_nw_reg_status *reg_status, struct lte_lc_cell *cell, enum lte_lc_lte_mode *lte_mode)</argsstring>
+        <name>parse_cereg</name>
+        <param>
+          <type>const char *</type>
+          <declname>at_response</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>is_notif</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__lte__lc_gae2e22418dff8974965840a21f1c49063_1gae2e22418dff8974965840a21f1c49063" kindref="member">lte_lc_nw_reg_status</ref> *</type>
+          <declname>reg_status</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structlte__lc__cell" kindref="compound">lte_lc_cell</ref> *</type>
+          <declname>cell</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__lte__lc_ga85a1606ed90f717b1c0607ecb0ad88d2_1ga85a1606ed90f717b1c0607ecb0ad88d2" kindref="member">lte_lc_lte_mode</ref> *</type>
+          <declname>lte_mode</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="213" column="5" declfile="lib/lte_link_control/lte_lc_helpers.h" declline="213" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="lte__lc__helpers_8h_a0eaed22b8a47e9bb0e2376134a90ada1_1a0eaed22b8a47e9bb0e2376134a90ada1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int parse_xt3412</definition>
+        <argsstring>(const char *at_response, uint64_t *time)</argsstring>
+        <name>parse_xt3412</name>
+        <param>
+          <type>const char *</type>
+          <declname>at_response</declname>
+        </param>
+        <param>
+          <type>uint64_t *</type>
+          <declname>time</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="226" column="5" declfile="lib/lte_link_control/lte_lc_helpers.h" declline="226" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="lte__lc__helpers_8h_a2d8499c04263d1c229f47905ca717372_1a2d8499c04263d1c229f47905ca717372" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint32_t</type>
+        <definition>uint32_t neighborcell_count_get</definition>
+        <argsstring>(const char *at_response)</argsstring>
+        <name>neighborcell_count_get</name>
+        <param>
+          <type>const char *</type>
+          <declname>at_response</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="234" column="10" declfile="lib/lte_link_control/lte_lc_helpers.h" declline="234" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="lte__lc__helpers_8h_a6339da0d1022285009c0416441c0431f_1a6339da0d1022285009c0416441c0431f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int parse_ncellmeas</definition>
+        <argsstring>(const char *at_response, struct lte_lc_cells_info *cells)</argsstring>
+        <name>parse_ncellmeas</name>
+        <param>
+          <type>const char *</type>
+          <declname>at_response</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structlte__lc__cells__info" kindref="compound">lte_lc_cells_info</ref> *</type>
+          <declname>cells</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="244" column="5" declfile="lib/lte_link_control/lte_lc_helpers.h" declline="244" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="lte__lc__helpers_8h_aa36301f7ceeff54effbf15b7a18ca930_1aa36301f7ceeff54effbf15b7a18ca930" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int parse_xmodemsleep</definition>
+        <argsstring>(const char *at_response, struct lte_lc_modem_sleep *modem_sleep)</argsstring>
+        <name>parse_xmodemsleep</name>
+        <param>
+          <type>const char *</type>
+          <declname>at_response</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structlte__lc__modem__sleep" kindref="compound">lte_lc_modem_sleep</ref> *</type>
+          <declname>modem_sleep</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="255" column="5" declfile="lib/lte_link_control/lte_lc_helpers.h" declline="255" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="lte__lc__helpers_8h_a11af9f70792e08c5c957bb9d2bc4907d_1a11af9f70792e08c5c957bb9d2bc4907d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int parse_coneval</definition>
+        <argsstring>(const char *at_response, struct lte_lc_conn_eval_params *params)</argsstring>
+        <name>parse_coneval</name>
+        <param>
+          <type>const char *</type>
+          <declname>at_response</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structlte__lc__conn__eval__params" kindref="compound">lte_lc_conn_eval_params</ref> *</type>
+          <declname>params</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="275" column="5" declfile="lib/lte_link_control/lte_lc_helpers.h" declline="275" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="lte__lc__helpers_8h_a618080662c09a25a6804cfd611c994f1_1a618080662c09a25a6804cfd611c994f1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int parse_mdmev</definition>
+        <argsstring>(const char *at_response, enum lte_lc_modem_evt *modem_evt)</argsstring>
+        <name>parse_mdmev</name>
+        <param>
+          <type>const char *</type>
+          <declname>at_response</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__lte__lc_ga881d51b5950df07508e70d7d4fa1d031_1ga881d51b5950df07508e70d7d4fa1d031" kindref="member">lte_lc_modem_evt</ref> *</type>
+          <declname>modem_evt</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="290" column="5" declfile="lib/lte_link_control/lte_lc_helpers.h" declline="290" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="lte__lc__helpers_8h_adc77e9e3fcc945308ba1cf422fd6469c_1adc77e9e3fcc945308ba1cf422fd6469c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int event_handler_list_append_handler</definition>
+        <argsstring>(lte_lc_evt_handler_t handler)</argsstring>
+        <name>event_handler_list_append_handler</name>
+        <param>
+          <type><ref refid="group__lte__lc_ga89093108c46eeb40fb49f6e8e3e39be0_1ga89093108c46eeb40fb49f6e8e3e39be0" kindref="member">lte_lc_evt_handler_t</ref></type>
+          <declname>handler</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="298" column="5" declfile="lib/lte_link_control/lte_lc_helpers.h" declline="298" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="lte__lc__helpers_8h_ab78b1f7aa3d8d8a48b71df232520bb67_1ab78b1f7aa3d8d8a48b71df232520bb67" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int event_handler_list_remove_handler</definition>
+        <argsstring>(lte_lc_evt_handler_t handler)</argsstring>
+        <name>event_handler_list_remove_handler</name>
+        <param>
+          <type><ref refid="group__lte__lc_ga89093108c46eeb40fb49f6e8e3e39be0_1ga89093108c46eeb40fb49f6e8e3e39be0" kindref="member">lte_lc_evt_handler_t</ref></type>
+          <declname>handler</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="306" column="5" declfile="lib/lte_link_control/lte_lc_helpers.h" declline="306" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="lte__lc__helpers_8h_a7661a7b73cfd324e17732a89080a4e06_1a7661a7b73cfd324e17732a89080a4e06" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void event_handler_list_dispatch</definition>
+        <argsstring>(const struct lte_lc_evt *const evt)</argsstring>
+        <name>event_handler_list_dispatch</name>
+        <param>
+          <type>const struct <ref refid="structlte__lc__evt" kindref="compound">lte_lc_evt</ref> *const</type>
+          <declname>evt</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="314" column="6" declfile="lib/lte_link_control/lte_lc_helpers.h" declline="314" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="lte__lc__helpers_8h_a1239f3b7ec3bbd30f867af41abebc110_1a1239f3b7ec3bbd30f867af41abebc110" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool event_handler_list_is_empty</definition>
+        <argsstring>(void)</argsstring>
+        <name>event_handler_list_is_empty</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="320" column="6" declfile="lib/lte_link_control/lte_lc_helpers.h" declline="320" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="lte__lc__helpers_8h_a0596768d573f7a8031df15b44261a134_1a0596768d573f7a8031df15b44261a134" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int string_to_int</definition>
+        <argsstring>(const char *str_buf, int base, int *output)</argsstring>
+        <name>string_to_int</name>
+        <param>
+          <type>const char *</type>
+          <declname>str_buf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>base</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="331" column="5" declfile="lib/lte_link_control/lte_lc_helpers.h" declline="331" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="lte__lc__helpers_8h_aa09a371783912a4c4e94f7f555d5e087_1aa09a371783912a4c4e94f7f555d5e087" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char *</type>
+        <definition>char * periodic_search_pattern_get</definition>
+        <argsstring>(char *const buf, size_t buf_size, const struct lte_lc_periodic_search_pattern *const pattern)</argsstring>
+        <name>periodic_search_pattern_get</name>
+        <param>
+          <type>char *const</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buf_size</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structlte__lc__periodic__search__pattern" kindref="compound">lte_lc_periodic_search_pattern</ref> *const</type>
+          <declname>pattern</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="342" column="6" declfile="lib/lte_link_control/lte_lc_helpers.h" declline="342" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="lte__lc__helpers_8h_a961145c58e23ad3cdaaed212d1290ab8_1a961145c58e23ad3cdaaed212d1290ab8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int parse_periodic_search_pattern</definition>
+        <argsstring>(const char *const pattern_str, struct lte_lc_periodic_search_pattern *pattern)</argsstring>
+        <name>parse_periodic_search_pattern</name>
+        <param>
+          <type>const char *const</type>
+          <declname>pattern_str</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structlte__lc__periodic__search__pattern" kindref="compound">lte_lc_periodic_search_pattern</ref> *</type>
+          <declname>pattern</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/lte_link_control/lte_lc_helpers.h" line="355" column="5" declfile="lib/lte_link_control/lte_lc_helpers.h" declline="355" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdio.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="lte__lc_8h" kindref="compound">modem/lte_lc.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="at__cmd__parser_8h" kindref="compound">modem/at_cmd_parser.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="at__params_8h" kindref="compound">modem/at_params.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;logging/log.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16" refid="lte__lc__helpers_8h_ac30812e089509cb7edafb1d5b08100e0_1ac30812e089509cb7edafb1d5b08100e0" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LC_MAX_READ_LENGTH<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>128</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="lte__lc__helpers_8h_a16e8148ffb553779a167d701c07a37c1_1a16e8148ffb553779a167d701c07a37c1" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CMD_SIZE(x)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(sizeof(x)<sp/>-<sp/>1)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="lte__lc__helpers_8h_ab897dfe0d4ce6bc559c21000323643a8_1ab897dfe0d4ce6bc559c21000323643a8" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_RESPONSE_PREFIX_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20" refid="lte__lc__helpers_8h_a5538bb745a55d845df694732043c500c_1a5538bb745a55d845df694732043c500c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CFUN_READ<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;AT+CFUN?&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="lte__lc__helpers_8h_a878c8ac161c6f8e900ef364d6f05f549_1a878c8ac161c6f8e900ef364d6f05f549" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CFUN_RESPONSE_PREFIX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;+CFUN&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22" refid="lte__lc__helpers_8h_af17db744a24ef4030eeac27b13374d29_1af17db744a24ef4030eeac27b13374d29" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CFUN_MODE_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="lte__lc__helpers_8h_a029da2dbdd9b34d6b49e81bf51eb69a5_1a029da2dbdd9b34d6b49e81bf51eb69a5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CFUN_PARAMS_COUNT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="lte__lc__helpers_8h_a3f7d1a938fc032a33c8d0f9d4b6f99f8_1a3f7d1a938fc032a33c8d0f9d4b6f99f8" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CFUN_RESPONSE_MAX_LEN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>20</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="lte__lc__helpers_8h_a16dcbb90fb62e34ac2071c81e8e63a18_1a16dcbb90fb62e34ac2071c81e8e63a18" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEREG_5<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;AT+CEREG=5&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="lte__lc__helpers_8h_ae8867261c08f6161ed1f2082d955dd18_1ae8867261c08f6161ed1f2082d955dd18" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEREG_READ<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;AT+CEREG?&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="lte__lc__helpers_8h_af944465c38ee02d4074bbb90dd9b4cba_1af944465c38ee02d4074bbb90dd9b4cba" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEREG_RESPONSE_PREFIX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;+CEREG&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="lte__lc__helpers_8h_a0b0f5a03ea52dd1206411972ce15d153_1a0b0f5a03ea52dd1206411972ce15d153" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEREG_PARAMS_COUNT_MAX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>11</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="lte__lc__helpers_8h_a6c3ac0b5f49d4711b6b47f4dc7cd7c87_1a6c3ac0b5f49d4711b6b47f4dc7cd7c87" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEREG_REG_STATUS_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="lte__lc__helpers_8h_a8938f90139d79bad8ae83f90aad5f691_1a8938f90139d79bad8ae83f90aad5f691" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEREG_READ_REG_STATUS_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="lte__lc__helpers_8h_a0c9f0da4002937eff0de003f8396ffe9_1a0c9f0da4002937eff0de003f8396ffe9" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEREG_TAC_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="lte__lc__helpers_8h_a8cc46ecbdf80da5033576e0c8d4d5603_1a8cc46ecbdf80da5033576e0c8d4d5603" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEREG_READ_TAC_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="lte__lc__helpers_8h_a24f66142df5331afead4ce05d1920f4a_1a24f66142df5331afead4ce05d1920f4a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEREG_CELL_ID_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="lte__lc__helpers_8h_a5c364e7cbd829d48576bf62ab3206e6c_1a5c364e7cbd829d48576bf62ab3206e6c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEREG_READ_CELL_ID_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="lte__lc__helpers_8h_ad767b9c9a55afc7f9ceddaa0ac531950_1ad767b9c9a55afc7f9ceddaa0ac531950" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEREG_ACT_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="lte__lc__helpers_8h_ac13a5847696d22cf4ccdc03fafff5dc0_1ac13a5847696d22cf4ccdc03fafff5dc0" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEREG_READ_ACT_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="lte__lc__helpers_8h_a15035feb6c6ed5bb3cf170f0d5d3484f_1a15035feb6c6ed5bb3cf170f0d5d3484f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEREG_ACTIVE_TIME_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>7</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="lte__lc__helpers_8h_a3abd374d176295969f6f3266ac735bbf_1a3abd374d176295969f6f3266ac735bbf" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEREG_READ_ACTIVE_TIME_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="lte__lc__helpers_8h_a06702687bd47b433adaef28909df49eb_1a06702687bd47b433adaef28909df49eb" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEREG_TAU_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="lte__lc__helpers_8h_ac16346d150d4c7b473dcc03687172f2d_1ac16346d150d4c7b473dcc03687172f2d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEREG_READ_TAU_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>9</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="lte__lc__helpers_8h_a22a387659d9c78effb12944e619913d5_1a22a387659d9c78effb12944e619913d5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEREG_RESPONSE_MAX_LEN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>80</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="lte__lc__helpers_8h_a19f15fb26b8ff0955cb9966c23612f66_1a19f15fb26b8ff0955cb9966c23612f66" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_XSYSTEMMODE_READ<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;AT%XSYSTEMMODE?&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="lte__lc__helpers_8h_ab7013898149e496c45b22ce1d4e107eb_1ab7013898149e496c45b22ce1d4e107eb" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_XSYSTEMMODE_RESPONSE_PREFIX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;%XSYSTEMMODE&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="lte__lc__helpers_8h_a16a16e84adb261792404ca7a4a8fd14c_1a16a16e84adb261792404ca7a4a8fd14c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_XSYSTEMMODE_PROTO<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;AT%%XSYSTEMMODE=%d,%d,%d,%d&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>The<sp/>indices<sp/>are<sp/>for<sp/>the<sp/>set<sp/>command.<sp/>Add<sp/>1<sp/>for<sp/>the<sp/>read<sp/>command<sp/>indices.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="lte__lc__helpers_8h_a7bd73964cd806918ba53e60d977b9601_1a7bd73964cd806918ba53e60d977b9601" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_XSYSTEMMODE_READ_LTEM_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="lte__lc__helpers_8h_ad82b0c21e0ba17e9d24474bb2b84f589_1ad82b0c21e0ba17e9d24474bb2b84f589" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_XSYSTEMMODE_READ_NBIOT_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="lte__lc__helpers_8h_a41c017129c97aaddbdb861ae9d47832c_1a41c017129c97aaddbdb861ae9d47832c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_XSYSTEMMODE_READ_GPS_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="lte__lc__helpers_8h_a29d27ac374667105e2952384a6315b82_1a29d27ac374667105e2952384a6315b82" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_XSYSTEMMODE_READ_PREFERENCE_INDEX<sp/><sp/><sp/><sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="lte__lc__helpers_8h_af9db3eb95d1a316605714b6e785a8758_1af9db3eb95d1a316605714b6e785a8758" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_XSYSTEMMODE_PARAMS_COUNT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="lte__lc__helpers_8h_a2b1e38d73e14bb0089468da3cc40cdf9_1a2b1e38d73e14bb0089468da3cc40cdf9" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_XSYSTEMMODE_RESPONSE_MAX_LEN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>30</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>CEDRXS<sp/>command<sp/>parameters<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="lte__lc__helpers_8h_a2fb286ff5e6a5c7e1e9e0127c1a31359_1a2fb286ff5e6a5c7e1e9e0127c1a31359" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEDRXS_MODE_INDEX</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="lte__lc__helpers_8h_a9754fadd6eb884a5eb6f1c780128e7b3_1a9754fadd6eb884a5eb6f1c780128e7b3" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEDRXS_ACTT_WB<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="lte__lc__helpers_8h_a0c38c06ab668636904dee5c1f1b4d5e7_1a0c38c06ab668636904dee5c1f1b4d5e7" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEDRXS_ACTT_NB<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>CEDRXP<sp/>notification<sp/>parameters<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="lte__lc__helpers_8h_a4ba9aae63b98b2aac2fea72f34f530ac_1a4ba9aae63b98b2aac2fea72f34f530ac" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEDRXP_PARAMS_COUNT_MAX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>6</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="lte__lc__helpers_8h_a9c83d7f9437af8122421e53868254a9a_1a9c83d7f9437af8122421e53868254a9a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEDRXP_ACTT_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="lte__lc__helpers_8h_aaf1a2cae1a2a5ede21fd66d133ec13d2_1aaf1a2cae1a2a5ede21fd66d133ec13d2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEDRXP_REQ_EDRX_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63" refid="lte__lc__helpers_8h_adfc5f16d95e5b2a29c860c2dbd1f2701_1adfc5f16d95e5b2a29c860c2dbd1f2701" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEDRXP_NW_EDRX_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="lte__lc__helpers_8h_ad2a32ee4fd6839582534771a98c3ced5_1ad2a32ee4fd6839582534771a98c3ced5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CEDRXP_NW_PTW_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>CSCON<sp/>command<sp/>parameters<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="lte__lc__helpers_8h_a4ca111da260877c29e14b78d46280b89_1a4ca111da260877c29e14b78d46280b89" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CSCON_RESPONSE_PREFIX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;+CSCON&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="lte__lc__helpers_8h_a9b1b8342a7a0b130760e4090141ec121_1a9b1b8342a7a0b130760e4090141ec121" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CSCON_PARAMS_COUNT_MAX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="lte__lc__helpers_8h_abc48c7c06b51cb12c1b32ea363cdc91c_1abc48c7c06b51cb12c1b32ea363cdc91c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CSCON_RRC_MODE_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="lte__lc__helpers_8h_aa82472fe54893fc63e1f80b4124e94ea_1aa82472fe54893fc63e1f80b4124e94ea" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CSCON_READ_RRC_MODE_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>XT3412<sp/>command<sp/>parameters<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="lte__lc__helpers_8h_ab847a9c0687f952a1cee8e395921a885_1ab847a9c0687f952a1cee8e395921a885" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_XT3412_SUB<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;AT%%XT3412=1,%d,%d&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="lte__lc__helpers_8h_a59a7359c741cdc52f790ce074b6f4713_1a59a7359c741cdc52f790ce074b6f4713" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_XT3412_PARAMS_COUNT_MAX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="lte__lc__helpers_8h_a1fe432677e8a9b84d315ac68bbe4b3d1_1a1fe432677e8a9b84d315ac68bbe4b3d1" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_XT3412_TIME_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="lte__lc__helpers_8h_a56d6b263bdeb45027dc126660df0fc0e_1a56d6b263bdeb45027dc126660df0fc0e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>T3412_MAX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>35712000000</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>NCELLMEAS<sp/>notification<sp/>parameters<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="lte__lc__helpers_8h_ab61b3325fd582c3c7df23fd6bbbcf2e2_1ab61b3325fd582c3c7df23fd6bbbcf2e2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_RESPONSE_PREFIX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;%NCELLMEAS&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80" refid="lte__lc__helpers_8h_aab432a7c0d4b855e9e6448c583f68d46_1aab432a7c0d4b855e9e6448c583f68d46" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_START<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;AT%%NCELLMEAS&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81" refid="lte__lc__helpers_8h_ada13717bc77fa680100a74fe97a9a427_1ada13717bc77fa680100a74fe97a9a427" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_STOP<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;AT%%NCELLMEASSTOP&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="lte__lc__helpers_8h_a1693985066fd7adf3a73b2ef6db3bace_1a1693985066fd7adf3a73b2ef6db3bace" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_STATUS_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83" refid="lte__lc__helpers_8h_aefe8a366d41a1d9d90389511b4ff8f87_1aefe8a366d41a1d9d90389511b4ff8f87" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_STATUS_VALUE_SUCCESS<sp/><sp/><sp/><sp/><sp/><sp/><sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84" refid="lte__lc__helpers_8h_a282c868445fc0718411cdc949a48ddfa_1a282c868445fc0718411cdc949a48ddfa" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_STATUS_VALUE_FAIL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="lte__lc__helpers_8h_a0b1c9d53d4a456b31aa5388162ced85a_1a0b1c9d53d4a456b31aa5388162ced85a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_CELL_ID_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="lte__lc__helpers_8h_a497f662c9923083dd24bda89499b31c2_1a497f662c9923083dd24bda89499b31c2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_PLMN_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87" refid="lte__lc__helpers_8h_ab443f76ebe0cdabd54a645c1c338305a_1ab443f76ebe0cdabd54a645c1c338305a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_TAC_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="lte__lc__helpers_8h_a24a0ddc8c9b0c838fb02079c3ed7abfb_1a24a0ddc8c9b0c838fb02079c3ed7abfb" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_TIMING_ADV_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89" refid="lte__lc__helpers_8h_a1005f6b459ee897f9b608a92736a4ac6_1a1005f6b459ee897f9b608a92736a4ac6" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_EARFCN_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>6</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="lte__lc__helpers_8h_afacb5d9b89c537c0e140a6460cb6632b_1afacb5d9b89c537c0e140a6460cb6632b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_PHYS_CELL_ID_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>7</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91" refid="lte__lc__helpers_8h_a940aab92b785719fc4737332b291644d_1a940aab92b785719fc4737332b291644d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_RSRP_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="lte__lc__helpers_8h_af655211cf60ba24cf9a419d39b3793d5_1af655211cf60ba24cf9a419d39b3793d5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_RSRQ_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>9</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="lte__lc__helpers_8h_ae7cfc8977a650c26fc911a459591a0cb_1ae7cfc8977a650c26fc911a459591a0cb" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_MEASUREMENT_TIME_INDEX<sp/><sp/><sp/><sp/><sp/>10</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94" refid="lte__lc__helpers_8h_ad3cc2446202d48fb70a79432bb608c20_1ad3cc2446202d48fb70a79432bb608c20" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_PRE_NCELLS_PARAMS_COUNT<sp/><sp/><sp/><sp/>11</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>The<sp/>rest<sp/>of<sp/>the<sp/>parameters<sp/>are<sp/>in<sp/>repeating<sp/>arrays<sp/>per<sp/>neighboring<sp/>cell.</highlight></codeline>
+<codeline lineno="96"><highlight class="comment"><sp/>*<sp/>The<sp/>indices<sp/>below<sp/>refer<sp/>to<sp/>their<sp/>index<sp/>within<sp/>such<sp/>a<sp/>repeating<sp/>array.</highlight></codeline>
+<codeline lineno="97"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98" refid="lte__lc__helpers_8h_af6be7dcdc912dbacea52d7833f85ff1c_1af6be7dcdc912dbacea52d7833f85ff1c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_N_EARFCN_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99" refid="lte__lc__helpers_8h_a474f33e6ffe4687740ebb6ae0ea9f4e8_1a474f33e6ffe4687740ebb6ae0ea9f4e8" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_N_PHYS_CELL_ID_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100" refid="lte__lc__helpers_8h_aba787f65789dad6e3646973c994fd531_1aba787f65789dad6e3646973c994fd531" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_N_RSRP_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101" refid="lte__lc__helpers_8h_af950ad0d11610f55e57b451b833bed58_1af950ad0d11610f55e57b451b833bed58" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_N_RSRQ_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102" refid="lte__lc__helpers_8h_aa6ea0f1c6c1e5d7833cab1e64b60ae3b_1aa6ea0f1c6c1e5d7833cab1e64b60ae3b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_N_TIME_DIFF_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103" refid="lte__lc__helpers_8h_a5abec1315888cf7a619184e6c5bcdee9_1a5abec1315888cf7a619184e6c5bcdee9" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_N_PARAMS_COUNT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104" refid="lte__lc__helpers_8h_a323d8648e9db72d032dcb2d73779630e_1a323d8648e9db72d032dcb2d73779630e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_N_MAX_ARRAY_SIZE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>CONFIG_LTE_NEIGHBOR_CELLS_MAX</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106" refid="lte__lc__helpers_8h_a266e502bb07876daa96a1caa3ecdb34a_1a266e502bb07876daa96a1caa3ecdb34a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_NCELLMEAS_PARAMS_COUNT_MAX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="107"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(AT_NCELLMEAS_PRE_NCELLS_PARAMS_COUNT<sp/>+<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="108"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>AT_NCELLMEAS_N_PARAMS_COUNT<sp/>*<sp/>CONFIG_LTE_NEIGHBOR_CELLS_MAX)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>XMODEMSLEEP<sp/>command<sp/>parameters.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="111" refid="lte__lc__helpers_8h_a17dbcf435a949ea1bb1b7e0f782a483f_1a17dbcf435a949ea1bb1b7e0f782a483f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_XMODEMSLEEP_SUB<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;AT%%XMODEMSLEEP=1,%d,%d&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="112" refid="lte__lc__helpers_8h_a0b549183784a3d1e7f79b4839890c1a7_1a0b549183784a3d1e7f79b4839890c1a7" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_XMODEMSLEEP_PARAMS_COUNT_MAX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113" refid="lte__lc__helpers_8h_a9d7137fef82d2f7c29e4bdf023660e95_1a9d7137fef82d2f7c29e4bdf023660e95" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_XMODEMSLEEP_TYPE_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114" refid="lte__lc__helpers_8h_a31a3dfd7d5883b3524d15f9c29aceb90_1a31a3dfd7d5883b3524d15f9c29aceb90" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_XMODEMSLEEP_TIME_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>CONEVAL<sp/>command<sp/>parameters<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117" refid="lte__lc__helpers_8h_a4892a2734125ab0ac1b1bc7112e5c437_1a4892a2734125ab0ac1b1bc7112e5c437" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CONEVAL_READ<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;AT%CONEVAL&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118" refid="lte__lc__helpers_8h_a91d71f5422d9da757f6184e5513183e3_1a91d71f5422d9da757f6184e5513183e3" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CONEVAL_RESPONSE_PREFIX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;%CONEVAL&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119" refid="lte__lc__helpers_8h_af480c766aa831bcd9e36e3a1322923b7_1af480c766aa831bcd9e36e3a1322923b7" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CONEVAL_PREFIX_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120" refid="lte__lc__helpers_8h_a9374c7e3995270ee9674c9abcd0460e1_1a9374c7e3995270ee9674c9abcd0460e1" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CONEVAL_RESPONSE_MAX_LEN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>110</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121" refid="lte__lc__helpers_8h_a787fc498eb947209896b767e743cc71e_1a787fc498eb947209896b767e743cc71e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CONEVAL_PARAMS_MAX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>19</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122" refid="lte__lc__helpers_8h_a8ee7bf7398e86b43b773235073981429_1a8ee7bf7398e86b43b773235073981429" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CONEVAL_RESULT_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123" refid="lte__lc__helpers_8h_abcd0b8c448643b1df5022cc79d235fa6_1abcd0b8c448643b1df5022cc79d235fa6" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CONEVAL_RRC_STATE_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124" refid="lte__lc__helpers_8h_a6306785fc665a972ccc633594935a2f3_1a6306785fc665a972ccc633594935a2f3" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CONEVAL_ENERGY_ESTIMATE_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125" refid="lte__lc__helpers_8h_a0c2fb087b4a86d5d9022c366442239bf_1a0c2fb087b4a86d5d9022c366442239bf" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CONEVAL_RSRP_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126" refid="lte__lc__helpers_8h_ada249a9e60f4d257d0bf87c6f8298cf8_1ada249a9e60f4d257d0bf87c6f8298cf8" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CONEVAL_RSRQ_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127" refid="lte__lc__helpers_8h_a7214547e7c03c37e5c9c929bf1f72716_1a7214547e7c03c37e5c9c929bf1f72716" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CONEVAL_SNR_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>6</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128" refid="lte__lc__helpers_8h_a6e401921f8a7027350a9213346c9630b_1a6e401921f8a7027350a9213346c9630b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CONEVAL_CELL_ID_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>7</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129" refid="lte__lc__helpers_8h_a7ee99770806318b0e5c719104fcb307c_1a7ee99770806318b0e5c719104fcb307c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CONEVAL_PLMN_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130" refid="lte__lc__helpers_8h_a1703796e5fa6a19045a155c806921849_1a1703796e5fa6a19045a155c806921849" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CONEVAL_PHYSICAL_CELL_ID_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/>9</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="131" refid="lte__lc__helpers_8h_abbc2ba38e9ad931bf1c9e90d0c67a3db_1abbc2ba38e9ad931bf1c9e90d0c67a3db" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CONEVAL_EARFCN_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>10</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132" refid="lte__lc__helpers_8h_aa3b39daba92c57f4615e7f05d601731f_1aa3b39daba92c57f4615e7f05d601731f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CONEVAL_BAND_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>11</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="133" refid="lte__lc__helpers_8h_a767df83417624e48b74b437aca6a7605_1a767df83417624e48b74b437aca6a7605" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CONEVAL_TAU_TRIGGERED_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>12</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134" refid="lte__lc__helpers_8h_a37b5c9f89e0da06e5370e695da2af0cc_1a37b5c9f89e0da06e5370e695da2af0cc" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CONEVAL_CE_LEVEL_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>13</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="135" refid="lte__lc__helpers_8h_acd63171f0e14b7d652d0b34b33a343bd_1acd63171f0e14b7d652d0b34b33a343bd" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CONEVAL_TX_POWER_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>14</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136" refid="lte__lc__helpers_8h_a52ddd381d006d33c37ce1915d76a1b84_1a52ddd381d006d33c37ce1915d76a1b84" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CONEVAL_TX_REPETITIONS_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>15</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137" refid="lte__lc__helpers_8h_a2202854df05e7370d04835cc20beae12_1a2202854df05e7370d04835cc20beae12" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CONEVAL_RX_REPETITIONS_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>16</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138" refid="lte__lc__helpers_8h_af56dbf651d2d9d133d69ae12d667353d_1af56dbf651d2d9d133d69ae12d667353d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CONEVAL_DL_PATHLOSS_INDEX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>17</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>MDMEV<sp/>command<sp/>parameters<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141" refid="lte__lc__helpers_8h_a7a6ac42b9ed1e86883be881c0a226faf_1a7a6ac42b9ed1e86883be881c0a226faf" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_MDMEV_ENABLE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;AT%%MDMEV=1&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="142" refid="lte__lc__helpers_8h_acb23716f4a439e62dc5b43924cc86014_1acb23716f4a439e62dc5b43924cc86014" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_MDMEV_DISABLE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;AT%%MDMEV=0&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="143" refid="lte__lc__helpers_8h_a4f60c20496b4d660430c050e328160f9_1a4f60c20496b4d660430c050e328160f9" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_MDMEV_RESPONSE_PREFIX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;%MDMEV:<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="144" refid="lte__lc__helpers_8h_a2733bba0016282828675f956651a3053_1a2733bba0016282828675f956651a3053" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_MDMEV_OVERHEATED<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;ME<sp/>OVERHEATED\r\n&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145" refid="lte__lc__helpers_8h_aeecfc1c0d722e5f9ccfd00025214b791_1aeecfc1c0d722e5f9ccfd00025214b791" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_MDMEV_BATTERY_LOW<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;ME<sp/>BATTERY<sp/>LOW\r\n&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146" refid="lte__lc__helpers_8h_a0f7e9c003f862103ca104096e1543c73_1a0f7e9c003f862103ca104096e1543c73" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_MDMEV_SEARCH_STATUS_1<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;SEARCH<sp/>STATUS<sp/>1\r\n&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="147" refid="lte__lc__helpers_8h_ae956b3cc771c7f03be5f3767793efb1f_1ae956b3cc771c7f03be5f3767793efb1f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_MDMEV_SEARCH_STATUS_2<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;SEARCH<sp/>STATUS<sp/>2\r\n&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="148" refid="lte__lc__helpers_8h_ac3aeb1efc0ce3175b7f1e9b4c7771014_1ac3aeb1efc0ce3175b7f1e9b4c7771014" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_MDMEV_RESET_LOOP<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;RESET<sp/>LOOP\r\n&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>@brief<sp/>Helper<sp/>function<sp/>to<sp/>check<sp/>if<sp/>a<sp/>response<sp/>is<sp/>what<sp/>was<sp/>expected.</highlight></codeline>
+<codeline lineno="151"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="152"><highlight class="comment"><sp/>*<sp/>@param<sp/>response<sp/>Pointer<sp/>to<sp/>response<sp/>prefix</highlight></codeline>
+<codeline lineno="153"><highlight class="comment"><sp/>*<sp/>@param<sp/>response_len<sp/>Length<sp/>of<sp/>the<sp/>response<sp/>to<sp/>be<sp/>checked</highlight></codeline>
+<codeline lineno="154"><highlight class="comment"><sp/>*<sp/>@param<sp/>check<sp/>The<sp/>buffer<sp/>with<sp/>&quot;truth&quot;<sp/>to<sp/>verify<sp/>the<sp/>response<sp/>against,</highlight></codeline>
+<codeline lineno="155"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>for<sp/>example<sp/>&quot;+CEREG&quot;</highlight></codeline>
+<codeline lineno="156"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="157"><highlight class="comment"><sp/>*<sp/>@return<sp/>True<sp/>if<sp/>the<sp/>provided<sp/>buffer<sp/>and<sp/>check<sp/>are<sp/>equal,<sp/>false<sp/>otherwise.</highlight></codeline>
+<codeline lineno="158"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="159" refid="lte__lc__helpers_8h_ace0c298b77cfb9d75d806c345f6769c9_1ace0c298b77cfb9d75d806c345f6769c9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="lte__lc__helpers_8h_ace0c298b77cfb9d75d806c345f6769c9_1ace0c298b77cfb9d75d806c345f6769c9" kindref="member">response_is_valid</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*response,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>response_len,</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*check);</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>@brief<sp/>Parses<sp/>an<sp/>AT<sp/>command<sp/>response,<sp/>and<sp/>returns<sp/>the<sp/>current<sp/>RRC<sp/>mode.</highlight></codeline>
+<codeline lineno="163"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="164"><highlight class="comment"><sp/>*<sp/>@param<sp/>at_response<sp/>Pointer<sp/>to<sp/>buffer<sp/>with<sp/>AT<sp/>response.</highlight></codeline>
+<codeline lineno="165"><highlight class="comment"><sp/>*<sp/>@param<sp/>mode<sp/>Pointer<sp/>to<sp/>where<sp/>the<sp/>RRC<sp/>mode<sp/>is<sp/>stored.</highlight></codeline>
+<codeline lineno="166"><highlight class="comment"><sp/>*<sp/>@param<sp/>mode_index<sp/>Parameter<sp/>index<sp/>for<sp/>mode.</highlight></codeline>
+<codeline lineno="167"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="168"><highlight class="comment"><sp/>*<sp/>@return<sp/>Zero<sp/>on<sp/>success<sp/>or<sp/>(negative)<sp/>error<sp/>code<sp/>otherwise.</highlight></codeline>
+<codeline lineno="169"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="170" refid="lte__lc__helpers_8h_a1d50fe2ab376747e48c0f74a3f816b0b_1a1d50fe2ab376747e48c0f74a3f816b0b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="lte__lc__helpers_8h_a1d50fe2ab376747e48c0f74a3f816b0b_1a1d50fe2ab376747e48c0f74a3f816b0b" kindref="member">parse_rrc_mode</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*at_response,</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__lte__lc_ga91261e353062129cf610715b32e5cd05_1ga91261e353062129cf610715b32e5cd05" kindref="member">lte_lc_rrc_mode</ref><sp/>*mode,</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>mode_index);</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>@brief<sp/>Parses<sp/>an<sp/>AT<sp/>command<sp/>response<sp/>and<sp/>returns<sp/>the<sp/>current<sp/>eDRX<sp/>configuration.</highlight></codeline>
+<codeline lineno="175"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="176"><highlight class="comment"><sp/>*<sp/>@note<sp/>It&apos;s<sp/>assumed<sp/>that<sp/>the<sp/>network<sp/>only<sp/>reports<sp/>valid<sp/>eDRX<sp/>values<sp/>when</highlight></codeline>
+<codeline lineno="177"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>each<sp/>mode<sp/>(LTE-M<sp/>and<sp/>NB1).<sp/>There&apos;s<sp/>no<sp/>sanity-check<sp/>of<sp/>these<sp/>values.</highlight></codeline>
+<codeline lineno="178"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="179"><highlight class="comment"><sp/>*<sp/>@param<sp/>at_response<sp/>Pointer<sp/>to<sp/>buffer<sp/>with<sp/>AT<sp/>response.</highlight></codeline>
+<codeline lineno="180"><highlight class="comment"><sp/>*<sp/>@param<sp/>cfg<sp/>Pointer<sp/>to<sp/>where<sp/>the<sp/>eDRX<sp/>configuration<sp/>is<sp/>stored.</highlight></codeline>
+<codeline lineno="181"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="182"><highlight class="comment"><sp/>*<sp/>@return<sp/>Zero<sp/>on<sp/>success<sp/>or<sp/>(negative)<sp/>error<sp/>code<sp/>otherwise.</highlight></codeline>
+<codeline lineno="183"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="184" refid="lte__lc__helpers_8h_adda010f4f4cdca875dd4eeca77b0b49d_1adda010f4f4cdca875dd4eeca77b0b49d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="lte__lc__helpers_8h_adda010f4f4cdca875dd4eeca77b0b49d_1adda010f4f4cdca875dd4eeca77b0b49d" kindref="member">parse_edrx</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*at_response,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlte__lc__edrx__cfg" kindref="compound">lte_lc_edrx_cfg</ref><sp/>*cfg);</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>@brief<sp/>Parses<sp/>PSM<sp/>configuration<sp/>from<sp/>periodic<sp/>TAU<sp/>timer<sp/>and<sp/>active<sp/>time<sp/>strings.</highlight></codeline>
+<codeline lineno="187"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="188"><highlight class="comment"><sp/>*<sp/>@param<sp/>active_time_str<sp/>Pointer<sp/>to<sp/>active<sp/>time<sp/>string.</highlight></codeline>
+<codeline lineno="189"><highlight class="comment"><sp/>*<sp/>@param<sp/>tau_ext_str<sp/>Pointer<sp/>to<sp/>TAU<sp/>(T3412<sp/>extended)<sp/>string.</highlight></codeline>
+<codeline lineno="190"><highlight class="comment"><sp/>*<sp/>@param<sp/>tau_legacy_str<sp/>Pointer<sp/>to<sp/>TAU<sp/>(T3412)<sp/>string.<sp/>Can<sp/>be<sp/>NULL.</highlight></codeline>
+<codeline lineno="191"><highlight class="comment"><sp/>*<sp/>@param<sp/>psm_cfg<sp/>Pointer<sp/>to<sp/>PSM<sp/>configuraion<sp/>struct<sp/>where<sp/>the<sp/>parsed<sp/>values</highlight></codeline>
+<codeline lineno="192"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>are<sp/>stored.</highlight></codeline>
+<codeline lineno="193"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="194"><highlight class="comment"><sp/>*<sp/>@retval<sp/>0<sp/>if<sp/>PSM<sp/>configuration<sp/>was<sp/>successfully<sp/>parsed.</highlight></codeline>
+<codeline lineno="195"><highlight class="comment"><sp/>*<sp/>@retval<sp/>-EINVAL<sp/>if<sp/>parsing<sp/>failed.</highlight></codeline>
+<codeline lineno="196"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="197" refid="lte__lc__helpers_8h_a8513a1d8cc02d845c54df977afff78f3_1a8513a1d8cc02d845c54df977afff78f3" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="lte__lc__helpers_8h_a8513a1d8cc02d845c54df977afff78f3_1a8513a1d8cc02d845c54df977afff78f3" kindref="member">parse_psm</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*active_time_str,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*tau_ext_str,</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*tau_legacy_str,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlte__lc__psm__cfg" kindref="compound">lte_lc_psm_cfg</ref><sp/>*psm_cfg);</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight></codeline>
+<codeline lineno="201"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>@brief<sp/>Parses<sp/>an<sp/>CEREG<sp/>response<sp/>and<sp/>returns<sp/>network<sp/>registration<sp/>status,</highlight></codeline>
+<codeline lineno="202"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>cell<sp/>information,<sp/>LTE<sp/>mode<sp/>and<sp/>pSM<sp/>configuration.</highlight></codeline>
+<codeline lineno="203"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="204"><highlight class="comment"><sp/>*<sp/>@param<sp/>at_response<sp/>Pointer<sp/>to<sp/>buffer<sp/>with<sp/>AT<sp/>response.</highlight></codeline>
+<codeline lineno="205"><highlight class="comment"><sp/>*<sp/>@param<sp/>is_notif<sp/>The<sp/>buffer<sp/>in<sp/>at_response<sp/>is<sp/>a<sp/>notification.</highlight></codeline>
+<codeline lineno="206"><highlight class="comment"><sp/>*<sp/>@param<sp/>reg_status<sp/>Pointer<sp/>to<sp/>where<sp/>the<sp/>registration<sp/>status<sp/>is<sp/>stored.</highlight></codeline>
+<codeline lineno="207"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Can<sp/>be<sp/>NULL.</highlight></codeline>
+<codeline lineno="208"><highlight class="comment"><sp/>*<sp/>@param<sp/>cell<sp/>Pointer<sp/>to<sp/>cell<sp/>information<sp/>struct.<sp/>Can<sp/>be<sp/>NULL.</highlight></codeline>
+<codeline lineno="209"><highlight class="comment"><sp/>*<sp/>@param<sp/>lte_mode<sp/>Pointer<sp/>to<sp/>LTE<sp/>mode<sp/>struct.<sp/>Can<sp/>be<sp/>NULL.</highlight></codeline>
+<codeline lineno="210"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="211"><highlight class="comment"><sp/>*<sp/>@return<sp/>Zero<sp/>on<sp/>success<sp/>or<sp/>(negative)<sp/>error<sp/>code<sp/>otherwise.</highlight></codeline>
+<codeline lineno="212"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="213" refid="lte__lc__helpers_8h_a11b44478e344513ad7608a594a502ba7_1a11b44478e344513ad7608a594a502ba7" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="lte__lc__helpers_8h_a11b44478e344513ad7608a594a502ba7_1a11b44478e344513ad7608a594a502ba7" kindref="member">parse_cereg</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*at_response,</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>is_notif,</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__lte__lc_gae2e22418dff8974965840a21f1c49063_1gae2e22418dff8974965840a21f1c49063" kindref="member">lte_lc_nw_reg_status</ref><sp/>*reg_status,</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlte__lc__cell" kindref="compound">lte_lc_cell</ref><sp/>*cell,</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__lte__lc_ga85a1606ed90f717b1c0607ecb0ad88d2_1ga85a1606ed90f717b1c0607ecb0ad88d2" kindref="member">lte_lc_lte_mode</ref><sp/>*lte_mode);</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"></highlight></codeline>
+<codeline lineno="219"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>@brief<sp/>Parses<sp/>an<sp/>XT3412<sp/>response<sp/>and<sp/>extracts<sp/>the<sp/>time<sp/>until<sp/>next<sp/>TAU.</highlight></codeline>
+<codeline lineno="220"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="221"><highlight class="comment"><sp/>*<sp/>@param<sp/>at_response<sp/>Pointer<sp/>to<sp/>buffer<sp/>with<sp/>AT<sp/>response.</highlight></codeline>
+<codeline lineno="222"><highlight class="comment"><sp/>*<sp/>@param<sp/>time<sp/>Pointer<sp/>to<sp/>integer<sp/>that<sp/>the<sp/>time<sp/>until<sp/>next<sp/>TAU<sp/>will<sp/>be<sp/>written<sp/>to.</highlight></codeline>
+<codeline lineno="223"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="224"><highlight class="comment"><sp/>*<sp/>@return<sp/>Zero<sp/>on<sp/>success<sp/>or<sp/>(negative)<sp/>error<sp/>code<sp/>otherwise.</highlight></codeline>
+<codeline lineno="225"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="226" refid="lte__lc__helpers_8h_a0eaed22b8a47e9bb0e2376134a90ada1_1a0eaed22b8a47e9bb0e2376134a90ada1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="lte__lc__helpers_8h_a0eaed22b8a47e9bb0e2376134a90ada1_1a0eaed22b8a47e9bb0e2376134a90ada1" kindref="member">parse_xt3412</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*at_response,<sp/>uint64_t<sp/>*time);</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"></highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>@brief<sp/>Get<sp/>the<sp/>number<sp/>of<sp/>neighboring<sp/>cells<sp/>reported<sp/>in<sp/>an<sp/>NCELLMEAS<sp/>response.</highlight></codeline>
+<codeline lineno="229"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="230"><highlight class="comment"><sp/>*<sp/>@param<sp/>at_response<sp/>Pointer<sp/>to<sp/>buffer<sp/>with<sp/>AT<sp/>response<sp/>to<sp/>parse.</highlight></codeline>
+<codeline lineno="231"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="232"><highlight class="comment"><sp/>*<sp/>@return<sp/>The<sp/>number<sp/>of<sp/>neighbor<sp/>cells<sp/>found<sp/>in<sp/>the<sp/>response.</highlight></codeline>
+<codeline lineno="233"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="234" refid="lte__lc__helpers_8h_a2d8499c04263d1c229f47905ca717372_1a2d8499c04263d1c229f47905ca717372" refkind="member"><highlight class="normal">uint32_t<sp/><ref refid="lte__lc__helpers_8h_a2d8499c04263d1c229f47905ca717372_1a2d8499c04263d1c229f47905ca717372" kindref="member">neighborcell_count_get</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*at_response);</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"></highlight></codeline>
+<codeline lineno="236"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>@brief<sp/>Parses<sp/>an<sp/>NCELLMEAS<sp/>notification<sp/>and<sp/>stores<sp/>neighboring<sp/>cell</highlight></codeline>
+<codeline lineno="237"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>information<sp/>in<sp/>a<sp/>struct.</highlight></codeline>
+<codeline lineno="238"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="239"><highlight class="comment"><sp/>*<sp/>@param<sp/>at_response<sp/>Pointer<sp/>to<sp/>buffer<sp/>with<sp/>AT<sp/>response.</highlight></codeline>
+<codeline lineno="240"><highlight class="comment"><sp/>*<sp/>@param<sp/>ncell<sp/>Pointer<sp/>to<sp/>ncell<sp/>structure.</highlight></codeline>
+<codeline lineno="241"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="242"><highlight class="comment"><sp/>*<sp/>@return<sp/>Zero<sp/>on<sp/>success<sp/>or<sp/>(negative)<sp/>error<sp/>code<sp/>otherwise.</highlight></codeline>
+<codeline lineno="243"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="244" refid="lte__lc__helpers_8h_a6339da0d1022285009c0416441c0431f_1a6339da0d1022285009c0416441c0431f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="lte__lc__helpers_8h_a6339da0d1022285009c0416441c0431f_1a6339da0d1022285009c0416441c0431f" kindref="member">parse_ncellmeas</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*at_response,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlte__lc__cells__info" kindref="compound">lte_lc_cells_info</ref><sp/>*cells);</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"></highlight></codeline>
+<codeline lineno="246"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>@brief<sp/>Parses<sp/>an<sp/>XMODEMSLEEP<sp/>response<sp/>and<sp/>extracts<sp/>the<sp/>sleep<sp/>type<sp/>and<sp/>time.</highlight></codeline>
+<codeline lineno="247"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="248"><highlight class="comment"><sp/>*<sp/>@note<sp/>If<sp/>the<sp/>time<sp/>parameter<sp/>-1<sp/>after<sp/>this<sp/>API<sp/>call,<sp/>time<sp/>shall<sp/>be<sp/>considered<sp/>infinite.</highlight></codeline>
+<codeline lineno="249"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="250"><highlight class="comment"><sp/>*<sp/>@param<sp/>at_response<sp/>Pointer<sp/>to<sp/>buffer<sp/>with<sp/>AT<sp/>response.</highlight></codeline>
+<codeline lineno="251"><highlight class="comment"><sp/>*<sp/>@param<sp/>modem_sleep<sp/>Pointer<sp/>to<sp/>a<sp/>structure<sp/>holding<sp/>modem<sp/>sleep<sp/>data.</highlight></codeline>
+<codeline lineno="252"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="253"><highlight class="comment"><sp/>*<sp/>@return<sp/>Zero<sp/>on<sp/>success<sp/>or<sp/>(negative)<sp/>error<sp/>code<sp/>otherwise.</highlight></codeline>
+<codeline lineno="254"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="255" refid="lte__lc__helpers_8h_aa36301f7ceeff54effbf15b7a18ca930_1aa36301f7ceeff54effbf15b7a18ca930" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="lte__lc__helpers_8h_aa36301f7ceeff54effbf15b7a18ca930_1aa36301f7ceeff54effbf15b7a18ca930" kindref="member">parse_xmodemsleep</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*at_response,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlte__lc__modem__sleep" kindref="compound">lte_lc_modem_sleep</ref><sp/>*modem_sleep);</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"></highlight></codeline>
+<codeline lineno="257"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>@brief<sp/>Parses<sp/>a<sp/>CONEVAL<sp/>response<sp/>and<sp/>populates<sp/>a<sp/>struct<sp/>with<sp/>parameters<sp/>from<sp/>the<sp/>response.</highlight></codeline>
+<codeline lineno="258"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="259"><highlight class="comment"><sp/>*<sp/>@param<sp/>at_response<sp/>Pointer<sp/>to<sp/>buffer<sp/>with<sp/>AT<sp/>response.</highlight></codeline>
+<codeline lineno="260"><highlight class="comment"><sp/>*<sp/>@param<sp/>params<sp/>Pointer<sp/>to<sp/>a<sp/>structure<sp/>that<sp/>will<sp/>be<sp/>populated<sp/>with<sp/>CONEVAL<sp/>parameters.</highlight></codeline>
+<codeline lineno="261"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="262"><highlight class="comment"><sp/>*<sp/>@return<sp/>Zero<sp/>on<sp/>success,<sp/>negative<sp/>errno<sp/>code<sp/>if<sp/>the<sp/>API<sp/>call<sp/>fails,<sp/>and<sp/>a<sp/>positive<sp/>error</highlight></codeline>
+<codeline lineno="263"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>code<sp/>if<sp/>the<sp/>API<sp/>call<sp/>succeeds<sp/>but<sp/>connection<sp/>evalution<sp/>fails<sp/>due<sp/>to<sp/>modem/network<sp/>related</highlight></codeline>
+<codeline lineno="264"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>reasons.</highlight></codeline>
+<codeline lineno="265"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="266"><highlight class="comment"><sp/>*<sp/>@retval<sp/>0<sp/>Evaluation<sp/>succeeded.</highlight></codeline>
+<codeline lineno="267"><highlight class="comment"><sp/>*<sp/>@retval<sp/>1<sp/>Evaluation<sp/>failed,<sp/>no<sp/>cell<sp/>available.</highlight></codeline>
+<codeline lineno="268"><highlight class="comment"><sp/>*<sp/>@retval<sp/>2<sp/>Evaluation<sp/>failed,<sp/>UICC<sp/>not<sp/>available.</highlight></codeline>
+<codeline lineno="269"><highlight class="comment"><sp/>*<sp/>@retval<sp/>3<sp/>Evaluation<sp/>failed,<sp/>only<sp/>barred<sp/>cells<sp/>available.</highlight></codeline>
+<codeline lineno="270"><highlight class="comment"><sp/>*<sp/>@retval<sp/>4<sp/>Evaluation<sp/>failed,<sp/>radio<sp/>busy<sp/>(e.g<sp/>GNSS<sp/>activity)</highlight></codeline>
+<codeline lineno="271"><highlight class="comment"><sp/>*<sp/>@retval<sp/>5<sp/>Evaluation<sp/>failed,<sp/>aborted<sp/>due<sp/>to<sp/>higher<sp/>priority<sp/>operation.</highlight></codeline>
+<codeline lineno="272"><highlight class="comment"><sp/>*<sp/>@retval<sp/>6<sp/>Evaluation<sp/>failed,<sp/>UE<sp/>not<sp/>registered<sp/>to<sp/>network.</highlight></codeline>
+<codeline lineno="273"><highlight class="comment"><sp/>*<sp/>@retval<sp/>7<sp/>Evaluation<sp/>failed,<sp/>Unspecified.</highlight></codeline>
+<codeline lineno="274"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="275" refid="lte__lc__helpers_8h_a11af9f70792e08c5c957bb9d2bc4907d_1a11af9f70792e08c5c957bb9d2bc4907d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="lte__lc__helpers_8h_a11af9f70792e08c5c957bb9d2bc4907d_1a11af9f70792e08c5c957bb9d2bc4907d" kindref="member">parse_coneval</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*at_response,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlte__lc__conn__eval__params" kindref="compound">lte_lc_conn_eval_params</ref><sp/>*params);</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"></highlight></codeline>
+<codeline lineno="277"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>@brief<sp/>Parses<sp/>an<sp/>MDMEV<sp/>response<sp/>and<sp/>populates<sp/>an<sp/>enum<sp/>with<sp/>the<sp/>corresponding</highlight></codeline>
+<codeline lineno="278"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>modem<sp/>event<sp/>type.</highlight></codeline>
+<codeline lineno="279"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="280"><highlight class="comment"><sp/>*<sp/>@param<sp/>at_response<sp/>Pointer<sp/>to<sp/>buffer<sp/>with<sp/>AT<sp/>response.</highlight></codeline>
+<codeline lineno="281"><highlight class="comment"><sp/>*<sp/>@param<sp/>modem_evt<sp/>Pointer<sp/>to<sp/>enum<sp/>to<sp/>hold<sp/>modem<sp/>event.</highlight></codeline>
+<codeline lineno="282"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="283"><highlight class="comment"><sp/>*<sp/>@return<sp/>Zero<sp/>on<sp/>success,<sp/>negative<sp/>errno<sp/>code<sp/>on<sp/>failure.</highlight></codeline>
+<codeline lineno="284"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="285"><highlight class="comment"><sp/>*<sp/>@retval<sp/>0<sp/>Parsing<sp/>succeeded.</highlight></codeline>
+<codeline lineno="286"><highlight class="comment"><sp/>*<sp/>@retval<sp/>-EINVAL<sp/>If<sp/>invalid<sp/>parameters<sp/>are<sp/>provided.</highlight></codeline>
+<codeline lineno="287"><highlight class="comment"><sp/>*<sp/>@retval<sp/>-EIO<sp/>If<sp/>the<sp/>AT<sp/>response<sp/>is<sp/>not<sp/>a<sp/>valid<sp/>MDMEV<sp/>response.</highlight></codeline>
+<codeline lineno="288"><highlight class="comment"><sp/>*<sp/>@retval<sp/>-ENODATA<sp/>If<sp/>no<sp/>modem<sp/>event<sp/>type<sp/>was<sp/>found<sp/>in<sp/>the<sp/>AT<sp/>response.</highlight></codeline>
+<codeline lineno="289"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="290" refid="lte__lc__helpers_8h_a618080662c09a25a6804cfd611c994f1_1a618080662c09a25a6804cfd611c994f1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="lte__lc__helpers_8h_a618080662c09a25a6804cfd611c994f1_1a618080662c09a25a6804cfd611c994f1" kindref="member">parse_mdmev</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*at_response,<sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__lte__lc_ga881d51b5950df07508e70d7d4fa1d031_1ga881d51b5950df07508e70d7d4fa1d031" kindref="member">lte_lc_modem_evt</ref><sp/>*modem_evt);</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"></highlight></codeline>
+<codeline lineno="292"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>@brief<sp/>Add<sp/>the<sp/>handler<sp/>in<sp/>the<sp/>event<sp/>handler<sp/>list<sp/>if<sp/>not<sp/>already<sp/>present.</highlight></codeline>
+<codeline lineno="293"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="294"><highlight class="comment"><sp/>*<sp/><sp/>@param<sp/>handler<sp/>Event<sp/>handler.</highlight></codeline>
+<codeline lineno="295"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="296"><highlight class="comment"><sp/>*<sp/>@return<sp/>Zero<sp/>on<sp/>success,<sp/>negative<sp/>errno<sp/>code<sp/>if<sp/>the<sp/>API<sp/>call<sp/>fails.</highlight></codeline>
+<codeline lineno="297"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="298" refid="lte__lc__helpers_8h_adc77e9e3fcc945308ba1cf422fd6469c_1adc77e9e3fcc945308ba1cf422fd6469c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="lte__lc__helpers_8h_adc77e9e3fcc945308ba1cf422fd6469c_1adc77e9e3fcc945308ba1cf422fd6469c" kindref="member">event_handler_list_append_handler</ref>(<ref refid="group__lte__lc_ga89093108c46eeb40fb49f6e8e3e39be0_1ga89093108c46eeb40fb49f6e8e3e39be0" kindref="member">lte_lc_evt_handler_t</ref><sp/>handler);</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"></highlight></codeline>
+<codeline lineno="300"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>@brief<sp/>Remove<sp/>the<sp/>handler<sp/>from<sp/>the<sp/>event<sp/>handler<sp/>list<sp/>if<sp/>present.</highlight></codeline>
+<codeline lineno="301"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="302"><highlight class="comment"><sp/>*<sp/><sp/>@param<sp/>handler<sp/>Event<sp/>handler.</highlight></codeline>
+<codeline lineno="303"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="304"><highlight class="comment"><sp/>*<sp/>@return<sp/>Zero<sp/>on<sp/>success,<sp/>negative<sp/>errno<sp/>code<sp/>if<sp/>the<sp/>API<sp/>call<sp/>fails.</highlight></codeline>
+<codeline lineno="305"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="306" refid="lte__lc__helpers_8h_ab78b1f7aa3d8d8a48b71df232520bb67_1ab78b1f7aa3d8d8a48b71df232520bb67" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="lte__lc__helpers_8h_ab78b1f7aa3d8d8a48b71df232520bb67_1ab78b1f7aa3d8d8a48b71df232520bb67" kindref="member">event_handler_list_remove_handler</ref>(<ref refid="group__lte__lc_ga89093108c46eeb40fb49f6e8e3e39be0_1ga89093108c46eeb40fb49f6e8e3e39be0" kindref="member">lte_lc_evt_handler_t</ref><sp/>handler);</highlight></codeline>
+<codeline lineno="307"><highlight class="normal"></highlight></codeline>
+<codeline lineno="308"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>@brief<sp/>Dispatch<sp/>events<sp/>for<sp/>the<sp/>registered<sp/>event<sp/>handlers.</highlight></codeline>
+<codeline lineno="309"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="310"><highlight class="comment"><sp/>*<sp/><sp/>@param<sp/>evt<sp/>Event.</highlight></codeline>
+<codeline lineno="311"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="312"><highlight class="comment"><sp/>*<sp/>@return<sp/>Zero<sp/>on<sp/>success,<sp/>negative<sp/>errno<sp/>code<sp/>if<sp/>the<sp/>API<sp/>call<sp/>fails.</highlight></codeline>
+<codeline lineno="313"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="314" refid="lte__lc__helpers_8h_a7661a7b73cfd324e17732a89080a4e06_1a7661a7b73cfd324e17732a89080a4e06" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="lte__lc__helpers_8h_a7661a7b73cfd324e17732a89080a4e06_1a7661a7b73cfd324e17732a89080a4e06" kindref="member">event_handler_list_dispatch</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlte__lc__evt" kindref="compound">lte_lc_evt</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>evt);</highlight></codeline>
+<codeline lineno="315"><highlight class="normal"></highlight></codeline>
+<codeline lineno="316"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>@brief<sp/>Test<sp/>if<sp/>the<sp/>handler<sp/>list<sp/>is<sp/>empty.</highlight></codeline>
+<codeline lineno="317"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="318"><highlight class="comment"><sp/>*<sp/>@return<sp/>a<sp/>boolean,<sp/>true<sp/>if<sp/>it&apos;s<sp/>empty,<sp/>false<sp/>otherwise</highlight></codeline>
+<codeline lineno="319"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="320" refid="lte__lc__helpers_8h_a1239f3b7ec3bbd30f867af41abebc110_1a1239f3b7ec3bbd30f867af41abebc110" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="lte__lc__helpers_8h_a1239f3b7ec3bbd30f867af41abebc110_1a1239f3b7ec3bbd30f867af41abebc110" kindref="member">event_handler_list_is_empty</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="321"><highlight class="normal"></highlight></codeline>
+<codeline lineno="322"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>@brief<sp/>Convert<sp/>string<sp/>to<sp/>integer<sp/>with<sp/>a<sp/>chosen<sp/>base.</highlight></codeline>
+<codeline lineno="323"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="324"><highlight class="comment"><sp/>*<sp/>@param<sp/>str_buf<sp/>Pointer<sp/>to<sp/>null-terminated<sp/>string.</highlight></codeline>
+<codeline lineno="325"><highlight class="comment"><sp/>*<sp/>@param<sp/>base<sp/>The<sp/>base<sp/>to<sp/>use<sp/>when<sp/>converting<sp/>the<sp/>string.</highlight></codeline>
+<codeline lineno="326"><highlight class="comment"><sp/>*<sp/>@param<sp/>output<sp/>Pointer<sp/>to<sp/>an<sp/>integer<sp/>where<sp/>the<sp/>result<sp/>is<sp/>stored.</highlight></codeline>
+<codeline lineno="327"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="328"><highlight class="comment"><sp/>*<sp/>@retval<sp/>0<sp/>if<sp/>conversion<sp/>was<sp/>successful.</highlight></codeline>
+<codeline lineno="329"><highlight class="comment"><sp/>*<sp/>@retval<sp/>-ENODATA<sp/>if<sp/>conversion<sp/>failed.</highlight></codeline>
+<codeline lineno="330"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="331" refid="lte__lc__helpers_8h_a0596768d573f7a8031df15b44261a134_1a0596768d573f7a8031df15b44261a134" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="lte__lc__helpers_8h_a0596768d573f7a8031df15b44261a134_1a0596768d573f7a8031df15b44261a134" kindref="member">string_to_int</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*str_buf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>base,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*output);</highlight></codeline>
+<codeline lineno="332"><highlight class="normal"></highlight></codeline>
+<codeline lineno="333"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>@brief<sp/>Get<sp/>periodic<sp/>search<sp/>pattern<sp/>string<sp/>to<sp/>be<sp/>used<sp/>in<sp/>AT%PERIODICSEARCHCONF<sp/>from</highlight></codeline>
+<codeline lineno="334"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>a<sp/>pattern<sp/>struct.</highlight></codeline>
+<codeline lineno="335"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="336"><highlight class="comment"><sp/>*<sp/>@param<sp/>buf<sp/>Buffer<sp/>to<sp/>store<sp/>the<sp/>string.</highlight></codeline>
+<codeline lineno="337"><highlight class="comment"><sp/>*<sp/>@param<sp/>buf_size<sp/>Size<sp/>of<sp/>the<sp/>provided<sp/>buffer.</highlight></codeline>
+<codeline lineno="338"><highlight class="comment"><sp/>*<sp/>@param<sp/>pattern<sp/>Pointer<sp/>to<sp/>pattern<sp/>struct.</highlight></codeline>
+<codeline lineno="339"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="340"><highlight class="comment"><sp/>*<sp/>@return<sp/>Pointer<sp/>to<sp/>the<sp/>buffer<sp/>where<sp/>the<sp/>pattern<sp/>string<sp/>is<sp/>stored.</highlight></codeline>
+<codeline lineno="341"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="342" refid="lte__lc__helpers_8h_aa09a371783912a4c4e94f7f555d5e087_1aa09a371783912a4c4e94f7f555d5e087" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="lte__lc__helpers_8h_aa09a371783912a4c4e94f7f555d5e087_1aa09a371783912a4c4e94f7f555d5e087" kindref="member">periodic_search_pattern_get</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>buf,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>buf_size,</highlight></codeline>
+<codeline lineno="343"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlte__lc__periodic__search__pattern" kindref="compound">lte_lc_periodic_search_pattern</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>pattern);</highlight></codeline>
+<codeline lineno="344"><highlight class="normal"></highlight></codeline>
+<codeline lineno="345"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>@brief<sp/>Parse<sp/>a<sp/>periodic<sp/>search<sp/>pattern<sp/>from<sp/>an<sp/>AT%PERIODICSEARCHCONF<sp/>response</highlight></codeline>
+<codeline lineno="346"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>and<sp/>populate<sp/>a<sp/>pattern<sp/>struct<sp/>with<sp/>the<sp/>result.</highlight></codeline>
+<codeline lineno="347"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>The<sp/>pattern<sp/>string<sp/>is<sp/>expected<sp/>to<sp/>be<sp/>without<sp/>quotation<sp/>marks<sp/>and<sp/>null-terminated.</highlight></codeline>
+<codeline lineno="348"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="349"><highlight class="comment"><sp/>*<sp/>@param<sp/>pattern_str<sp/>Pointer<sp/>to<sp/>pattern<sp/>string.</highlight></codeline>
+<codeline lineno="350"><highlight class="comment"><sp/>*<sp/>@param<sp/>pattern<sp/>Pointer<sp/>to<sp/>storage<sp/>for<sp/>the<sp/>parsed<sp/>pattern.</highlight></codeline>
+<codeline lineno="351"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="352"><highlight class="comment"><sp/>*<sp/>@retval<sp/>0<sp/>if<sp/>parsing<sp/>was<sp/>successful.</highlight></codeline>
+<codeline lineno="353"><highlight class="comment"><sp/>*<sp/>@retval<sp/>-EBADMSG<sp/>if<sp/>pattern<sp/>could<sp/>not<sp/>be<sp/>parsed.</highlight></codeline>
+<codeline lineno="354"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="355" refid="lte__lc__helpers_8h_a961145c58e23ad3cdaaed212d1290ab8_1a961145c58e23ad3cdaaed212d1290ab8" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="lte__lc__helpers_8h_a961145c58e23ad3cdaaed212d1290ab8_1a961145c58e23ad3cdaaed212d1290ab8" kindref="member">parse_periodic_search_pattern</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>pattern_str,</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlte__lc__periodic__search__pattern" kindref="compound">lte_lc_periodic_search_pattern</ref><sp/>*pattern);</highlight></codeline>
+    </programlisting>
+    <location file="lib/lte_link_control/lte_lc_helpers.h"/>
+  </compounddef>
+</doxygen>

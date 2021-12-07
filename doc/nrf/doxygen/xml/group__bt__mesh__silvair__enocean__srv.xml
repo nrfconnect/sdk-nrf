@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__silvair__enocean__srv" kind="group">
+    <compoundname>bt_mesh_silvair_enocean_srv</compoundname>
+    <title>Silvair EnOcean Server model</title>
+    <innerclass refid="structbt__mesh__silvair__enocean__srv" prot="public">bt_mesh_silvair_enocean_srv</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__mesh__silvair__enocean__srv_1ga7e067bd42554b3d83a274db92de3bb4f" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_silvair_enocean_state</name>
+        <enumvalue id="group__bt__mesh__silvair__enocean__srv_ga7e067bd42554b3d83a274db92de3bb4f_1gga7e067bd42554b3d83a274db92de3bb4fa87c68f01860836f9f0d4a9d236ea1ad5" prot="public">
+          <name>BT_MESH_SILVAIR_ENOCEAN_STATE_IDLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Idle state </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__silvair__enocean__srv_ga7e067bd42554b3d83a274db92de3bb4f_1gga7e067bd42554b3d83a274db92de3bb4fa3323da655c5cbd1885ef51956bc1d92c" prot="public">
+          <name>BT_MESH_SILVAIR_ENOCEAN_STATE_WAIT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Waiting state </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__silvair__enocean__srv_ga7e067bd42554b3d83a274db92de3bb4f_1gga7e067bd42554b3d83a274db92de3bb4fa5d03e59c3e038f206145be52f3ad7751" prot="public">
+          <name>BT_MESH_SILVAIR_ENOCEAN_STATE_DELTA</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Delta sending state </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Silvair Enocean Proxy Server state machine state </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="43" column="1" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="43" bodyend="50"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__silvair__enocean__srv_1ga2a758ff5a507bd250cd1b1884d46a4f7" prot="public" static="no">
+        <name>BT_MESH_COMPANY_ID_SILVAIR</name>
+        <initializer>0x0136</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="26" column="9" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__silvair__enocean__srv_1gaf9efc1743ba3582f10f965956b4d49aa" prot="public" static="no">
+        <name>BT_MESH_MODEL_ID_SILVAIR_ENOCEAN_SRV</name>
+        <initializer>0x0001</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="27" column="9" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__silvair__enocean__srv_1ga54dddaa402af6a6f7d56fd4aff8d0b6c" prot="public" static="no">
+        <name>BT_MESH_SILVAIR_ENOCEAN_PROXY_BUTTONS</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="28" column="9" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__silvair__enocean__srv_1ga53e8e96d4b1d1080c746451d3a5182f7" prot="public" static="no">
+        <name>BT_MESH_MODEL_SILVAIR_ENOCEAN_SRV</name>
+        <param><defname>_srv</defname></param>
+        <initializer>	BT_MESH_MODEL_VND_CB(<ref refid="group__bt__mesh__silvair__enocean__srv_ga2a758ff5a507bd250cd1b1884d46a4f7_1ga2a758ff5a507bd250cd1b1884d46a4f7" kindref="member">BT_MESH_COMPANY_ID_SILVAIR</ref>,                       \
+			     <ref refid="group__bt__mesh__silvair__enocean__srv_gaf9efc1743ba3582f10f965956b4d49aa_1gaf9efc1743ba3582f10f965956b4d49aa" kindref="member">BT_MESH_MODEL_ID_SILVAIR_ENOCEAN_SRV</ref>,             \
+			     _bt_mesh_silvair_enocean_srv_op, &amp;(_srv)-&gt;pub,    \
+			     BT_MESH_MODEL_USER_DATA(                          \
+				struct <ref refid="structbt__mesh__silvair__enocean__srv" kindref="compound">bt_mesh_silvair_enocean_srv</ref>, _srv),     \
+			     &amp;_bt_mesh_silvair_enocean_srv_cb)</initializer>
+        <briefdescription>
+<para>Silvair Enocean Proxy Server model entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__silvair__enocean__srv" kindref="compound">Silvair EnOcean Server model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="92" column="9" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__silvair__enocean__srv_1gac5dd5af828311cbbfdc686d9b6898160" prot="public" static="no">
+        <name>BT_MESH_MODEL_SILVAIR_ENOCEAN_BUTTON</name>
+        <param><defname>_srv</defname></param>
+        <param><defname>_idx</defname></param>
+        <initializer>		<ref refid="group__bt__mesh__lvl__cli_ga3f0e23dded46fae30198c83f456ab7ee_1ga3f0e23dded46fae30198c83f456ab7ee" kindref="member">BT_MESH_MODEL_LVL_CLI</ref>(&amp;(_srv)-&gt;buttons[_idx].lvl),             \
+		<ref refid="group__bt__mesh__onoff__cli_ga583568678890461bcdd4a1a8f09c1512_1ga583568678890461bcdd4a1a8f09c1512" kindref="member">BT_MESH_MODEL_ONOFF_CLI</ref>(&amp;(_srv)-&gt;buttons[_idx].onoff)</initializer>
+        <briefdescription>
+<para>Model entries for a button for a Silvair Enocean Proxy Server model. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>One of these should be added for each rocker switch handled by the Silvair Enocean Proxy Server instance, each on its own element. This macro includes the Generic Level Client and Generic OnOff Client.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__lightness__srv" kindref="compound">Light Lightness Server model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Button index for the model entries. Must be in the range 0 to <computeroutput>BT_MESH_SILVAIR_ENOCEAN_PROXY_BUTTONS</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="112" column="9" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Silvair EnOcean Server. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

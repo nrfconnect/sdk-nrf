@@ -1,0 +1,252 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="lbs_8h" kind="file" language="C++">
+    <compoundname>lbs.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/bluetooth/services/lbs.h</label>
+        <link refid="lbs_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structbt__lbs__cb" prot="public">bt_lbs_cb</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__lbs_ga4499e5ddcc8635d8081232ef23aa7afe_1ga4499e5ddcc8635d8081232ef23aa7afe" prot="public" static="no">
+        <name>BT_UUID_LBS_VAL</name>
+        <initializer>	BT_UUID_128_ENCODE(0x00001523, 0x1212, 0xefde, 0x1523, 0x785feabcd123)</initializer>
+        <briefdescription>
+<para>LBS Service UUID. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/lbs.h" line="23" column="9" bodyfile="include/bluetooth/services/lbs.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__lbs_gaa4f8dbe4470277df6f5fa89d6cd02481_1gaa4f8dbe4470277df6f5fa89d6cd02481" prot="public" static="no">
+        <name>BT_UUID_LBS_BUTTON_VAL</name>
+        <initializer>	BT_UUID_128_ENCODE(0x00001524, 0x1212, 0xefde, 0x1523, 0x785feabcd123)</initializer>
+        <briefdescription>
+<para>Button Characteristic UUID. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/lbs.h" line="27" column="9" bodyfile="include/bluetooth/services/lbs.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__lbs_gac20ed2eba15b4547731e177eac00fd45_1gac20ed2eba15b4547731e177eac00fd45" prot="public" static="no">
+        <name>BT_UUID_LBS_LED_VAL</name>
+        <initializer>	BT_UUID_128_ENCODE(0x00001525, 0x1212, 0xefde, 0x1523, 0x785feabcd123)</initializer>
+        <briefdescription>
+<para>LED Characteristic UUID. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/lbs.h" line="31" column="9" bodyfile="include/bluetooth/services/lbs.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__lbs_ga3ea49d04ea969879c2983c54ece0f0e7_1ga3ea49d04ea969879c2983c54ece0f0e7" prot="public" static="no">
+        <name>BT_UUID_LBS</name>
+        <initializer>BT_UUID_DECLARE_128(<ref refid="group__bt__lbs_ga4499e5ddcc8635d8081232ef23aa7afe_1ga4499e5ddcc8635d8081232ef23aa7afe" kindref="member">BT_UUID_LBS_VAL</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/lbs.h" line="35" column="9" bodyfile="include/bluetooth/services/lbs.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__lbs_ga830e5ee10b9b0dc2767c090f469857e1_1ga830e5ee10b9b0dc2767c090f469857e1" prot="public" static="no">
+        <name>BT_UUID_LBS_BUTTON</name>
+        <initializer>BT_UUID_DECLARE_128(<ref refid="group__bt__lbs_gaa4f8dbe4470277df6f5fa89d6cd02481_1gaa4f8dbe4470277df6f5fa89d6cd02481" kindref="member">BT_UUID_LBS_BUTTON_VAL</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/lbs.h" line="36" column="9" bodyfile="include/bluetooth/services/lbs.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__lbs_gaf6b4252406f6fa83e3475c36d2b7fa3d_1gaf6b4252406f6fa83e3475c36d2b7fa3d" prot="public" static="no">
+        <name>BT_UUID_LBS_LED</name>
+        <initializer>BT_UUID_DECLARE_128(<ref refid="group__bt__lbs_gac20ed2eba15b4547731e177eac00fd45_1gac20ed2eba15b4547731e177eac00fd45" kindref="member">BT_UUID_LBS_LED_VAL</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/lbs.h" line="37" column="9" bodyfile="include/bluetooth/services/lbs.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__bt__lbs_ga985260ae276b47a123c131e8fb8b4b9c_1ga985260ae276b47a123c131e8fb8b4b9c" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* led_cb_t) (const bool led_state)</definition>
+        <argsstring>)(const bool led_state)</argsstring>
+        <name>led_cb_t</name>
+        <briefdescription>
+<para>Callback type for when an LED state change is received. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/lbs.h" line="40" column="9" bodyfile="include/bluetooth/services/lbs.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bt__lbs_ga2e599292d9bbc0b8e303e5e6cafd767d_1ga2e599292d9bbc0b8e303e5e6cafd767d" prot="public" static="no">
+        <type>bool(*</type>
+        <definition>typedef bool(* button_cb_t) (void)</definition>
+        <argsstring>)(void)</argsstring>
+        <name>button_cb_t</name>
+        <briefdescription>
+<para>Callback type for when the button state is pulled. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/lbs.h" line="43" column="9" bodyfile="include/bluetooth/services/lbs.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__lbs_gac4704303723cf374953e2a9f196a2bab_1gac4704303723cf374953e2a9f196a2bab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_lbs_init</definition>
+        <argsstring>(struct bt_lbs_cb *callbacks)</argsstring>
+        <name>bt_lbs_init</name>
+        <param>
+          <type>struct <ref refid="structbt__lbs__cb" kindref="compound">bt_lbs_cb</ref> *</type>
+          <declname>callbacks</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the LBS Service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function registers a GATT service with two characteristics: Button and LED. Send notifications for the Button Characteristic to let connected peers know when the button state changes. Write to the LED Characteristic to change the state of the LED on the board.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">callbacks</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Struct containing pointers to callback functions used by the service. This pointer can be NULL if no callback functions are defined.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/lbs.h" line="70" column="5" declfile="include/bluetooth/services/lbs.h" declline="70" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__lbs_ga28793cf146020ef627fa4d86521866be_1ga28793cf146020ef627fa4d86521866be" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_lbs_send_button_state</definition>
+        <argsstring>(bool button_state)</argsstring>
+        <name>bt_lbs_send_button_state</name>
+        <param>
+          <type>bool</type>
+          <declname>button_state</declname>
+        </param>
+        <briefdescription>
+<para>Send the button state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function sends a binary state, typically the state of a button, to all connected peers.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">button_state</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The state of the button.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/lbs.h" line="82" column="5" declfile="include/bluetooth/services/lbs.h" declline="82" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2018<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_LBS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_LBS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="group__bt__lbs_ga4499e5ddcc8635d8081232ef23aa7afe_1ga4499e5ddcc8635d8081232ef23aa7afe" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_LBS_VAL<sp/>\</highlight></codeline>
+<codeline lineno="24"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_UUID_128_ENCODE(0x00001523,<sp/>0x1212,<sp/>0xefde,<sp/>0x1523,<sp/>0x785feabcd123)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="group__bt__lbs_gaa4f8dbe4470277df6f5fa89d6cd02481_1gaa4f8dbe4470277df6f5fa89d6cd02481" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_LBS_BUTTON_VAL<sp/>\</highlight></codeline>
+<codeline lineno="28"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_UUID_128_ENCODE(0x00001524,<sp/>0x1212,<sp/>0xefde,<sp/>0x1523,<sp/>0x785feabcd123)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="group__bt__lbs_gac20ed2eba15b4547731e177eac00fd45_1gac20ed2eba15b4547731e177eac00fd45" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_LBS_LED_VAL<sp/>\</highlight></codeline>
+<codeline lineno="32"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_UUID_128_ENCODE(0x00001525,<sp/>0x1212,<sp/>0xefde,<sp/>0x1523,<sp/>0x785feabcd123)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="group__bt__lbs_ga3ea49d04ea969879c2983c54ece0f0e7_1ga3ea49d04ea969879c2983c54ece0f0e7" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_LBS<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_UUID_DECLARE_128(BT_UUID_LBS_VAL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="group__bt__lbs_ga830e5ee10b9b0dc2767c090f469857e1_1ga830e5ee10b9b0dc2767c090f469857e1" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_LBS_BUTTON<sp/><sp/><sp/><sp/>BT_UUID_DECLARE_128(BT_UUID_LBS_BUTTON_VAL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="group__bt__lbs_gaf6b4252406f6fa83e3475c36d2b7fa3d_1gaf6b4252406f6fa83e3475c36d2b7fa3d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_LBS_LED<sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_UUID_DECLARE_128(BT_UUID_LBS_LED_VAL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="group__bt__lbs_ga985260ae276b47a123c131e8fb8b4b9c_1ga985260ae276b47a123c131e8fb8b4b9c" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__bt__lbs_ga985260ae276b47a123c131e8fb8b4b9c_1ga985260ae276b47a123c131e8fb8b4b9c" kindref="member">led_cb_t</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__asset_ga9aa8c3dcec2b8da09483d627b83aa1de_1ga9aa8c3dcec2b8da09483d627b83aa1de" kindref="member">led_state</ref>);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="group__bt__lbs_ga2e599292d9bbc0b8e303e5e6cafd767d_1ga2e599292d9bbc0b8e303e5e6cafd767d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>bool<sp/>(*<ref refid="group__bt__lbs_ga2e599292d9bbc0b8e303e5e6cafd767d_1ga2e599292d9bbc0b8e303e5e6cafd767d" kindref="member">button_cb_t</ref>)(void);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="structbt__lbs__cb" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__lbs__cb" kindref="compound">bt_lbs_cb</ref><sp/>{</highlight></codeline>
+<codeline lineno="48" refid="structbt__lbs__cb_acbdc8a609f1cb50d97ae626bde777a55_1acbdc8a609f1cb50d97ae626bde777a55" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__lbs_ga985260ae276b47a123c131e8fb8b4b9c_1ga985260ae276b47a123c131e8fb8b4b9c" kindref="member">led_cb_t</ref><sp/><sp/><sp/><sp/><ref refid="structbt__lbs__cb_acbdc8a609f1cb50d97ae626bde777a55_1acbdc8a609f1cb50d97ae626bde777a55" kindref="member">led_cb</ref>;</highlight></codeline>
+<codeline lineno="50" refid="structbt__lbs__cb_a1c7cb5f0226dc1bd7cecbb2b5c3b4275_1a1c7cb5f0226dc1bd7cecbb2b5c3b4275" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__lbs_ga2e599292d9bbc0b8e303e5e6cafd767d_1ga2e599292d9bbc0b8e303e5e6cafd767d" kindref="member">button_cb_t</ref><sp/><ref refid="structbt__lbs__cb_a1c7cb5f0226dc1bd7cecbb2b5c3b4275_1a1c7cb5f0226dc1bd7cecbb2b5c3b4275" kindref="member">button_cb</ref>;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="group__bt__lbs_gac4704303723cf374953e2a9f196a2bab_1gac4704303723cf374953e2a9f196a2bab" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__lbs_gac4704303723cf374953e2a9f196a2bab_1gac4704303723cf374953e2a9f196a2bab" kindref="member">bt_lbs_init</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__lbs__cb" kindref="compound">bt_lbs_cb</ref><sp/>*callbacks);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="group__bt__lbs_ga28793cf146020ef627fa4d86521866be_1ga28793cf146020ef627fa4d86521866be" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__lbs_ga28793cf146020ef627fa4d86521866be_1ga28793cf146020ef627fa4d86521866be" kindref="member">bt_lbs_send_button_state</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>button_state);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_LBS_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/services/lbs.h"/>
+  </compounddef>
+</doxygen>

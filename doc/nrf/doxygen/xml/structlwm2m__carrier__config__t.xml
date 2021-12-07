@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlwm2m__carrier__config__t" kind="struct" language="C++" prot="public">
+    <compoundname>lwm2m_carrier_config_t</compoundname>
+    <includes refid="lwm2m__carrier_8h" local="no">lwm2m_carrier.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlwm2m__carrier__config__t_ac6580ecd5df54240ec0173fd579e1a12_1ac6580ecd5df54240ec0173fd579e1a12" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* lwm2m_carrier_config_t::bootstrap_uri</definition>
+        <argsstring></argsstring>
+        <name>bootstrap_uri</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>URI of the bootstrap server, null-terminated string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="205" column="12" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="205" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlwm2m__carrier__config__t_a57f3af34abd7efc39af5575cf0124f9f_1a57f3af34abd7efc39af5575cf0124f9f" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* lwm2m_carrier_config_t::psk</definition>
+        <argsstring></argsstring>
+        <name>psk</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pre-Shared Key for the bootstrap server, null-terminated hexadecimal string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="209" column="12" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="209" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlwm2m__carrier__config__t_a4c959e47774fafb815d54449dcb1aec1_1a4c959e47774fafb815d54449dcb1aec1" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* lwm2m_carrier_config_t::apn</definition>
+        <argsstring></argsstring>
+        <name>apn</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Optional custom APN, null-terminated string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="211" column="12" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="211" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlwm2m__carrier__config__t_a908bab7ed7423d53300076b700c80bd3_1a908bab7ed7423d53300076b700c80bd3" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool lwm2m_carrier_config_t::certification_mode</definition>
+        <argsstring></argsstring>
+        <name>certification_mode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Connect to certification servers if true, connect to production servers otherwise. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="215" column="6" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="215" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Structure holding LWM2M carrier library initialization parameters. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" line="203" column="1" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_carrier.h" bodystart="203" bodyend="216"/>
+    <listofallmembers>
+      <member refid="structlwm2m__carrier__config__t_a4c959e47774fafb815d54449dcb1aec1_1a4c959e47774fafb815d54449dcb1aec1" prot="public" virt="non-virtual"><scope>lwm2m_carrier_config_t</scope><name>apn</name></member>
+      <member refid="structlwm2m__carrier__config__t_ac6580ecd5df54240ec0173fd579e1a12_1ac6580ecd5df54240ec0173fd579e1a12" prot="public" virt="non-virtual"><scope>lwm2m_carrier_config_t</scope><name>bootstrap_uri</name></member>
+      <member refid="structlwm2m__carrier__config__t_a908bab7ed7423d53300076b700c80bd3_1a908bab7ed7423d53300076b700c80bd3" prot="public" virt="non-virtual"><scope>lwm2m_carrier_config_t</scope><name>certification_mode</name></member>
+      <member refid="structlwm2m__carrier__config__t_a57f3af34abd7efc39af5575cf0124f9f_1a57f3af34abd7efc39af5575cf0124f9f" prot="public" virt="non-virtual"><scope>lwm2m_carrier_config_t</scope><name>psk</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

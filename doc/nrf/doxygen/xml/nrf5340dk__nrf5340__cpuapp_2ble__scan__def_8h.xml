@@ -1,0 +1,159 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="nrf5340dk__nrf5340__cpuapp_2ble__scan__def_8h" kind="file" language="C++">
+    <compoundname>ble_scan_def.h</compoundname>
+    <includes refid="ble__event_8h" local="yes">ble_event.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp/ble_scan_def.h</label>
+        <link refid="nrf5340dk__nrf5340__cpuapp_2ble__scan__def_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ble_event.h</label>
+        <link refid="ble__event_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>hwid.h</label>
+        <link refid="hwid_8h"/>
+      </node>
+      <node id="5">
+        <label>event_manager.h</label>
+        <link refid="event__manager_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>event_manager_profiler.h</label>
+        <link refid="event__manager__profiler_8h"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>profiler.h</label>
+        <link refid="profiler_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/bluetooth.h</label>
+      </node>
+      <node id="4">
+        <label>bluetooth/conn.h</label>
+      </node>
+      <node id="11">
+        <label>event_manager_priv.h</label>
+      </node>
+      <node id="15">
+        <label>event_manager_profiler_priv.h</label>
+      </node>
+      <node id="10">
+        <label>logging/log_ctrl.h</label>
+      </node>
+      <node id="9">
+        <label>sys/__assert.h</label>
+      </node>
+      <node id="8">
+        <label>sys/reboot.h</label>
+      </node>
+      <node id="13">
+        <label>sys/util.h</label>
+      </node>
+      <node id="6">
+        <label>zephyr.h</label>
+      </node>
+      <node id="7">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="nrf5340dk__nrf5340__cpuapp_2ble__scan__def_8h_a40221236bf4453c0174f280d2a7ad83d_1a40221236bf4453c0174f280d2a7ad83d" prot="public" static="no" mutable="no">
+        <type>const struct @114</type>
+        <definition>const struct @114 ble_scan_include_once</definition>
+        <argsstring></argsstring>
+        <name>ble_scan_include_once</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp/ble_scan_def.h" line="14" column="35"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf5340dk__nrf5340__cpuapp_2ble__scan__def_8h_af27333642250ddfad3c87e01f1b3cc2d_1af27333642250ddfad3c87e01f1b3cc2d" prot="public" static="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const peer_name[]</definition>
+        <argsstring>[]</argsstring>
+        <name>peer_name</name>
+        <initializer>= {
+	[<ref refid="group__ble__event_gac69e3dc77018854dc02597ae99dd9f51_1ggac69e3dc77018854dc02597ae99dd9f51ae345d7fa850b3fd130633e6169000c97" kindref="member">PEER_TYPE_MOUSE</ref>] = &quot;Mouse nRF52 Desktop&quot;,
+	[PEER_TYPE_KEYBOARD] = &quot;Keyboard nRF52 Desktop&quot;,
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp/ble_scan_def.h" line="18" column="26" bodyfile="applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp/ble_scan_def.h" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>configuration<sp/>file<sp/>defines<sp/>filters<sp/>for<sp/>BLE<sp/>central<sp/>(based<sp/>on<sp/>BLE</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/>*<sp/>names).<sp/>Used<sp/>only<sp/>by<sp/>ble_scan<sp/>module.</highlight></codeline>
+<codeline lineno="9"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>structure<sp/>enforces<sp/>the<sp/>header<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>in<sp/>the<sp/>build.</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*<sp/>Violating<sp/>this<sp/>requirement<sp/>triggers<sp/>a<sp/>multiple<sp/>definition<sp/>error<sp/>at<sp/>link<sp/>time.</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14" refid="nrf5340dk__nrf5340__cpuapp_2ble__scan__def_8h_a40221236bf4453c0174f280d2a7ad83d_1a40221236bf4453c0174f280d2a7ad83d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{}<sp/><ref refid="nrf52820dongle__nrf52820_2ble__scan__def_8h_a960cedaa48822e8add9c70acbcb488e6_1a960cedaa48822e8add9c70acbcb488e6" kindref="member">ble_scan_include_once</ref>;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ble__event_8h" kindref="compound">ble_event.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="nrf5340dk__nrf5340__cpuapp_2ble__scan__def_8h_af27333642250ddfad3c87e01f1b3cc2d_1af27333642250ddfad3c87e01f1b3cc2d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="nrf5340dk__nrf5340__cpuapp_2ble__scan__def_8h_af27333642250ddfad3c87e01f1b3cc2d_1af27333642250ddfad3c87e01f1b3cc2d" kindref="member">peer_name</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__ble__event_gac69e3dc77018854dc02597ae99dd9f51_1ggac69e3dc77018854dc02597ae99dd9f51ae345d7fa850b3fd130633e6169000c97" kindref="member">PEER_TYPE_MOUSE</ref>]<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Mouse<sp/>nRF52<sp/>Desktop&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__ble__event_gac69e3dc77018854dc02597ae99dd9f51_1ggac69e3dc77018854dc02597ae99dd9f51adbf2ebc8689da47a4f044d79a9b206ea" kindref="member">PEER_TYPE_KEYBOARD</ref>]<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Keyboard<sp/>nRF52<sp/>Desktop&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="21"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp/ble_scan_def.h"/>
+  </compounddef>
+</doxygen>

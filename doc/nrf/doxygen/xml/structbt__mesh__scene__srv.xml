@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__scene__srv" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_scene_srv</compoundname>
+    <includes refid="scene__srv_8h" local="no">scene_srv.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__scene__srv_a83655df22cf3a235bfcea5f30d9d1029_1a83655df22cf3a235bfcea5f30d9d1029" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_scene_srv::all[0]</definition>
+        <argsstring>[0]</argsstring>
+        <name>all</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>All known scenes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_srv.h" line="73" column="10" bodyfile="include/bluetooth/mesh/scene_srv.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scene__srv_a25f09d01683756bc687bd930e757382b_1a25f09d01683756bc687bd930e757382b" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_scene_srv::count</definition>
+        <argsstring></argsstring>
+        <name>count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of known scenes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_srv.h" line="75" column="10" bodyfile="include/bluetooth/mesh/scene_srv.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Scene Server model instance </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/scene_srv.h" line="71" column="1" bodyfile="include/bluetooth/mesh/scene_srv.h" bodystart="71" bodyend="111"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__scene__srv_a83655df22cf3a235bfcea5f30d9d1029_1a83655df22cf3a235bfcea5f30d9d1029" prot="public" virt="non-virtual"><scope>bt_mesh_scene_srv</scope><name>all</name></member>
+      <member refid="structbt__mesh__scene__srv_a25f09d01683756bc687bd930e757382b_1a25f09d01683756bc687bd930e757382b" prot="public" virt="non-virtual"><scope>bt_mesh_scene_srv</scope><name>count</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

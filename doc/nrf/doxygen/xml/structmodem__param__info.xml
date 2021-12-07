@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structmodem__param__info" kind="struct" language="C++" prot="public">
+    <compoundname>modem_param_info</compoundname>
+    <includes refid="modem__info_8h" local="no">modem_info.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmodem__param__info_a82053e362d484a93c6b54fcc2cce8572_1a82053e362d484a93c6b54fcc2cce8572" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structnetwork__param" kindref="compound">network_param</ref></type>
+        <definition>struct network_param modem_param_info::network</definition>
+        <argsstring></argsstring>
+        <name>network</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Network parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="119" column="20" bodyfile="include/modem/modem_info.h" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__param__info_ab21eef1822ababe31ff142e6606a60be_1ab21eef1822ababe31ff142e6606a60be" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structsim__param" kindref="compound">sim_param</ref></type>
+        <definition>struct sim_param modem_param_info::sim</definition>
+        <argsstring></argsstring>
+        <name>sim</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>SIM card parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="120" column="16" bodyfile="include/modem/modem_info.h" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__param__info_a2b90dca0becd916bbbc7b1e7f75de098_1a2b90dca0becd916bbbc7b1e7f75de098" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structdevice__param" kindref="compound">device_param</ref></type>
+        <definition>struct device_param modem_param_info::device</definition>
+        <argsstring></argsstring>
+        <name>device</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="121" column="19" bodyfile="include/modem/modem_info.h" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Modem parameters. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="5">
+        <label>device_param</label>
+        <link refid="structdevice__param"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>battery</edgelabel>
+          <edgelabel>imei</edgelabel>
+          <edgelabel>modem_fw</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>lte_param</label>
+        <link refid="structlte__param"/>
+      </node>
+      <node id="1">
+        <label>modem_param_info</label>
+        <link refid="structmodem__param__info"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>network</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>sim</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>device</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>network_param</label>
+        <link refid="structnetwork__param"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>apn</edgelabel>
+          <edgelabel>area_code</edgelabel>
+          <edgelabel>cellid_hex</edgelabel>
+          <edgelabel>current_band</edgelabel>
+          <edgelabel>current_operator</edgelabel>
+          <edgelabel>date_time</edgelabel>
+          <edgelabel>gps_mode</edgelabel>
+          <edgelabel>ip_address</edgelabel>
+          <edgelabel>lte_mode</edgelabel>
+          <edgelabel>mcc</edgelabel>
+          <edgelabel>...</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>sim_param</label>
+        <link refid="structsim__param"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>iccid</edgelabel>
+          <edgelabel>imsi</edgelabel>
+          <edgelabel>uicc</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/modem/modem_info.h" line="118" column="1" bodyfile="include/modem/modem_info.h" bodystart="118" bodyend="122"/>
+    <listofallmembers>
+      <member refid="structmodem__param__info_a2b90dca0becd916bbbc7b1e7f75de098_1a2b90dca0becd916bbbc7b1e7f75de098" prot="public" virt="non-virtual"><scope>modem_param_info</scope><name>device</name></member>
+      <member refid="structmodem__param__info_a82053e362d484a93c6b54fcc2cce8572_1a82053e362d484a93c6b54fcc2cce8572" prot="public" virt="non-virtual"><scope>modem_param_info</scope><name>network</name></member>
+      <member refid="structmodem__param__info_ab21eef1822ababe31ff142e6606a60be_1ab21eef1822ababe31ff142e6606a60be" prot="public" virt="non-virtual"><scope>modem_param_info</scope><name>sim</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

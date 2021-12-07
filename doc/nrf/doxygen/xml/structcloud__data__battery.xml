@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structcloud__data__battery" kind="struct" language="C++" prot="public">
+    <compoundname>cloud_data_battery</compoundname>
+    <includes refid="v2_2src_2cloud_2cloud__codec_2cloud__codec_8h" local="no">cloud_codec.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structcloud__data__battery_a01ef81225c2175edb85581d56dc7bfaf_1a01ef81225c2175edb85581d56dc7bfaf" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t cloud_data_battery::bat</definition>
+        <argsstring></argsstring>
+        <name>bat</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Battery voltage level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="34" column="10" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__battery_ab7d63cb8dfcc0b1a9a1f1c5aac5bc123_1ab7d63cb8dfcc0b1a9a1f1c5aac5bc123" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t cloud_data_battery::bat_ts</definition>
+        <argsstring></argsstring>
+        <name>bat_ts</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Battery data timestamp. UNIX milliseconds. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="36" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__battery_a448edaf51bf16ac5d81d5390812704c9_1a448edaf51bf16ac5d81d5390812704c9" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool cloud_data_battery::queued</definition>
+        <argsstring></argsstring>
+        <name>queued</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Flag signifying that the data entry is to be encoded. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="38" column="6" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Structure containing battery data published to cloud. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="32" column="1" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="32" bodyend="39"/>
+    <listofallmembers>
+      <member refid="structcloud__data__battery_a01ef81225c2175edb85581d56dc7bfaf_1a01ef81225c2175edb85581d56dc7bfaf" prot="public" virt="non-virtual"><scope>cloud_data_battery</scope><name>bat</name></member>
+      <member refid="structcloud__data__battery_ab7d63cb8dfcc0b1a9a1f1c5aac5bc123_1ab7d63cb8dfcc0b1a9a1f1c5aac5bc123" prot="public" virt="non-virtual"><scope>cloud_data_battery</scope><name>bat_ts</name></member>
+      <member refid="structcloud__data__battery_a448edaf51bf16ac5d81d5390812704c9_1a448edaf51bf16ac5d81d5390812704c9" prot="public" virt="non-virtual"><scope>cloud_data_battery</scope><name>queued</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

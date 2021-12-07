@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nrf__modem__lib" kind="group">
+    <compoundname>nrf_modem_lib</compoundname>
+    <title>nRF Modem library wrapper</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nrf__modem__lib_1gaeefd4a54ca863211a51ef410304845ad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_modem_lib_init</definition>
+        <argsstring>(enum nrf_modem_mode_t mode)</argsstring>
+        <name>nrf_modem_lib_init</name>
+        <param>
+          <type>enum nrf_modem_mode_t</type>
+          <declname>mode</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the Modem library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function synchronously turns on the modem; it could block for a few minutes when the modem firmware is being updated.</para>
+<para>If your application supports modem firmware updates, consider initializing the library manually to have control of what the application should do while initialization is ongoing.</para>
+<para>The library has two operation modes, normal mode and full DFU mode. The full DFU mode is used to update the whole modem firmware.</para>
+<para>When the library is initialized in full DFU mode, all shared memory regions are reserved for the firmware update operation, and no other functionality can be used. In particular, sockets won&apos;t be available to the application.</para>
+<para>To switch between the full DFU mode and normal mode, shutdown the modem with <ref refid="group__nrf__modem__lib_ga253305b94dd05d8d9e659ce310a5a097_1ga253305b94dd05d8d9e659ce310a5a097" kindref="member">nrf_modem_lib_shutdown()</ref> and re-initialize it in the desired operation mode.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">mode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Library mode.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>int Zero on success, non-zero otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/nrf_modem_lib.h" line="48" column="5" declfile="include/modem/nrf_modem_lib.h" declline="48" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__modem__lib_1ga916829f682feda9ba0887a48141e0333" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nrf_modem_lib_shutdown_wait</definition>
+        <argsstring>(void)</argsstring>
+        <name>nrf_modem_lib_shutdown_wait</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Makes a thread sleep until next time <ref refid="group__nrf__modem__lib_gaeefd4a54ca863211a51ef410304845ad_1gaeefd4a54ca863211a51ef410304845ad" kindref="member">nrf_modem_lib_init()</ref> is called. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When <ref refid="group__nrf__modem__lib_ga253305b94dd05d8d9e659ce310a5a097_1ga253305b94dd05d8d9e659ce310a5a097" kindref="member">nrf_modem_lib_shutdown()</ref> is called a thread can call this function to be woken up next time <ref refid="group__nrf__modem__lib_gaeefd4a54ca863211a51ef410304845ad_1gaeefd4a54ca863211a51ef410304845ad" kindref="member">nrf_modem_lib_init()</ref> is called. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/nrf_modem_lib.h" line="56" column="6" declfile="include/modem/nrf_modem_lib.h" declline="56" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__modem__lib_1ga204172046bf0c3c3cde35edd03b5c74a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_modem_lib_get_init_ret</definition>
+        <argsstring>(void)</argsstring>
+        <name>nrf_modem_lib_get_init_ret</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Get the last return value of nrf_modem_lib_init. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function can be used to access the last return value of nrf_modem_lib_init. This can be used to check the state of a modem firmware exchange when the Modem library was initialized at boot-time.</para>
+<para><simplesect kind="return"><para>int The last return value of nrf_modem_lib_init. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/nrf_modem_lib.h" line="67" column="5" declfile="include/modem/nrf_modem_lib.h" declline="67" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__modem__lib_1ga253305b94dd05d8d9e659ce310a5a097" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_modem_lib_shutdown</definition>
+        <argsstring>(void)</argsstring>
+        <name>nrf_modem_lib_shutdown</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Shutdown the Modem library, releasing its resources. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>int Zero on success, non-zero otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/nrf_modem_lib.h" line="74" column="5" declfile="include/modem/nrf_modem_lib.h" declline="74" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__modem__lib_1ga3e975af50d987f16b241fa2f4a8da7a3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nrf_modem_lib_shm_tx_diagnose</definition>
+        <argsstring>(void)</argsstring>
+        <name>nrf_modem_lib_shm_tx_diagnose</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Print diagnostic information for the TX heap. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/nrf_modem_lib.h" line="79" column="6" declfile="include/modem/nrf_modem_lib.h" declline="79" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__modem__lib_1ga98f6676b5d572cb3180224a4acff643f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nrf_modem_lib_heap_diagnose</definition>
+        <argsstring>(void)</argsstring>
+        <name>nrf_modem_lib_heap_diagnose</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Print diagnostic information for the library heap. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/nrf_modem_lib.h" line="84" column="6" declfile="include/modem/nrf_modem_lib.h" declline="84" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API of the SMS nRF Modem library wrapper module. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

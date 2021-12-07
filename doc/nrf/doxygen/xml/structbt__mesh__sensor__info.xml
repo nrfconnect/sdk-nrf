@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__sensor__info" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_sensor_info</compoundname>
+    <includes refid="sensor__cli_8h" local="no">sensor_cli.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__sensor__info_aa0ef7323cd730e1b4f924fe7ef950835_1aa0ef7323cd730e1b4f924fe7ef950835" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_sensor_info::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sensor Device Property ID </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="113" column="10" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__info_afb95324fc7e713048bd640de8e4c8282_1afb95324fc7e713048bd640de8e4c8282" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__sensor__descriptor" kindref="compound">bt_mesh_sensor_descriptor</ref></type>
+        <definition>struct bt_mesh_sensor_descriptor bt_mesh_sensor_info::descriptor</definition>
+        <argsstring></argsstring>
+        <name>descriptor</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sensor descriptor. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="115" column="32" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="115" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Sensor info structure. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_mesh_sensor_descriptor</label>
+        <link refid="structbt__mesh__sensor__descriptor"/>
+      </node>
+      <node id="1">
+        <label>bt_mesh_sensor_info</label>
+        <link refid="structbt__mesh__sensor__info"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>descriptor</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/sensor_cli.h" line="111" column="1" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="111" bodyend="116"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__sensor__info_afb95324fc7e713048bd640de8e4c8282_1afb95324fc7e713048bd640de8e4c8282" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_info</scope><name>descriptor</name></member>
+      <member refid="structbt__mesh__sensor__info_aa0ef7323cd730e1b4f924fe7ef950835_1aa0ef7323cd730e1b4f924fe7ef950835" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_info</scope><name>id</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbutton__handler" kind="struct" language="C++" prot="public">
+    <compoundname>button_handler</compoundname>
+    <includes refid="dk__buttons__and__leds_8h" local="no">dk_buttons_and_leds.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbutton__handler_a66bb427509a37e42a1925c1919ce053b_1a66bb427509a37e42a1925c1919ce053b" prot="public" static="no" mutable="no">
+        <type><ref refid="group__dk__buttons__and__leds_gafdb4d479095b8675fd1f04a2dfe39587_1gafdb4d479095b8675fd1f04a2dfe39587" kindref="member">button_handler_t</ref></type>
+        <definition>button_handler_t button_handler::cb</definition>
+        <argsstring></argsstring>
+        <name>cb</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Callback function. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="57" column="18" bodyfile="include/dk_buttons_and_leds.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbutton__handler_a07af093ffb41b2ba84621f64f2f4348a_1a07af093ffb41b2ba84621f64f2f4348a" prot="public" static="no" mutable="no">
+        <type>sys_snode_t</type>
+        <definition>sys_snode_t button_handler::node</definition>
+        <argsstring></argsstring>
+        <name>node</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Linked list node, for internal use. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="58" column="13" bodyfile="include/dk_buttons_and_leds.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Button handler list entry. </para>
+    </detaileddescription>
+    <location file="include/dk_buttons_and_leds.h" line="56" column="1" bodyfile="include/dk_buttons_and_leds.h" bodystart="56" bodyend="59"/>
+    <listofallmembers>
+      <member refid="structbutton__handler_a66bb427509a37e42a1925c1919ce053b_1a66bb427509a37e42a1925c1919ce053b" prot="public" virt="non-virtual"><scope>button_handler</scope><name>cb</name></member>
+      <member refid="structbutton__handler_a07af093ffb41b2ba84621f64f2f4348a_1a07af093ffb41b2ba84621f64f2f4348a" prot="public" virt="non-virtual"><scope>button_handler</scope><name>node</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

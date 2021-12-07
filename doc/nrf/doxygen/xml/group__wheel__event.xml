@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__wheel__event" kind="group">
+    <compoundname>wheel_event</compoundname>
+    <title>Wheel Event</title>
+    <innerclass refid="structwheel__event" prot="public">wheel_event</innerclass>
+    <briefdescription>
+<para>Wheel Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

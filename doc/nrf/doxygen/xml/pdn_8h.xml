@@ -1,0 +1,707 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="pdn_8h" kind="file" language="C++">
+    <compoundname>pdn.h</compoundname>
+    <includes local="no">stdbool.h</includes>
+    <includes local="no">stddef.h</includes>
+    <includes local="no">stdint.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/modem/pdn.h</label>
+        <link refid="pdn_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stdbool.h</label>
+      </node>
+      <node id="3">
+        <label>stddef.h</label>
+      </node>
+      <node id="4">
+        <label>stdint.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structpdn__pdp__opt" prot="public">pdn_pdp_opt</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__pdn_ga2f987f23c128efe7654349429c88fcb5_1ga2f987f23c128efe7654349429c88fcb5" prot="public" static="no" strong="no">
+        <type></type>
+        <name>pdn_fam</name>
+        <enumvalue id="group__pdn_ga2f987f23c128efe7654349429c88fcb5_1gga2f987f23c128efe7654349429c88fcb5a9d438054c0e38fabb65598d9f720e194" prot="public">
+          <name>PDN_FAM_IPV4</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pdn_ga2f987f23c128efe7654349429c88fcb5_1gga2f987f23c128efe7654349429c88fcb5ac5b9d9eedd08b99e8b92c7e9d4a01cb9" prot="public">
+          <name>PDN_FAM_IPV6</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pdn_ga2f987f23c128efe7654349429c88fcb5_1gga2f987f23c128efe7654349429c88fcb5afd689f49993354b602981eab7fd40c59" prot="public">
+          <name>PDN_FAM_IPV4V6</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pdn_ga2f987f23c128efe7654349429c88fcb5_1gga2f987f23c128efe7654349429c88fcb5aecd0070f8b023c0ce9d448e329bf706b" prot="public">
+          <name>PDN_FAM_NONIP</name>
+          <initializer>= 3</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>PDN family. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/pdn.h" line="26" column="1" bodyfile="include/modem/pdn.h" bodystart="26" bodyend="31"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__pdn_ga3e7b7ee49e1473ddc41bd97fb704227d_1ga3e7b7ee49e1473ddc41bd97fb704227d" prot="public" static="no" strong="no">
+        <type></type>
+        <name>pdn_event</name>
+        <enumvalue id="group__pdn_ga3e7b7ee49e1473ddc41bd97fb704227d_1gga3e7b7ee49e1473ddc41bd97fb704227da4f59f5b592debb6928b545d1852cdde7" prot="public">
+          <name>PDN_EVENT_CNEC_ESM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pdn_ga3e7b7ee49e1473ddc41bd97fb704227d_1gga3e7b7ee49e1473ddc41bd97fb704227da26008b8c592b5957522049c1719416e2" prot="public">
+          <name>PDN_EVENT_ACTIVATED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>+CNEC ESM error code </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pdn_ga3e7b7ee49e1473ddc41bd97fb704227d_1gga3e7b7ee49e1473ddc41bd97fb704227da6da18cbea180376e5281867558dcc869" prot="public">
+          <name>PDN_EVENT_DEACTIVATED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>PDN connection activated </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pdn_ga3e7b7ee49e1473ddc41bd97fb704227d_1gga3e7b7ee49e1473ddc41bd97fb704227da9d79e5e54af9a0b42823e7e195e518a9" prot="public">
+          <name>PDN_EVENT_IPV6_UP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>PDN connection deactivated </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pdn_ga3e7b7ee49e1473ddc41bd97fb704227d_1gga3e7b7ee49e1473ddc41bd97fb704227daa1adb1f26197ee06c77c877ed62299ab" prot="public">
+          <name>PDN_EVENT_IPV6_DOWN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>PDN has IPv6 connectivity </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>PDN library event. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/pdn.h" line="57" column="1" bodyfile="include/modem/pdn.h" bodystart="57" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__pdn_ga7afca6297fda2fcd0c49444d5a0cb5f6_1ga7afca6297fda2fcd0c49444d5a0cb5f6" prot="public" static="no" strong="no">
+        <type></type>
+        <name>pdn_auth</name>
+        <enumvalue id="group__pdn_ga7afca6297fda2fcd0c49444d5a0cb5f6_1gga7afca6297fda2fcd0c49444d5a0cb5f6ac1c8d35185d0aac19fa0051b6cbf9251" prot="public">
+          <name>PDN_AUTH_NONE</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pdn_ga7afca6297fda2fcd0c49444d5a0cb5f6_1gga7afca6297fda2fcd0c49444d5a0cb5f6aef46ceadc437938ec3e9e981378676e1" prot="public">
+          <name>PDN_AUTH_PAP</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>No authentication </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__pdn_ga7afca6297fda2fcd0c49444d5a0cb5f6_1gga7afca6297fda2fcd0c49444d5a0cb5f6a9a83724a960dfcdef8102a420538129e" prot="public">
+          <name>PDN_AUTH_CHAP</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Password authentication protocol </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>PDN authentication method. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/pdn.h" line="66" column="1" bodyfile="include/modem/pdn.h" bodystart="66" bodyend="70"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__pdn_gaf57d90f638425d513dcd974318563b38_1gaf57d90f638425d513dcd974318563b38" prot="public" static="no">
+        <type>void(*</type>
+        <definition>pdn_event_handler_t</definition>
+        <argsstring>)(uint8_t cid, enum pdn_event event, int reason)</argsstring>
+        <name>pdn_event_handler_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event handler for PDN events. If assigned during PDP context creation, the event handler will receive status information relative to the Packet Data Network connection, as reported by the AT notifications +CNEC and +GGEV.</para>
+<para>This handler is executed by the same context that dispatches AT notifications.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The PDP context ID. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>event</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The event. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>reason</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The ESM error reason, if available. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/pdn.h" line="86" column="9" bodyfile="include/modem/pdn.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__pdn_gafe4a43d49642b36f29e50c1f0138f139_1gafe4a43d49642b36f29e50c1f0138f139" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int pdn_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>pdn_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize the PDN library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This library depends on the <ref refid="group__at__cmd" kindref="compound">AT command interface driver</ref> and <ref refid="group__at__notif" kindref="compound">AT command notification manager</ref> libraries, and they must be both initialized before initializing this library.</para>
+<para><simplesect kind="return"><para>int Zero on success or a negative errno otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/pdn.h" line="97" column="5" declfile="include/modem/pdn.h" declline="97" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__pdn_ga4377545f0c348ca4ae30cc676af1b172_1ga4377545f0c348ca4ae30cc676af1b172" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int pdn_ctx_create</definition>
+        <argsstring>(uint8_t *cid, pdn_event_handler_t cb)</argsstring>
+        <name>pdn_ctx_create</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>cid</declname>
+        </param>
+        <param>
+          <type><ref refid="group__pdn_gaf57d90f638425d513dcd974318563b38_1gaf57d90f638425d513dcd974318563b38" kindref="member">pdn_event_handler_t</ref></type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Create a Packet Data Protocol (PDP) context. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If a callback is provided via the <computeroutput>cb</computeroutput> parameter, the library will generate events from the +CNEC and +GGEV AT notifications to report state of the Packet Data Network (PDN) connection.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">cid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The ID of the new PDP context. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional event handler. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>int Zero on success or a negative errno otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/pdn.h" line="110" column="5" declfile="include/modem/pdn.h" declline="110" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__pdn_ga0e9f68662cb425d8d3a2580eb080f339_1ga0e9f68662cb425d8d3a2580eb080f339" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int pdn_ctx_configure</definition>
+        <argsstring>(uint8_t cid, const char *apn, enum pdn_fam family, struct pdn_pdp_opt *opts)</argsstring>
+        <name>pdn_ctx_configure</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>cid</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>apn</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__pdn_ga2f987f23c128efe7654349429c88fcb5_1ga2f987f23c128efe7654349429c88fcb5" kindref="member">pdn_fam</ref></type>
+          <declname>family</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structpdn__pdp__opt" kindref="compound">pdn_pdp_opt</ref> *</type>
+          <declname>opts</declname>
+        </param>
+        <briefdescription>
+<para>Configure a Packet Data Protocol context. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The PDN connection must be inactive when the PDP context is configured.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The PDP context to configure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>apn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Access Point Name to configure the PDP context with. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>family</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The family to configure the PDN context for. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>opts</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional additional configuration options. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>int Zero on success or a negative errno otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/pdn.h" line="123" column="5" declfile="include/modem/pdn.h" declline="123" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__pdn_gae9ca6507309674748650e8742b0ec5fd_1gae9ca6507309674748650e8742b0ec5fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int pdn_ctx_auth_set</definition>
+        <argsstring>(uint8_t cid, enum pdn_auth method, const char *user, const char *password)</argsstring>
+        <name>pdn_ctx_auth_set</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>cid</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__pdn_ga7afca6297fda2fcd0c49444d5a0cb5f6_1ga7afca6297fda2fcd0c49444d5a0cb5f6" kindref="member">pdn_auth</ref></type>
+          <declname>method</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>user</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>password</declname>
+        </param>
+        <briefdescription>
+<para>Set PDN connection authentication parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The PDP context to set authentication parameters for. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>method</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The desired authentication method. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>user</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The username to use for authentication. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>password</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The password to use for authentication. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>int Zero on success or a negative errno otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/pdn.h" line="135" column="5" declfile="include/modem/pdn.h" declline="135" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__pdn_gaf03e3ada061e3ba075938fe68f32b991_1gaf03e3ada061e3ba075938fe68f32b991" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int pdn_ctx_destroy</definition>
+        <argsstring>(uint8_t cid)</argsstring>
+        <name>pdn_ctx_destroy</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>cid</declname>
+        </param>
+        <briefdescription>
+<para>Destroy a Packet Data Protocol context. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The PDN connection must be inactive when the PDP context is destroyed.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The PDP context to destroy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>int Zero on success or a negative errno otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/pdn.h" line="146" column="5" declfile="include/modem/pdn.h" declline="146" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__pdn_gacfb7ac86a2dd6ec121797a8436e014f1_1gacfb7ac86a2dd6ec121797a8436e014f1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int pdn_activate</definition>
+        <argsstring>(uint8_t cid, int *esm, enum pdn_fam *family)</argsstring>
+        <name>pdn_activate</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>cid</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>esm</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__pdn_ga2f987f23c128efe7654349429c88fcb5_1ga2f987f23c128efe7654349429c88fcb5" kindref="member">pdn_fam</ref> *</type>
+          <declname>family</declname>
+        </param>
+        <briefdescription>
+<para>Activate a Packet Data Network (PDN) connection. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The PDP context ID to activate a connection for. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">esm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If provided, the function will block to return the ESM error reason. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">family</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If provided, the function will block to return PDN_FAM_IPV4 if only IPv4 is supported, or PDN_FAM_IPV6 if only IPv6 is supported. Otherwise, this value will remain unchanged. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>int Zero on success or a negative errno otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/pdn.h" line="158" column="5" declfile="include/modem/pdn.h" declline="158" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__pdn_ga3362ded95a8ba600498d35ce6b9dd0a4_1ga3362ded95a8ba600498d35ce6b9dd0a4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int pdn_deactivate</definition>
+        <argsstring>(uint8_t cid)</argsstring>
+        <name>pdn_deactivate</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>cid</declname>
+        </param>
+        <briefdescription>
+<para>Deactivate a Packet Data Network (PDN) connection. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The PDP context ID. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>int Zero on success or a negative errno otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/pdn.h" line="166" column="5" declfile="include/modem/pdn.h" declline="166" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__pdn_gaa9b5aef8a5ed4251c7bd84113f034b5e_1gaa9b5aef8a5ed4251c7bd84113f034b5e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int pdn_id_get</definition>
+        <argsstring>(uint8_t cid)</argsstring>
+        <name>pdn_id_get</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>cid</declname>
+        </param>
+        <briefdescription>
+<para>Retrieve the PDN ID for a given PDP Context. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The PDN ID can be used to route traffic through a Packet Data Network.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The context ID of the PDN connection. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>int A non-negative PDN ID on success, or a negative errno otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/pdn.h" line="176" column="5" declfile="include/modem/pdn.h" declline="176" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__pdn_ga06cd69e582bec5a04967b23f062d24a5_1ga06cd69e582bec5a04967b23f062d24a5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int pdn_default_apn_get</definition>
+        <argsstring>(char *buf, size_t len)</argsstring>
+        <name>pdn_default_apn_get</name>
+        <param>
+          <type>char *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Retrieve the default Access Point Name (APN). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The default APN is the APN of the default PDP context (zero).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The buffer to copy the APN into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the output buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>int Zero on success or a negative errno otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/pdn.h" line="187" column="5" declfile="include/modem/pdn.h" declline="187" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__pdn_gaf22e0dedf91b86c3b125310c786c5507_1gaf22e0dedf91b86c3b125310c786c5507" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int pdn_default_callback_set</definition>
+        <argsstring>(pdn_event_handler_t cb)</argsstring>
+        <name>pdn_default_callback_set</name>
+        <param>
+          <type><ref refid="group__pdn_gaf57d90f638425d513dcd974318563b38_1gaf57d90f638425d513dcd974318563b38" kindref="member">pdn_event_handler_t</ref></type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Set a callback for events pertaining to the default PDP context (zero). </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The PDN event handler. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/pdn.h" line="194" column="5" declfile="include/modem/pdn.h" declline="194" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Public APIs for the PDN library. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>PDN_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PDN_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdbool.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stddef.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdint.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="group__pdn_ga2f987f23c128efe7654349429c88fcb5_1ga2f987f23c128efe7654349429c88fcb5" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__pdn_ga2f987f23c128efe7654349429c88fcb5_1ga2f987f23c128efe7654349429c88fcb5" kindref="member">pdn_fam</ref><sp/>{</highlight></codeline>
+<codeline lineno="27" refid="group__pdn_ga2f987f23c128efe7654349429c88fcb5_1gga2f987f23c128efe7654349429c88fcb5a9d438054c0e38fabb65598d9f720e194" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pdn_ga2f987f23c128efe7654349429c88fcb5_1gga2f987f23c128efe7654349429c88fcb5a9d438054c0e38fabb65598d9f720e194" kindref="member">PDN_FAM_IPV4</ref><sp/><sp/><sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="28" refid="group__pdn_ga2f987f23c128efe7654349429c88fcb5_1gga2f987f23c128efe7654349429c88fcb5ac5b9d9eedd08b99e8b92c7e9d4a01cb9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pdn_ga2f987f23c128efe7654349429c88fcb5_1gga2f987f23c128efe7654349429c88fcb5ac5b9d9eedd08b99e8b92c7e9d4a01cb9" kindref="member">PDN_FAM_IPV6</ref><sp/><sp/><sp/>=<sp/>1,</highlight></codeline>
+<codeline lineno="29" refid="group__pdn_ga2f987f23c128efe7654349429c88fcb5_1gga2f987f23c128efe7654349429c88fcb5afd689f49993354b602981eab7fd40c59" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pdn_ga2f987f23c128efe7654349429c88fcb5_1gga2f987f23c128efe7654349429c88fcb5afd689f49993354b602981eab7fd40c59" kindref="member">PDN_FAM_IPV4V6</ref><sp/>=<sp/>2,</highlight></codeline>
+<codeline lineno="30" refid="group__pdn_ga2f987f23c128efe7654349429c88fcb5_1gga2f987f23c128efe7654349429c88fcb5aecd0070f8b023c0ce9d448e329bf706b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pdn_ga2f987f23c128efe7654349429c88fcb5_1gga2f987f23c128efe7654349429c88fcb5aecd0070f8b023c0ce9d448e329bf706b" kindref="member">PDN_FAM_NONIP</ref><sp/><sp/>=<sp/>3,</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="structpdn__pdp__opt" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structpdn__pdp__opt" kindref="compound">pdn_pdp_opt</ref><sp/>{</highlight></codeline>
+<codeline lineno="40" refid="structpdn__pdp__opt_a1bb1b6c865c86f2bfb3068fa5d88b3a5_1a1bb1b6c865c86f2bfb3068fa5d88b3a5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structpdn__pdp__opt_a1bb1b6c865c86f2bfb3068fa5d88b3a5_1a1bb1b6c865c86f2bfb3068fa5d88b3a5" kindref="member">ip4_addr_alloc</ref>;</highlight></codeline>
+<codeline lineno="47" refid="structpdn__pdp__opt_ac71560c987d7f5e201c816a4c6070d6b_1ac71560c987d7f5e201c816a4c6070d6b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structpdn__pdp__opt_ac71560c987d7f5e201c816a4c6070d6b_1ac71560c987d7f5e201c816a4c6070d6b" kindref="member">nslpi</ref>;</highlight></codeline>
+<codeline lineno="53" refid="structpdn__pdp__opt_a6baca8ef2479c84982ad18a6d784e280_1a6baca8ef2479c84982ad18a6d784e280" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structpdn__pdp__opt_a6baca8ef2479c84982ad18a6d784e280_1a6baca8ef2479c84982ad18a6d784e280" kindref="member">secure_pco</ref>;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="group__pdn_ga3e7b7ee49e1473ddc41bd97fb704227d_1ga3e7b7ee49e1473ddc41bd97fb704227d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__pdn_ga3e7b7ee49e1473ddc41bd97fb704227d_1ga3e7b7ee49e1473ddc41bd97fb704227d" kindref="member">pdn_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="58" refid="group__pdn_ga3e7b7ee49e1473ddc41bd97fb704227d_1gga3e7b7ee49e1473ddc41bd97fb704227da4f59f5b592debb6928b545d1852cdde7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pdn_ga3e7b7ee49e1473ddc41bd97fb704227d_1gga3e7b7ee49e1473ddc41bd97fb704227da4f59f5b592debb6928b545d1852cdde7" kindref="member">PDN_EVENT_CNEC_ESM</ref>,<sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="59" refid="group__pdn_ga3e7b7ee49e1473ddc41bd97fb704227d_1gga3e7b7ee49e1473ddc41bd97fb704227da26008b8c592b5957522049c1719416e2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pdn_ga3e7b7ee49e1473ddc41bd97fb704227d_1gga3e7b7ee49e1473ddc41bd97fb704227da26008b8c592b5957522049c1719416e2" kindref="member">PDN_EVENT_ACTIVATED</ref>,<sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="60" refid="group__pdn_ga3e7b7ee49e1473ddc41bd97fb704227d_1gga3e7b7ee49e1473ddc41bd97fb704227da6da18cbea180376e5281867558dcc869" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pdn_ga3e7b7ee49e1473ddc41bd97fb704227d_1gga3e7b7ee49e1473ddc41bd97fb704227da6da18cbea180376e5281867558dcc869" kindref="member">PDN_EVENT_DEACTIVATED</ref>,<sp/><sp/></highlight></codeline>
+<codeline lineno="61" refid="group__pdn_ga3e7b7ee49e1473ddc41bd97fb704227d_1gga3e7b7ee49e1473ddc41bd97fb704227da9d79e5e54af9a0b42823e7e195e518a9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pdn_ga3e7b7ee49e1473ddc41bd97fb704227d_1gga3e7b7ee49e1473ddc41bd97fb704227da9d79e5e54af9a0b42823e7e195e518a9" kindref="member">PDN_EVENT_IPV6_UP</ref>,<sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="62" refid="group__pdn_ga3e7b7ee49e1473ddc41bd97fb704227d_1gga3e7b7ee49e1473ddc41bd97fb704227daa1adb1f26197ee06c77c877ed62299ab" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pdn_ga3e7b7ee49e1473ddc41bd97fb704227d_1gga3e7b7ee49e1473ddc41bd97fb704227daa1adb1f26197ee06c77c877ed62299ab" kindref="member">PDN_EVENT_IPV6_DOWN</ref>,<sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="63"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="group__pdn_ga7afca6297fda2fcd0c49444d5a0cb5f6_1ga7afca6297fda2fcd0c49444d5a0cb5f6" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__pdn_ga7afca6297fda2fcd0c49444d5a0cb5f6_1ga7afca6297fda2fcd0c49444d5a0cb5f6" kindref="member">pdn_auth</ref><sp/>{</highlight></codeline>
+<codeline lineno="67" refid="group__pdn_ga7afca6297fda2fcd0c49444d5a0cb5f6_1gga7afca6297fda2fcd0c49444d5a0cb5f6ac1c8d35185d0aac19fa0051b6cbf9251" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pdn_ga7afca6297fda2fcd0c49444d5a0cb5f6_1gga7afca6297fda2fcd0c49444d5a0cb5f6ac1c8d35185d0aac19fa0051b6cbf9251" kindref="member">PDN_AUTH_NONE</ref><sp/>=<sp/>0,<sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="68" refid="group__pdn_ga7afca6297fda2fcd0c49444d5a0cb5f6_1gga7afca6297fda2fcd0c49444d5a0cb5f6aef46ceadc437938ec3e9e981378676e1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pdn_ga7afca6297fda2fcd0c49444d5a0cb5f6_1gga7afca6297fda2fcd0c49444d5a0cb5f6aef46ceadc437938ec3e9e981378676e1" kindref="member">PDN_AUTH_PAP</ref><sp/><sp/>=<sp/>1,<sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="69" refid="group__pdn_ga7afca6297fda2fcd0c49444d5a0cb5f6_1gga7afca6297fda2fcd0c49444d5a0cb5f6a9a83724a960dfcdef8102a420538129e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__pdn_ga7afca6297fda2fcd0c49444d5a0cb5f6_1gga7afca6297fda2fcd0c49444d5a0cb5f6a9a83724a960dfcdef8102a420538129e" kindref="member">PDN_AUTH_CHAP</ref><sp/>=<sp/>2,<sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="70"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="group__pdn_gaf57d90f638425d513dcd974318563b38_1gaf57d90f638425d513dcd974318563b38" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__pdn_gaf57d90f638425d513dcd974318563b38_1gaf57d90f638425d513dcd974318563b38" kindref="member">pdn_event_handler_t</ref>)(uint8_t<sp/>cid,<sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__pdn_ga3e7b7ee49e1473ddc41bd97fb704227d_1ga3e7b7ee49e1473ddc41bd97fb704227d" kindref="member">pdn_event</ref><sp/>event,</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>reason);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97" refid="group__pdn_gafe4a43d49642b36f29e50c1f0138f139_1gafe4a43d49642b36f29e50c1f0138f139" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__pdn_gafe4a43d49642b36f29e50c1f0138f139_1gafe4a43d49642b36f29e50c1f0138f139" kindref="member">pdn_init</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110" refid="group__pdn_ga4377545f0c348ca4ae30cc676af1b172_1ga4377545f0c348ca4ae30cc676af1b172" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__pdn_ga4377545f0c348ca4ae30cc676af1b172_1ga4377545f0c348ca4ae30cc676af1b172" kindref="member">pdn_ctx_create</ref>(uint8_t<sp/>*cid,<sp/><ref refid="group__pdn_gaf57d90f638425d513dcd974318563b38_1gaf57d90f638425d513dcd974318563b38" kindref="member">pdn_event_handler_t</ref><sp/>cb);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123" refid="group__pdn_ga0e9f68662cb425d8d3a2580eb080f339_1ga0e9f68662cb425d8d3a2580eb080f339" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__pdn_ga0e9f68662cb425d8d3a2580eb080f339_1ga0e9f68662cb425d8d3a2580eb080f339" kindref="member">pdn_ctx_configure</ref>(uint8_t<sp/>cid,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*apn,<sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__pdn_ga2f987f23c128efe7654349429c88fcb5_1ga2f987f23c128efe7654349429c88fcb5" kindref="member">pdn_fam</ref><sp/>family,</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structpdn__pdp__opt" kindref="compound">pdn_pdp_opt</ref><sp/>*opts);</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135" refid="group__pdn_gae9ca6507309674748650e8742b0ec5fd_1gae9ca6507309674748650e8742b0ec5fd" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__pdn_gae9ca6507309674748650e8742b0ec5fd_1gae9ca6507309674748650e8742b0ec5fd" kindref="member">pdn_ctx_auth_set</ref>(uint8_t<sp/>cid,<sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__pdn_ga7afca6297fda2fcd0c49444d5a0cb5f6_1ga7afca6297fda2fcd0c49444d5a0cb5f6" kindref="member">pdn_auth</ref><sp/>method,</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*user,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*password);</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146" refid="group__pdn_gaf03e3ada061e3ba075938fe68f32b991_1gaf03e3ada061e3ba075938fe68f32b991" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__pdn_gaf03e3ada061e3ba075938fe68f32b991_1gaf03e3ada061e3ba075938fe68f32b991" kindref="member">pdn_ctx_destroy</ref>(uint8_t<sp/>cid);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="158" refid="group__pdn_gacfb7ac86a2dd6ec121797a8436e014f1_1gacfb7ac86a2dd6ec121797a8436e014f1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__pdn_gacfb7ac86a2dd6ec121797a8436e014f1_1gacfb7ac86a2dd6ec121797a8436e014f1" kindref="member">pdn_activate</ref>(uint8_t<sp/>cid,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*esm,<sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__pdn_ga2f987f23c128efe7654349429c88fcb5_1ga2f987f23c128efe7654349429c88fcb5" kindref="member">pdn_fam</ref><sp/>*family);</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166" refid="group__pdn_ga3362ded95a8ba600498d35ce6b9dd0a4_1ga3362ded95a8ba600498d35ce6b9dd0a4" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__pdn_ga3362ded95a8ba600498d35ce6b9dd0a4_1ga3362ded95a8ba600498d35ce6b9dd0a4" kindref="member">pdn_deactivate</ref>(uint8_t<sp/>cid);</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176" refid="group__pdn_gaa9b5aef8a5ed4251c7bd84113f034b5e_1gaa9b5aef8a5ed4251c7bd84113f034b5e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__pdn_gaa9b5aef8a5ed4251c7bd84113f034b5e_1gaa9b5aef8a5ed4251c7bd84113f034b5e" kindref="member">pdn_id_get</ref>(uint8_t<sp/>cid);</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187" refid="group__pdn_ga06cd69e582bec5a04967b23f062d24a5_1ga06cd69e582bec5a04967b23f062d24a5" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__pdn_ga06cd69e582bec5a04967b23f062d24a5_1ga06cd69e582bec5a04967b23f062d24a5" kindref="member">pdn_default_apn_get</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*buf,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>len);</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight></codeline>
+<codeline lineno="194" refid="group__pdn_gaf22e0dedf91b86c3b125310c786c5507_1gaf22e0dedf91b86c3b125310c786c5507" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__pdn_gaf22e0dedf91b86c3b125310c786c5507_1gaf22e0dedf91b86c3b125310c786c5507" kindref="member">pdn_default_callback_set</ref>(<ref refid="group__pdn_gaf57d90f638425d513dcd974318563b38_1gaf57d90f638425d513dcd974318563b38" kindref="member">pdn_event_handler_t</ref><sp/>cb);</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight></codeline>
+<codeline lineno="198"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="199"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="201"><highlight class="normal"></highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>PDN_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/modem/pdn.h"/>
+  </compounddef>
+</doxygen>

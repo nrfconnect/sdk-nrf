@@ -1,0 +1,192 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="click__event_8h" kind="file" language="C++">
+    <compoundname>click_event.h</compoundname>
+    <includes refid="event__manager_8h" local="no">event_manager.h</includes>
+    <includes refid="event__manager__profiler_8h" local="no">event_manager_profiler.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/caf/events/click_event.h</label>
+        <link refid="click__event_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>event_manager.h</label>
+        <link refid="event__manager_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>event_manager_profiler.h</label>
+        <link refid="event__manager__profiler_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>profiler.h</label>
+        <link refid="profiler_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>event_manager_priv.h</label>
+      </node>
+      <node id="12">
+        <label>event_manager_profiler_priv.h</label>
+      </node>
+      <node id="7">
+        <label>logging/log_ctrl.h</label>
+      </node>
+      <node id="6">
+        <label>sys/__assert.h</label>
+      </node>
+      <node id="5">
+        <label>sys/reboot.h</label>
+      </node>
+      <node id="10">
+        <label>sys/util.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr.h</label>
+      </node>
+      <node id="4">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structclick__event" prot="public">click_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1gaa4ab9acde58c39ed8f273e894f51fa69" prot="public" static="no" strong="no">
+        <type></type>
+        <name>click</name>
+        <enumvalue id="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1ggaa4ab9acde58c39ed8f273e894f51fa69a172bbcfbcfb06569269d34823b08cc71" prot="public">
+          <name>CLICK_NONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Button pressed and held for a period of time that is too long for CLICK_SHORT, but too short for CLICK_LONG. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1ggaa4ab9acde58c39ed8f273e894f51fa69a2363d3cf0ada4db1ee267ee337d67d3f" prot="public">
+          <name>CLICK_SHORT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Button pressed and released after a short time. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1ggaa4ab9acde58c39ed8f273e894f51fa69adfcb136d5d952a22b314f033e7317322" prot="public">
+          <name>CLICK_LONG</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Button pressed and held for a long period of time. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1ggaa4ab9acde58c39ed8f273e894f51fa69a6a6b9152bd1cc0b637573c34e69c1e73" prot="public">
+          <name>CLICK_DOUBLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Two sequences of the button press and release in a short time interval. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1ggaa4ab9acde58c39ed8f273e894f51fa69ae88fb2356d399f1866fd553515274906" prot="public">
+          <name>CLICK_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Number of click types. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Click types. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The click type refers to the way a button can be pressed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/click_event.h" line="28" column="1" bodyfile="include/caf/events/click_event.h" bodystart="28" bodyend="45"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019-2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_CLICK_EVENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_CLICK_EVENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="event__manager_8h" kindref="compound">event_manager.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="event__manager__profiler_8h" kindref="compound">event_manager_profiler.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1gaa4ab9acde58c39ed8f273e894f51fa69" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1gaa4ab9acde58c39ed8f273e894f51fa69" kindref="member">click</ref><sp/>{</highlight></codeline>
+<codeline lineno="32" refid="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1ggaa4ab9acde58c39ed8f273e894f51fa69a172bbcfbcfb06569269d34823b08cc71" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1ggaa4ab9acde58c39ed8f273e894f51fa69a172bbcfbcfb06569269d34823b08cc71" kindref="member">CLICK_NONE</ref>,</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1ggaa4ab9acde58c39ed8f273e894f51fa69a2363d3cf0ada4db1ee267ee337d67d3f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1ggaa4ab9acde58c39ed8f273e894f51fa69a2363d3cf0ada4db1ee267ee337d67d3f" kindref="member">CLICK_SHORT</ref>,</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1ggaa4ab9acde58c39ed8f273e894f51fa69adfcb136d5d952a22b314f033e7317322" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1ggaa4ab9acde58c39ed8f273e894f51fa69adfcb136d5d952a22b314f033e7317322" kindref="member">CLICK_LONG</ref>,</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1ggaa4ab9acde58c39ed8f273e894f51fa69a6a6b9152bd1cc0b637573c34e69c1e73" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1ggaa4ab9acde58c39ed8f273e894f51fa69a6a6b9152bd1cc0b637573c34e69c1e73" kindref="member">CLICK_DOUBLE</ref>,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1ggaa4ab9acde58c39ed8f273e894f51fa69ae88fb2356d399f1866fd553515274906" kindref="member">CLICK_COUNT</ref></highlight></codeline>
+<codeline lineno="45" refid="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1ggaa4ab9acde58c39ed8f273e894f51fa69ae88fb2356d399f1866fd553515274906" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="structclick__event" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structclick__event" kindref="compound">click_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="53" refid="structclick__event_ae98937b1b1c76dd971956a63ac91b59e_1ae98937b1b1c76dd971956a63ac91b59e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structevent__header" kindref="compound">event_header</ref><sp/><ref refid="structclick__event_ae98937b1b1c76dd971956a63ac91b59e_1ae98937b1b1c76dd971956a63ac91b59e" kindref="member">header</ref>;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="structclick__event_ac05203e0857756a573cb90bb657a9838_1ac05203e0857756a573cb90bb657a9838" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structclick__event_ac05203e0857756a573cb90bb657a9838_1ac05203e0857756a573cb90bb657a9838" kindref="member">key_id</ref>;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="structclick__event_acc5d646650f95408852b542218b7d271_1acc5d646650f95408852b542218b7d271" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1gaa4ab9acde58c39ed8f273e894f51fa69" kindref="member">click</ref><sp/><ref refid="structclick__event_acc5d646650f95408852b542218b7d271_1acc5d646650f95408852b542218b7d271" kindref="member">click</ref>;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><ref refid="group__event__manager_gade0652b21cddf1a6b4d58e668b402caa_1gade0652b21cddf1a6b4d58e668b402caa" kindref="member">EVENT_TYPE_DECLARE</ref>(<ref refid="structclick__event" kindref="compound">click_event</ref>);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_CLICK_EVENT_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/caf/events/click_event.h"/>
+  </compounddef>
+</doxygen>

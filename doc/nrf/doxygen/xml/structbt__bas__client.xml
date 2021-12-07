@@ -1,0 +1,199 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__bas__client" kind="struct" language="C++" prot="public">
+    <compoundname>bt_bas_client</compoundname>
+    <includes refid="bas__client_8h" local="no">bas_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__bas__client_a2dce69230cab49a2326c4be0bec4f086_1a2dce69230cab49a2326c4be0bec4f086" prot="public" static="no" mutable="no">
+        <type>struct bt_conn *</type>
+        <definition>struct bt_conn* bt_bas_client::conn</definition>
+        <argsstring></argsstring>
+        <name>conn</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Connection handle. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="84" column="14" bodyfile="include/bluetooth/services/bas_client.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__bas__client_abcf862ab8c2daa90ff36cea2641bbacf_1abcf862ab8c2daa90ff36cea2641bbacf" prot="public" static="no" mutable="no">
+        <type>struct bt_gatt_subscribe_params</type>
+        <definition>struct bt_gatt_subscribe_params bt_bas_client::notify_params</definition>
+        <argsstring></argsstring>
+        <name>notify_params</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Notification parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="86" column="31" bodyfile="include/bluetooth/services/bas_client.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__bas__client_a42f2502758bf2e93fd5a77fd6986e063_1a42f2502758bf2e93fd5a77fd6986e063" prot="public" static="no" mutable="no">
+        <type>struct bt_gatt_read_params</type>
+        <definition>struct bt_gatt_read_params bt_bas_client::read_params</definition>
+        <argsstring></argsstring>
+        <name>read_params</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Read parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="88" column="26" bodyfile="include/bluetooth/services/bas_client.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__bas__client_aa6e2251d9b8c1593b2634d2f341b9985_1aa6e2251d9b8c1593b2634d2f341b9985" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__bas__periodic__read" kindref="compound">bt_bas_periodic_read</ref></type>
+        <definition>struct bt_bas_periodic_read bt_bas_client::periodic_read</definition>
+        <argsstring></argsstring>
+        <name>periodic_read</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Read characteristic value timing. Used when characteristic do not have a CCCD descriptor. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="92" column="27" bodyfile="include/bluetooth/services/bas_client.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__bas__client_a8f31cc91700701b53746f7f782f8007f_1a8f31cc91700701b53746f7f782f8007f" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__bas__client__api_gac958a84eb3b24bbdcbe2183b64d74b08_1gac958a84eb3b24bbdcbe2183b64d74b08" kindref="member">bt_bas_notify_cb</ref></type>
+        <definition>bt_bas_notify_cb bt_bas_client::notify_cb</definition>
+        <argsstring></argsstring>
+        <name>notify_cb</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Notification callback. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="94" column="18" bodyfile="include/bluetooth/services/bas_client.h" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__bas__client_ade503a6e735e0c3c9f3053f0304367e2_1ade503a6e735e0c3c9f3053f0304367e2" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__bas__client__api_ga91c37379f6a337c12b22b3cfc92c2552_1ga91c37379f6a337c12b22b3cfc92c2552" kindref="member">bt_bas_read_cb</ref></type>
+        <definition>bt_bas_read_cb bt_bas_client::read_cb</definition>
+        <argsstring></argsstring>
+        <name>read_cb</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Read value callback. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="96" column="16" bodyfile="include/bluetooth/services/bas_client.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__bas__client_a41d438e00c2ace0f512145b492619475_1a41d438e00c2ace0f512145b492619475" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_bas_client::val_handle</definition>
+        <argsstring></argsstring>
+        <name>val_handle</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handle of the Battery Level Characteristic. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="98" column="10" bodyfile="include/bluetooth/services/bas_client.h" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__bas__client_ae9a9da672212055b95b06aeb6305f795_1ae9a9da672212055b95b06aeb6305f795" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_bas_client::ccc_handle</definition>
+        <argsstring></argsstring>
+        <name>ccc_handle</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handle of the CCCD of the Battery Level Characteristic. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="100" column="10" bodyfile="include/bluetooth/services/bas_client.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__bas__client_a68c3c7020f4c028f312938581b14e5b0_1a68c3c7020f4c028f312938581b14e5b0" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_bas_client::battery_level</definition>
+        <argsstring></argsstring>
+        <name>battery_level</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current battery value. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="102" column="9" bodyfile="include/bluetooth/services/bas_client.h" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__bas__client_aeb267e9b7b577052a963f8eecd8e870d_1aeb267e9b7b577052a963f8eecd8e870d" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_bas_client::properties</definition>
+        <argsstring></argsstring>
+        <name>properties</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Properties of the service. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="104" column="9" bodyfile="include/bluetooth/services/bas_client.h" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__bas__client_ad5258eedeffeb985636716ff6622d3e3_1ad5258eedeffeb985636716ff6622d3e3" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool bt_bas_client::notify</definition>
+        <argsstring></argsstring>
+        <name>notify</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Notification supported. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bas_client.h" line="106" column="6" bodyfile="include/bluetooth/services/bas_client.h" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Battery Service Client instance. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_bas_client</label>
+        <link refid="structbt__bas__client"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>periodic_read</edgelabel>
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>notify_cb</edgelabel>
+          <edgelabel>read_cb</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_bas_periodic_read</label>
+        <link refid="structbt__bas__periodic__read"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/bas_client.h" line="82" column="1" bodyfile="include/bluetooth/services/bas_client.h" bodystart="82" bodyend="107"/>
+    <listofallmembers>
+      <member refid="structbt__bas__client_a68c3c7020f4c028f312938581b14e5b0_1a68c3c7020f4c028f312938581b14e5b0" prot="public" virt="non-virtual"><scope>bt_bas_client</scope><name>battery_level</name></member>
+      <member refid="structbt__bas__client_ae9a9da672212055b95b06aeb6305f795_1ae9a9da672212055b95b06aeb6305f795" prot="public" virt="non-virtual"><scope>bt_bas_client</scope><name>ccc_handle</name></member>
+      <member refid="structbt__bas__client_a2dce69230cab49a2326c4be0bec4f086_1a2dce69230cab49a2326c4be0bec4f086" prot="public" virt="non-virtual"><scope>bt_bas_client</scope><name>conn</name></member>
+      <member refid="structbt__bas__client_ad5258eedeffeb985636716ff6622d3e3_1ad5258eedeffeb985636716ff6622d3e3" prot="public" virt="non-virtual"><scope>bt_bas_client</scope><name>notify</name></member>
+      <member refid="structbt__bas__client_a8f31cc91700701b53746f7f782f8007f_1a8f31cc91700701b53746f7f782f8007f" prot="public" virt="non-virtual"><scope>bt_bas_client</scope><name>notify_cb</name></member>
+      <member refid="structbt__bas__client_abcf862ab8c2daa90ff36cea2641bbacf_1abcf862ab8c2daa90ff36cea2641bbacf" prot="public" virt="non-virtual"><scope>bt_bas_client</scope><name>notify_params</name></member>
+      <member refid="structbt__bas__client_aa6e2251d9b8c1593b2634d2f341b9985_1aa6e2251d9b8c1593b2634d2f341b9985" prot="public" virt="non-virtual"><scope>bt_bas_client</scope><name>periodic_read</name></member>
+      <member refid="structbt__bas__client_aeb267e9b7b577052a963f8eecd8e870d_1aeb267e9b7b577052a963f8eecd8e870d" prot="public" virt="non-virtual"><scope>bt_bas_client</scope><name>properties</name></member>
+      <member refid="structbt__bas__client_ade503a6e735e0c3c9f3053f0304367e2_1ade503a6e735e0c3c9f3053f0304367e2" prot="public" virt="non-virtual"><scope>bt_bas_client</scope><name>read_cb</name></member>
+      <member refid="structbt__bas__client_a42f2502758bf2e93fd5a77fd6986e063_1a42f2502758bf2e93fd5a77fd6986e063" prot="public" virt="non-virtual"><scope>bt_bas_client</scope><name>read_params</name></member>
+      <member refid="structbt__bas__client_a41d438e00c2ace0f512145b492619475_1a41d438e00c2ace0f512145b492619475" prot="public" virt="non-virtual"><scope>bt_bas_client</scope><name>val_handle</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

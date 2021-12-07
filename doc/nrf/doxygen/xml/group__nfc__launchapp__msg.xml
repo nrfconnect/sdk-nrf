@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__launchapp__msg" kind="group">
+    <compoundname>nfc_launchapp_msg</compoundname>
+    <title>Launch App messages</title>
+    <innergroup refid="group__nfc__launchapp__rec">Launch App records</innergroup>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__launchapp__msg_1ga72a2f1a1faca0c21ef11289af00b2c8d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_launchapp_msg_encode</definition>
+        <argsstring>(uint8_t const *android_package_name, uint32_t android_package_name_len, uint8_t const *universal_link, uint32_t universal_link_len, uint8_t *buf, size_t *len)</argsstring>
+        <name>nfc_launchapp_msg_encode</name>
+        <param>
+          <type>uint8_t const *</type>
+          <declname>android_package_name</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>android_package_name_len</declname>
+        </param>
+        <param>
+          <type>uint8_t const *</type>
+          <declname>universal_link</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>universal_link_len</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Function for encoding an NFC NDEF launch app message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function encodes an NFC NDEF message into a buffer.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">android_package_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Android package name string. If NULL, the Android Application Record will be skipped. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">android_package_name_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the Android package name. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">universal_link</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Universal Link string. If NULL, the Universal Link Record will be skipped. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">universal_link_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the Universal Link. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer for the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the available memory for the message as input. Size of the generated message as output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the message was successfully created. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if both android_package_name_len and universal_link were invalid (equal to NULL). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the predicted message is larger than the provided buffer space. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>codes might be returned depending on the functions <ref refid="group__nfc__ndef__msg_ga82467aede468e5467a8bff345ea05d2e_1ga82467aede468e5467a8bff345ea05d2e" kindref="member">nfc_ndef_msg_encode</ref> and <ref refid="group__nfc__ndef__msg_gaa3eb7eacc6ffbeb2bf42d92c8c814554_1gaa3eb7eacc6ffbeb2bf42d92c8c814554" kindref="member">nfc_ndef_msg_record_add</ref> </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/launchapp_msg.h" line="46" column="5" declfile="include/nfc/ndef/launchapp_msg.h" declline="46" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Generation of NFC NDEF messages that can be used to launch apps. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

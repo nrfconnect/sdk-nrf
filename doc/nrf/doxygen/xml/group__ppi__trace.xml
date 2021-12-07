@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__ppi__trace" kind="group">
+    <compoundname>ppi_trace</compoundname>
+    <title>PPI trace</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__ppi__trace_1ga677f257b97ceea33b82ddd15c0639b34" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void * ppi_trace_config</definition>
+        <argsstring>(uint32_t pin, uint32_t evt)</argsstring>
+        <name>ppi_trace_config</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>pin</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>evt</declname>
+        </param>
+        <briefdescription>
+<para>Configure a PPI trace pin for tracing a single event. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>If a hardware event is used by DPPI in the application, the PPI trace configuration must occur after the DPPI connection for the given event. The order is important because DPPI allows assigning events to only one channel. Therefore, PPI trace subscribes to the same channel.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>pin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pin to use for tracing. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Hardware event to be traced on the pin.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Handle, or NULL if the configuration failed. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/debug/ppi_trace.h" line="33" column="6" declfile="include/debug/ppi_trace.h" declline="33" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ppi__trace_1ga115ca3c22f2faff30223b10dbdcc651b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void * ppi_trace_pair_config</definition>
+        <argsstring>(uint32_t pin, uint32_t start_evt, uint32_t stop_evt)</argsstring>
+        <name>ppi_trace_pair_config</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>pin</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>start_evt</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>stop_evt</declname>
+        </param>
+        <briefdescription>
+<para>Configure a PPI trace pin for tracing complementary events. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Not supported on nRF51 Series. Requires presence of GPIOTE SET and CLR tasks.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>pin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pin to use for tracing. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>start_evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Hardware event that sets the pin. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>stop_evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Hardware event that clears the pin.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Handle, or NULL if the configuration failed. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/debug/ppi_trace.h" line="46" column="6" declfile="include/debug/ppi_trace.h" declline="46" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ppi__trace_1ga487889f099a9571d51845aadf9a0659c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ppi_trace_enable</definition>
+        <argsstring>(void *handle)</argsstring>
+        <name>ppi_trace_enable</name>
+        <param>
+          <type>void *</type>
+          <declname>handle</declname>
+        </param>
+        <briefdescription>
+<para>Enable PPI trace pin. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>handle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Handle. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/debug/ppi_trace.h" line="52" column="6" declfile="include/debug/ppi_trace.h" declline="52" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ppi__trace_1gafbdc20df67dd9f715ff924197d1dc78b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ppi_trace_disable</definition>
+        <argsstring>(void *handle)</argsstring>
+        <name>ppi_trace_disable</name>
+        <param>
+          <type>void *</type>
+          <declname>handle</declname>
+        </param>
+        <briefdescription>
+<para>Disable PPI trace pin. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>handle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Handle. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/debug/ppi_trace.h" line="58" column="6" declfile="include/debug/ppi_trace.h" declline="58" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Module for tracing hardware events on GPIO. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

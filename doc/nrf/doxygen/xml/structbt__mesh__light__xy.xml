@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__xy" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_xy</compoundname>
+    <includes refid="light__xyl_8h" local="no">light_xyl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__xy_a55db1f30129438aa4ce4c90344ebe66f_1a55db1f30129438aa4ce4c90344ebe66f" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_light_xy::x</definition>
+        <argsstring></argsstring>
+        <name>x</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>xyL x value </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl.h" line="26" column="10" bodyfile="include/bluetooth/mesh/light_xyl.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__xy_a2b7970c75e484ca30824ce0ca8c71739_1a2b7970c75e484ca30824ce0ca8c71739" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_light_xy::y</definition>
+        <argsstring></argsstring>
+        <name>y</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>xyL y value </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl.h" line="28" column="10" bodyfile="include/bluetooth/mesh/light_xyl.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Light xy parameters. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/light_xyl.h" line="24" column="1" bodyfile="include/bluetooth/mesh/light_xyl.h" bodystart="24" bodyend="29"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__xy_a55db1f30129438aa4ce4c90344ebe66f_1a55db1f30129438aa4ce4c90344ebe66f" prot="public" virt="non-virtual"><scope>bt_mesh_light_xy</scope><name>x</name></member>
+      <member refid="structbt__mesh__light__xy_a2b7970c75e484ca30824ce0ca8c71739_1a2b7970c75e484ca30824ce0ca8c71739" prot="public" virt="non-virtual"><scope>bt_mesh_light_xy</scope><name>y</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

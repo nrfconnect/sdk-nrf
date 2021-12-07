@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_f9b1babcadcf492ffa42f34d1bac7944" kind="dir">
+    <compoundname>applications/nrf_desktop/configuration/nrf52833dk_nrf52833</compoundname>
+    <innerfile refid="nrf52833dk__nrf52833_2ble__discovery__def_8h">ble_discovery_def.h</innerfile>
+    <innerfile refid="nrf52833dk__nrf52833_2ble__scan__def_8h">ble_scan_def.h</innerfile>
+    <innerfile refid="nrf__desktop_2configuration_2nrf52833dk__nrf52833_2buttons__def_8h">buttons_def.h</innerfile>
+    <innerfile refid="nrf__desktop_2configuration_2nrf52833dk__nrf52833_2click__detector__def_8h">click_detector_def.h</innerfile>
+    <innerfile refid="nrf__desktop_2configuration_2nrf52833dk__nrf52833_2led__state__def_8h">led_state_def.h</innerfile>
+    <innerfile refid="nrf52833dk__nrf52833_2port__state__def_8h">port_state_def.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/nrf_desktop/configuration/nrf52833dk_nrf52833/"/>
+  </compounddef>
+</doxygen>

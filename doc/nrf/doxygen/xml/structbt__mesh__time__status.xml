@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__time__status" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_time_status</compoundname>
+    <includes refid="time_8h" local="no">time.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__time__status_a561467e58cfb4f1c715385b4ddee36c3_1a561467e58cfb4f1c715385b4ddee36c3" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__time__tai" kindref="compound">bt_mesh_time_tai</ref></type>
+        <definition>struct bt_mesh_time_tai bt_mesh_time_status::tai</definition>
+        <argsstring></argsstring>
+        <name>tai</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>TAI time. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time.h" line="46" column="23" bodyfile="include/bluetooth/mesh/time.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__time__status_a06c1df34010f6ec5b288b231f4aaf7fe_1a06c1df34010f6ec5b288b231f4aaf7fe" prot="public" static="no" mutable="no">
+        <type>uint64_t</type>
+        <definition>uint64_t bt_mesh_time_status::uncertainty</definition>
+        <argsstring></argsstring>
+        <name>uncertainty</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Accumulated uncertainty of the mesh Timestamp in milliseconds. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time.h" line="48" column="10" bodyfile="include/bluetooth/mesh/time.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__time__status_a7762cd6360c1ee172cc50cab145bed11_1a7762cd6360c1ee172cc50cab145bed11" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t bt_mesh_time_status::tai_utc_delta</definition>
+        <argsstring></argsstring>
+        <name>tai_utc_delta</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current TAI-UTC Delta (leap seconds). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time.h" line="50" column="9" bodyfile="include/bluetooth/mesh/time.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__time__status_a27bfd28dc268c9d9d664960198ee52e3_1a27bfd28dc268c9d9d664960198ee52e3" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t bt_mesh_time_status::time_zone_offset</definition>
+        <argsstring></argsstring>
+        <name>time_zone_offset</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current zone offset in 15-minute increments. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time.h" line="52" column="9" bodyfile="include/bluetooth/mesh/time.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__time__status_a1b35723f052d9d0e6f8ffd466d71b335_1a1b35723f052d9d0e6f8ffd466d71b335" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool bt_mesh_time_status::is_authority</definition>
+        <argsstring></argsstring>
+        <name>is_authority</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Reliable TAI source flag. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time.h" line="54" column="6" bodyfile="include/bluetooth/mesh/time.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Parameters for the Time Status message. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_mesh_time_status</label>
+        <link refid="structbt__mesh__time__status"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>tai</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_mesh_time_tai</label>
+        <link refid="structbt__mesh__time__tai"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/time.h" line="44" column="1" bodyfile="include/bluetooth/mesh/time.h" bodystart="44" bodyend="55"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__time__status_a1b35723f052d9d0e6f8ffd466d71b335_1a1b35723f052d9d0e6f8ffd466d71b335" prot="public" virt="non-virtual"><scope>bt_mesh_time_status</scope><name>is_authority</name></member>
+      <member refid="structbt__mesh__time__status_a561467e58cfb4f1c715385b4ddee36c3_1a561467e58cfb4f1c715385b4ddee36c3" prot="public" virt="non-virtual"><scope>bt_mesh_time_status</scope><name>tai</name></member>
+      <member refid="structbt__mesh__time__status_a7762cd6360c1ee172cc50cab145bed11_1a7762cd6360c1ee172cc50cab145bed11" prot="public" virt="non-virtual"><scope>bt_mesh_time_status</scope><name>tai_utc_delta</name></member>
+      <member refid="structbt__mesh__time__status_a27bfd28dc268c9d9d664960198ee52e3_1a27bfd28dc268c9d9d664960198ee52e3" prot="public" virt="non-virtual"><scope>bt_mesh_time_status</scope><name>time_zone_offset</name></member>
+      <member refid="structbt__mesh__time__status_a06c1df34010f6ec5b288b231f4aaf7fe_1a06c1df34010f6ec5b288b231f4aaf7fe" prot="public" virt="non-virtual"><scope>bt_mesh_time_status</scope><name>uncertainty</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

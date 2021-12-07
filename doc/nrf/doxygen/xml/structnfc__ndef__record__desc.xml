@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__ndef__record__desc" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_ndef_record_desc</compoundname>
+    <includes refid="record_8h" local="no">record.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__ndef__record__desc_ad9d73aa209bc93c9cd900c5eb730a3ec_1ad9d73aa209bc93c9cd900c5eb730a3ec" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1ga2091295307fa8161219648a88df172a8" kindref="member">nfc_ndef_record_tnf</ref></type>
+        <definition>enum nfc_ndef_record_tnf nfc_ndef_record_desc::tnf</definition>
+        <argsstring></argsstring>
+        <name>tnf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Value of the Type Name Format (TNF) field. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="93" column="25" bodyfile="include/nfc/ndef/record.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__record__desc_ae6b993e75f17d0f14ce4442df727ab78_1ae6b993e75f17d0f14ce4442df727ab78" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_ndef_record_desc::id_length</definition>
+        <argsstring></argsstring>
+        <name>id_length</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of the ID field. If 0, a record format without ID field is assumed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="97" column="9" bodyfile="include/nfc/ndef/record.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__record__desc_ac95aad08f0e4484104707a2849923c5b_1ac95aad08f0e4484104707a2849923c5b" prot="public" static="no" mutable="no">
+        <type>uint8_t const  *</type>
+        <definition>uint8_t const* nfc_ndef_record_desc::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the ID field data. Not relevant if id_length is 0. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="99" column="15" bodyfile="include/nfc/ndef/record.h" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__record__desc_a2d2faaf16cb06573bc38ecbfe6c2f180_1a2d2faaf16cb06573bc38ecbfe6c2f180" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_ndef_record_desc::type_length</definition>
+        <argsstring></argsstring>
+        <name>type_length</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of the type field. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="101" column="9" bodyfile="include/nfc/ndef/record.h" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__record__desc_ad681f33d5704137699bfc622eeb5836e_1ad681f33d5704137699bfc622eeb5836e" prot="public" static="no" mutable="no">
+        <type>uint8_t const  *</type>
+        <definition>uint8_t const* nfc_ndef_record_desc::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the type field data. Not relevant if type_length is 0. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="103" column="15" bodyfile="include/nfc/ndef/record.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__record__desc_ad664e32bf1b17a01ae4d62e92ccba15f_1ad664e32bf1b17a01ae4d62e92ccba15f" prot="public" static="no" mutable="no">
+        <type><ref refid="group__nfc__ndef__record_ga1ccae5f0330b1b9b31af6efd37a8aeb8_1ga1ccae5f0330b1b9b31af6efd37a8aeb8" kindref="member">payload_constructor_t</ref></type>
+        <definition>payload_constructor_t nfc_ndef_record_desc::payload_constructor</definition>
+        <argsstring></argsstring>
+        <name>payload_constructor</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the payload constructor function. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="105" column="23" bodyfile="include/nfc/ndef/record.h" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__record__desc_a8b329fb06d553177ed4f74b0eb7c847b_1a8b329fb06d553177ed4f74b0eb7c847b" prot="public" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* nfc_ndef_record_desc::payload_descriptor</definition>
+        <argsstring></argsstring>
+        <name>payload_descriptor</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the data for the payload constructor function. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/record.h" line="107" column="6" bodyfile="include/nfc/ndef/record.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>NDEF record descriptor. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/nfc/ndef/record.h" line="91" column="1" bodyfile="include/nfc/ndef/record.h" bodystart="91" bodyend="108"/>
+    <listofallmembers>
+      <member refid="structnfc__ndef__record__desc_ac95aad08f0e4484104707a2849923c5b_1ac95aad08f0e4484104707a2849923c5b" prot="public" virt="non-virtual"><scope>nfc_ndef_record_desc</scope><name>id</name></member>
+      <member refid="structnfc__ndef__record__desc_ae6b993e75f17d0f14ce4442df727ab78_1ae6b993e75f17d0f14ce4442df727ab78" prot="public" virt="non-virtual"><scope>nfc_ndef_record_desc</scope><name>id_length</name></member>
+      <member refid="structnfc__ndef__record__desc_ad664e32bf1b17a01ae4d62e92ccba15f_1ad664e32bf1b17a01ae4d62e92ccba15f" prot="public" virt="non-virtual"><scope>nfc_ndef_record_desc</scope><name>payload_constructor</name></member>
+      <member refid="structnfc__ndef__record__desc_a8b329fb06d553177ed4f74b0eb7c847b_1a8b329fb06d553177ed4f74b0eb7c847b" prot="public" virt="non-virtual"><scope>nfc_ndef_record_desc</scope><name>payload_descriptor</name></member>
+      <member refid="structnfc__ndef__record__desc_ad9d73aa209bc93c9cd900c5eb730a3ec_1ad9d73aa209bc93c9cd900c5eb730a3ec" prot="public" virt="non-virtual"><scope>nfc_ndef_record_desc</scope><name>tnf</name></member>
+      <member refid="structnfc__ndef__record__desc_ad681f33d5704137699bfc622eeb5836e_1ad681f33d5704137699bfc622eeb5836e" prot="public" virt="non-virtual"><scope>nfc_ndef_record_desc</scope><name>type</name></member>
+      <member refid="structnfc__ndef__record__desc_a2d2faaf16cb06573bc38ecbfe6c2f180_1a2d2faaf16cb06573bc38ecbfe6c2f180" prot="public" virt="non-virtual"><scope>nfc_ndef_record_desc</scope><name>type_length</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

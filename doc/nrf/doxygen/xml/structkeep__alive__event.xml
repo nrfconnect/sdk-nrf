@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structkeep__alive__event" kind="struct" language="C++" prot="public">
+    <compoundname>keep_alive_event</compoundname>
+    <includes refid="keep__alive__event_8h" local="no">keep_alive_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structkeep__alive__event_a365a73f11fa0f03683363c273fcc4227_1a365a73f11fa0f03683363c273fcc4227" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header keep_alive_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event header. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/keep_alive_event.h" line="32" column="19" bodyfile="include/caf/events/keep_alive_event.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Simple event to keep the power manager alive. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The event called would keep power manager from power downing for configured period of time. The event does not take any argument. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>keep_alive_event</label>
+        <link refid="structkeep__alive__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/caf/events/keep_alive_event.h" line="30" column="1" bodyfile="include/caf/events/keep_alive_event.h" bodystart="30" bodyend="33"/>
+    <listofallmembers>
+      <member refid="structkeep__alive__event_a365a73f11fa0f03683363c273fcc4227_1a365a73f11fa0f03683363c273fcc4227" prot="public" virt="non-virtual"><scope>keep_alive_event</scope><name>header</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

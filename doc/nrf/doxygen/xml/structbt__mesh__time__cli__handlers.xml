@@ -1,0 +1,193 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__time__cli__handlers" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_time_cli_handlers</compoundname>
+    <includes refid="time__cli_8h" local="no">time_cli.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__time__cli__handlers_af0353c8f150a47996a619a34ee2df208_1af0353c8f150a47996a619a34ee2df208" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_time_cli_handlers::time_status) (struct bt_mesh_time_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_time_status *status)</definition>
+        <argsstring>)(struct bt_mesh_time_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_time_status *status)</argsstring>
+        <name>time_status</name>
+        <briefdescription>
+<para>Time status message handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Called when the client receives a Time Status message, either as a result of calling <ref refid="group__bt__mesh__time__cli_gac719c4736d0e2b7058d224a4f9d92964_1gac719c4736d0e2b7058d224a4f9d92964" kindref="member">bt_mesh_time_cli_time_get</ref>, <ref refid="group__bt__mesh__time__cli_gac58133514ecff134a179b270c6dc5563_1gac58133514ecff134a179b270c6dc5563" kindref="member">bt_mesh_time_cli_time_set</ref>, or as an unsolicited message.</para>
+<para><simplesect kind="note"><para>This handler is optional.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the incoming message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time Status contained in the message. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time_cli.h" line="68" column="1" bodyfile="include/bluetooth/mesh/time_cli.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__time__cli__handlers_a42bb296e25656bbb816a37fbb6546581_1a42bb296e25656bbb816a37fbb6546581" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_time_cli_handlers::time_zone_status) (struct bt_mesh_time_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_time_zone_status *status)</definition>
+        <argsstring>)(struct bt_mesh_time_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_time_zone_status *status)</argsstring>
+        <name>time_zone_status</name>
+        <briefdescription>
+<para>Time Zone status message handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Called when the client receives a Time Zone Status message, either as a result of calling <ref refid="group__bt__mesh__time__cli_gaf6f09f9320083ec13d0283fea37b1c06_1gaf6f09f9320083ec13d0283fea37b1c06" kindref="member">bt_mesh_time_cli_zone_get</ref>, <ref refid="group__bt__mesh__time__cli_gab89e44b4a0e91f4ccd1e3240cc86a0b3_1gab89e44b4a0e91f4ccd1e3240cc86a0b3" kindref="member">bt_mesh_time_cli_zone_set</ref>, or as an unsolicited message.</para>
+<para><simplesect kind="note"><para>This handler is optional.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the incoming message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time Zone Status contained in the message. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time_cli.h" line="84" column="1" bodyfile="include/bluetooth/mesh/time_cli.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__time__cli__handlers_ae8137803b026445878f793e2de1c51c9_1ae8137803b026445878f793e2de1c51c9" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_time_cli_handlers::tai_utc_delta_status) (struct bt_mesh_time_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_time_tai_utc_delta_status *status)</definition>
+        <argsstring>)(struct bt_mesh_time_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_time_tai_utc_delta_status *status)</argsstring>
+        <name>tai_utc_delta_status</name>
+        <briefdescription>
+<para>TAI-UTC Delta status message handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Called when the client receives a TAI-UTC Delta Status message, either as a result of calling <ref refid="group__bt__mesh__time__cli_ga54bd04d177cc8a128993279efb81b974_1ga54bd04d177cc8a128993279efb81b974" kindref="member">bt_mesh_time_cli_tai_utc_delta_get</ref>, <ref refid="group__bt__mesh__time__cli_gaae4779a5933617abca92928eb116dce2_1gaae4779a5933617abca92928eb116dce2" kindref="member">bt_mesh_time_cli_tai_utc_delta_set</ref>, or as an unsolicited message.</para>
+<para><simplesect kind="note"><para>This handler is optional.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the incoming message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>TAI-UTC Delta Status contained in the message. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time_cli.h" line="100" column="1" bodyfile="include/bluetooth/mesh/time_cli.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__time__cli__handlers_ab48200ffa888192f799156386f475758_1ab48200ffa888192f799156386f475758" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_time_cli_handlers::time_role_status) (struct bt_mesh_time_cli *cli, struct bt_mesh_msg_ctx *ctx, enum bt_mesh_time_role time_role)</definition>
+        <argsstring>)(struct bt_mesh_time_cli *cli, struct bt_mesh_msg_ctx *ctx, enum bt_mesh_time_role time_role)</argsstring>
+        <name>time_role_status</name>
+        <briefdescription>
+<para>Time Role status message handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Called when the client receives a Time Role Status message, either as a result of calling <ref refid="group__bt__mesh__time__cli_ga2989eadb0273be7c84900bc9eb40a412_1ga2989eadb0273be7c84900bc9eb40a412" kindref="member">bt_mesh_time_cli_role_get</ref>, <ref refid="group__bt__mesh__time__cli_ga649f35e14f1c21bddb091cd91ff96f6a_1ga649f35e14f1c21bddb091cd91ff96f6a" kindref="member">bt_mesh_time_cli_role_set</ref>, or as an unsolicited message.</para>
+<para><simplesect kind="note"><para>This handler is optional.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the incoming message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">time_role</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time Role of the server. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time_cli.h" line="116" column="1" bodyfile="include/bluetooth/mesh/time_cli.h" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Time Client handler functions. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/time_cli.h" line="55" column="1" bodyfile="include/bluetooth/mesh/time_cli.h" bodystart="55" bodyend="119"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__time__cli__handlers_ae8137803b026445878f793e2de1c51c9_1ae8137803b026445878f793e2de1c51c9" prot="public" virt="non-virtual"><scope>bt_mesh_time_cli_handlers</scope><name>tai_utc_delta_status</name></member>
+      <member refid="structbt__mesh__time__cli__handlers_ab48200ffa888192f799156386f475758_1ab48200ffa888192f799156386f475758" prot="public" virt="non-virtual"><scope>bt_mesh_time_cli_handlers</scope><name>time_role_status</name></member>
+      <member refid="structbt__mesh__time__cli__handlers_af0353c8f150a47996a619a34ee2df208_1af0353c8f150a47996a619a34ee2df208" prot="public" virt="non-virtual"><scope>bt_mesh_time_cli_handlers</scope><name>time_status</name></member>
+      <member refid="structbt__mesh__time__cli__handlers_a42bb296e25656bbb816a37fbb6546581_1a42bb296e25656bbb816a37fbb6546581" prot="public" virt="non-virtual"><scope>bt_mesh_time_cli_handlers</scope><name>time_zone_status</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__launchapp__rec" kind="group">
+    <compoundname>nfc_launchapp_rec</compoundname>
+    <title>Launch App records</title>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__nfc__launchapp__rec_1gadc1507d1b8ecf4e6b5fd2387bcfaf3f1" prot="public" static="no" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t ndef_android_launchapp_rec_type[15]</definition>
+        <argsstring>[15]</argsstring>
+        <name>ndef_android_launchapp_rec_type</name>
+        <briefdescription>
+<para>External reference to the type field of the NFC NDEF Android Application Record, defined in the file <computeroutput>launchapp_rec.c</computeroutput>. It is used in the <ref refid="group__nfc__launchapp__rec_ga9ff2bf240d27b8b62a8bcf1ed785f4ac_1ga9ff2bf240d27b8b62a8bcf1ed785f4ac" kindref="member">NFC_NDEF_ANDROID_LAUNCHAPP_RECORD_DESC_DEF</ref> macro. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/launchapp_rec.h" line="38" column="22" declfile="include/nfc/ndef/launchapp_rec.h" declline="38" declcolumn="22"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__launchapp__rec_1gad54f7048905f67c5c529dc8074cb381c" prot="public" static="no">
+        <name>NFC_ANDROID_REC_TYPE_LENGTH</name>
+        <initializer>15</initializer>
+        <briefdescription>
+<para>Size of the type field of the Android Application Record, defined in the file <computeroutput>launchapp_rec.c</computeroutput>. It is used in the <ref refid="group__nfc__launchapp__rec_gab11bdadfdc3d6b6199842f80d6de52d6_1gab11bdadfdc3d6b6199842f80d6de52d6" kindref="member">NFC_NDEF_ANDROID_LAUNCHAPP_RECORD_DESC</ref> macro. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/launchapp_rec.h" line="31" column="9" bodyfile="include/nfc/ndef/launchapp_rec.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__launchapp__rec_1ga9ff2bf240d27b8b62a8bcf1ed785f4ac" prot="public" static="no">
+        <name>NFC_NDEF_ANDROID_LAUNCHAPP_RECORD_DESC_DEF</name>
+        <param><defname>name</defname></param>
+        <param><defname>package_name</defname></param>
+        <param><defname>package_name_length</defname></param>
+        <initializer>	<ref refid="group__nfc__ndef__record_ga1ba7c60df67955d44ad65e8b50581d02_1ga1ba7c60df67955d44ad65e8b50581d02" kindref="member">NFC_NDEF_RECORD_BIN_DATA_DEF</ref>(name,					\
+				     <ref refid="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1gga2091295307fa8161219648a88df172a8af0c50a342dab3f03c386ab05f93e3920" kindref="member">TNF_EXTERNAL_TYPE</ref>,				\
+				     NULL,					\
+				     0,						\
+				     <ref refid="group__nfc__launchapp__rec_gadc1507d1b8ecf4e6b5fd2387bcfaf3f1_1gadc1507d1b8ecf4e6b5fd2387bcfaf3f1" kindref="member">ndef_android_launchapp_rec_type</ref>,		\
+				     sizeof(<ref refid="group__nfc__launchapp__rec_gadc1507d1b8ecf4e6b5fd2387bcfaf3f1_1gadc1507d1b8ecf4e6b5fd2387bcfaf3f1" kindref="member">ndef_android_launchapp_rec_type</ref>),	\
+				     (package_name),				\
+				     (package_name_length))</initializer>
+        <briefdescription>
+<para>Macro for generating a description of an NFC NDEF Android Application Record (AAR). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro declares and initializes an instance of an NFC NDEF record description of an Android Application Record (AAR).</para>
+<para><simplesect kind="note"><para>The record descriptor is declared as an automatic variable, which implies that the NDEF message encoding (see <ref refid="group__nfc__launchapp__msg_ga72a2f1a1faca0c21ef11289af00b2c8d_1ga72a2f1a1faca0c21ef11289af00b2c8d" kindref="member">nfc_launchapp_msg_encode</ref>) must be done in the same variable scope.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name for accessing the record descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">package_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Android package name string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">package_name_length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the Android package name. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/launchapp_rec.h" line="55" column="9" bodyfile="include/nfc/ndef/launchapp_rec.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__launchapp__rec_1gab11bdadfdc3d6b6199842f80d6de52d6" prot="public" static="no">
+        <name>NFC_NDEF_ANDROID_LAUNCHAPP_RECORD_DESC</name>
+        <param><defname>name</defname></param>
+        <initializer><ref refid="group__nfc__ndef__record_ga9f7681ee4be16d8f3711d81e1068875d_1ga9f7681ee4be16d8f3711d81e1068875d" kindref="member">NFC_NDEF_RECORD_BIN_DATA</ref>(name)</initializer>
+        <briefdescription>
+<para>Macro for accessing the NFC NDEF Android Application Record descriptor instance that was created with <ref refid="group__nfc__launchapp__rec_ga9ff2bf240d27b8b62a8bcf1ed785f4ac_1ga9ff2bf240d27b8b62a8bcf1ed785f4ac" kindref="member">NFC_NDEF_ANDROID_LAUNCHAPP_RECORD_DESC_DEF</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/launchapp_rec.h" line="69" column="9" bodyfile="include/nfc/ndef/launchapp_rec.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Generation of NFC NDEF record descriptions that launch apps. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

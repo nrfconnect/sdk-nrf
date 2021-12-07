@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_c9e07056523ceb16c548c8f89edec384" kind="dir">
+    <compoundname>applications/asset_tracker_v2/src/events</compoundname>
+    <innerfile refid="app__module__event_8h">app_module_event.h</innerfile>
+    <innerfile refid="cloud__module__event_8h">cloud_module_event.h</innerfile>
+    <innerfile refid="data__module__event_8h">data_module_event.h</innerfile>
+    <innerfile refid="debug__module__event_8h">debug_module_event.h</innerfile>
+    <innerfile refid="gps__module__event_8h">gps_module_event.h</innerfile>
+    <innerfile refid="led__state__event_8h">led_state_event.h</innerfile>
+    <innerfile refid="modem__module__event_8h">modem_module_event.h</innerfile>
+    <innerfile refid="sensor__module__event_8h">sensor_module_event.h</innerfile>
+    <innerfile refid="ui__module__event_8h">ui_module_event.h</innerfile>
+    <innerfile refid="util__module__event_8h">util_module_event.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/events/"/>
+  </compounddef>
+</doxygen>

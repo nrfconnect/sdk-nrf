@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_cf3f4c112b31f4db44723bb6d13bd312" kind="dir">
+    <compoundname>applications/machine_learning/configuration/common</compoundname>
+    <innerfile refid="machine__learning_2configuration_2common_2ble__adv__def_8h">ble_adv_def.h</innerfile>
+    <innerfile refid="machine__learning_2configuration_2common_2led__state_8h">led_state.h</innerfile>
+    <innerfile refid="sensor__sim__ctrl_8h">sensor_sim_ctrl.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/machine_learning/configuration/common/"/>
+  </compounddef>
+</doxygen>

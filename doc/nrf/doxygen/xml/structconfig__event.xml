@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structconfig__event" kind="struct" language="C++" prot="public">
+    <compoundname>config_event</compoundname>
+    <includes refid="config__event_8h" local="no">config_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structconfig__event_a88eebd766fa89516058a4c1e5365b434_1a88eebd766fa89516058a4c1e5365b434" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header config_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="84" column="19" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structconfig__event_aa568a5cf8d2feace1775f1562e1e505b_1aa568a5cf8d2feace1775f1562e1e505b" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t config_event::transport_id</definition>
+        <argsstring></argsstring>
+        <name>transport_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="86" column="10" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structconfig__event_a09301b4d9f1bd2024c6d78fa25489903_1a09301b4d9f1bd2024c6d78fa25489903" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool config_event::is_request</definition>
+        <argsstring></argsstring>
+        <name>is_request</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="87" column="6" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structconfig__event_ad40eeac47433481807e20ac35783ee55_1ad40eeac47433481807e20ac35783ee55" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t config_event::event_id</definition>
+        <argsstring></argsstring>
+        <name>event_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="90" column="9" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structconfig__event_a57cd2a029ccf0c69b7160a31ab961d27_1a57cd2a029ccf0c69b7160a31ab961d27" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t config_event::recipient</definition>
+        <argsstring></argsstring>
+        <name>recipient</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="91" column="9" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structconfig__event_a19e0bea1ac5619eb9a64935a095f0d43_1a19e0bea1ac5619eb9a64935a095f0d43" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t config_event::status</definition>
+        <argsstring></argsstring>
+        <name>status</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="92" column="9" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structconfig__event_ad46d32aacd49043c74d62f7865723ae2_1ad46d32aacd49043c74d62f7865723ae2" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__dyndata" kindref="compound">event_dyndata</ref></type>
+        <definition>struct event_dyndata config_event::dyndata</definition>
+        <argsstring></argsstring>
+        <name>dyndata</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/config_event.h" line="93" column="20" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Configuration channel event. Used to forward configuration channel request/response. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>config_event</label>
+        <link refid="structconfig__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>dyndata</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>event_dyndata</label>
+        <link refid="structevent__dyndata"/>
+      </node>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/nrf_desktop/src/events/config_event.h" line="83" column="1" bodyfile="applications/nrf_desktop/src/events/config_event.h" bodystart="83" bodyend="94"/>
+    <listofallmembers>
+      <member refid="structconfig__event_ad46d32aacd49043c74d62f7865723ae2_1ad46d32aacd49043c74d62f7865723ae2" prot="public" virt="non-virtual"><scope>config_event</scope><name>dyndata</name></member>
+      <member refid="structconfig__event_ad40eeac47433481807e20ac35783ee55_1ad40eeac47433481807e20ac35783ee55" prot="public" virt="non-virtual"><scope>config_event</scope><name>event_id</name></member>
+      <member refid="structconfig__event_a88eebd766fa89516058a4c1e5365b434_1a88eebd766fa89516058a4c1e5365b434" prot="public" virt="non-virtual"><scope>config_event</scope><name>header</name></member>
+      <member refid="structconfig__event_a09301b4d9f1bd2024c6d78fa25489903_1a09301b4d9f1bd2024c6d78fa25489903" prot="public" virt="non-virtual"><scope>config_event</scope><name>is_request</name></member>
+      <member refid="structconfig__event_a57cd2a029ccf0c69b7160a31ab961d27_1a57cd2a029ccf0c69b7160a31ab961d27" prot="public" virt="non-virtual"><scope>config_event</scope><name>recipient</name></member>
+      <member refid="structconfig__event_a19e0bea1ac5619eb9a64935a095f0d43_1a19e0bea1ac5619eb9a64935a095f0d43" prot="public" virt="non-virtual"><scope>config_event</scope><name>status</name></member>
+      <member refid="structconfig__event_aa568a5cf8d2feace1775f1562e1e505b_1aa568a5cf8d2feace1775f1562e1e505b" prot="public" virt="non-virtual"><scope>config_event</scope><name>transport_id</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

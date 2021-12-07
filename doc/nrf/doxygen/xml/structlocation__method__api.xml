@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlocation__method__api" kind="struct" language="C++" prot="public">
+    <compoundname>location_method_api</compoundname>
+    <includes refid="location__core_8h" local="no">location_core.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlocation__method__api_a127471a7dc1118593f7cf12c3062710b_1a127471a7dc1118593f7cf12c3062710b" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1gaf90edf6d88c090d3e8276ce08903aa23" kindref="member">location_method</ref></type>
+        <definition>enum location_method location_method_api::method</definition>
+        <argsstring></argsstring>
+        <name>method</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_core.h" line="11" column="21" bodyfile="lib/location/location_core.h" bodystart="11" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__method__api_ad84b3969c541aef2c969bc42b29e01af_1ad84b3969c541aef2c969bc42b29e01af" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char location_method_api::method_string[10]</definition>
+        <argsstring>[10]</argsstring>
+        <name>method_string</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_core.h" line="12" column="6" bodyfile="lib/location/location_core.h" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__method__api_a20474acf36aeea6b9c618a3dbdfd3eb4_1a20474acf36aeea6b9c618a3dbdfd3eb4" prot="public" static="no" mutable="no">
+        <type>int(*</type>
+        <definition>int(* location_method_api::init) (void)</definition>
+        <argsstring>)(void)</argsstring>
+        <name>init</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_core.h" line="13" column="1" bodyfile="lib/location/location_core.h" bodystart="13" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__method__api_aa32bbceecda73acbcf55fd1a544ab2cb_1aa32bbceecda73acbcf55fd1a544ab2cb" prot="public" static="no" mutable="no">
+        <type>int(*</type>
+        <definition>int(* location_method_api::validate_params) (const struct location_method_config *config)</definition>
+        <argsstring>)(const struct location_method_config *config)</argsstring>
+        <name>validate_params</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_core.h" line="14" column="1" bodyfile="lib/location/location_core.h" bodystart="14" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__method__api_aa6d5f5de153fddab40c6f5ee7bbb320c_1aa6d5f5de153fddab40c6f5ee7bbb320c" prot="public" static="no" mutable="no">
+        <type>int(*</type>
+        <definition>int(* location_method_api::location_get) (const struct location_method_config *config)</definition>
+        <argsstring>)(const struct location_method_config *config)</argsstring>
+        <name>location_get</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_core.h" line="15" column="1" bodyfile="lib/location/location_core.h" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__method__api_a384af6560d11851dfc0a5d036db682eb_1a384af6560d11851dfc0a5d036db682eb" prot="public" static="no" mutable="no">
+        <type>int(*</type>
+        <definition>int(* location_method_api::cancel) ()</definition>
+        <argsstring>)()</argsstring>
+        <name>cancel</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_core.h" line="16" column="1" bodyfile="lib/location/location_core.h" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/location/location_core.h" line="10" column="1" bodyfile="lib/location/location_core.h" bodystart="10" bodyend="17"/>
+    <listofallmembers>
+      <member refid="structlocation__method__api_a384af6560d11851dfc0a5d036db682eb_1a384af6560d11851dfc0a5d036db682eb" prot="public" virt="non-virtual"><scope>location_method_api</scope><name>cancel</name></member>
+      <member refid="structlocation__method__api_a20474acf36aeea6b9c618a3dbdfd3eb4_1a20474acf36aeea6b9c618a3dbdfd3eb4" prot="public" virt="non-virtual"><scope>location_method_api</scope><name>init</name></member>
+      <member refid="structlocation__method__api_aa6d5f5de153fddab40c6f5ee7bbb320c_1aa6d5f5de153fddab40c6f5ee7bbb320c" prot="public" virt="non-virtual"><scope>location_method_api</scope><name>location_get</name></member>
+      <member refid="structlocation__method__api_a127471a7dc1118593f7cf12c3062710b_1a127471a7dc1118593f7cf12c3062710b" prot="public" virt="non-virtual"><scope>location_method_api</scope><name>method</name></member>
+      <member refid="structlocation__method__api_ad84b3969c541aef2c969bc42b29e01af_1ad84b3969c541aef2c969bc42b29e01af" prot="public" virt="non-virtual"><scope>location_method_api</scope><name>method_string</name></member>
+      <member refid="structlocation__method__api_aa32bbceecda73acbcf55fd1a544ab2cb_1aa32bbceecda73acbcf55fd1a544ab2cb" prot="public" virt="non-virtual"><scope>location_method_api</scope><name>validate_params</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

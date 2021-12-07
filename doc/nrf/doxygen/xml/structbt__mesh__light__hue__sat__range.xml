@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__hue__sat__range" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_hue_sat_range</compoundname>
+    <includes refid="light__hsl_8h" local="no">light_hsl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__hue__sat__range_a5914b694afe04207a72928471d60ea39_1a5914b694afe04207a72928471d60ea39" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__light__hue__sat" kindref="compound">bt_mesh_light_hue_sat</ref></type>
+        <definition>struct bt_mesh_light_hue_sat bt_mesh_light_hue_sat_range::min</definition>
+        <argsstring></argsstring>
+        <name>min</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Minimum hue and saturation </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl.h" line="165" column="28" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="165" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__hue__sat__range_af49e4aca3852f9a6f9ecd1d066b9dab9_1af49e4aca3852f9a6f9ecd1d066b9dab9" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__light__hue__sat" kindref="compound">bt_mesh_light_hue_sat</ref></type>
+        <definition>struct bt_mesh_light_hue_sat bt_mesh_light_hue_sat_range::max</definition>
+        <argsstring></argsstring>
+        <name>max</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum hue and saturation </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl.h" line="167" column="28" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="167" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Light HSL range set message parameters. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_mesh_light_hue_sat</label>
+        <link refid="structbt__mesh__light__hue__sat"/>
+      </node>
+      <node id="1">
+        <label>bt_mesh_light_hue_sat_range</label>
+        <link refid="structbt__mesh__light__hue__sat__range"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>max</edgelabel>
+          <edgelabel>min</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/light_hsl.h" line="163" column="1" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="163" bodyend="168"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__hue__sat__range_af49e4aca3852f9a6f9ecd1d066b9dab9_1af49e4aca3852f9a6f9ecd1d066b9dab9" prot="public" virt="non-virtual"><scope>bt_mesh_light_hue_sat_range</scope><name>max</name></member>
+      <member refid="structbt__mesh__light__hue__sat__range_a5914b694afe04207a72928471d60ea39_1a5914b694afe04207a72928471d60ea39" prot="public" virt="non-virtual"><scope>bt_mesh_light_hue_sat_range</scope><name>min</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

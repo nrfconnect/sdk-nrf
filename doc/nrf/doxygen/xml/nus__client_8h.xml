@@ -1,0 +1,340 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="nus__client_8h" kind="file" language="C++">
+    <compoundname>nus_client.h</compoundname>
+    <includes local="no">bluetooth/gatt.h</includes>
+    <includes local="no">bluetooth/conn.h</includes>
+    <includes refid="gatt__dm_8h" local="no">bluetooth/gatt_dm.h</includes>
+    <incdepgraph>
+      <node id="4">
+        <label>bluetooth/gatt_dm.h</label>
+        <link refid="gatt__dm_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/services/nus_client.h</label>
+        <link refid="nus__client_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/conn.h</label>
+      </node>
+      <node id="2">
+        <label>bluetooth/gatt.h</label>
+      </node>
+      <node id="5">
+        <label>bluetooth/uuid.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structbt__nus__client__handles" prot="public">bt_nus_client_handles</innerclass>
+    <innerclass refid="structbt__nus__client__cb" prot="public">bt_nus_client_cb</innerclass>
+    <innerclass refid="structbt__nus__client" prot="public">bt_nus_client</innerclass>
+    <innerclass refid="structbt__nus__client__init__param" prot="public">bt_nus_client_init_param</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__nus__client_gaa9ea231170c9b215a66ffa1bdfc86d6c_1gaa9ea231170c9b215a66ffa1bdfc86d6c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_nus_client_init</definition>
+        <argsstring>(struct bt_nus_client *nus, const struct bt_nus_client_init_param *init_param)</argsstring>
+        <name>bt_nus_client_init</name>
+        <param>
+          <type>struct <ref refid="structbt__nus__client" kindref="compound">bt_nus_client</ref> *</type>
+          <declname>nus</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__nus__client__init__param" kindref="compound">bt_nus_client_init_param</ref> *</type>
+          <declname>init_param</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the NUS Client module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function initializes the NUS Client module with callbacks provided by the user.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">nus</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>NUS Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">init_param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>NUS Client initialization parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus_client.h" line="120" column="5" declfile="include/bluetooth/services/nus_client.h" declline="120" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__nus__client_ga99d23cc84813e4acd54e0bafc254fd19_1ga99d23cc84813e4acd54e0bafc254fd19" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_nus_client_send</definition>
+        <argsstring>(struct bt_nus_client *nus, const uint8_t *data, uint16_t len)</argsstring>
+        <name>bt_nus_client_send</name>
+        <param>
+          <type>struct <ref refid="structbt__nus__client" kindref="compound">bt_nus_client</ref> *</type>
+          <declname>nus</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Send data to the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function writes to the RX Characteristic of the server.</para>
+<para><simplesect kind="note"><para>This procedure is asynchronous. Therefore, the data to be sent must remain valid while the function is active.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">nus</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>NUS Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to be transmitted. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of data.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus_client.h" line="137" column="5" declfile="include/bluetooth/services/nus_client.h" declline="137" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__nus__client_ga6fb12e388ca2200e93ba2542b7de88b7_1ga6fb12e388ca2200e93ba2542b7de88b7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_nus_handles_assign</definition>
+        <argsstring>(struct bt_gatt_dm *dm, struct bt_nus_client *nus)</argsstring>
+        <name>bt_nus_handles_assign</name>
+        <param>
+          <type>struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__nus__client" kindref="compound">bt_nus_client</ref> *</type>
+          <declname>nus</declname>
+        </param>
+        <briefdescription>
+<para>Assign handles to the NUS Client instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function should be called when a link with a peer has been established to associate the link to this instance of the module. This makes it possible to handle several links and associate each link to a particular instance of this module. The GATT attribute handles are provided by the GATT DB discovery module.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">nus</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>NUS Client instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>(-ENOTSUP)</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Special error code used when UUID of the service does not match the expected UUID. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Otherwise</parametername>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus_client.h" line="156" column="5" declfile="include/bluetooth/services/nus_client.h" declline="156" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__nus__client_gaac9915b863ac3a284be5478a6dc64c70_1gaac9915b863ac3a284be5478a6dc64c70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_nus_subscribe_receive</definition>
+        <argsstring>(struct bt_nus_client *nus)</argsstring>
+        <name>bt_nus_subscribe_receive</name>
+        <param>
+          <type>struct <ref refid="structbt__nus__client" kindref="compound">bt_nus_client</ref> *</type>
+          <declname>nus</declname>
+        </param>
+        <briefdescription>
+<para>Request the peer to start sending notifications for the TX Characteristic. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function enables notifications for the NUS TX Characteristic at the peer by writing to the CCC descriptor of the NUS TX Characteristic.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">nus</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>NUS Client instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus_client.h" line="170" column="5" declfile="include/bluetooth/services/nus_client.h" declline="170" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2018<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_NUS_CLIENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_NUS_CLIENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/gatt.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/conn.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="gatt__dm_8h" kindref="compound">bluetooth/gatt_dm.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="structbt__nus__client__handles" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__nus__client__handles" kindref="compound">bt_nus_client_handles</ref><sp/>{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="structbt__nus__client__handles_a83dc463604e2b6f77bdda27dd5d70b8c_1a83dc463604e2b6f77bdda27dd5d70b8c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__nus__client__handles_a83dc463604e2b6f77bdda27dd5d70b8c_1a83dc463604e2b6f77bdda27dd5d70b8c" kindref="member">rx</ref>;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="structbt__nus__client__handles_aa80625acdf2bc445822db35c09168f75_1aa80625acdf2bc445822db35c09168f75" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__nus__client__handles_aa80625acdf2bc445822db35c09168f75_1aa80625acdf2bc445822db35c09168f75" kindref="member">tx</ref>;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="structbt__nus__client__handles_a4b7bac6bf0fa2be3d0b3ab159b05485a_1a4b7bac6bf0fa2be3d0b3ab159b05485a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__nus__client__handles_a4b7bac6bf0fa2be3d0b3ab159b05485a_1a4b7bac6bf0fa2be3d0b3ab159b05485a" kindref="member">tx_ccc</ref>;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="structbt__nus__client__cb" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__nus__client__cb" kindref="compound">bt_nus_client_cb</ref><sp/>{</highlight></codeline>
+<codeline lineno="59" refid="structbt__nus__client__cb_a78907212ca45dfaabf471f399f9a942f_1a78907212ca45dfaabf471f399f9a942f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>(*<ref refid="structbt__nus__client__cb_a78907212ca45dfaabf471f399f9a942f_1a78907212ca45dfaabf471f399f9a942f" kindref="member">received</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*data,<sp/>uint16_t<sp/>len);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="structbt__nus__client__cb_aeb9ce2e615b832fa374862a9fe391e94_1aeb9ce2e615b832fa374862a9fe391e94" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structbt__nus__client__cb_aeb9ce2e615b832fa374862a9fe391e94_1aeb9ce2e615b832fa374862a9fe391e94" kindref="member">sent</ref>)(uint8_t<sp/>err,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*data,<sp/>uint16_t<sp/>len);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="structbt__nus__client__cb_a77555e3abddbcd0c07b758842cd8e042_1a77555e3abddbcd0c07b758842cd8e042" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structbt__nus__client__cb_a77555e3abddbcd0c07b758842cd8e042_1a77555e3abddbcd0c07b758842cd8e042" kindref="member">unsubscribed</ref>)(void);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="structbt__nus__client" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__nus__client" kindref="compound">bt_nus_client</ref><sp/>{</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="structbt__nus__client_a7cbebbd5d7b3d8277089d8bf53b64681_1a7cbebbd5d7b3d8277089d8bf53b64681" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_conn<sp/>*<ref refid="structbt__nus__client_a7cbebbd5d7b3d8277089d8bf53b64681_1a7cbebbd5d7b3d8277089d8bf53b64681" kindref="member">conn</ref>;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="structbt__nus__client_a9232dfa8fa2b0ae3b70785558ff7a14b_1a9232dfa8fa2b0ae3b70785558ff7a14b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>atomic_t<sp/><ref refid="structbt__nus__client_a9232dfa8fa2b0ae3b70785558ff7a14b_1a9232dfa8fa2b0ae3b70785558ff7a14b" kindref="member">state</ref>;</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="structbt__nus__client_a0d9b22027394aed60a30f6b086c9747e_1a0d9b22027394aed60a30f6b086c9747e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__nus__client__handles" kindref="compound">bt_nus_client_handles</ref><sp/><ref refid="structbt__nus__client_a0d9b22027394aed60a30f6b086c9747e_1a0d9b22027394aed60a30f6b086c9747e" kindref="member">handles</ref>;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="structbt__nus__client_a87263e52dd2b5d1049b76d5c2e1065ba_1a87263e52dd2b5d1049b76d5c2e1065ba" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_gatt_subscribe_params<sp/><ref refid="structbt__nus__client_a87263e52dd2b5d1049b76d5c2e1065ba_1a87263e52dd2b5d1049b76d5c2e1065ba" kindref="member">tx_notif_params</ref>;</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96" refid="structbt__nus__client_acd6dff6ee99c4189f233b2610ea2fe80_1acd6dff6ee99c4189f233b2610ea2fe80" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_gatt_write_params<sp/><ref refid="structbt__nus__client_acd6dff6ee99c4189f233b2610ea2fe80_1acd6dff6ee99c4189f233b2610ea2fe80" kindref="member">rx_write_params</ref>;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99" refid="structbt__nus__client_aa3f37cf38be242eed2c2c378bc651c6b_1aa3f37cf38be242eed2c2c378bc651c6b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__nus__client__cb" kindref="compound">bt_nus_client_cb</ref><sp/><ref refid="structbt__nus__client_aa3f37cf38be242eed2c2c378bc651c6b_1aa3f37cf38be242eed2c2c378bc651c6b" kindref="member">cb</ref>;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103" refid="structbt__nus__client__init__param" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__nus__client__init__param" kindref="compound">bt_nus_client_init_param</ref><sp/>{</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106" refid="structbt__nus__client__init__param_a6936dc4ffd714b4221244dea3575fa2d_1a6936dc4ffd714b4221244dea3575fa2d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__nus__client__cb" kindref="compound">bt_nus_client_cb</ref><sp/><ref refid="structbt__nus__client__init__param_a6936dc4ffd714b4221244dea3575fa2d_1a6936dc4ffd714b4221244dea3575fa2d" kindref="member">cb</ref>;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120" refid="group__bt__nus__client_gaa9ea231170c9b215a66ffa1bdfc86d6c_1gaa9ea231170c9b215a66ffa1bdfc86d6c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__nus__client_gaa9ea231170c9b215a66ffa1bdfc86d6c_1gaa9ea231170c9b215a66ffa1bdfc86d6c" kindref="member">bt_nus_client_init</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__nus__client" kindref="compound">bt_nus_client</ref><sp/>*nus,</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__nus__client__init__param" kindref="compound">bt_nus_client_init_param</ref><sp/>*init_param);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137" refid="group__bt__nus__client_ga99d23cc84813e4acd54e0bafc254fd19_1ga99d23cc84813e4acd54e0bafc254fd19" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__nus__client_ga99d23cc84813e4acd54e0bafc254fd19_1ga99d23cc84813e4acd54e0bafc254fd19" kindref="member">bt_nus_client_send</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__nus__client" kindref="compound">bt_nus_client</ref><sp/>*nus,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*data,</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/>len);</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156" refid="group__bt__nus__client_ga6fb12e388ca2200e93ba2542b7de88b7_1ga6fb12e388ca2200e93ba2542b7de88b7" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__nus__client_ga6fb12e388ca2200e93ba2542b7de88b7_1ga6fb12e388ca2200e93ba2542b7de88b7" kindref="member">bt_nus_handles_assign</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_gatt_dm<sp/>*dm,</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__nus__client" kindref="compound">bt_nus_client</ref><sp/>*nus);</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170" refid="group__bt__nus__client_gaac9915b863ac3a284be5478a6dc64c70_1gaac9915b863ac3a284be5478a6dc64c70" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__nus__client_gaac9915b863ac3a284be5478a6dc64c70_1gaac9915b863ac3a284be5478a6dc64c70" kindref="member">bt_nus_subscribe_receive</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__nus__client" kindref="compound">bt_nus_client</ref><sp/>*nus);</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_NUS_CLIENT_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/services/nus_client.h"/>
+  </compounddef>
+</doxygen>

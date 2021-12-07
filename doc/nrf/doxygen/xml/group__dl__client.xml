@@ -1,0 +1,411 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__dl__client" kind="group">
+    <compoundname>dl_client</compoundname>
+    <title>Download client</title>
+    <innerclass refid="structdownload__fragment" prot="public">download_fragment</innerclass>
+    <innerclass refid="structdownload__client__evt" prot="public">download_client_evt</innerclass>
+    <innerclass refid="structdownload__client__cfg" prot="public">download_client_cfg</innerclass>
+    <innerclass refid="structdownload__client" prot="public">download_client</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__dl__client_1gaabb2b65eab84b7897a777243fbec4cba" prot="public" static="no" strong="no">
+        <type></type>
+        <name>download_client_evt_id</name>
+        <enumvalue id="group__dl__client_gaabb2b65eab84b7897a777243fbec4cba_1ggaabb2b65eab84b7897a777243fbec4cbaa9390918b083ef76c302619ce78109596" prot="public">
+          <name>DOWNLOAD_CLIENT_EVT_FRAGMENT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Event contains a fragment. The application may return any non-zero value to stop the download. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__dl__client_gaabb2b65eab84b7897a777243fbec4cba_1ggaabb2b65eab84b7897a777243fbec4cbaa46f57e634ec999ade6cb1ca425a5a275" prot="public">
+          <name>DOWNLOAD_CLIENT_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>An error has occurred during download and the connection to the server has been lost.</para>
+<para>Error reason may be one of the following:<itemizedlist>
+<listitem><para>ECONNRESET: socket error, peer closed connection</para>
+</listitem><listitem><para>ETIMEDOUT: socket error, connection timed out</para>
+</listitem><listitem><para>EHOSTDOWN: host went down during download</para>
+</listitem><listitem><para>EBADMSG: HTTP response header not as expected</para>
+</listitem><listitem><para>E2BIG: HTTP response header could not fit in buffer</para>
+</listitem></itemizedlist>
+</para>
+<para>In case of errors on the socket during send() or recv() (ECONNRESET), returning zero from the callback will let the library attempt to reconnect to the server and download the last fragment again. Otherwise, the application may return any non-zero value to stop the download.</para>
+<para>In case the download is stopped, the application should manually disconnect (<ref refid="group__dl__client_gad7b57bcb40afbc67eac590a9e4fa7348_1gad7b57bcb40afbc67eac590a9e4fa7348" kindref="member">download_client_disconnect</ref>) to clean up the network socket as necessary before re-attempting the download. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__dl__client_gaabb2b65eab84b7897a777243fbec4cba_1ggaabb2b65eab84b7897a777243fbec4cbaa971c88cd05f88be6990c67e4804bd5f5" prot="public">
+          <name>DOWNLOAD_CLIENT_EVT_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Download complete. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Download client event IDs. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="34" column="1" bodyfile="include/net/download_client.h" bodystart="34" bodyend="64"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__dl__client_1gad1970f12cef5b5715577dd5573737b9b" prot="public" static="no">
+        <type>int(*</type>
+        <definition>typedef int(* download_client_callback_t) (const struct download_client_evt *event)</definition>
+        <argsstring>)(const struct download_client_evt *event)</argsstring>
+        <name>download_client_callback_t</name>
+        <briefdescription>
+<para>Download client asynchronous event handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Through this callback, the application receives events, such as download of a fragment, download completion, or errors.</para>
+<para>If the callback returns a non-zero value, the download stops. To resume the download, use <ref refid="group__dl__client_ga9c6e4153ef22913ea5f57aa7aed884e7_1ga9c6e4153ef22913ea5f57aa7aed884e7" kindref="member">download_client_start()</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">event</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The event.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Zero to continue the download, non-zero otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="120" column="9" bodyfile="include/net/download_client.h" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__dl__client_1ga95e6622d190c00d790a041c8054cc748" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int download_client_init</definition>
+        <argsstring>(struct download_client *client, download_client_callback_t callback)</argsstring>
+        <name>download_client_init</name>
+        <param>
+          <type>struct <ref refid="structdownload__client" kindref="compound">download_client</ref> *</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type><ref refid="group__dl__client_gad1970f12cef5b5715577dd5573737b9b_1gad1970f12cef5b5715577dd5573737b9b" kindref="member">download_client_callback_t</ref></type>
+          <declname>callback</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the download client. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">callback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback function.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>int</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zero on success, otherwise a negative error code. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="183" column="5" declfile="include/net/download_client.h" declline="183" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dl__client_1gaa890ed293e1d2372d36b8c77a6b15537" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int download_client_connect</definition>
+        <argsstring>(struct download_client *client, const char *host, const struct download_client_cfg *config)</argsstring>
+        <name>download_client_connect</name>
+        <param>
+          <type>struct <ref refid="structdownload__client" kindref="compound">download_client</ref> *</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>host</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structdownload__client__cfg" kindref="compound">download_client_cfg</ref> *</type>
+          <declname>config</declname>
+        </param>
+        <briefdescription>
+<para>Establish a connection to the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">host</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the host to connect to, null-terminated. Can include scheme and port number, defaults to HTTP or HTTPS if no scheme is provided. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">config</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Configuration options.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>int</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zero on success, a negative error code otherwise. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="197" column="5" declfile="include/net/download_client.h" declline="197" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dl__client_1ga9c6e4153ef22913ea5f57aa7aed884e7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int download_client_start</definition>
+        <argsstring>(struct download_client *client, const char *file, size_t from)</argsstring>
+        <name>download_client_start</name>
+        <param>
+          <type>struct <ref refid="structdownload__client" kindref="compound">download_client</ref> *</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>file</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>from</declname>
+        </param>
+        <briefdescription>
+<para>Download a file. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The download is carried out in fragments of up to <verbatim>embed:rst:inline :kconfig:`CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE` </verbatim> bytes for HTTP, or <verbatim>embed:rst:inline :kconfig:`CONFIG_DOWNLOAD_CLIENT_COAP_BLOCK_SIZE` </verbatim> bytes for CoAP, which are delivered to the application via <ref refid="group__dl__client_gaabb2b65eab84b7897a777243fbec4cba_1ggaabb2b65eab84b7897a777243fbec4cbaa9390918b083ef76c302619ce78109596" kindref="member">DOWNLOAD_CLIENT_EVT_FRAGMENT</ref> events.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>File to download, null-terminated. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">from</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Offset from where to resume the download, or zero to download from the beginning.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>int</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zero on success, a negative error code otherwise. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="216" column="5" declfile="include/net/download_client.h" declline="216" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dl__client_1ga2e306ab9f1bb31c2ecb7c91acc5e12fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void download_client_pause</definition>
+        <argsstring>(struct download_client *client)</argsstring>
+        <name>download_client_pause</name>
+        <param>
+          <type>struct <ref refid="structdownload__client" kindref="compound">download_client</ref> *</type>
+          <declname>client</declname>
+        </param>
+        <briefdescription>
+<para>Pause the download. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="224" column="6" declfile="include/net/download_client.h" declline="224" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dl__client_1ga68a5e169d2d9d30c2024a7eba75c1eeb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void download_client_resume</definition>
+        <argsstring>(struct download_client *client)</argsstring>
+        <name>download_client_resume</name>
+        <param>
+          <type>struct <ref refid="structdownload__client" kindref="compound">download_client</ref> *</type>
+          <declname>client</declname>
+        </param>
+        <briefdescription>
+<para>Resume the download. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="231" column="6" declfile="include/net/download_client.h" declline="231" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dl__client_1gadcc82980c5f6c24b358fdf9430c11011" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int download_client_file_size_get</definition>
+        <argsstring>(struct download_client *client, size_t *size)</argsstring>
+        <name>download_client_file_size_get</name>
+        <param>
+          <type>struct <ref refid="structdownload__client" kindref="compound">download_client</ref> *</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type>size_t *</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+<para>Retrieve the size of the file being downloaded, in bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The file size is only available after the download has begun.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>File size.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>int</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zero on success, a negative error code otherwise. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="243" column="5" declfile="include/net/download_client.h" declline="243" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dl__client_1gad7b57bcb40afbc67eac590a9e4fa7348" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int download_client_disconnect</definition>
+        <argsstring>(struct download_client *client)</argsstring>
+        <name>download_client_disconnect</name>
+        <param>
+          <type>struct <ref refid="structdownload__client" kindref="compound">download_client</ref> *</type>
+          <declname>client</declname>
+        </param>
+        <briefdescription>
+<para>Disconnect from the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Zero on success, a negative error code otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="252" column="5" declfile="include/net/download_client.h" declline="252" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Client for downloading an object. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The download client provides APIs for:<itemizedlist>
+<listitem><para>connecting to a remote server,</para>
+</listitem><listitem><para>downloading an object from the server,</para>
+</listitem><listitem><para>disconnecting from the server,</para>
+</listitem><listitem><para>receiving asynchronous event notifications on the download status. </para>
+</listitem></itemizedlist>
+</para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

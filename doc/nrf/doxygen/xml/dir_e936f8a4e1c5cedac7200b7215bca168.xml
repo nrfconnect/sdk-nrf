@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_e936f8a4e1c5cedac7200b7215bca168" kind="dir">
+    <compoundname>include/mpsl</compoundname>
+    <innerfile refid="mpsl__assert_8h">mpsl_assert.h</innerfile>
+    <innerfile refid="mpsl__cx__config__bluetooth_8h">mpsl_cx_config_bluetooth.h</innerfile>
+    <innerfile refid="mpsl__cx__config__thread_8h">mpsl_cx_config_thread.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/mpsl/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__sensor__types__device__operating__temperature" kind="group">
+    <compoundname>bt_mesh_sensor_types_device_operating_temperature</compoundname>
+    <title>Device operating</title>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__device__operating__temperature_1ga1a1325636f43295679f4c6af0fc7fe76" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_dev_op_temp_range_spec</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_dev_op_temp_range_spec</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device operating temperature range specification</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Minimum Temperature<itemizedlist>
+<listitem><para>Unit: Celsius</para>
+</listitem><listitem><para>Encoding: 16 bit signed scalar (Resolution: 0.01 C)</para>
+</listitem><listitem><para>Range: -327.68 to 327.67</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Maximum Temperature<itemizedlist>
+<listitem><para>Unit: Celsius</para>
+</listitem><listitem><para>Encoding: 16 bit signed scalar (Resolution: 0.01 C)</para>
+</listitem><listitem><para>Range: -327.68 to 327.67 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="576" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="576" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__device__operating__temperature_1gac80caa98bcf9e66adf9b8f4b994dd65e" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_dev_op_temp_stat_values</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_dev_op_temp_stat_values</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device operating temperature statistical values</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Average Temperature<itemizedlist>
+<listitem><para>Unit: Celsius</para>
+</listitem><listitem><para>Encoding: 16 bit signed scalar (Resolution: 0.01 C)</para>
+</listitem><listitem><para>Range: -327.68 to 327.67</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Standard Deviation Temperature<itemizedlist>
+<listitem><para>Unit: Celsius</para>
+</listitem><listitem><para>Encoding: 16 bit signed scalar (Resolution: 0.01 C)</para>
+</listitem><listitem><para>Range: -327.68 to 327.67</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Minimum Temperature<itemizedlist>
+<listitem><para>Unit: Celsius</para>
+</listitem><listitem><para>Encoding: 16 bit signed scalar (Resolution: 0.01 C)</para>
+</listitem><listitem><para>Range: -327.68 to 327.67</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Maximum Temperature<itemizedlist>
+<listitem><para>Unit: Celsius</para>
+</listitem><listitem><para>Encoding: 16 bit signed scalar (Resolution: 0.01 C)</para>
+</listitem><listitem><para>Range: -327.68 to 327.67</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Sensing duration<itemizedlist>
+<listitem><para>Unit: Seconds</para>
+</listitem><listitem><para>Encoding: 8 bit unsigned exponential time (pow(1.1, N - 64) seconds)</para>
+</listitem><listitem><para>Range: 0 to 73216705 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="602" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="602" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__device__operating__temperature_1ga3d76364b44f32980ad324632305c2b89" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_present_dev_op_temp</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_present_dev_op_temp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present device operating temperature</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Temperature<itemizedlist>
+<listitem><para>Unit: Celsius</para>
+</listitem><listitem><para>Encoding: 16 bit signed scalar (Resolution: 0.01 C)</para>
+</listitem><listitem><para>Range: -327.68 to 327.67 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="612" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="612" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__device__operating__temperature_1ga8ad3febddef4d5f5fe0cb3ed719fa422" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_rel_runtime_in_a_dev_op_temp_range</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_rel_runtime_in_a_dev_op_temp_range</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Relative runtime in a device operating temperature range</para>
+<para>This sensor type supports series access. The series X-axis is measured in Celsius.</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Relative Value<itemizedlist>
+<listitem><para>Unit: Percent</para>
+</listitem><listitem><para>Encoding: 8 bit unsigned scalar (Resolution: 0.5 %)</para>
+</listitem><listitem><para>Range: 0 to 100.0</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Minimum Temperature Value<itemizedlist>
+<listitem><para>Unit: Celsius</para>
+</listitem><listitem><para>Encoding: 16 bit signed scalar (Resolution: 0.01 C)</para>
+</listitem><listitem><para>Range: -327.68 to 327.67</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Maximum Temperature Value<itemizedlist>
+<listitem><para>Unit: Celsius</para>
+</listitem><listitem><para>Encoding: 16 bit signed scalar (Resolution: 0.01 C)</para>
+</listitem><listitem><para>Range: -327.68 to 327.67 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="634" column="1" declfile="include/bluetooth/mesh/sensor_types.h" declline="634" declcolumn="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>temperature sensor types </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

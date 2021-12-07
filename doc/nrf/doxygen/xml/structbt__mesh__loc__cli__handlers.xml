@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__loc__cli__handlers" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_loc_cli_handlers</compoundname>
+    <includes refid="gen__loc__cli_8h" local="no">gen_loc_cli.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__loc__cli__handlers_a19b2cbaa571f70f4fc9e04b2962c63d4_1a19b2cbaa571f70f4fc9e04b2962c63d4" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_loc_cli_handlers::global_status) (struct bt_mesh_loc_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_loc_global *status)</definition>
+        <argsstring>)(struct bt_mesh_loc_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_loc_global *status)</argsstring>
+        <name>global_status</name>
+        <briefdescription>
+<para>Global Location status message handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the incoming message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Global Location parameters of the Generic Location Server that published the message. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc_cli.h" line="60" column="1" bodyfile="include/bluetooth/mesh/gen_loc_cli.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__loc__cli__handlers_a7055889fea6dab4261352e028f02a5a5_1a7055889fea6dab4261352e028f02a5a5" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_loc_cli_handlers::local_status) (struct bt_mesh_loc_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_loc_local *status)</definition>
+        <argsstring>)(struct bt_mesh_loc_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_loc_local *status)</argsstring>
+        <name>local_status</name>
+        <briefdescription>
+<para>Local Location status message handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the incoming message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Local Location parameters of the Generic Location Server that published the message. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc_cli.h" line="71" column="1" bodyfile="include/bluetooth/mesh/gen_loc_cli.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Location handler functions </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/gen_loc_cli.h" line="52" column="1" bodyfile="include/bluetooth/mesh/gen_loc_cli.h" bodystart="52" bodyend="74"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__loc__cli__handlers_a19b2cbaa571f70f4fc9e04b2962c63d4_1a19b2cbaa571f70f4fc9e04b2962c63d4" prot="public" virt="non-virtual"><scope>bt_mesh_loc_cli_handlers</scope><name>global_status</name></member>
+      <member refid="structbt__mesh__loc__cli__handlers_a7055889fea6dab4261352e028f02a5a5_1a7055889fea6dab4261352e028f02a5a5" prot="public" virt="non-virtual"><scope>bt_mesh_loc_cli_handlers</scope><name>local_status</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

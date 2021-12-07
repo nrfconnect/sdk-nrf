@@ -1,0 +1,435 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="gen__dtt__srv_8h" kind="file" language="C++">
+    <compoundname>gen_dtt_srv.h</compoundname>
+    <includes local="no">bluetooth/mesh.h</includes>
+    <includes refid="model__types_8h" local="no">bluetooth/mesh/model_types.h</includes>
+    <includes refid="gen__dtt_8h" local="no">bluetooth/mesh/gen_dtt.h</includes>
+    <includedby refid="gen__ponoff__srv_8h" local="no">include/bluetooth/mesh/gen_ponoff_srv.h</includedby>
+    <includedby refid="models_8h" local="no">include/bluetooth/mesh/models.h</includedby>
+    <incdepgraph>
+      <node id="4">
+        <label>bluetooth/mesh/gen_dtt.h</label>
+        <link refid="gen__dtt_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/mesh/gen_dtt_srv.h</label>
+        <link refid="gen__dtt__srv_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/mesh/model_types.h</label>
+        <link refid="model__types_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bluetooth/mesh.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>include/bluetooth/mesh/gen_dtt_srv.h</label>
+        <link refid="gen__dtt__srv_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>include/bluetooth/mesh/gen_plvl_srv.h</label>
+        <link refid="gen__plvl__srv_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/bluetooth/mesh/gen_ponoff_srv.h</label>
+        <link refid="gen__ponoff__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>include/bluetooth/mesh/light_ctl_srv.h</label>
+        <link refid="light__ctl__srv_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>include/bluetooth/mesh/light_ctrl_srv.h</label>
+        <link refid="light__ctrl__srv_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>include/bluetooth/mesh/light_hsl_srv.h</label>
+        <link refid="light__hsl__srv_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>include/bluetooth/mesh/light_xyl_srv.h</label>
+        <link refid="light__xyl__srv_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>include/bluetooth/mesh/lightness_srv.h</label>
+        <link refid="lightness__srv_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>include/bluetooth/mesh/models.h</label>
+        <link refid="models_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>include/bluetooth/mesh/vnd/silvair_enocean_srv.h</label>
+        <link refid="silvair__enocean__srv_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structbt__mesh__dtt__srv" prot="public">bt_mesh_dtt_srv</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__dtt__srv_ga51f86601b5863f3ab0a5041d9708611f_1ga51f86601b5863f3ab0a5041d9708611f" prot="public" static="no">
+        <name>BT_MESH_DTT_SRV_INIT</name>
+        <param><defname>_update</defname></param>
+        <initializer>	{                                                                      \
+		.update = _update,                                             \
+	}</initializer>
+        <briefdescription>
+<para>Initialization parameters for <ref refid="group__bt__mesh__dtt__srv" kindref="compound">Generic Default Transition Time Server</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_update</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Update handler called on every change to the transition time in this server. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_dtt_srv.h" line="35" column="9" bodyfile="include/bluetooth/mesh/gen_dtt_srv.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__dtt__srv_ga3d97499d30dc351c2e4d4c704b258ba1_1ga3d97499d30dc351c2e4d4c704b258ba1" prot="public" static="no">
+        <name>BT_MESH_MODEL_DTT_SRV</name>
+        <param><defname>_srv</defname></param>
+        <initializer>	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_DEF_TRANS_TIME_SRV,              \
+			 _bt_mesh_dtt_srv_op, &amp;(_srv)-&gt;pub,                    \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__dtt__srv" kindref="compound">bt_mesh_dtt_srv</ref>,       \
+						 _srv),                        \
+			 &amp;_bt_mesh_dtt_srv_cb)</initializer>
+        <briefdescription>
+<para>Generic Default Transition Time Server model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__dtt__srv" kindref="compound">Generic Default Transition Time Server</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_dtt_srv.h" line="46" column="9" bodyfile="include/bluetooth/mesh/gen_dtt_srv.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__dtt__srv_gadf57baba0774aa3a607071e522f3eb6e_1gadf57baba0774aa3a607071e522f3eb6e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_mesh_dtt_srv_set</definition>
+        <argsstring>(struct bt_mesh_dtt_srv *srv, uint32_t transition_time)</argsstring>
+        <name>bt_mesh_dtt_srv_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__dtt__srv" kindref="compound">bt_mesh_dtt_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>transition_time</declname>
+        </param>
+        <briefdescription>
+<para>Set the Default Transition Time of the DTT server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If an update handler is set, it&apos;ll be called with the updated transition time. If publication is configured, the change will cause the server to publish.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server to set the DTT of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">transition_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New Default Transition Time, in milliseconds. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_dtt_srv.h" line="94" column="6" declfile="include/bluetooth/mesh/gen_dtt_srv.h" declline="94" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__dtt__srv_ga0e32a960aa3952c6ecb13d495126a76c_1ga0e32a960aa3952c6ecb13d495126a76c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_dtt_srv_pub</definition>
+        <argsstring>(struct bt_mesh_dtt_srv *srv, struct bt_mesh_msg_ctx *ctx)</argsstring>
+        <name>bt_mesh_dtt_srv_pub</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__dtt__srv" kindref="compound">bt_mesh_dtt_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <briefdescription>
+<para>Publish the current transition time. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server instance to publish with. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to publish with, or NULL to publish with the configured parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully published the current transition time. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_dtt_srv.h" line="107" column="5" declfile="include/bluetooth/mesh/gen_dtt_srv.h" declline="107" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__dtt__srv_ga8a685115b9d76f99deb5018eeeb54e57_1ga8a685115b9d76f99deb5018eeeb54e57" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>struct <ref refid="structbt__mesh__dtt__srv" kindref="compound">bt_mesh_dtt_srv</ref> *</type>
+        <definition>static struct bt_mesh_dtt_srv * bt_mesh_dtt_srv_get</definition>
+        <argsstring>(const struct bt_mesh_elem *elem)</argsstring>
+        <name>bt_mesh_dtt_srv_get</name>
+        <param>
+          <type>const struct bt_mesh_elem *</type>
+          <declname>elem</declname>
+        </param>
+        <briefdescription>
+<para>Find the Generic DTT server in a given element. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">elem</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Element to find the DTT server in.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A pointer to the DTT server instance, or NULL if no instance is found. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_dtt_srv.h" line="118" column="1" bodyfile="include/bluetooth/mesh/gen_dtt_srv.h" bodystart="118" bodyend="124"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__dtt__srv_gae7a19ab0d1bb7a6d11a65250c1e72806_1gae7a19ab0d1bb7a6d11a65250c1e72806" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool bt_mesh_dtt_srv_transition_get</definition>
+        <argsstring>(struct bt_mesh_model *model, struct bt_mesh_model_transition *transition)</argsstring>
+        <name>bt_mesh_dtt_srv_transition_get</name>
+        <param>
+          <type>struct bt_mesh_model *</type>
+          <declname>model</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref> *</type>
+          <declname>transition</declname>
+        </param>
+        <briefdescription>
+<para>Get the default transition parameters for the given model. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">model</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Model to get the DTT for. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">transition</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Transition buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Whether the transition was set. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_dtt_srv.h" line="134" column="1" bodyfile="include/bluetooth/mesh/gen_dtt_srv.h" bodystart="134" bodyend="143"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_MESH_GEN_DTT_SRV_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_GEN_DTT_SRV_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/mesh.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="model__types_8h" kindref="compound">bluetooth/mesh/model_types.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="gen__dtt_8h" kindref="compound">bluetooth/mesh/gen_dtt.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__dtt__srv" kindref="compound">bt_mesh_dtt_srv</ref>;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="group__bt__mesh__dtt__srv_ga51f86601b5863f3ab0a5041d9708611f_1ga51f86601b5863f3ab0a5041d9708611f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_DTT_SRV_INIT(_update)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="36"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="37"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.update<sp/>=<sp/>_update,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="38"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="group__bt__mesh__dtt__srv_ga3d97499d30dc351c2e4d4c704b258ba1_1ga3d97499d30dc351c2e4d4c704b258ba1" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_MODEL_DTT_SRV(_srv)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="47"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_DEF_TRANS_TIME_SRV,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="48"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_bt_mesh_dtt_srv_op,<sp/>&amp;(_srv)-&gt;pub,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="49"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_USER_DATA(struct<sp/>bt_mesh_dtt_srv,<sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="50"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_srv),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="51"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;_bt_mesh_dtt_srv_cb)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="structbt__mesh__dtt__srv" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__dtt__srv" kindref="compound">bt_mesh_dtt_srv</ref><sp/>{</highlight></codeline>
+<codeline lineno="56" refid="structbt__mesh__dtt__srv_a4b985b9d805e3274341b231535c71627_1a4b985b9d805e3274341b231535c71627" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__mesh__dtt__srv_a4b985b9d805e3274341b231535c71627_1a4b985b9d805e3274341b231535c71627" kindref="member">transition_time</ref>;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="structbt__mesh__dtt__srv_a6dad41d541eb508cd1f37033161341bc_1a6dad41d541eb508cd1f37033161341bc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__dtt__srv_a6dad41d541eb508cd1f37033161341bc_1a6dad41d541eb508cd1f37033161341bc" kindref="member">update</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__dtt__srv" kindref="compound">bt_mesh_dtt_srv</ref><sp/>*srv,</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/>old_transition_time,</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/>new_transition_time);</highlight></codeline>
+<codeline lineno="75" refid="structbt__mesh__dtt__srv_affb6963e375463e64a2417660b7b3394_1affb6963e375463e64a2417660b7b3394" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model<sp/>*<ref refid="structbt__mesh__dtt__srv_affb6963e375463e64a2417660b7b3394_1affb6963e375463e64a2417660b7b3394" kindref="member">model</ref>;</highlight></codeline>
+<codeline lineno="77" refid="structbt__mesh__dtt__srv_ae5ef61a36dfc51ade238527729935d6b_1ae5ef61a36dfc51ade238527729935d6b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_pub<sp/><ref refid="structbt__mesh__dtt__srv_ae5ef61a36dfc51ade238527729935d6b_1ae5ef61a36dfc51ade238527729935d6b" kindref="member">pub</ref>;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Publication<sp/>buffer<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="structbt__mesh__dtt__srv_a3b86887ed9f9519a64be615ed91124d7_1a3b86887ed9f9519a64be615ed91124d7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">net_buf_simple<sp/><ref refid="structbt__mesh__dtt__srv_a3b86887ed9f9519a64be615ed91124d7_1a3b86887ed9f9519a64be615ed91124d7" kindref="member">pub_buf</ref>;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Publication<sp/>data<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81" refid="structbt__mesh__dtt__srv_ad4dbefc29963daf2c94d2a201952bb21_1ad4dbefc29963daf2c94d2a201952bb21" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__dtt__srv_ad4dbefc29963daf2c94d2a201952bb21_1ad4dbefc29963daf2c94d2a201952bb21" kindref="member">pub_data</ref>[BT_MESH_MODEL_BUF_LEN(BT_MESH_DTT_OP_STATUS,</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_DTT_MSG_LEN_STATUS)];</highlight></codeline>
+<codeline lineno="83"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94" refid="group__bt__mesh__dtt__srv_gadf57baba0774aa3a607071e522f3eb6e_1gadf57baba0774aa3a607071e522f3eb6e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__dtt__srv_gadf57baba0774aa3a607071e522f3eb6e_1gadf57baba0774aa3a607071e522f3eb6e" kindref="member">bt_mesh_dtt_srv_set</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__dtt__srv" kindref="compound">bt_mesh_dtt_srv</ref><sp/>*srv,<sp/>uint32_t<sp/>transition_time);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107" refid="group__bt__mesh__dtt__srv_ga0e32a960aa3952c6ecb13d495126a76c_1ga0e32a960aa3952c6ecb13d495126a76c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__dtt__srv_ga0e32a960aa3952c6ecb13d495126a76c_1ga0e32a960aa3952c6ecb13d495126a76c" kindref="member">bt_mesh_dtt_srv_pub</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__dtt__srv" kindref="compound">bt_mesh_dtt_srv</ref><sp/>*srv,</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx);</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__dtt__srv" kindref="compound">bt_mesh_dtt_srv</ref><sp/>*</highlight></codeline>
+<codeline lineno="118" refid="group__bt__mesh__dtt__srv_ga8a685115b9d76f99deb5018eeeb54e57_1ga8a685115b9d76f99deb5018eeeb54e57" refkind="member"><highlight class="normal"><ref refid="group__bt__mesh__dtt__srv_ga8a685115b9d76f99deb5018eeeb54e57_1ga8a685115b9d76f99deb5018eeeb54e57" kindref="member">bt_mesh_dtt_srv_get</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_elem<sp/>*elem)</highlight></codeline>
+<codeline lineno="119"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model<sp/>*model<sp/>=<sp/>bt_mesh_model_find(</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>elem,<sp/>BT_MESH_MODEL_ID_GEN_DEF_TRANS_TIME_SRV);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__dtt__srv" kindref="compound">bt_mesh_dtt_srv</ref><sp/>*)(model<sp/>?<sp/>model-&gt;user_data<sp/>:<sp/>NULL);</highlight></codeline>
+<codeline lineno="124"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134" refid="group__bt__mesh__dtt__srv_gae7a19ab0d1bb7a6d11a65250c1e72806_1gae7a19ab0d1bb7a6d11a65250c1e72806" refkind="member"><highlight class="normal"><ref refid="group__bt__mesh__dtt__srv_gae7a19ab0d1bb7a6d11a65250c1e72806_1gae7a19ab0d1bb7a6d11a65250c1e72806" kindref="member">bt_mesh_dtt_srv_transition_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_model<sp/>*model,</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref><sp/>*transition)</highlight></codeline>
+<codeline lineno="136"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__dtt__srv" kindref="compound">bt_mesh_dtt_srv</ref><sp/>*srv<sp/>=</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__dtt__srv_ga8a685115b9d76f99deb5018eeeb54e57_1ga8a685115b9d76f99deb5018eeeb54e57" kindref="member">bt_mesh_dtt_srv_get</ref>(bt_mesh_model_elem(<ref refid="structbt__mesh__dtt__srv_affb6963e375463e64a2417660b7b3394_1affb6963e375463e64a2417660b7b3394" kindref="member">model</ref>));</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>transition-&gt;<ref refid="structbt__mesh__model__transition_a379edf32df457ab3dd9cd8ac1a66f051_1a379edf32df457ab3dd9cd8ac1a66f051" kindref="member">time</ref><sp/>=<sp/>srv<sp/>?<sp/>srv-&gt;<ref refid="structbt__mesh__dtt__srv_a4b985b9d805e3274341b231535c71627_1a4b985b9d805e3274341b231535c71627" kindref="member">transition_time</ref><sp/>:<sp/>0;</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>transition-&gt;<ref refid="structbt__mesh__model__transition_a22e05787d6336fee5b171126bda4400c_1a22e05787d6336fee5b171126bda4400c" kindref="member">delay</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(srv<sp/>!=<sp/>NULL);</highlight></codeline>
+<codeline lineno="143"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_op<sp/>_bt_mesh_dtt_srv_op[];</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_cb<sp/>_bt_mesh_dtt_srv_cb;</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_MESH_GEN_DTT_SRV_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/mesh/gen_dtt_srv.h"/>
+  </compounddef>
+</doxygen>

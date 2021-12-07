@@ -1,0 +1,164 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structgps__module__event" kind="struct" language="C++" prot="public">
+    <compoundname>gps_module_event</compoundname>
+    <includes refid="gps__module__event_8h" local="no">gps_module_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structgps__module__event_a9e74675b3aaebffe1c146b8c12f145e5_1a9e74675b3aaebffe1c146b8c12f145e5" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header gps_module_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/gps_module_event.h" line="67" column="19" bodyfile="applications/asset_tracker_v2/src/events/gps_module_event.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__module__event_a65fb62363ea2678a1619c47a65dde175_1a65fb62363ea2678a1619c47a65dde175" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__gps__module__event_gade6be844c4a6150084262b37427cac88_1gade6be844c4a6150084262b37427cac88" kindref="member">gps_module_event_type</ref></type>
+        <definition>enum gps_module_event_type gps_module_event::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/gps_module_event.h" line="68" column="27" bodyfile="applications/asset_tracker_v2/src/events/gps_module_event.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__module__event_a569b8fc33aa7fab01eef703a5fe39b48_1a569b8fc33aa7fab01eef703a5fe39b48" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structgps__module__data" kindref="compound">gps_module_data</ref></type>
+        <definition>struct gps_module_data gps_module_event::gps</definition>
+        <argsstring></argsstring>
+        <name>gps</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/gps_module_event.h" line="71" column="22" bodyfile="applications/asset_tracker_v2/src/events/gps_module_event.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__module__event_a457b53f5104887afbdc85f45ef6f2e1e_1a457b53f5104887afbdc85f45ef6f2e1e" prot="public" static="no" mutable="no">
+        <type>struct nrf_modem_gnss_agps_data_frame</type>
+        <definition>struct nrf_modem_gnss_agps_data_frame gps_module_event::agps_request</definition>
+        <argsstring></argsstring>
+        <name>agps_request</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/gps_module_event.h" line="72" column="37" bodyfile="applications/asset_tracker_v2/src/events/gps_module_event.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__module__event_a1bec4127d039c905cf142a1c886c5768_1a1bec4127d039c905cf142a1c886c5768" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t gps_module_event::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/gps_module_event.h" line="74" column="10" bodyfile="applications/asset_tracker_v2/src/events/gps_module_event.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__module__event_ac3456314b30df7ac59aad29af65059e2_1ac3456314b30df7ac59aad29af65059e2" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int gps_module_event::err</definition>
+        <argsstring></argsstring>
+        <name>err</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/gps_module_event.h" line="75" column="5" bodyfile="applications/asset_tracker_v2/src/events/gps_module_event.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__module__event_ad8c19fcdec6bc8bc120bcb0d3734f37c_1ad8c19fcdec6bc8bc120bcb0d3734f37c" prot="public" static="no" mutable="no">
+        <type>union gps_module_event::@15</type>
+        <definition>union gps_module_event::@15 gps_module_event::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/gps_module_event.h" line="76" column="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>GPS event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>gps_module_data</label>
+        <link refid="structgps__module__data"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>pvt</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>gps_module_event</label>
+        <link refid="structgps__module__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>gps</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>gps_module_pvt</label>
+        <link refid="structgps__module__pvt"/>
+      </node>
+    </collaborationgraph>
+    <location file="applications/asset_tracker_v2/src/events/gps_module_event.h" line="66" column="1" bodyfile="applications/asset_tracker_v2/src/events/gps_module_event.h" bodystart="66" bodyend="77"/>
+    <listofallmembers>
+      <member refid="structgps__module__event_a457b53f5104887afbdc85f45ef6f2e1e_1a457b53f5104887afbdc85f45ef6f2e1e" prot="public" virt="non-virtual"><scope>gps_module_event</scope><name>agps_request</name></member>
+      <member refid="structgps__module__event_ad8c19fcdec6bc8bc120bcb0d3734f37c_1ad8c19fcdec6bc8bc120bcb0d3734f37c" prot="public" virt="non-virtual"><scope>gps_module_event</scope><name>data</name></member>
+      <member refid="structgps__module__event_ac3456314b30df7ac59aad29af65059e2_1ac3456314b30df7ac59aad29af65059e2" prot="public" virt="non-virtual"><scope>gps_module_event</scope><name>err</name></member>
+      <member refid="structgps__module__event_a569b8fc33aa7fab01eef703a5fe39b48_1a569b8fc33aa7fab01eef703a5fe39b48" prot="public" virt="non-virtual"><scope>gps_module_event</scope><name>gps</name></member>
+      <member refid="structgps__module__event_a9e74675b3aaebffe1c146b8c12f145e5_1a9e74675b3aaebffe1c146b8c12f145e5" prot="public" virt="non-virtual"><scope>gps_module_event</scope><name>header</name></member>
+      <member refid="structgps__module__event_a1bec4127d039c905cf142a1c886c5768_1a1bec4127d039c905cf142a1c886c5768" prot="public" virt="non-virtual"><scope>gps_module_event</scope><name>id</name></member>
+      <member refid="structgps__module__event_a65fb62363ea2678a1619c47a65dde175_1a65fb62363ea2678a1619c47a65dde175" prot="public" virt="non-virtual"><scope>gps_module_event</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

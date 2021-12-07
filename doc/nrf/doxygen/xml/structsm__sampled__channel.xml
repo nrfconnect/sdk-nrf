@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structsm__sampled__channel" kind="struct" language="C++" prot="public">
+    <compoundname>sm_sampled_channel</compoundname>
+    <includes refid="sensor__manager_8h" local="no">sensor_manager.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structsm__sampled__channel_a057074ff1f0d7d269cb8a1b33b9e5c62_1a057074ff1f0d7d269cb8a1b33b9e5c62" prot="public" static="no" mutable="no">
+        <type>enum sensor_channel</type>
+        <definition>enum sensor_channel sm_sampled_channel::chan</definition>
+        <argsstring></argsstring>
+        <name>chan</name>
+        <briefdescription>
+<para>Channel identifier. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/sensor_manager.h" line="39" column="20" bodyfile="include/caf/sensor_manager.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsm__sampled__channel_a4e08d7de229ea884777f73d77e5b5c73_1a4e08d7de229ea884777f73d77e5b5c73" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t sm_sampled_channel::data_cnt</definition>
+        <argsstring></argsstring>
+        <name>data_cnt</name>
+        <briefdescription>
+<para>Number of data samples in selected channel. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/sensor_manager.h" line="41" column="9" bodyfile="include/caf/sensor_manager.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Description of single channel. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The description of the channel to do the measurement on. </para>
+    </detaileddescription>
+    <location file="include/caf/sensor_manager.h" line="37" column="1" bodyfile="include/caf/sensor_manager.h" bodystart="37" bodyend="42"/>
+    <listofallmembers>
+      <member refid="structsm__sampled__channel_a057074ff1f0d7d269cb8a1b33b9e5c62_1a057074ff1f0d7d269cb8a1b33b9e5c62" prot="public" virt="non-virtual"><scope>sm_sampled_channel</scope><name>chan</name></member>
+      <member refid="structsm__sampled__channel_a4e08d7de229ea884777f73d77e5b5c73_1a4e08d7de229ea884777f73d77e5b5c73" prot="public" virt="non-virtual"><scope>sm_sampled_channel</scope><name>data_cnt</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

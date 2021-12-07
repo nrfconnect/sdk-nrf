@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__modem__jwt" kind="group">
+    <compoundname>modem_jwt</compoundname>
+    <title>JWT generation</title>
+    <innerclass refid="structjwt__data" prot="public">jwt_data</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__modem__jwt_1gab3fc100bfe9885bc7d6cd5011d487eeb" prot="public" static="no" strong="no">
+        <type></type>
+        <name>jwt_key_type</name>
+        <enumvalue id="group__modem__jwt_gab3fc100bfe9885bc7d6cd5011d487eeb_1ggab3fc100bfe9885bc7d6cd5011d487eeba96ed1861a4dba83ebe3855440bedb20b" prot="public">
+          <name>JWT_KEY_TYPE_CLIENT_PRIV</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__jwt_gab3fc100bfe9885bc7d6cd5011d487eeb_1ggab3fc100bfe9885bc7d6cd5011d487eeba7c55c6c5501cd87eed290e65c5de3b2c" prot="public">
+          <name>JWT_KEY_TYPE_ENDORSEMENT</name>
+          <initializer>= 8</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>The type of key to be used for signing the JWT. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_jwt.h" line="26" column="1" bodyfile="include/modem/modem_jwt.h" bodystart="26" bodyend="29"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__modem__jwt_1gacaa7ea0e840121ee3ae0180cda78db0a" prot="public" static="no" strong="no">
+        <type></type>
+        <name>jwt_alg_type</name>
+        <enumvalue id="group__modem__jwt_gacaa7ea0e840121ee3ae0180cda78db0a_1ggacaa7ea0e840121ee3ae0180cda78db0aaba356159c1a90fbcd9d40b63f5bf6c92" prot="public">
+          <name>JWT_ALG_TYPE_ES256</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>JWT signing algorithm. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_jwt.h" line="32" column="1" bodyfile="include/modem/modem_jwt.h" bodystart="32" bodyend="34"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__modem__jwt_1ga3acc163ac07c90facc3a135931422a81" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_jwt_generate</definition>
+        <argsstring>(struct jwt_data *const jwt)</argsstring>
+        <name>modem_jwt_generate</name>
+        <param>
+          <type>struct <ref refid="structjwt__data" kindref="compound">jwt_data</ref> *const</type>
+          <declname>jwt</declname>
+        </param>
+        <briefdescription>
+<para>Generates a JWT using the supplied parameters. If successful, the JWT string will be stored in the supplied struct. This function will allocate memory for the JWT if the user does not provide a buffer. In that case, the user is responsible for freeing the memory by calling <ref refid="group__modem__jwt_gadfe0c31924fb6b9f35ac772a9771e729_1gadfe0c31924fb6b9f35ac772a9771e729" kindref="member">modem_jwt_free</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Subject and audience fields may be NULL in which case those fields are left out from generated JWT token.</para>
+<para>If sec_tag value is given as zero, JWT is signed with Nordic&apos;s own keys that already exist in the modem.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">jwt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to struct containing JWT parameters and result.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_jwt.h" line="84" column="5" declfile="include/modem/modem_jwt.h" declline="84" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__modem__jwt_1ga037cdb2b8be6c6900836efacf8c7598e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_jwt_get_uuids</definition>
+        <argsstring>(struct nrf_device_uuid *dev, struct nrf_modem_fw_uuid *mfw)</argsstring>
+        <name>modem_jwt_get_uuids</name>
+        <param>
+          <type>struct <ref refid="structnrf__device__uuid" kindref="compound">nrf_device_uuid</ref> *</type>
+          <declname>dev</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnrf__modem__fw__uuid" kindref="compound">nrf_modem_fw_uuid</ref> *</type>
+          <declname>mfw</declname>
+        </param>
+        <briefdescription>
+<para>Gets the device and/or modem firmware UUID from the modem and returns it as a NULL terminated string in the supplied struct(s). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Uses internally <ref refid="group__modem__jwt_ga3acc163ac07c90facc3a135931422a81_1ga3acc163ac07c90facc3a135931422a81" kindref="member">modem_jwt_generate</ref> and parses JWT token for &quot;iss&quot; &quot;jti&quot; fields which contains given UUID values.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">dev</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to struct containing device UUID string. Can be NULL if UUID is not wanted. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">mfw</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to struct containing modem fw UUID string. Can be NULL if UUID is not wanted.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_jwt.h" line="101" column="5" declfile="include/modem/modem_jwt.h" declline="101" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__modem__jwt_1gadfe0c31924fb6b9f35ac772a9771e729" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void modem_jwt_free</definition>
+        <argsstring>(char *const jwt_buf)</argsstring>
+        <name>modem_jwt_free</name>
+        <param>
+          <type>char *const</type>
+          <declname>jwt_buf</declname>
+        </param>
+        <briefdescription>
+<para>Frees the JWT buffer allocated by <ref refid="group__modem__jwt_ga3acc163ac07c90facc3a135931422a81_1ga3acc163ac07c90facc3a135931422a81" kindref="member">modem_jwt_generate</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">jwt_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to JWT buffer; see <ref refid="structjwt__data" kindref="compound">jwt_data</ref>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_jwt.h" line="109" column="6" declfile="include/modem/modem_jwt.h" declline="109" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

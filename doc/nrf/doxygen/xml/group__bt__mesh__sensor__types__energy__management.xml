@@ -1,0 +1,315 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__sensor__types__energy__management" kind="group">
+    <compoundname>bt_mesh_sensor_types_energy_management</compoundname>
+    <title>Energy management sensor</title>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__energy__management_1gad9e34e37f4848772e92ee9b5034eb5bc" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_dev_power_range_spec</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_dev_power_range_spec</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device power range specification</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Minimum Power Value<itemizedlist>
+<listitem><para>Unit: Watt</para>
+</listitem><listitem><para>Encoding: 24 bit unsigned scalar (Resolution: 0.1 W)</para>
+</listitem><listitem><para>Range: 0 to 1677721.4</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Typical Power Value<itemizedlist>
+<listitem><para>Unit: Watt</para>
+</listitem><listitem><para>Encoding: 24 bit unsigned scalar (Resolution: 0.1 W)</para>
+</listitem><listitem><para>Range: 0 to 1677721.4</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Maximum Power Value<itemizedlist>
+<listitem><para>Unit: Watt</para>
+</listitem><listitem><para>Encoding: 24 bit unsigned scalar (Resolution: 0.1 W)</para>
+</listitem><listitem><para>Range: 0 to 1677721.4 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="867" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="867" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__energy__management_1gaf0e11607ea427ae6a84ca7f9699d24df" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_present_dev_input_power</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_present_dev_input_power</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present device input power</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Present Device Input Power<itemizedlist>
+<listitem><para>Unit: Watt</para>
+</listitem><listitem><para>Encoding: 24 bit unsigned scalar (Resolution: 0.1 W)</para>
+</listitem><listitem><para>Range: 0 to 1677721.4 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="877" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="877" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__energy__management_1gaf51130646b3cdacc6a42967f668db861" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_present_dev_op_efficiency</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_present_dev_op_efficiency</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present device operating efficiency</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Present Device Operating Efficiency<itemizedlist>
+<listitem><para>Unit: Percent</para>
+</listitem><listitem><para>Encoding: 8 bit unsigned scalar (Resolution: 0.5 %)</para>
+</listitem><listitem><para>Range: 0 to 100.0 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="888" column="1" declfile="include/bluetooth/mesh/sensor_types.h" declline="888" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__energy__management_1gaf72d4e1b03fa107620d0ec29eeea6445" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_tot_dev_energy_use</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_tot_dev_energy_use</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Total device energy use</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Total Device Energy Use<itemizedlist>
+<listitem><para>Unit: Kwh</para>
+</listitem><listitem><para>Encoding: 24 bit unsigned scalar (Resolution: 1 kWh)</para>
+</listitem><listitem><para>Range: 0 to 16777214 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="898" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="898" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__energy__management_1ga1c034827120c41ded715ef36c03b76fe" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_dev_energy_use_since_turn_on</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_dev_energy_use_since_turn_on</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device energy use since turn on</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Device Energy Use Since Turn On<itemizedlist>
+<listitem><para>Unit: Kwh</para>
+</listitem><listitem><para>Encoding: 24 bit unsigned scalar (Resolution: 1 kWh)</para>
+</listitem><listitem><para>Range: 0 to 16777214 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="909" column="1" declfile="include/bluetooth/mesh/sensor_types.h" declline="909" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__energy__management_1gaf8331e6b85fa2b116773aace9c095eee" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_precise_tot_dev_energy_use</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_precise_tot_dev_energy_use</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Precise Total Device Energy Use</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Total Device Energy Use<itemizedlist>
+<listitem><para>Unit: kWh</para>
+</listitem><listitem><para>Encoding: 32 bit unsigned scalar (Resolution: 0.001 kWh)</para>
+</listitem><listitem><para>Range: 0 to 4294967.293 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="920" column="1" declfile="include/bluetooth/mesh/sensor_types.h" declline="920" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__energy__management_1gaff98780e118f1bd5236763d4b43bf5a1" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_power_factor</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_power_factor</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Power Factor</para>
+<para>This sensor type should be used as a sensor setting.</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Cosine Of the Angle<itemizedlist>
+<listitem><para>Unit: <emphasis>unitless</emphasis></para>
+</listitem><listitem><para>Encoding: 8 bit signed scalar (Resolution: 1)</para>
+</listitem><listitem><para>Range: -100 to 100 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="932" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="932" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__energy__management_1gabb624051956fc3f34828a4754d9e3b39" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_rel_dev_energy_use_in_a_period_of_day</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_rel_dev_energy_use_in_a_period_of_day</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Relative device energy use in a period of day</para>
+<para>This sensor type supports series access. The series X-axis is measured in Hours.</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Energy Value<itemizedlist>
+<listitem><para>Unit: kWh</para>
+</listitem><listitem><para>Encoding: 24 bit unsigned scalar (Resolution: 1 kWh)</para>
+</listitem><listitem><para>Range: 0 to 16777214</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Start Time<itemizedlist>
+<listitem><para>Unit: Hours</para>
+</listitem><listitem><para>Encoding: 8 bit unsigned scalar (Resolution: 0.1 hours)</para>
+</listitem><listitem><para>Range: 0 to 24.0</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>End Time<itemizedlist>
+<listitem><para>Unit: Hours</para>
+</listitem><listitem><para>Encoding: 8 bit unsigned scalar (Resolution: 0.1 hours)</para>
+</listitem><listitem><para>Range: 0 to 24.0 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="954" column="1" declfile="include/bluetooth/mesh/sensor_types.h" declline="954" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__energy__management_1gaee6004f89ef39f8114be0bc81cb72814" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_apparent_energy32</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_apparent_energy32</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Apparent energy</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Apparent Energy<itemizedlist>
+<listitem><para>Unit: kVAh</para>
+</listitem><listitem><para>Encoding: 32 bit unsigned scalar (Resolution: 0.001 kVAh)</para>
+</listitem><listitem><para>Range: 0 to 4294967.293 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="964" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="964" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__energy__management_1gae8838a3a0b0749fd5251de628c58f086" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_apparent_power</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_apparent_power</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Apparent power</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Apparent Power<itemizedlist>
+<listitem><para>Unit: VA</para>
+</listitem><listitem><para>Encoding: 32 bit unsigned scalar (Resolution: 0.1 VA)</para>
+</listitem><listitem><para>Range: 0 to 1677721.3 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="974" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="974" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__energy__management_1ga55c80e29fb6324ba2b0edd37e5adfc2d" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_active_energy_loadside</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_active_energy_loadside</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Active energy loadside</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Energy<itemizedlist>
+<listitem><para>Unit: kWh</para>
+</listitem><listitem><para>Encoding: 32 bit unsigned scalar (Resolution: 0.001 kWh)</para>
+</listitem><listitem><para>Range: 0 to 4294967.293 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="984" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="984" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__energy__management_1ga4573fc536d3eb44a84eaecf326a743b1" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_active_power_loadside</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_active_power_loadside</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Active power loadside Channels:<itemizedlist>
+<listitem><para>Power<itemizedlist>
+<listitem><para>Unit: Watt</para>
+</listitem><listitem><para>Encoding: 24 bit unsigned scalar (Resolution: 0.1 W)</para>
+</listitem><listitem><para>Range: 0 to 1677721.4 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="993" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="993" declcolumn="39"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>types </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,336 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="lte__lc__trace_8h" kind="file" language="C++">
+    <compoundname>lte_lc_trace.h</compoundname>
+    <includes local="no">sys/util.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/modem/lte_lc_trace.h</label>
+        <link refid="lte__lc__trace_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>sys/util.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="lte__lc__trace_8h_ab4d14f47e520bb861bd4d5a8f8612005_1ab4d14f47e520bb861bd4d5a8f8612005" prot="public" static="no">
+        <name>LTE_LC_TRACE</name>
+        <param><defname>type</defname></param>
+        <initializer>	IF_ENABLED(CONFIG_LTE_LC_TRACE,						\
+		  (<ref refid="lte__lc__trace_8h_a28860d1733be9af1e35fb331e1542263_1a28860d1733be9af1e35fb331e1542263" kindref="member">lte_lc_trace_capture</ref>(type)))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc_trace.h" line="15" column="9" bodyfile="include/modem/lte_lc_trace.h" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047" prot="public" static="no" strong="no">
+        <type></type>
+        <name>lte_lc_trace_type</name>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a841bd08d32ee321e8af624e50185fd35" prot="public">
+          <name>LTE_LC_TRACE_FUNC_MODE_NORMAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a7c17feb800f49b6af489f9c5567261ea" prot="public">
+          <name>LTE_LC_TRACE_FUNC_MODE_ACTIVATE_LTE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047ae640e8c2729238fa3a08be9c2557678b" prot="public">
+          <name>LTE_LC_TRACE_FUNC_MODE_POWER_OFF</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a84871b7d3924b7a6460d8027fd514681" prot="public">
+          <name>LTE_LC_TRACE_FUNC_MODE_RX_ONLY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047ada21214a2d1301d06fac7ce1be2c38ba" prot="public">
+          <name>LTE_LC_TRACE_FUNC_MODE_OFFLINE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a16bf33ace8f559fa8e5bd027338719f9" prot="public">
+          <name>LTE_LC_TRACE_FUNC_MODE_DEACTIVATE_LTE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a446cedf8991701b6cb993cb12139aea4" prot="public">
+          <name>LTE_LC_TRACE_FUNC_MODE_DEACTIVATE_GNSS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a89ffafa3e17397148ba6c57d2d696cf3" prot="public">
+          <name>LTE_LC_TRACE_FUNC_MODE_ACTIVATE_GNSS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047adcb2a77f3e5b5d7895402fe47f6036da" prot="public">
+          <name>LTE_LC_TRACE_FUNC_MODE_DEACTIVATE_UICC</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a6ccca30963e13e7d2f9ce2e4580019a8" prot="public">
+          <name>LTE_LC_TRACE_FUNC_MODE_ACTIVATE_UICC</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047abd15eae386eaade3c52c8f83750e321a" prot="public">
+          <name>LTE_LC_TRACE_FUNC_MODE_OFFLINE_UICC_ON</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047ae880965ee6b2f331803269a54f5dad67" prot="public">
+          <name>LTE_LC_TRACE_NW_REG_NOT_REGISTERED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a205f1dc423eb1e1875550059e845d8c3" prot="public">
+          <name>LTE_LC_TRACE_NW_REG_REGISTERED_HOME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a7a33f2fd0d3de2c959b87601a81672d1" prot="public">
+          <name>LTE_LC_TRACE_NW_REG_SEARCHING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a85b5656c54aad62305ed0edfa2ca0fd8" prot="public">
+          <name>LTE_LC_TRACE_NW_REG_REGISTRATION_DENIED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a4d83dabaa4ede1a404b37ee14303b27c" prot="public">
+          <name>LTE_LC_TRACE_NW_REG_UNKNOWN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047ab98385d54fed9b7db75a207d5c1dbef9" prot="public">
+          <name>LTE_LC_TRACE_NW_REG_REGISTERED_ROAMING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a5bd0a70cace87cb67c15bb3c824ae15f" prot="public">
+          <name>LTE_LC_TRACE_NW_REG_REGISTERED_EMERGENCY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a78d075f8b46ddc495568cb8ce4e45318" prot="public">
+          <name>LTE_LC_TRACE_NW_REG_UICC_FAIL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a365b7ca79ff9d2834f1f883d3cf26997" prot="public">
+          <name>LTE_LC_TRACE_RRC_CONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a1b9ad54f9d6285976e7bb3caa11ced39" prot="public">
+          <name>LTE_LC_TRACE_RRC_IDLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a12fd9392f02350a2a37a7615503fe32e" prot="public">
+          <name>LTE_LC_TRACE_LTE_MODE_UPDATE_LTEM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a01bd510935918a2b292e42e1bf76b25f" prot="public">
+          <name>LTE_LC_TRACE_LTE_MODE_UPDATE_NBIOT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047aced14a0382ae0a354dd3ce6b1047f697" prot="public">
+          <name>LTE_LC_TRACE_MODEM_SLEEP_EXIT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a7a6a01b93d122ac63423f3fe1ebbe359" prot="public">
+          <name>LTE_LC_TRACE_MODEM_SLEEP_ENTER</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc_trace.h" line="19" column="1" bodyfile="include/modem/lte_lc_trace.h" bodystart="19" bodyend="45"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="lte__lc__trace_8h_a8b4520494cbd480c49081c0b1b3f00f9_1a8b4520494cbd480c49081c0b1b3f00f9" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* lte_lc_trace_handler_t) (enum lte_lc_trace_type type)</definition>
+        <argsstring>)(enum lte_lc_trace_type type)</argsstring>
+        <name>lte_lc_trace_handler_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc_trace.h" line="47" column="9" bodyfile="include/modem/lte_lc_trace.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="lte__lc__trace_8h_a1d24c68ec027fd0dce81e825d7210891_1a1d24c68ec027fd0dce81e825d7210891" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void lte_lc_trace_handler_set</definition>
+        <argsstring>(lte_lc_trace_handler_t handler)</argsstring>
+        <name>lte_lc_trace_handler_set</name>
+        <param>
+          <type><ref refid="lte__lc__trace_8h_a8b4520494cbd480c49081c0b1b3f00f9_1a8b4520494cbd480c49081c0b1b3f00f9" kindref="member">lte_lc_trace_handler_t</ref></type>
+          <declname>handler</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc_trace.h" line="49" column="6" declfile="include/modem/lte_lc_trace.h" declline="49" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="lte__lc__trace_8h_a28860d1733be9af1e35fb331e1542263_1a28860d1733be9af1e35fb331e1542263" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void lte_lc_trace_capture</definition>
+        <argsstring>(enum lte_lc_trace_type type)</argsstring>
+        <name>lte_lc_trace_capture</name>
+        <param>
+          <type>enum <ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047" kindref="member">lte_lc_trace_type</ref></type>
+          <declname>type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc_trace.h" line="51" column="6" declfile="include/modem/lte_lc_trace.h" declline="51" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>ZEPHYR_INCLUDE_LTE_LINK_CONTROL_TRACE_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ZEPHYR_INCLUDE_LTE_LINK_CONTROL_TRACE_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/util.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15" refid="lte__lc__trace_8h_ab4d14f47e520bb861bd4d5a8f8612005_1ab4d14f47e520bb861bd4d5a8f8612005" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LTE_LC_TRACE(type)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="16"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>IF_ENABLED(CONFIG_LTE_LC_TRACE,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="17"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(lte_lc_trace_capture(type)))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047" kindref="member">lte_lc_trace_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="20" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a841bd08d32ee321e8af624e50185fd35" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a841bd08d32ee321e8af624e50185fd35" kindref="member">LTE_LC_TRACE_FUNC_MODE_NORMAL</ref>,</highlight></codeline>
+<codeline lineno="21" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a7c17feb800f49b6af489f9c5567261ea" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a7c17feb800f49b6af489f9c5567261ea" kindref="member">LTE_LC_TRACE_FUNC_MODE_ACTIVATE_LTE</ref>,</highlight></codeline>
+<codeline lineno="22" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047ae640e8c2729238fa3a08be9c2557678b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047ae640e8c2729238fa3a08be9c2557678b" kindref="member">LTE_LC_TRACE_FUNC_MODE_POWER_OFF</ref>,</highlight></codeline>
+<codeline lineno="23" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a84871b7d3924b7a6460d8027fd514681" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a84871b7d3924b7a6460d8027fd514681" kindref="member">LTE_LC_TRACE_FUNC_MODE_RX_ONLY</ref>,</highlight></codeline>
+<codeline lineno="24" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047ada21214a2d1301d06fac7ce1be2c38ba" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047ada21214a2d1301d06fac7ce1be2c38ba" kindref="member">LTE_LC_TRACE_FUNC_MODE_OFFLINE</ref>,</highlight></codeline>
+<codeline lineno="25" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a16bf33ace8f559fa8e5bd027338719f9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a16bf33ace8f559fa8e5bd027338719f9" kindref="member">LTE_LC_TRACE_FUNC_MODE_DEACTIVATE_LTE</ref>,</highlight></codeline>
+<codeline lineno="26" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a446cedf8991701b6cb993cb12139aea4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a446cedf8991701b6cb993cb12139aea4" kindref="member">LTE_LC_TRACE_FUNC_MODE_DEACTIVATE_GNSS</ref>,</highlight></codeline>
+<codeline lineno="27" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a89ffafa3e17397148ba6c57d2d696cf3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a89ffafa3e17397148ba6c57d2d696cf3" kindref="member">LTE_LC_TRACE_FUNC_MODE_ACTIVATE_GNSS</ref>,</highlight></codeline>
+<codeline lineno="28" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047adcb2a77f3e5b5d7895402fe47f6036da" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047adcb2a77f3e5b5d7895402fe47f6036da" kindref="member">LTE_LC_TRACE_FUNC_MODE_DEACTIVATE_UICC</ref>,</highlight></codeline>
+<codeline lineno="29" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a6ccca30963e13e7d2f9ce2e4580019a8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a6ccca30963e13e7d2f9ce2e4580019a8" kindref="member">LTE_LC_TRACE_FUNC_MODE_ACTIVATE_UICC</ref>,</highlight></codeline>
+<codeline lineno="30" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047abd15eae386eaade3c52c8f83750e321a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047abd15eae386eaade3c52c8f83750e321a" kindref="member">LTE_LC_TRACE_FUNC_MODE_OFFLINE_UICC_ON</ref>,</highlight></codeline>
+<codeline lineno="31" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047ae880965ee6b2f331803269a54f5dad67" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047ae880965ee6b2f331803269a54f5dad67" kindref="member">LTE_LC_TRACE_NW_REG_NOT_REGISTERED</ref>,</highlight></codeline>
+<codeline lineno="32" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a205f1dc423eb1e1875550059e845d8c3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a205f1dc423eb1e1875550059e845d8c3" kindref="member">LTE_LC_TRACE_NW_REG_REGISTERED_HOME</ref>,</highlight></codeline>
+<codeline lineno="33" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a7a33f2fd0d3de2c959b87601a81672d1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a7a33f2fd0d3de2c959b87601a81672d1" kindref="member">LTE_LC_TRACE_NW_REG_SEARCHING</ref>,</highlight></codeline>
+<codeline lineno="34" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a85b5656c54aad62305ed0edfa2ca0fd8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a85b5656c54aad62305ed0edfa2ca0fd8" kindref="member">LTE_LC_TRACE_NW_REG_REGISTRATION_DENIED</ref>,</highlight></codeline>
+<codeline lineno="35" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a4d83dabaa4ede1a404b37ee14303b27c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a4d83dabaa4ede1a404b37ee14303b27c" kindref="member">LTE_LC_TRACE_NW_REG_UNKNOWN</ref>,</highlight></codeline>
+<codeline lineno="36" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047ab98385d54fed9b7db75a207d5c1dbef9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047ab98385d54fed9b7db75a207d5c1dbef9" kindref="member">LTE_LC_TRACE_NW_REG_REGISTERED_ROAMING</ref>,</highlight></codeline>
+<codeline lineno="37" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a5bd0a70cace87cb67c15bb3c824ae15f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a5bd0a70cace87cb67c15bb3c824ae15f" kindref="member">LTE_LC_TRACE_NW_REG_REGISTERED_EMERGENCY</ref>,</highlight></codeline>
+<codeline lineno="38" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a78d075f8b46ddc495568cb8ce4e45318" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a78d075f8b46ddc495568cb8ce4e45318" kindref="member">LTE_LC_TRACE_NW_REG_UICC_FAIL</ref>,</highlight></codeline>
+<codeline lineno="39" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a365b7ca79ff9d2834f1f883d3cf26997" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a365b7ca79ff9d2834f1f883d3cf26997" kindref="member">LTE_LC_TRACE_RRC_CONNECTED</ref>,</highlight></codeline>
+<codeline lineno="40" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a1b9ad54f9d6285976e7bb3caa11ced39" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a1b9ad54f9d6285976e7bb3caa11ced39" kindref="member">LTE_LC_TRACE_RRC_IDLE</ref>,</highlight></codeline>
+<codeline lineno="41" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a12fd9392f02350a2a37a7615503fe32e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a12fd9392f02350a2a37a7615503fe32e" kindref="member">LTE_LC_TRACE_LTE_MODE_UPDATE_LTEM</ref>,</highlight></codeline>
+<codeline lineno="42" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a01bd510935918a2b292e42e1bf76b25f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a01bd510935918a2b292e42e1bf76b25f" kindref="member">LTE_LC_TRACE_LTE_MODE_UPDATE_NBIOT</ref>,</highlight></codeline>
+<codeline lineno="43" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047aced14a0382ae0a354dd3ce6b1047f697" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047aced14a0382ae0a354dd3ce6b1047f697" kindref="member">LTE_LC_TRACE_MODEM_SLEEP_EXIT</ref>,</highlight></codeline>
+<codeline lineno="44" refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a7a6a01b93d122ac63423f3fe1ebbe359" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047a7a6a01b93d122ac63423f3fe1ebbe359" kindref="member">LTE_LC_TRACE_MODEM_SLEEP_ENTER</ref>,</highlight></codeline>
+<codeline lineno="45"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="lte__lc__trace_8h_a8b4520494cbd480c49081c0b1b3f00f9_1a8b4520494cbd480c49081c0b1b3f00f9" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void(*<ref refid="lte__lc__trace_8h_a8b4520494cbd480c49081c0b1b3f00f9_1a8b4520494cbd480c49081c0b1b3f00f9" kindref="member">lte_lc_trace_handler_t</ref>)(</highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047" kindref="member">lte_lc_trace_type</ref><sp/>type);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="lte__lc__trace_8h_a1d24c68ec027fd0dce81e825d7210891_1a1d24c68ec027fd0dce81e825d7210891" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="lte__lc__trace_8h_a1d24c68ec027fd0dce81e825d7210891_1a1d24c68ec027fd0dce81e825d7210891" kindref="member">lte_lc_trace_handler_set</ref>(<ref refid="lte__lc__trace_8h_a8b4520494cbd480c49081c0b1b3f00f9_1a8b4520494cbd480c49081c0b1b3f00f9" kindref="member">lte_lc_trace_handler_t</ref><sp/>handler);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="lte__lc__trace_8h_a28860d1733be9af1e35fb331e1542263_1a28860d1733be9af1e35fb331e1542263" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="lte__lc__trace_8h_a28860d1733be9af1e35fb331e1542263_1a28860d1733be9af1e35fb331e1542263" kindref="member">lte_lc_trace_capture</ref>(</highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="lte__lc__trace_8h_a5fe5d6c5692e84cde772a175d4927047_1a5fe5d6c5692e84cde772a175d4927047" kindref="member">lte_lc_trace_type</ref><sp/>type);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>ZEPHYR_INCLUDE_LTE_LINK_CONTROL_TRACE_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/modem/lte_lc_trace.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__dfu__smp__header" kind="struct" language="C++" prot="public">
+    <compoundname>bt_dfu_smp_header</compoundname>
+    <includes refid="dfu__smp_8h" local="no">dfu_smp.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__dfu__smp__header_a8a1c00b7051e1e952e17557f12e469fa_1a8a1c00b7051e1e952e17557f12e469fa" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_dfu_smp_header::op</definition>
+        <argsstring></argsstring>
+        <name>op</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Operation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="54" column="9" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__dfu__smp__header_a8e87d57e7aec8ee11a1f57e8494aeaa5_1a8e87d57e7aec8ee11a1f57e8494aeaa5" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_dfu_smp_header::flags</definition>
+        <argsstring></argsstring>
+        <name>flags</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Operational flags. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="56" column="9" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__dfu__smp__header_a06e3e1284c4982ac1d552a2498b9f691_1a06e3e1284c4982ac1d552a2498b9f691" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_dfu_smp_header::len_h8</definition>
+        <argsstring></argsstring>
+        <name>len_h8</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Payload length high byte. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="58" column="9" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__dfu__smp__header_aa1c55ea86ce0835f8b4a924bec8979b4_1aa1c55ea86ce0835f8b4a924bec8979b4" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_dfu_smp_header::len_l8</definition>
+        <argsstring></argsstring>
+        <name>len_l8</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Payload length low byte. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="60" column="9" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__dfu__smp__header_a08c2afadc8e75dc6f061ba087589bbbf_1a08c2afadc8e75dc6f061ba087589bbbf" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_dfu_smp_header::group_h8</definition>
+        <argsstring></argsstring>
+        <name>group_h8</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Group ID high byte. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="62" column="9" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__dfu__smp__header_ada55ccf734817f0f642142d2bb721c79_1ada55ccf734817f0f642142d2bb721c79" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_dfu_smp_header::group_l8</definition>
+        <argsstring></argsstring>
+        <name>group_l8</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Group ID low byte. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="64" column="9" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__dfu__smp__header_ac7d2d60516b4db0d2334a12bf01b860a_1ac7d2d60516b4db0d2334a12bf01b860a" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_dfu_smp_header::seq</definition>
+        <argsstring></argsstring>
+        <name>seq</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sequence number. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="66" column="9" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__dfu__smp__header_aa51f531c02a36ebab9418b47aad5337d_1aa51f531c02a36ebab9418b47aad5337d" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_dfu_smp_header::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Command ID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="68" column="9" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Header used internally by dfu_smp. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/dfu_smp.h" line="52" column="1" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="52" bodyend="69"/>
+    <listofallmembers>
+      <member refid="structbt__dfu__smp__header_a8e87d57e7aec8ee11a1f57e8494aeaa5_1a8e87d57e7aec8ee11a1f57e8494aeaa5" prot="public" virt="non-virtual"><scope>bt_dfu_smp_header</scope><name>flags</name></member>
+      <member refid="structbt__dfu__smp__header_a08c2afadc8e75dc6f061ba087589bbbf_1a08c2afadc8e75dc6f061ba087589bbbf" prot="public" virt="non-virtual"><scope>bt_dfu_smp_header</scope><name>group_h8</name></member>
+      <member refid="structbt__dfu__smp__header_ada55ccf734817f0f642142d2bb721c79_1ada55ccf734817f0f642142d2bb721c79" prot="public" virt="non-virtual"><scope>bt_dfu_smp_header</scope><name>group_l8</name></member>
+      <member refid="structbt__dfu__smp__header_aa51f531c02a36ebab9418b47aad5337d_1aa51f531c02a36ebab9418b47aad5337d" prot="public" virt="non-virtual"><scope>bt_dfu_smp_header</scope><name>id</name></member>
+      <member refid="structbt__dfu__smp__header_a06e3e1284c4982ac1d552a2498b9f691_1a06e3e1284c4982ac1d552a2498b9f691" prot="public" virt="non-virtual"><scope>bt_dfu_smp_header</scope><name>len_h8</name></member>
+      <member refid="structbt__dfu__smp__header_aa1c55ea86ce0835f8b4a924bec8979b4_1aa1c55ea86ce0835f8b4a924bec8979b4" prot="public" virt="non-virtual"><scope>bt_dfu_smp_header</scope><name>len_l8</name></member>
+      <member refid="structbt__dfu__smp__header_a8a1c00b7051e1e952e17557f12e469fa_1a8a1c00b7051e1e952e17557f12e469fa" prot="public" virt="non-virtual"><scope>bt_dfu_smp_header</scope><name>op</name></member>
+      <member refid="structbt__dfu__smp__header_ac7d2d60516b4db0d2334a12bf01b860a_1ac7d2d60516b4db0d2334a12bf01b860a" prot="public" virt="non-virtual"><scope>bt_dfu_smp_header</scope><name>seq</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

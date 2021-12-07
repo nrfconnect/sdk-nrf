@@ -1,0 +1,547 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="gadgets_8h" kind="file" language="C++">
+    <compoundname>gadgets.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <includes local="no">bluetooth/conn.h</includes>
+    <includes local="no">bluetooth/uuid.h</includes>
+    <includes local="no">bluetooth/gatt.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/bluetooth/services/gadgets.h</label>
+        <link refid="gadgets_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/conn.h</label>
+      </node>
+      <node id="5">
+        <label>bluetooth/gatt.h</label>
+      </node>
+      <node id="4">
+        <label>bluetooth/uuid.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structbt__gadgets__cb" prot="public">bt_gadgets_cb</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__gadgets_gad56f679787cdf56c6ad3eed52b839729_1gad56f679787cdf56c6ad3eed52b839729" prot="public" static="no">
+        <name>BT_UUID_GADGETS_VAL</name>
+        <initializer>	BT_UUID_128_ENCODE(0x0000FE03, 0x0000, 0x1000, 0x8000, 0x00805F9B34FB)</initializer>
+        <briefdescription>
+<para>UUID of the Gadgets Service. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets.h" line="32" column="9" bodyfile="include/bluetooth/services/gadgets.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__gadgets_ga0a670310ec158135a289aa1e5a551c8e_1ga0a670310ec158135a289aa1e5a551c8e" prot="public" static="no">
+        <name>BT_UUID_GADGETS_SHORT_VAL</name>
+        <initializer>0xfe03</initializer>
+        <briefdescription>
+<para>Short version of the Gadgets Service UUID. Used in advertisement packets. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets.h" line="38" column="9" bodyfile="include/bluetooth/services/gadgets.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__gadgets_ga7e89ace7615617d057e7b9f625b032ce_1ga7e89ace7615617d057e7b9f625b032ce" prot="public" static="no">
+        <name>BT_UUID_GADGETS_TX_VAL</name>
+        <initializer>	BT_UUID_128_ENCODE(0xF04EB177, 0x3005, 0x43A7, 0xAC61, 0xA390DDF83076)</initializer>
+        <briefdescription>
+<para>UUID of the TX Characteristic. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets.h" line="41" column="9" bodyfile="include/bluetooth/services/gadgets.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__gadgets_ga4250c4fe5d1035461f48dee342bfff62_1ga4250c4fe5d1035461f48dee342bfff62" prot="public" static="no">
+        <name>BT_UUID_GADGETS_RX_VAL</name>
+        <initializer>	BT_UUID_128_ENCODE(0x2BEEA05B, 0x1879, 0x4BB4, 0x8A2F, 0x72641F82420B)</initializer>
+        <briefdescription>
+<para>UUID of the RX Characteristic. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets.h" line="45" column="9" bodyfile="include/bluetooth/services/gadgets.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__gadgets_gad56ec8059b9974ec96c96f1bdc01d6e6_1gad56ec8059b9974ec96c96f1bdc01d6e6" prot="public" static="no">
+        <name>BT_UUID_GADGETS</name>
+        <initializer>BT_UUID_DECLARE_128(<ref refid="group__bt__gadgets_gad56f679787cdf56c6ad3eed52b839729_1gad56f679787cdf56c6ad3eed52b839729" kindref="member">BT_UUID_GADGETS_VAL</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets.h" line="48" column="9" bodyfile="include/bluetooth/services/gadgets.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__gadgets_ga137ca2b78dc96aae6567c0d91181294e_1ga137ca2b78dc96aae6567c0d91181294e" prot="public" static="no">
+        <name>BT_UUID_GADGETS_RX</name>
+        <initializer>BT_UUID_DECLARE_128(<ref refid="group__bt__gadgets_ga4250c4fe5d1035461f48dee342bfff62_1ga4250c4fe5d1035461f48dee342bfff62" kindref="member">BT_UUID_GADGETS_RX_VAL</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets.h" line="49" column="9" bodyfile="include/bluetooth/services/gadgets.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__gadgets_ga6139e1199a3cf1a6a05c7e74801701fe_1ga6139e1199a3cf1a6a05c7e74801701fe" prot="public" static="no">
+        <name>BT_UUID_GADGETS_TX</name>
+        <initializer>BT_UUID_DECLARE_128(<ref refid="group__bt__gadgets_ga7e89ace7615617d057e7b9f625b032ce_1ga7e89ace7615617d057e7b9f625b032ce" kindref="member">BT_UUID_GADGETS_TX_VAL</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets.h" line="50" column="9" bodyfile="include/bluetooth/services/gadgets.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__gadgets_ga8c1cf7632d65260372dc90b3c4f35a55_1ga8c1cf7632d65260372dc90b3c4f35a55" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_gadget_result</name>
+        <enumvalue id="group__bt__gadgets_ga8c1cf7632d65260372dc90b3c4f35a55_1gga8c1cf7632d65260372dc90b3c4f35a55a70c82eb00fad4f18ba6fb50cad2cc47d" prot="public">
+          <name>BT_GADGETS_RESULT_CODE_SUCCESS</name>
+          <initializer>= 0x00</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Gadget result code: success. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__gadgets_ga8c1cf7632d65260372dc90b3c4f35a55_1gga8c1cf7632d65260372dc90b3c4f35a55ae2ab33a63ae5c94c8aa0f8840ebcf695" prot="public">
+          <name>BT_GADGETS_RESULT_CODE_UNKNOWN</name>
+          <initializer>= 0x01</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Gadget result code: unknown error. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__gadgets_ga8c1cf7632d65260372dc90b3c4f35a55_1gga8c1cf7632d65260372dc90b3c4f35a55aeb94b2efed1d74ac0815b8820d8bfaf3" prot="public">
+          <name>BT_GADGETS_RESULT_CODE_UNSUPPORTED</name>
+          <initializer>= 0x03</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Gadget result code: unsupported error. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Gadgets Service result codes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets.h" line="54" column="1" bodyfile="include/bluetooth/services/gadgets.h" bodystart="54" bodyend="61"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__gadgets_ga6fecc2de10e6d2d176ab1ef8eda8ccb6_1ga6fecc2de10e6d2d176ab1ef8eda8ccb6" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_gadgets_stream_id</name>
+        <enumvalue id="group__bt__gadgets_ga6fecc2de10e6d2d176ab1ef8eda8ccb6_1gga6fecc2de10e6d2d176ab1ef8eda8ccb6a7ffca7d0a604df4af7959801766c1ab8" prot="public">
+          <name>BT_GADGETS_STREAM_ID_CONTROL</name>
+          <initializer>= 0b0000</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Control stream ID </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__gadgets_ga6fecc2de10e6d2d176ab1ef8eda8ccb6_1gga6fecc2de10e6d2d176ab1ef8eda8ccb6a077b4ce4d0a4e1f700e5a814cb60d9bb" prot="public">
+          <name>BT_GADGETS_STREAM_ID_ALEXA</name>
+          <initializer>= 0b0110</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Alexa stream ID </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__gadgets_ga6fecc2de10e6d2d176ab1ef8eda8ccb6_1gga6fecc2de10e6d2d176ab1ef8eda8ccb6a8b4a20e2ad9b9a0c6ed44170bbead5f5" prot="public">
+          <name>BT_GADGETS_STREAM_ID_OTA</name>
+          <initializer>= 0b0010</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>OTA stream ID </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Gadgets Service stream types. See Gadgets documentation for details: <ulink url="https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/packet-ble.html#streams">https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/packet-ble.html#streams</ulink>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets.h" line="67" column="1" bodyfile="include/bluetooth/services/gadgets.h" bodystart="67" bodyend="74"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__bt__gadgets_ga971083d8dd96deae6ae01c7ade506477_1ga971083d8dd96deae6ae01c7ade506477" prot="public" static="no">
+        <type>bool(*</type>
+        <definition>typedef bool(* bt_gadgets_stream_cb_t) (struct bt_conn *conn, const uint8_t *const data, uint16_t len, bool more_data)</definition>
+        <argsstring>)(struct bt_conn *conn, const uint8_t *const data, uint16_t len, bool more_data)</argsstring>
+        <name>bt_gadgets_stream_cb_t</name>
+        <briefdescription>
+<para>Callback type for data received. Returns false if type is unsupported. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets.h" line="79" column="9" bodyfile="include/bluetooth/services/gadgets.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bt__gadgets_ga7bd9f50d9e62f3cd0122c59174f09a82_1ga7bd9f50d9e62f3cd0122c59174f09a82" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_gadgets_sent_cb_t) (struct bt_conn *conn, const void *buf, bool success)</definition>
+        <argsstring>)(struct bt_conn *conn, const void *buf, bool success)</argsstring>
+        <name>bt_gadgets_sent_cb_t</name>
+        <briefdescription>
+<para>Callback type for data sent. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets.h" line="85" column="9" bodyfile="include/bluetooth/services/gadgets.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bt__gadgets_gaf985eb476aad558ab6feebdcdd3aaa96_1gaf985eb476aad558ab6feebdcdd3aaa96" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_gadgets_ccc_update_cb_t) (struct bt_conn *conn, bool enabled)</definition>
+        <argsstring>)(struct bt_conn *conn, bool enabled)</argsstring>
+        <name>bt_gadgets_ccc_update_cb_t</name>
+        <briefdescription>
+<para>Callback type for CCCD updated. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets.h" line="90" column="9" bodyfile="include/bluetooth/services/gadgets.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__gadgets_ga4740977d5ada1f1b11069f44c6864dff_1ga4740977d5ada1f1b11069f44c6864dff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_gadgets_init</definition>
+        <argsstring>(const struct bt_gadgets_cb *callbacks)</argsstring>
+        <name>bt_gadgets_init</name>
+        <param>
+          <type>const struct <ref refid="structbt__gadgets__cb" kindref="compound">bt_gadgets_cb</ref> *</type>
+          <declname>callbacks</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function registers the Gadgets BLE service with two characteristics, TX and RX.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">callbacks</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Struct with function pointers to callbacks for service events.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If initialization is successful. Otherwise, a negative value is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets.h" line="119" column="5" declfile="include/bluetooth/services/gadgets.h" declline="119" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gadgets_ga30d32a3846aa0dabd84bb114b2804ec1_1ga30d32a3846aa0dabd84bb114b2804ec1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_gadgets_stream_send</definition>
+        <argsstring>(struct bt_conn *conn, enum bt_gadgets_stream_id stream, void *data, uint16_t size)</argsstring>
+        <name>bt_gadgets_stream_send</name>
+        <param>
+          <type>struct bt_conn *</type>
+          <declname>conn</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__bt__gadgets_ga6fecc2de10e6d2d176ab1ef8eda8ccb6_1ga6fecc2de10e6d2d176ab1ef8eda8ccb6" kindref="member">bt_gadgets_stream_id</ref></type>
+          <declname>stream</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+<para>Send data in stream format. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function encapsulates the data in the stream format and transmits to the peer device.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to connection object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">stream</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Stream type to use. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a data buffer. Buffer must be kept valid until <ref refid="group__bt__gadgets_ga7bd9f50d9e62f3cd0122c59174f09a82_1ga7bd9f50d9e62f3cd0122c59174f09a82" kindref="member">bt_gadgets_sent_cb_t</ref> is triggered. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the data in the buffer in bytes.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the data is sent. Otherwise, a negative value is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets.h" line="135" column="5" declfile="include/bluetooth/services/gadgets.h" declline="135" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gadgets_ga23baaad59dff0e1758404307f0379503_1ga23baaad59dff0e1758404307f0379503" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_gadgets_send</definition>
+        <argsstring>(struct bt_conn *conn, void *data, uint16_t size)</argsstring>
+        <name>bt_gadgets_send</name>
+        <param>
+          <type>struct bt_conn *</type>
+          <declname>conn</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+<para>Send data without stream formatting. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>No encapsulation or fragmentation is done of this data. Data buffer does not need to be kept valid after this function returns.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to connection object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the data in the buffer in bytes.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the data is sent. Otherwise, a negative value is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets.h" line="152" column="5" declfile="include/bluetooth/services/gadgets.h" declline="152" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gadgets_ga44c15cae3067f9477cb36961b48dd14c_1ga44c15cae3067f9477cb36961b48dd14c" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>uint16_t</type>
+        <definition>static uint16_t bt_gadgets_max_send</definition>
+        <argsstring>(struct bt_conn *conn)</argsstring>
+        <name>bt_gadgets_max_send</name>
+        <param>
+          <type>struct bt_conn *</type>
+          <declname>conn</declname>
+        </param>
+        <briefdescription>
+<para>Get maximum data length that can be used for <ref refid="group__bt__gadgets_ga23baaad59dff0e1758404307f0379503_1ga23baaad59dff0e1758404307f0379503" kindref="member">bt_gadgets_send</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to connection object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Maximum data length. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets.h" line="161" column="24" bodyfile="include/bluetooth/services/gadgets.h" bodystart="161" bodyend="167"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_GADGETS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_GADGETS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/conn.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/uuid.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/gatt.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="group__bt__gadgets_gad56f679787cdf56c6ad3eed52b839729_1gad56f679787cdf56c6ad3eed52b839729" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_GADGETS_VAL<sp/>\</highlight></codeline>
+<codeline lineno="33"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_UUID_128_ENCODE(0x0000FE03,<sp/>0x0000,<sp/>0x1000,<sp/>0x8000,<sp/>0x00805F9B34FB)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="group__bt__gadgets_ga0a670310ec158135a289aa1e5a551c8e_1ga0a670310ec158135a289aa1e5a551c8e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_GADGETS_SHORT_VAL<sp/>0xfe03</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="group__bt__gadgets_ga7e89ace7615617d057e7b9f625b032ce_1ga7e89ace7615617d057e7b9f625b032ce" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_GADGETS_TX_VAL<sp/>\</highlight></codeline>
+<codeline lineno="42"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_UUID_128_ENCODE(0xF04EB177,<sp/>0x3005,<sp/>0x43A7,<sp/>0xAC61,<sp/>0xA390DDF83076)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="group__bt__gadgets_ga4250c4fe5d1035461f48dee342bfff62_1ga4250c4fe5d1035461f48dee342bfff62" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_GADGETS_RX_VAL<sp/>\</highlight></codeline>
+<codeline lineno="46"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_UUID_128_ENCODE(0x2BEEA05B,<sp/>0x1879,<sp/>0x4BB4,<sp/>0x8A2F,<sp/>0x72641F82420B)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="group__bt__gadgets_gad56ec8059b9974ec96c96f1bdc01d6e6_1gad56ec8059b9974ec96c96f1bdc01d6e6" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_GADGETS<sp/><sp/><sp/><sp/>BT_UUID_DECLARE_128(BT_UUID_GADGETS_VAL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="group__bt__gadgets_ga137ca2b78dc96aae6567c0d91181294e_1ga137ca2b78dc96aae6567c0d91181294e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_GADGETS_RX<sp/>BT_UUID_DECLARE_128(BT_UUID_GADGETS_RX_VAL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="group__bt__gadgets_ga6139e1199a3cf1a6a05c7e74801701fe_1ga6139e1199a3cf1a6a05c7e74801701fe" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_GADGETS_TX<sp/>BT_UUID_DECLARE_128(BT_UUID_GADGETS_TX_VAL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="group__bt__gadgets_ga8c1cf7632d65260372dc90b3c4f35a55_1ga8c1cf7632d65260372dc90b3c4f35a55" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__gadgets_ga8c1cf7632d65260372dc90b3c4f35a55_1ga8c1cf7632d65260372dc90b3c4f35a55" kindref="member">bt_gadget_result</ref><sp/>{</highlight></codeline>
+<codeline lineno="56" refid="group__bt__gadgets_ga8c1cf7632d65260372dc90b3c4f35a55_1gga8c1cf7632d65260372dc90b3c4f35a55a70c82eb00fad4f18ba6fb50cad2cc47d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gadgets_ga8c1cf7632d65260372dc90b3c4f35a55_1gga8c1cf7632d65260372dc90b3c4f35a55a70c82eb00fad4f18ba6fb50cad2cc47d" kindref="member">BT_GADGETS_RESULT_CODE_SUCCESS</ref><sp/>=<sp/>0x00,</highlight></codeline>
+<codeline lineno="58" refid="group__bt__gadgets_ga8c1cf7632d65260372dc90b3c4f35a55_1gga8c1cf7632d65260372dc90b3c4f35a55ae2ab33a63ae5c94c8aa0f8840ebcf695" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gadgets_ga8c1cf7632d65260372dc90b3c4f35a55_1gga8c1cf7632d65260372dc90b3c4f35a55ae2ab33a63ae5c94c8aa0f8840ebcf695" kindref="member">BT_GADGETS_RESULT_CODE_UNKNOWN</ref><sp/>=<sp/>0x01,</highlight></codeline>
+<codeline lineno="60" refid="group__bt__gadgets_ga8c1cf7632d65260372dc90b3c4f35a55_1gga8c1cf7632d65260372dc90b3c4f35a55aeb94b2efed1d74ac0815b8820d8bfaf3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gadgets_ga8c1cf7632d65260372dc90b3c4f35a55_1gga8c1cf7632d65260372dc90b3c4f35a55aeb94b2efed1d74ac0815b8820d8bfaf3" kindref="member">BT_GADGETS_RESULT_CODE_UNSUPPORTED</ref><sp/>=<sp/>0x03,</highlight></codeline>
+<codeline lineno="61"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="group__bt__gadgets_ga6fecc2de10e6d2d176ab1ef8eda8ccb6_1ga6fecc2de10e6d2d176ab1ef8eda8ccb6" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__gadgets_ga6fecc2de10e6d2d176ab1ef8eda8ccb6_1ga6fecc2de10e6d2d176ab1ef8eda8ccb6" kindref="member">bt_gadgets_stream_id</ref><sp/>{</highlight></codeline>
+<codeline lineno="69" refid="group__bt__gadgets_ga6fecc2de10e6d2d176ab1ef8eda8ccb6_1gga6fecc2de10e6d2d176ab1ef8eda8ccb6a7ffca7d0a604df4af7959801766c1ab8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gadgets_ga6fecc2de10e6d2d176ab1ef8eda8ccb6_1gga6fecc2de10e6d2d176ab1ef8eda8ccb6a7ffca7d0a604df4af7959801766c1ab8" kindref="member">BT_GADGETS_STREAM_ID_CONTROL</ref><sp/>=<sp/>0b0000,</highlight></codeline>
+<codeline lineno="71" refid="group__bt__gadgets_ga6fecc2de10e6d2d176ab1ef8eda8ccb6_1gga6fecc2de10e6d2d176ab1ef8eda8ccb6a077b4ce4d0a4e1f700e5a814cb60d9bb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gadgets_ga6fecc2de10e6d2d176ab1ef8eda8ccb6_1gga6fecc2de10e6d2d176ab1ef8eda8ccb6a077b4ce4d0a4e1f700e5a814cb60d9bb" kindref="member">BT_GADGETS_STREAM_ID_ALEXA</ref><sp/>=<sp/>0b0110,</highlight></codeline>
+<codeline lineno="73" refid="group__bt__gadgets_ga6fecc2de10e6d2d176ab1ef8eda8ccb6_1gga6fecc2de10e6d2d176ab1ef8eda8ccb6a8b4a20e2ad9b9a0c6ed44170bbead5f5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gadgets_ga6fecc2de10e6d2d176ab1ef8eda8ccb6_1gga6fecc2de10e6d2d176ab1ef8eda8ccb6a8b4a20e2ad9b9a0c6ed44170bbead5f5" kindref="member">BT_GADGETS_STREAM_ID_OTA</ref><sp/>=<sp/>0b0010,</highlight></codeline>
+<codeline lineno="74"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="group__bt__gadgets_ga971083d8dd96deae6ae01c7ade506477_1ga971083d8dd96deae6ae01c7ade506477" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>bool<sp/>(*<ref refid="group__bt__gadgets_ga971083d8dd96deae6ae01c7ade506477_1ga971083d8dd96deae6ae01c7ade506477" kindref="member">bt_gadgets_stream_cb_t</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_conn<sp/>*conn,</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>data,</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/>len,</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>more_data);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="group__bt__gadgets_ga7bd9f50d9e62f3cd0122c59174f09a82_1ga7bd9f50d9e62f3cd0122c59174f09a82" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__bt__gadgets_ga7bd9f50d9e62f3cd0122c59174f09a82_1ga7bd9f50d9e62f3cd0122c59174f09a82" kindref="member">bt_gadgets_sent_cb_t</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_conn<sp/>*conn,</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*buf,</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>success);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="group__bt__gadgets_gaf985eb476aad558ab6feebdcdd3aaa96_1gaf985eb476aad558ab6feebdcdd3aaa96" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__bt__gadgets_gaf985eb476aad558ab6feebdcdd3aaa96_1gaf985eb476aad558ab6feebdcdd3aaa96" kindref="member">bt_gadgets_ccc_update_cb_t</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_conn<sp/>*conn,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>enabled);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="structbt__gadgets__cb" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__gadgets__cb" kindref="compound">bt_gadgets_cb</ref><sp/>{</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96" refid="structbt__gadgets__cb_a68df3873cff8b0dabda77c266d4d7d07_1a68df3873cff8b0dabda77c266d4d7d07" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gadgets_ga971083d8dd96deae6ae01c7ade506477_1ga971083d8dd96deae6ae01c7ade506477" kindref="member">bt_gadgets_stream_cb_t</ref><sp/><ref refid="structbt__gadgets__cb_a68df3873cff8b0dabda77c266d4d7d07_1a68df3873cff8b0dabda77c266d4d7d07" kindref="member">control_stream_cb</ref>;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99" refid="structbt__gadgets__cb_abe0f1b2e0c335c66abebb0489cb5330d_1abe0f1b2e0c335c66abebb0489cb5330d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gadgets_ga971083d8dd96deae6ae01c7ade506477_1ga971083d8dd96deae6ae01c7ade506477" kindref="member">bt_gadgets_stream_cb_t</ref><sp/><ref refid="structbt__gadgets__cb_abe0f1b2e0c335c66abebb0489cb5330d_1abe0f1b2e0c335c66abebb0489cb5330d" kindref="member">alexa_stream_cb</ref>;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102" refid="structbt__gadgets__cb_ac24c729b0bcde1db6f873b41cb964b89_1ac24c729b0bcde1db6f873b41cb964b89" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gadgets_ga7bd9f50d9e62f3cd0122c59174f09a82_1ga7bd9f50d9e62f3cd0122c59174f09a82" kindref="member">bt_gadgets_sent_cb_t</ref><sp/><ref refid="structbt__gadgets__cb_ac24c729b0bcde1db6f873b41cb964b89_1ac24c729b0bcde1db6f873b41cb964b89" kindref="member">sent_cb</ref>;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105" refid="structbt__gadgets__cb_a5c33b6f26fdc02afe667445207d91ddb_1a5c33b6f26fdc02afe667445207d91ddb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gadgets_gaf985eb476aad558ab6feebdcdd3aaa96_1gaf985eb476aad558ab6feebdcdd3aaa96" kindref="member">bt_gadgets_ccc_update_cb_t</ref><sp/><ref refid="structbt__gadgets__cb_a5c33b6f26fdc02afe667445207d91ddb_1a5c33b6f26fdc02afe667445207d91ddb" kindref="member">ccc_cb</ref>;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119" refid="group__bt__gadgets_ga4740977d5ada1f1b11069f44c6864dff_1ga4740977d5ada1f1b11069f44c6864dff" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__gadgets_ga4740977d5ada1f1b11069f44c6864dff_1ga4740977d5ada1f1b11069f44c6864dff" kindref="member">bt_gadgets_init</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__gadgets__cb" kindref="compound">bt_gadgets_cb</ref><sp/>*callbacks);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135" refid="group__bt__gadgets_ga30d32a3846aa0dabd84bb114b2804ec1_1ga30d32a3846aa0dabd84bb114b2804ec1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__gadgets_ga30d32a3846aa0dabd84bb114b2804ec1_1ga30d32a3846aa0dabd84bb114b2804ec1" kindref="member">bt_gadgets_stream_send</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_conn<sp/>*conn,</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__gadgets_ga6fecc2de10e6d2d176ab1ef8eda8ccb6_1ga6fecc2de10e6d2d176ab1ef8eda8ccb6" kindref="member">bt_gadgets_stream_id</ref><sp/>stream,</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*data,</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/>size);</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="152" refid="group__bt__gadgets_ga23baaad59dff0e1758404307f0379503_1ga23baaad59dff0e1758404307f0379503" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__gadgets_ga23baaad59dff0e1758404307f0379503_1ga23baaad59dff0e1758404307f0379503" kindref="member">bt_gadgets_send</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_conn<sp/>*conn,<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*data,<sp/>uint16_t<sp/>size);</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161" refid="group__bt__gadgets_ga44c15cae3067f9477cb36961b48dd14c_1ga44c15cae3067f9477cb36961b48dd14c" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>uint16_t<sp/><ref refid="group__bt__gadgets_ga44c15cae3067f9477cb36961b48dd14c_1ga44c15cae3067f9477cb36961b48dd14c" kindref="member">bt_gadgets_max_send</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_conn<sp/>*conn)</highlight></codeline>
+<codeline lineno="162"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>According<sp/>to<sp/>3.4.7.1<sp/>Handle<sp/>Value<sp/>Notification<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>off<sp/>the<sp/>ATT<sp/>protocol.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Maximum<sp/>supported<sp/>notification<sp/>is<sp/>ATT_MTU<sp/>-<sp/>3<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bt_gatt_get_mtu(conn)<sp/>-<sp/>3;</highlight></codeline>
+<codeline lineno="167"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_GADGETS_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/services/gadgets.h"/>
+  </compounddef>
+</doxygen>

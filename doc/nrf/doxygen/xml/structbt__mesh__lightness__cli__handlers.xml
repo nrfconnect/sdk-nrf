@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__lightness__cli__handlers" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_lightness_cli_handlers</compoundname>
+    <includes refid="lightness__cli_8h" local="no">lightness_cli.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__lightness__cli__handlers_a9bfa181948790ee87079f24de8b2d528_1a9bfa181948790ee87079f24de8b2d528" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_lightness_cli_handlers::light_status) (struct bt_mesh_lightness_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_lightness_status *status)</definition>
+        <argsstring>)(struct bt_mesh_lightness_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_lightness_status *status)</argsstring>
+        <name>light_status</name>
+        <briefdescription>
+<para>Light Level status message handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Lightness status contained in the message. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness_cli.h" line="60" column="1" bodyfile="include/bluetooth/mesh/lightness_cli.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__cli__handlers_ab575dd34e1d85eb66053dc376daeecc1_1ab575dd34e1d85eb66053dc376daeecc1" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_lightness_cli_handlers::default_status) (struct bt_mesh_lightness_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t default_light)</definition>
+        <argsstring>)(struct bt_mesh_lightness_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t default_light)</argsstring>
+        <name>default_status</name>
+        <briefdescription>
+<para>Default Light status message handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">default_light</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Default Light Level of the server. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness_cli.h" line="70" column="1" bodyfile="include/bluetooth/mesh/lightness_cli.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__cli__handlers_a6dd632a405b037ae8d6b6c792494bf65_1a6dd632a405b037ae8d6b6c792494bf65" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_lightness_cli_handlers::range_status) (struct bt_mesh_lightness_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_lightness_range_status *status)</definition>
+        <argsstring>)(struct bt_mesh_lightness_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_lightness_range_status *status)</argsstring>
+        <name>range_status</name>
+        <briefdescription>
+<para>Light Range status message handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Range state of the server. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness_cli.h" line="80" column="1" bodyfile="include/bluetooth/mesh/lightness_cli.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__cli__handlers_ac7eaaee1ad41c3b15b34474763eb1c9f_1ac7eaaee1ad41c3b15b34474763eb1c9f" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_lightness_cli_handlers::last_light_status) (struct bt_mesh_lightness_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t last)</definition>
+        <argsstring>)(struct bt_mesh_lightness_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t last)</argsstring>
+        <name>last_light_status</name>
+        <briefdescription>
+<para>Last non-zero Light Level status message handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">last</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Last non-zero Light Level of the server. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness_cli.h" line="90" column="1" bodyfile="include/bluetooth/mesh/lightness_cli.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Handler function for the Light Lightness Client. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/lightness_cli.h" line="52" column="1" bodyfile="include/bluetooth/mesh/lightness_cli.h" bodystart="52" bodyend="93"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__lightness__cli__handlers_ab575dd34e1d85eb66053dc376daeecc1_1ab575dd34e1d85eb66053dc376daeecc1" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_cli_handlers</scope><name>default_status</name></member>
+      <member refid="structbt__mesh__lightness__cli__handlers_ac7eaaee1ad41c3b15b34474763eb1c9f_1ac7eaaee1ad41c3b15b34474763eb1c9f" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_cli_handlers</scope><name>last_light_status</name></member>
+      <member refid="structbt__mesh__lightness__cli__handlers_a9bfa181948790ee87079f24de8b2d528_1a9bfa181948790ee87079f24de8b2d528" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_cli_handlers</scope><name>light_status</name></member>
+      <member refid="structbt__mesh__lightness__cli__handlers_a6dd632a405b037ae8d6b6c792494bf65_1a6dd632a405b037ae8d6b6c792494bf65" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_cli_handlers</scope><name>range_status</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

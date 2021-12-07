@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbutton__event" kind="struct" language="C++" prot="public">
+    <compoundname>button_event</compoundname>
+    <includes refid="button__event_8h" local="no">button_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbutton__event_a21bda6485b1acee1307d9e01de0d90cc_1a21bda6485b1acee1307d9e01de0d90cc" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header button_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event header. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/button_event.h" line="30" column="19" bodyfile="include/caf/events/button_event.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbutton__event_aee0006e7d691cfdce5cd81681f1a3960_1aee0006e7d691cfdce5cd81681f1a3960" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t button_event::key_id</definition>
+        <argsstring></argsstring>
+        <name>key_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>ID of the button. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/button_event.h" line="33" column="10" bodyfile="include/caf/events/button_event.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbutton__event_a9cbac4a74f9c158330a79d991ed25608_1a9cbac4a74f9c158330a79d991ed25608" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool button_event::pressed</definition>
+        <argsstring></argsstring>
+        <name>pressed</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Information if the button was pressed or released. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/button_event.h" line="36" column="6" bodyfile="include/caf/events/button_event.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Button event. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The button event is submitted when a button is pressed or released. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>button_event</label>
+        <link refid="structbutton__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/caf/events/button_event.h" line="28" column="1" bodyfile="include/caf/events/button_event.h" bodystart="28" bodyend="37"/>
+    <listofallmembers>
+      <member refid="structbutton__event_a21bda6485b1acee1307d9e01de0d90cc_1a21bda6485b1acee1307d9e01de0d90cc" prot="public" virt="non-virtual"><scope>button_event</scope><name>header</name></member>
+      <member refid="structbutton__event_aee0006e7d691cfdce5cd81681f1a3960_1aee0006e7d691cfdce5cd81681f1a3960" prot="public" virt="non-virtual"><scope>button_event</scope><name>key_id</name></member>
+      <member refid="structbutton__event_a9cbac4a74f9c158330a79d991ed25608_1a9cbac4a74f9c158330a79d991ed25608" prot="public" virt="non-virtual"><scope>button_event</scope><name>pressed</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

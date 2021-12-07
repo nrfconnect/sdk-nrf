@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structsms__data" kind="struct" language="C++" prot="public">
+    <compoundname>sms_data</compoundname>
+    <includes refid="sms_8h" local="no">sms.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structsms__data_afd644ebaa14fce49b602b4d22fe9bfe0_1afd644ebaa14fce49b602b4d22fe9bfe0" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__sms_gac3ecefc364f1d37b24489a264fe143bd_1gac3ecefc364f1d37b24489a264fe143bd" kindref="member">sms_type</ref></type>
+        <definition>enum sms_type sms_data::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+<para>Received message type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="136" column="14" bodyfile="include/modem/sms.h" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsms__data_ae3a5cb2a6dc7d7f302a86c191608ed0b_1ae3a5cb2a6dc7d7f302a86c191608ed0b" prot="public" static="no" mutable="no">
+        <type>union <ref refid="unionsms__header" kindref="compound">sms_header</ref></type>
+        <definition>union sms_header sms_data::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+<para>SMS header. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="138" column="17" bodyfile="include/modem/sms.h" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsms__data_a3c6d7d3ba3b3a586f41e9924896fda56_1a3c6d7d3ba3b3a586f41e9924896fda56" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int sms_data::payload_len</definition>
+        <argsstring></argsstring>
+        <name>payload_len</name>
+        <briefdescription>
+<para>Length of the payload buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="141" column="5" bodyfile="include/modem/sms.h" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsms__data_a5cbea550bad512b2332a578af43670e9_1a5cbea550bad512b2332a578af43670e9" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t sms_data::payload[160+1]</definition>
+        <argsstring>[160+1]</argsstring>
+        <name>payload</name>
+        <briefdescription>
+<para>SMS message payload. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Reserving enough bytes for maximum number of characters but the length of the received payload is in payload_len variable.</para>
+<para>Generally the message is of text type in which case you can treat it as string. However, header may contain information that determines it for specific purpose, e.g., via application port information, in which case it should be treated as specified for that purpose. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="153" column="9" bodyfile="include/modem/sms.h" bodystart="153" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>SMS PDU data. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="5">
+        <label>sms_address</label>
+        <link refid="structsms__address"/>
+      </node>
+      <node id="1">
+        <label>sms_data</label>
+        <link refid="structsms__data"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>sms_deliver_header</label>
+        <link refid="structsms__deliver__header"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>time</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>originating_address</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>app_port</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>concatenated</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>sms_header</label>
+        <link refid="unionsms__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>deliver</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>sms_time</label>
+        <link refid="structsms__time"/>
+      </node>
+      <node id="6">
+        <label>sms_udh_app_port</label>
+        <link refid="structsms__udh__app__port"/>
+      </node>
+      <node id="7">
+        <label>sms_udh_concat</label>
+        <link refid="structsms__udh__concat"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/modem/sms.h" line="134" column="1" bodyfile="include/modem/sms.h" bodystart="134" bodyend="154"/>
+    <listofallmembers>
+      <member refid="structsms__data_ae3a5cb2a6dc7d7f302a86c191608ed0b_1ae3a5cb2a6dc7d7f302a86c191608ed0b" prot="public" virt="non-virtual"><scope>sms_data</scope><name>header</name></member>
+      <member refid="structsms__data_a5cbea550bad512b2332a578af43670e9_1a5cbea550bad512b2332a578af43670e9" prot="public" virt="non-virtual"><scope>sms_data</scope><name>payload</name></member>
+      <member refid="structsms__data_a3c6d7d3ba3b3a586f41e9924896fda56_1a3c6d7d3ba3b3a586f41e9924896fda56" prot="public" virt="non-virtual"><scope>sms_data</scope><name>payload_len</name></member>
+      <member refid="structsms__data_afd644ebaa14fce49b602b4d22fe9bfe0_1afd644ebaa14fce49b602b4d22fe9bfe0" prot="public" virt="non-virtual"><scope>sms_data</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

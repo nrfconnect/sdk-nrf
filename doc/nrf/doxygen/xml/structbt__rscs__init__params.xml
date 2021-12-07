@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__rscs__init__params" kind="struct" language="C++" prot="public">
+    <compoundname>bt_rscs_init_params</compoundname>
+    <includes refid="rscs_8h" local="no">rscs.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__rscs__init__params_afde1ddb33ab0fbe205e96f4ba060f393_1afde1ddb33ab0fbe205e96f4ba060f393" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__rscs__features" kindref="compound">bt_rscs_features</ref></type>
+        <definition>struct bt_rscs_features bt_rscs_init_params::features</definition>
+        <argsstring></argsstring>
+        <name>features</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initial value for features of sensor. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="124" column="23" bodyfile="include/bluetooth/services/rscs.h" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rscs__init__params_a0eb39cb65a57df9e668a3a0d94fa798e_1a0eb39cb65a57df9e668a3a0d94fa798e" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__rsc__supported__loc" kindref="compound">bt_rsc_supported_loc</ref></type>
+        <definition>struct bt_rsc_supported_loc bt_rscs_init_params::supported_locations</definition>
+        <argsstring></argsstring>
+        <name>supported_locations</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>List of supperted locations </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="127" column="27" bodyfile="include/bluetooth/services/rscs.h" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rscs__init__params_accad317155d1a93601e4e5dd140bf298_1accad317155d1a93601e4e5dd140bf298" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1gaedd524a7087566075a8d47508f5f8645" kindref="member">bt_rscs_location</ref></type>
+        <definition>enum bt_rscs_location bt_rscs_init_params::location</definition>
+        <argsstring></argsstring>
+        <name>location</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initial value for sensor location. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="130" column="22" bodyfile="include/bluetooth/services/rscs.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rscs__init__params_a57766db34f71d23edd161a5cd2094326_1a57766db34f71d23edd161a5cd2094326" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__rscs_gac831ad9ae949de8a046921a7a4361f99_1gac831ad9ae949de8a046921a7a4361f99" kindref="member">bt_rscs_evt_handler</ref></type>
+        <definition>bt_rscs_evt_handler bt_rscs_init_params::evt_handler</definition>
+        <argsstring></argsstring>
+        <name>evt_handler</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event handler to be called for handling events in the RSC Service. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="133" column="21" bodyfile="include/bluetooth/services/rscs.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rscs__init__params_a4a81220ee6852e912ad2e3357a4e66ad_1a4a81220ee6852e912ad2e3357a4e66ad" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__rscs__cp__cb" kindref="compound">bt_rscs_cp_cb</ref> *</type>
+        <definition>const struct bt_rscs_cp_cb* bt_rscs_init_params::cp_cb</definition>
+        <argsstring></argsstring>
+        <name>cp_cb</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>SC Control Point callback structure. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="136" column="26" bodyfile="include/bluetooth/services/rscs.h" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Running Speed and Cadence Service initialization parameters. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>bt_rsc_supported_loc</label>
+        <link refid="structbt__rsc__supported__loc"/>
+      </node>
+      <node id="4">
+        <label>bt_rscs_cp_cb</label>
+        <link refid="structbt__rscs__cp__cb"/>
+      </node>
+      <node id="2">
+        <label>bt_rscs_features</label>
+        <link refid="structbt__rscs__features"/>
+      </node>
+      <node id="1">
+        <label>bt_rscs_init_params</label>
+        <link refid="structbt__rscs__init__params"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>features</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>supported_locations</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>cp_cb</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/rscs.h" line="122" column="1" bodyfile="include/bluetooth/services/rscs.h" bodystart="122" bodyend="137"/>
+    <listofallmembers>
+      <member refid="structbt__rscs__init__params_a4a81220ee6852e912ad2e3357a4e66ad_1a4a81220ee6852e912ad2e3357a4e66ad" prot="public" virt="non-virtual"><scope>bt_rscs_init_params</scope><name>cp_cb</name></member>
+      <member refid="structbt__rscs__init__params_a57766db34f71d23edd161a5cd2094326_1a57766db34f71d23edd161a5cd2094326" prot="public" virt="non-virtual"><scope>bt_rscs_init_params</scope><name>evt_handler</name></member>
+      <member refid="structbt__rscs__init__params_afde1ddb33ab0fbe205e96f4ba060f393_1afde1ddb33ab0fbe205e96f4ba060f393" prot="public" virt="non-virtual"><scope>bt_rscs_init_params</scope><name>features</name></member>
+      <member refid="structbt__rscs__init__params_accad317155d1a93601e4e5dd140bf298_1accad317155d1a93601e4e5dd140bf298" prot="public" virt="non-virtual"><scope>bt_rscs_init_params</scope><name>location</name></member>
+      <member refid="structbt__rscs__init__params_a0eb39cb65a57df9e668a3a0d94fa798e_1a0eb39cb65a57df9e668a3a0d94fa798e" prot="public" virt="non-virtual"><scope>bt_rscs_init_params</scope><name>supported_locations</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

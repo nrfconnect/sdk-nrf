@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_62c5a78cd0a02d36c7a5c459fef7d49a" kind="dir">
+    <compoundname>applications/serial_lte_modem/src/http_c</compoundname>
+    <innerfile refid="slm__at__httpc_8h">slm_at_httpc.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/serial_lte_modem/src/http_c/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structsms__time" kind="struct" language="C++" prot="public">
+    <compoundname>sms_time</compoundname>
+    <includes refid="sms_8h" local="no">sms.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structsms__time_a1a79eaeab1cf4a825dd286a3235e25a0_1a1a79eaeab1cf4a825dd286a3235e25a0" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t sms_time::year</definition>
+        <argsstring></argsstring>
+        <name>year</name>
+        <briefdescription>
+<para>Year. Last two digits of the year. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="53" column="9" bodyfile="include/modem/sms.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsms__time_a526f4452857b5cc485ed6df68b10f23a_1a526f4452857b5cc485ed6df68b10f23a" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t sms_time::month</definition>
+        <argsstring></argsstring>
+        <name>month</name>
+        <briefdescription>
+<para>Month. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="54" column="9" bodyfile="include/modem/sms.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsms__time_a901e070b1b171f1efb837de34a076d41_1a901e070b1b171f1efb837de34a076d41" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t sms_time::day</definition>
+        <argsstring></argsstring>
+        <name>day</name>
+        <briefdescription>
+<para>Day. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="55" column="9" bodyfile="include/modem/sms.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsms__time_a22ec6ee13014e8164920649084880310_1a22ec6ee13014e8164920649084880310" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t sms_time::hour</definition>
+        <argsstring></argsstring>
+        <name>hour</name>
+        <briefdescription>
+<para>Hour. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="56" column="9" bodyfile="include/modem/sms.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsms__time_ae6fda5a59d05b08db91736332b5c6110_1ae6fda5a59d05b08db91736332b5c6110" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t sms_time::minute</definition>
+        <argsstring></argsstring>
+        <name>minute</name>
+        <briefdescription>
+<para>Minute. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="57" column="9" bodyfile="include/modem/sms.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsms__time_a31f958497e53fdd7ca2c58538bcc4381_1a31f958497e53fdd7ca2c58538bcc4381" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t sms_time::second</definition>
+        <argsstring></argsstring>
+        <name>second</name>
+        <briefdescription>
+<para>Second. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="58" column="9" bodyfile="include/modem/sms.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsms__time_a8486dda7229afb85f0eb0627f812c852_1a8486dda7229afb85f0eb0627f812c852" prot="public" static="no" mutable="no">
+        <type>int8_t</type>
+        <definition>int8_t sms_time::timezone</definition>
+        <argsstring></argsstring>
+        <name>timezone</name>
+        <briefdescription>
+<para>Timezone. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="59" column="8" bodyfile="include/modem/sms.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>SMS time information specified in 3GPP TS 23.040 Section 9.2.3.11. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/modem/sms.h" line="52" column="1" bodyfile="include/modem/sms.h" bodystart="52" bodyend="60"/>
+    <listofallmembers>
+      <member refid="structsms__time_a901e070b1b171f1efb837de34a076d41_1a901e070b1b171f1efb837de34a076d41" prot="public" virt="non-virtual"><scope>sms_time</scope><name>day</name></member>
+      <member refid="structsms__time_a22ec6ee13014e8164920649084880310_1a22ec6ee13014e8164920649084880310" prot="public" virt="non-virtual"><scope>sms_time</scope><name>hour</name></member>
+      <member refid="structsms__time_ae6fda5a59d05b08db91736332b5c6110_1ae6fda5a59d05b08db91736332b5c6110" prot="public" virt="non-virtual"><scope>sms_time</scope><name>minute</name></member>
+      <member refid="structsms__time_a526f4452857b5cc485ed6df68b10f23a_1a526f4452857b5cc485ed6df68b10f23a" prot="public" virt="non-virtual"><scope>sms_time</scope><name>month</name></member>
+      <member refid="structsms__time_a31f958497e53fdd7ca2c58538bcc4381_1a31f958497e53fdd7ca2c58538bcc4381" prot="public" virt="non-virtual"><scope>sms_time</scope><name>second</name></member>
+      <member refid="structsms__time_a8486dda7229afb85f0eb0627f812c852_1a8486dda7229afb85f0eb0627f812c852" prot="public" virt="non-virtual"><scope>sms_time</scope><name>timezone</name></member>
+      <member refid="structsms__time_a1a79eaeab1cf4a825dd286a3235e25a0_1a1a79eaeab1cf4a825dd286a3235e25a0" prot="public" virt="non-virtual"><scope>sms_time</scope><name>year</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

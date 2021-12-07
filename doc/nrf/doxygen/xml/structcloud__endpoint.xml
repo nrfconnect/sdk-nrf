@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structcloud__endpoint" kind="struct" language="C++" prot="public">
+    <compoundname>cloud_endpoint</compoundname>
+    <includes refid="cloud_8h" local="no">cloud.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structcloud__endpoint_aeca1bbf208b768b6ac1b3add859e9599_1aeca1bbf208b768b6ac1b3add859e9599" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1gafdfebe6e28634145da5dbc14d11d29c4" kindref="member">cloud_endpoint_type</ref></type>
+        <definition>enum cloud_endpoint_type cloud_endpoint::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="128" column="25" bodyfile="include/net/cloud.h" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__endpoint_a443a42f1c583815482a90b0ff15db680_1a443a42f1c583815482a90b0ff15db680" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* cloud_endpoint::str</definition>
+        <argsstring></argsstring>
+        <name>str</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="129" column="6" bodyfile="include/net/cloud.h" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__endpoint_a9b67288fc83e23b9d4e3bfb786ac59b8_1a9b67288fc83e23b9d4e3bfb786ac59b8" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t cloud_endpoint::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="130" column="8" bodyfile="include/net/cloud.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Cloud endpoint data. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/cloud.h" line="127" column="1" bodyfile="include/net/cloud.h" bodystart="127" bodyend="131"/>
+    <listofallmembers>
+      <member refid="structcloud__endpoint_a9b67288fc83e23b9d4e3bfb786ac59b8_1a9b67288fc83e23b9d4e3bfb786ac59b8" prot="public" virt="non-virtual"><scope>cloud_endpoint</scope><name>len</name></member>
+      <member refid="structcloud__endpoint_a443a42f1c583815482a90b0ff15db680_1a443a42f1c583815482a90b0ff15db680" prot="public" virt="non-virtual"><scope>cloud_endpoint</scope><name>str</name></member>
+      <member refid="structcloud__endpoint_aeca1bbf208b768b6ac1b3add859e9599_1aeca1bbf208b768b6ac1b3add859e9599" prot="public" virt="non-virtual"><scope>cloud_endpoint</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

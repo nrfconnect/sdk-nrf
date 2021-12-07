@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlocation__cellular__config" kind="struct" language="C++" prot="public">
+    <compoundname>location_cellular_config</compoundname>
+    <includes refid="location_8h" local="no">location.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlocation__cellular__config_a1277c2dddf09e988237366e42c3c9ea7_1a1277c2dddf09e988237366e42c3c9ea7" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t location_cellular_config::timeout</definition>
+        <argsstring></argsstring>
+        <name>timeout</name>
+        <briefdescription>
+<para>Timeout (in seconds) of how long the cellular positioning procedure can take. Zero means that the timer is disabled. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="158" column="10" bodyfile="include/modem/location.h" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__cellular__config_a18262f8b0a4910e80348e67ff337601b_1a18262f8b0a4910e80348e67ff337601b" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__location_ga065818dd61883219339120739cf46c7d_1ga065818dd61883219339120739cf46c7d" kindref="member">location_service</ref></type>
+        <definition>enum location_service location_cellular_config::service</definition>
+        <argsstring></argsstring>
+        <name>service</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Used cellular positioning service. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="161" column="22" bodyfile="include/modem/location.h" bodystart="161" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>LTE cellular positioning configuration. </para>
+    </detaileddescription>
+    <location file="include/modem/location.h" line="153" column="1" bodyfile="include/modem/location.h" bodystart="153" bodyend="162"/>
+    <listofallmembers>
+      <member refid="structlocation__cellular__config_a18262f8b0a4910e80348e67ff337601b_1a18262f8b0a4910e80348e67ff337601b" prot="public" virt="non-virtual"><scope>location_cellular_config</scope><name>service</name></member>
+      <member refid="structlocation__cellular__config_a1277c2dddf09e988237366e42c3c9ea7_1a1277c2dddf09e988237366e42c3c9ea7" prot="public" virt="non-virtual"><scope>location_cellular_config</scope><name>timeout</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

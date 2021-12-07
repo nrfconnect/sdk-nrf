@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structsim__param" kind="struct" language="C++" prot="public">
+    <compoundname>sim_param</compoundname>
+    <includes refid="modem__info_8h" local="no">modem_info.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structsim__param_a549f183659230cf2cfce3281f600fad0_1a549f183659230cf2cfce3281f600fad0" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__param" kindref="compound">lte_param</ref></type>
+        <definition>struct lte_param sim_param::uicc</definition>
+        <argsstring></argsstring>
+        <name>uicc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>UICC state. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="102" column="16" bodyfile="include/modem/modem_info.h" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsim__param_ac14bd50cfbdc3f936c4a05ec273437f0_1ac14bd50cfbdc3f936c4a05ec273437f0" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__param" kindref="compound">lte_param</ref></type>
+        <definition>struct lte_param sim_param::iccid</definition>
+        <argsstring></argsstring>
+        <name>iccid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>SIM ICCID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="103" column="16" bodyfile="include/modem/modem_info.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsim__param_a30cda7169b6f252e93086d54d40943a0_1a30cda7169b6f252e93086d54d40943a0" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__param" kindref="compound">lte_param</ref></type>
+        <definition>struct lte_param sim_param::imsi</definition>
+        <argsstring></argsstring>
+        <name>imsi</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Mobile subscriber identity. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="104" column="16" bodyfile="include/modem/modem_info.h" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>SIM card parameters. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>lte_param</label>
+        <link refid="structlte__param"/>
+      </node>
+      <node id="1">
+        <label>sim_param</label>
+        <link refid="structsim__param"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>iccid</edgelabel>
+          <edgelabel>imsi</edgelabel>
+          <edgelabel>uicc</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/modem/modem_info.h" line="101" column="1" bodyfile="include/modem/modem_info.h" bodystart="101" bodyend="105"/>
+    <listofallmembers>
+      <member refid="structsim__param_ac14bd50cfbdc3f936c4a05ec273437f0_1ac14bd50cfbdc3f936c4a05ec273437f0" prot="public" virt="non-virtual"><scope>sim_param</scope><name>iccid</name></member>
+      <member refid="structsim__param_a30cda7169b6f252e93086d54d40943a0_1a30cda7169b6f252e93086d54d40943a0" prot="public" virt="non-virtual"><scope>sim_param</scope><name>imsi</name></member>
+      <member refid="structsim__param_a549f183659230cf2cfce3281f600fad0_1a549f183659230cf2cfce3281f600fad0" prot="public" virt="non-virtual"><scope>sim_param</scope><name>uicc</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

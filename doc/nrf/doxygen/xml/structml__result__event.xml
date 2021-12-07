@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structml__result__event" kind="struct" language="C++" prot="public">
+    <compoundname>ml_result_event</compoundname>
+    <includes refid="ml__result__event_8h" local="no">ml_result_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structml__result__event_a382367a7f937a707b109374e483bd2de_1a382367a7f937a707b109374e483bd2de" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header ml_result_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event header. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/machine_learning/src/events/ml_result_event.h" line="27" column="19" bodyfile="applications/machine_learning/src/events/ml_result_event.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structml__result__event_a0c6de0765a978e1730a261402a88c064_1a0c6de0765a978e1730a261402a88c064" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* ml_result_event::label</definition>
+        <argsstring></argsstring>
+        <name>label</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Classification label. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/machine_learning/src/events/ml_result_event.h" line="29" column="12" bodyfile="applications/machine_learning/src/events/ml_result_event.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structml__result__event_ac451a76c4c5fb655443bd2d03da4dcad_1ac451a76c4c5fb655443bd2d03da4dcad" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float ml_result_event::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Classification value. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/machine_learning/src/events/ml_result_event.h" line="30" column="7" bodyfile="applications/machine_learning/src/events/ml_result_event.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structml__result__event_ad80b2a112a7ae9dc0e3e4e56ad20313a_1ad80b2a112a7ae9dc0e3e4e56ad20313a" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float ml_result_event::anomaly</definition>
+        <argsstring></argsstring>
+        <name>anomaly</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Anomaly value. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/machine_learning/src/events/ml_result_event.h" line="31" column="7" bodyfile="applications/machine_learning/src/events/ml_result_event.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Machine learning classification result event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ml_result_event</label>
+        <link refid="structml__result__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/machine_learning/src/events/ml_result_event.h" line="26" column="1" bodyfile="applications/machine_learning/src/events/ml_result_event.h" bodystart="26" bodyend="32"/>
+    <listofallmembers>
+      <member refid="structml__result__event_ad80b2a112a7ae9dc0e3e4e56ad20313a_1ad80b2a112a7ae9dc0e3e4e56ad20313a" prot="public" virt="non-virtual"><scope>ml_result_event</scope><name>anomaly</name></member>
+      <member refid="structml__result__event_a382367a7f937a707b109374e483bd2de_1a382367a7f937a707b109374e483bd2de" prot="public" virt="non-virtual"><scope>ml_result_event</scope><name>header</name></member>
+      <member refid="structml__result__event_a0c6de0765a978e1730a261402a88c064_1a0c6de0765a978e1730a261402a88c064" prot="public" virt="non-virtual"><scope>ml_result_event</scope><name>label</name></member>
+      <member refid="structml__result__event_ac451a76c4c5fb655443bd2d03da4dcad_1ac451a76c4c5fb655443bd2d03da4dcad" prot="public" virt="non-virtual"><scope>ml_result_event</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

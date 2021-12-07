@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__ancs__parse__sm" kind="struct" language="C++" prot="public">
+    <compoundname>bt_ancs_parse_sm</compoundname>
+    <includes refid="ancs__client_8h" local="no">ancs_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__ancs__parse__sm_a146d854954db7ea475b404a630dca0be_1a146d854954db7ea475b404a630dca0be" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__ancs__attr__list" kindref="compound">bt_ancs_attr_list</ref> *</type>
+        <definition>struct bt_ancs_attr_list* bt_ancs_parse_sm::attr_list</definition>
+        <argsstring></argsstring>
+        <name>attr_list</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The current list of attributes that are being parsed. This will point to either ancs_notif_attr_list or ancs_app_attr_list in struct <ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="327" column="24" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="327" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__ancs__parse__sm_a8f2bb284462a7be6a6b28d69f572a6f7_1a8f2bb284462a7be6a6b28d69f572a6f7" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_ancs_parse_sm::attr_count</definition>
+        <argsstring></argsstring>
+        <name>attr_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of possible attributes. When parsing begins, it is set to either <ref refid="group__bt__ancs__client_ga1bf95f570098a8e89126ff1449bf7089_1ga1bf95f570098a8e89126ff1449bf7089" kindref="member">BT_ANCS_NOTIF_ATTR_COUNT</ref> or <ref refid="group__bt__ancs__client_gae4e02e6caa190c1da949156465dd978d_1gae4e02e6caa190c1da949156465dd978d" kindref="member">BT_ANCS_APP_ATTR_COUNT</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="331" column="10" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="331" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__ancs__parse__sm_ad721afe235fa17aa3239225e420373a3_1ad721afe235fa17aa3239225e420373a3" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_ancs_parse_sm::expected_number_of_attrs</definition>
+        <argsstring></argsstring>
+        <name>expected_number_of_attrs</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The number of attributes expected upon receiving attributes. Keeps track of when to stop reading incoming attributes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="335" column="10" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="335" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__ancs__parse__sm_af3380e14f7f332f02870fcd84d26accf_1af3380e14f7f332f02870fcd84d26accf" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1gac6979db89c35b9750706b6e7d007cb15" kindref="member">bt_ancs_parse_state</ref></type>
+        <definition>enum bt_ancs_parse_state bt_ancs_parse_sm::parse_state</definition>
+        <argsstring></argsstring>
+        <name>parse_state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>ANCS notification attribute parsing state. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="337" column="25" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="337" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__ancs__parse__sm_a5de7adb458ae232669f5b76ed1b8b5b9_1a5de7adb458ae232669f5b76ed1b8b5b9" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__ancs__client_gaea2b08813c4cebb99af5460c8dc66bd2_1gaea2b08813c4cebb99af5460c8dc66bd2" kindref="member">bt_ancs_cmd_id_val</ref></type>
+        <definition>enum bt_ancs_cmd_id_val bt_ancs_parse_sm::command_id</definition>
+        <argsstring></argsstring>
+        <name>command_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Variable to keep track of what command type is being parsed ( <ref refid="group__bt__ancs__client_gaea2b08813c4cebb99af5460c8dc66bd2_1ggaea2b08813c4cebb99af5460c8dc66bd2ac90e496cd64985c5ea0d84818f093390" kindref="member">BT_ANCS_COMMAND_ID_GET_NOTIF_ATTRIBUTES</ref> or <ref refid="group__bt__ancs__client_gaea2b08813c4cebb99af5460c8dc66bd2_1ggaea2b08813c4cebb99af5460c8dc66bd2a020b2ba527e443de2c7b2d5de0ad0de2" kindref="member">BT_ANCS_COMMAND_ID_GET_APP_ATTRIBUTES</ref>). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="342" column="24" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="342" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__ancs__parse__sm_a50fce3f0a08e168d6cbe9a8ab212ef40_1a50fce3f0a08e168d6cbe9a8ab212ef40" prot="public" static="no" mutable="no">
+        <type>uint8_t *</type>
+        <definition>uint8_t* bt_ancs_parse_sm::data_dest</definition>
+        <argsstring></argsstring>
+        <name>data_dest</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Attribute that the parsed data is copied into. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="344" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="344" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__ancs__parse__sm_aab2b9a3f46c6035cc2cf61c930f945bf_1aab2b9a3f46c6035cc2cf61c930f945bf" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_ancs_parse_sm::current_attr_index</definition>
+        <argsstring></argsstring>
+        <name>current_attr_index</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Variable to keep track of the parsing progress, for the given attribute. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="346" column="10" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="346" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__ancs__parse__sm_ac69f5afb98462592f3bf03c9cb932fa3_1ac69f5afb98462592f3bf03c9cb932fa3" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_ancs_parse_sm::current_app_id_index</definition>
+        <argsstring></argsstring>
+        <name>current_app_id_index</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Variable to keep track of the parsing progress, for the given app identifier. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="348" column="10" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="348" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_ancs_attr_list</label>
+        <link refid="structbt__ancs__attr__list"/>
+      </node>
+      <node id="1">
+        <label>bt_ancs_parse_sm</label>
+        <link refid="structbt__ancs__parse__sm"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>attr_list</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/ancs_client.h" line="322" column="1" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="322" bodyend="349"/>
+    <listofallmembers>
+      <member refid="structbt__ancs__parse__sm_a8f2bb284462a7be6a6b28d69f572a6f7_1a8f2bb284462a7be6a6b28d69f572a6f7" prot="public" virt="non-virtual"><scope>bt_ancs_parse_sm</scope><name>attr_count</name></member>
+      <member refid="structbt__ancs__parse__sm_a146d854954db7ea475b404a630dca0be_1a146d854954db7ea475b404a630dca0be" prot="public" virt="non-virtual"><scope>bt_ancs_parse_sm</scope><name>attr_list</name></member>
+      <member refid="structbt__ancs__parse__sm_a5de7adb458ae232669f5b76ed1b8b5b9_1a5de7adb458ae232669f5b76ed1b8b5b9" prot="public" virt="non-virtual"><scope>bt_ancs_parse_sm</scope><name>command_id</name></member>
+      <member refid="structbt__ancs__parse__sm_ac69f5afb98462592f3bf03c9cb932fa3_1ac69f5afb98462592f3bf03c9cb932fa3" prot="public" virt="non-virtual"><scope>bt_ancs_parse_sm</scope><name>current_app_id_index</name></member>
+      <member refid="structbt__ancs__parse__sm_aab2b9a3f46c6035cc2cf61c930f945bf_1aab2b9a3f46c6035cc2cf61c930f945bf" prot="public" virt="non-virtual"><scope>bt_ancs_parse_sm</scope><name>current_attr_index</name></member>
+      <member refid="structbt__ancs__parse__sm_a50fce3f0a08e168d6cbe9a8ab212ef40_1a50fce3f0a08e168d6cbe9a8ab212ef40" prot="public" virt="non-virtual"><scope>bt_ancs_parse_sm</scope><name>data_dest</name></member>
+      <member refid="structbt__ancs__parse__sm_ad721afe235fa17aa3239225e420373a3_1ad721afe235fa17aa3239225e420373a3" prot="public" virt="non-virtual"><scope>bt_ancs_parse_sm</scope><name>expected_number_of_attrs</name></member>
+      <member refid="structbt__ancs__parse__sm_af3380e14f7f332f02870fcd84d26accf_1af3380e14f7f332f02870fcd84d26accf" prot="public" virt="non-virtual"><scope>bt_ancs_parse_sm</scope><name>parse_state</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,1800 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__cloud__codec" kind="group">
+    <compoundname>cloud_codec</compoundname>
+    <title>Cloud codec</title>
+    <innerclass refid="structcloud__data" prot="public">cloud_data</innerclass>
+    <innerclass refid="structcloud__channel__data" prot="public">cloud_channel_data</innerclass>
+    <innerclass refid="structcloud__command__state__value" prot="public">cloud_command_state_value</innerclass>
+    <innerclass refid="structcloud__command__modem__params" prot="public">cloud_command_modem_params</innerclass>
+    <innerclass refid="structcloud__command" prot="public">cloud_command</innerclass>
+    <innerclass refid="structcloud__data__battery" prot="public">cloud_data_battery</innerclass>
+    <innerclass refid="structcloud__data__gps__pvt" prot="public">cloud_data_gps_pvt</innerclass>
+    <innerclass refid="structcloud__data__gps" prot="public">cloud_data_gps</innerclass>
+    <innerclass refid="structcloud__data__no__data" prot="public">cloud_data_no_data</innerclass>
+    <innerclass refid="structcloud__data__cfg" prot="public">cloud_data_cfg</innerclass>
+    <innerclass refid="structcloud__data__accelerometer" prot="public">cloud_data_accelerometer</innerclass>
+    <innerclass refid="structcloud__data__sensors" prot="public">cloud_data_sensors</innerclass>
+    <innerclass refid="structcloud__data__modem__static" prot="public">cloud_data_modem_static</innerclass>
+    <innerclass refid="structcloud__data__modem__dynamic" prot="public">cloud_data_modem_dynamic</innerclass>
+    <innerclass refid="structcloud__data__ui" prot="public">cloud_data_ui</innerclass>
+    <innerclass refid="structcloud__codec__data" prot="public">cloud_codec_data</innerclass>
+    <innerclass refid="structcloud__data__neighbor__cells" prot="public">cloud_data_neighbor_cells</innerclass>
+    <innerclass refid="structcloud__data__agps__request" prot="public">cloud_data_agps_request</innerclass>
+    <innerclass refid="structcloud__data__pgps__request" prot="public">cloud_data_pgps_request</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__cloud__codec_1ga13364d4b7e9466e1db8c9b123cf70cdc" prot="public" static="no" strong="no">
+        <type></type>
+        <name>cloud_channel</name>
+        <enumvalue id="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1gga13364d4b7e9466e1db8c9b123cf70cdcace92960f75b36644426bb592f330d4bf" prot="public">
+          <name>CLOUD_CHANNEL_GPS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The GPS sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1gga13364d4b7e9466e1db8c9b123cf70cdcad1e71a6f082af0bcb9e84a6c935b63db" prot="public">
+          <name>CLOUD_CHANNEL_FLIP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The FLIP movement sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1gga13364d4b7e9466e1db8c9b123cf70cdca1b01a267aaeeb885651160dbb61050b9" prot="public">
+          <name>CLOUD_CHANNEL_IMPACT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The IMPACT movement sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1gga13364d4b7e9466e1db8c9b123cf70cdcaee80eabc08b058ee8bc6963efb6bbeb9" prot="public">
+          <name>CLOUD_CHANNEL_BUTTON</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The Button press sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1gga13364d4b7e9466e1db8c9b123cf70cdca46449bae857b2162078eee40cc08be98" prot="public">
+          <name>CLOUD_CHANNEL_PIN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The PIN unit on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1gga13364d4b7e9466e1db8c9b123cf70cdca01b3583063efa1f0e03b5a11d95fd025" prot="public">
+          <name>CLOUD_CHANNEL_RGB_LED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The RGB LED on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1gga13364d4b7e9466e1db8c9b123cf70cdca7e9b74311540059f726d7152a075530a" prot="public">
+          <name>CLOUD_CHANNEL_BUZZER</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The BUZZER on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1gga13364d4b7e9466e1db8c9b123cf70cdcacf0ad874e5a55f23bd1a0ff64b30f16b" prot="public">
+          <name>CLOUD_CHANNEL_ENVIRONMENT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The environmental sensors channel. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1gga13364d4b7e9466e1db8c9b123cf70cdcae6c639c815b2f8078366f2537aad2298" prot="public">
+          <name>CLOUD_CHANNEL_TEMP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The TEMP sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1gga13364d4b7e9466e1db8c9b123cf70cdca1b60f51c21a20a4471185f0fd578219d" prot="public">
+          <name>CLOUD_CHANNEL_HUMID</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The Humidity sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1gga13364d4b7e9466e1db8c9b123cf70cdca4c85d9d6c0724d6586beae491d926702" prot="public">
+          <name>CLOUD_CHANNEL_AIR_PRESS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The Air Pressure sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1gga13364d4b7e9466e1db8c9b123cf70cdca907214cd695c84caf19f8f06c9907d4e" prot="public">
+          <name>CLOUD_CHANNEL_AIR_QUAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The Air Quality sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1gga13364d4b7e9466e1db8c9b123cf70cdca1e879ab1be35761e9cef00c7707472c3" prot="public">
+          <name>CLOUD_CHANNEL_LTE_LINK_RSRP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The RSPR data obtained from the modem. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1gga13364d4b7e9466e1db8c9b123cf70cdca910e4cbea3f570e61de941ee0861bd30" prot="public">
+          <name>CLOUD_CHANNEL_DEVICE_INFO</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The descriptive DEVICE data indicating its status. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1gga13364d4b7e9466e1db8c9b123cf70cdcaa1c2784697d526aaba0d83ff44bb66e7" prot="public">
+          <name>CLOUD_CHANNEL_LIGHT_SENSOR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The RBG IR light levels on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1gga13364d4b7e9466e1db8c9b123cf70cdcaf90a51bd28cff74d63e8ab06494b9a92" prot="public">
+          <name>CLOUD_CHANNEL_LIGHT_RED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The red light level on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1gga13364d4b7e9466e1db8c9b123cf70cdcaa47a8bd24d33a1bab12a40ac155b2be6" prot="public">
+          <name>CLOUD_CHANNEL_LIGHT_GREEN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The green light level on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1gga13364d4b7e9466e1db8c9b123cf70cdca8c9085ba9ec38eddec20259cdb115152" prot="public">
+          <name>CLOUD_CHANNEL_LIGHT_BLUE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The blue light level on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1gga13364d4b7e9466e1db8c9b123cf70cdca0fd3776524633340d47199243fc8de0d" prot="public">
+          <name>CLOUD_CHANNEL_LIGHT_IR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The IR light level on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1gga13364d4b7e9466e1db8c9b123cf70cdca90e08ca4dd740d5b1c91d3d443e7d4b6" prot="public">
+          <name>CLOUD_CHANNEL_ASSISTED_GPS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The assisted GPS channel. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1gga13364d4b7e9466e1db8c9b123cf70cdcaf0e7b2dcd1c76f6a066adf3ed677480e" prot="public">
+          <name>CLOUD_CHANNEL_MODEM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The modem channel. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1gga13364d4b7e9466e1db8c9b123cf70cdca91739ab3193e1e734c8a42ef5616dfab" prot="public">
+          <name>CLOUD_CHANNEL__TOTAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Cloud sensor types. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="26" column="1" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="26" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__cloud__codec_1gabdbc6eb2c1ece3d709d8c6214267d6c7" prot="public" static="no" strong="no">
+        <type></type>
+        <name>cloud_cmd_group</name>
+        <enumvalue id="group__cloud__codec_gabdbc6eb2c1ece3d709d8c6214267d6c7_1ggabdbc6eb2c1ece3d709d8c6214267d6c7a3cf59f819dfedc50cea3335fc41603a2" prot="public">
+          <name>CLOUD_CMD_GROUP_HELLO</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_gabdbc6eb2c1ece3d709d8c6214267d6c7_1ggabdbc6eb2c1ece3d709d8c6214267d6c7af5dc069af2f86e59bab3b1b89220e399" prot="public">
+          <name>CLOUD_CMD_GROUP_START</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_gabdbc6eb2c1ece3d709d8c6214267d6c7_1ggabdbc6eb2c1ece3d709d8c6214267d6c7a70c05b9fb6e304ea381283333932bd0c" prot="public">
+          <name>CLOUD_CMD_GROUP_STOP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_gabdbc6eb2c1ece3d709d8c6214267d6c7_1ggabdbc6eb2c1ece3d709d8c6214267d6c7a463b965ad7fb3b8b3b1ab534c044a2c5" prot="public">
+          <name>CLOUD_CMD_GROUP_INIT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_gabdbc6eb2c1ece3d709d8c6214267d6c7_1ggabdbc6eb2c1ece3d709d8c6214267d6c7a6da68f75fa6184ecb27dbb42101c5b77" prot="public">
+          <name>CLOUD_CMD_GROUP_GET</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_gabdbc6eb2c1ece3d709d8c6214267d6c7_1ggabdbc6eb2c1ece3d709d8c6214267d6c7ad23c095213fe567a6cd45b2684a332b6" prot="public">
+          <name>CLOUD_CMD_GROUP_STATUS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_gabdbc6eb2c1ece3d709d8c6214267d6c7_1ggabdbc6eb2c1ece3d709d8c6214267d6c7af0951794244bd4f052ef62b2667ca0f8" prot="public">
+          <name>CLOUD_CMD_GROUP_DATA</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_gabdbc6eb2c1ece3d709d8c6214267d6c7_1ggabdbc6eb2c1ece3d709d8c6214267d6c7a6fc3d17948f2f63c1877c46568eb6a95" prot="public">
+          <name>CLOUD_CMD_GROUP_OK</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_gabdbc6eb2c1ece3d709d8c6214267d6c7_1ggabdbc6eb2c1ece3d709d8c6214267d6c7ae65852a99f1b3b2300f4fa7458f79f78" prot="public">
+          <name>CLOUD_CMD_GROUP_CFG_SET</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_gabdbc6eb2c1ece3d709d8c6214267d6c7_1ggabdbc6eb2c1ece3d709d8c6214267d6c7a4270739a7a0a8aeba8caaa9af2ca0577" prot="public">
+          <name>CLOUD_CMD_GROUP_CFG_GET</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_gabdbc6eb2c1ece3d709d8c6214267d6c7_1ggabdbc6eb2c1ece3d709d8c6214267d6c7a768371c7b2ad3bd0fffc841b09859845" prot="public">
+          <name>CLOUD_CMD_GROUP_COMMAND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_gabdbc6eb2c1ece3d709d8c6214267d6c7_1ggabdbc6eb2c1ece3d709d8c6214267d6c7a45c5a0db1d93473319f8d4a78d3ef30d" prot="public">
+          <name>CLOUD_CMD_GROUP__TOTAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="111" column="1" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="111" bodyend="125"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__cloud__codec_1ga0b87ebba7d1e837119247b258b4cb35e" prot="public" static="no" strong="no">
+        <type></type>
+        <name>cloud_cmd_type</name>
+        <enumvalue id="group__cloud__codec_ga0b87ebba7d1e837119247b258b4cb35e_1gga0b87ebba7d1e837119247b258b4cb35ea94e3db8707599df47e6b715cecd6943d" prot="public">
+          <name>CLOUD_CMD_EMPTY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga0b87ebba7d1e837119247b258b4cb35e_1gga0b87ebba7d1e837119247b258b4cb35ea0799889c5fd26356e46ea3996d6c14a8" prot="public">
+          <name>CLOUD_CMD_ENABLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga0b87ebba7d1e837119247b258b4cb35e_1gga0b87ebba7d1e837119247b258b4cb35ea09d890db5cfc8855cf89ff59feacf9dd" prot="public">
+          <name>CLOUD_CMD_THRESHOLD_HIGH</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga0b87ebba7d1e837119247b258b4cb35e_1gga0b87ebba7d1e837119247b258b4cb35ea662c603b5fc4ddf3101d271c22ecd449" prot="public">
+          <name>CLOUD_CMD_THRESHOLD_LOW</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga0b87ebba7d1e837119247b258b4cb35e_1gga0b87ebba7d1e837119247b258b4cb35ea8fd7480035f8c6edc648b8ece9b72f9b" prot="public">
+          <name>CLOUD_CMD_INTERVAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga0b87ebba7d1e837119247b258b4cb35e_1gga0b87ebba7d1e837119247b258b4cb35eabc91f540cab2d6336f39bc7ac11f74d6" prot="public">
+          <name>CLOUD_CMD_COLOR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga0b87ebba7d1e837119247b258b4cb35e_1gga0b87ebba7d1e837119247b258b4cb35ea89925c7b09e2500f016a1a0d9c45ed3e" prot="public">
+          <name>CLOUD_CMD_MODEM_PARAM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga0b87ebba7d1e837119247b258b4cb35e_1gga0b87ebba7d1e837119247b258b4cb35eab0334548d40cd6a23069d3c7eb29fe10" prot="public">
+          <name>CLOUD_CMD_DATA_STRING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_ga0b87ebba7d1e837119247b258b4cb35e_1gga0b87ebba7d1e837119247b258b4cb35eab8611f708094fbc050bda633e7db3f0f" prot="public">
+          <name>CLOUD_CMD__TOTAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="139" column="1" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="139" bodyend="150"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__cloud__codec_1gac7d7a3f8767350cfe663734beb0d67b9" prot="public" static="no" strong="no">
+        <type></type>
+        <name>cloud_cmd_state</name>
+        <enumvalue id="group__cloud__codec_gac7d7a3f8767350cfe663734beb0d67b9_1ggac7d7a3f8767350cfe663734beb0d67b9a74568d1d9351c134753db088e6091f54" prot="public">
+          <name>CLOUD_CMD_STATE_UNDEFINED</name>
+          <initializer>= -1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_gac7d7a3f8767350cfe663734beb0d67b9_1ggac7d7a3f8767350cfe663734beb0d67b9a60ee4190f0d2a25ccf908ab45f151776" prot="public">
+          <name>CLOUD_CMD_STATE_FALSE</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_gac7d7a3f8767350cfe663734beb0d67b9_1ggac7d7a3f8767350cfe663734beb0d67b9a303488270fc026d87dae2e70230f0be3" prot="public">
+          <name>CLOUD_CMD_STATE_TRUE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="152" column="1" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="152" bodyend="156"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__cloud__codec_1gaa18c19f379a624d574e0db849a86f700" prot="public" static="no" strong="no">
+        <type></type>
+        <name>cloud_data_gps_format</name>
+        <enumvalue id="group__cloud__codec_gaa18c19f379a624d574e0db849a86f700_1ggaa18c19f379a624d574e0db849a86f700a641b3336aaf9f95a29a4a1505e6c9bd2" prot="public">
+          <name>CLOUD_CODEC_GPS_FORMAT_INVALID</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_gaa18c19f379a624d574e0db849a86f700_1ggaa18c19f379a624d574e0db849a86f700a4dd49954fce5114b310be9ea630de9bf" prot="public">
+          <name>CLOUD_CODEC_GPS_FORMAT_PVT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_gaa18c19f379a624d574e0db849a86f700_1ggaa18c19f379a624d574e0db849a86f700a637f49b9913735c6028d3327512f2354" prot="public">
+          <name>CLOUD_CODEC_GPS_FORMAT_NMEA</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="56" column="1" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="56" bodyend="60"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__cloud__codec_1gae03987f579b254fe29ecf9894a506016" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* cloud_cmd_cb_t) (struct cloud_command *cmd)</definition>
+        <argsstring>)(struct cloud_command *cmd)</argsstring>
+        <name>cloud_cmd_cb_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="194" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="194" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__cloud__codec_1ga8d2eb047c6f194c4311ac6b9b026e165" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_encode_data</definition>
+        <argsstring>(const struct cloud_channel_data *channel, const enum cloud_cmd_group group, struct cloud_msg *output)</argsstring>
+        <name>cloud_encode_data</name>
+        <param>
+          <type>const struct <ref refid="structcloud__channel__data" kindref="compound">cloud_channel_data</ref> *</type>
+          <declname>channel</declname>
+        </param>
+        <param>
+          <type>const enum <ref refid="group__cloud__codec_gabdbc6eb2c1ece3d709d8c6214267d6c7_1gabdbc6eb2c1ece3d709d8c6214267d6c7" kindref="member">cloud_cmd_group</ref></type>
+          <declname>group</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__msg" kindref="compound">cloud_msg</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Encode cloud data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>channel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The cloud channel type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>group</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The channel data&apos;s group. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the cloud data output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if the operation was successful, otherwise a (negative) error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="205" column="5" declfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" declline="205" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1ga186323694cea13b66a82f1c6f8f90cdc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_decode_command</definition>
+        <argsstring>(char const *input)</argsstring>
+        <name>cloud_decode_command</name>
+        <param>
+          <type>char const *</type>
+          <declname>input</declname>
+        </param>
+        <briefdescription>
+<para>Decode cloud data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the cloud data input.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful; data was decoded. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>1</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If data was not meant for this decoder; decode elsewhere. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A negative value on error. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="217" column="5" declfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" declline="217" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1ga35712266105dd6f0875a411a73ba2fca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_decode_init</definition>
+        <argsstring>(cloud_cmd_cb_t cb)</argsstring>
+        <name>cloud_decode_init</name>
+        <param>
+          <type><ref refid="group__cloud__codec_gae03987f579b254fe29ecf9894a506016_1gae03987f579b254fe29ecf9894a506016" kindref="member">cloud_cmd_cb_t</ref></type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Init the cloud decoder. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The callback handler to be used by the cloud decoder.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if the operation was successful, otherwise a (negative) error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="226" column="5" declfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" declline="226" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1ga6227b2a534a867cfab18d4875db8e21c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_encode_device_status_data</definition>
+        <argsstring>(void *modem_param, const char *const ui[], const uint32_t ui_count, const char *const fota[], const uint32_t fota_count, const uint16_t fota_version, struct cloud_msg *output)</argsstring>
+        <name>cloud_encode_device_status_data</name>
+        <param>
+          <type>void *</type>
+          <declname>modem_param</declname>
+        </param>
+        <param>
+          <type>const char *const</type>
+          <declname>ui</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+          <declname>ui_count</declname>
+        </param>
+        <param>
+          <type>const char *const</type>
+          <declname>fota</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+          <declname>fota_count</declname>
+        </param>
+        <param>
+          <type>const uint16_t</type>
+          <declname>fota_version</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__msg" kindref="compound">cloud_msg</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Encode device status data to be transmitted to the digital twin. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>modem_param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to optional modem parameter data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ui</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to array of cloud data channel name strings. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ui_count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the ui array. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fota</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to array of FOTA services. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fota_count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the fota array. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fota_version</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Version of the FOTA service. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to encoded data structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if the operation was successful, otherwise a (negative) error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="244" column="5" declfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" declline="244" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1gab0197862bd3247aad480cfb8c1a5639e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_encode_config_data</definition>
+        <argsstring>(struct cloud_msg *output)</argsstring>
+        <name>cloud_encode_config_data</name>
+        <param>
+          <type>struct <ref refid="structcloud__msg" kindref="compound">cloud_msg</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Encode device config data to be transmitted to the shadow/digital twin. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to encoded data structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if the operation was successful, otherwise a (negative) error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="260" column="5" declfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" declline="260" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1ga53fbe412d0d3ee06f13b14a1a1c24a52" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void cloud_release_data</definition>
+        <argsstring>(struct cloud_msg *data)</argsstring>
+        <name>cloud_release_data</name>
+        <param>
+          <type>struct <ref refid="structcloud__msg" kindref="compound">cloud_msg</ref> *</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Releases memory used by cloud data structure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud data to be released.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if the operation was successful, otherwise a (negative) error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="269" column="20" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="269" bodyend="272"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1ga2123648f84fa26c231a73b9f72743a46" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_encode_env_sensors_data</definition>
+        <argsstring>(const env_sensor_data_t *sensor_data, struct cloud_msg *output)</argsstring>
+        <name>cloud_encode_env_sensors_data</name>
+        <param>
+          <type>const <ref refid="structenv__sensor__data__t" kindref="compound">env_sensor_data_t</ref> *</type>
+          <declname>sensor_data</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__msg" kindref="compound">cloud_msg</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="274" column="5" declfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" declline="274" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1ga4c572bb1b5bb9889ef4c2a1bc35db746" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_encode_motion_data</definition>
+        <argsstring>(const motion_data_t *motion_data, struct cloud_msg *output)</argsstring>
+        <name>cloud_encode_motion_data</name>
+        <param>
+          <type>const <ref refid="structmotion__data__t" kindref="compound">motion_data_t</ref> *</type>
+          <declname>motion_data</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__msg" kindref="compound">cloud_msg</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="277" column="5" declfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" declline="277" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1ga6dcdc60013f58db222c85e308c1fbd6d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool cloud_is_send_allowed</definition>
+        <argsstring>(const enum cloud_channel channel, const double value)</argsstring>
+        <name>cloud_is_send_allowed</name>
+        <param>
+          <type>const enum <ref refid="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1ga13364d4b7e9466e1db8c9b123cf70cdc" kindref="member">cloud_channel</ref></type>
+          <declname>channel</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Checks if data could be sent to the cloud based on config. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>channel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The cloud channel type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current data value for channel.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true If the data should be sent to the cloud. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="293" column="6" declfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" declline="293" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1ga6a0b38469d9bcf17e6cb6c530d81c09f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>enum <ref refid="group__cloud__codec_gac7d7a3f8767350cfe663734beb0d67b9_1gac7d7a3f8767350cfe663734beb0d67b9" kindref="member">cloud_cmd_state</ref></type>
+        <definition>enum cloud_cmd_state cloud_get_channel_enable_state</definition>
+        <argsstring>(const enum cloud_channel channel)</argsstring>
+        <name>cloud_get_channel_enable_state</name>
+        <param>
+          <type>const enum <ref refid="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1ga13364d4b7e9466e1db8c9b123cf70cdc" kindref="member">cloud_channel</ref></type>
+          <declname>channel</declname>
+        </param>
+        <briefdescription>
+<para>Gets the enable state of the specified cloud channel. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>channel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The cloud channel type.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>cloud_cmd_state The enable state. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="303" column="21" declfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" declline="303" declcolumn="21"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1ga2c17beedc5d176ec36d9e4d20439e489" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cloud_set_channel_enable_state</definition>
+        <argsstring>(const enum cloud_channel channel, const enum cloud_cmd_state state)</argsstring>
+        <name>cloud_set_channel_enable_state</name>
+        <param>
+          <type>const enum <ref refid="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1ga13364d4b7e9466e1db8c9b123cf70cdc" kindref="member">cloud_channel</ref></type>
+          <declname>channel</declname>
+        </param>
+        <param>
+          <type>const enum <ref refid="group__cloud__codec_gac7d7a3f8767350cfe663734beb0d67b9_1gac7d7a3f8767350cfe663734beb0d67b9" kindref="member">cloud_cmd_state</ref></type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+<para>Sets the enable state of the specified cloud channel. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>channel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The cloud channel type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>state</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The desired enable state. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="312" column="6" declfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" declline="312" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1ga23c45fe441fd17be1594d93e23155f49" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void cloud_codec_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>cloud_codec_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="231" column="20" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="231" bodyend="234"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1gac96146fc3658ec30b090d1a7b8cf38a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_codec_encode_neighbor_cells</definition>
+        <argsstring>(struct cloud_codec_data *output, struct cloud_data_neighbor_cells *neighbor_cells)</argsstring>
+        <name>cloud_codec_encode_neighbor_cells</name>
+        <param>
+          <type>struct <ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__neighbor__cells" kindref="compound">cloud_data_neighbor_cells</ref> *</type>
+          <declname>neighbor_cells</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="236" column="5" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="236" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1gaef6c41b6911cd859dbdb4953dd410e1b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_codec_encode_agps_request</definition>
+        <argsstring>(struct cloud_codec_data *output, struct cloud_data_agps_request *agps_request)</argsstring>
+        <name>cloud_codec_encode_agps_request</name>
+        <param>
+          <type>struct <ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__agps__request" kindref="compound">cloud_data_agps_request</ref> *</type>
+          <declname>agps_request</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="239" column="5" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="239" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1ga719c018fc6bf8cb4b7dd5763e0104763" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_codec_encode_pgps_request</definition>
+        <argsstring>(struct cloud_codec_data *output, struct cloud_data_pgps_request *pgps_request)</argsstring>
+        <name>cloud_codec_encode_pgps_request</name>
+        <param>
+          <type>struct <ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__pgps__request" kindref="compound">cloud_data_pgps_request</ref> *</type>
+          <declname>pgps_request</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="242" column="5" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="242" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1ga796d3e540e797835d855b6220dbf448b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_codec_decode_config</definition>
+        <argsstring>(char *input, size_t input_len, struct cloud_data_cfg *cfg)</argsstring>
+        <name>cloud_codec_decode_config</name>
+        <param>
+          <type>char *</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>input_len</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__cfg" kindref="compound">cloud_data_cfg</ref> *</type>
+          <declname>cfg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="245" column="5" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="245" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1ga796c2746862e804d63d3f1f59f8a5d17" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_codec_encode_config</definition>
+        <argsstring>(struct cloud_codec_data *output, struct cloud_data_cfg *cfg)</argsstring>
+        <name>cloud_codec_encode_config</name>
+        <param>
+          <type>struct <ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__cfg" kindref="compound">cloud_data_cfg</ref> *</type>
+          <declname>cfg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="248" column="5" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="248" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1ga8379aedf3c21ed135bea9daed95ba085" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_codec_encode_data</definition>
+        <argsstring>(struct cloud_codec_data *output, struct cloud_data_gps *gps_buf, struct cloud_data_sensors *sensor_buf, struct cloud_data_modem_static *modem_stat_buf, struct cloud_data_modem_dynamic *modem_dyn_buf, struct cloud_data_ui *ui_buf, struct cloud_data_accelerometer *accel_buf, struct cloud_data_battery *bat_buf)</argsstring>
+        <name>cloud_codec_encode_data</name>
+        <param>
+          <type>struct <ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__gps" kindref="compound">cloud_data_gps</ref> *</type>
+          <declname>gps_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__sensors" kindref="compound">cloud_data_sensors</ref> *</type>
+          <declname>sensor_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__modem__static" kindref="compound">cloud_data_modem_static</ref> *</type>
+          <declname>modem_stat_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__modem__dynamic" kindref="compound">cloud_data_modem_dynamic</ref> *</type>
+          <declname>modem_dyn_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__ui" kindref="compound">cloud_data_ui</ref> *</type>
+          <declname>ui_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__accelerometer" kindref="compound">cloud_data_accelerometer</ref> *</type>
+          <declname>accel_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__battery" kindref="compound">cloud_data_battery</ref> *</type>
+          <declname>bat_buf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="251" column="5" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="251" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1ga45b5ec76d8d4d8aab896e06a0d4ad730" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_codec_encode_ui_data</definition>
+        <argsstring>(struct cloud_codec_data *output, struct cloud_data_ui *ui_buf)</argsstring>
+        <name>cloud_codec_encode_ui_data</name>
+        <param>
+          <type>struct <ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__ui" kindref="compound">cloud_data_ui</ref> *</type>
+          <declname>ui_buf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="260" column="5" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="260" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1gad12548ddbb161bb882937e7efea69fcc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_codec_encode_batch_data</definition>
+        <argsstring>(struct cloud_codec_data *output, struct cloud_data_gps *gps_buf, struct cloud_data_sensors *sensor_buf, struct cloud_data_modem_dynamic *modem_dyn_buf, struct cloud_data_ui *ui_buf, struct cloud_data_accelerometer *accel_buf, struct cloud_data_battery *bat_buf, size_t gps_buf_count, size_t sensor_buf_count, size_t modem_dyn_buf_count, size_t ui_buf_count, size_t accel_buf_count, size_t bat_buf_count)</argsstring>
+        <name>cloud_codec_encode_batch_data</name>
+        <param>
+          <type>struct <ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__gps" kindref="compound">cloud_data_gps</ref> *</type>
+          <declname>gps_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__sensors" kindref="compound">cloud_data_sensors</ref> *</type>
+          <declname>sensor_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__modem__dynamic" kindref="compound">cloud_data_modem_dynamic</ref> *</type>
+          <declname>modem_dyn_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__ui" kindref="compound">cloud_data_ui</ref> *</type>
+          <declname>ui_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__accelerometer" kindref="compound">cloud_data_accelerometer</ref> *</type>
+          <declname>accel_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__battery" kindref="compound">cloud_data_battery</ref> *</type>
+          <declname>bat_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>gps_buf_count</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>sensor_buf_count</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>modem_dyn_buf_count</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>ui_buf_count</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>accel_buf_count</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>bat_buf_count</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="263" column="5" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="263" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1gaecced72fa0c46815e0b2105f14c1fdd6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cloud_codec_populate_sensor_buffer</definition>
+        <argsstring>(struct cloud_data_sensors *sensor_buffer, struct cloud_data_sensors *new_sensor_data, int *head_sensor_buf, size_t buffer_count)</argsstring>
+        <name>cloud_codec_populate_sensor_buffer</name>
+        <param>
+          <type>struct <ref refid="structcloud__data__sensors" kindref="compound">cloud_data_sensors</ref> *</type>
+          <declname>sensor_buffer</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__sensors" kindref="compound">cloud_data_sensors</ref> *</type>
+          <declname>new_sensor_data</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>head_sensor_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buffer_count</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="278" column="6" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="278" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1ga65d32adb4aac7e4a1fcda21b108c86be" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cloud_codec_populate_ui_buffer</definition>
+        <argsstring>(struct cloud_data_ui *ui_buffer, struct cloud_data_ui *new_ui_data, int *head_ui_buf, size_t buffer_count)</argsstring>
+        <name>cloud_codec_populate_ui_buffer</name>
+        <param>
+          <type>struct <ref refid="structcloud__data__ui" kindref="compound">cloud_data_ui</ref> *</type>
+          <declname>ui_buffer</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__ui" kindref="compound">cloud_data_ui</ref> *</type>
+          <declname>new_ui_data</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>head_ui_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buffer_count</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="284" column="6" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="284" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1ga44ae27821d58225262e2937a292a6d16" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cloud_codec_populate_accel_buffer</definition>
+        <argsstring>(struct cloud_data_accelerometer *accel_buf, struct cloud_data_accelerometer *new_accel_data, int *head_accel_buf, size_t buffer_count)</argsstring>
+        <name>cloud_codec_populate_accel_buffer</name>
+        <param>
+          <type>struct <ref refid="structcloud__data__accelerometer" kindref="compound">cloud_data_accelerometer</ref> *</type>
+          <declname>accel_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__accelerometer" kindref="compound">cloud_data_accelerometer</ref> *</type>
+          <declname>new_accel_data</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>head_accel_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buffer_count</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="289" column="6" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="289" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1ga64098a13bb9b28ba9065c4c38dadda2b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cloud_codec_populate_bat_buffer</definition>
+        <argsstring>(struct cloud_data_battery *bat_buffer, struct cloud_data_battery *new_bat_data, int *head_bat_buf, size_t buffer_count)</argsstring>
+        <name>cloud_codec_populate_bat_buffer</name>
+        <param>
+          <type>struct <ref refid="structcloud__data__battery" kindref="compound">cloud_data_battery</ref> *</type>
+          <declname>bat_buffer</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__battery" kindref="compound">cloud_data_battery</ref> *</type>
+          <declname>new_bat_data</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>head_bat_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buffer_count</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="295" column="6" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="295" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1ga75ee5eb86bd9a5e555c0f35f154c7d9b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cloud_codec_populate_gps_buffer</definition>
+        <argsstring>(struct cloud_data_gps *gps_buffer, struct cloud_data_gps *new_gps_data, int *head_gps_buf, size_t buffer_count)</argsstring>
+        <name>cloud_codec_populate_gps_buffer</name>
+        <param>
+          <type>struct <ref refid="structcloud__data__gps" kindref="compound">cloud_data_gps</ref> *</type>
+          <declname>gps_buffer</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__gps" kindref="compound">cloud_data_gps</ref> *</type>
+          <declname>new_gps_data</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>head_gps_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buffer_count</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="300" column="6" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="300" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1gac04976b461ccc1008151878c6af7e3b1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cloud_codec_populate_modem_dynamic_buffer</definition>
+        <argsstring>(struct cloud_data_modem_dynamic *modem_buffer, struct cloud_data_modem_dynamic *new_modem_data, int *head_modem_buf, size_t buffer_count)</argsstring>
+        <name>cloud_codec_populate_modem_dynamic_buffer</name>
+        <param>
+          <type>struct <ref refid="structcloud__data__modem__dynamic" kindref="compound">cloud_data_modem_dynamic</ref> *</type>
+          <declname>modem_buffer</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__modem__dynamic" kindref="compound">cloud_data_modem_dynamic</ref> *</type>
+          <declname>new_modem_data</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>head_modem_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buffer_count</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="305" column="6" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="305" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_1ga1934b6d2c28cc80d059380b671baa2a7" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void cloud_codec_release_data</definition>
+        <argsstring>(struct cloud_codec_data *output)</argsstring>
+        <name>cloud_codec_release_data</name>
+        <param>
+          <type>struct <ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="311" column="20" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="311" bodyend="314"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__cloud__codec_1gafd5e613c07ac91ebedd74a315f56dc4a" prot="public" static="no">
+        <name>CLOUD_CHANNEL_STR_GPS</name>
+        <initializer>&quot;GPS&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="73" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga43178e88fc537097ce7cfcc61b793e72" prot="public" static="no">
+        <name>CLOUD_CHANNEL_STR_FLIP</name>
+        <initializer>&quot;FLIP&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="74" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga5bf9d33e2eb7f474eaad4f7eba3c4507" prot="public" static="no">
+        <name>CLOUD_CHANNEL_STR_BUTTON</name>
+        <initializer>&quot;BUTTON&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="75" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga366e66750ad640bbaa4f07faf612d6e0" prot="public" static="no">
+        <name>CLOUD_CHANNEL_STR_ENVIRONMENT</name>
+        <initializer>&quot;ENV&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="76" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga1ababd499f3bff2322e6e2f8a6cc8931" prot="public" static="no">
+        <name>CLOUD_CHANNEL_STR_TEMP</name>
+        <initializer>&quot;TEMP&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="77" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1gacaffcf6216118960efebee0dbf6a2b6c" prot="public" static="no">
+        <name>CLOUD_CHANNEL_STR_HUMID</name>
+        <initializer>&quot;HUMID&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="78" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1gab3f1724051ee75c12873a5dc810df938" prot="public" static="no">
+        <name>CLOUD_CHANNEL_STR_AIR_PRESS</name>
+        <initializer>&quot;AIR_PRESS&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="79" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga340a52893b724d250e49c57869579b83" prot="public" static="no">
+        <name>CLOUD_CHANNEL_STR_AIR_QUAL</name>
+        <initializer>&quot;AIR_QUAL&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="80" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga2f8b6debbff0a8ab5f7630cc4c381fe9" prot="public" static="no">
+        <name>CLOUD_CHANNEL_STR_LTE_LINK_RSRP</name>
+        <initializer>&quot;RSRP&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="81" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga5bbfa3091a66060cf5b3aa444b3d8afb" prot="public" static="no">
+        <name>CLOUD_CHANNEL_STR_DEVICE_INFO</name>
+        <initializer>&quot;DEVICE&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="82" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1gaedac3a608172259ed9d11ae4bbed867b" prot="public" static="no">
+        <name>CLOUD_CHANNEL_STR_LIGHT_SENSOR</name>
+        <initializer>&quot;LIGHT&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="83" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1gaff728b7fc6927326d245b2a713234ea9" prot="public" static="no">
+        <name>CLOUD_CHANNEL_STR_LIGHT_RED</name>
+        <initializer>&quot;LIGHT_RED&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="84" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga4e80b99c22618a3fa5fa19110982e6b3" prot="public" static="no">
+        <name>CLOUD_CHANNEL_STR_LIGHT_GREEN</name>
+        <initializer>&quot;LIGHT_GREEN&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="85" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga44c35dc0a9866634818bd6674faa62bd" prot="public" static="no">
+        <name>CLOUD_CHANNEL_STR_LIGHT_BLUE</name>
+        <initializer>&quot;LIGHT_BLUE&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="86" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1gae1f41778cc4efcce0dfcc8a937bac87a" prot="public" static="no">
+        <name>CLOUD_CHANNEL_STR_LIGHT_IR</name>
+        <initializer>&quot;LIGHT_IR&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="87" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga0a09e421a15629e274e287b2073eae3e" prot="public" static="no">
+        <name>CLOUD_CHANNEL_STR_ASSISTED_GPS</name>
+        <initializer>&quot;AGPS&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="88" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga26f1840003180cd3cd71c5cd6e32a7f9" prot="public" static="no">
+        <name>CLOUD_CHANNEL_STR_RGB_LED</name>
+        <initializer>&quot;LED&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="89" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga5ac35245deccd1995bd10769e2af480a" prot="public" static="no">
+        <name>CLOUD_CHANNEL_STR_MODEM</name>
+        <initializer>&quot;MODEM&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="90" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1gaf77a0cc656afc8c5c7d7de6b28b07fd7" prot="public" static="no">
+        <name>CLOUD_CMD_GROUP_STR_HELLO</name>
+        <initializer>&quot;HELLO&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="127" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga4d281db1114c47891f7676a9eafefbe0" prot="public" static="no">
+        <name>CLOUD_CMD_GROUP_STR_START</name>
+        <initializer>&quot;START&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="128" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga07ca21b0b079bf0fd508fe04ed25d600" prot="public" static="no">
+        <name>CLOUD_CMD_GROUP_STR_STOP</name>
+        <initializer>&quot;STOP&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="129" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1gaa8ffa1aa9c92f2d19904e6c2e22e52ac" prot="public" static="no">
+        <name>CLOUD_CMD_GROUP_STR_INIT</name>
+        <initializer>&quot;INIT&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="130" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga836e3ba4cb61f8fd9bccfc503e73218d" prot="public" static="no">
+        <name>CLOUD_CMD_GROUP_STR_GET</name>
+        <initializer>&quot;GET&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="131" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga71cc29ec3cc2998e7b126ab6d9e880e3" prot="public" static="no">
+        <name>CLOUD_CMD_GROUP_STR_STATUS</name>
+        <initializer>&quot;STATUS&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="132" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1gac509ed6701eb04d8c299233c3cac16c7" prot="public" static="no">
+        <name>CLOUD_CMD_GROUP_STR_DATA</name>
+        <initializer>&quot;DATA&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="133" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga9c00d4ceb870fe5762a15d9e190d7d1e" prot="public" static="no">
+        <name>CLOUD_CMD_GROUP_STR_OK</name>
+        <initializer>&quot;OK&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="134" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga929b4631fc0dba874498e5b4782fe24d" prot="public" static="no">
+        <name>CLOUD_CMD_GROUP_STR_CFG_SET</name>
+        <initializer>&quot;CFG_SET&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="135" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga20c0a14291618a651948b4cc612d6f31" prot="public" static="no">
+        <name>CLOUD_CMD_GROUP_STR_CFG_GET</name>
+        <initializer>&quot;CFG_GET&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="136" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga7a607d7f368e7d95cfb15ad35a2a23d0" prot="public" static="no">
+        <name>CLOUD_CMD_GROUP_STR_COMMAND</name>
+        <initializer>&quot;CMD&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="137" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="137" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1gad7a66686f1e40952bca93aea86150b55" prot="public" static="no">
+        <name>CLOUD_CMD_TYPE_STR_EMPTY</name>
+        <initializer>&quot;empty&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="158" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga5e44dc7188f0ea62f50f2ae0a6898b20" prot="public" static="no">
+        <name>CLOUD_CMD_TYPE_STR_ENABLE</name>
+        <initializer>&quot;enable&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="159" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="159" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga14c79b1475c22df8d85f647ec62db55a" prot="public" static="no">
+        <name>CLOUD_CMD_TYPE_STR_THRESH_LO</name>
+        <initializer>&quot;thresh_lo&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="160" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="160" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1gaccc7d292fdfa81e2e87908f820d734cf" prot="public" static="no">
+        <name>CLOUD_CMD_TYPE_STR_THRESH_HI</name>
+        <initializer>&quot;thresh_hi&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="161" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="161" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1gadeccd672d15e192885b8ee85340f8e6d" prot="public" static="no">
+        <name>CLOUD_CMD_TYPE_STR_INTERVAL</name>
+        <initializer>&quot;interval&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="162" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="162" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1gacaacc7cda4a5617e20d5e618e3b695fd" prot="public" static="no">
+        <name>CLOUD_CMD_TYPE_STR_COLOR</name>
+        <initializer>&quot;color&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="163" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="163" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga34a982b986de68f4d32b309ac9e237fa" prot="public" static="no">
+        <name>CLOUD_CMD_TYPE_STR_MODEM_PARAM</name>
+        <initializer>&quot;modemParams&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="164" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="164" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1gab30b5fbe692ef3d95feb7748acfabde1" prot="public" static="no">
+        <name>CLOUD_CMD_TYPE_STR_DATA_STRING</name>
+        <initializer>&quot;data_string&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="165" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="165" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1gaf0000cc360755784f9769988f0e745a9" prot="public" static="no">
+        <name>MODEM_PARAM_BLOB_KEY_STR</name>
+        <initializer>&quot;blob&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="168" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="168" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__cloud__codec_1ga84937e0a322e3825a64c922ef161f239" prot="public" static="no">
+        <name>MODEM_PARAM_CHECKSUM_KEY_STR</name>
+        <initializer>&quot;checksum&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="169" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="169" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Module that encodes and decodes data destined for a cloud solution. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Module that encodes and decodes cloud communication.</para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

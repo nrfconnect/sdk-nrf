@@ -1,0 +1,290 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="modules__common_8h" kind="file" language="C++">
+    <compoundname>modules_common.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/asset_tracker_v2/src/modules/modules_common.h</label>
+        <link refid="modules__common_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structmodule__data" prot="public">module_data</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="modules__common_8h_a54b9826627bf2c0b18180bdbc2017c16_1a54b9826627bf2c0b18180bdbc2017c16" prot="public" static="no">
+        <name>IS_EVENT</name>
+        <param><defname>_ptr</defname></param>
+        <param><defname>_mod</defname></param>
+        <param><defname>_evt</defname></param>
+        <initializer>		is_ ## _mod ## _module_event(&amp;_ptr-&gt;module._mod.header) &amp;&amp;		\
+		_ptr-&gt;module._mod.type == _evt</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/modules/modules_common.h" line="12" column="9" bodyfile="applications/asset_tracker_v2/src/modules/modules_common.h" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="modules__common_8h_a637d6c2bd8dc777f2b728e3e9148238e_1a637d6c2bd8dc777f2b728e3e9148238e" prot="public" static="no">
+        <name>SEND_EVENT</name>
+        <param><defname>_mod</defname></param>
+        <param><defname>_type</defname></param>
+        <initializer>	struct _mod ## _module_event *event = new_ ## _mod ## _module_event();		\
+	event-&gt;type = _type;								\
+	<ref refid="group__event__manager_ga5fb4d859ba408c80abc899d18bb626e4_1ga5fb4d859ba408c80abc899d18bb626e4" kindref="member">EVENT_SUBMIT</ref>(event)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/modules/modules_common.h" line="16" column="9" bodyfile="applications/asset_tracker_v2/src/modules/modules_common.h" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="modules__common_8h_a1410ea40f9122c386cd9e1a1531b4d1d_1a1410ea40f9122c386cd9e1a1531b4d1d" prot="public" static="no">
+        <name>SEND_ERROR</name>
+        <param><defname>_mod</defname></param>
+        <param><defname>_type</defname></param>
+        <param><defname>_error_code</defname></param>
+        <initializer>	struct _mod ## _module_event *event = new_ ## _mod ## _module_event();		\
+	event-&gt;type = _type;								\
+	event-&gt;data.err = _error_code;							\
+	<ref refid="group__event__manager_ga5fb4d859ba408c80abc899d18bb626e4_1ga5fb4d859ba408c80abc899d18bb626e4" kindref="member">EVENT_SUBMIT</ref>(event)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/modules/modules_common.h" line="21" column="9" bodyfile="applications/asset_tracker_v2/src/modules/modules_common.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="modules__common_8h_ab4c516ed4ccd36959bd5fb7c37a43700_1ab4c516ed4ccd36959bd5fb7c37a43700" prot="public" static="no">
+        <name>SEND_SHUTDOWN_ACK</name>
+        <param><defname>_mod</defname></param>
+        <param><defname>_type</defname></param>
+        <param><defname>_id</defname></param>
+        <initializer>	struct _mod ## _module_event *event = new_ ## _mod ## _module_event();		\
+	event-&gt;type = _type;								\
+	event-&gt;data.id = _id;								\
+	<ref refid="group__event__manager_ga5fb4d859ba408c80abc899d18bb626e4_1ga5fb4d859ba408c80abc899d18bb626e4" kindref="member">EVENT_SUBMIT</ref>(event)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/modules/modules_common.h" line="27" column="9" bodyfile="applications/asset_tracker_v2/src/modules/modules_common.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="modules__common_8h_a1a5a4226af0888d05e97f5352a7d8bf1_1a1a5a4226af0888d05e97f5352a7d8bf1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void module_purge_queue</definition>
+        <argsstring>(struct module_data *module)</argsstring>
+        <name>module_purge_queue</name>
+        <param>
+          <type>struct <ref refid="structmodule__data" kindref="compound">module_data</ref> *</type>
+          <declname>module</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/modules/modules_common.h" line="45" column="6" declfile="applications/asset_tracker_v2/src/modules/modules_common.h" declline="45" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="modules__common_8h_abec396fc20b04989d4d217a3470d8746_1abec396fc20b04989d4d217a3470d8746" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int module_get_next_msg</definition>
+        <argsstring>(struct module_data *module, void *msg)</argsstring>
+        <name>module_get_next_msg</name>
+        <param>
+          <type>struct <ref refid="structmodule__data" kindref="compound">module_data</ref> *</type>
+          <declname>module</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/modules/modules_common.h" line="47" column="5" declfile="applications/asset_tracker_v2/src/modules/modules_common.h" declline="47" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="modules__common_8h_aaff8f55ee1fd70fa097f79f2e712ca4b_1aaff8f55ee1fd70fa097f79f2e712ca4b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int module_enqueue_msg</definition>
+        <argsstring>(struct module_data *module, void *msg)</argsstring>
+        <name>module_enqueue_msg</name>
+        <param>
+          <type>struct <ref refid="structmodule__data" kindref="compound">module_data</ref> *</type>
+          <declname>module</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+<para>Enqueue message to a module&apos;s queue. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>0 if successful, otherwise a negative error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/modules/modules_common.h" line="53" column="5" declfile="applications/asset_tracker_v2/src/modules/modules_common.h" declline="53" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="modules__common_8h_a9dd22212a2c0ed95aa7c5c46e7e4aa30_1a9dd22212a2c0ed95aa7c5c46e7e4aa30" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool modules_shutdown_register</definition>
+        <argsstring>(uint32_t id_reg)</argsstring>
+        <name>modules_shutdown_register</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>id_reg</declname>
+        </param>
+        <briefdescription>
+<para>Register that a module has performed a graceful shutdown. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>id_reg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Identifier of module.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true If this API has been called for all modules supporting graceful shutdown in the application. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/modules/modules_common.h" line="62" column="6" declfile="applications/asset_tracker_v2/src/modules/modules_common.h" declline="62" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="modules__common_8h_acad8a900eb708ba75f7b7109a509cbcf_1acad8a900eb708ba75f7b7109a509cbcf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int module_start</definition>
+        <argsstring>(struct module_data *module)</argsstring>
+        <name>module_start</name>
+        <param>
+          <type>struct <ref refid="structmodule__data" kindref="compound">module_data</ref> *</type>
+          <declname>module</declname>
+        </param>
+        <briefdescription>
+<para>Register and start a module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>module</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a structure containing module metadata.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if successful, otherwise a negative error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/modules/modules_common.h" line="70" column="5" declfile="applications/asset_tracker_v2/src/modules/modules_common.h" declline="70" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="modules__common_8h_a321429867cafb8263785af07c1cb5d4a_1a321429867cafb8263785af07c1cb5d4a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint32_t</type>
+        <definition>uint32_t module_active_count_get</definition>
+        <argsstring>(void)</argsstring>
+        <name>module_active_count_get</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/modules/modules_common.h" line="72" column="10" declfile="applications/asset_tracker_v2/src/modules/modules_common.h" declline="72" declcolumn="10"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_MODULES_COMMON_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_MODULES_COMMON_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12" refid="modules__common_8h_a54b9826627bf2c0b18180bdbc2017c16_1a54b9826627bf2c0b18180bdbc2017c16" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>IS_EVENT(_ptr,<sp/>_mod,<sp/>_evt)<sp/>\</highlight></codeline>
+<codeline lineno="13"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>is_<sp/>##<sp/>_mod<sp/>##<sp/>_module_event(&amp;_ptr-&gt;module._mod.header)<sp/>&amp;&amp;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="14"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_ptr-&gt;module._mod.type<sp/>==<sp/>_evt</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16" refid="modules__common_8h_a637d6c2bd8dc777f2b728e3e9148238e_1a637d6c2bd8dc777f2b728e3e9148238e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SEND_EVENT(_mod,<sp/>_type)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="17"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>struct<sp/>_mod<sp/>##<sp/>_module_event<sp/>*event<sp/>=<sp/>new_<sp/>##<sp/>_mod<sp/>##<sp/>_module_event();<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="18"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>event-&gt;type<sp/>=<sp/>_type;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="19"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EVENT_SUBMIT(event)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="modules__common_8h_a1410ea40f9122c386cd9e1a1531b4d1d_1a1410ea40f9122c386cd9e1a1531b4d1d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SEND_ERROR(_mod,<sp/>_type,<sp/>_error_code)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="22"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>struct<sp/>_mod<sp/>##<sp/>_module_event<sp/>*event<sp/>=<sp/>new_<sp/>##<sp/>_mod<sp/>##<sp/>_module_event();<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="23"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>event-&gt;type<sp/>=<sp/>_type;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="24"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>event-&gt;data.err<sp/>=<sp/>_error_code;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="25"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EVENT_SUBMIT(event)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="modules__common_8h_ab4c516ed4ccd36959bd5fb7c37a43700_1ab4c516ed4ccd36959bd5fb7c37a43700" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SEND_SHUTDOWN_ACK(_mod,<sp/>_type,<sp/>_id)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="28"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>struct<sp/>_mod<sp/>##<sp/>_module_event<sp/>*event<sp/>=<sp/>new_<sp/>##<sp/>_mod<sp/>##<sp/>_module_event();<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="29"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>event-&gt;type<sp/>=<sp/>_type;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="30"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>event-&gt;data.id<sp/>=<sp/>_id;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="31"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EVENT_SUBMIT(event)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="structmodule__data" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmodule__data" kindref="compound">module_data</ref><sp/>{</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Variable<sp/>used<sp/>to<sp/>construct<sp/>a<sp/>linked<sp/>list<sp/>of<sp/>module<sp/>metadata.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="structmodule__data_ac70a05c36e48d86201cd1cf02c4ab476_1ac70a05c36e48d86201cd1cf02c4ab476" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sys_snode_t<sp/><ref refid="structmodule__data_ac70a05c36e48d86201cd1cf02c4ab476_1ac70a05c36e48d86201cd1cf02c4ab476" kindref="member">header</ref>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>ID<sp/>specific<sp/>to<sp/>each<sp/>module.<sp/>Internally<sp/>assigned<sp/>when<sp/>calling<sp/>module_start().<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="structmodule__data_a6bf12259328b5869b228300e40cf7fd3_1a6bf12259328b5869b228300e40cf7fd3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structmodule__data_a6bf12259328b5869b228300e40cf7fd3_1a6bf12259328b5869b228300e40cf7fd3" kindref="member">id</ref>;</highlight></codeline>
+<codeline lineno="38" refid="structmodule__data_a4ef81c23135dd5dc0c7588fe6228e4db_1a4ef81c23135dd5dc0c7588fe6228e4db" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>k_tid_t<sp/><ref refid="structmodule__data_a4ef81c23135dd5dc0c7588fe6228e4db_1a4ef81c23135dd5dc0c7588fe6228e4db" kindref="member">thread_id</ref>;</highlight></codeline>
+<codeline lineno="39" refid="structmodule__data_a841086b470516d563bb0271b3016d6ff_1a841086b470516d563bb0271b3016d6ff" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structmodule__data_a841086b470516d563bb0271b3016d6ff_1a841086b470516d563bb0271b3016d6ff" kindref="member">name</ref>;</highlight></codeline>
+<codeline lineno="40" refid="structmodule__data_a095bedb58a13cfc03913e957f1494b96_1a095bedb58a13cfc03913e957f1494b96" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">k_msgq<sp/>*<ref refid="structmodule__data_a095bedb58a13cfc03913e957f1494b96_1a095bedb58a13cfc03913e957f1494b96" kindref="member">msg_q</ref>;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Flag<sp/>signifying<sp/>if<sp/>the<sp/>module<sp/>supports<sp/>shutdown.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="structmodule__data_ad43bb544952202655c84cb009075a216_1ad43bb544952202655c84cb009075a216" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structmodule__data_ad43bb544952202655c84cb009075a216_1ad43bb544952202655c84cb009075a216" kindref="member">supports_shutdown</ref>;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="modules__common_8h_a1a5a4226af0888d05e97f5352a7d8bf1_1a1a5a4226af0888d05e97f5352a7d8bf1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="modules__common_8h_a1a5a4226af0888d05e97f5352a7d8bf1_1a1a5a4226af0888d05e97f5352a7d8bf1" kindref="member">module_purge_queue</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structmodule__data" kindref="compound">module_data</ref><sp/>*module);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="modules__common_8h_abec396fc20b04989d4d217a3470d8746_1abec396fc20b04989d4d217a3470d8746" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="modules__common_8h_abec396fc20b04989d4d217a3470d8746_1abec396fc20b04989d4d217a3470d8746" kindref="member">module_get_next_msg</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structmodule__data" kindref="compound">module_data</ref><sp/>*module,<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*msg);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="modules__common_8h_aaff8f55ee1fd70fa097f79f2e712ca4b_1aaff8f55ee1fd70fa097f79f2e712ca4b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="modules__common_8h_aaff8f55ee1fd70fa097f79f2e712ca4b_1aaff8f55ee1fd70fa097f79f2e712ca4b" kindref="member">module_enqueue_msg</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structmodule__data" kindref="compound">module_data</ref><sp/>*module,<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*msg);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="modules__common_8h_a9dd22212a2c0ed95aa7c5c46e7e4aa30_1a9dd22212a2c0ed95aa7c5c46e7e4aa30" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="modules__common_8h_a9dd22212a2c0ed95aa7c5c46e7e4aa30_1a9dd22212a2c0ed95aa7c5c46e7e4aa30" kindref="member">modules_shutdown_register</ref>(uint32_t<sp/>id_reg);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="modules__common_8h_acad8a900eb708ba75f7b7109a509cbcf_1acad8a900eb708ba75f7b7109a509cbcf" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="modules__common_8h_acad8a900eb708ba75f7b7109a509cbcf_1acad8a900eb708ba75f7b7109a509cbcf" kindref="member">module_start</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structmodule__data" kindref="compound">module_data</ref><sp/>*module);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="modules__common_8h_a321429867cafb8263785af07c1cb5d4a_1a321429867cafb8263785af07c1cb5d4a" refkind="member"><highlight class="normal">uint32_t<sp/><ref refid="modules__common_8h_a321429867cafb8263785af07c1cb5d4a_1a321429867cafb8263785af07c1cb5d4a" kindref="member">module_active_count_get</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_MODULES_COMMON_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/asset_tracker_v2/src/modules/modules_common.h"/>
+  </compounddef>
+</doxygen>

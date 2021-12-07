@@ -1,0 +1,241 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="lte__params_8h" kind="file" language="C++">
+    <compoundname>lte_params.h</compoundname>
+    <includes local="yes">supl_session.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>lib/supl/include/lte_params.h</label>
+        <link refid="lte__params_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>supl_session.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="lte__params_8h_ad641177ab7f75c74321428a2927cc19c_1ad641177ab7f75c74321428a2927cc19c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void lte_params_init</definition>
+        <argsstring>(struct lte_params *params)</argsstring>
+        <name>lte_params_init</name>
+        <param>
+          <type>struct lte_params *</type>
+          <declname>params</declname>
+        </param>
+        <briefdescription>
+<para>Initialize LTE parameters struct. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>LTE parameters to initialize </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/supl/include/lte_params.h" line="17" column="6" declfile="lib/supl/include/lte_params.h" declline="17" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="lte__params_8h_a751c6ee721a770ba109321cbd077bef2_1a751c6ee721a770ba109321cbd077bef2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int handler_at_xmonitor</definition>
+        <argsstring>(struct supl_session_ctx *session_ctx, int col_number, const char *buf, int buf_len)</argsstring>
+        <name>handler_at_xmonitor</name>
+        <param>
+          <type>struct supl_session_ctx *</type>
+          <declname>session_ctx</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>col_number</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>buf_len</declname>
+        </param>
+        <briefdescription>
+<para>Handler for XMONITOR AT command. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">session_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>session context to fill </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">col_number</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>column number </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>input buffer </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">buf_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>input buffer length</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 for success, -1 otherwise </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/supl/include/lte_params.h" line="29" column="5" declfile="lib/supl/include/lte_params.h" declline="29" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="lte__params_8h_a89870e958f6bb3affe68efb8d67bcd1a_1a89870e958f6bb3affe68efb8d67bcd1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void device_id_init</definition>
+        <argsstring>(struct supl_session_ctx *session_ctx)</argsstring>
+        <name>device_id_init</name>
+        <param>
+          <type>struct supl_session_ctx *</type>
+          <declname>session_ctx</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the device ID. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">session_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The session context </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/supl/include/lte_params.h" line="39" column="6" declfile="lib/supl/include/lte_params.h" declline="39" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="lte__params_8h_a483aaebf6a2f86f70cad6071be335d46_1a483aaebf6a2f86f70cad6071be335d46" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int handler_at_cgdcont</definition>
+        <argsstring>(struct supl_session_ctx *session_ctx, int col_number, const char *buf, int buf_len)</argsstring>
+        <name>handler_at_cgdcont</name>
+        <param>
+          <type>struct supl_session_ctx *</type>
+          <declname>session_ctx</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>col_number</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>buf_len</declname>
+        </param>
+        <briefdescription>
+<para>Handler for +CGDCONT AT response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">session_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>session context to fill </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">col_number</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>column number </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>input buffer </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">buf_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>input buffer length</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 for success, -1 otherwise </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/supl/include/lte_params.h" line="51" column="5" declfile="lib/supl/include/lte_params.h" declline="51" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>SUPL_LTE_PARAMS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SUPL_LTE_PARAMS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;supl_session.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17" refid="lte__params_8h_ad641177ab7f75c74321428a2927cc19c_1ad641177ab7f75c74321428a2927cc19c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="lte__params_8h_ad641177ab7f75c74321428a2927cc19c_1ad641177ab7f75c74321428a2927cc19c" kindref="member">lte_params_init</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>lte_params<sp/>*params);</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="lte__params_8h_a751c6ee721a770ba109321cbd077bef2_1a751c6ee721a770ba109321cbd077bef2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="lte__params_8h_a751c6ee721a770ba109321cbd077bef2_1a751c6ee721a770ba109321cbd077bef2" kindref="member">handler_at_xmonitor</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>supl_session_ctx<sp/>*session_ctx,</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>col_number,</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*buf,</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>buf_len);</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="lte__params_8h_a89870e958f6bb3affe68efb8d67bcd1a_1a89870e958f6bb3affe68efb8d67bcd1a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="lte__params_8h_a89870e958f6bb3affe68efb8d67bcd1a_1a89870e958f6bb3affe68efb8d67bcd1a" kindref="member">device_id_init</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>supl_session_ctx<sp/>*session_ctx);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="lte__params_8h_a483aaebf6a2f86f70cad6071be335d46_1a483aaebf6a2f86f70cad6071be335d46" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="lte__params_8h_a483aaebf6a2f86f70cad6071be335d46_1a483aaebf6a2f86f70cad6071be335d46" kindref="member">handler_at_cgdcont</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>supl_session_ctx<sp/>*session_ctx,</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>col_number,</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*buf,</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>buf_len);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>SUPL_LTE_PARAMS_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="lib/supl/include/lte_params.h"/>
+  </compounddef>
+</doxygen>

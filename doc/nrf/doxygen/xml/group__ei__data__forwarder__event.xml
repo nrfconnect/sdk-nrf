@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__ei__data__forwarder__event" kind="group">
+    <compoundname>ei_data_forwarder_event</compoundname>
+    <title>Edge Impulse Data Forwarder Event</title>
+    <innerclass refid="structei__data__forwarder__event" prot="public">ei_data_forwarder_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__ei__data__forwarder__event_1gad2753de99db4c77e1f02f0f60f48c274" prot="public" static="no" strong="no">
+        <type></type>
+        <name>ei_data_forwarder_state</name>
+        <enumvalue id="group__ei__data__forwarder__event_gad2753de99db4c77e1f02f0f60f48c274_1ggad2753de99db4c77e1f02f0f60f48c274a28a5bc3dfd396241a59370cab3a8ab3e" prot="public">
+          <name>EI_DATA_FORWARDER_STATE_DISABLED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ei__data__forwarder__event_gad2753de99db4c77e1f02f0f60f48c274_1ggad2753de99db4c77e1f02f0f60f48c274a0c84fa8e12ce7306f2d67fc6f249c734" prot="public">
+          <name>EI_DATA_FORWARDER_STATE_DISCONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ei__data__forwarder__event_gad2753de99db4c77e1f02f0f60f48c274_1ggad2753de99db4c77e1f02f0f60f48c274af719f8b13dfb1401cb9fdd7f59495dde" prot="public">
+          <name>EI_DATA_FORWARDER_STATE_CONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ei__data__forwarder__event_gad2753de99db4c77e1f02f0f60f48c274_1ggad2753de99db4c77e1f02f0f60f48c274a44ca1f6efb8eb8c09688b5228f8e8b55" prot="public">
+          <name>EI_DATA_FORWARDER_STATE_TRANSMITTING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ei__data__forwarder__event_gad2753de99db4c77e1f02f0f60f48c274_1ggad2753de99db4c77e1f02f0f60f48c274acd7b3f67177e2e81d7fef4643a0623b8" prot="public">
+          <name>EI_DATA_FORWARDER_STATE_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Edge Impulse data forwarder states. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/machine_learning/src/events/ei_data_forwarder_event.h" line="24" column="1" bodyfile="applications/machine_learning/src/events/ei_data_forwarder_event.h" bodystart="24" bodyend="31"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Edge Impulse Data Forwarder Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

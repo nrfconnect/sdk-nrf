@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structcloud__codec__data" kind="struct" language="C++" prot="public">
+    <compoundname>cloud_codec_data</compoundname>
+    <includes refid="v2_2src_2cloud_2cloud__codec_2cloud__codec_8h" local="no">cloud_codec.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structcloud__codec__data_a1a700a697e396a779759f9f73e6bbb42_1a1a700a697e396a779759f9f73e6bbb42" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* cloud_codec_data::buf</definition>
+        <argsstring></argsstring>
+        <name>buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Encoded output. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="192" column="6" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="192" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__codec__data_ae80c1bbbfbc86d13555455f4a4b834e5_1ae80c1bbbfbc86d13555455f4a4b834e5" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t cloud_codec_data::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of encoded output. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="194" column="8" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="194" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="190" column="1" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="190" bodyend="195"/>
+    <listofallmembers>
+      <member refid="structcloud__codec__data_a1a700a697e396a779759f9f73e6bbb42_1a1a700a697e396a779759f9f73e6bbb42" prot="public" virt="non-virtual"><scope>cloud_codec_data</scope><name>buf</name></member>
+      <member refid="structcloud__codec__data_ae80c1bbbfbc86d13555455f4a4b834e5_1ae80c1bbbfbc86d13555455f4a4b834e5" prot="public" virt="non-virtual"><scope>cloud_codec_data</scope><name>len</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

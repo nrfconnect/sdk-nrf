@@ -1,0 +1,191 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__scheduler__cli" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_scheduler_cli</compoundname>
+    <includes refid="scheduler__cli_8h" local="no">scheduler_cli.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__scheduler__cli_a3001ef2476baba50a432814921123c55_1a3001ef2476baba50a432814921123c55" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_mesh_scheduler_cli::status_handler) (struct bt_mesh_scheduler_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t schedules)</definition>
+        <argsstring>)(struct bt_mesh_scheduler_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t schedules)</argsstring>
+        <name>status_handler</name>
+        <briefdescription>
+<para>Scheduler Status message callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scheduler client model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">schedules</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Received Scheduler Status. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler_cli.h" line="47" column="1" bodyfile="include/bluetooth/mesh/scheduler_cli.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scheduler__cli_ad2454794f49b056d84780c2d40efacc0_1ad2454794f49b056d84780c2d40efacc0" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_mesh_scheduler_cli::action_status_handler) (struct bt_mesh_scheduler_cli *cli, struct bt_mesh_msg_ctx *ctx, uint8_t idx, const struct bt_mesh_schedule_entry *action)</definition>
+        <argsstring>)(struct bt_mesh_scheduler_cli *cli, struct bt_mesh_msg_ctx *ctx, uint8_t idx, const struct bt_mesh_schedule_entry *action)</argsstring>
+        <name>action_status_handler</name>
+        <briefdescription>
+<para>Scheduler Action Status message callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scheduler client model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the received action. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">action</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Received Scheduler action or NULL if there is only index in the reply. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler_cli.h" line="59" column="1" bodyfile="include/bluetooth/mesh/scheduler_cli.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scheduler__cli_a02f2ec773374dc7566b1632408fd8a4c_1a02f2ec773374dc7566b1632408fd8a4c" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model *</type>
+        <definition>struct bt_mesh_model* bt_mesh_scheduler_cli::model</definition>
+        <argsstring></argsstring>
+        <name>model</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler_cli.h" line="65" column="20" bodyfile="include/bluetooth/mesh/scheduler_cli.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scheduler__cli_a396d32b481660eeaba828cd82c066a46_1a396d32b481660eeaba828cd82c066a46" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model_pub</type>
+        <definition>struct bt_mesh_model_pub bt_mesh_scheduler_cli::pub</definition>
+        <argsstring></argsstring>
+        <name>pub</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler_cli.h" line="67" column="24" bodyfile="include/bluetooth/mesh/scheduler_cli.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scheduler__cli_a73aa5107eb9d096a899d6bebd13341c3_1a73aa5107eb9d096a899d6bebd13341c3" prot="public" static="no" mutable="no">
+        <type>struct net_buf_simple</type>
+        <definition>struct net_buf_simple bt_mesh_scheduler_cli::pub_msg</definition>
+        <argsstring></argsstring>
+        <name>pub_msg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler_cli.h" line="69" column="21" bodyfile="include/bluetooth/mesh/scheduler_cli.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scheduler__cli_a86ed13e9c1dcfb53d7a8b5621b1c4542_1a86ed13e9c1dcfb53d7a8b5621b1c4542" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_scheduler_cli::buf[BT_MESH_MODEL_BUF_LEN(BT_MESH_SCHEDULER_OP_ACTION_STATUS, BT_MESH_SCHEDULER_MSG_LEN_ACTION_STATUS)]</definition>
+        <argsstring>[BT_MESH_MODEL_BUF_LEN(BT_MESH_SCHEDULER_OP_ACTION_STATUS, BT_MESH_SCHEDULER_MSG_LEN_ACTION_STATUS)]</argsstring>
+        <name>buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler_cli.h" line="71" column="9" bodyfile="include/bluetooth/mesh/scheduler_cli.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scheduler__cli_a10a3655f74c4feae0f1932543d225426_1a10a3655f74c4feae0f1932543d225426" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_msg_ack_ctx</type>
+        <definition>struct bt_mesh_msg_ack_ctx bt_mesh_scheduler_cli::ack_ctx</definition>
+        <argsstring></argsstring>
+        <name>ack_ctx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler_cli.h" line="74" column="26" bodyfile="include/bluetooth/mesh/scheduler_cli.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scheduler__cli_a400f987afcbd41021eed22518395b836_1a400f987afcbd41021eed22518395b836" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_scheduler_cli::ack_idx</definition>
+        <argsstring></argsstring>
+        <name>ack_idx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler_cli.h" line="76" column="9" bodyfile="include/bluetooth/mesh/scheduler_cli.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Scheduler client model instance. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/scheduler_cli.h" line="40" column="1" bodyfile="include/bluetooth/mesh/scheduler_cli.h" bodystart="40" bodyend="77"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__scheduler__cli_a10a3655f74c4feae0f1932543d225426_1a10a3655f74c4feae0f1932543d225426" prot="public" virt="non-virtual"><scope>bt_mesh_scheduler_cli</scope><name>ack_ctx</name></member>
+      <member refid="structbt__mesh__scheduler__cli_a400f987afcbd41021eed22518395b836_1a400f987afcbd41021eed22518395b836" prot="public" virt="non-virtual"><scope>bt_mesh_scheduler_cli</scope><name>ack_idx</name></member>
+      <member refid="structbt__mesh__scheduler__cli_ad2454794f49b056d84780c2d40efacc0_1ad2454794f49b056d84780c2d40efacc0" prot="public" virt="non-virtual"><scope>bt_mesh_scheduler_cli</scope><name>action_status_handler</name></member>
+      <member refid="structbt__mesh__scheduler__cli_a86ed13e9c1dcfb53d7a8b5621b1c4542_1a86ed13e9c1dcfb53d7a8b5621b1c4542" prot="public" virt="non-virtual"><scope>bt_mesh_scheduler_cli</scope><name>buf</name></member>
+      <member refid="structbt__mesh__scheduler__cli_a02f2ec773374dc7566b1632408fd8a4c_1a02f2ec773374dc7566b1632408fd8a4c" prot="public" virt="non-virtual"><scope>bt_mesh_scheduler_cli</scope><name>model</name></member>
+      <member refid="structbt__mesh__scheduler__cli_a396d32b481660eeaba828cd82c066a46_1a396d32b481660eeaba828cd82c066a46" prot="public" virt="non-virtual"><scope>bt_mesh_scheduler_cli</scope><name>pub</name></member>
+      <member refid="structbt__mesh__scheduler__cli_a73aa5107eb9d096a899d6bebd13341c3_1a73aa5107eb9d096a899d6bebd13341c3" prot="public" virt="non-virtual"><scope>bt_mesh_scheduler_cli</scope><name>pub_msg</name></member>
+      <member refid="structbt__mesh__scheduler__cli_a3001ef2476baba50a432814921123c55_1a3001ef2476baba50a432814921123c55" prot="public" virt="non-virtual"><scope>bt_mesh_scheduler_cli</scope><name>status_handler</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

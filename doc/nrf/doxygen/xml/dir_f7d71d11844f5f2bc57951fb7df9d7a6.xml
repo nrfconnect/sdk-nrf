@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_f7d71d11844f5f2bc57951fb7df9d7a6" kind="dir">
+    <compoundname>applications/pelion_client/configuration/nrf52840dk_nrf52840</compoundname>
+    <innerfile refid="pelion__client_2configuration_2nrf52840dk__nrf52840_2buttons__def_8h">buttons_def.h</innerfile>
+    <innerfile refid="pelion__client_2configuration_2nrf52840dk__nrf52840_2led__state__def_8h">led_state_def.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/pelion_client/configuration/nrf52840dk_nrf52840/"/>
+  </compounddef>
+</doxygen>

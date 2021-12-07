@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__amp__measure__conf__reg" kind="group">
+    <compoundname>st25r3911b_amp_measure_conf_reg</compoundname>
+    <title>Amplitude Measurement</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__amp__measure__conf__reg_1gac08ec012fbf88693ab57a8eecdb700ee" prot="public" static="no">
+        <name>ST25R3911B_REG_AMP_MEASURE_CONF_AM_AE</name>
+        <initializer>BIT(0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="663" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="663" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__amp__measure__conf__reg_1gaf0e9144720f0e350d33c55f529cc9798" prot="public" static="no">
+        <name>ST25R3911B_REG_AMP_MEASURE_CONF_AEW2</name>
+        <initializer>BIT(1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="664" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="664" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__amp__measure__conf__reg_1ga0f8c7e526e00081b9f1b6de3bca4f647" prot="public" static="no">
+        <name>ST25R3911B_REG_AMP_MEASURE_CONF_AEW1</name>
+        <initializer>BIT(2)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="665" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="665" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__amp__measure__conf__reg_1ga5ef3ca5950295379b9ffbdec757a5933" prot="public" static="no">
+        <name>ST25R3911B_REG_AMP_MEASURE_CONF_AAM</name>
+        <initializer>BIT(3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="666" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="666" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__amp__measure__conf__reg_1ga185be71d5b15890f5565444b1db8362d" prot="public" static="no">
+        <name>ST25R3911B_REG_AMP_MEASURE_CONF_AM_DO</name>
+        <initializer>BIT(4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="667" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="667" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__amp__measure__conf__reg_1gae0cc170f4fa0912383ae8e1e0f95c23d" prot="public" static="no">
+        <name>ST25R3911B_REG_AMP_MEASURE_CONF_AM_D1</name>
+        <initializer>BIT(5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="668" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="668" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__amp__measure__conf__reg_1ga3474f250df12e7f5d1d2548d2ad33ac9" prot="public" static="no">
+        <name>ST25R3911B_REG_AMP_MEASURE_CONF_AM_D2</name>
+        <initializer>BIT(6)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="669" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="669" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__amp__measure__conf__reg_1gad7ab274fbe22df6ad52e2b2b0e1ee4d9" prot="public" static="no">
+        <name>ST25R3911B_REG_AMP_MEASURE_CONF_AM_D3</name>
+        <initializer>BIT(7)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="670" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="670" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Configuration Register bits </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

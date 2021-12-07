@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__num__tx__bytes__reg" kind="group">
+    <compoundname>st25r3911b_num_tx_bytes_reg</compoundname>
+    <title>Number of Transmitted</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__num__tx__bytes__reg_1ga4cfae50c5491a08853c8bd15e3aa8af0" prot="public" static="no">
+        <name>ST25R3911B_REG_NUM_TX_BYTES_REG2_NBTX</name>
+        <initializer>(0x07)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="423" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="423" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__num__tx__bytes__reg_1gae684f0777d89414f6bb6ae806bd2c2ca" prot="public" static="no">
+        <name>ST25R3911B_REG_NUM_TX_BYTES_REG2_NTX_MASK</name>
+        <initializer>(0xF8)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="424" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="424" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__num__tx__bytes__reg_1ga279eae208aee877d49b358305c8eef93" prot="public" static="no">
+        <name>ST25R3911B_REG_NUM_TX_BYTES_NTX_SHIFT</name>
+        <initializer>(0x03)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="425" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="425" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__num__tx__bytes__reg_1gabeceac2f46ba532738e538b07282c9be" prot="public" static="no">
+        <name>ST25R3911B_REG_NUM_TX_BYTES_NTX_SHIFT_LSB</name>
+        <initializer>(0x05)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="426" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="426" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Bytes Register 2 bits </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

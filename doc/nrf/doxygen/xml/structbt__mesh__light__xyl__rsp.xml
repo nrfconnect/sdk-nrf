@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__xyl__rsp" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_xyl_rsp</compoundname>
+    <includes refid="light__xyl_8h" local="no">light_xyl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__rsp_a8438b4caad7ba0a28f446d1c95c769b5_1a8438b4caad7ba0a28f446d1c95c769b5" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__light__xyl" kindref="compound">bt_mesh_light_xyl</ref></type>
+        <definition>struct bt_mesh_light_xyl bt_mesh_light_xyl_rsp::current</definition>
+        <argsstring></argsstring>
+        <name>current</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current xyL parameters </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl.h" line="56" column="24" bodyfile="include/bluetooth/mesh/light_xyl.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__rsp_a02e2817c9cac6fd7e13ee68822600615_1a02e2817c9cac6fd7e13ee68822600615" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__light__xyl" kindref="compound">bt_mesh_light_xyl</ref></type>
+        <definition>struct bt_mesh_light_xyl bt_mesh_light_xyl_rsp::target</definition>
+        <argsstring></argsstring>
+        <name>target</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Target xyL parameters </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl.h" line="58" column="24" bodyfile="include/bluetooth/mesh/light_xyl.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__rsp_a5ef96d0af571ae214fbc88547dcc1e64_1a5ef96d0af571ae214fbc88547dcc1e64" prot="public" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t bt_mesh_light_xyl_rsp::remaining_time</definition>
+        <argsstring></argsstring>
+        <name>remaining_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Remaining time for the state change (ms). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl.h" line="60" column="9" bodyfile="include/bluetooth/mesh/light_xyl.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Light xyL set response message parameters. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>bt_mesh_light_xy</label>
+        <link refid="structbt__mesh__light__xy"/>
+      </node>
+      <node id="2">
+        <label>bt_mesh_light_xyl</label>
+        <link refid="structbt__mesh__light__xyl"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>xy</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>bt_mesh_light_xyl_rsp</label>
+        <link refid="structbt__mesh__light__xyl__rsp"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>current</edgelabel>
+          <edgelabel>target</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/light_xyl.h" line="54" column="1" bodyfile="include/bluetooth/mesh/light_xyl.h" bodystart="54" bodyend="61"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__xyl__rsp_a8438b4caad7ba0a28f446d1c95c769b5_1a8438b4caad7ba0a28f446d1c95c769b5" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_rsp</scope><name>current</name></member>
+      <member refid="structbt__mesh__light__xyl__rsp_a5ef96d0af571ae214fbc88547dcc1e64_1a5ef96d0af571ae214fbc88547dcc1e64" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_rsp</scope><name>remaining_time</name></member>
+      <member refid="structbt__mesh__light__xyl__rsp_a02e2817c9cac6fd7e13ee68822600615_1a02e2817c9cac6fd7e13ee68822600615" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_rsp</scope><name>target</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__lvl__move__set" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_lvl_move_set</compoundname>
+    <includes refid="gen__lvl_8h" local="no">gen_lvl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__lvl__move__set_a5303dff783d8d3234d94391519231712_1a5303dff783d8d3234d94391519231712" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t bt_mesh_lvl_move_set::delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Translation to make for every transition step. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl.h" line="67" column="9" bodyfile="include/bluetooth/mesh/gen_lvl.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lvl__move__set_a7009606f9cff6a4cc0d84a558fcc174d_1a7009606f9cff6a4cc0d84a558fcc174d" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool bt_mesh_lvl_move_set::new_transaction</definition>
+        <argsstring></argsstring>
+        <name>new_transaction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Whether this is a new action. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl.h" line="69" column="6" bodyfile="include/bluetooth/mesh/gen_lvl.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lvl__move__set_af3a88c2a0989a1f5a502365600929e6b_1af3a88c2a0989a1f5a502365600929e6b" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref> *</type>
+        <definition>const struct bt_mesh_model_transition* bt_mesh_lvl_move_set::transition</definition>
+        <argsstring></argsstring>
+        <name>transition</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transition parameters, or NULL. <computeroutput>delay</computeroutput> indicates time until the move should start, <computeroutput>time</computeroutput> indicates the amount of time each <computeroutput>delta</computeroutput> step should take.</para>
+<para>When sending, setting the transition to NULL makes the receiver use its default transition time parameters, or 0 if no default transition time is set. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl.h" line="79" column="37" bodyfile="include/bluetooth/mesh/gen_lvl.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Generic Level move set message parameters. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_mesh_lvl_move_set</label>
+        <link refid="structbt__mesh__lvl__move__set"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>transition</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_mesh_model_transition</label>
+        <link refid="structbt__mesh__model__transition"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/gen_lvl.h" line="65" column="1" bodyfile="include/bluetooth/mesh/gen_lvl.h" bodystart="65" bodyend="80"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__lvl__move__set_a5303dff783d8d3234d94391519231712_1a5303dff783d8d3234d94391519231712" prot="public" virt="non-virtual"><scope>bt_mesh_lvl_move_set</scope><name>delta</name></member>
+      <member refid="structbt__mesh__lvl__move__set_a7009606f9cff6a4cc0d84a558fcc174d_1a7009606f9cff6a4cc0d84a558fcc174d" prot="public" virt="non-virtual"><scope>bt_mesh_lvl_move_set</scope><name>new_transaction</name></member>
+      <member refid="structbt__mesh__lvl__move__set_af3a88c2a0989a1f5a502365600929e6b_1af3a88c2a0989a1f5a502365600929e6b" prot="public" virt="non-virtual"><scope>bt_mesh_lvl_move_set</scope><name>transition</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

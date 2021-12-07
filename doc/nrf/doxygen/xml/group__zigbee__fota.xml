@@ -1,0 +1,220 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__zigbee__fota" kind="group">
+    <compoundname>zigbee_fota</compoundname>
+    <title>Zigbee firmware over-the-air download library</title>
+    <innerclass refid="structzigbee__fota__event__dl" prot="public">zigbee_fota_event_dl</innerclass>
+    <innerclass refid="structzigbee__fota__evt" prot="public">zigbee_fota_evt</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__zigbee__fota_1gafd8525bbd00bfa2c4822013981b5fee9" prot="public" static="no" strong="no">
+        <type></type>
+        <name>zigbee_fota_evt_id</name>
+        <enumvalue id="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1ggafd8525bbd00bfa2c4822013981b5fee9a0716cee7150151519ace7a48b26466ad" prot="public">
+          <name>ZIGBEE_FOTA_EVT_PROGRESS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Zigbee FOTA download progress report. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1ggafd8525bbd00bfa2c4822013981b5fee9a7b5f8e0a035506ef9111735ab4539dfb" prot="public">
+          <name>ZIGBEE_FOTA_EVT_FINISHED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Zigbee FOTA download finished. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1ggafd8525bbd00bfa2c4822013981b5fee9a6f48b326608f44a1fe42e7270f37b461" prot="public">
+          <name>ZIGBEE_FOTA_EVT_ERASE_PENDING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Zigbee FOTA download erase pending. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1ggafd8525bbd00bfa2c4822013981b5fee9a06931999f7a16cab760b3ad16c4d5d43" prot="public">
+          <name>ZIGBEE_FOTA_EVT_ERASE_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Zigbee FOTA download erase done. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1ggafd8525bbd00bfa2c4822013981b5fee9a034b60c65ad56b72c04cc0a45b9b9313" prot="public">
+          <name>ZIGBEE_FOTA_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Zigbee FOTA download error. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Zigbee FOTA download event IDs. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_fota.h" line="34" column="1" bodyfile="include/zigbee/zigbee_fota.h" bodystart="34" bodyend="45"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__zigbee__fota_1ga0d48ab776d6ced05f1cb8046449968f2" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* zigbee_fota_callback_t) (const struct zigbee_fota_evt *evt)</definition>
+        <argsstring>)(const struct zigbee_fota_evt *evt)</argsstring>
+        <name>zigbee_fota_callback_t</name>
+        <briefdescription>
+<para>Zigbee FOTA download asynchronous callback function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_fota.h" line="70" column="9" bodyfile="include/zigbee/zigbee_fota.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__zigbee__fota_1ga5d567b47db2bbf2f916768e6fbcf2178" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int zigbee_fota_init</definition>
+        <argsstring>(zigbee_fota_callback_t client_callback)</argsstring>
+        <name>zigbee_fota_init</name>
+        <param>
+          <type><ref refid="group__zigbee__fota_ga0d48ab776d6ced05f1cb8046449968f2_1ga0d48ab776d6ced05f1cb8046449968f2" kindref="member">zigbee_fota_callback_t</ref></type>
+          <declname>client_callback</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the Zigbee firmware over-the-air download library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>client_callback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback for the generated events.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successfully initialized. Otherwise, a negative value is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_fota.h" line="80" column="5" declfile="include/zigbee/zigbee_fota.h" declline="80" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__fota_1gacc5777c2513d7d252fdb0443458dec7b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void zigbee_fota_abort</definition>
+        <argsstring>(void)</argsstring>
+        <name>zigbee_fota_abort</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Abort all pending updates performed via Zigbee network. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_fota.h" line="85" column="6" declfile="include/zigbee/zigbee_fota.h" declline="85" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__fota_1ga48706ce2edcc58b54631614c9ed8227f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void zigbee_fota_signal_handler</definition>
+        <argsstring>(zb_bufid_t bufid)</argsstring>
+        <name>zigbee_fota_signal_handler</name>
+        <param>
+          <type>zb_bufid_t</type>
+          <declname>bufid</declname>
+        </param>
+        <briefdescription>
+<para>Function for passing Zigbee stack signals to the Zigbee FOTA logic. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">bufid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Reference to the Zigbee stack buffer used to pass signal. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_fota.h" line="92" column="6" declfile="include/zigbee/zigbee_fota.h" declline="92" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__fota_1ga990eee6d329a3329c7b2a491589713d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void zigbee_fota_zcl_cb</definition>
+        <argsstring>(zb_bufid_t bufid)</argsstring>
+        <name>zigbee_fota_zcl_cb</name>
+        <param>
+          <type>zb_bufid_t</type>
+          <declname>bufid</declname>
+        </param>
+        <briefdescription>
+<para>Function for passing ZCL callback events to the Zigbee FOTA logic. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">bufid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Reference to the Zigbee stack buffer used to pass event. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_fota.h" line="99" column="6" declfile="include/zigbee/zigbee_fota.h" declline="99" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__zigbee__fota_1ga175a4030fd25787ddbf5115a5ff87632" prot="public" static="no">
+        <name>ZIGBEE_FOTA_EVT_DL_COMPLETE_VAL</name>
+        <initializer>100</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_fota.h" line="25" column="9" bodyfile="include/zigbee/zigbee_fota.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Library for downloading a firmware update through Zigbee network. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Discovers Zigbee OTA server, queries it for new images and downloads the matching file to the secondary partition of MCUboot. After the file has been downloaded, the secondary slot is tagged as having valid firmware inside it. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

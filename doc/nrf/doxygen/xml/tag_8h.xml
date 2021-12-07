@@ -1,0 +1,870 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="tag_8h" kind="file" language="C++">
+    <compoundname>tag.h</compoundname>
+    <includes refid="base_8h" local="no">nfc/tnep/base.h</includes>
+    <includes local="no">kernel.h</includes>
+    <includedby refid="tnep_2ch_8h" local="no">include/nfc/tnep/ch.h</includedby>
+    <incdepgraph>
+      <node id="4">
+        <label>nfc/ndef/msg.h</label>
+        <link refid="msg_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>nfc/ndef/record.h</label>
+        <link refid="record_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>nfc/ndef/tnep_rec.h</label>
+        <link refid="tnep__rec_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>nfc/tnep/base.h</label>
+        <link refid="base_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/nfc/tnep/tag.h</label>
+        <link refid="tag_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>kernel.h</label>
+      </node>
+      <node id="3">
+        <label>stddef.h</label>
+      </node>
+      <node id="5">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>include/nfc/tnep/ch.h</label>
+        <link refid="tnep_2ch_8h"/>
+      </node>
+      <node id="1">
+        <label>include/nfc/tnep/tag.h</label>
+        <link refid="tag_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structnfc__tnep__tag__service__cb" prot="public">nfc_tnep_tag_service_cb</innerclass>
+    <innerclass refid="structnfc__tnep__tag__service" prot="public">nfc_tnep_tag_service</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__tnep__tag_ga5fbe879ccd249dac56610bedfbb7d9b3_1ga5fbe879ccd249dac56610bedfbb7d9b3" prot="public" static="no">
+        <name>NFC_TNEP_EVENTS_NUMBER</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>NFC TNEP library event count. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="21" column="9" bodyfile="include/nfc/tnep/tag.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__tnep__tag_gac46c92e2ad76e43819874f661689ef18_1gac46c92e2ad76e43819874f661689ef18" prot="public" static="no">
+        <name>NFC_TNEP_TAG_MAX_WAIT_TIME</name>
+        <initializer>63</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum Service Waiting Time. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="24" column="9" bodyfile="include/nfc/tnep/tag.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__tnep__tag_gaa03a4517334cfdd1eb5d5bd33cd62dda_1gaa03a4517334cfdd1eb5d5bd33cd62dda" prot="public" static="no">
+        <name>NFC_TNEP_TAG_MAX_N_WAIT_TIME</name>
+        <initializer>15</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum Waiting Time extension. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="27" column="9" bodyfile="include/nfc/tnep/tag.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__tnep__tag_gab6576033968225cdbc21341f6c2813d4_1gab6576033968225cdbc21341f6c2813d4" prot="public" static="no">
+        <name>NFC_TNEP_TAG_APP_MSG_DEF</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_max_record_cnt</defname></param>
+        <initializer>	<ref refid="group__nfc__ndef__msg_ga912e0302af4c49c3432535b3a44b0166_1ga912e0302af4c49c3432535b3a44b0166" kindref="member">NFC_NDEF_MSG_DEF</ref>(_name, (_max_record_cnt + 1))</initializer>
+        <briefdescription>
+<para>Create and initialize an NFC NDEF TNEP Application message descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Use the macro <ref refid="group__nfc__ndef__msg_gaa3254c3d074722505b84cbe9c02e957d_1gaa3254c3d074722505b84cbe9c02e957d" kindref="member">NFC_NDEF_MSG</ref> to access the NDEF message descriptor instance. This macro reserves place for the TNEP status record.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the related instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_max_record_cnt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum count of records in the message. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="39" column="9" bodyfile="include/nfc/tnep/tag.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__tnep__tag_ga8e79e1dc610721be025d74f1f58f3b05_1ga8e79e1dc610721be025d74f1f58f3b05" prot="public" static="no">
+        <name>NFC_TNEP_TAG_SERVICE_DEF</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_uri</defname></param>
+        <param><defname>_uri_length</defname></param>
+        <param><defname>_mode</defname></param>
+        <param><defname>_t_wait</defname></param>
+        <param><defname>_n_wait</defname></param>
+        <param><defname>_max_msg_size</defname></param>
+        <param><defname>_select_cb</defname></param>
+        <param><defname>_deselect_cb</defname></param>
+        <param><defname>_message_cb</defname></param>
+        <param><defname>_error_cb</defname></param>
+        <initializer>									    \
+	BUILD_ASSERT(_t_wait &lt;= <ref refid="group__nfc__tnep__tag_gac46c92e2ad76e43819874f661689ef18_1gac46c92e2ad76e43819874f661689ef18" kindref="member">NFC_TNEP_TAG_MAX_WAIT_TIME</ref>,                                      \
+			 &quot;The Waiting time has to be equal or smaller than 63&quot;);                 \
+	BUILD_ASSERT(_n_wait &lt;= <ref refid="group__nfc__tnep__tag_gac46c92e2ad76e43819874f661689ef18_1gac46c92e2ad76e43819874f661689ef18" kindref="member">NFC_TNEP_TAG_MAX_WAIT_TIME</ref>,                                      \
+			 &quot;The Waiting time extension count has to be equal or smaller then 15&quot;); \
+												 \
+	NFC_TNEP_SERIVCE_PARAM_RECORD_DESC_DEF(_name, <ref refid="group__nfc__tnep__base_gac03f554bf2d3facdf1e8bb1e758b6f74_1gac03f554bf2d3facdf1e8bb1e758b6f74" kindref="member">NFC_TNEP_VERSION</ref>,	\
+					       _uri_length, _uri,       \
+					       _mode, _t_wait, _n_wait, \
+					       _max_msg_size);          \
+	static const struct <ref refid="structnfc__tnep__tag__service__cb" kindref="compound">nfc_tnep_tag_service_cb</ref> _name##_cb = {      \
+		.selected = _select_cb,                                 \
+		.deselected = _deselect_cb,                             \
+		.message_received = _message_cb,                        \
+		.error_detected = _error_cb,                            \
+	};                                                              \
+									\
+	const STRUCT_SECTION_ITERABLE(<ref refid="structnfc__tnep__tag__service" kindref="compound">nfc_tnep_tag_service</ref>, _name##_svc) = \
+		<ref refid="group__nfc__tnep__tag_ga3607a164b1bcf6afe670cfd4f6f2d41e_1ga3607a164b1bcf6afe670cfd4f6f2d41e" kindref="member">NFC_TNEP_TAG_SERVICE</ref>(_name)</initializer>
+        <briefdescription>
+<para>Macro to define TNEP service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>TNEP Service instance contains information about Services Parameter and callback s for NDEF application. The Service Parameter contains the Service Name URI of the Service and the TNEP parameters used to communicate with the Service. The Reader/Writer will configure the TNEP communication according to the announced parameter in the Service Parameter record.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Service instance name used in code. Use <ref refid="group__nfc__tnep__tag_ga3607a164b1bcf6afe670cfd4f6f2d41e_1ga3607a164b1bcf6afe670cfd4f6f2d41e" kindref="member">NFC_TNEP_TAG_SERVICE</ref> to get service by name. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_uri</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Service Name URI. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_uri_length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Service Name URI length in bytes. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_mode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Service mode - TNEP Communication Mode: Single Response or Service specific </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_t_wait</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum Waiting Time measured between the end of the last write command of an NDEF Write Procedure and the start of the first command of the first NDEF Read Procedure following the NDEF Write Procedures. T_wait has a value between 0 and 63 and is converted to time units using protocol specified formula. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_n_wait</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum Number of Waiting Time Extensions is the maximum number of requested waiting time extensions n_wait for a specific Service. N_wait can vary between 0 and 15 repetitions. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_max_msg_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum NDEF message size in bytes. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_select_cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback function, called by protocol library when service is selected by the Reader/Writer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_deselect_cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback function, called by protocol library when service is deselected by the Reader/Writer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_message_cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback function, called by protocol library when new message is received from the Reader/Writer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_error_cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback function, called by protocol library when an internal error occurred. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="125" column="9" bodyfile="include/nfc/tnep/tag.h" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__tnep__tag_ga3607a164b1bcf6afe670cfd4f6f2d41e_1ga3607a164b1bcf6afe670cfd4f6f2d41e" prot="public" static="no">
+        <name>NFC_TNEP_TAG_SERVICE</name>
+        <param><defname>_name</defname></param>
+        <initializer>	{                                          \
+		&amp;_name,                            \
+		&amp;<ref refid="group__nfc__ndef__tnep__rec_ga43b70c920ac53289eb050432868628e2_1ga43b70c920ac53289eb050432868628e2" kindref="member">NFC_NDEF_TNEP_RECORD_DESC</ref>(_name), \
+		&amp;_name##_cb,                       \
+	}</initializer>
+        <briefdescription>
+<para>macro for accessing the TNEP Service. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="149" column="9" bodyfile="include/nfc/tnep/tag.h" bodystart="149" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__nfc__tnep__tag_gaad679ef99e2e2d11b219af1149373fb2_1gaad679ef99e2e2d11b219af1149373fb2" prot="public" static="no">
+        <type>int(*</type>
+        <definition>typedef int(* nfc_payload_set_t) (uint8_t *, size_t)</definition>
+        <argsstring>)(uint8_t *, size_t)</argsstring>
+        <name>nfc_payload_set_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="157" column="9" bodyfile="include/nfc/tnep/tag.h" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__nfc__tnep__tag_ga7faf9e5f72704155fd0307febae4dc50_1ga7faf9e5f72704155fd0307febae4dc50" prot="public" static="no">
+        <type>int(*</type>
+        <definition>typedef int(* initial_msg_encode_t) (struct nfc_ndef_msg_desc *msg)</definition>
+        <argsstring>)(struct nfc_ndef_msg_desc *msg)</argsstring>
+        <name>initial_msg_encode_t</name>
+        <briefdescription>
+<para>Callback type for encoding the Initial TNEP NDEF message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This callback is called every time when the TNEP NDEF library encodes the Initial TNEP message. You must use <ref refid="group__nfc__tnep__tag_ga4cbee380fb3a62b1063010b146940863_1ga4cbee380fb3a62b1063010b146940863" kindref="member">nfc_tnep_initial_msg_encode</ref> function to finish encoding.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Initial TNEP NDEF message.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="170" column="9" bodyfile="include/nfc/tnep/tag.h" bodystart="170" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__tnep__tag_ga77f0b9e72d9372fbc02afa9e810179c4_1ga77f0b9e72d9372fbc02afa9e810179c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_tnep_tag_tx_msg_buffer_register</definition>
+        <argsstring>(uint8_t *tx_buff, uint8_t *tx_swap_buff, size_t len)</argsstring>
+        <name>nfc_tnep_tag_tx_msg_buffer_register</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>tx_buff</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>tx_swap_buff</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Register TNEP message buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>TNEP Tag Device needs two buffers one for current NDEF message and seconds for new message.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">tx_buff</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to NDEF message buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">tx_swap_buff</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to swap NDEF message buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of NDEF message buffers.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="185" column="5" declfile="include/nfc/tnep/tag.h" declline="185" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__tnep__tag_ga5891bd96778029c66f8df217c706b6c2_1ga5891bd96778029c66f8df217c706b6c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_tnep_tag_init</definition>
+        <argsstring>(struct k_poll_event *events, uint8_t event_cnt, nfc_payload_set_t payload_set)</argsstring>
+        <name>nfc_tnep_tag_init</name>
+        <param>
+          <type>struct k_poll_event *</type>
+          <declname>events</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>event_cnt</declname>
+        </param>
+        <param>
+          <type><ref refid="group__nfc__tnep__tag_gaad679ef99e2e2d11b219af1149373fb2_1gaad679ef99e2e2d11b219af1149373fb2" kindref="member">nfc_payload_set_t</ref></type>
+          <declname>payload_set</declname>
+        </param>
+        <briefdescription>
+<para>Start communication using TNEP. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">events</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>TNEP Tag Events. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">event_cnt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event count. This library needs 2 events. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">payload_set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Function for setting NDEF data for NFC TNEP Tag Device. This library use it internally to set raw NDEF message to the Tag NDEF file. This function is called from atomic context, so sleeping or anyhow delaying is not allowed there.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="202" column="5" declfile="include/nfc/tnep/tag.h" declline="202" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__tnep__tag_gaf5c071a830658743c3cb404c8101a2ed_1gaf5c071a830658743c3cb404c8101a2ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_tnep_tag_initial_msg_create</definition>
+        <argsstring>(size_t max_record_cnt, initial_msg_encode_t msg_encode_cb)</argsstring>
+        <name>nfc_tnep_tag_initial_msg_create</name>
+        <param>
+          <type>size_t</type>
+          <declname>max_record_cnt</declname>
+        </param>
+        <param>
+          <type><ref refid="group__nfc__tnep__tag_ga7faf9e5f72704155fd0307febae4dc50_1ga7faf9e5f72704155fd0307febae4dc50" kindref="member">initial_msg_encode_t</ref></type>
+          <declname>msg_encode_cb</declname>
+        </param>
+        <briefdescription>
+<para>Create the Initial TNEP NDEF message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function creates the Initial TNEP message. Initial NDEF message has to contain at least one service parameters record defined using <ref refid="group__nfc__tnep__tag_ga8e79e1dc610721be025d74f1f58f3b05_1ga8e79e1dc610721be025d74f1f58f3b05" kindref="member">NFC_TNEP_TAG_SERVICE_DEF</ref>. It can also contain optional NDEF records which can be used by NFC Poller Device which does not support TNEP Protocol.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">max_record_cnt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum count of the optional NDEF records </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">msg_encode_cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback function for encoding the Initial TNEP NDEF message. Can be set to NULL if <computeroutput>max_record_cnt</computeroutput> is 0 then only the Service Parameters Records are encoded into the Initial TNEP NDEF message.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="224" column="5" declfile="include/nfc/tnep/tag.h" declline="224" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__tnep__tag_ga4cbee380fb3a62b1063010b146940863_1ga4cbee380fb3a62b1063010b146940863" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_tnep_initial_msg_encode</definition>
+        <argsstring>(struct nfc_ndef_msg_desc *msg, const struct nfc_ndef_record_desc *records, size_t records_cnt)</argsstring>
+        <name>nfc_tnep_initial_msg_encode</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref> *</type>
+          <declname>msg</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>records</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>records_cnt</declname>
+        </param>
+        <briefdescription>
+<para>Encode the Initial NDEF message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function encodes the Initial TNEP NDEF message. It must be used in combination with <ref refid="group__nfc__tnep__tag_ga7faf9e5f72704155fd0307febae4dc50_1ga7faf9e5f72704155fd0307febae4dc50" kindref="member">initial_msg_encode_t</ref> callback function.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Initial NDEF message descriptor. NDEF records can be added to it also before calling this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">records</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the first NDEF records structure. Can be set to NULL if there are no additional NDEF records to encode or records are encoded directly to the Initial NDEF message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">records_cnt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of provided NDEF records. It must be set to 0 when <computeroutput>records</computeroutput> is NULL.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="245" column="5" declfile="include/nfc/tnep/tag.h" declline="245" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__tnep__tag_gad05e7c609999eebc2890f254c717b9b9_1gad05e7c609999eebc2890f254c717b9b9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_tnep_tag_process</definition>
+        <argsstring>(void)</argsstring>
+        <name>nfc_tnep_tag_process</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Waiting for a signals to execute protocol logic. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function must be called periodically from thread to process the TNEP Tag Device.</para>
+<para><simplesect kind="note"><para>This function cannot be called before <emphasis>nfc_tnep_init()</emphasis>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="257" column="6" declfile="include/nfc/tnep/tag.h" declline="257" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__tnep__tag_ga3ea96b2eaf4e8fe14db01b0a6dd89d32_1ga3ea96b2eaf4e8fe14db01b0a6dd89d32" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_tnep_tag_rx_msg_indicate</definition>
+        <argsstring>(const uint8_t *rx_buffer, size_t len)</argsstring>
+        <name>nfc_tnep_tag_rx_msg_indicate</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>rx_buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Indicate about new TNEP message available in buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The NFC Tag Device concludes that the NDEF Write Procedure is finished when, after a write command of the NDEF Write Procedure, an NDEF message is available in the data area. If, after the write command of the NDEF Write Procedure, no NDEF message is available in the data area, the NFC Tag Device concludes that the actual NDEF Write Procedure is ongoing.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">rx_buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to NDEF message buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of NDEF message buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="272" column="6" declfile="include/nfc/tnep/tag.h" declline="272" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__tnep__tag_gadb35ef2966b941ed3c363907c4b2b441_1gadb35ef2966b941ed3c363907c4b2b441" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_tnep_tag_tx_msg_app_data</definition>
+        <argsstring>(struct nfc_ndef_msg_desc *msg, enum nfc_tnep_status_value status)</argsstring>
+        <name>nfc_tnep_tag_tx_msg_app_data</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref> *</type>
+          <declname>msg</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__nfc__tnep__base_ga6a3da489c1aade13de10f4017d2ebcf9_1ga6a3da489c1aade13de10f4017d2ebcf9" kindref="member">nfc_tnep_status_value</ref></type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+<para>Add application data record to next message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Use this function to set application data after the service selection to set service application data and use it also during service data exchange with the NFC Polling Device. To indicate that application has no more data use <ref refid="group__nfc__tnep__tag_gae92b0da3f2dcada148c1c163092a1ddc_1gae92b0da3f2dcada148c1c163092a1ddc" kindref="member">nfc_tnep_tag_tx_msg_no_app_data()</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to NDEF message with application data. The message must have at least one free slot for the TNEP status record which is added automatically by this function. So if you want to encode for example 2 NDEF records the NDEF message minimal record count is 3. Use <ref refid="group__nfc__tnep__tag_gab6576033968225cdbc21341f6c2813d4_1gab6576033968225cdbc21341f6c2813d4" kindref="member">NFC_TNEP_TAG_APP_MSG_DEF</ref> which reserves slot for the TNEP status record. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>TNEP App data message status.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="294" column="5" declfile="include/nfc/tnep/tag.h" declline="294" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__tnep__tag_gae92b0da3f2dcada148c1c163092a1ddc_1gae92b0da3f2dcada148c1c163092a1ddc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_tnep_tag_tx_msg_no_app_data</definition>
+        <argsstring>(void)</argsstring>
+        <name>nfc_tnep_tag_tx_msg_no_app_data</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Respond with no more application data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If the NDEF application on the NFC Tag Device has finished, and therefore the NFC Tag Device has no more application data available for the Reader/Writer, then the NFC Tag Device SHALL provide a status message containing a single record that is a TNEP status record indicating success.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="309" column="5" declfile="include/nfc/tnep/tag.h" declline="309" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__tnep__tag_ga2e57d1195ba4d65fad71f76d3401b493_1ga2e57d1195ba4d65fad71f76d3401b493" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_tnep_tag_on_selected</definition>
+        <argsstring>(void)</argsstring>
+        <name>nfc_tnep_tag_on_selected</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Handle NFC Tag selected event. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If data exchange with poller starts again, NFC TNEP Tag device shall provide TNEP Initial message. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="317" column="6" declfile="include/nfc/tnep/tag.h" declline="317" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__tnep__tag_gaf2bd0bb295d37ba2d63ca2cb57da6494_1gaf2bd0bb295d37ba2d63ca2cb57da6494" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t nfc_tnep_tag_svc_count_get</definition>
+        <argsstring>(void)</argsstring>
+        <name>nfc_tnep_tag_svc_count_get</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Get the NFC Tag TNEP service count. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>TNEP Tag Service count. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="324" column="8" declfile="include/nfc/tnep/tag.h" declline="324" declcolumn="8"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NFC_TNEP_TAG_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_TNEP_TAG_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="base_8h" kindref="compound">nfc/tnep/base.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;kernel.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="group__nfc__tnep__tag_ga5fbe879ccd249dac56610bedfbb7d9b3_1ga5fbe879ccd249dac56610bedfbb7d9b3" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_TNEP_EVENTS_NUMBER<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="group__nfc__tnep__tag_gac46c92e2ad76e43819874f661689ef18_1gac46c92e2ad76e43819874f661689ef18" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_TNEP_TAG_MAX_WAIT_TIME<sp/>63</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="group__nfc__tnep__tag_gaa03a4517334cfdd1eb5d5bd33cd62dda_1gaa03a4517334cfdd1eb5d5bd33cd62dda" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_TNEP_TAG_MAX_N_WAIT_TIME<sp/>15</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="group__nfc__tnep__tag_gab6576033968225cdbc21341f6c2813d4_1gab6576033968225cdbc21341f6c2813d4" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_TNEP_TAG_APP_MSG_DEF(_name,<sp/>_max_record_cnt)<sp/>\</highlight></codeline>
+<codeline lineno="40"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NFC_NDEF_MSG_DEF(_name,<sp/>(_max_record_cnt<sp/>+<sp/>1))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="structnfc__tnep__tag__service__cb" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__tnep__tag__service__cb" kindref="compound">nfc_tnep_tag_service_cb</ref><sp/>{</highlight></codeline>
+<codeline lineno="44" refid="structnfc__tnep__tag__service__cb_a0e0986c3cdfbe21b7ec2ccd08b73c092_1a0e0986c3cdfbe21b7ec2ccd08b73c092" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structnfc__tnep__tag__service__cb_a0e0986c3cdfbe21b7ec2ccd08b73c092_1a0e0986c3cdfbe21b7ec2ccd08b73c092" kindref="member">selected</ref>)(void);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="structnfc__tnep__tag__service__cb_ace17573d4a865cff77ce0a3f9b1bc3f8_1ace17573d4a865cff77ce0a3f9b1bc3f8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structnfc__tnep__tag__service__cb_ace17573d4a865cff77ce0a3f9b1bc3f8_1ace17573d4a865cff77ce0a3f9b1bc3f8" kindref="member">deselected</ref>)(void);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="structnfc__tnep__tag__service__cb_a6964b9337da1e38bcd40e883b98f98ec_1a6964b9337da1e38bcd40e883b98f98ec" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structnfc__tnep__tag__service__cb_a6964b9337da1e38bcd40e883b98f98ec_1a6964b9337da1e38bcd40e883b98f98ec" kindref="member">message_received</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*data,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>len);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="structnfc__tnep__tag__service__cb_ace5ad7760b7e4dc756b1e2b8be314f80_1ace5ad7760b7e4dc756b1e2b8be314f80" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structnfc__tnep__tag__service__cb_ace5ad7760b7e4dc756b1e2b8be314f80_1ace5ad7760b7e4dc756b1e2b8be314f80" kindref="member">error_detected</ref>)(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>err);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="structnfc__tnep__tag__service" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__tnep__tag__service" kindref="compound">nfc_tnep_tag_service</ref><sp/>{</highlight></codeline>
+<codeline lineno="74" refid="structnfc__tnep__tag__service_ae2b1f9340c5c41a00aec1744d26a7c66_1ae2b1f9340c5c41a00aec1744d26a7c66" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__ndef__tnep__rec__svc__param" kindref="compound">nfc_ndef_tnep_rec_svc_param</ref><sp/>*<ref refid="structnfc__tnep__tag__service_ae2b1f9340c5c41a00aec1744d26a7c66_1ae2b1f9340c5c41a00aec1744d26a7c66" kindref="member">parameters</ref>;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77" refid="structnfc__tnep__tag__service_a70eec10020a92af5ca38ebbd15061b32_1a70eec10020a92af5ca38ebbd15061b32" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref><sp/>*<ref refid="structnfc__tnep__tag__service_a70eec10020a92af5ca38ebbd15061b32_1a70eec10020a92af5ca38ebbd15061b32" kindref="member">ndef_record</ref>;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80" refid="structnfc__tnep__tag__service_a4dedd8be029071a810eacd982813df57_1a4dedd8be029071a810eacd982813df57" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__tnep__tag__service__cb" kindref="compound">nfc_tnep_tag_service_cb</ref><sp/>*<ref refid="structnfc__tnep__tag__service_a4dedd8be029071a810eacd982813df57_1a4dedd8be029071a810eacd982813df57" kindref="member">callbacks</ref>;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119" refid="group__nfc__tnep__tag_ga8e79e1dc610721be025d74f1f58f3b05_1ga8e79e1dc610721be025d74f1f58f3b05" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_TNEP_TAG_SERVICE_DEF(_name,<sp/>_uri,<sp/>_uri_length,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="120"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_mode,<sp/>_t_wait,<sp/>_n_wait,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="121"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_max_msg_size,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="122"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_select_cb,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="123"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_deselect_cb,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="124"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_message_cb,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="125"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_error_cb)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="126"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="127"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BUILD_ASSERT(_t_wait<sp/>&lt;=<sp/>NFC_TNEP_TAG_MAX_WAIT_TIME,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="128"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;The<sp/>Waiting<sp/>time<sp/>has<sp/>to<sp/>be<sp/>equal<sp/>or<sp/>smaller<sp/>than<sp/>63&quot;</highlight><highlight class="normal">);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BUILD_ASSERT(_n_wait<sp/>&lt;=<sp/>NFC_TNEP_TAG_MAX_WAIT_TIME,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;The<sp/>Waiting<sp/>time<sp/>extension<sp/>count<sp/>has<sp/>to<sp/>be<sp/>equal<sp/>or<sp/>smaller<sp/>then<sp/>15&quot;);<sp/>\</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NFC_TNEP_SERIVCE_PARAM_RECORD_DESC_DEF(_name,<sp/>NFC_TNEP_VERSION,<sp/>\</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_uri_length,<sp/>_uri,<sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_mode,<sp/>_t_wait,<sp/>_n_wait,<sp/>\</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_max_msg_size);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>static<sp/>const<sp/>struct<sp/>nfc_tnep_tag_service_cb<sp/>_name##_cb<sp/>=<sp/>{<sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.selected<sp/>=<sp/>_select_cb,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.deselected<sp/>=<sp/>_deselect_cb,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.message_received<sp/>=<sp/>_message_cb,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.error_detected<sp/>=<sp/>_error_cb,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>STRUCT_SECTION_ITERABLE(nfc_tnep_tag_service,<sp/>_name##_svc)<sp/>=<sp/>\</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NFC_TNEP_TAG_SERVICE(_name)</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149" refid="group__nfc__tnep__tag_ga3607a164b1bcf6afe670cfd4f6f2d41e_1ga3607a164b1bcf6afe670cfd4f6f2d41e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_TNEP_TAG_SERVICE(_name)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="150"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="151"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;_name,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="152"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;NFC_NDEF_TNEP_RECORD_DESC(_name),<sp/>\</highlight></codeline>
+<codeline lineno="153"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;_name##_cb,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="154"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157" refid="group__nfc__tnep__tag_gaad679ef99e2e2d11b219af1149373fb2_1gaad679ef99e2e2d11b219af1149373fb2" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>int<sp/>(*<ref refid="group__nfc__tnep__tag_gaad679ef99e2e2d11b219af1149373fb2_1gaad679ef99e2e2d11b219af1149373fb2" kindref="member">nfc_payload_set_t</ref>)(uint8_t<sp/>*,<sp/>size_t);</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170" refid="group__nfc__tnep__tag_ga7faf9e5f72704155fd0307febae4dc50_1ga7faf9e5f72704155fd0307febae4dc50" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>int<sp/>(*<ref refid="group__nfc__tnep__tag_ga7faf9e5f72704155fd0307febae4dc50_1ga7faf9e5f72704155fd0307febae4dc50" kindref="member">initial_msg_encode_t</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref><sp/>*msg);</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185" refid="group__nfc__tnep__tag_ga77f0b9e72d9372fbc02afa9e810179c4_1ga77f0b9e72d9372fbc02afa9e810179c4" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__tnep__tag_ga77f0b9e72d9372fbc02afa9e810179c4_1ga77f0b9e72d9372fbc02afa9e810179c4" kindref="member">nfc_tnep_tag_tx_msg_buffer_register</ref>(uint8_t<sp/>*tx_buff,</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*tx_swap_buff,</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>len);</highlight></codeline>
+<codeline lineno="202" refid="group__nfc__tnep__tag_ga5891bd96778029c66f8df217c706b6c2_1ga5891bd96778029c66f8df217c706b6c2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__tnep__tag_ga5891bd96778029c66f8df217c706b6c2_1ga5891bd96778029c66f8df217c706b6c2" kindref="member">nfc_tnep_tag_init</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>k_poll_event<sp/>*events,<sp/>uint8_t<sp/>event_cnt,</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__tnep__tag_gaad679ef99e2e2d11b219af1149373fb2_1gaad679ef99e2e2d11b219af1149373fb2" kindref="member">nfc_payload_set_t</ref><sp/>payload_set);</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="224" refid="group__nfc__tnep__tag_gaf5c071a830658743c3cb404c8101a2ed_1gaf5c071a830658743c3cb404c8101a2ed" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__tnep__tag_gaf5c071a830658743c3cb404c8101a2ed_1gaf5c071a830658743c3cb404c8101a2ed" kindref="member">nfc_tnep_tag_initial_msg_create</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>max_record_cnt,</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__tnep__tag_ga7faf9e5f72704155fd0307febae4dc50_1ga7faf9e5f72704155fd0307febae4dc50" kindref="member">initial_msg_encode_t</ref><sp/>msg_encode_cb);</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight></codeline>
+<codeline lineno="245" refid="group__nfc__tnep__tag_ga4cbee380fb3a62b1063010b146940863_1ga4cbee380fb3a62b1063010b146940863" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__tnep__tag_ga4cbee380fb3a62b1063010b146940863_1ga4cbee380fb3a62b1063010b146940863" kindref="member">nfc_tnep_initial_msg_encode</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref><sp/>*msg,</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref><sp/>*records,</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>records_cnt);</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"></highlight></codeline>
+<codeline lineno="257" refid="group__nfc__tnep__tag_gad05e7c609999eebc2890f254c717b9b9_1gad05e7c609999eebc2890f254c717b9b9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nfc__tnep__tag_gad05e7c609999eebc2890f254c717b9b9_1gad05e7c609999eebc2890f254c717b9b9" kindref="member">nfc_tnep_tag_process</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"></highlight></codeline>
+<codeline lineno="272" refid="group__nfc__tnep__tag_ga3ea96b2eaf4e8fe14db01b0a6dd89d32_1ga3ea96b2eaf4e8fe14db01b0a6dd89d32" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nfc__tnep__tag_ga3ea96b2eaf4e8fe14db01b0a6dd89d32_1ga3ea96b2eaf4e8fe14db01b0a6dd89d32" kindref="member">nfc_tnep_tag_rx_msg_indicate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*rx_buffer,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>len);</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"></highlight></codeline>
+<codeline lineno="294" refid="group__nfc__tnep__tag_gadb35ef2966b941ed3c363907c4b2b441_1gadb35ef2966b941ed3c363907c4b2b441" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__tnep__tag_gadb35ef2966b941ed3c363907c4b2b441_1gadb35ef2966b941ed3c363907c4b2b441" kindref="member">nfc_tnep_tag_tx_msg_app_data</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref><sp/>*msg,</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nfc__tnep__base_ga6a3da489c1aade13de10f4017d2ebcf9_1ga6a3da489c1aade13de10f4017d2ebcf9" kindref="member">nfc_tnep_status_value</ref><sp/>status);</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"></highlight></codeline>
+<codeline lineno="309" refid="group__nfc__tnep__tag_gae92b0da3f2dcada148c1c163092a1ddc_1gae92b0da3f2dcada148c1c163092a1ddc" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__tnep__tag_gae92b0da3f2dcada148c1c163092a1ddc_1gae92b0da3f2dcada148c1c163092a1ddc" kindref="member">nfc_tnep_tag_tx_msg_no_app_data</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="310"><highlight class="normal"></highlight></codeline>
+<codeline lineno="317" refid="group__nfc__tnep__tag_ga2e57d1195ba4d65fad71f76d3401b493_1ga2e57d1195ba4d65fad71f76d3401b493" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nfc__tnep__tag_ga2e57d1195ba4d65fad71f76d3401b493_1ga2e57d1195ba4d65fad71f76d3401b493" kindref="member">nfc_tnep_tag_on_selected</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="318"><highlight class="normal"></highlight></codeline>
+<codeline lineno="324" refid="group__nfc__tnep__tag_gaf2bd0bb295d37ba2d63ca2cb57da6494_1gaf2bd0bb295d37ba2d63ca2cb57da6494" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="group__nfc__tnep__tag_gaf2bd0bb295d37ba2d63ca2cb57da6494_1gaf2bd0bb295d37ba2d63ca2cb57da6494" kindref="member">nfc_tnep_tag_svc_count_get</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="325"><highlight class="normal"></highlight></codeline>
+<codeline lineno="330"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight></codeline>
+    </programlisting>
+    <location file="include/nfc/tnep/tag.h"/>
+  </compounddef>
+</doxygen>

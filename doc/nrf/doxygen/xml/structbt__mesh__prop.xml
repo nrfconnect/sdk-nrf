@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__prop" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_prop</compoundname>
+    <includes refid="gen__prop_8h" local="no">gen_prop.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__prop_a2dc5c80066ef92d5aacaa9c3cc8d79c5_1a2dc5c80066ef92d5aacaa9c3cc8d79c5" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_prop::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Property ID. <simplesect kind="see"><para><ref refid="group__bt__mesh__property__ids" kindref="compound">Property IDs</ref>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop.h" line="52" column="10" bodyfile="include/bluetooth/mesh/gen_prop.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__prop_a85b13d8e600d2674581896944fd6cffa_1a85b13d8e600d2674581896944fd6cffa" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__mesh__prop_ga79ad26ae27108b0b537be96f2349bf3b_1ga79ad26ae27108b0b537be96f2349bf3b" kindref="member">bt_mesh_prop_access</ref></type>
+        <definition>enum bt_mesh_prop_access bt_mesh_prop::user_access</definition>
+        <argsstring></argsstring>
+        <name>user_access</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>User access flags for the property. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop.h" line="54" column="25" bodyfile="include/bluetooth/mesh/gen_prop.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Property representation. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/gen_prop.h" line="50" column="1" bodyfile="include/bluetooth/mesh/gen_prop.h" bodystart="50" bodyend="55"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__prop_a2dc5c80066ef92d5aacaa9c3cc8d79c5_1a2dc5c80066ef92d5aacaa9c3cc8d79c5" prot="public" virt="non-virtual"><scope>bt_mesh_prop</scope><name>id</name></member>
+      <member refid="structbt__mesh__prop_a85b13d8e600d2674581896944fd6cffa_1a85b13d8e600d2674581896944fd6cffa" prot="public" virt="non-virtual"><scope>bt_mesh_prop</scope><name>user_access</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

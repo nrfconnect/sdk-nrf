@@ -1,0 +1,234 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="slm__defines_8h" kind="file" language="C++">
+    <compoundname>slm_defines.h</compoundname>
+    <includes local="no">net/net_ip.h</includes>
+    <includedby refid="slm__at__host_8h" local="yes">applications/serial_lte_modem/src/slm_at_host.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/serial_lte_modem/src/slm_defines.h</label>
+        <link refid="slm__defines_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>net/net_ip.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>applications/serial_lte_modem/src/slm_at_host.h</label>
+        <link refid="slm__at__host_8h"/>
+      </node>
+      <node id="1">
+        <label>applications/serial_lte_modem/src/slm_defines.h</label>
+        <link refid="slm__defines_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="slm__defines_8h_a26769957ec1a2beaf223f33b66ee64ab_1a26769957ec1a2beaf223f33b66ee64ab" prot="public" static="no">
+        <name>INVALID_SOCKET</name>
+        <initializer>-1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_defines.h" line="12" column="9" bodyfile="applications/serial_lte_modem/src/slm_defines.h" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slm__defines_8h_a68275f0736d080a09e58536dd0cfdf95_1a68275f0736d080a09e58536dd0cfdf95" prot="public" static="no">
+        <name>INVALID_SEC_TAG</name>
+        <initializer>-1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_defines.h" line="13" column="9" bodyfile="applications/serial_lte_modem/src/slm_defines.h" bodystart="13" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slm__defines_8h_a0c837bd270ef5417f7e1e33dc159fe29_1a0c837bd270ef5417f7e1e33dc159fe29" prot="public" static="no">
+        <name>INVALID_ROLE</name>
+        <initializer>-1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_defines.h" line="14" column="9" bodyfile="applications/serial_lte_modem/src/slm_defines.h" bodystart="14" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slm__defines_8h_a21be10b06d3fb6f00a1d142015262f26_1a21be10b06d3fb6f00a1d142015262f26" prot="public" static="no">
+        <name>SLM_AT_CMD_RESPONSE_MAX_LEN</name>
+        <initializer>2100 /** re-define CONFIG_AT_CMD_RESPONSE_MAX_LEN */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_defines.h" line="16" column="9" bodyfile="applications/serial_lte_modem/src/slm_defines.h" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slm__defines_8h_ac37a14e34cc8f5486be7253ffd3af4b5_1ac37a14e34cc8f5486be7253ffd3af4b5" prot="public" static="no">
+        <name>SLM_MAX_URL</name>
+        <initializer>128  /** max size of URL string */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_defines.h" line="18" column="9" bodyfile="applications/serial_lte_modem/src/slm_defines.h" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slm__defines_8h_a7ef3ae09c82447cdd8c27456e390c438_1a7ef3ae09c82447cdd8c27456e390c438" prot="public" static="no">
+        <name>SLM_MAX_USERNAME</name>
+        <initializer>32   /** max size of username in login */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_defines.h" line="19" column="9" bodyfile="applications/serial_lte_modem/src/slm_defines.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slm__defines_8h_ae1cd03ad846e488efebd5b4e66206e6a_1ae1cd03ad846e488efebd5b4e66206e6a" prot="public" static="no">
+        <name>SLM_MAX_PASSWORD</name>
+        <initializer>32   /** max size of password in login */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_defines.h" line="20" column="9" bodyfile="applications/serial_lte_modem/src/slm_defines.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slm__defines_8h_a19755038d97642b930b46ee6d5d1b744_1a19755038d97642b930b46ee6d5d1b744" prot="public" static="no">
+        <name>MODEM_MSS</name>
+        <initializer>708</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_defines.h" line="22" column="9" bodyfile="applications/serial_lte_modem/src/slm_defines.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slm__defines_8h_a8e5729c5ed9e72869e1fbfc0388f1d03_1a8e5729c5ed9e72869e1fbfc0388f1d03" prot="public" static="no">
+        <name>MODEM_MTU</name>
+        <initializer>1280</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_defines.h" line="23" column="9" bodyfile="applications/serial_lte_modem/src/slm_defines.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slm__defines_8h_a224f4b5cede06ff65109ee9a5d21a833_1a224f4b5cede06ff65109ee9a5d21a833" prot="public" static="no">
+        <name>TCP_MAX_PAYLOAD_IPV4</name>
+        <initializer>(<ref refid="slm__defines_8h_a19755038d97642b930b46ee6d5d1b744_1a19755038d97642b930b46ee6d5d1b744" kindref="member">MODEM_MSS</ref> - NET_IPV4TCPH_LEN)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_defines.h" line="24" column="9" bodyfile="applications/serial_lte_modem/src/slm_defines.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slm__defines_8h_a39cf792f0f81d20f95e5f7907f4d790a_1a39cf792f0f81d20f95e5f7907f4d790a" prot="public" static="no">
+        <name>UDP_MAX_PAYLOAD_IPV4</name>
+        <initializer>(<ref refid="slm__defines_8h_a8e5729c5ed9e72869e1fbfc0388f1d03_1a8e5729c5ed9e72869e1fbfc0388f1d03" kindref="member">MODEM_MTU</ref> - NET_IPV4UDPH_LEN)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_defines.h" line="25" column="9" bodyfile="applications/serial_lte_modem/src/slm_defines.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slm__defines_8h_a03007536ac690fb7000461905e1f9c96_1a03007536ac690fb7000461905e1f9c96" prot="public" static="no">
+        <name>TCP_MAX_PAYLOAD_IPV6</name>
+        <initializer>(<ref refid="slm__defines_8h_a19755038d97642b930b46ee6d5d1b744_1a19755038d97642b930b46ee6d5d1b744" kindref="member">MODEM_MSS</ref> - NET_IPV6TCPH_LEN)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_defines.h" line="26" column="9" bodyfile="applications/serial_lte_modem/src/slm_defines.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slm__defines_8h_ab94d6626b9d211261c3d31c1ba8d30fa_1ab94d6626b9d211261c3d31c1ba8d30fa" prot="public" static="no">
+        <name>UDP_MAX_PAYLOAD_IPV6</name>
+        <initializer>(<ref refid="slm__defines_8h_a8e5729c5ed9e72869e1fbfc0388f1d03_1a8e5729c5ed9e72869e1fbfc0388f1d03" kindref="member">MODEM_MTU</ref> - NET_IPV6TCPH_LEN)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_defines.h" line="27" column="9" bodyfile="applications/serial_lte_modem/src/slm_defines.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slm__defines_8h_a46388110d5b415f13e51e71bb519e4bf_1a46388110d5b415f13e51e71bb519e4bf" prot="public" static="no">
+        <name>SLM_MAX_PAYLOAD</name>
+        <initializer><ref refid="slm__defines_8h_a39cf792f0f81d20f95e5f7907f4d790a_1a39cf792f0f81d20f95e5f7907f4d790a" kindref="member">UDP_MAX_PAYLOAD_IPV4</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_defines.h" line="28" column="9" bodyfile="applications/serial_lte_modem/src/slm_defines.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slm__defines_8h_aca527ee291c514397a164667f656134e_1aca527ee291c514397a164667f656134e" prot="public" static="no">
+        <name>SLM_MAX_PAYLOAD6</name>
+        <initializer><ref refid="slm__defines_8h_ab94d6626b9d211261c3d31c1ba8d30fa_1ab94d6626b9d211261c3d31c1ba8d30fa" kindref="member">UDP_MAX_PAYLOAD_IPV6</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_defines.h" line="29" column="9" bodyfile="applications/serial_lte_modem/src/slm_defines.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;net/net_ip.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>SLM_AT_DEFINES_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SLM_AT_DEFINES_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12" refid="slm__defines_8h_a26769957ec1a2beaf223f33b66ee64ab_1a26769957ec1a2beaf223f33b66ee64ab" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>INVALID_SOCKET<sp/><sp/><sp/><sp/><sp/><sp/><sp/>-1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13" refid="slm__defines_8h_a68275f0736d080a09e58536dd0cfdf95_1a68275f0736d080a09e58536dd0cfdf95" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>INVALID_SEC_TAG<sp/><sp/><sp/><sp/><sp/><sp/>-1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14" refid="slm__defines_8h_a0c837bd270ef5417f7e1e33dc159fe29_1a0c837bd270ef5417f7e1e33dc159fe29" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>INVALID_ROLE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16" refid="slm__defines_8h_a21be10b06d3fb6f00a1d142015262f26_1a21be10b06d3fb6f00a1d142015262f26" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SLM_AT_CMD_RESPONSE_MAX_LEN<sp/>2100<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="slm__defines_8h_ac37a14e34cc8f5486be7253ffd3af4b5_1ac37a14e34cc8f5486be7253ffd3af4b5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SLM_MAX_URL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>128<sp/><sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="slm__defines_8h_a7ef3ae09c82447cdd8c27456e390c438_1a7ef3ae09c82447cdd8c27456e390c438" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SLM_MAX_USERNAME<sp/><sp/><sp/><sp/><sp/>32<sp/><sp/><sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20" refid="slm__defines_8h_ae1cd03ad846e488efebd5b4e66206e6a_1ae1cd03ad846e488efebd5b4e66206e6a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SLM_MAX_PASSWORD<sp/><sp/><sp/><sp/><sp/>32<sp/><sp/><sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22" refid="slm__defines_8h_a19755038d97642b930b46ee6d5d1b744_1a19755038d97642b930b46ee6d5d1b744" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_MSS<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>708</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="slm__defines_8h_a8e5729c5ed9e72869e1fbfc0388f1d03_1a8e5729c5ed9e72869e1fbfc0388f1d03" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_MTU<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1280</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="slm__defines_8h_a224f4b5cede06ff65109ee9a5d21a833_1a224f4b5cede06ff65109ee9a5d21a833" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>TCP_MAX_PAYLOAD_IPV4<sp/>(MODEM_MSS<sp/>-<sp/>NET_IPV4TCPH_LEN)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="slm__defines_8h_a39cf792f0f81d20f95e5f7907f4d790a_1a39cf792f0f81d20f95e5f7907f4d790a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UDP_MAX_PAYLOAD_IPV4<sp/>(MODEM_MTU<sp/>-<sp/>NET_IPV4UDPH_LEN)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="slm__defines_8h_a03007536ac690fb7000461905e1f9c96_1a03007536ac690fb7000461905e1f9c96" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>TCP_MAX_PAYLOAD_IPV6<sp/>(MODEM_MSS<sp/>-<sp/>NET_IPV6TCPH_LEN)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="slm__defines_8h_ab94d6626b9d211261c3d31c1ba8d30fa_1ab94d6626b9d211261c3d31c1ba8d30fa" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UDP_MAX_PAYLOAD_IPV6<sp/>(MODEM_MTU<sp/>-<sp/>NET_IPV6TCPH_LEN)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="slm__defines_8h_a46388110d5b415f13e51e71bb519e4bf_1a46388110d5b415f13e51e71bb519e4bf" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SLM_MAX_PAYLOAD<sp/><sp/><sp/><sp/><sp/><sp/>UDP_MAX_PAYLOAD_IPV4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="slm__defines_8h_aca527ee291c514397a164667f656134e_1aca527ee291c514397a164667f656134e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SLM_MAX_PAYLOAD6<sp/><sp/><sp/><sp/><sp/>UDP_MAX_PAYLOAD_IPV6</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>SLM_AT_DEFINES_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/serial_lte_modem/src/slm_defines.h"/>
+  </compounddef>
+</doxygen>

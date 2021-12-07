@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__ctrl__srv__reg__cfg" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_ctrl_srv_reg_cfg</compoundname>
+    <includes refid="light__ctrl__srv_8h" local="no">light_ctrl_srv.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__srv__reg__cfg_a5f98e64ad5fcf3ba9a92e86c23a6c925_1a5f98e64ad5fcf3ba9a92e86c23a6c925" prot="public" static="no" mutable="no">
+        <type>struct sensor_value</type>
+        <definition>struct sensor_value bt_mesh_light_ctrl_srv_reg_cfg::lux[LIGHT_CTRL_STATE_COUNT]</definition>
+        <argsstring>[LIGHT_CTRL_STATE_COUNT]</argsstring>
+        <name>lux</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Target illuminance values </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="102" column="19" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__srv__reg__cfg_a25bfa7eec43231236743deceecfba97d_1a25bfa7eec43231236743deceecfba97d" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float bt_mesh_light_ctrl_srv_reg_cfg::kiu</definition>
+        <argsstring></argsstring>
+        <name>kiu</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Regulator upwards integral coefficient </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="104" column="7" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__srv__reg__cfg_a20098f140da7eea09841b74657acf1c8_1a20098f140da7eea09841b74657acf1c8" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float bt_mesh_light_ctrl_srv_reg_cfg::kid</definition>
+        <argsstring></argsstring>
+        <name>kid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Regulator downwards integral coefficient </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="106" column="7" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__srv__reg__cfg_ac4850f1dee7b562b8295f8db5d1f835e_1ac4850f1dee7b562b8295f8db5d1f835e" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float bt_mesh_light_ctrl_srv_reg_cfg::kpu</definition>
+        <argsstring></argsstring>
+        <name>kpu</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Regulator upwards propotional coefficient </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="108" column="7" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__srv__reg__cfg_ad5230d300ec8ea1a7ab94976d6a1c3ef_1ad5230d300ec8ea1a7ab94976d6a1c3ef" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float bt_mesh_light_ctrl_srv_reg_cfg::kpd</definition>
+        <argsstring></argsstring>
+        <name>kpd</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Regulator downwards propotional coefficient </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="110" column="7" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__ctrl__srv__reg__cfg_a5ae814741a8d598fbc424c793920b6ec_1a5ae814741a8d598fbc424c793920b6ec" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_light_ctrl_srv_reg_cfg::accuracy</definition>
+        <argsstring></argsstring>
+        <name>accuracy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Regulator dead zone (in percent) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="112" column="9" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Illumination regulator configuration </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="100" column="1" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="100" bodyend="113"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__ctrl__srv__reg__cfg_a5ae814741a8d598fbc424c793920b6ec_1a5ae814741a8d598fbc424c793920b6ec" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_srv_reg_cfg</scope><name>accuracy</name></member>
+      <member refid="structbt__mesh__light__ctrl__srv__reg__cfg_a20098f140da7eea09841b74657acf1c8_1a20098f140da7eea09841b74657acf1c8" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_srv_reg_cfg</scope><name>kid</name></member>
+      <member refid="structbt__mesh__light__ctrl__srv__reg__cfg_a25bfa7eec43231236743deceecfba97d_1a25bfa7eec43231236743deceecfba97d" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_srv_reg_cfg</scope><name>kiu</name></member>
+      <member refid="structbt__mesh__light__ctrl__srv__reg__cfg_ad5230d300ec8ea1a7ab94976d6a1c3ef_1ad5230d300ec8ea1a7ab94976d6a1c3ef" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_srv_reg_cfg</scope><name>kpd</name></member>
+      <member refid="structbt__mesh__light__ctrl__srv__reg__cfg_ac4850f1dee7b562b8295f8db5d1f835e_1ac4850f1dee7b562b8295f8db5d1f835e" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_srv_reg_cfg</scope><name>kpu</name></member>
+      <member refid="structbt__mesh__light__ctrl__srv__reg__cfg_a5f98e64ad5fcf3ba9a92e86c23a6c925_1a5f98e64ad5fcf3ba9a92e86c23a6c925" prot="public" virt="non-virtual"><scope>bt_mesh_light_ctrl_srv_reg_cfg</scope><name>lux</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

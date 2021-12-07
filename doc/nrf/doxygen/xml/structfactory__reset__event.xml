@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structfactory__reset__event" kind="struct" language="C++" prot="public">
+    <compoundname>factory_reset_event</compoundname>
+    <includes refid="factory__reset__event_8h" local="no">factory_reset_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structfactory__reset__event_a344d36896f803f67e13a8702a8a77547_1a344d36896f803f67e13a8702a8a77547" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header factory_reset_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/factory_reset_event.h" line="23" column="19" bodyfile="include/caf/events/factory_reset_event.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Factory reset event. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The event that informs that factory reset was requested. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>factory_reset_event</label>
+        <link refid="structfactory__reset__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/caf/events/factory_reset_event.h" line="22" column="1" bodyfile="include/caf/events/factory_reset_event.h" bodystart="22" bodyend="24"/>
+    <listofallmembers>
+      <member refid="structfactory__reset__event_a344d36896f803f67e13a8702a8a77547_1a344d36896f803f67e13a8702a8a77547" prot="public" virt="non-virtual"><scope>factory_reset_event</scope><name>header</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_57b0fd26a56d6d337f8b30fcd4067695" kind="dir">
+    <compoundname>lib/supl</compoundname>
+    <innerdir refid="dir_f151cf99f723fc440ad910cb53efad89">lib/supl/include</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/supl/"/>
+  </compounddef>
+</doxygen>

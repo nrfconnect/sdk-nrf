@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__bms__init__params" kind="struct" language="C++" prot="public">
+    <compoundname>bt_bms_init_params</compoundname>
+    <includes refid="bms_8h" local="no">bms.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__bms__init__params_a803af91d779204d5a546acf677429098_1a803af91d779204d5a546acf677429098" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__bms__cb" kindref="compound">bt_bms_cb</ref> *</type>
+        <definition>struct bt_bms_cb* bt_bms_init_params::cbs</definition>
+        <argsstring></argsstring>
+        <name>cbs</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bms.h" line="97" column="16" bodyfile="include/bluetooth/services/bms.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__bms__init__params_a3fe37e474efd950c65e59ec48d610564_1a3fe37e474efd950c65e59ec48d610564" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__bms__features" kindref="compound">bt_bms_features</ref></type>
+        <definition>struct bt_bms_features bt_bms_init_params::features</definition>
+        <argsstring></argsstring>
+        <name>features</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bms.h" line="99" column="22" bodyfile="include/bluetooth/services/bms.h" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>BMS initialization parameters. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_bms_cb</label>
+        <link refid="structbt__bms__cb"/>
+      </node>
+      <node id="4">
+        <label>bt_bms_feature</label>
+        <link refid="structbt__bms__feature"/>
+      </node>
+      <node id="3">
+        <label>bt_bms_features</label>
+        <link refid="structbt__bms__features"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>delete_all</edgelabel>
+          <edgelabel>delete_requesting</edgelabel>
+          <edgelabel>delete_rest</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>bt_bms_init_params</label>
+        <link refid="structbt__bms__init__params"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>cbs</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>features</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/bms.h" line="95" column="1" bodyfile="include/bluetooth/services/bms.h" bodystart="95" bodyend="100"/>
+    <listofallmembers>
+      <member refid="structbt__bms__init__params_a803af91d779204d5a546acf677429098_1a803af91d779204d5a546acf677429098" prot="public" virt="non-virtual"><scope>bt_bms_init_params</scope><name>cbs</name></member>
+      <member refid="structbt__bms__init__params_a3fe37e474efd950c65e59ec48d610564_1a3fe37e474efd950c65e59ec48d610564" prot="public" virt="non-virtual"><scope>bt_bms_init_params</scope><name>features</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

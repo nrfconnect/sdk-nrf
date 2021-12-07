@@ -1,0 +1,163 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__caf__ble__common__event" kind="group">
+    <compoundname>caf_ble_common_event</compoundname>
+    <title>CAF Bluetooth LE Common Event</title>
+    <innerclass refid="structble__peer__event" prot="public">ble_peer_event</innerclass>
+    <innerclass refid="structble__peer__operation__event" prot="public">ble_peer_operation_event</innerclass>
+    <innerclass refid="structble__peer__conn__params__event" prot="public">ble_peer_conn_params_event</innerclass>
+    <innerclass refid="structble__peer__search__event" prot="public">ble_peer_search_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__caf__ble__common__event_1gaf960a6979cd9769891c731a932718427" prot="public" static="no" strong="no">
+        <type></type>
+        <name>peer_state</name>
+        <enumvalue id="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427af77a841c1c7c80bda9c81dc293a213c2" prot="public">
+          <name>PEER_STATE_DISCONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Bluetooth stack disconnected from the remote peer. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427a7e0c9738ecfb141513df0a75037ac99f" prot="public">
+          <name>PEER_STATE_DISCONNECTING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>An application module called bt_conn_disconnect() to disconnect the remote peer. This state can be reported by the module that requests peer disconnection to let other application modules prepare for the planned disconnection. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427ac89a6ebf34e029db43c011d000d166f6" prot="public">
+          <name>PEER_STATE_CONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Bluetooth stack successfully connected to the remote peer. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427a8ad73139c4e620adcb1726505aa2df4d" prot="public">
+          <name>PEER_STATE_SECURED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Bluetooth stack set the connection security to at least level 2 (that is, encryption and no authentication). </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427a924e6ac8a75aadb3e22ce5748d10076f" prot="public">
+          <name>PEER_STATE_CONN_FAILED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Bluetooth stack failed to connect the remote peer. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427a369bec064041670d8dc873fecac9269d" prot="public">
+          <name>PEER_STATE_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Number of peer states. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Peer states. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>State of the Bluetooth connected peer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/ble_common_event.h" line="31" column="1" bodyfile="include/caf/events/ble_common_event.h" bodystart="31" bodyend="54"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__caf__ble__common__event_1gaa5f5d51c4d32cd760f1aebe47777d126" prot="public" static="no" strong="no">
+        <type></type>
+        <name>peer_operation</name>
+        <enumvalue id="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a3320917435db50ef4dbcec4db2964921" prot="public">
+          <name>PEER_OPERATION_SELECT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The peer change is triggered and waiting for confirmation. The operation is not performed by the Bluetooth stack before the selection is confirmed. PEER_OPERATION_SELECTED should be used for confirmed operation. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a945aa596e6a20b742ae75d17ca44ba57" prot="public">
+          <name>PEER_OPERATION_SELECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The peer change is confirmed. That results in swapping used local identity. The peers that are connected to previously used Bluetooth local identity should be disconnected. The application can start peer search for peers related to a new local identity. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a9f8454f3b23d9efa6a003af97d8ef81b" prot="public">
+          <name>PEER_OPERATION_SCAN_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Bluetooth scanning is requested. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a16dbe0aacb881dbe03ad4ccbef5c2641" prot="public">
+          <name>PEER_OPERATION_ERASE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The bond erase is triggered and waiting for confirmation. The operation is not performed by the Bluetooth stack before the erase is confirmed. PEER_OPERATION_ERASED should be used for a confirmed operation. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a072b9e04b4bb94402721e3fd43eca0d7" prot="public">
+          <name>PEER_OPERATION_ERASE_ADV</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Trigger erase advertising for selected local identity. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126ad6df8c00f608e5e4137e61db3dcc1a54" prot="public">
+          <name>PEER_OPERATION_ERASE_ADV_CANCEL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Cancel ongoing erase advertising. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126abc289d73593ad6ac11edfb50cfb75c7b" prot="public">
+          <name>PEER_OPERATION_ERASED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The bond erase is confirmed. That results in removing all of the Bluetooth bonds of related local identity. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a819eed2058257d927dc2dbc27563369e" prot="public">
+          <name>PEER_OPERATION_CANCEL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Cancel ongoing peer operation. If PEER_OPERATION_ERASE_ADV is cancelled, PEER_OPERATION_ERASE_ADV_CANCEL must be used instead. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126acb52562461d959e336a4eaa1faad1b94" prot="public">
+          <name>PEER_OPERATION_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Number of peer operations. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Peer operations. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/ble_common_event.h" line="58" column="1" bodyfile="include/caf/events/ble_common_event.h" bodystart="58" bodyend="98"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>CAF Bluetooth LE Common Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

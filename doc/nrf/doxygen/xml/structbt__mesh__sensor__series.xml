@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__sensor__series" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_sensor_series</compoundname>
+    <includes refid="sensor_8h" local="no">sensor.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__sensor__series_ae61f048a6c11bf5c4d4ab6730feaa845_1ae61f048a6c11bf5c4d4ab6730feaa845" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__column" kindref="compound">bt_mesh_sensor_column</ref> *</type>
+        <definition>const struct bt_mesh_sensor_column* bt_mesh_sensor_series::columns</definition>
+        <argsstring></argsstring>
+        <name>columns</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the list of columns.</para>
+<para>The columns may overlap, but the start value of each column must be unique. The list of columns do not have to cover the entire valid range, and values that don&apos;t fit in any of the columns should be ignored. If columns overlap, samples must be present in all columns they fall into. The columns may come in any order. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="298" column="34" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="298" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__series_a316cfaa47e6996e73cb72a87dedea108_1a316cfaa47e6996e73cb72a87dedea108" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_mesh_sensor_series::column_count</definition>
+        <argsstring></argsstring>
+        <name>column_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of columns. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="301" column="10" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="301" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__series_a4e160448bc8ceb240638bb837c2f918a_1a4e160448bc8ceb240638bb837c2f918a" prot="public" static="no" mutable="no">
+        <type>int(*</type>
+        <definition>int(* bt_mesh_sensor_series::get) (struct bt_mesh_sensor *sensor, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_column *column, struct sensor_value *value)</definition>
+        <argsstring>)(struct bt_mesh_sensor *sensor, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_column *column, struct sensor_value *value)</argsstring>
+        <name>get</name>
+        <briefdescription>
+<para>Getter for the series values. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Should return the historical data for the latest sensor readings in the given column.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor pointer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context pointer, or NULL if this call didn&apos;t originate from a mesh message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">column</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The requested sensor column. Points to a column in the <computeroutput>columns</computeroutput> array. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor value response buffer. Holds the number of channels indicated by the sensor type. All channels must be filled.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, or (negative) error code otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="319" column="1" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="319" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Sensor series specification. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_mesh_sensor_column</label>
+        <link refid="structbt__mesh__sensor__column"/>
+      </node>
+      <node id="1">
+        <label>bt_mesh_sensor_series</label>
+        <link refid="structbt__mesh__sensor__series"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>columns</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/sensor.h" line="289" column="1" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="289" bodyend="322"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__sensor__series_a316cfaa47e6996e73cb72a87dedea108_1a316cfaa47e6996e73cb72a87dedea108" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_series</scope><name>column_count</name></member>
+      <member refid="structbt__mesh__sensor__series_ae61f048a6c11bf5c4d4ab6730feaa845_1ae61f048a6c11bf5c4d4ab6730feaa845" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_series</scope><name>columns</name></member>
+      <member refid="structbt__mesh__sensor__series_a4e160448bc8ceb240638bb837c2f918a_1a4e160448bc8ceb240638bb837c2f918a" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_series</scope><name>get</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

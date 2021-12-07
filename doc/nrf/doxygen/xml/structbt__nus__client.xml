@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__nus__client" kind="struct" language="C++" prot="public">
+    <compoundname>bt_nus_client</compoundname>
+    <includes refid="nus__client_8h" local="no">nus_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__nus__client_a7cbebbd5d7b3d8277089d8bf53b64681_1a7cbebbd5d7b3d8277089d8bf53b64681" prot="public" static="no" mutable="no">
+        <type>struct bt_conn *</type>
+        <definition>struct bt_conn* bt_nus_client::conn</definition>
+        <argsstring></argsstring>
+        <name>conn</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Connection object. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus_client.h" line="82" column="14" bodyfile="include/bluetooth/services/nus_client.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__nus__client_a9232dfa8fa2b0ae3b70785558ff7a14b_1a9232dfa8fa2b0ae3b70785558ff7a14b" prot="public" static="no" mutable="no">
+        <type>atomic_t</type>
+        <definition>atomic_t bt_nus_client::state</definition>
+        <argsstring></argsstring>
+        <name>state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Internal state. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus_client.h" line="85" column="10" bodyfile="include/bluetooth/services/nus_client.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__nus__client_a0d9b22027394aed60a30f6b086c9747e_1a0d9b22027394aed60a30f6b086c9747e" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__nus__client__handles" kindref="compound">bt_nus_client_handles</ref></type>
+        <definition>struct bt_nus_client_handles bt_nus_client::handles</definition>
+        <argsstring></argsstring>
+        <name>handles</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handles on the connected peer device that are needed to interact with the device. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus_client.h" line="90" column="28" bodyfile="include/bluetooth/services/nus_client.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__nus__client_a87263e52dd2b5d1049b76d5c2e1065ba_1a87263e52dd2b5d1049b76d5c2e1065ba" prot="public" static="no" mutable="no">
+        <type>struct bt_gatt_subscribe_params</type>
+        <definition>struct bt_gatt_subscribe_params bt_nus_client::tx_notif_params</definition>
+        <argsstring></argsstring>
+        <name>tx_notif_params</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>GATT subscribe parameters for NUS TX Characteristic. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus_client.h" line="93" column="31" bodyfile="include/bluetooth/services/nus_client.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__nus__client_acd6dff6ee99c4189f233b2610ea2fe80_1acd6dff6ee99c4189f233b2610ea2fe80" prot="public" static="no" mutable="no">
+        <type>struct bt_gatt_write_params</type>
+        <definition>struct bt_gatt_write_params bt_nus_client::rx_write_params</definition>
+        <argsstring></argsstring>
+        <name>rx_write_params</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>GATT write parameters for NUS RX Characteristic. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus_client.h" line="96" column="27" bodyfile="include/bluetooth/services/nus_client.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__nus__client_aa3f37cf38be242eed2c2c378bc651c6b_1aa3f37cf38be242eed2c2c378bc651c6b" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__nus__client__cb" kindref="compound">bt_nus_client_cb</ref></type>
+        <definition>struct bt_nus_client_cb bt_nus_client::cb</definition>
+        <argsstring></argsstring>
+        <name>cb</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Application callbacks. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus_client.h" line="99" column="23" bodyfile="include/bluetooth/services/nus_client.h" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>NUS Client structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_nus_client</label>
+        <link refid="structbt__nus__client"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>handles</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>cb</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bt_nus_client_cb</label>
+        <link refid="structbt__nus__client__cb"/>
+      </node>
+      <node id="2">
+        <label>bt_nus_client_handles</label>
+        <link refid="structbt__nus__client__handles"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/nus_client.h" line="79" column="1" bodyfile="include/bluetooth/services/nus_client.h" bodystart="79" bodyend="100"/>
+    <listofallmembers>
+      <member refid="structbt__nus__client_aa3f37cf38be242eed2c2c378bc651c6b_1aa3f37cf38be242eed2c2c378bc651c6b" prot="public" virt="non-virtual"><scope>bt_nus_client</scope><name>cb</name></member>
+      <member refid="structbt__nus__client_a7cbebbd5d7b3d8277089d8bf53b64681_1a7cbebbd5d7b3d8277089d8bf53b64681" prot="public" virt="non-virtual"><scope>bt_nus_client</scope><name>conn</name></member>
+      <member refid="structbt__nus__client_a0d9b22027394aed60a30f6b086c9747e_1a0d9b22027394aed60a30f6b086c9747e" prot="public" virt="non-virtual"><scope>bt_nus_client</scope><name>handles</name></member>
+      <member refid="structbt__nus__client_acd6dff6ee99c4189f233b2610ea2fe80_1acd6dff6ee99c4189f233b2610ea2fe80" prot="public" virt="non-virtual"><scope>bt_nus_client</scope><name>rx_write_params</name></member>
+      <member refid="structbt__nus__client_a9232dfa8fa2b0ae3b70785558ff7a14b_1a9232dfa8fa2b0ae3b70785558ff7a14b" prot="public" virt="non-virtual"><scope>bt_nus_client</scope><name>state</name></member>
+      <member refid="structbt__nus__client_a87263e52dd2b5d1049b76d5c2e1065ba_1a87263e52dd2b5d1049b76d5c2e1065ba" prot="public" virt="non-virtual"><scope>bt_nus_client</scope><name>tx_notif_params</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

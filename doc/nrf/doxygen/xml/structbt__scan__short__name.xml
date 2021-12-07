@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__scan__short__name" kind="struct" language="C++" prot="public">
+    <compoundname>bt_scan_short_name</compoundname>
+    <includes refid="scan_8h" local="no">scan.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__scan__short__name_a4e9da7b5d70d80061842d53dc3d53fcd_1a4e9da7b5d70d80061842d53dc3d53fcd" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* bt_scan_short_name::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the short name. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="152" column="12" bodyfile="include/bluetooth/scan.h" bodystart="152" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__scan__short__name_a431c90f10fc9a84d72f4ac5c04f96856_1a431c90f10fc9a84d72f4ac5c04f96856" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_scan_short_name::min_len</definition>
+        <argsstring></argsstring>
+        <name>min_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Minimum length of the short name. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="155" column="9" bodyfile="include/bluetooth/scan.h" bodystart="155" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A helper structure to set filters for the name. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/scan.h" line="150" column="1" bodyfile="include/bluetooth/scan.h" bodystart="150" bodyend="156"/>
+    <listofallmembers>
+      <member refid="structbt__scan__short__name_a431c90f10fc9a84d72f4ac5c04f96856_1a431c90f10fc9a84d72f4ac5c04f96856" prot="public" virt="non-virtual"><scope>bt_scan_short_name</scope><name>min_len</name></member>
+      <member refid="structbt__scan__short__name_a4e9da7b5d70d80061842d53dc3d53fcd_1a4e9da7b5d70d80061842d53dc3d53fcd" prot="public" virt="non-virtual"><scope>bt_scan_short_name</scope><name>name</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

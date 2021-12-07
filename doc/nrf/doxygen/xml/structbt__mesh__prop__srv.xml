@@ -1,0 +1,238 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__prop__srv" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_prop_srv</compoundname>
+    <includes refid="gen__prop__srv_8h" local="no">gen_prop_srv.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__prop__srv_a22a90986894d4776aaf305386c646c49_1a22a90986894d4776aaf305386c646c49" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model *</type>
+        <definition>struct bt_mesh_model* bt_mesh_prop_srv::model</definition>
+        <argsstring></argsstring>
+        <name>model</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the mesh model entry. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_srv.h" line="154" column="20" bodyfile="include/bluetooth/mesh/gen_prop_srv.h" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__prop__srv_afeb4b115e22e60b90183c12a10563bdd_1afeb4b115e22e60b90183c12a10563bdd" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model_pub</type>
+        <definition>struct bt_mesh_model_pub bt_mesh_prop_srv::pub</definition>
+        <argsstring></argsstring>
+        <name>pub</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Model publication parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_srv.h" line="156" column="24" bodyfile="include/bluetooth/mesh/gen_prop_srv.h" bodystart="156" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__prop__srv_ae6b5a7522a9514c30692d3bf21f9f1b1_1ae6b5a7522a9514c30692d3bf21f9f1b1" prot="public" static="no" mutable="no">
+        <type>struct net_buf_simple</type>
+        <definition>struct net_buf_simple bt_mesh_prop_srv::pub_buf</definition>
+        <argsstring></argsstring>
+        <name>pub_buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_srv.h" line="158" column="21" bodyfile="include/bluetooth/mesh/gen_prop_srv.h" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__prop__srv_ab75138e4215bdff82528841252f7877d_1ab75138e4215bdff82528841252f7877d" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_prop_srv::pub_data[BT_MESH_PROP_MSG_MAXLEN(CONFIG_BT_MESH_PROP_MAXCOUNT)]</definition>
+        <argsstring>[BT_MESH_PROP_MSG_MAXLEN(CONFIG_BT_MESH_PROP_MAXCOUNT)]</argsstring>
+        <name>pub_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_srv.h" line="160" column="9" bodyfile="include/bluetooth/mesh/gen_prop_srv.h" bodystart="160" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__prop__srv_af79d827c89c9d2231fec32f99faec94a_1af79d827c89c9d2231fec32f99faec94a" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_prop_srv::pub_id</definition>
+        <argsstring></argsstring>
+        <name>pub_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Property ID currently being published. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_srv.h" line="162" column="10" bodyfile="include/bluetooth/mesh/gen_prop_srv.h" bodystart="162" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__prop__srv_afe6a836fcaea619f7bb33a9e4e8db0de_1afe6a836fcaea619f7bb33a9e4e8db0de" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__mesh__prop__srv_ga0a073975054874b3da333bebee87050c_1ga0a073975054874b3da333bebee87050c" kindref="member">bt_mesh_prop_srv_state</ref></type>
+        <definition>enum bt_mesh_prop_srv_state bt_mesh_prop_srv::pub_state</definition>
+        <argsstring></argsstring>
+        <name>pub_state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Which state is currently being published. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_srv.h" line="164" column="28" bodyfile="include/bluetooth/mesh/gen_prop_srv.h" bodystart="164" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__prop__srv_a5741a6bcf5b38a2b33d59fde439ac8d7_1a5741a6bcf5b38a2b33d59fde439ac8d7" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__prop" kindref="compound">bt_mesh_prop</ref> *const</type>
+        <definition>struct bt_mesh_prop* const bt_mesh_prop_srv::properties</definition>
+        <argsstring></argsstring>
+        <name>properties</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>List of properties supported by the server. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_srv.h" line="171" column="25" bodyfile="include/bluetooth/mesh/gen_prop_srv.h" bodystart="171" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__prop__srv_a052b9fc881a5e0e59148342f74ce2598_1a052b9fc881a5e0e59148342f74ce2598" prot="public" static="no" mutable="no">
+        <type>const uint32_t</type>
+        <definition>const uint32_t bt_mesh_prop_srv::property_count</definition>
+        <argsstring></argsstring>
+        <name>property_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of properties supported by the server. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_srv.h" line="173" column="16" bodyfile="include/bluetooth/mesh/gen_prop_srv.h" bodystart="173" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__prop__srv_a6c02862fb5b18cdd8f6a98fd2948d282_1a6c02862fb5b18cdd8f6a98fd2948d282" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_prop_srv::set) (struct bt_mesh_prop_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_prop_val *val)</definition>
+        <argsstring>)(struct bt_mesh_prop_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_prop_val *val)</argsstring>
+        <name>set</name>
+        <briefdescription>
+<para>Set a property value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The handler may reject the value change with two levels of severity:</para>
+<para>To indicate data format errors and permanently illegal values, change the <computeroutput>val::meta::id</computeroutput> field to <ref refid="group__bt__mesh__property__ids_ga413ac9169af1fb0f89e048b75ab642bb_1ga413ac9169af1fb0f89e048b75ab642bb" kindref="member">BT_MESH_PROP_ID_PROHIBITED</ref> before returning. This will cancel the response message sending, indicating a protocol violation.</para>
+<para>To indicate that the new value is temporarily unable to change, but not in violation of the protocol, replace the contents of <computeroutput>buf</computeroutput> and <computeroutput>size</computeroutput> with the current property value and size. Note that <computeroutput>buf</computeroutput> can only fit a value of size <computeroutput>CONFIG_GEN_PROP_MAXSIZE</computeroutput>.</para>
+<para><simplesect kind="note"><para>This handler is mandatory if the server is acting as an Admin Property Server, and ignored if the server is acting as a Manufacturer Property Server.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Property Server instance whose property to set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context for the message that triggered the change, or NULL if the change is not coming from a messge. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Property value to set. Any changes to the value will be reflected in the response message. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_srv.h" line="199" column="1" bodyfile="include/bluetooth/mesh/gen_prop_srv.h" bodystart="199" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__prop__srv_a8dac5103076e9f159fa5dc474979ba86_1a8dac5103076e9f159fa5dc474979ba86" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_prop_srv::get) (struct bt_mesh_prop_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_prop_val *val)</definition>
+        <argsstring>)(struct bt_mesh_prop_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_prop_val *val)</argsstring>
+        <name>get</name>
+        <briefdescription>
+<para>Get a property value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Note that <computeroutput>buf</computeroutput> can only fit a value of size <computeroutput>CONFIG_GEN_PROP_MAXSIZE</computeroutput>.</para>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Property Server instance whose property to set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context for the message that triggered the change, or NULL if the change is not coming from a messge. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Property value to get. Any changes to the value will be reflected in the response message. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_srv.h" line="216" column="1" bodyfile="include/bluetooth/mesh/gen_prop_srv.h" bodystart="216" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Generic Property Server instance. Should be initialized with the <ref refid="group__bt__mesh__prop__srv_gaf67d93e14cf61187afaf6ff4287c215c_1gaf67d93e14cf61187afaf6ff4287c215c" kindref="member">BT_MESH_PROP_SRV_INIT</ref>, <ref refid="group__bt__mesh__prop__srv_gaaee5077a4b1871a7a11f3994095ea550_1gaaee5077a4b1871a7a11f3994095ea550" kindref="member">BT_MESH_PROP_SRV_ADMIN_INIT</ref>, <ref refid="group__bt__mesh__prop__srv_ga1201ec798558f7f13af9eb2067a63489_1ga1201ec798558f7f13af9eb2067a63489" kindref="member">BT_MESH_PROP_SRV_MFR_INIT</ref> or <ref refid="group__bt__mesh__prop__srv_ga1fe244ad0ea3d36167d2736d971b37fd_1ga1fe244ad0ea3d36167d2736d971b37fd" kindref="member">BT_MESH_PROP_SRV_CLIENT_INIT</ref> macro. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_mesh_prop</label>
+        <link refid="structbt__mesh__prop"/>
+      </node>
+      <node id="1">
+        <label>bt_mesh_prop_srv</label>
+        <link refid="structbt__mesh__prop__srv"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>properties</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/gen_prop_srv.h" line="152" column="1" bodyfile="include/bluetooth/mesh/gen_prop_srv.h" bodystart="152" bodyend="219"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__prop__srv_a8dac5103076e9f159fa5dc474979ba86_1a8dac5103076e9f159fa5dc474979ba86" prot="public" virt="non-virtual"><scope>bt_mesh_prop_srv</scope><name>get</name></member>
+      <member refid="structbt__mesh__prop__srv_a22a90986894d4776aaf305386c646c49_1a22a90986894d4776aaf305386c646c49" prot="public" virt="non-virtual"><scope>bt_mesh_prop_srv</scope><name>model</name></member>
+      <member refid="structbt__mesh__prop__srv_a5741a6bcf5b38a2b33d59fde439ac8d7_1a5741a6bcf5b38a2b33d59fde439ac8d7" prot="public" virt="non-virtual"><scope>bt_mesh_prop_srv</scope><name>properties</name></member>
+      <member refid="structbt__mesh__prop__srv_a052b9fc881a5e0e59148342f74ce2598_1a052b9fc881a5e0e59148342f74ce2598" prot="public" virt="non-virtual"><scope>bt_mesh_prop_srv</scope><name>property_count</name></member>
+      <member refid="structbt__mesh__prop__srv_afeb4b115e22e60b90183c12a10563bdd_1afeb4b115e22e60b90183c12a10563bdd" prot="public" virt="non-virtual"><scope>bt_mesh_prop_srv</scope><name>pub</name></member>
+      <member refid="structbt__mesh__prop__srv_ae6b5a7522a9514c30692d3bf21f9f1b1_1ae6b5a7522a9514c30692d3bf21f9f1b1" prot="public" virt="non-virtual"><scope>bt_mesh_prop_srv</scope><name>pub_buf</name></member>
+      <member refid="structbt__mesh__prop__srv_ab75138e4215bdff82528841252f7877d_1ab75138e4215bdff82528841252f7877d" prot="public" virt="non-virtual"><scope>bt_mesh_prop_srv</scope><name>pub_data</name></member>
+      <member refid="structbt__mesh__prop__srv_af79d827c89c9d2231fec32f99faec94a_1af79d827c89c9d2231fec32f99faec94a" prot="public" virt="non-virtual"><scope>bt_mesh_prop_srv</scope><name>pub_id</name></member>
+      <member refid="structbt__mesh__prop__srv_afe6a836fcaea619f7bb33a9e4e8db0de_1afe6a836fcaea619f7bb33a9e4e8db0de" prot="public" virt="non-virtual"><scope>bt_mesh_prop_srv</scope><name>pub_state</name></member>
+      <member refid="structbt__mesh__prop__srv_a6c02862fb5b18cdd8f6a98fd2948d282_1a6c02862fb5b18cdd8f6a98fd2948d282" prot="public" virt="non-virtual"><scope>bt_mesh_prop_srv</scope><name>set</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

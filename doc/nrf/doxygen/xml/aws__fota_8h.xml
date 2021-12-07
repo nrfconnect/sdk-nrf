@@ -1,0 +1,316 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="aws__fota_8h" kind="file" language="C++">
+    <compoundname>aws_fota.h</compoundname>
+    <innerclass refid="structaws__fota__event__dl" prot="public">aws_fota_event_dl</innerclass>
+    <innerclass refid="structaws__fota__event" prot="public">aws_fota_event</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__aws__fota_ga6f52a7a6f1a1ef80325c53df9c70cd2e_1ga6f52a7a6f1a1ef80325c53df9c70cd2e" prot="public" static="no">
+        <name>AWS_FOTA_EVT_DL_COMPLETE_VAL</name>
+        <initializer>100</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_fota.h" line="39" column="9" bodyfile="include/net/aws_fota.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1ga4bb9f4422a0afdde491fbff5192268f2" prot="public" static="no" strong="no">
+        <type></type>
+        <name>aws_fota_evt_id</name>
+        <enumvalue id="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2a1c51e5d693324bb64806be46fc1ee78d" prot="public">
+          <name>AWS_FOTA_EVT_START</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>AWS FOTA has started </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2a77b7621f99dea675ec3c6075f394aa1e" prot="public">
+          <name>AWS_FOTA_EVT_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>AWS FOTA complete and status reported to job document </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2a9b60a771ee0cb0c60daccd0d22f0e711" prot="public">
+          <name>AWS_FOTA_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>AWS FOTA error </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2a74c4ff6e691bae197bfccc0cb0755b2a" prot="public">
+          <name>AWS_FOTA_EVT_ERASE_PENDING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>AWS FOTA Erase pending </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2a26d49a1561516d2ea4e4948bcff3837c" prot="public">
+          <name>AWS_FOTA_EVT_ERASE_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>AWS FOTA Erase done </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2abe2b358f3ae77a3cf44320260823f55a" prot="public">
+          <name>AWS_FOTA_EVT_DL_PROGRESS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>AWS FOTA download progress </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_fota.h" line="24" column="1" bodyfile="include/net/aws_fota.h" bodystart="24" bodyend="37"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__aws__fota_ga0d9062c79a48da7eeaada60ad2fecfe6_1ga0d9062c79a48da7eeaada60ad2fecfe6" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* aws_fota_callback_t) (struct aws_fota_event *fota_evt)</definition>
+        <argsstring>)(struct aws_fota_event *fota_evt)</argsstring>
+        <name>aws_fota_callback_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_fota.h" line="51" column="9" bodyfile="include/net/aws_fota.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__aws__fota_ga1a5c24999628fb00e893f934ef1d3ed5_1ga1a5c24999628fb00e893f934ef1d3ed5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_fota_init</definition>
+        <argsstring>(struct mqtt_client *const client, aws_fota_callback_t evt_handler)</argsstring>
+        <name>aws_fota_init</name>
+        <param>
+          <type>struct mqtt_client *const</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type><ref refid="group__aws__fota_ga0d9062c79a48da7eeaada60ad2fecfe6_1ga0d9062c79a48da7eeaada60ad2fecfe6" kindref="member">aws_fota_callback_t</ref></type>
+          <declname>evt_handler</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the AWS Firmware Over the Air library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to an initialized MQTT instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>evt_handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback function for events emitted by the aws_fota library.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successfully initialized. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If any of the input values are invalid. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Negative value on error. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_fota.h" line="63" column="5" declfile="include/net/aws_fota.h" declline="63" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__fota_ga269f36510e8058c5630cce854498ec16_1ga269f36510e8058c5630cce854498ec16" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_fota_mqtt_evt_handler</definition>
+        <argsstring>(struct mqtt_client *const client, const struct mqtt_evt *evt)</argsstring>
+        <name>aws_fota_mqtt_evt_handler</name>
+        <param>
+          <type>struct mqtt_client *const</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type>const struct mqtt_evt *</type>
+          <declname>evt</declname>
+        </param>
+        <briefdescription>
+<para>AWS Firmware over the air mqtt event handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the mqtt_client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the recived mqtt_evt.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful and the application can skip handling this event. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>1</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful but wants the application to handle the event. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A negative value on error. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_fota.h" line="75" column="5" declfile="include/net/aws_fota.h" declline="75" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__fota_ga0eef68dff4dddaf56c42caaa55904bb8_1ga0eef68dff4dddaf56c42caaa55904bb8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_fota_get_job_id</definition>
+        <argsstring>(uint8_t *const job_id_buf, size_t buf_size)</argsstring>
+        <name>aws_fota_get_job_id</name>
+        <param>
+          <type>uint8_t *const</type>
+          <declname>job_id_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buf_size</declname>
+        </param>
+        <briefdescription>
+<para>Get the null-terminated job id string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>job_id_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to which the job id will be copied. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buf_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Length of the job id string (not counting the terminating null character) or a negative value on error. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_fota.h" line="86" column="5" declfile="include/net/aws_fota.h" declline="86" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>AWS FOTA library header. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>AWS_FOTA_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AWS_FOTA_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1ga4bb9f4422a0afdde491fbff5192268f2" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1ga4bb9f4422a0afdde491fbff5192268f2" kindref="member">aws_fota_evt_id</ref><sp/>{</highlight></codeline>
+<codeline lineno="26" refid="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2a1c51e5d693324bb64806be46fc1ee78d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2a1c51e5d693324bb64806be46fc1ee78d" kindref="member">AWS_FOTA_EVT_START</ref>,</highlight></codeline>
+<codeline lineno="28" refid="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2a77b7621f99dea675ec3c6075f394aa1e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2a77b7621f99dea675ec3c6075f394aa1e" kindref="member">AWS_FOTA_EVT_DONE</ref>,</highlight></codeline>
+<codeline lineno="30" refid="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2a9b60a771ee0cb0c60daccd0d22f0e711" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2a9b60a771ee0cb0c60daccd0d22f0e711" kindref="member">AWS_FOTA_EVT_ERROR</ref>,</highlight></codeline>
+<codeline lineno="32" refid="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2a74c4ff6e691bae197bfccc0cb0755b2a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2a74c4ff6e691bae197bfccc0cb0755b2a" kindref="member">AWS_FOTA_EVT_ERASE_PENDING</ref>,</highlight></codeline>
+<codeline lineno="34" refid="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2a26d49a1561516d2ea4e4948bcff3837c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2a26d49a1561516d2ea4e4948bcff3837c" kindref="member">AWS_FOTA_EVT_ERASE_DONE</ref>,</highlight></codeline>
+<codeline lineno="36" refid="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2abe2b358f3ae77a3cf44320260823f55a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1gga4bb9f4422a0afdde491fbff5192268f2abe2b358f3ae77a3cf44320260823f55a" kindref="member">AWS_FOTA_EVT_DL_PROGRESS</ref>,</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="group__aws__fota_ga6f52a7a6f1a1ef80325c53df9c70cd2e_1ga6f52a7a6f1a1ef80325c53df9c70cd2e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AWS_FOTA_EVT_DL_COMPLETE_VAL<sp/>100</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="structaws__fota__event__dl" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structaws__fota__event__dl" kindref="compound">aws_fota_event_dl</ref><sp/>{</highlight></codeline>
+<codeline lineno="41" refid="structaws__fota__event__dl_a84e52918ac31b104d2f01c293d226b3a_1a84e52918ac31b104d2f01c293d226b3a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structaws__fota__event__dl_a84e52918ac31b104d2f01c293d226b3a_1a84e52918ac31b104d2f01c293d226b3a" kindref="member">progress</ref>;<sp/></highlight><highlight class="comment">/*<sp/>Download<sp/>progress<sp/>percent,<sp/>0-100<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="structaws__fota__event" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structaws__fota__event" kindref="compound">aws_fota_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="45" refid="structaws__fota__event_a284b4316afb0c68ff663c7979eadb0f4_1a284b4316afb0c68ff663c7979eadb0f4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__aws__fota_ga4bb9f4422a0afdde491fbff5192268f2_1ga4bb9f4422a0afdde491fbff5192268f2" kindref="member">aws_fota_evt_id</ref><sp/><ref refid="structaws__fota__event_a284b4316afb0c68ff663c7979eadb0f4_1a284b4316afb0c68ff663c7979eadb0f4" kindref="member">id</ref>;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">union<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="47" refid="structaws__fota__event_ac94f4ef374e8b18f9e31f0cc3eaf3e7f_1ac94f4ef374e8b18f9e31f0cc3eaf3e7f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structaws__fota__event__dl" kindref="compound">aws_fota_event_dl</ref><sp/><ref refid="structaws__fota__event_ac94f4ef374e8b18f9e31f0cc3eaf3e7f_1ac94f4ef374e8b18f9e31f0cc3eaf3e7f" kindref="member">dl</ref>;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="49"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="group__aws__fota_ga0d9062c79a48da7eeaada60ad2fecfe6_1ga0d9062c79a48da7eeaada60ad2fecfe6" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__aws__fota_ga0d9062c79a48da7eeaada60ad2fecfe6_1ga0d9062c79a48da7eeaada60ad2fecfe6" kindref="member">aws_fota_callback_t</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structaws__fota__event" kindref="compound">aws_fota_event</ref><sp/>*fota_evt);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63" refid="group__aws__fota_ga1a5c24999628fb00e893f934ef1d3ed5_1ga1a5c24999628fb00e893f934ef1d3ed5" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__aws__fota_ga1a5c24999628fb00e893f934ef1d3ed5_1ga1a5c24999628fb00e893f934ef1d3ed5" kindref="member">aws_fota_init</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>mqtt_client<sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>client,</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__aws__fota_ga0d9062c79a48da7eeaada60ad2fecfe6_1ga0d9062c79a48da7eeaada60ad2fecfe6" kindref="member">aws_fota_callback_t</ref><sp/>evt_handler);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="group__aws__fota_ga269f36510e8058c5630cce854498ec16_1ga269f36510e8058c5630cce854498ec16" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__aws__fota_ga269f36510e8058c5630cce854498ec16_1ga269f36510e8058c5630cce854498ec16" kindref="member">aws_fota_mqtt_evt_handler</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>mqtt_client<sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>client,</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>mqtt_evt<sp/>*evt);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="group__aws__fota_ga0eef68dff4dddaf56c42caaa55904bb8_1ga0eef68dff4dddaf56c42caaa55904bb8" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__aws__fota_ga0eef68dff4dddaf56c42caaa55904bb8_1ga0eef68dff4dddaf56c42caaa55904bb8" kindref="member">aws_fota_get_job_id</ref>(uint8_t<sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>job_id_buf,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>buf_size);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>AWS_FOTA_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/net/aws_fota.h"/>
+  </compounddef>
+</doxygen>

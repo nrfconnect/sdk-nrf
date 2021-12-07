@@ -1,0 +1,321 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="app__module__event_8h" kind="file" language="C++">
+    <compoundname>app_module_event.h</compoundname>
+    <includes refid="event__manager_8h" local="no">event_manager.h</includes>
+    <includes refid="event__manager__profiler_8h" local="no">event_manager_profiler.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/asset_tracker_v2/src/events/app_module_event.h</label>
+        <link refid="app__module__event_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>event_manager.h</label>
+        <link refid="event__manager_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>event_manager_profiler.h</label>
+        <link refid="event__manager__profiler_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>profiler.h</label>
+        <link refid="profiler_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>event_manager_priv.h</label>
+      </node>
+      <node id="12">
+        <label>event_manager_profiler_priv.h</label>
+      </node>
+      <node id="7">
+        <label>logging/log_ctrl.h</label>
+      </node>
+      <node id="6">
+        <label>sys/__assert.h</label>
+      </node>
+      <node id="5">
+        <label>sys/reboot.h</label>
+      </node>
+      <node id="10">
+        <label>sys/util.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr.h</label>
+      </node>
+      <node id="4">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structapp__module__event" prot="public">app_module_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1ga826859b7de896e4cb94a4bd90ca5577c" prot="public" static="no" strong="no">
+        <type></type>
+        <name>app_module_event_type</name>
+        <enumvalue id="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577cac509bb5b7c727663a7244425cc59d7d9" prot="public">
+          <name>APP_EVT_START</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Signal that the application has done necessary setup, and now started. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577cab9e26d1eabd5f51a706822cb1376641d" prot="public">
+          <name>APP_EVT_LTE_CONNECT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Connect to LTE network. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca721bac86809f101ab67dbf3a6c635336" prot="public">
+          <name>APP_EVT_LTE_DISCONNECT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Disconnect from LTE network. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca6cfcf232d3994aed3286862e9839c330" prot="public">
+          <name>APP_EVT_DATA_GET</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Signal other modules to start sampling and report the data when it&apos;s ready. The event must also contain a list with requested data types, <ref refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1gad84e82af763a7e80908bd0ba0fdd5e00" kindref="member">app_module_data_type</ref>. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca865282a71defbc7f22f724b37d3d447e" prot="public">
+          <name>APP_EVT_DATA_GET_ALL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Create a list with all available sensor types in the system and distribute it as a APP_EVT_DATA_GET event. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca77c8906fa7720abacccb9592326f6e6a" prot="public">
+          <name>APP_EVT_CONFIG_GET</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Request latest configuration from the cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca7985e035a53faecfcb50adab4d27ff4e" prot="public">
+          <name>APP_EVT_ACTIVITY_DETECTION_ENABLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Application module is waiting for movement to trigger the next sample request. This event is used to signal the sensor module to enable activity detection. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca86cbcf98ca323072f3c9accd2903dc53" prot="public">
+          <name>APP_EVT_ACTIVITY_DETECTION_DISABLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Application module does not depend on activity detection. This event is used to signal the sensor module to disable activity detection. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577cac7273f5602011e98abcaaf3bb407035c" prot="public">
+          <name>APP_EVT_SHUTDOWN_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The application module has performed all procedures to prepare for a shutdown of the system. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca1381bee4bf59bd3097c597f4878fce01" prot="public">
+          <name>APP_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>An error has occurred in the application module. Error details are attached in the event structure. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Application event types submitted by Application module. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/app_module_event.h" line="24" column="1" bodyfile="applications/asset_tracker_v2/src/events/app_module_event.h" bodystart="24" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1gad84e82af763a7e80908bd0ba0fdd5e00" prot="public" static="no" strong="no">
+        <type></type>
+        <name>app_module_data_type</name>
+        <enumvalue id="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00a737108ceec1f7ed1013580f44045ae3c" prot="public">
+          <name>APP_DATA_ENVIRONMENTAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00a46fe23855634447edefd65ad7c1091fd" prot="public">
+          <name>APP_DATA_MOVEMENT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00ab06611fde432a30f1613327b47e1404e" prot="public">
+          <name>APP_DATA_MODEM_STATIC</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00aa791728ffdea5593d80e7ef0c3fe036f" prot="public">
+          <name>APP_DATA_MODEM_DYNAMIC</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00a37b1f36905614637ad4920a2cc50468f" prot="public">
+          <name>APP_DATA_BATTERY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00af95c74c931c8ac4860dc8355ea888f0b" prot="public">
+          <name>APP_DATA_GNSS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00acb100d693c071e21c9ee2c290ba680b1" prot="public">
+          <name>APP_DATA_NEIGHBOR_CELLS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00a892e009baad32f7251476661b22b8c9b" prot="public">
+          <name>APP_DATA_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Data types that the application module requests samples for in <ref refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1ga826859b7de896e4cb94a4bd90ca5577c" kindref="member">app_module_event_type</ref> APP_EVT_DATA_GET. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/app_module_event.h" line="75" column="1" bodyfile="applications/asset_tracker_v2/src/events/app_module_event.h" bodystart="75" bodyend="85"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_APP_MODULE_EVENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_APP_MODULE_EVENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="event__manager_8h" kindref="compound">event_manager.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="event__manager__profiler_8h" kindref="compound">event_manager_profiler.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1ga826859b7de896e4cb94a4bd90ca5577c" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1ga826859b7de896e4cb94a4bd90ca5577c" kindref="member">app_module_event_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="28" refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577cac509bb5b7c727663a7244425cc59d7d9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577cac509bb5b7c727663a7244425cc59d7d9" kindref="member">APP_EVT_START</ref>,</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577cab9e26d1eabd5f51a706822cb1376641d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577cab9e26d1eabd5f51a706822cb1376641d" kindref="member">APP_EVT_LTE_CONNECT</ref>,</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca721bac86809f101ab67dbf3a6c635336" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca721bac86809f101ab67dbf3a6c635336" kindref="member">APP_EVT_LTE_DISCONNECT</ref>,</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca6cfcf232d3994aed3286862e9839c330" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca6cfcf232d3994aed3286862e9839c330" kindref="member">APP_EVT_DATA_GET</ref>,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca865282a71defbc7f22f724b37d3d447e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca865282a71defbc7f22f724b37d3d447e" kindref="member">APP_EVT_DATA_GET_ALL</ref>,</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca77c8906fa7720abacccb9592326f6e6a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca77c8906fa7720abacccb9592326f6e6a" kindref="member">APP_EVT_CONFIG_GET</ref>,</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca7985e035a53faecfcb50adab4d27ff4e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca7985e035a53faecfcb50adab4d27ff4e" kindref="member">APP_EVT_ACTIVITY_DETECTION_ENABLE</ref>,</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca86cbcf98ca323072f3c9accd2903dc53" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca86cbcf98ca323072f3c9accd2903dc53" kindref="member">APP_EVT_ACTIVITY_DETECTION_DISABLE</ref>,</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577cac7273f5602011e98abcaaf3bb407035c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577cac7273f5602011e98abcaaf3bb407035c" kindref="member">APP_EVT_SHUTDOWN_READY</ref>,</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca1381bee4bf59bd3097c597f4878fce01" kindref="member">APP_EVT_ERROR</ref></highlight></codeline>
+<codeline lineno="70" refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca1381bee4bf59bd3097c597f4878fce01" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1gad84e82af763a7e80908bd0ba0fdd5e00" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1gad84e82af763a7e80908bd0ba0fdd5e00" kindref="member">app_module_data_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="76" refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00a737108ceec1f7ed1013580f44045ae3c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00a737108ceec1f7ed1013580f44045ae3c" kindref="member">APP_DATA_ENVIRONMENTAL</ref>,</highlight></codeline>
+<codeline lineno="77" refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00a46fe23855634447edefd65ad7c1091fd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00a46fe23855634447edefd65ad7c1091fd" kindref="member">APP_DATA_MOVEMENT</ref>,</highlight></codeline>
+<codeline lineno="78" refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00ab06611fde432a30f1613327b47e1404e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00ab06611fde432a30f1613327b47e1404e" kindref="member">APP_DATA_MODEM_STATIC</ref>,</highlight></codeline>
+<codeline lineno="79" refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00aa791728ffdea5593d80e7ef0c3fe036f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00aa791728ffdea5593d80e7ef0c3fe036f" kindref="member">APP_DATA_MODEM_DYNAMIC</ref>,</highlight></codeline>
+<codeline lineno="80" refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00a37b1f36905614637ad4920a2cc50468f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00a37b1f36905614637ad4920a2cc50468f" kindref="member">APP_DATA_BATTERY</ref>,</highlight></codeline>
+<codeline lineno="81" refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00af95c74c931c8ac4860dc8355ea888f0b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00af95c74c931c8ac4860dc8355ea888f0b" kindref="member">APP_DATA_GNSS</ref>,</highlight></codeline>
+<codeline lineno="82" refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00acb100d693c071e21c9ee2c290ba680b1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00acb100d693c071e21c9ee2c290ba680b1" kindref="member">APP_DATA_NEIGHBOR_CELLS</ref>,</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84" refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00a892e009baad32f7251476661b22b8c9b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00a892e009baad32f7251476661b22b8c9b" kindref="member">APP_DATA_COUNT</ref>,</highlight></codeline>
+<codeline lineno="85"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="structapp__module__event" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structapp__module__event" kindref="compound">app_module_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="89" refid="structapp__module__event_a9d4c3e9f4c08ee905295567a8e5f5370_1a9d4c3e9f4c08ee905295567a8e5f5370" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structevent__header" kindref="compound">event_header</ref><sp/><ref refid="structapp__module__event_a9d4c3e9f4c08ee905295567a8e5f5370_1a9d4c3e9f4c08ee905295567a8e5f5370" kindref="member">header</ref>;</highlight></codeline>
+<codeline lineno="90" refid="structapp__module__event_ab6884aeec5d58def60a8191cf4df7cf2_1ab6884aeec5d58def60a8191cf4df7cf2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1ga826859b7de896e4cb94a4bd90ca5577c" kindref="member">app_module_event_type</ref><sp/><ref refid="structapp__module__event_ab6884aeec5d58def60a8191cf4df7cf2_1ab6884aeec5d58def60a8191cf4df7cf2" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="91" refid="structapp__module__event_a9f288e6624c4b8b02d583377f802e1e1_1a9f288e6624c4b8b02d583377f802e1e1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1gad84e82af763a7e80908bd0ba0fdd5e00" kindref="member">app_module_data_type</ref><sp/><ref refid="structapp__module__event_a9f288e6624c4b8b02d583377f802e1e1_1a9f288e6624c4b8b02d583377f802e1e1" kindref="member">data_list</ref>[<ref refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00a892e009baad32f7251476661b22b8c9b" kindref="member">APP_DATA_COUNT</ref>];</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">union<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="94" refid="structapp__module__event_a849781330a57eae4d552892fbdaa58ba_1a849781330a57eae4d552892fbdaa58ba" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structapp__module__event_a849781330a57eae4d552892fbdaa58ba_1a849781330a57eae4d552892fbdaa58ba" kindref="member">err</ref>;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Module<sp/>ID,<sp/>used<sp/>when<sp/>acknowledging<sp/>shutdown<sp/>requests.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96" refid="structapp__module__event_abfdb8fa4e9a80c67c29d0407fd88ff3f_1abfdb8fa4e9a80c67c29d0407fd88ff3f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structapp__module__event_abfdb8fa4e9a80c67c29d0407fd88ff3f_1abfdb8fa4e9a80c67c29d0407fd88ff3f" kindref="member">id</ref>;</highlight></codeline>
+<codeline lineno="97" refid="structapp__module__event_ad639d195abb07a5b2d19076d3718d808_1ad639d195abb07a5b2d19076d3718d808" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/><ref refid="structapp__module__event_ad639d195abb07a5b2d19076d3718d808_1ad639d195abb07a5b2d19076d3718d808" kindref="member">data</ref>;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99" refid="structapp__module__event_af52207e9176686843ef260829ff30939_1af52207e9176686843ef260829ff30939" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structapp__module__event_af52207e9176686843ef260829ff30939_1af52207e9176686843ef260829ff30939" kindref="member">count</ref>;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104" refid="structapp__module__event_a1ae07cc32b3089342d3058313c59604b_1a1ae07cc32b3089342d3058313c59604b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structapp__module__event_a1ae07cc32b3089342d3058313c59604b_1a1ae07cc32b3089342d3058313c59604b" kindref="member">timeout</ref>;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><ref refid="group__event__manager_gade0652b21cddf1a6b4d58e668b402caa_1gade0652b21cddf1a6b4d58e668b402caa" kindref="member">EVENT_TYPE_DECLARE</ref>(<ref refid="structapp__module__event" kindref="compound">app_module_event</ref>);</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_APP_MODULE_EVENT_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/asset_tracker_v2/src/events/app_module_event.h"/>
+  </compounddef>
+</doxygen>

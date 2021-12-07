@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="motion__sensor_8h" kind="file" language="C++">
+    <compoundname>motion_sensor.h</compoundname>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23" prot="public" static="no" strong="no">
+        <type></type>
+        <name>motion_sensor_option</name>
+        <enumvalue id="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23acf32212b2a940546dcd0a17e1dec11ae" prot="public">
+          <name>MOTION_SENSOR_OPTION_CPI</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23aaa2bb269bfe652545df7bcfd82abdb17" prot="public">
+          <name>MOTION_SENSOR_OPTION_SLEEP_ENABLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23adbb07a6c381f102ea4cc257f09371155" prot="public">
+          <name>MOTION_SENSOR_OPTION_SLEEP1_TIMEOUT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23abd86dcf795633ec4b2ee83bc0d03b4d3" prot="public">
+          <name>MOTION_SENSOR_OPTION_SLEEP2_TIMEOUT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23a0cf7ba86451c8dbc73c1c0d52f38eb57" prot="public">
+          <name>MOTION_SENSOR_OPTION_SLEEP3_TIMEOUT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23a700265f00b14722e0d8ac9e634c4cf02" prot="public">
+          <name>MOTION_SENSOR_OPTION_SLEEP1_SAMPLE_TIME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23afdc7a5e0dad129e1fa27709850d10e65" prot="public">
+          <name>MOTION_SENSOR_OPTION_SLEEP2_SAMPLE_TIME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23ad84a154ff851c262dba5ed15a053fd79" prot="public">
+          <name>MOTION_SENSOR_OPTION_SLEEP3_SAMPLE_TIME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23a20bf41a603735bbc94a46cb4794850ad" prot="public">
+          <name>MOTION_SENSOR_OPTION_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/motion_sensor.h" line="9" column="1" bodyfile="applications/nrf_desktop/configuration/common/motion_sensor.h" bodystart="9" bodyend="20"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_MOTION_SENSOR_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_MOTION_SENSOR_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9" refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23" kindref="member">motion_sensor_option</ref><sp/>{</highlight></codeline>
+<codeline lineno="10" refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23acf32212b2a940546dcd0a17e1dec11ae" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23acf32212b2a940546dcd0a17e1dec11ae" kindref="member">MOTION_SENSOR_OPTION_CPI</ref>,</highlight></codeline>
+<codeline lineno="11" refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23aaa2bb269bfe652545df7bcfd82abdb17" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23aaa2bb269bfe652545df7bcfd82abdb17" kindref="member">MOTION_SENSOR_OPTION_SLEEP_ENABLE</ref>,</highlight></codeline>
+<codeline lineno="12" refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23adbb07a6c381f102ea4cc257f09371155" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23adbb07a6c381f102ea4cc257f09371155" kindref="member">MOTION_SENSOR_OPTION_SLEEP1_TIMEOUT</ref>,</highlight></codeline>
+<codeline lineno="13" refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23abd86dcf795633ec4b2ee83bc0d03b4d3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23abd86dcf795633ec4b2ee83bc0d03b4d3" kindref="member">MOTION_SENSOR_OPTION_SLEEP2_TIMEOUT</ref>,</highlight></codeline>
+<codeline lineno="14" refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23a0cf7ba86451c8dbc73c1c0d52f38eb57" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23a0cf7ba86451c8dbc73c1c0d52f38eb57" kindref="member">MOTION_SENSOR_OPTION_SLEEP3_TIMEOUT</ref>,</highlight></codeline>
+<codeline lineno="15" refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23a700265f00b14722e0d8ac9e634c4cf02" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23a700265f00b14722e0d8ac9e634c4cf02" kindref="member">MOTION_SENSOR_OPTION_SLEEP1_SAMPLE_TIME</ref>,</highlight></codeline>
+<codeline lineno="16" refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23afdc7a5e0dad129e1fa27709850d10e65" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23afdc7a5e0dad129e1fa27709850d10e65" kindref="member">MOTION_SENSOR_OPTION_SLEEP2_SAMPLE_TIME</ref>,</highlight></codeline>
+<codeline lineno="17" refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23ad84a154ff851c262dba5ed15a053fd79" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23ad84a154ff851c262dba5ed15a053fd79" kindref="member">MOTION_SENSOR_OPTION_SLEEP3_SAMPLE_TIME</ref>,</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23a20bf41a603735bbc94a46cb4794850ad" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23a20bf41a603735bbc94a46cb4794850ad" kindref="member">MOTION_SENSOR_OPTION_COUNT</ref>,</highlight></codeline>
+<codeline lineno="20"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>CONFIG_DESKTOP_MOTION_SENSOR_PMW3360_ENABLE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/>#include<sp/>&lt;<ref refid="pmw3360_8h" kindref="compound">sensor/pmw3360.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/>#define<sp/>MOTION_SENSOR_DEV_NAME<sp/>&quot;PMW3360&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>motion_sensor_option_attr[<ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23a20bf41a603735bbc94a46cb4794850ad" kindref="member">MOTION_SENSOR_OPTION_COUNT</ref>]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23acf32212b2a940546dcd0a17e1dec11ae" kindref="member">MOTION_SENSOR_OPTION_CPI</ref>]<sp/>=<sp/><ref refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aae5a6505e20706becaee5ff3f8521edae" kindref="member">PMW3360_ATTR_CPI</ref>,</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23aaa2bb269bfe652545df7bcfd82abdb17" kindref="member">MOTION_SENSOR_OPTION_SLEEP_ENABLE</ref>]<sp/>=<sp/><ref refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aaa4ecd5bc34adfec5d41f9c49284556f8" kindref="member">PMW3360_ATTR_REST_ENABLE</ref>,</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23adbb07a6c381f102ea4cc257f09371155" kindref="member">MOTION_SENSOR_OPTION_SLEEP1_TIMEOUT</ref>]<sp/>=<sp/><ref refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aaf80a9db65e747cc798c7a64963ff02cb" kindref="member">PMW3360_ATTR_RUN_DOWNSHIFT_TIME</ref>,</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23abd86dcf795633ec4b2ee83bc0d03b4d3" kindref="member">MOTION_SENSOR_OPTION_SLEEP2_TIMEOUT</ref>]<sp/>=<sp/><ref refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aa5e973481bba4c100eac760be1d25be05" kindref="member">PMW3360_ATTR_REST1_DOWNSHIFT_TIME</ref>,</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23a0cf7ba86451c8dbc73c1c0d52f38eb57" kindref="member">MOTION_SENSOR_OPTION_SLEEP3_TIMEOUT</ref>]<sp/>=<sp/><ref refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aa3d266229d8466cc26cff0c3292f9c8ef" kindref="member">PMW3360_ATTR_REST2_DOWNSHIFT_TIME</ref>,</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23a700265f00b14722e0d8ac9e634c4cf02" kindref="member">MOTION_SENSOR_OPTION_SLEEP1_SAMPLE_TIME</ref>]<sp/>=<sp/><ref refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aabbbb0a88b8181112790cef373f9fe462" kindref="member">PMW3360_ATTR_REST1_SAMPLE_TIME</ref>,</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23afdc7a5e0dad129e1fa27709850d10e65" kindref="member">MOTION_SENSOR_OPTION_SLEEP2_SAMPLE_TIME</ref>]<sp/>=<sp/><ref refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aa76b82c82fb262a91186d5936acaa9b38" kindref="member">PMW3360_ATTR_REST2_SAMPLE_TIME</ref>,</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23ad84a154ff851c262dba5ed15a053fd79" kindref="member">MOTION_SENSOR_OPTION_SLEEP3_SAMPLE_TIME</ref>]<sp/>=<sp/><ref refid="group__pmw3360_gaab336f619c0bb42471895b2a58c4064a_1ggaab336f619c0bb42471895b2a58c4064aa6c3799efb219182633d0dadfbc02b7e2" kindref="member">PMW3360_ATTR_REST3_SAMPLE_TIME</ref>,</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/>};</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="preprocessor">#elif<sp/>CONFIG_DESKTOP_MOTION_SENSOR_PAW3212_ENABLE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/>#include<sp/>&lt;<ref refid="paw3212_8h" kindref="compound">sensor/paw3212.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/>#define<sp/>MOTION_SENSOR_DEV_NAME<sp/>&quot;PAW3212&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>motion_sensor_option_attr[<ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23a20bf41a603735bbc94a46cb4794850ad" kindref="member">MOTION_SENSOR_OPTION_COUNT</ref>]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23acf32212b2a940546dcd0a17e1dec11ae" kindref="member">MOTION_SENSOR_OPTION_CPI</ref>]<sp/>=<sp/><ref refid="group__paw3212_gab99871fbcb70d37cfb6789b937d822dd_1ggab99871fbcb70d37cfb6789b937d822ddaabdda5b8556f935edbd90b96f33d8ee8" kindref="member">PAW3212_ATTR_CPI</ref>,</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23aaa2bb269bfe652545df7bcfd82abdb17" kindref="member">MOTION_SENSOR_OPTION_SLEEP_ENABLE</ref>]<sp/>=<sp/><ref refid="group__paw3212_gab99871fbcb70d37cfb6789b937d822dd_1ggab99871fbcb70d37cfb6789b937d822dda63bf7fc0978909e026acdb89211cec76" kindref="member">PAW3212_ATTR_SLEEP_ENABLE</ref>,</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23adbb07a6c381f102ea4cc257f09371155" kindref="member">MOTION_SENSOR_OPTION_SLEEP1_TIMEOUT</ref>]<sp/>=<sp/><ref refid="group__paw3212_gab99871fbcb70d37cfb6789b937d822dd_1ggab99871fbcb70d37cfb6789b937d822ddaf8cb3e9caf13be644e4988aad76148e4" kindref="member">PAW3212_ATTR_SLEEP1_TIMEOUT</ref>,</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23abd86dcf795633ec4b2ee83bc0d03b4d3" kindref="member">MOTION_SENSOR_OPTION_SLEEP2_TIMEOUT</ref>]<sp/>=<sp/><ref refid="group__paw3212_gab99871fbcb70d37cfb6789b937d822dd_1ggab99871fbcb70d37cfb6789b937d822ddacf0f4e0ea7407268257e0ab700a20bba" kindref="member">PAW3212_ATTR_SLEEP2_TIMEOUT</ref>,</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23a0cf7ba86451c8dbc73c1c0d52f38eb57" kindref="member">MOTION_SENSOR_OPTION_SLEEP3_TIMEOUT</ref>]<sp/>=<sp/><ref refid="group__paw3212_gab99871fbcb70d37cfb6789b937d822dd_1ggab99871fbcb70d37cfb6789b937d822dda5ffe15e3e7c8372a9582bef6348c92be" kindref="member">PAW3212_ATTR_SLEEP3_TIMEOUT</ref>,</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23a700265f00b14722e0d8ac9e634c4cf02" kindref="member">MOTION_SENSOR_OPTION_SLEEP1_SAMPLE_TIME</ref>]<sp/>=<sp/><ref refid="group__paw3212_gab99871fbcb70d37cfb6789b937d822dd_1ggab99871fbcb70d37cfb6789b937d822dda302f8c4cadcdb42ed6ca4b2f23591f1f" kindref="member">PAW3212_ATTR_SLEEP1_SAMPLE_TIME</ref>,</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23afdc7a5e0dad129e1fa27709850d10e65" kindref="member">MOTION_SENSOR_OPTION_SLEEP2_SAMPLE_TIME</ref>]<sp/>=<sp/><ref refid="group__paw3212_gab99871fbcb70d37cfb6789b937d822dd_1ggab99871fbcb70d37cfb6789b937d822dda5a6e9c7f9a78f886922f760e45973549" kindref="member">PAW3212_ATTR_SLEEP2_SAMPLE_TIME</ref>,</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="motion__sensor_8h_a250098ee49264c418b1d9549e32dab23_1a250098ee49264c418b1d9549e32dab23ad84a154ff851c262dba5ed15a053fd79" kindref="member">MOTION_SENSOR_OPTION_SLEEP3_SAMPLE_TIME</ref>]<sp/>=<sp/><ref refid="group__paw3212_gab99871fbcb70d37cfb6789b937d822dd_1ggab99871fbcb70d37cfb6789b937d822ddadb93860f381d9edf5ac7e3fca6f17191" kindref="member">PAW3212_ATTR_SLEEP3_SAMPLE_TIME</ref>,</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/>};</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/>#error<sp/>&quot;Sensor<sp/>not<sp/>supported&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_MOTION_SENSOR_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/common/motion_sensor.h"/>
+  </compounddef>
+</doxygen>

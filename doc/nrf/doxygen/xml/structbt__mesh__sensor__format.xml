@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__sensor__format" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_sensor_format</compoundname>
+    <includes refid="sensor_8h" local="no">sensor.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__sensor__format_a27532f0cd9fc8df811cc6b21c39630e5_1a27532f0cd9fc8df811cc6b21c39630e5" prot="public" static="no" mutable="no">
+        <type>int(*const</type>
+        <definition>int(*const bt_mesh_sensor_format::encode) (const struct bt_mesh_sensor_format *format, const struct sensor_value *val, struct net_buf_simple *buf)</definition>
+        <argsstring>)(const struct bt_mesh_sensor_format *format, const struct sensor_value *val, struct net_buf_simple *buf)</argsstring>
+        <name>encode</name>
+        <briefdescription>
+<para>Sensor channel value encode function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">format</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the format structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor channel value to encode. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to encode the value into.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, or (negative) error code otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="164" column="1" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="164" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__format_a48916546dc94327835ca373c96860ae8_1a48916546dc94327835ca373c96860ae8" prot="public" static="no" mutable="no">
+        <type>int(*const</type>
+        <definition>int(*const bt_mesh_sensor_format::decode) (const struct bt_mesh_sensor_format *format, struct net_buf_simple *buf, struct sensor_value *val)</definition>
+        <argsstring>)(const struct bt_mesh_sensor_format *format, struct net_buf_simple *buf, struct sensor_value *val)</argsstring>
+        <name>decode</name>
+        <briefdescription>
+<para>Sensor channel value decode function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">format</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the format structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to decode the value from. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting sensor channel value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, or (negative) error code otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="176" column="1" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="176" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__format_ace2c92d83a630e1436b4f84838be0168_1ace2c92d83a630e1436b4f84838be0168" prot="public" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* bt_mesh_sensor_format::user_data</definition>
+        <argsstring></argsstring>
+        <name>user_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>User data pointer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="181" column="6" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="181" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__format_a7de792bb25c2eefbc3c3ffce07f4d045_1a7de792bb25c2eefbc3c3ffce07f4d045" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t bt_mesh_sensor_format::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of the encoded data in bytes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="183" column="8" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="183" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Sensor channel value format. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/sensor.h" line="155" column="1" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="155" bodyend="189"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__sensor__format_a48916546dc94327835ca373c96860ae8_1a48916546dc94327835ca373c96860ae8" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_format</scope><name>decode</name></member>
+      <member refid="structbt__mesh__sensor__format_a27532f0cd9fc8df811cc6b21c39630e5_1a27532f0cd9fc8df811cc6b21c39630e5" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_format</scope><name>encode</name></member>
+      <member refid="structbt__mesh__sensor__format_a7de792bb25c2eefbc3c3ffce07f4d045_1a7de792bb25c2eefbc3c3ffce07f4d045" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_format</scope><name>size</name></member>
+      <member refid="structbt__mesh__sensor__format_ace2c92d83a630e1436b4f84838be0168_1ace2c92d83a630e1436b4f84838be0168" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_format</scope><name>user_data</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

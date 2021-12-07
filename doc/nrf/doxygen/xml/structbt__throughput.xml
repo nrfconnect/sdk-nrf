@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__throughput" kind="struct" language="C++" prot="public">
+    <compoundname>bt_throughput</compoundname>
+    <includes refid="throughput_8h" local="no">throughput.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__throughput_acb8c33825fa7a8be089972bc69135c56_1acb8c33825fa7a8be089972bc69135c56" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_throughput::char_handle</definition>
+        <argsstring></argsstring>
+        <name>char_handle</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Throughput Characteristic handle. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="74" column="10" bodyfile="include/bluetooth/services/throughput.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__throughput_a5004c58550c130312aebd71e78dea82a_1a5004c58550c130312aebd71e78dea82a" prot="public" static="no" mutable="no">
+        <type>struct bt_gatt_read_params</type>
+        <definition>struct bt_gatt_read_params bt_throughput::read_params</definition>
+        <argsstring></argsstring>
+        <name>read_params</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>GATT read parameters for the Throughput Characteristic. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="77" column="26" bodyfile="include/bluetooth/services/throughput.h" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__throughput_a111cf3eae21d913fdefa7b275a2522da_1a111cf3eae21d913fdefa7b275a2522da" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__throughput__cb" kindref="compound">bt_throughput_cb</ref> *</type>
+        <definition>struct bt_throughput_cb* bt_throughput::cb</definition>
+        <argsstring></argsstring>
+        <name>cb</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Throughput callback structure. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="80" column="23" bodyfile="include/bluetooth/services/throughput.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__throughput_af0eee8167c526248666a76b3607b0827_1af0eee8167c526248666a76b3607b0827" prot="public" static="no" mutable="no">
+        <type>struct bt_conn *</type>
+        <definition>struct bt_conn* bt_throughput::conn</definition>
+        <argsstring></argsstring>
+        <name>conn</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Connection object. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="83" column="14" bodyfile="include/bluetooth/services/throughput.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Throughput structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_throughput</label>
+        <link refid="structbt__throughput"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>cb</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_throughput_cb</label>
+        <link refid="structbt__throughput__cb"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/throughput.h" line="72" column="1" bodyfile="include/bluetooth/services/throughput.h" bodystart="72" bodyend="84"/>
+    <listofallmembers>
+      <member refid="structbt__throughput_a111cf3eae21d913fdefa7b275a2522da_1a111cf3eae21d913fdefa7b275a2522da" prot="public" virt="non-virtual"><scope>bt_throughput</scope><name>cb</name></member>
+      <member refid="structbt__throughput_acb8c33825fa7a8be089972bc69135c56_1acb8c33825fa7a8be089972bc69135c56" prot="public" virt="non-virtual"><scope>bt_throughput</scope><name>char_handle</name></member>
+      <member refid="structbt__throughput_af0eee8167c526248666a76b3607b0827_1af0eee8167c526248666a76b3607b0827" prot="public" virt="non-virtual"><scope>bt_throughput</scope><name>conn</name></member>
+      <member refid="structbt__throughput_a5004c58550c130312aebd71e78dea82a_1a5004c58550c130312aebd71e78dea82a" prot="public" virt="non-virtual"><scope>bt_throughput</scope><name>read_params</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

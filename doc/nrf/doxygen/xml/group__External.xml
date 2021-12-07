@@ -1,0 +1,248 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__External" kind="group">
+    <compoundname>External</compoundname>
+    <title>sensors ext_sensors</title>
+    <innerclass refid="structext__sensor__evt" prot="public">ext_sensor_evt</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__External_1gaceacf77b0bc9c42e726792ee4743c8fa" prot="public" static="no" strong="no">
+        <type></type>
+        <name>ext_sensor_evt_type</name>
+        <enumvalue id="group__External_gaceacf77b0bc9c42e726792ee4743c8fa_1ggaceacf77b0bc9c42e726792ee4743c8faaeff33d29408df08fef707df870a8e761" prot="public">
+          <name>EXT_SENSOR_EVT_ACCELEROMETER_TRIGGER</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__External_gaceacf77b0bc9c42e726792ee4743c8fa_1ggaceacf77b0bc9c42e726792ee4743c8faa04bb3b28232608a100ceaf3ad08cf04d" prot="public">
+          <name>EXT_SENSOR_EVT_ACCELEROMETER_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Events propagated when an error associated with a sensor device occurs. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__External_gaceacf77b0bc9c42e726792ee4743c8fa_1ggaceacf77b0bc9c42e726792ee4743c8faa602ae24028caabd4db057d5015dc774b" prot="public">
+          <name>EXT_SENSOR_EVT_TEMPERATURE_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__External_gaceacf77b0bc9c42e726792ee4743c8fa_1ggaceacf77b0bc9c42e726792ee4743c8faa4d739c8319a61e2e149e83a015e7a1ce" prot="public">
+          <name>EXT_SENSOR_EVT_HUMIDITY_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Enum containing callback events from library. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" line="29" column="1" bodyfile="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" bodystart="29" bodyend="36"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__External_1ga62f3128665a4307c91de97d5c3725562" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* ext_sensor_handler_t) (const struct ext_sensor_evt *const evt)</definition>
+        <argsstring>)(const struct ext_sensor_evt *const evt)</argsstring>
+        <name>ext_sensor_handler_t</name>
+        <briefdescription>
+<para>External sensors library asynchronous event handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The event and any associated parameters. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" line="55" column="9" bodyfile="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__External_1ga387f627224ee1cb5973e2638b56994c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ext_sensors_init</definition>
+        <argsstring>(ext_sensor_handler_t handler)</argsstring>
+        <name>ext_sensors_init</name>
+        <param>
+          <type><ref refid="group__External_ga62f3128665a4307c91de97d5c3725562_1ga62f3128665a4307c91de97d5c3725562" kindref="member">ext_sensor_handler_t</ref></type>
+          <declname>handler</declname>
+        </param>
+        <briefdescription>
+<para>Initializes the library, sets callback handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to callback handler.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success or negative error value on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" line="65" column="5" declfile="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" declline="65" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__External_1gae10eebf6fc29ef84b1eb1f73b53fbc29" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ext_sensors_temperature_get</definition>
+        <argsstring>(double *temp)</argsstring>
+        <name>ext_sensors_temperature_get</name>
+        <param>
+          <type>double *</type>
+          <declname>temp</declname>
+        </param>
+        <briefdescription>
+<para>Get temperature from library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">temp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to variable containing temperature in celcius.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success or negative error value on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" line="74" column="5" declfile="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" declline="74" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__External_1gab8c63e4e774d317a1b613bdb8c7a0488" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ext_sensors_humidity_get</definition>
+        <argsstring>(double *humid)</argsstring>
+        <name>ext_sensors_humidity_get</name>
+        <param>
+          <type>double *</type>
+          <declname>humid</declname>
+        </param>
+        <briefdescription>
+<para>Get humidity from library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">humid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to variable containing humidity in percentage.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success or negative error value on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" line="83" column="5" declfile="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" declline="83" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__External_1ga68df76ce23553584bb23ab9e81c08b26" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ext_sensors_mov_thres_set</definition>
+        <argsstring>(double threshold_new)</argsstring>
+        <name>ext_sensors_mov_thres_set</name>
+        <param>
+          <type>double</type>
+          <declname>threshold_new</declname>
+        </param>
+        <briefdescription>
+<para>Set the threshold that triggeres callback on accelerometer data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">threshold_new</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable that sets the accelerometer threshold value in m/s2.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success or negative error value on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" line="93" column="5" declfile="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" declline="93" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__External_1ga408151c7e74879b4c5656125ba23f27a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ext_sensors_accelerometer_trigger_callback_set</definition>
+        <argsstring>(bool enable)</argsstring>
+        <name>ext_sensors_accelerometer_trigger_callback_set</name>
+        <param>
+          <type>bool</type>
+          <declname>enable</declname>
+        </param>
+        <briefdescription>
+<para>Enable or disable accelerometer trigger handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">enable</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Flag that enables or disables callback triggers from the accelerometer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success or negative error value on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" line="102" column="5" declfile="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" declline="102" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__External_1gaaac20c964606d6377c49d208c225e946" prot="public" static="no">
+        <name>ACCELEROMETER_CHANNELS</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of accelerometer channels. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" line="26" column="9" bodyfile="applications/asset_tracker_v2/src/ext_sensors/ext_sensors.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Module that manages external sensors. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

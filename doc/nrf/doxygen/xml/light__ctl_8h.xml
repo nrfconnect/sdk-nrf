@@ -1,0 +1,211 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="light__ctl_8h" kind="file" language="C++">
+    <compoundname>light_ctl.h</compoundname>
+    <includes local="no">bluetooth/mesh.h</includes>
+    <includes refid="model__types_8h" local="no">bluetooth/mesh/model_types.h</includes>
+    <includedby refid="light__ctl__cli_8h" local="no">include/bluetooth/mesh/light_ctl_cli.h</includedby>
+    <includedby refid="light__ctl__srv_8h" local="no">include/bluetooth/mesh/light_ctl_srv.h</includedby>
+    <includedby refid="light__temp__srv_8h" local="no">include/bluetooth/mesh/light_temp_srv.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/bluetooth/mesh/light_ctl.h</label>
+        <link refid="light__ctl_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/mesh/model_types.h</label>
+        <link refid="model__types_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bluetooth/mesh.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>include/bluetooth/mesh/light_ctl.h</label>
+        <link refid="light__ctl_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/bluetooth/mesh/light_ctl_cli.h</label>
+        <link refid="light__ctl__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>include/bluetooth/mesh/light_ctl_srv.h</label>
+        <link refid="light__ctl__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>include/bluetooth/mesh/light_temp_srv.h</label>
+        <link refid="light__temp__srv_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>include/bluetooth/mesh/models.h</label>
+        <link refid="models_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>include/bluetooth/mesh/vnd/silvair_enocean_srv.h</label>
+        <link refid="silvair__enocean__srv_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structbt__mesh__light__ctl" prot="public">bt_mesh_light_ctl</innerclass>
+    <innerclass refid="structbt__mesh__light__temp" prot="public">bt_mesh_light_temp</innerclass>
+    <innerclass refid="structbt__mesh__light__ctl__set" prot="public">bt_mesh_light_ctl_set</innerclass>
+    <innerclass refid="structbt__mesh__light__ctl__status" prot="public">bt_mesh_light_ctl_status</innerclass>
+    <innerclass refid="structbt__mesh__light__temp__set" prot="public">bt_mesh_light_temp_set</innerclass>
+    <innerclass refid="structbt__mesh__light__temp__status" prot="public">bt_mesh_light_temp_status</innerclass>
+    <innerclass refid="structbt__mesh__light__temp__range" prot="public">bt_mesh_light_temp_range</innerclass>
+    <innerclass refid="structbt__mesh__light__temp__range__status" prot="public">bt_mesh_light_temp_range_status</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__light__ctl_gaa5200a34d790cbdc0af6ad52d00a9e16_1gaa5200a34d790cbdc0af6ad52d00a9e16" prot="public" static="no">
+        <name>BT_MESH_LIGHT_TEMP_MIN</name>
+        <initializer>800</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Minimum permitted Temperature level </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl.h" line="24" column="9" bodyfile="include/bluetooth/mesh/light_ctl.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__light__ctl_gaf13717070f6e7f20dea54ee6c68ef2be_1gaf13717070f6e7f20dea54ee6c68ef2be" prot="public" static="no">
+        <name>BT_MESH_LIGHT_TEMP_MAX</name>
+        <initializer>20000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum permitted Temperature level </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl.h" line="26" column="9" bodyfile="include/bluetooth/mesh/light_ctl.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_MESH_LIGHT_CTL_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/mesh.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="model__types_8h" kindref="compound">bluetooth/mesh/model_types.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="group__bt__mesh__light__ctl_gaa5200a34d790cbdc0af6ad52d00a9e16_1gaa5200a34d790cbdc0af6ad52d00a9e16" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_TEMP_MIN<sp/>800</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="group__bt__mesh__light__ctl_gaf13717070f6e7f20dea54ee6c68ef2be_1gaf13717070f6e7f20dea54ee6c68ef2be" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_TEMP_MAX<sp/>20000</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="structbt__mesh__light__ctl" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__ctl" kindref="compound">bt_mesh_light_ctl</ref><sp/>{</highlight></codeline>
+<codeline lineno="31" refid="structbt__mesh__light__ctl_a5fc48b0448fbe3594459211d7da48fc5_1a5fc48b0448fbe3594459211d7da48fc5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__mesh__light__ctl_a5fc48b0448fbe3594459211d7da48fc5_1a5fc48b0448fbe3594459211d7da48fc5" kindref="member">light</ref>;</highlight></codeline>
+<codeline lineno="33" refid="structbt__mesh__light__ctl_a68e9b881003644abffa9a3085e0d5702_1a68e9b881003644abffa9a3085e0d5702" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__mesh__light__ctl_a68e9b881003644abffa9a3085e0d5702_1a68e9b881003644abffa9a3085e0d5702" kindref="member">temp</ref>;</highlight></codeline>
+<codeline lineno="35" refid="structbt__mesh__light__ctl_a93ffe2a43cd65be2bd3d9dab76c632b7_1a93ffe2a43cd65be2bd3d9dab76c632b7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structbt__mesh__light__ctl_a93ffe2a43cd65be2bd3d9dab76c632b7_1a93ffe2a43cd65be2bd3d9dab76c632b7" kindref="member">delta_uv</ref>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="structbt__mesh__light__temp" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__temp" kindref="compound">bt_mesh_light_temp</ref><sp/>{</highlight></codeline>
+<codeline lineno="41" refid="structbt__mesh__light__temp_ace72c5a9da6e28e4ab828c52e36e1ef6_1ace72c5a9da6e28e4ab828c52e36e1ef6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__mesh__light__temp_ace72c5a9da6e28e4ab828c52e36e1ef6_1ace72c5a9da6e28e4ab828c52e36e1ef6" kindref="member">temp</ref>;</highlight></codeline>
+<codeline lineno="43" refid="structbt__mesh__light__temp_ad1031386fc9e2082e7471fb38c6bfd18_1ad1031386fc9e2082e7471fb38c6bfd18" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structbt__mesh__light__temp_ad1031386fc9e2082e7471fb38c6bfd18_1ad1031386fc9e2082e7471fb38c6bfd18" kindref="member">delta_uv</ref>;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="structbt__mesh__light__ctl__set" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__ctl__set" kindref="compound">bt_mesh_light_ctl_set</ref><sp/>{</highlight></codeline>
+<codeline lineno="49" refid="structbt__mesh__light__ctl__set_ac5a078567780e1d9c953c3abb2c8b3c0_1ac5a078567780e1d9c953c3abb2c8b3c0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__ctl" kindref="compound">bt_mesh_light_ctl</ref><sp/><ref refid="structbt__mesh__light__ctl__set_ac5a078567780e1d9c953c3abb2c8b3c0_1ac5a078567780e1d9c953c3abb2c8b3c0" kindref="member">params</ref>;</highlight></codeline>
+<codeline lineno="57" refid="structbt__mesh__light__ctl__set_afb7ac566997769b1cc6bbebbdde0a00e_1afb7ac566997769b1cc6bbebbdde0a00e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref><sp/>*<ref refid="structbt__mesh__light__ctl__set_afb7ac566997769b1cc6bbebbdde0a00e_1afb7ac566997769b1cc6bbebbdde0a00e" kindref="member">transition</ref>;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="structbt__mesh__light__ctl__status" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__ctl__status" kindref="compound">bt_mesh_light_ctl_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="63" refid="structbt__mesh__light__ctl__status_a7fa841cf2cd01f481ba574c9095e4722_1a7fa841cf2cd01f481ba574c9095e4722" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__mesh__light__ctl__status_a7fa841cf2cd01f481ba574c9095e4722_1a7fa841cf2cd01f481ba574c9095e4722" kindref="member">current_light</ref>;</highlight></codeline>
+<codeline lineno="65" refid="structbt__mesh__light__ctl__status_ae1f2061463fd3fdc3dbef65254fb887f_1ae1f2061463fd3fdc3dbef65254fb887f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__mesh__light__ctl__status_ae1f2061463fd3fdc3dbef65254fb887f_1ae1f2061463fd3fdc3dbef65254fb887f" kindref="member">current_temp</ref>;</highlight></codeline>
+<codeline lineno="67" refid="structbt__mesh__light__ctl__status_a2aba62783c5b306c5c4fa58d6f70ed2b_1a2aba62783c5b306c5c4fa58d6f70ed2b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__mesh__light__ctl__status_a2aba62783c5b306c5c4fa58d6f70ed2b_1a2aba62783c5b306c5c4fa58d6f70ed2b" kindref="member">target_light</ref>;</highlight></codeline>
+<codeline lineno="69" refid="structbt__mesh__light__ctl__status_aa9b25dca717fa5cd7febe5822d15053b_1aa9b25dca717fa5cd7febe5822d15053b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__mesh__light__ctl__status_aa9b25dca717fa5cd7febe5822d15053b_1aa9b25dca717fa5cd7febe5822d15053b" kindref="member">target_temp</ref>;</highlight></codeline>
+<codeline lineno="71" refid="structbt__mesh__light__ctl__status_a4761d987b3a2e5c694624e8b103d8f5a_1a4761d987b3a2e5c694624e8b103d8f5a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__mesh__light__ctl__status_a4761d987b3a2e5c694624e8b103d8f5a_1a4761d987b3a2e5c694624e8b103d8f5a" kindref="member">remaining_time</ref>;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="structbt__mesh__light__temp__set" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__temp__set" kindref="compound">bt_mesh_light_temp_set</ref><sp/>{</highlight></codeline>
+<codeline lineno="77" refid="structbt__mesh__light__temp__set_ab7b2b964f54bf04d32471111271e5533_1ab7b2b964f54bf04d32471111271e5533" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__temp" kindref="compound">bt_mesh_light_temp</ref><sp/><ref refid="structbt__mesh__light__temp__set_ab7b2b964f54bf04d32471111271e5533_1ab7b2b964f54bf04d32471111271e5533" kindref="member">params</ref>;</highlight></codeline>
+<codeline lineno="85" refid="structbt__mesh__light__temp__set_ac8f4a671ee66173f5f35391b308d42f9_1ac8f4a671ee66173f5f35391b308d42f9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref><sp/>*<ref refid="structbt__mesh__light__temp__set_ac8f4a671ee66173f5f35391b308d42f9_1ac8f4a671ee66173f5f35391b308d42f9" kindref="member">transition</ref>;</highlight></codeline>
+<codeline lineno="86"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89" refid="structbt__mesh__light__temp__status" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__temp__status" kindref="compound">bt_mesh_light_temp_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="91" refid="structbt__mesh__light__temp__status_a55043599226ca8bfe1efaa9dca810ac1_1a55043599226ca8bfe1efaa9dca810ac1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__temp" kindref="compound">bt_mesh_light_temp</ref><sp/><ref refid="structbt__mesh__light__temp__status_a55043599226ca8bfe1efaa9dca810ac1_1a55043599226ca8bfe1efaa9dca810ac1" kindref="member">current</ref>;</highlight></codeline>
+<codeline lineno="93" refid="structbt__mesh__light__temp__status_abada7fb7b5eb77c906e5cf32afa02790_1abada7fb7b5eb77c906e5cf32afa02790" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__temp" kindref="compound">bt_mesh_light_temp</ref><sp/><ref refid="structbt__mesh__light__temp__status_abada7fb7b5eb77c906e5cf32afa02790_1abada7fb7b5eb77c906e5cf32afa02790" kindref="member">target</ref>;</highlight></codeline>
+<codeline lineno="95" refid="structbt__mesh__light__temp__status_a88a52ecc5555c66c6c34686275e77911_1a88a52ecc5555c66c6c34686275e77911" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__mesh__light__temp__status_a88a52ecc5555c66c6c34686275e77911_1a88a52ecc5555c66c6c34686275e77911" kindref="member">remaining_time</ref>;</highlight></codeline>
+<codeline lineno="96"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99" refid="structbt__mesh__light__temp__range" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__temp__range" kindref="compound">bt_mesh_light_temp_range</ref><sp/>{</highlight></codeline>
+<codeline lineno="101" refid="structbt__mesh__light__temp__range_a6622b1b5824fa8f8986d6d3182aa19bf_1a6622b1b5824fa8f8986d6d3182aa19bf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__mesh__light__temp__range_a6622b1b5824fa8f8986d6d3182aa19bf_1a6622b1b5824fa8f8986d6d3182aa19bf" kindref="member">min</ref>;</highlight></codeline>
+<codeline lineno="103" refid="structbt__mesh__light__temp__range_a62fb9902ac550ec1cb1311b927efbb3d_1a62fb9902ac550ec1cb1311b927efbb3d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__mesh__light__temp__range_a62fb9902ac550ec1cb1311b927efbb3d_1a62fb9902ac550ec1cb1311b927efbb3d" kindref="member">max</ref>;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107" refid="structbt__mesh__light__temp__range__status" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__temp__range__status" kindref="compound">bt_mesh_light_temp_range_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="109" refid="structbt__mesh__light__temp__range__status_aba61af5577a866eee593d04bdb9b15c4_1aba61af5577a866eee593d04bdb9b15c4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1ga6fcaf7e02af730b2100af1ef0a01f323" kindref="member">bt_mesh_model_status</ref><sp/><ref refid="structbt__mesh__light__temp__range__status_aba61af5577a866eee593d04bdb9b15c4_1aba61af5577a866eee593d04bdb9b15c4" kindref="member">status</ref>;</highlight></codeline>
+<codeline lineno="111" refid="structbt__mesh__light__temp__range__status_a15dbdb315e9dd9325d49b9e6b7bbe68f_1a15dbdb315e9dd9325d49b9e6b7bbe68f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__light__temp__range" kindref="compound">bt_mesh_light_temp_range</ref><sp/><ref refid="structbt__mesh__light__temp__range__status_a15dbdb315e9dd9325d49b9e6b7bbe68f_1a15dbdb315e9dd9325d49b9e6b7bbe68f" kindref="member">range</ref>;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x5D)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_SET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x5E)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_SET_UNACK<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x5F)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_STATUS<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x60)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_TEMP_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x61)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_TEMP_RANGE_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x62)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_TEMP_RANGE_STATUS<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x63)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_TEMP_SET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x64)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_TEMP_SET_UNACK<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x65)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_TEMP_STATUS<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x66)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_DEFAULT_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x67)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_DEFAULT_STATUS<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x68)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_DEFAULT_SET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x69)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_DEFAULT_SET_UNACK<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x6A)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_TEMP_RANGE_SET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x6B)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_TEMP_RANGE_SET_UNACK<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x6C)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_MSG_LEN_GET<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_MSG_MINLEN_SET<sp/>7</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_MSG_MAXLEN_SET<sp/>9</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_MSG_MINLEN_STATUS<sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_MSG_MAXLEN_STATUS<sp/>9</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_MSG_LEN_TEMP_RANGE_STATUS<sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_MSG_MINLEN_TEMP_SET<sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_MSG_MAXLEN_TEMP_SET<sp/>7</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_MSG_MINLEN_TEMP_STATUS<sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_MSG_MAXLEN_TEMP_STATUS<sp/>9</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_MSG_LEN_DEFAULT_MSG<sp/>6</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LIGHT_CTL_MSG_LEN_TEMP_RANGE_SET<sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_MESH_LIGHT_CTL_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/mesh/light_ctl.h"/>
+  </compounddef>
+</doxygen>

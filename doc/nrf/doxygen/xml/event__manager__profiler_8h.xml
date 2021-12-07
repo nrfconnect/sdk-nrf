@@ -1,0 +1,661 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="event__manager__profiler_8h" kind="file" language="C++">
+    <compoundname>event_manager_profiler.h</compoundname>
+    <includes local="no">event_manager_profiler_priv.h</includes>
+    <includes refid="profiler_8h" local="no">profiler.h</includes>
+    <includedby refid="app__module__event_8h" local="no">applications/asset_tracker_v2/src/events/app_module_event.h</includedby>
+    <includedby refid="cloud__module__event_8h" local="no">applications/asset_tracker_v2/src/events/cloud_module_event.h</includedby>
+    <includedby refid="data__module__event_8h" local="no">applications/asset_tracker_v2/src/events/data_module_event.h</includedby>
+    <includedby refid="debug__module__event_8h" local="no">applications/asset_tracker_v2/src/events/debug_module_event.h</includedby>
+    <includedby refid="gps__module__event_8h" local="no">applications/asset_tracker_v2/src/events/gps_module_event.h</includedby>
+    <includedby refid="led__state__event_8h" local="no">applications/asset_tracker_v2/src/events/led_state_event.h</includedby>
+    <includedby refid="modem__module__event_8h" local="no">applications/asset_tracker_v2/src/events/modem_module_event.h</includedby>
+    <includedby refid="sensor__module__event_8h" local="no">applications/asset_tracker_v2/src/events/sensor_module_event.h</includedby>
+    <includedby refid="ui__module__event_8h" local="no">applications/asset_tracker_v2/src/events/ui_module_event.h</includedby>
+    <includedby refid="util__module__event_8h" local="no">applications/asset_tracker_v2/src/events/util_module_event.h</includedby>
+    <includedby refid="ble__ctrl__event_8h" local="no">applications/connectivity_bridge/src/events/ble_ctrl_event.h</includedby>
+    <includedby refid="ble__data__event_8h" local="no">applications/connectivity_bridge/src/events/ble_data_event.h</includedby>
+    <includedby refid="cdc__data__event_8h" local="no">applications/connectivity_bridge/src/events/cdc_data_event.h</includedby>
+    <includedby refid="fs__event_8h" local="no">applications/connectivity_bridge/src/events/fs_event.h</includedby>
+    <includedby refid="peer__conn__event_8h" local="no">applications/connectivity_bridge/src/events/peer_conn_event.h</includedby>
+    <includedby refid="applications_2connectivity__bridge_2src_2events_2power__event_8h" local="no">applications/connectivity_bridge/src/events/power_event.h</includedby>
+    <includedby refid="uart__data__event_8h" local="no">applications/connectivity_bridge/src/events/uart_data_event.h</includedby>
+    <includedby refid="ei__data__forwarder__event_8h" local="no">applications/machine_learning/src/events/ei_data_forwarder_event.h</includedby>
+    <includedby refid="ml__result__event_8h" local="no">applications/machine_learning/src/events/ml_result_event.h</includedby>
+    <includedby refid="ml__state__event_8h" local="no">applications/machine_learning/src/events/ml_state_event.h</includedby>
+    <includedby refid="sensor__sim__event_8h" local="no">applications/machine_learning/src/events/sensor_sim_event.h</includedby>
+    <includedby refid="battery__event_8h" local="no">applications/nrf_desktop/src/events/battery_event.h</includedby>
+    <includedby refid="ble__event_8h" local="no">applications/nrf_desktop/src/events/ble_event.h</includedby>
+    <includedby refid="config__event_8h" local="no">applications/nrf_desktop/src/events/config_event.h</includedby>
+    <includedby refid="cpu__load__event_8h" local="no">applications/nrf_desktop/src/events/cpu_load_event.h</includedby>
+    <includedby refid="hid__event_8h" local="no">applications/nrf_desktop/src/events/hid_event.h</includedby>
+    <includedby refid="hids__event_8h" local="no">applications/nrf_desktop/src/events/hids_event.h</includedby>
+    <includedby refid="motion__event_8h" local="no">applications/nrf_desktop/src/events/motion_event.h</includedby>
+    <includedby refid="passkey__event_8h" local="no">applications/nrf_desktop/src/events/passkey_event.h</includedby>
+    <includedby refid="selector__event_8h" local="no">applications/nrf_desktop/src/events/selector_event.h</includedby>
+    <includedby refid="usb__event_8h" local="no">applications/nrf_desktop/src/events/usb_event.h</includedby>
+    <includedby refid="wheel__event_8h" local="no">applications/nrf_desktop/src/events/wheel_event.h</includedby>
+    <includedby refid="pelion__event_8h" local="no">applications/pelion_client/src/events/pelion_event.h</includedby>
+    <includedby refid="ble__common__event_8h" local="no">include/caf/events/ble_common_event.h</includedby>
+    <includedby refid="ble__smp__event_8h" local="no">include/caf/events/ble_smp_event.h</includedby>
+    <includedby refid="button__event_8h" local="no">include/caf/events/button_event.h</includedby>
+    <includedby refid="click__event_8h" local="no">include/caf/events/click_event.h</includedby>
+    <includedby refid="factory__reset__event_8h" local="no">include/caf/events/factory_reset_event.h</includedby>
+    <includedby refid="force__power__down__event_8h" local="no">include/caf/events/force_power_down_event.h</includedby>
+    <includedby refid="keep__alive__event_8h" local="no">include/caf/events/keep_alive_event.h</includedby>
+    <includedby refid="led__event_8h" local="no">include/caf/events/led_event.h</includedby>
+    <includedby refid="module__state__event_8h" local="no">include/caf/events/module_state_event.h</includedby>
+    <includedby refid="net__state__event_8h" local="no">include/caf/events/net_state_event.h</includedby>
+    <includedby refid="include_2caf_2events_2power__event_8h" local="no">include/caf/events/power_event.h</includedby>
+    <includedby refid="power__manager__event_8h" local="no">include/caf/events/power_manager_event.h</includedby>
+    <includedby refid="sensor__event_8h" local="no">include/caf/events/sensor_event.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/event_manager_profiler.h</label>
+        <link refid="event__manager__profiler_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>profiler.h</label>
+        <link refid="profiler_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>event_manager_profiler_priv.h</label>
+      </node>
+      <node id="6">
+        <label>sys/__assert.h</label>
+      </node>
+      <node id="5">
+        <label>sys/util.h</label>
+      </node>
+      <node id="4">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="8">
+        <label>applications/asset_tracker_v2/include/nrf9160dk_nrf9160_ns/led_state_def.h</label>
+        <link refid="asset__tracker__v2_2include_2nrf9160dk__nrf9160__ns_2led__state__def_8h"/>
+      </node>
+      <node id="9">
+        <label>applications/asset_tracker_v2/include/thingy91_nrf9160_ns/led_state_def.h</label>
+        <link refid="asset__tracker__v2_2include_2thingy91__nrf9160__ns_2led__state__def_8h"/>
+      </node>
+      <node id="2">
+        <label>applications/asset_tracker_v2/src/events/app_module_event.h</label>
+        <link refid="app__module__event_8h"/>
+      </node>
+      <node id="3">
+        <label>applications/asset_tracker_v2/src/events/cloud_module_event.h</label>
+        <link refid="cloud__module__event_8h"/>
+      </node>
+      <node id="4">
+        <label>applications/asset_tracker_v2/src/events/data_module_event.h</label>
+        <link refid="data__module__event_8h"/>
+      </node>
+      <node id="5">
+        <label>applications/asset_tracker_v2/src/events/debug_module_event.h</label>
+        <link refid="debug__module__event_8h"/>
+      </node>
+      <node id="6">
+        <label>applications/asset_tracker_v2/src/events/gps_module_event.h</label>
+        <link refid="gps__module__event_8h"/>
+      </node>
+      <node id="7">
+        <label>applications/asset_tracker_v2/src/events/led_state_event.h</label>
+        <link refid="led__state__event_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>applications/asset_tracker_v2/src/events/modem_module_event.h</label>
+        <link refid="modem__module__event_8h"/>
+      </node>
+      <node id="11">
+        <label>applications/asset_tracker_v2/src/events/sensor_module_event.h</label>
+        <link refid="sensor__module__event_8h"/>
+      </node>
+      <node id="12">
+        <label>applications/asset_tracker_v2/src/events/ui_module_event.h</label>
+        <link refid="ui__module__event_8h"/>
+      </node>
+      <node id="13">
+        <label>applications/asset_tracker_v2/src/events/util_module_event.h</label>
+        <link refid="util__module__event_8h"/>
+      </node>
+      <node id="14">
+        <label>applications/connectivity_bridge/src/events/ble_ctrl_event.h</label>
+        <link refid="ble__ctrl__event_8h"/>
+      </node>
+      <node id="15">
+        <label>applications/connectivity_bridge/src/events/ble_data_event.h</label>
+        <link refid="ble__data__event_8h"/>
+      </node>
+      <node id="16">
+        <label>applications/connectivity_bridge/src/events/cdc_data_event.h</label>
+        <link refid="cdc__data__event_8h"/>
+      </node>
+      <node id="17">
+        <label>applications/connectivity_bridge/src/events/fs_event.h</label>
+        <link refid="fs__event_8h"/>
+      </node>
+      <node id="18">
+        <label>applications/connectivity_bridge/src/events/peer_conn_event.h</label>
+        <link refid="peer__conn__event_8h"/>
+      </node>
+      <node id="19">
+        <label>applications/connectivity_bridge/src/events/power_event.h</label>
+        <link refid="applications_2connectivity__bridge_2src_2events_2power__event_8h"/>
+      </node>
+      <node id="20">
+        <label>applications/connectivity_bridge/src/events/uart_data_event.h</label>
+        <link refid="uart__data__event_8h"/>
+      </node>
+      <node id="22">
+        <label>applications/machine_learning/configuration/nrf52840dk_nrf52840/led_state_def.h</label>
+        <link refid="machine__learning_2configuration_2nrf52840dk__nrf52840_2led__state__def_8h"/>
+      </node>
+      <node id="23">
+        <label>applications/machine_learning/configuration/nrf5340dk_nrf5340_cpuapp/led_state_def.h</label>
+        <link refid="machine__learning_2configuration_2nrf5340dk__nrf5340__cpuapp_2led__state__def_8h"/>
+      </node>
+      <node id="24">
+        <label>applications/machine_learning/configuration/thingy52_nrf52832/led_state_def.h</label>
+        <link refid="machine__learning_2configuration_2thingy52__nrf52832_2led__state__def_8h"/>
+      </node>
+      <node id="25">
+        <label>applications/machine_learning/configuration/thingy53_nrf5340_cpuapp/led_state_def.h</label>
+        <link refid="machine__learning_2configuration_2thingy53__nrf5340__cpuapp_2led__state__def_8h"/>
+      </node>
+      <node id="26">
+        <label>applications/machine_learning/configuration/thingy53_nrf5340_cpuapp_ns/led_state_def.h</label>
+        <link refid="machine__learning_2configuration_2thingy53__nrf5340__cpuapp__ns_2led__state__def_8h"/>
+      </node>
+      <node id="21">
+        <label>applications/machine_learning/src/events/ei_data_forwarder_event.h</label>
+        <link refid="ei__data__forwarder__event_8h"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>applications/machine_learning/src/events/ml_result_event.h</label>
+        <link refid="ml__result__event_8h"/>
+      </node>
+      <node id="28">
+        <label>applications/machine_learning/src/events/ml_state_event.h</label>
+        <link refid="ml__state__event_8h"/>
+      </node>
+      <node id="29">
+        <label>applications/machine_learning/src/events/sensor_sim_event.h</label>
+        <link refid="sensor__sim__event_8h"/>
+      </node>
+      <node id="67">
+        <label>applications/nrf_desktop/configuration/common/led_state.h</label>
+        <link refid="nrf__desktop_2configuration_2common_2led__state_8h"/>
+      </node>
+      <node id="32">
+        <label>applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/ble_discovery_def.h</label>
+        <link refid="nrf52820dongle__nrf52820_2ble__discovery__def_8h"/>
+      </node>
+      <node id="33">
+        <label>applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/ble_scan_def.h</label>
+        <link refid="nrf52820dongle__nrf52820_2ble__scan__def_8h"/>
+      </node>
+      <node id="34">
+        <label>applications/nrf_desktop/configuration/nrf52833dk_nrf52833/ble_discovery_def.h</label>
+        <link refid="nrf52833dk__nrf52833_2ble__discovery__def_8h"/>
+      </node>
+      <node id="35">
+        <label>applications/nrf_desktop/configuration/nrf52833dk_nrf52833/ble_scan_def.h</label>
+        <link refid="nrf52833dk__nrf52833_2ble__scan__def_8h"/>
+      </node>
+      <node id="36">
+        <label>applications/nrf_desktop/configuration/nrf52833dongle_nrf52833/ble_discovery_def.h</label>
+        <link refid="nrf52833dongle__nrf52833_2ble__discovery__def_8h"/>
+      </node>
+      <node id="37">
+        <label>applications/nrf_desktop/configuration/nrf52833dongle_nrf52833/ble_scan_def.h</label>
+        <link refid="nrf52833dongle__nrf52833_2ble__scan__def_8h"/>
+      </node>
+      <node id="38">
+        <label>applications/nrf_desktop/configuration/nrf52840dk_nrf52840/ble_discovery_def.h</label>
+        <link refid="nrf52840dk__nrf52840_2ble__discovery__def_8h"/>
+      </node>
+      <node id="39">
+        <label>applications/nrf_desktop/configuration/nrf52840dk_nrf52840/ble_scan_def.h</label>
+        <link refid="nrf52840dk__nrf52840_2ble__scan__def_8h"/>
+      </node>
+      <node id="40">
+        <label>applications/nrf_desktop/configuration/nrf52840dongle_nrf52840/ble_discovery_def.h</label>
+        <link refid="nrf52840dongle__nrf52840_2ble__discovery__def_8h"/>
+      </node>
+      <node id="41">
+        <label>applications/nrf_desktop/configuration/nrf52840dongle_nrf52840/ble_scan_def.h</label>
+        <link refid="nrf52840dongle__nrf52840_2ble__scan__def_8h"/>
+      </node>
+      <node id="42">
+        <label>applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp/ble_discovery_def.h</label>
+        <link refid="nrf5340dk__nrf5340__cpuapp_2ble__discovery__def_8h"/>
+      </node>
+      <node id="43">
+        <label>applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp/ble_scan_def.h</label>
+        <link refid="nrf5340dk__nrf5340__cpuapp_2ble__scan__def_8h"/>
+      </node>
+      <node id="30">
+        <label>applications/nrf_desktop/src/events/battery_event.h</label>
+        <link refid="battery__event_8h"/>
+      </node>
+      <node id="31">
+        <label>applications/nrf_desktop/src/events/ble_event.h</label>
+        <link refid="ble__event_8h"/>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>applications/nrf_desktop/src/events/config_event.h</label>
+        <link refid="config__event_8h"/>
+        <childnode refid="45" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>applications/nrf_desktop/src/events/cpu_load_event.h</label>
+        <link refid="cpu__load__event_8h"/>
+      </node>
+      <node id="47">
+        <label>applications/nrf_desktop/src/events/hid_event.h</label>
+        <link refid="hid__event_8h"/>
+      </node>
+      <node id="48">
+        <label>applications/nrf_desktop/src/events/hids_event.h</label>
+        <link refid="hids__event_8h"/>
+      </node>
+      <node id="49">
+        <label>applications/nrf_desktop/src/events/motion_event.h</label>
+        <link refid="motion__event_8h"/>
+      </node>
+      <node id="50">
+        <label>applications/nrf_desktop/src/events/passkey_event.h</label>
+        <link refid="passkey__event_8h"/>
+      </node>
+      <node id="51">
+        <label>applications/nrf_desktop/src/events/selector_event.h</label>
+        <link refid="selector__event_8h"/>
+      </node>
+      <node id="52">
+        <label>applications/nrf_desktop/src/events/usb_event.h</label>
+        <link refid="usb__event_8h"/>
+      </node>
+      <node id="53">
+        <label>applications/nrf_desktop/src/events/wheel_event.h</label>
+        <link refid="wheel__event_8h"/>
+      </node>
+      <node id="45">
+        <label>applications/nrf_desktop/src/util/config_channel_transport.h</label>
+        <link refid="config__channel__transport_8h"/>
+      </node>
+      <node id="55">
+        <label>applications/pelion_client/configuration/nrf52840dk_nrf52840/led_state_def.h</label>
+        <link refid="pelion__client_2configuration_2nrf52840dk__nrf52840_2led__state__def_8h"/>
+      </node>
+      <node id="56">
+        <label>applications/pelion_client/configuration/nrf5340dk_nrf5340_cpuapp/led_state_def.h</label>
+        <link refid="pelion__client_2configuration_2nrf5340dk__nrf5340__cpuapp_2led__state__def_8h"/>
+      </node>
+      <node id="57">
+        <label>applications/pelion_client/configuration/nrf5340dk_nrf5340_cpuapp_ns/led_state_def.h</label>
+        <link refid="pelion__client_2configuration_2nrf5340dk__nrf5340__cpuapp__ns_2led__state__def_8h"/>
+      </node>
+      <node id="58">
+        <label>applications/pelion_client/configuration/nrf9160dk_nrf9160_ns/led_state_def.h</label>
+        <link refid="pelion__client_2configuration_2nrf9160dk__nrf9160__ns_2led__state__def_8h"/>
+      </node>
+      <node id="54">
+        <label>applications/pelion_client/src/events/pelion_event.h</label>
+        <link refid="pelion__event_8h"/>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+      </node>
+      <node id="59">
+        <label>include/caf/events/ble_common_event.h</label>
+        <link refid="ble__common__event_8h"/>
+      </node>
+      <node id="60">
+        <label>include/caf/events/ble_smp_event.h</label>
+        <link refid="ble__smp__event_8h"/>
+      </node>
+      <node id="61">
+        <label>include/caf/events/button_event.h</label>
+        <link refid="button__event_8h"/>
+      </node>
+      <node id="62">
+        <label>include/caf/events/click_event.h</label>
+        <link refid="click__event_8h"/>
+      </node>
+      <node id="63">
+        <label>include/caf/events/factory_reset_event.h</label>
+        <link refid="factory__reset__event_8h"/>
+      </node>
+      <node id="64">
+        <label>include/caf/events/force_power_down_event.h</label>
+        <link refid="force__power__down__event_8h"/>
+      </node>
+      <node id="65">
+        <label>include/caf/events/keep_alive_event.h</label>
+        <link refid="keep__alive__event_8h"/>
+      </node>
+      <node id="66">
+        <label>include/caf/events/led_event.h</label>
+        <link refid="led__event_8h"/>
+        <childnode refid="67" relation="include">
+        </childnode>
+      </node>
+      <node id="68">
+        <label>include/caf/events/module_state_event.h</label>
+        <link refid="module__state__event_8h"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="69">
+        <label>include/caf/events/net_state_event.h</label>
+        <link refid="net__state__event_8h"/>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+      </node>
+      <node id="70">
+        <label>include/caf/events/power_event.h</label>
+        <link refid="include_2caf_2events_2power__event_8h"/>
+      </node>
+      <node id="71">
+        <label>include/caf/events/power_manager_event.h</label>
+        <link refid="power__manager__event_8h"/>
+      </node>
+      <node id="72">
+        <label>include/caf/events/sensor_event.h</label>
+        <link refid="sensor__event_8h"/>
+      </node>
+      <node id="1">
+        <label>include/event_manager_profiler.h</label>
+        <link refid="event__manager__profiler_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structprofiler__info" prot="public">profiler_info</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__event__manager__profiler_ga0def2aec07d929152fdef44cf21d0078_1ga0def2aec07d929152fdef44cf21d0078" prot="public" static="no">
+        <name>ENCODE</name>
+        <param><defname>...</defname></param>
+        <initializer>__VA_ARGS__</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Encode event data types or labels.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data types or labels to be encoded. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager_profiler.h" line="54" column="9" bodyfile="include/event_manager_profiler.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__event__manager__profiler_gadd4c317f31ca2f1dc1812967d3b9c69b_1gadd4c317f31ca2f1dc1812967d3b9c69b" prot="public" static="no">
+        <name>EVENT_INFO_DEFINE</name>
+        <param><defname>ename</defname></param>
+        <param><defname>types</defname></param>
+        <param><defname>labels</defname></param>
+        <param><defname>profile_func</defname></param>
+        <initializer>	BUILD_ASSERT(profile_func != NULL);			\
+	_EVENT_INFO_DEFINE(ename, <ref refid="group__event__manager__profiler_ga0def2aec07d929152fdef44cf21d0078_1ga0def2aec07d929152fdef44cf21d0078" kindref="member">ENCODE</ref>(types), <ref refid="group__event__manager__profiler_ga0def2aec07d929152fdef44cf21d0078_1ga0def2aec07d929152fdef44cf21d0078" kindref="member">ENCODE</ref>(labels), profile_func)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Define event profiling information.</para>
+<para>This macro provides definitions required for an event to be profiled.</para>
+<para><simplesect kind="note"><para>Types and labels of the profiled values should be wrapped with the <ref refid="group__event__manager__profiler_ga0def2aec07d929152fdef44cf21d0078_1ga0def2aec07d929152fdef44cf21d0078" kindref="member">ENCODE</ref> macro.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ename</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the event. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>types</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Types of values to profile (represented as <ref refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1ga89852e0ad202010e105fec68bcf32b0c" kindref="member">profiler_arg</ref>). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels of values to profile. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>profile_func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Function used to profile event data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager_profiler.h" line="69" column="9" bodyfile="include/event_manager_profiler.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Event Manager Profiler header. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_EVENT_MANAGER_PROFILER_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_EVENT_MANAGER_PROFILER_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;event_manager_profiler_priv.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="profiler_8h" kindref="compound">profiler.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="structprofiler__info" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structprofiler__info" kindref="compound">profiler_info</ref><sp/>{</highlight></codeline>
+<codeline lineno="34" refid="structprofiler__info_a1f27de3f29e6ca83daed4c98538ac372_1a1f27de3f29e6ca83daed4c98538ac372" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structprofiler__info_a1f27de3f29e6ca83daed4c98538ac372_1a1f27de3f29e6ca83daed4c98538ac372" kindref="member">profile_fn</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref><sp/>*buf,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structevent__header" kindref="compound">event_header</ref><sp/>*eh);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="structprofiler__info_a199801e833d536cf9ea03d96956379f9_1a199801e833d536cf9ea03d96956379f9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/><ref refid="structprofiler__info_a199801e833d536cf9ea03d96956379f9_1a199801e833d536cf9ea03d96956379f9" kindref="member">profiler_arg_cnt</ref>;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="structprofiler__info_ae3db3b83bf25f1824959685644f839cd_1ae3db3b83bf25f1824959685644f839cd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>**<ref refid="structprofiler__info_ae3db3b83bf25f1824959685644f839cd_1ae3db3b83bf25f1824959685644f839cd" kindref="member">profiler_arg_labels</ref>;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="structprofiler__info_a6007b6e69ed0a8c6d611996dee2bf201_1a6007b6e69ed0a8c6d611996dee2bf201" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1ga89852e0ad202010e105fec68bcf32b0c" kindref="member">profiler_arg</ref><sp/>*<ref refid="structprofiler__info_a6007b6e69ed0a8c6d611996dee2bf201_1a6007b6e69ed0a8c6d611996dee2bf201" kindref="member">profiler_arg_types</ref>;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="structprofiler__info_a91d95c9b7e6fc29c4b64d38fd0802a64_1a91d95c9b7e6fc29c4b64d38fd0802a64" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structprofiler__info_a91d95c9b7e6fc29c4b64d38fd0802a64_1a91d95c9b7e6fc29c4b64d38fd0802a64" kindref="member">name</ref>;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="group__event__manager__profiler_ga0def2aec07d929152fdef44cf21d0078_1ga0def2aec07d929152fdef44cf21d0078" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ENCODE(...)<sp/>__VA_ARGS__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="group__event__manager__profiler_gadd4c317f31ca2f1dc1812967d3b9c69b_1gadd4c317f31ca2f1dc1812967d3b9c69b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>EVENT_INFO_DEFINE(ename,<sp/>types,<sp/>labels,<sp/>profile_func)<sp/>\</highlight></codeline>
+<codeline lineno="70"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BUILD_ASSERT(profile_func<sp/>!=<sp/>NULL);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="71"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_EVENT_INFO_DEFINE(ename,<sp/>ENCODE(types),<sp/>ENCODE(labels),<sp/>profile_func)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_EVENT_MANAGER_PROFILER_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/event_manager_profiler.h"/>
+  </compounddef>
+</doxygen>

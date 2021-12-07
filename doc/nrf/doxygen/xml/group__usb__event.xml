@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__usb__event" kind="group">
+    <compoundname>usb_event</compoundname>
+    <title>USB Event</title>
+    <innerclass refid="structusb__state__event" prot="public">usb_state_event</innerclass>
+    <innerclass refid="structusb__hid__event" prot="public">usb_hid_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__usb__event_1ga1cbdfbce25ec33689d021842d10576d2" prot="public" static="no" strong="no">
+        <type></type>
+        <name>usb_state</name>
+        <enumvalue id="group__usb__event_ga1cbdfbce25ec33689d021842d10576d2_1gga1cbdfbce25ec33689d021842d10576d2aaa41dde7f31656f8b3e9649f110d9188" prot="public">
+          <name>USB_STATE_DISCONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Cable is not attached. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__usb__event_ga1cbdfbce25ec33689d021842d10576d2_1gga1cbdfbce25ec33689d021842d10576d2a25b72bb35524040c703e9474ad03cf38" prot="public">
+          <name>USB_STATE_POWERED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Cable attached but no communication. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__usb__event_ga1cbdfbce25ec33689d021842d10576d2_1gga1cbdfbce25ec33689d021842d10576d2a0476f164158f83b42685bdc301c27031" prot="public">
+          <name>USB_STATE_ACTIVE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Cable attached and data is exchanged. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__usb__event_ga1cbdfbce25ec33689d021842d10576d2_1gga1cbdfbce25ec33689d021842d10576d2a64dad39ce2fa9e96d554703f6a65f7ab" prot="public">
+          <name>USB_STATE_SUSPENDED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Cable attached but port is suspended. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__usb__event_ga1cbdfbce25ec33689d021842d10576d2_1gga1cbdfbce25ec33689d021842d10576d2ac9954d7fbbed02b6e2ea2e72ae284ab9" prot="public">
+          <name>USB_STATE_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Number of states. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Peer states. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/usb_event.h" line="31" column="1" bodyfile="applications/nrf_desktop/src/events/usb_event.h" bodystart="31" bodyend="38"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>USB Event. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>File defines a set of events used to transmit the information about USB state between the application modules. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,983 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="chmap__filter_8h" kind="file" language="C++">
+    <compoundname>chmap_filter.h</compoundname>
+    <includes local="no">stdbool.h</includes>
+    <includes local="no">stddef.h</includes>
+    <includes local="no">stdint.h</includes>
+    <includes local="yes">zephyr/types.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h</label>
+        <link refid="chmap__filter_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stdbool.h</label>
+      </node>
+      <node id="3">
+        <label>stddef.h</label>
+      </node>
+      <node id="4">
+        <label>stdint.h</label>
+      </node>
+      <node id="5">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structchmap__filter__params" prot="public">chmap_filter_params</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__chmap__filter_ga052a6fdda58a4406e6052e59ae3403a8_1ga052a6fdda58a4406e6052e59ae3403a8" prot="public" static="no">
+        <name>CHMAP_WLAN_802_11GN_CENTER_FREQS</name>
+        <initializer>	{12, 17, 22, 27, 32, 37, 42, 47, 52, 57, 62, 67}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="37" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_gae4ed884f006fe8ef2c8a124fe91e9769_1gae4ed884f006fe8ef2c8a124fe91e9769" prot="public" static="no">
+        <name>CHMAP_WLAN_802_11GN_CENTER_FREQ_COUNT</name>
+        <initializer>12</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="39" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_ga7064e76b24603b7ccf4bb6653a3b338d_1ga7064e76b24603b7ccf4bb6653a3b338d" prot="public" static="no">
+        <name>CHMAP_WLAN_802_11GN_CHANNEL_WIDTH_MHz</name>
+        <initializer>20</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="40" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_ga432ea2a9a94af227c04bfcd748672102_1ga432ea2a9a94af227c04bfcd748672102" prot="public" static="no">
+        <name>CHMAP_BLE_CHANNEL_COUNT</name>
+        <initializer>37</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="43" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_ga51d636c85cca5987648f57106dddc7da_1ga51d636c85cca5987648f57106dddc7da" prot="public" static="no">
+        <name>CHMAP_BLE_BITMASK_SIZE</name>
+        <initializer>5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="44" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_gafec564fa44c872ecb4cc8de386ce62b5_1gafec564fa44c872ecb4cc8de386ce62b5" prot="public" static="no">
+        <name>CHMAP_BLE_BITMASK_DEFAULT</name>
+        <initializer>{0xFF, 0xFF, 0xFF, 0xFF, 0x1F}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="45" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_gad80ff4edba0fcd81459b5a16fae1a2ae_1gad80ff4edba0fcd81459b5a16fae1a2ae" prot="public" static="no">
+        <name>CHMAP_FILTER_INST_SIZE</name>
+        <initializer>580</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="48" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_gafd82cc95d9aca5313a502a737c63e043_1gafd82cc95d9aca5313a502a737c63e043" prot="public" static="no">
+        <name>CHMAP_PARAM_DYN_EVAL_TARGET</name>
+        <initializer>10</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="52" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_ga15d6334428135e0cd132969ef23583ab_1ga15d6334428135e0cd132969ef23583ab" prot="public" static="no">
+        <name>CHMAP_PARAM_DYN_BLOCK_INCREASE</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="55" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_gaecabe6e2d968a24fbac68bce40cd0f67_1gaecabe6e2d968a24fbac68bce40cd0f67" prot="public" static="no">
+        <name>DEFAULT_PARAM_MAINTENANCE_SAMPLE_COUNT</name>
+        <initializer>2000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="58" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_gadddbb4fd258c62f4a62cc7d54eca6552_1gadddbb4fd258c62f4a62cc7d54eca6552" prot="public" static="no">
+        <name>DEFAULT_PARAM_INITIAL_RATING</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="59" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_ga73c182478b5072ccfc62c6fe3d6da1b7_1ga73c182478b5072ccfc62c6fe3d6da1b7" prot="public" static="no">
+        <name>DEFAULT_PARAM_BLE_MIN_CHANNEL_COUNT</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="60" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_ga6d80787e512866061995aca946e091bd_1ga6d80787e512866061995aca946e091bd" prot="public" static="no">
+        <name>DEFAULT_PARAM_BLE_WIFI_KEEPOUT_DURATION</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="61" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_ga74278255a36ab7dc7191f0537b284a59_1ga74278255a36ab7dc7191f0537b284a59" prot="public" static="no">
+        <name>DEFAULT_PARAM_EVAL_MAX_COUNT</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="62" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_ga57df878e4728ce329ec062f783245853_1ga57df878e4728ce329ec062f783245853" prot="public" static="no">
+        <name>DEFAULT_PARAM_EVAL_DURATION</name>
+        <initializer>5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="63" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_ga4b70184f07ef813310738a3219a94f78_1ga4b70184f07ef813310738a3219a94f78" prot="public" static="no">
+        <name>DEFAULT_PARAM_EVAL_KEEPOUT_DURATION</name>
+        <initializer>300</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="64" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_ga3576b2f571c8a491795327410c53d051_1ga3576b2f571c8a491795327410c53d051" prot="public" static="no">
+        <name>DEFAULT_PARAM_DYN_DURATIONS</name>
+        <initializer>true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="65" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_ga36ac65ff0e6fe517fe86168b624dd1b2_1ga36ac65ff0e6fe517fe86168b624dd1b2" prot="public" static="no">
+        <name>DEFAULT_PARAM_BLE_WEIGHT_CRC_OK</name>
+        <initializer>100  /* = 1.0 */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="67" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_ga1e7e942d8a62f8b13b2567ff1c6f9a9e_1ga1e7e942d8a62f8b13b2567ff1c6f9a9e" prot="public" static="no">
+        <name>DEFAULT_PARAM_BLE_WEIGHT_CRC_ERROR</name>
+        <initializer>-100 /* = -1.0 */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="68" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_gaaa59550e6ea71860fb5639f42be00e15_1gaaa59550e6ea71860fb5639f42be00e15" prot="public" static="no">
+        <name>DEFAULT_PARAM_BLE_RATING_TRIM</name>
+        <initializer>49   /* = 0.49 */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="69" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_gad6c0c4723856419eb0c4c3643db1a74d_1gad6c0c4723856419eb0c4c3643db1a74d" prot="public" static="no">
+        <name>DEFAULT_PARAM_BLE_BLOCK_THRESHOLD</name>
+        <initializer>25   /* = 0.25 */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="70" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_gad4369fb2a7bc175dd8780943a1c71b50_1gad4369fb2a7bc175dd8780943a1c71b50" prot="public" static="no">
+        <name>DEFAULT_PARAM_WIFI_RATING_INC</name>
+        <initializer>400  /* = 4.0 */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="71" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_gacf838c224087d7b88b6ce85e0c55c9dd_1gacf838c224087d7b88b6ce85e0c55c9dd" prot="public" static="no">
+        <name>DEFAULT_PARAM_WIFI_PRESENT_THRESHOLD</name>
+        <initializer>90   /* = 0.9 */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="72" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_gaa38d1ee38ccb6000997ed1bd156fb782_1gaa38d1ee38ccb6000997ed1bd156fb782" prot="public" static="no">
+        <name>DEFAULT_PARAM_WIFI_ACTIVE_THRESHOLD</name>
+        <initializer>75   /* = 0.75 */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="73" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_ga5b464204e354eb32bc67a35ebd8742a2_1ga5b464204e354eb32bc67a35ebd8742a2" prot="public" static="no">
+        <name>DEFAULT_PARAM_WIFI_RATING_TRIM</name>
+        <initializer>50   /* = 0.5 */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="74" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__chmap__filter_gaf0e6c94b4fa8923dc91b3ed9b41c78d5_1gaf0e6c94b4fa8923dc91b3ed9b41c78d5" prot="public" static="no">
+        <name>DEFAULT_PARAM_EVAL_SUCCESS_THRESHOLD</name>
+        <initializer>85   /* = 0.85 */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="75" column="9" bodyfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__chmap__filter_ga5066b477033e43707bbc4d3cccfb29fb_1ga5066b477033e43707bbc4d3cccfb29fb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const char *</type>
+        <definition>const char * chmap_filter_version</definition>
+        <argsstring>(void)</argsstring>
+        <name>chmap_filter_version</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Get library version number. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Pointer to null-terminated version string </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="137" column="12" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="137" declcolumn="12"/>
+      </memberdef>
+      <memberdef kind="function" id="group__chmap__filter_ga2dd39c05fd79b008c1ba1f6ad2014834_1ga2dd39c05fd79b008c1ba1f6ad2014834" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void chmap_filter_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>chmap_filter_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize channel map filter library. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="141" column="6" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="141" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__chmap__filter_ga62a4abcc2b9c0257b5cca7cbd08bbe02_1ga62a4abcc2b9c0257b5cca7cbd08bbe02" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int chmap_filter_instance_init</definition>
+        <argsstring>(struct chmap_instance *p_inst, size_t size)</argsstring>
+        <name>chmap_filter_instance_init</name>
+        <param>
+          <type>struct chmap_instance *</type>
+          <declname>p_inst</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+<para>Initialize channel map filter instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Sufficient memory should be supplied to hold filter state. Allocate <ref refid="group__chmap__filter_gad80ff4edba0fcd81459b5a16fae1a2ae_1gad80ff4edba0fcd81459b5a16fae1a2ae" kindref="member">CHMAP_FILTER_INST_SIZE</ref> bytes for this purpose.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">p_inst</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to instance buffer </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of instance buffer</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>when successful </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if buffer is too small </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="154" column="5" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="154" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__chmap__filter_ga06e754d82e54d70bae1a263880cfdc54_1ga06e754d82e54d70bae1a263880cfdc54" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void chmap_filter_crc_update</definition>
+        <argsstring>(struct chmap_instance *p_inst, uint8_t ch_idx, uint16_t crc_ok, uint8_t crc_error)</argsstring>
+        <name>chmap_filter_crc_update</name>
+        <param>
+          <type>struct chmap_instance *</type>
+          <declname>p_inst</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>ch_idx</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>crc_ok</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>crc_error</declname>
+        </param>
+        <briefdescription>
+<para>Update channel CRC information. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Should not preempt <ref refid="group__chmap__filter_ga44e940fc848a8c21f82c4c7b130d6332_1ga44e940fc848a8c21f82c4c7b130d6332" kindref="member">chmap_filter_process</ref></para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">p_inst</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel map instance pointer </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ch_idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>BLE channel index </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">crc_ok</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>CRC ok count </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">crc_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>CRC error count </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="165" column="6" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="165" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__chmap__filter_ga44e940fc848a8c21f82c4c7b130d6332_1ga44e940fc848a8c21f82c4c7b130d6332" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool chmap_filter_process</definition>
+        <argsstring>(struct chmap_instance *p_inst)</argsstring>
+        <name>chmap_filter_process</name>
+        <param>
+          <type>struct chmap_instance *</type>
+          <declname>p_inst</declname>
+        </param>
+        <briefdescription>
+<para>Process channel map filter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">p_inst</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel map instance pointer</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true when channel map update is recommended </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="177" column="6" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="177" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__chmap__filter_ga38bde8021efbc13f5cca821a8d475608_1ga38bde8021efbc13f5cca821a8d475608" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint8_t *</type>
+        <definition>uint8_t * chmap_filter_suggested_map_get</definition>
+        <argsstring>(struct chmap_instance *p_inst)</argsstring>
+        <name>chmap_filter_suggested_map_get</name>
+        <param>
+          <type>struct chmap_instance *</type>
+          <declname>p_inst</declname>
+        </param>
+        <briefdescription>
+<para>Get suggested channel map. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">p_inst</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel map instance pointer</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>pointer to <emphasis>CHMAP_BLE_BITMAP_SIZE</emphasis> sized channel map array </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="185" column="9" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="185" declcolumn="9"/>
+      </memberdef>
+      <memberdef kind="function" id="group__chmap__filter_ga999d5af9bce9ccc91218b91886ec2eb5_1ga999d5af9bce9ccc91218b91886ec2eb5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void chmap_filter_suggested_map_confirm</definition>
+        <argsstring>(struct chmap_instance *p_inst)</argsstring>
+        <name>chmap_filter_suggested_map_confirm</name>
+        <param>
+          <type>struct chmap_instance *</type>
+          <declname>p_inst</declname>
+        </param>
+        <briefdescription>
+<para>Confirm that suggested channel map has been applied. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is used to keep internal state consistent with actual channel map used. There will always be a brief period of inconsistency when a new channel map is applied, which is to be expected.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">p_inst</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel map instance pointer </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="196" column="6" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="196" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__chmap__filter_ga9ebb7692b6c2adc87cb6be454e65852d_1ga9ebb7692b6c2adc87cb6be454e65852d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void chmap_filter_params_get</definition>
+        <argsstring>(struct chmap_instance *p_inst, struct chmap_filter_params *p_params)</argsstring>
+        <name>chmap_filter_params_get</name>
+        <param>
+          <type>struct chmap_instance *</type>
+          <declname>p_inst</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structchmap__filter__params" kindref="compound">chmap_filter_params</ref> *</type>
+          <declname>p_params</declname>
+        </param>
+        <briefdescription>
+<para>Get dynamic parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">p_inst</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel map instance pointer </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">p_params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to hold parameter values </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="203" column="6" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="203" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__chmap__filter_ga53a86d53c364ffac375956eafd28db18_1ga53a86d53c364ffac375956eafd28db18" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int chmap_filter_params_set</definition>
+        <argsstring>(struct chmap_instance *p_inst, struct chmap_filter_params *p_params)</argsstring>
+        <name>chmap_filter_params_set</name>
+        <param>
+          <type>struct chmap_instance *</type>
+          <declname>p_inst</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structchmap__filter__params" kindref="compound">chmap_filter_params</ref> *</type>
+          <declname>p_params</declname>
+        </param>
+        <briefdescription>
+<para>Set dynamic parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Parameter update follow the read-modify-write pattern. Use <ref refid="group__chmap__filter_ga9ebb7692b6c2adc87cb6be454e65852d_1ga9ebb7692b6c2adc87cb6be454e65852d" kindref="member">chmap_filter_params_get</ref> to get the full set of parameters, make desired adjustments, then <ref refid="group__chmap__filter_ga53a86d53c364ffac375956eafd28db18_1ga53a86d53c364ffac375956eafd28db18" kindref="member">chmap_filter_params_set</ref> to set updated parameters.</para>
+<para><simplesect kind="note"><para>Parameters will be applied when <ref refid="group__chmap__filter_ga44e940fc848a8c21f82c4c7b130d6332_1ga44e940fc848a8c21f82c4c7b130d6332" kindref="member">chmap_filter_process</ref> is called.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">p_inst</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel map instance pointer </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">p_params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer that holds parameter values</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>when successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if one or more parameters are invalid. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="222" column="5" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="222" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__chmap__filter_gac7523275969401313dd2f0f84939ea46_1gac7523275969401313dd2f0f84939ea46" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint16_t</type>
+        <definition>uint16_t chmap_filter_wifi_blacklist_get</definition>
+        <argsstring>(void)</argsstring>
+        <name>chmap_filter_wifi_blacklist_get</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Get bitmask of currently blacklisted wifi channels. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>As blacklist updates happen asynchronously, <ref refid="group__chmap__filter_ga44e940fc848a8c21f82c4c7b130d6332_1ga44e940fc848a8c21f82c4c7b130d6332" kindref="member">chmap_filter_process</ref> needs to run after <ref refid="group__chmap__filter_ga4e969aba29960434f0aaacf5b19b097c_1ga4e969aba29960434f0aaacf5b19b097c" kindref="member">chmap_filter_blacklist_set</ref> for the information returned from this function to be valid.</para>
+</simplesect>
+<simplesect kind="return"><para>Bitmask of wifi channels. E.g. channel 6 and channel 8 = (1 &lt;&lt; 6) | (1 &lt;&lt; 8) = 320 </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="236" column="10" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="236" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="group__chmap__filter_ga4e969aba29960434f0aaacf5b19b097c_1ga4e969aba29960434f0aaacf5b19b097c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int chmap_filter_blacklist_set</definition>
+        <argsstring>(struct chmap_instance *p_inst, uint16_t blacklist)</argsstring>
+        <name>chmap_filter_blacklist_set</name>
+        <param>
+          <type>struct chmap_instance *</type>
+          <declname>p_inst</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>blacklist</declname>
+        </param>
+        <briefdescription>
+<para>Set wifi channels blacklist. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>One or more channels can be blacklisted. It does not matter if channels overlap. The blacklist will not be accepted if the total number of blacklisted BLE channels exceeds the minimum channel count param.</para>
+<para><simplesect kind="note"><para>Blacklist can be partially added if more than one channel is blacklisted and function return is non-zero. Use <ref refid="group__chmap__filter_gac7523275969401313dd2f0f84939ea46_1gac7523275969401313dd2f0f84939ea46" kindref="member">chmap_filter_wifi_blacklist_get</ref> to confirm.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">p_inst</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel map instance pointer </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">blacklist</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bitfield of blacklisted wifi channels. E.g. wifi channel 6 = (1 &lt;&lt; 6)</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>when successful, </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if blacklist exceeds minimum channel count. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="256" column="5" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="256" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__chmap__filter_ga727c52ee3ad1d5edf55e53625e0f1433_1ga727c52ee3ad1d5edf55e53625e0f1433" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int chmap_filter_chn_info_get</definition>
+        <argsstring>(struct chmap_instance *p_inst, uint8_t chn_idx, uint8_t *p_state, int16_t *p_rating, uint8_t *p_freq)</argsstring>
+        <name>chmap_filter_chn_info_get</name>
+        <param>
+          <type>struct chmap_instance *</type>
+          <declname>p_inst</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>chn_idx</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>p_state</declname>
+        </param>
+        <param>
+          <type>int16_t *</type>
+          <declname>p_rating</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>p_freq</declname>
+        </param>
+        <briefdescription>
+<para>Get BLE channel information. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">p_inst</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel map instance pointer </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">chn_idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bluetooth channel index (0-36) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">p_state</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to hold state value </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">p_rating</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to hold rating value </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">p_freq</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to hold frequency value [2400 + x MHz]</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>when successful </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if p_inst or chn_idx is invalid </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" line="269" column="5" declfile="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h" declline="269" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_CHMAP_FILTER_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_CHMAP_FILTER_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdbool.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stddef.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdint.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;zephyr/types.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>WLAN<sp/>characteristics<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Note:<sp/>Some<sp/>channels<sp/>may<sp/>be<sp/>omitted<sp/>to<sp/>reduce<sp/>state<sp/>memory<sp/>usage<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="group__chmap__filter_ga052a6fdda58a4406e6052e59ae3403a8_1ga052a6fdda58a4406e6052e59ae3403a8" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CHMAP_WLAN_802_11GN_CENTER_FREQS<sp/>\</highlight></codeline>
+<codeline lineno="38"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{12,<sp/>17,<sp/>22,<sp/>27,<sp/>32,<sp/>37,<sp/>42,<sp/>47,<sp/>52,<sp/>57,<sp/>62,<sp/>67}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="group__chmap__filter_gae4ed884f006fe8ef2c8a124fe91e9769_1gae4ed884f006fe8ef2c8a124fe91e9769" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CHMAP_WLAN_802_11GN_CENTER_FREQ_COUNT<sp/><sp/>12</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="group__chmap__filter_ga7064e76b24603b7ccf4bb6653a3b338d_1ga7064e76b24603b7ccf4bb6653a3b338d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CHMAP_WLAN_802_11GN_CHANNEL_WIDTH_MHz<sp/><sp/>20</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>BLE<sp/>characteristics<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="group__chmap__filter_ga432ea2a9a94af227c04bfcd748672102_1ga432ea2a9a94af227c04bfcd748672102" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CHMAP_BLE_CHANNEL_COUNT<sp/>37</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="group__chmap__filter_ga51d636c85cca5987648f57106dddc7da_1ga51d636c85cca5987648f57106dddc7da" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CHMAP_BLE_BITMASK_SIZE<sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="group__chmap__filter_gafec564fa44c872ecb4cc8de386ce62b5_1gafec564fa44c872ecb4cc8de386ce62b5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CHMAP_BLE_BITMASK_DEFAULT<sp/>{0xFF,<sp/>0xFF,<sp/>0xFF,<sp/>0xFF,<sp/>0x1F}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Filter<sp/>instance<sp/>size<sp/>[bytes]<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="group__chmap__filter_gad80ff4edba0fcd81459b5a16fae1a2ae_1gad80ff4edba0fcd81459b5a16fae1a2ae" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CHMAP_FILTER_INST_SIZE<sp/>580</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Static<sp/>parameters<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Target<sp/>evaluation<sp/>keepout<sp/>for<sp/>minimum<sp/>size<sp/>channel<sp/>map<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="group__chmap__filter_gafd82cc95d9aca5313a502a737c63e043_1gafd82cc95d9aca5313a502a737c63e043" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CHMAP_PARAM_DYN_EVAL_TARGET<sp/>10</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Channel<sp/>block<sp/>duration<sp/>factor<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Duration<sp/>will<sp/>increase<sp/>based<sp/>on<sp/>previous<sp/>channel<sp/>history<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="group__chmap__filter_ga15d6334428135e0cd132969ef23583ab_1ga15d6334428135e0cd132969ef23583ab" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CHMAP_PARAM_DYN_BLOCK_INCREASE<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Default<sp/>parameter<sp/>values<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58" refid="group__chmap__filter_gaecabe6e2d968a24fbac68bce40cd0f67_1gaecabe6e2d968a24fbac68bce40cd0f67" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DEFAULT_PARAM_MAINTENANCE_SAMPLE_COUNT<sp/>2000</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="group__chmap__filter_gadddbb4fd258c62f4a62cc7d54eca6552_1gadddbb4fd258c62f4a62cc7d54eca6552" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DEFAULT_PARAM_INITIAL_RATING<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="group__chmap__filter_ga73c182478b5072ccfc62c6fe3d6da1b7_1ga73c182478b5072ccfc62c6fe3d6da1b7" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DEFAULT_PARAM_BLE_MIN_CHANNEL_COUNT<sp/><sp/><sp/><sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="group__chmap__filter_ga6d80787e512866061995aca946e091bd_1ga6d80787e512866061995aca946e091bd" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DEFAULT_PARAM_BLE_WIFI_KEEPOUT_DURATION<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="group__chmap__filter_ga74278255a36ab7dc7191f0537b284a59_1ga74278255a36ab7dc7191f0537b284a59" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DEFAULT_PARAM_EVAL_MAX_COUNT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63" refid="group__chmap__filter_ga57df878e4728ce329ec062f783245853_1ga57df878e4728ce329ec062f783245853" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DEFAULT_PARAM_EVAL_DURATION<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="group__chmap__filter_ga4b70184f07ef813310738a3219a94f78_1ga4b70184f07ef813310738a3219a94f78" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DEFAULT_PARAM_EVAL_KEEPOUT_DURATION<sp/><sp/><sp/><sp/>300</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65" refid="group__chmap__filter_ga3576b2f571c8a491795327410c53d051_1ga3576b2f571c8a491795327410c53d051" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DEFAULT_PARAM_DYN_DURATIONS<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>true</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>The<sp/>below<sp/>parameters<sp/>are<sp/>fixed<sp/>point<sp/>values,<sp/>with<sp/>scaling<sp/>factor<sp/>of<sp/>1/100<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="group__chmap__filter_ga36ac65ff0e6fe517fe86168b624dd1b2_1ga36ac65ff0e6fe517fe86168b624dd1b2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DEFAULT_PARAM_BLE_WEIGHT_CRC_OK<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>100<sp/><sp/></highlight><highlight class="comment">/*<sp/>=<sp/>1.0<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="group__chmap__filter_ga1e7e942d8a62f8b13b2567ff1c6f9a9e_1ga1e7e942d8a62f8b13b2567ff1c6f9a9e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DEFAULT_PARAM_BLE_WEIGHT_CRC_ERROR<sp/><sp/><sp/><sp/><sp/>-100<sp/></highlight><highlight class="comment">/*<sp/>=<sp/>-1.0<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="group__chmap__filter_gaaa59550e6ea71860fb5639f42be00e15_1gaaa59550e6ea71860fb5639f42be00e15" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DEFAULT_PARAM_BLE_RATING_TRIM<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>49<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>=<sp/>0.49<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="group__chmap__filter_gad6c0c4723856419eb0c4c3643db1a74d_1gad6c0c4723856419eb0c4c3643db1a74d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DEFAULT_PARAM_BLE_BLOCK_THRESHOLD<sp/><sp/><sp/><sp/><sp/><sp/>25<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>=<sp/>0.25<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71" refid="group__chmap__filter_gad4369fb2a7bc175dd8780943a1c71b50_1gad4369fb2a7bc175dd8780943a1c71b50" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DEFAULT_PARAM_WIFI_RATING_INC<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>400<sp/><sp/></highlight><highlight class="comment">/*<sp/>=<sp/>4.0<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="group__chmap__filter_gacf838c224087d7b88b6ce85e0c55c9dd_1gacf838c224087d7b88b6ce85e0c55c9dd" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DEFAULT_PARAM_WIFI_PRESENT_THRESHOLD<sp/><sp/><sp/>90<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>=<sp/>0.9<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="group__chmap__filter_gaa38d1ee38ccb6000997ed1bd156fb782_1gaa38d1ee38ccb6000997ed1bd156fb782" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DEFAULT_PARAM_WIFI_ACTIVE_THRESHOLD<sp/><sp/><sp/><sp/>75<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>=<sp/>0.75<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="group__chmap__filter_ga5b464204e354eb32bc67a35ebd8742a2_1ga5b464204e354eb32bc67a35ebd8742a2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DEFAULT_PARAM_WIFI_RATING_TRIM<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>50<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>=<sp/>0.5<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="group__chmap__filter_gaf0e6c94b4fa8923dc91b3ed9b41c78d5_1gaf0e6c94b4fa8923dc91b3ed9b41c78d5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DEFAULT_PARAM_EVAL_SUCCESS_THRESHOLD<sp/><sp/><sp/>85<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>=<sp/>0.85<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87" refid="structchmap__filter__params" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structchmap__filter__params" kindref="compound">chmap_filter_params</ref><sp/>{</highlight></codeline>
+<codeline lineno="89" refid="structchmap__filter__params_a8575c57bcc5133c25e727c3f527fb6c1_1a8575c57bcc5133c25e727c3f527fb6c1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structchmap__filter__params_a8575c57bcc5133c25e727c3f527fb6c1_1a8575c57bcc5133c25e727c3f527fb6c1" kindref="member">maintenance_sample_count</ref>;</highlight></codeline>
+<codeline lineno="91" refid="structchmap__filter__params_a7813a5ffcab0c2ca0039b43403e939ea_1a7813a5ffcab0c2ca0039b43403e939ea" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int32_t<sp/><ref refid="structchmap__filter__params_a7813a5ffcab0c2ca0039b43403e939ea_1a7813a5ffcab0c2ca0039b43403e939ea" kindref="member">initial_rating</ref>;</highlight></codeline>
+<codeline lineno="93" refid="structchmap__filter__params_adf5ff92fb084f7813d459cb7029b217f_1adf5ff92fb084f7813d459cb7029b217f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><sp/><ref refid="structchmap__filter__params_adf5ff92fb084f7813d459cb7029b217f_1adf5ff92fb084f7813d459cb7029b217f" kindref="member">min_channel_count</ref>;</highlight></codeline>
+<codeline lineno="95" refid="structchmap__filter__params_a134ca6117e20abfa460de42cea1cc5ef_1a134ca6117e20abfa460de42cea1cc5ef" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structchmap__filter__params_a134ca6117e20abfa460de42cea1cc5ef_1a134ca6117e20abfa460de42cea1cc5ef" kindref="member">ble_weight_crc_ok</ref>;</highlight></codeline>
+<codeline lineno="97" refid="structchmap__filter__params_a1d50cbb620f904fa72ad93078466ec2e_1a1d50cbb620f904fa72ad93078466ec2e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structchmap__filter__params_a1d50cbb620f904fa72ad93078466ec2e_1a1d50cbb620f904fa72ad93078466ec2e" kindref="member">ble_weight_crc_error</ref>;</highlight></codeline>
+<codeline lineno="101" refid="structchmap__filter__params_a2df24fc206e853e1bee0c1537729fb51_1a2df24fc206e853e1bee0c1537729fb51" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structchmap__filter__params_a2df24fc206e853e1bee0c1537729fb51_1a2df24fc206e853e1bee0c1537729fb51" kindref="member">ble_rating_trim</ref>;</highlight></codeline>
+<codeline lineno="103" refid="structchmap__filter__params_aca18b5b35c1641153de72e92adc3a4c3_1aca18b5b35c1641153de72e92adc3a4c3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structchmap__filter__params_aca18b5b35c1641153de72e92adc3a4c3_1aca18b5b35c1641153de72e92adc3a4c3" kindref="member">ble_block_threshold</ref>;</highlight></codeline>
+<codeline lineno="107" refid="structchmap__filter__params_a680e864b857fd8b28432604420a9a9ea_1a680e864b857fd8b28432604420a9a9ea" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structchmap__filter__params_a680e864b857fd8b28432604420a9a9ea_1a680e864b857fd8b28432604420a9a9ea" kindref="member">ble_wifi_keepout_duration</ref>;</highlight></codeline>
+<codeline lineno="109" refid="structchmap__filter__params_aa78b97b1bc622097d84c3e168ba37422_1aa78b97b1bc622097d84c3e168ba37422" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structchmap__filter__params_aa78b97b1bc622097d84c3e168ba37422_1aa78b97b1bc622097d84c3e168ba37422" kindref="member">wifi_rating_inc</ref>;</highlight></codeline>
+<codeline lineno="111" refid="structchmap__filter__params_a42d9d6f0949d80634cddbdba191a7404_1a42d9d6f0949d80634cddbdba191a7404" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structchmap__filter__params_a42d9d6f0949d80634cddbdba191a7404_1a42d9d6f0949d80634cddbdba191a7404" kindref="member">wifi_present_threshold</ref>;</highlight></codeline>
+<codeline lineno="113" refid="structchmap__filter__params_a00e9e653b2e5c9bb5fe558eb8dafa059_1a00e9e653b2e5c9bb5fe558eb8dafa059" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structchmap__filter__params_a00e9e653b2e5c9bb5fe558eb8dafa059_1a00e9e653b2e5c9bb5fe558eb8dafa059" kindref="member">wifi_active_threshold</ref>;</highlight></codeline>
+<codeline lineno="115" refid="structchmap__filter__params_aa973ca5b8d561e19b3e70599a999c498_1aa973ca5b8d561e19b3e70599a999c498" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structchmap__filter__params_aa973ca5b8d561e19b3e70599a999c498_1aa973ca5b8d561e19b3e70599a999c498" kindref="member">wifi_rating_trim</ref>;</highlight></codeline>
+<codeline lineno="117" refid="structchmap__filter__params_ab3107321f49892a1b08a0c5a480ed15c_1ab3107321f49892a1b08a0c5a480ed15c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><sp/><ref refid="structchmap__filter__params_ab3107321f49892a1b08a0c5a480ed15c_1ab3107321f49892a1b08a0c5a480ed15c" kindref="member">eval_max_count</ref>;</highlight></codeline>
+<codeline lineno="119" refid="structchmap__filter__params_aa4ea8477374e7cca14e8f04e5f60548f_1aa4ea8477374e7cca14e8f04e5f60548f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structchmap__filter__params_aa4ea8477374e7cca14e8f04e5f60548f_1aa4ea8477374e7cca14e8f04e5f60548f" kindref="member">eval_duration</ref>;</highlight></codeline>
+<codeline lineno="121" refid="structchmap__filter__params_abe2a0de81e350764c2e33de33a92d24f_1abe2a0de81e350764c2e33de33a92d24f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structchmap__filter__params_abe2a0de81e350764c2e33de33a92d24f_1abe2a0de81e350764c2e33de33a92d24f" kindref="member">eval_keepout_duration</ref>;</highlight></codeline>
+<codeline lineno="123" refid="structchmap__filter__params_a4a34c6b97b620e8464a3fbf2de1b2f50_1a4a34c6b97b620e8464a3fbf2de1b2f50" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structchmap__filter__params_a4a34c6b97b620e8464a3fbf2de1b2f50_1a4a34c6b97b620e8464a3fbf2de1b2f50" kindref="member">eval_success_threshold</ref>;</highlight></codeline>
+<codeline lineno="128" refid="structchmap__filter__params_a22c95ae4532c65d9ca258505c41560b0_1a22c95ae4532c65d9ca258505c41560b0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structchmap__filter__params_a22c95ae4532c65d9ca258505c41560b0_1a22c95ae4532c65d9ca258505c41560b0" kindref="member">dynamic_durations</ref>;</highlight></codeline>
+<codeline lineno="129"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">chmap_instance;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137" refid="group__chmap__filter_ga5066b477033e43707bbc4d3cccfb29fb_1ga5066b477033e43707bbc4d3cccfb29fb" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="group__chmap__filter_ga5066b477033e43707bbc4d3cccfb29fb_1ga5066b477033e43707bbc4d3cccfb29fb" kindref="member">chmap_filter_version</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141" refid="group__chmap__filter_ga2dd39c05fd79b008c1ba1f6ad2014834_1ga2dd39c05fd79b008c1ba1f6ad2014834" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__chmap__filter_ga2dd39c05fd79b008c1ba1f6ad2014834_1ga2dd39c05fd79b008c1ba1f6ad2014834" kindref="member">chmap_filter_init</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154" refid="group__chmap__filter_ga62a4abcc2b9c0257b5cca7cbd08bbe02_1ga62a4abcc2b9c0257b5cca7cbd08bbe02" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__chmap__filter_ga62a4abcc2b9c0257b5cca7cbd08bbe02_1ga62a4abcc2b9c0257b5cca7cbd08bbe02" kindref="member">chmap_filter_instance_init</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>chmap_instance<sp/>*p_inst,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>size);</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165" refid="group__chmap__filter_ga06e754d82e54d70bae1a263880cfdc54_1ga06e754d82e54d70bae1a263880cfdc54" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__chmap__filter_ga06e754d82e54d70bae1a263880cfdc54_1ga06e754d82e54d70bae1a263880cfdc54" kindref="member">chmap_filter_crc_update</ref>(</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>chmap_instance<sp/>*p_inst,</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>ch_idx,</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/>crc_ok,</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>crc_error);</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="177" refid="group__chmap__filter_ga44e940fc848a8c21f82c4c7b130d6332_1ga44e940fc848a8c21f82c4c7b130d6332" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__chmap__filter_ga44e940fc848a8c21f82c4c7b130d6332_1ga44e940fc848a8c21f82c4c7b130d6332" kindref="member">chmap_filter_process</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>chmap_instance<sp/>*p_inst);</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185" refid="group__chmap__filter_ga38bde8021efbc13f5cca821a8d475608_1ga38bde8021efbc13f5cca821a8d475608" refkind="member"><highlight class="normal">uint8_t<sp/>*<ref refid="group__chmap__filter_ga38bde8021efbc13f5cca821a8d475608_1ga38bde8021efbc13f5cca821a8d475608" kindref="member">chmap_filter_suggested_map_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>chmap_instance<sp/>*p_inst);</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight></codeline>
+<codeline lineno="196" refid="group__chmap__filter_ga999d5af9bce9ccc91218b91886ec2eb5_1ga999d5af9bce9ccc91218b91886ec2eb5" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__chmap__filter_ga999d5af9bce9ccc91218b91886ec2eb5_1ga999d5af9bce9ccc91218b91886ec2eb5" kindref="member">chmap_filter_suggested_map_confirm</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>chmap_instance<sp/>*p_inst);</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight></codeline>
+<codeline lineno="203" refid="group__chmap__filter_ga9ebb7692b6c2adc87cb6be454e65852d_1ga9ebb7692b6c2adc87cb6be454e65852d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__chmap__filter_ga9ebb7692b6c2adc87cb6be454e65852d_1ga9ebb7692b6c2adc87cb6be454e65852d" kindref="member">chmap_filter_params_get</ref>(</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>chmap_instance<sp/>*p_inst,</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structchmap__filter__params" kindref="compound">chmap_filter_params</ref><sp/>*p_params);</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight></codeline>
+<codeline lineno="222" refid="group__chmap__filter_ga53a86d53c364ffac375956eafd28db18_1ga53a86d53c364ffac375956eafd28db18" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__chmap__filter_ga53a86d53c364ffac375956eafd28db18_1ga53a86d53c364ffac375956eafd28db18" kindref="member">chmap_filter_params_set</ref>(</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>chmap_instance<sp/>*p_inst,</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structchmap__filter__params" kindref="compound">chmap_filter_params</ref><sp/>*p_params);</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"></highlight></codeline>
+<codeline lineno="236" refid="group__chmap__filter_gac7523275969401313dd2f0f84939ea46_1gac7523275969401313dd2f0f84939ea46" refkind="member"><highlight class="normal">uint16_t<sp/><ref refid="group__chmap__filter_gac7523275969401313dd2f0f84939ea46_1gac7523275969401313dd2f0f84939ea46" kindref="member">chmap_filter_wifi_blacklist_get</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"></highlight></codeline>
+<codeline lineno="256" refid="group__chmap__filter_ga4e969aba29960434f0aaacf5b19b097c_1ga4e969aba29960434f0aaacf5b19b097c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__chmap__filter_ga4e969aba29960434f0aaacf5b19b097c_1ga4e969aba29960434f0aaacf5b19b097c" kindref="member">chmap_filter_blacklist_set</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>chmap_instance<sp/>*p_inst,<sp/>uint16_t<sp/>blacklist);</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"></highlight></codeline>
+<codeline lineno="269" refid="group__chmap__filter_ga727c52ee3ad1d5edf55e53625e0f1433_1ga727c52ee3ad1d5edf55e53625e0f1433" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__chmap__filter_ga727c52ee3ad1d5edf55e53625e0f1433_1ga727c52ee3ad1d5edf55e53625e0f1433" kindref="member">chmap_filter_chn_info_get</ref>(</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>chmap_instance<sp/>*p_inst,</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>chn_idx,</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*p_state,</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/>*p_rating,</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*p_freq);</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"></highlight></codeline>
+<codeline lineno="276"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="277"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="279"><highlight class="normal"></highlight></codeline>
+<codeline lineno="284"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_CHMAP_FILTER_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h"/>
+  </compounddef>
+</doxygen>

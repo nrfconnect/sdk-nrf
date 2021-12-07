@@ -1,0 +1,199 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__at__monitor" kind="group">
+    <compoundname>at_monitor</compoundname>
+    <title>AT monitor</title>
+    <innerclass refid="structat__monitor__entry" prot="public">at_monitor_entry</innerclass>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__at__monitor_1ga170f3e1648f03d53eb7c8bc9eb6091cc" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* at_monitor_handler_t) (const char *notif)</definition>
+        <argsstring>)(const char *notif)</argsstring>
+        <name>at_monitor_handler_t</name>
+        <briefdescription>
+<para>AT monitor callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>notif</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The AT notification. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_monitor.h" line="34" column="9" bodyfile="include/modem/at_monitor.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__at__monitor_1ga83bf29bcba359308bb28f834f9921450" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void at_monitor_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>at_monitor_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Ready to dispatch notifications to monitors. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_monitor.h" line="51" column="6" declfile="include/modem/at_monitor.h" declline="51" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__at__monitor_1ga756cb5435a9a4479ee2066ab9da0dbae" prot="public" static="no">
+        <name>ANY</name>
+        <initializer>NULL</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Wildcard. Match any notifications. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_monitor.h" line="54" column="9" bodyfile="include/modem/at_monitor.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__monitor_1ga734b46dfd78fbf6fc938a6f9115f2cc7" prot="public" static="no">
+        <name>PAUSED</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Monitor is paused. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_monitor.h" line="56" column="9" bodyfile="include/modem/at_monitor.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__monitor_1ga3a6d3cd70078e6046471ec528a09cd19" prot="public" static="no">
+        <name>ACTIVE</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Monitor is active, default </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_monitor.h" line="58" column="9" bodyfile="include/modem/at_monitor.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__monitor_1ga67e4b241cac410639d33722b4ec512ed" prot="public" static="no">
+        <name>AT_MONITOR</name>
+        <param><defname>name</defname></param>
+        <param><defname>_filter</defname></param>
+        <param><defname>_handler</defname></param>
+        <param><defname>...</defname></param>
+        <initializer>	static void _handler(const char *);                                    \
+	STRUCT_SECTION_ITERABLE(<ref refid="structat__monitor__entry" kindref="compound">at_monitor_entry</ref>, at_monitor_##name) = {       \
+		.filter = _filter,                                             \
+		.handler = _handler,                                           \
+		COND_CODE_1(__VA_ARGS__, (.paused = __VA_ARGS__,), ())         \
+	}</initializer>
+        <briefdescription>
+<para>Define an AT monitor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The monitor name. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_filter</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The filter for AT notification the monitor should receive, or <computeroutput>ANY</computeroutput> to receive all notifications. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The monitor callback. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional monitor initial state (<computeroutput>PAUSED</computeroutput> or <computeroutput>ACTIVE</computeroutput>). The default initial state of a monitor is active. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_monitor.h" line="70" column="9" bodyfile="include/modem/at_monitor.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__monitor_1ga7930b44e1db4fae8e6f0cc33b8014a2f" prot="public" static="no">
+        <name>at_monitor_pause</name>
+        <param><defname>mon</defname></param>
+        <initializer>	at_monitor_##mon.paused = 1</initializer>
+        <briefdescription>
+<para>Pause monitor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Pause monitor <computeroutput>mon</computeroutput> from receiving notifications.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>mon</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The monitor to pause. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_monitor.h" line="85" column="9" bodyfile="include/modem/at_monitor.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__monitor_1ga7d32e8771ee0e08f1835d194abe84480" prot="public" static="no">
+        <name>at_monitor_resume</name>
+        <param><defname>mon</defname></param>
+        <initializer>	at_monitor_##mon.paused = 0</initializer>
+        <briefdescription>
+<para>Resume monitor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Resume forwarding notifications to monitor <computeroutput>mon</computeroutput>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>mon</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The monitor to resume. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_monitor.h" line="95" column="9" bodyfile="include/modem/at_monitor.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Public APIs for the AT monitor library. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

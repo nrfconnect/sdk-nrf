@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structmodem__module__neighbor__cells" kind="struct" language="C++" prot="public">
+    <compoundname>modem_module_neighbor_cells</compoundname>
+    <includes refid="modem__module__event_8h" local="no">modem_module_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmodem__module__neighbor__cells_abe38f372eb7c47c132e7544854dff073_1abe38f372eb7c47c132e7544854dff073" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__lc__cells__info" kindref="compound">lte_lc_cells_info</ref></type>
+        <definition>struct lte_lc_cells_info modem_module_neighbor_cells::cell_data</definition>
+        <argsstring></argsstring>
+        <name>cell_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="128" column="24" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__neighbor__cells_a04e283950573955221c58036c4c3be16_1a04e283950573955221c58036c4c3be16" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__lc__ncell" kindref="compound">lte_lc_ncell</ref></type>
+        <definition>struct lte_lc_ncell modem_module_neighbor_cells::neighbor_cells[17]</definition>
+        <argsstring>[17]</argsstring>
+        <name>neighbor_cells</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="129" column="19" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__neighbor__cells_a96e10e11789781f5e5d185d543898c4e_1a96e10e11789781f5e5d185d543898c4e" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t modem_module_neighbor_cells::timestamp</definition>
+        <argsstring></argsstring>
+        <name>timestamp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="130" column="9" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>lte_lc_cell</label>
+        <link refid="structlte__lc__cell"/>
+      </node>
+      <node id="2">
+        <label>lte_lc_cells_info</label>
+        <link refid="structlte__lc__cells__info"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>current_cell</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>neighbor_cells</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>lte_lc_ncell</label>
+        <link refid="structlte__lc__ncell"/>
+      </node>
+      <node id="1">
+        <label>modem_module_neighbor_cells</label>
+        <link refid="structmodem__module__neighbor__cells"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>cell_data</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>neighbor_cells</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="127" column="1" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="127" bodyend="131"/>
+    <listofallmembers>
+      <member refid="structmodem__module__neighbor__cells_abe38f372eb7c47c132e7544854dff073_1abe38f372eb7c47c132e7544854dff073" prot="public" virt="non-virtual"><scope>modem_module_neighbor_cells</scope><name>cell_data</name></member>
+      <member refid="structmodem__module__neighbor__cells_a04e283950573955221c58036c4c3be16_1a04e283950573955221c58036c4c3be16" prot="public" virt="non-virtual"><scope>modem_module_neighbor_cells</scope><name>neighbor_cells</name></member>
+      <member refid="structmodem__module__neighbor__cells_a96e10e11789781f5e5d185d543898c4e_1a96e10e11789781f5e5d185d543898c4e" prot="public" virt="non-virtual"><scope>modem_module_neighbor_cells</scope><name>timestamp</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

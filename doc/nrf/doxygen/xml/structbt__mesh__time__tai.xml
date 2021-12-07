@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__time__tai" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_time_tai</compoundname>
+    <includes refid="time_8h" local="no">time.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__time__tai_a9c6068b78bfbac659c047391e537d5ef_1a9c6068b78bfbac659c047391e537d5ef" prot="public" static="no" mutable="no">
+        <type>uint64_t</type>
+        <definition>uint64_t bt_mesh_time_tai::sec</definition>
+        <argsstring></argsstring>
+        <name>sec</name>
+        <bitfield>40</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Seconds </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time.h" line="39" column="10" bodyfile="include/bluetooth/mesh/time.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__time__tai_aef69cdcc45f3ca7a512a151c5669aeba_1aef69cdcc45f3ca7a512a151c5669aeba" prot="public" static="no" mutable="no">
+        <type>uint64_t</type>
+        <definition>uint64_t bt_mesh_time_tai::subsec</definition>
+        <argsstring></argsstring>
+        <name>subsec</name>
+        <bitfield>8</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>1/256th seconds </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time.h" line="40" column="2" bodyfile="include/bluetooth/mesh/time.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>TAI time. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/time.h" line="38" column="1" bodyfile="include/bluetooth/mesh/time.h" bodystart="38" bodyend="41"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__time__tai_a9c6068b78bfbac659c047391e537d5ef_1a9c6068b78bfbac659c047391e537d5ef" prot="public" virt="non-virtual"><scope>bt_mesh_time_tai</scope><name>sec</name></member>
+      <member refid="structbt__mesh__time__tai_aef69cdcc45f3ca7a512a151c5669aeba_1aef69cdcc45f3ca7a512a151c5669aeba" prot="public" virt="non-virtual"><scope>bt_mesh_time_tai</scope><name>subsec</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

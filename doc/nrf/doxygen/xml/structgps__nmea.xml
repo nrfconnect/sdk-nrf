@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structgps__nmea" kind="struct" language="C++" prot="public">
+    <compoundname>gps_nmea</compoundname>
+    <includes refid="gps_8h" local="no">gps.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structgps__nmea_aca631affac28091259c2258c0243c308_1aca631affac28091259c2258c0243c308" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char gps_nmea::buf[83]</definition>
+        <argsstring>[83]</argsstring>
+        <name>buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="34" column="6" bodyfile="include/drivers/gps.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__nmea_a58fc5017abf173999564410e0bd10a48_1a58fc5017abf173999564410e0bd10a48" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t gps_nmea::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="35" column="9" bodyfile="include/drivers/gps.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/drivers/gps.h" line="33" column="1" bodyfile="include/drivers/gps.h" bodystart="33" bodyend="36"/>
+    <listofallmembers>
+      <member refid="structgps__nmea_aca631affac28091259c2258c0243c308_1aca631affac28091259c2258c0243c308" prot="public" virt="non-virtual"><scope>gps_nmea</scope><name>buf</name></member>
+      <member refid="structgps__nmea_a58fc5017abf173999564410e0bd10a48_1a58fc5017abf173999564410e0bd10a48" prot="public" virt="non-virtual"><scope>gps_nmea</scope><name>len</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

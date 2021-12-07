@@ -1,0 +1,590 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nrf__bt__scan" kind="group">
+    <compoundname>nrf_bt_scan</compoundname>
+    <title>BT Scanning module</title>
+    <innerclass refid="structbt__scan__filter__info" prot="public">bt_scan_filter_info</innerclass>
+    <innerclass refid="structbt__filter__status" prot="public">bt_filter_status</innerclass>
+    <innerclass refid="structbt__scan__adv__info" prot="public">bt_scan_adv_info</innerclass>
+    <innerclass refid="structbt__scan__short__name" prot="public">bt_scan_short_name</innerclass>
+    <innerclass refid="structbt__scan__manufacturer__data" prot="public">bt_scan_manufacturer_data</innerclass>
+    <innerclass refid="structbt__scan__init__param" prot="public">bt_scan_init_param</innerclass>
+    <innerclass refid="structbt__scan__name__filter__status" prot="public">bt_scan_name_filter_status</innerclass>
+    <innerclass refid="structbt__scan__addr__filter__status" prot="public">bt_scan_addr_filter_status</innerclass>
+    <innerclass refid="structbt__scan__uuid__filter__status" prot="public">bt_scan_uuid_filter_status</innerclass>
+    <innerclass refid="structbt__scan__appearance__filter__status" prot="public">bt_scan_appearance_filter_status</innerclass>
+    <innerclass refid="structbt__scan__manufacturer__data__filter__status" prot="public">bt_scan_manufacturer_data_filter_status</innerclass>
+    <innerclass refid="structbt__scan__filter__match" prot="public">bt_scan_filter_match</innerclass>
+    <innerclass refid="structbt__scan__device__info" prot="public">bt_scan_device_info</innerclass>
+    <innerclass refid="structcb__data" prot="public">cb_data</innerclass>
+    <innerclass refid="structbt__scan__cb" prot="public">bt_scan_cb</innerclass>
+    <innergroup refid="group__BT__SCAN__FILTER__MODE">Filter modes</innergroup>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nrf__bt__scan_1ga3e89c0eebbc80f1458a47e11de9f52f3" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_scan_type</name>
+        <enumvalue id="group__nrf__bt__scan_ga3e89c0eebbc80f1458a47e11de9f52f3_1gga3e89c0eebbc80f1458a47e11de9f52f3aa8585a9c194323f999b43ceec23c7710" prot="public">
+          <name>BT_SCAN_TYPE_SCAN_PASSIVE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Active scanning. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__bt__scan_ga3e89c0eebbc80f1458a47e11de9f52f3_1gga3e89c0eebbc80f1458a47e11de9f52f3a8f9bf315072d98eed2ce7f76c2eb326f" prot="public">
+          <name>BT_SCAN_TYPE_SCAN_ACTIVE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Passive scanning. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Scan types. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="68" column="1" bodyfile="include/bluetooth/scan.h" bodystart="68" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__nrf__bt__scan_1ga0dc9b7b2be9a0ce4d0ad93d88f399565" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_scan_filter_type</name>
+        <enumvalue id="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565a8baf63b387ed679c608f73952296b443" prot="public">
+          <name>BT_SCAN_FILTER_TYPE_NAME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Filter for names. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565a5ef77da97ee7953416cbfccb7fc75bb1" prot="public">
+          <name>BT_SCAN_FILTER_TYPE_SHORT_NAME</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Filter for short names. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565ae789bbbc20951ed3c8415b011893aee1" prot="public">
+          <name>BT_SCAN_FILTER_TYPE_ADDR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Filter for addresses. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565ab059c2432821d465a5c3bd5b467ecddb" prot="public">
+          <name>BT_SCAN_FILTER_TYPE_UUID</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Filter for UUIDs. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565a14399ae2c466c4dd54e2f1060f80d60c" prot="public">
+          <name>BT_SCAN_FILTER_TYPE_APPEARANCE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Filter for appearances. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1gga0dc9b7b2be9a0ce4d0ad93d88f399565afd7430ed5fc246963c053114f34c26e9" prot="public">
+          <name>BT_SCAN_FILTER_TYPE_MANUFACTURER_DATA</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Filter for manufacturer data. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Types of filters. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="78" column="1" bodyfile="include/bluetooth/scan.h" bodystart="78" bodyend="96"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nrf__bt__scan_1ga9d503c79f44b6df1f9f1048f64e6c0df" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_scan_cb_register</definition>
+        <argsstring>(struct bt_scan_cb *cb)</argsstring>
+        <name>bt_scan_cb_register</name>
+        <param>
+          <type>struct <ref refid="structbt__scan__cb" kindref="compound">bt_scan_cb</ref> *</type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Register scanning callbacks. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Register callbacks to monitor the state of scanning.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback struct. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="396" column="6" declfile="include/bluetooth/scan.h" declline="396" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_1gad1960003a31eeac39f7405fc93a0e086" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_scan_init</definition>
+        <argsstring>(const struct bt_scan_init_param *init)</argsstring>
+        <name>bt_scan_init</name>
+        <param>
+          <type>const struct <ref refid="structbt__scan__init__param" kindref="compound">bt_scan_init_param</ref> *</type>
+          <declname>init</declname>
+        </param>
+        <briefdescription>
+<para>Function for initializing the Scanning Module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">init</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to scanning module initialization structure. Can be initialized as NULL. If NULL, the parameters required to initialize the module are loaded from static configuration. If module is to establish the connection automatically, this must be initialized with the relevant data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="407" column="6" declfile="include/bluetooth/scan.h" declline="407" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_1ga4d503246962d58d6aea9e815e0899e45" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_scan_start</definition>
+        <argsstring>(enum bt_scan_type scan_type)</argsstring>
+        <name>bt_scan_start</name>
+        <param>
+          <type>enum <ref refid="group__nrf__bt__scan_ga3e89c0eebbc80f1458a47e11de9f52f3_1ga3e89c0eebbc80f1458a47e11de9f52f3" kindref="member">bt_scan_type</ref></type>
+          <declname>scan_type</declname>
+        </param>
+        <briefdescription>
+<para>Function for starting scanning. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function starts the scanning according to the configuration set during the initialization.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">scan_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The choice between active and passive scanning.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="419" column="5" declfile="include/bluetooth/scan.h" declline="419" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_1gaab3258c0ad99c5ffaf6231170cc3a493" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_scan_stop</definition>
+        <argsstring>(void)</argsstring>
+        <name>bt_scan_stop</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for stopping scanning. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="423" column="5" declfile="include/bluetooth/scan.h" declline="423" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_1ga494590dc24ed9aa1c057aee285fcb715" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_scan_update_init_conn_params</definition>
+        <argsstring>(struct bt_le_conn_param *new_conn_param)</argsstring>
+        <name>bt_scan_update_init_conn_params</name>
+        <param>
+          <type>struct bt_le_conn_param *</type>
+          <declname>new_conn_param</declname>
+        </param>
+        <briefdescription>
+<para>Function to update initial connection parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>The function should not be used when scanning is active.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">new_conn_param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New initial connection parameters. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="431" column="6" declfile="include/bluetooth/scan.h" declline="431" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_1ga5a166ca0ea8a0223c56af9efb5f56f67" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_scan_filter_enable</definition>
+        <argsstring>(uint8_t mode, bool match_all)</argsstring>
+        <name>bt_scan_filter_enable</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>mode</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>match_all</declname>
+        </param>
+        <briefdescription>
+<para>Function for enabling filtering. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The filters can be combined with each other. For example, you can enable one filter or several filters. For example, (BT_SCAN_NAME_FILTER | BT_SCAN_UUID_FILTER) enables UUID and name filters.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">mode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Filter mode: <ref refid="group__BT__SCAN__FILTER__MODE" kindref="compound">Filter modes</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">match_all</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If this flag is set, all types of enabled filters must be matched before generating <emphasis>BT_SCAN_EVT_FILTER_MATCH</emphasis> to the main application. Otherwise, it is enough to match one filter to trigger the filter match event.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="453" column="5" declfile="include/bluetooth/scan.h" declline="453" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_1ga02c3257b0902ba840cf83872a098bdc8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_scan_filter_disable</definition>
+        <argsstring>(void)</argsstring>
+        <name>bt_scan_filter_disable</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for disabling filtering. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function disables all filters. Even if the automatic connection establishing is enabled, the connection will not be established with the first device found after this function is called. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="462" column="6" declfile="include/bluetooth/scan.h" declline="462" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_1gab92cc96006fe08d039c69ed4b2ba2f46" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_scan_filter_status</definition>
+        <argsstring>(struct bt_filter_status *status)</argsstring>
+        <name>bt_scan_filter_status</name>
+        <param>
+          <type>struct <ref refid="structbt__filter__status" kindref="compound">bt_filter_status</ref> *</type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+<para>Function for getting filter status. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function returns the filter setting and whether it is enabled or disabled.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to Filter Status structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="474" column="5" declfile="include/bluetooth/scan.h" declline="474" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_1gac0768a9a67ddd298b108c32c48eb769c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_scan_filter_add</definition>
+        <argsstring>(enum bt_scan_filter_type type, const void *data)</argsstring>
+        <name>bt_scan_filter_add</name>
+        <param>
+          <type>enum <ref refid="group__nrf__bt__scan_ga0dc9b7b2be9a0ce4d0ad93d88f399565_1ga0dc9b7b2be9a0ce4d0ad93d88f399565" kindref="member">bt_scan_filter_type</ref></type>
+          <declname>type</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Function for adding any type of filter to the scanning. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function adds a new filter by type. The filter will be added if there is available space in this filter type array, and if the same filter has not already been set.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Filter type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to The filter data to add.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="489" column="5" declfile="include/bluetooth/scan.h" declline="489" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_1gafad82ea488fd69e8aa17033536319c30" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_scan_filter_remove_all</definition>
+        <argsstring>(void)</argsstring>
+        <name>bt_scan_filter_remove_all</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for removing all set filters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The function removes all previously set filters.</para>
+<para><simplesect kind="note"><para>After using this function the filters are still enabled. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="498" column="6" declfile="include/bluetooth/scan.h" declline="498" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_1ga4d1d8b9ae85bb4f3fe567e4599c29b47" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_scan_params_set</definition>
+        <argsstring>(struct bt_le_scan_param *scan_param)</argsstring>
+        <name>bt_scan_params_set</name>
+        <param>
+          <type>struct bt_le_scan_param *</type>
+          <declname>scan_param</declname>
+        </param>
+        <briefdescription>
+<para>Function for changing the scanning parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Use this function to change scanning parameters. During the parameter change the scan is stopped. To resume scanning, use <ref refid="group__nrf__bt__scan_ga4d503246962d58d6aea9e815e0899e45_1ga4d503246962d58d6aea9e815e0899e45" kindref="member">bt_scan_start</ref>. Scanning parameters can be set to NULL. If so, the default static configuration is used.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">scan_param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to Scanning parameters. Can be initialized as NULL.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="516" column="5" declfile="include/bluetooth/scan.h" declline="516" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_1gab844ca2c4d1010890cd8802df43796d5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_scan_conn_attempts_filter_clear</definition>
+        <argsstring>(void)</argsstring>
+        <name>bt_scan_conn_attempts_filter_clear</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Clear connection attempts filter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Use this function to remove all entries from the connection attempts filter. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="523" column="6" declfile="include/bluetooth/scan.h" declline="523" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_1ga8fa1fe8ec5635bdb6833125cf70bb8f5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_scan_blocklist_device_add</definition>
+        <argsstring>(const bt_addr_le_t *addr)</argsstring>
+        <name>bt_scan_blocklist_device_add</name>
+        <param>
+          <type>const bt_addr_le_t *</type>
+          <declname>addr</declname>
+        </param>
+        <briefdescription>
+<para>Add a new device to the blocklist. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Use this function to add a device to the blocklist. Scanning module does not generate any event for the blocklist device or does not try to connect such devices.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">addr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Device address.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="537" column="5" declfile="include/bluetooth/scan.h" declline="537" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__bt__scan_1ga9af099d21381896d402fffb958daf58f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_scan_blocklist_clear</definition>
+        <argsstring>(void)</argsstring>
+        <name>bt_scan_blocklist_clear</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Clear the blocklist of the scanning module device. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Use this function to remove all entries from the blocklist. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="544" column="6" declfile="include/bluetooth/scan.h" declline="544" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nrf__bt__scan_1gaaecbaf4fa4218aa999b42844a8045ce9" prot="public" static="no">
+        <name>BT_SCAN_CB_INIT</name>
+        <param><defname>_name</defname></param>
+        <param><defname>match_fun</defname></param>
+        <param><defname>no_match_fun</defname></param>
+        <param><defname>error_fun</defname></param>
+        <param><defname>connecting_fun</defname></param>
+        <initializer>	static const struct <ref refid="structcb__data" kindref="compound">cb_data</ref> _name ## _data = { 	\
+		.filter_match = match_fun,		\
+		.filter_no_match = no_match_fun,	\
+		.connecting_error = error_fun,		\
+		.connecting = connecting_fun,		\
+	};						\
+	static struct <ref refid="structbt__scan__cb" kindref="compound">bt_scan_cb</ref> _name = {		\
+		.cb_addr = &amp;_name ## _data,		\
+	}</initializer>
+        <briefdescription>
+<para>Initializing macro for scanning module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is macro initializing necessary structures for <ref refid="structbt__scan__cb" kindref="compound">bt_scan_cb</ref> type.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Unique name for <ref refid="structbt__scan__cb" kindref="compound">bt_scan_cb</ref> structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">match_fun</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scan filter matched function pointer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">no_match_fun</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scan filter unmatched (the device was not found) function pointer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">error_fun</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Error when connecting function pointer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">connecting_fun</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connecting data function pointer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="315" column="9" bodyfile="include/bluetooth/scan.h" bodystart="311" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>BT Scanning module. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The Scanning Module handles the Bluetooth LE scanning for your application. The module offers several criteria for filtering the devices available for connection, and it can also work in the simple mode without using the filtering. If an event handler is provided, your main application can react to a filter match. The module can also be configured to automatically connect after it matches a filter.</para>
+<para><simplesect kind="note"><para>The Scanning Module also supports applications with a multicentral link. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

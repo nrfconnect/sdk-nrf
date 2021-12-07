@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__prop__val" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_prop_val</compoundname>
+    <includes refid="gen__prop_8h" local="no">gen_prop.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__prop__val_a90ea9b88afe9e5c2defeaa6759d20a6e_1a90ea9b88afe9e5c2defeaa6759d20a6e" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__prop" kindref="compound">bt_mesh_prop</ref></type>
+        <definition>struct bt_mesh_prop bt_mesh_prop_val::meta</definition>
+        <argsstring></argsstring>
+        <name>meta</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Metadata for this property. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop.h" line="59" column="19" bodyfile="include/bluetooth/mesh/gen_prop.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__prop__val_ab70971d2539ef1671ed880b734769812_1ab70971d2539ef1671ed880b734769812" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t bt_mesh_prop_val::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of the property value. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop.h" line="60" column="8" bodyfile="include/bluetooth/mesh/gen_prop.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__prop__val_a2d0b3085409881c8ed93e76123325358_1a2d0b3085409881c8ed93e76123325358" prot="public" static="no" mutable="no">
+        <type>uint8_t *</type>
+        <definition>uint8_t* bt_mesh_prop_val::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Property value. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop.h" line="61" column="9" bodyfile="include/bluetooth/mesh/gen_prop.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Property value representation. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_mesh_prop</label>
+        <link refid="structbt__mesh__prop"/>
+      </node>
+      <node id="1">
+        <label>bt_mesh_prop_val</label>
+        <link refid="structbt__mesh__prop__val"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>meta</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/gen_prop.h" line="58" column="1" bodyfile="include/bluetooth/mesh/gen_prop.h" bodystart="58" bodyend="62"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__prop__val_a90ea9b88afe9e5c2defeaa6759d20a6e_1a90ea9b88afe9e5c2defeaa6759d20a6e" prot="public" virt="non-virtual"><scope>bt_mesh_prop_val</scope><name>meta</name></member>
+      <member refid="structbt__mesh__prop__val_ab70971d2539ef1671ed880b734769812_1ab70971d2539ef1671ed880b734769812" prot="public" virt="non-virtual"><scope>bt_mesh_prop_val</scope><name>size</name></member>
+      <member refid="structbt__mesh__prop__val_a2d0b3085409881c8ed93e76123325358_1a2d0b3085409881c8ed93e76123325358" prot="public" virt="non-virtual"><scope>bt_mesh_prop_val</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

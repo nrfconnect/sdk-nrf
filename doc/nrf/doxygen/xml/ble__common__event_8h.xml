@@ -1,0 +1,359 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="ble__common__event_8h" kind="file" language="C++">
+    <compoundname>ble_common_event.h</compoundname>
+    <includes local="no">bluetooth/bluetooth.h</includes>
+    <includes local="no">bluetooth/conn.h</includes>
+    <includes refid="event__manager_8h" local="no">event_manager.h</includes>
+    <includes refid="event__manager__profiler_8h" local="no">event_manager_profiler.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/caf/events/ble_common_event.h</label>
+        <link refid="ble__common__event_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>event_manager.h</label>
+        <link refid="event__manager_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>event_manager_profiler.h</label>
+        <link refid="event__manager__profiler_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>profiler.h</label>
+        <link refid="profiler_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bluetooth/bluetooth.h</label>
+      </node>
+      <node id="3">
+        <label>bluetooth/conn.h</label>
+      </node>
+      <node id="10">
+        <label>event_manager_priv.h</label>
+      </node>
+      <node id="14">
+        <label>event_manager_profiler_priv.h</label>
+      </node>
+      <node id="9">
+        <label>logging/log_ctrl.h</label>
+      </node>
+      <node id="8">
+        <label>sys/__assert.h</label>
+      </node>
+      <node id="7">
+        <label>sys/reboot.h</label>
+      </node>
+      <node id="12">
+        <label>sys/util.h</label>
+      </node>
+      <node id="5">
+        <label>zephyr.h</label>
+      </node>
+      <node id="6">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structble__peer__event" prot="public">ble_peer_event</innerclass>
+    <innerclass refid="structble__peer__operation__event" prot="public">ble_peer_operation_event</innerclass>
+    <innerclass refid="structble__peer__conn__params__event" prot="public">ble_peer_conn_params_event</innerclass>
+    <innerclass refid="structble__peer__search__event" prot="public">ble_peer_search_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1gaf960a6979cd9769891c731a932718427" prot="public" static="no" strong="no">
+        <type></type>
+        <name>peer_state</name>
+        <enumvalue id="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427af77a841c1c7c80bda9c81dc293a213c2" prot="public">
+          <name>PEER_STATE_DISCONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Bluetooth stack disconnected from the remote peer. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427a7e0c9738ecfb141513df0a75037ac99f" prot="public">
+          <name>PEER_STATE_DISCONNECTING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>An application module called bt_conn_disconnect() to disconnect the remote peer. This state can be reported by the module that requests peer disconnection to let other application modules prepare for the planned disconnection. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427ac89a6ebf34e029db43c011d000d166f6" prot="public">
+          <name>PEER_STATE_CONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Bluetooth stack successfully connected to the remote peer. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427a8ad73139c4e620adcb1726505aa2df4d" prot="public">
+          <name>PEER_STATE_SECURED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Bluetooth stack set the connection security to at least level 2 (that is, encryption and no authentication). </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427a924e6ac8a75aadb3e22ce5748d10076f" prot="public">
+          <name>PEER_STATE_CONN_FAILED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Bluetooth stack failed to connect the remote peer. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427a369bec064041670d8dc873fecac9269d" prot="public">
+          <name>PEER_STATE_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Number of peer states. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Peer states. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>State of the Bluetooth connected peer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/ble_common_event.h" line="31" column="1" bodyfile="include/caf/events/ble_common_event.h" bodystart="31" bodyend="54"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1gaa5f5d51c4d32cd760f1aebe47777d126" prot="public" static="no" strong="no">
+        <type></type>
+        <name>peer_operation</name>
+        <enumvalue id="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a3320917435db50ef4dbcec4db2964921" prot="public">
+          <name>PEER_OPERATION_SELECT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The peer change is triggered and waiting for confirmation. The operation is not performed by the Bluetooth stack before the selection is confirmed. PEER_OPERATION_SELECTED should be used for confirmed operation. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a945aa596e6a20b742ae75d17ca44ba57" prot="public">
+          <name>PEER_OPERATION_SELECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The peer change is confirmed. That results in swapping used local identity. The peers that are connected to previously used Bluetooth local identity should be disconnected. The application can start peer search for peers related to a new local identity. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a9f8454f3b23d9efa6a003af97d8ef81b" prot="public">
+          <name>PEER_OPERATION_SCAN_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Bluetooth scanning is requested. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a16dbe0aacb881dbe03ad4ccbef5c2641" prot="public">
+          <name>PEER_OPERATION_ERASE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The bond erase is triggered and waiting for confirmation. The operation is not performed by the Bluetooth stack before the erase is confirmed. PEER_OPERATION_ERASED should be used for a confirmed operation. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a072b9e04b4bb94402721e3fd43eca0d7" prot="public">
+          <name>PEER_OPERATION_ERASE_ADV</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Trigger erase advertising for selected local identity. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126ad6df8c00f608e5e4137e61db3dcc1a54" prot="public">
+          <name>PEER_OPERATION_ERASE_ADV_CANCEL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Cancel ongoing erase advertising. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126abc289d73593ad6ac11edfb50cfb75c7b" prot="public">
+          <name>PEER_OPERATION_ERASED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The bond erase is confirmed. That results in removing all of the Bluetooth bonds of related local identity. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a819eed2058257d927dc2dbc27563369e" prot="public">
+          <name>PEER_OPERATION_CANCEL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Cancel ongoing peer operation. If PEER_OPERATION_ERASE_ADV is cancelled, PEER_OPERATION_ERASE_ADV_CANCEL must be used instead. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126acb52562461d959e336a4eaa1faad1b94" prot="public">
+          <name>PEER_OPERATION_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Number of peer operations. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Peer operations. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/ble_common_event.h" line="58" column="1" bodyfile="include/caf/events/ble_common_event.h" bodystart="58" bodyend="98"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2018-2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_BLE_COMMON_EVENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_BLE_COMMON_EVENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/bluetooth.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/conn.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="event__manager_8h" kindref="compound">event_manager.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="event__manager__profiler_8h" kindref="compound">event_manager_profiler.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1gaf960a6979cd9769891c731a932718427" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1gaf960a6979cd9769891c731a932718427" kindref="member">peer_state</ref><sp/>{</highlight></codeline>
+<codeline lineno="33" refid="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427af77a841c1c7c80bda9c81dc293a213c2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427af77a841c1c7c80bda9c81dc293a213c2" kindref="member">PEER_STATE_DISCONNECTED</ref>,</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427a7e0c9738ecfb141513df0a75037ac99f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427a7e0c9738ecfb141513df0a75037ac99f" kindref="member">PEER_STATE_DISCONNECTING</ref>,</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427ac89a6ebf34e029db43c011d000d166f6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427ac89a6ebf34e029db43c011d000d166f6" kindref="member">PEER_STATE_CONNECTED</ref>,</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427a8ad73139c4e620adcb1726505aa2df4d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427a8ad73139c4e620adcb1726505aa2df4d" kindref="member">PEER_STATE_SECURED</ref>,</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427a924e6ac8a75aadb3e22ce5748d10076f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427a924e6ac8a75aadb3e22ce5748d10076f" kindref="member">PEER_STATE_CONN_FAILED</ref>,</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427a369bec064041670d8dc873fecac9269d" kindref="member">PEER_STATE_COUNT</ref></highlight></codeline>
+<codeline lineno="54" refid="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1ggaf960a6979cd9769891c731a932718427a369bec064041670d8dc873fecac9269d" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58" refid="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1gaa5f5d51c4d32cd760f1aebe47777d126" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1gaa5f5d51c4d32cd760f1aebe47777d126" kindref="member">peer_operation</ref><sp/>{</highlight></codeline>
+<codeline lineno="63" refid="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a3320917435db50ef4dbcec4db2964921" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a3320917435db50ef4dbcec4db2964921" kindref="member">PEER_OPERATION_SELECT</ref>,</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a945aa596e6a20b742ae75d17ca44ba57" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a945aa596e6a20b742ae75d17ca44ba57" kindref="member">PEER_OPERATION_SELECTED</ref>,</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a9f8454f3b23d9efa6a003af97d8ef81b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a9f8454f3b23d9efa6a003af97d8ef81b" kindref="member">PEER_OPERATION_SCAN_REQUEST</ref>,</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a16dbe0aacb881dbe03ad4ccbef5c2641" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a16dbe0aacb881dbe03ad4ccbef5c2641" kindref="member">PEER_OPERATION_ERASE</ref>,</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81" refid="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a072b9e04b4bb94402721e3fd43eca0d7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a072b9e04b4bb94402721e3fd43eca0d7" kindref="member">PEER_OPERATION_ERASE_ADV</ref>,</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84" refid="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126ad6df8c00f608e5e4137e61db3dcc1a54" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126ad6df8c00f608e5e4137e61db3dcc1a54" kindref="member">PEER_OPERATION_ERASE_ADV_CANCEL</ref>,</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89" refid="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126abc289d73593ad6ac11edfb50cfb75c7b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126abc289d73593ad6ac11edfb50cfb75c7b" kindref="member">PEER_OPERATION_ERASED</ref>,</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94" refid="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a819eed2058257d927dc2dbc27563369e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126a819eed2058257d927dc2dbc27563369e" kindref="member">PEER_OPERATION_CANCEL</ref>,</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126acb52562461d959e336a4eaa1faad1b94" kindref="member">PEER_OPERATION_COUNT</ref></highlight></codeline>
+<codeline lineno="98" refid="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1ggaa5f5d51c4d32cd760f1aebe47777d126acb52562461d959e336a4eaa1faad1b94" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105" refid="structble__peer__event" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structble__peer__event" kindref="compound">ble_peer_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="107" refid="structble__peer__event_a4f2b19959ddf4007122fc2a76257c9cd_1a4f2b19959ddf4007122fc2a76257c9cd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structevent__header" kindref="compound">event_header</ref><sp/><ref refid="structble__peer__event_a4f2b19959ddf4007122fc2a76257c9cd_1a4f2b19959ddf4007122fc2a76257c9cd" kindref="member">header</ref>;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110" refid="structble__peer__event_a9e9bd6711867cd2d1ababfbe700c30d8_1a9e9bd6711867cd2d1ababfbe700c30d8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__caf__ble__common__event_gaf960a6979cd9769891c731a932718427_1gaf960a6979cd9769891c731a932718427" kindref="member">peer_state</ref><sp/><ref refid="structble__peer__event_a9e9bd6711867cd2d1ababfbe700c30d8_1a9e9bd6711867cd2d1ababfbe700c30d8" kindref="member">state</ref>;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113" refid="structble__peer__event_a655687e23fbc039b5bcbf446ce8860e1_1a655687e23fbc039b5bcbf446ce8860e1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structble__peer__event_a655687e23fbc039b5bcbf446ce8860e1_1a655687e23fbc039b5bcbf446ce8860e1" kindref="member">id</ref>;</highlight></codeline>
+<codeline lineno="114"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125" refid="structble__peer__operation__event" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structble__peer__operation__event" kindref="compound">ble_peer_operation_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="127" refid="structble__peer__operation__event_ae4bce14cc3d98cf689d4806c25aaed84_1ae4bce14cc3d98cf689d4806c25aaed84" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structevent__header" kindref="compound">event_header</ref><sp/><ref refid="structble__peer__operation__event_ae4bce14cc3d98cf689d4806c25aaed84_1ae4bce14cc3d98cf689d4806c25aaed84" kindref="member">header</ref>;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130" refid="structble__peer__operation__event_a30b3f42de3ba2dc7d5394c0540d8d0d3_1a30b3f42de3ba2dc7d5394c0540d8d0d3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__caf__ble__common__event_gaa5f5d51c4d32cd760f1aebe47777d126_1gaa5f5d51c4d32cd760f1aebe47777d126" kindref="member">peer_operation</ref><sp/><ref refid="structble__peer__operation__event_a30b3f42de3ba2dc7d5394c0540d8d0d3_1a30b3f42de3ba2dc7d5394c0540d8d0d3" kindref="member">op</ref>;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133" refid="structble__peer__operation__event_a9d8bc53bd291f3a926ae640f2cfbbafd_1a9d8bc53bd291f3a926ae640f2cfbbafd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structble__peer__operation__event_a9d8bc53bd291f3a926ae640f2cfbbafd_1a9d8bc53bd291f3a926ae640f2cfbbafd" kindref="member">bt_app_id</ref>;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136" refid="structble__peer__operation__event_a0e9dbf51c41b5116ebb564a9fe79f04b_1a0e9dbf51c41b5116ebb564a9fe79f04b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structble__peer__operation__event_a0e9dbf51c41b5116ebb564a9fe79f04b_1a0e9dbf51c41b5116ebb564a9fe79f04b" kindref="member">bt_stack_id</ref>;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149" refid="structble__peer__conn__params__event" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structble__peer__conn__params__event" kindref="compound">ble_peer_conn_params_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="151" refid="structble__peer__conn__params__event_a02d9736248732f741c280efd9b46a0e9_1a02d9736248732f741c280efd9b46a0e9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structevent__header" kindref="compound">event_header</ref><sp/><ref refid="structble__peer__conn__params__event_a02d9736248732f741c280efd9b46a0e9_1a02d9736248732f741c280efd9b46a0e9" kindref="member">header</ref>;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154" refid="structble__peer__conn__params__event_aa608611409b722ca7708c61ca15a004e_1aa608611409b722ca7708c61ca15a004e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structble__peer__conn__params__event_aa608611409b722ca7708c61ca15a004e_1aa608611409b722ca7708c61ca15a004e" kindref="member">id</ref>;</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157" refid="structble__peer__conn__params__event_a8b907252982923f47265c0dc41b6a26c_1a8b907252982923f47265c0dc41b6a26c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structble__peer__conn__params__event_a8b907252982923f47265c0dc41b6a26c_1a8b907252982923f47265c0dc41b6a26c" kindref="member">interval_min</ref>;</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160" refid="structble__peer__conn__params__event_a71aafc4e5705464008c2468fadc910f0_1a71aafc4e5705464008c2468fadc910f0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structble__peer__conn__params__event_a71aafc4e5705464008c2468fadc910f0_1a71aafc4e5705464008c2468fadc910f0" kindref="member">interval_max</ref>;</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163" refid="structble__peer__conn__params__event_ab28e3433ea4719247895244986d6292f_1ab28e3433ea4719247895244986d6292f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structble__peer__conn__params__event_ab28e3433ea4719247895244986d6292f_1ab28e3433ea4719247895244986d6292f" kindref="member">latency</ref>;</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166" refid="structble__peer__conn__params__event_ac6d31363a3cbabf8390e99dea8722439_1ac6d31363a3cbabf8390e99dea8722439" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structble__peer__conn__params__event_ac6d31363a3cbabf8390e99dea8722439_1ac6d31363a3cbabf8390e99dea8722439" kindref="member">timeout</ref>;</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171" refid="structble__peer__conn__params__event_a7fa65cc787cd5996c0ca9002689c8b67_1a7fa65cc787cd5996c0ca9002689c8b67" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structble__peer__conn__params__event_a7fa65cc787cd5996c0ca9002689c8b67_1a7fa65cc787cd5996c0ca9002689c8b67" kindref="member">updated</ref>;</highlight></codeline>
+<codeline lineno="172"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179" refid="structble__peer__search__event" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structble__peer__search__event" kindref="compound">ble_peer_search_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="181" refid="structble__peer__search__event_acdea7224516409e91580f54936b14409_1acdea7224516409e91580f54936b14409" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structevent__header" kindref="compound">event_header</ref><sp/><ref refid="structble__peer__search__event_acdea7224516409e91580f54936b14409_1acdea7224516409e91580f54936b14409" kindref="member">header</ref>;</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight></codeline>
+<codeline lineno="184" refid="structble__peer__search__event_a7e97f0c25d89f703d574c0ee9f8949cc_1a7e97f0c25d89f703d574c0ee9f8949cc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structble__peer__search__event_a7e97f0c25d89f703d574c0ee9f8949cc_1a7e97f0c25d89f703d574c0ee9f8949cc" kindref="member">active</ref>;</highlight></codeline>
+<codeline lineno="185"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="198"><highlight class="normal"></highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><ref refid="group__event__manager_gade0652b21cddf1a6b4d58e668b402caa_1gade0652b21cddf1a6b4d58e668b402caa" kindref="member">EVENT_TYPE_DECLARE</ref>(<ref refid="structble__peer__event" kindref="compound">ble_peer_event</ref>);</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><ref refid="group__event__manager_gade0652b21cddf1a6b4d58e668b402caa_1gade0652b21cddf1a6b4d58e668b402caa" kindref="member">EVENT_TYPE_DECLARE</ref>(<ref refid="structble__peer__operation__event" kindref="compound">ble_peer_operation_event</ref>);</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><ref refid="group__event__manager_gade0652b21cddf1a6b4d58e668b402caa_1gade0652b21cddf1a6b4d58e668b402caa" kindref="member">EVENT_TYPE_DECLARE</ref>(<ref refid="structble__peer__conn__params__event" kindref="compound">ble_peer_conn_params_event</ref>);</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><ref refid="group__event__manager_gade0652b21cddf1a6b4d58e668b402caa_1gade0652b21cddf1a6b4d58e668b402caa" kindref="member">EVENT_TYPE_DECLARE</ref>(<ref refid="structble__peer__search__event" kindref="compound">ble_peer_search_event</ref>);</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_BLE_COMMON_EVENT_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/caf/events/ble_common_event.h"/>
+  </compounddef>
+</doxygen>

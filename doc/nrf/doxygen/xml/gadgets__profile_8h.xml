@@ -1,0 +1,484 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="gadgets__profile_8h" kind="file" language="C++">
+    <compoundname>gadgets_profile.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/bluetooth/services/gadgets_profile.h</label>
+        <link refid="gadgets__profile_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structbt__gadgets__evt" prot="public">bt_gadgets_evt</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1ga07b0617ffa14a591dfa0a89e13bc0e4f" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_gadgets_evt_type</name>
+        <enumvalue id="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa28d6de60fbf275ee64663cc54d00ce73" prot="public">
+          <name>BT_GADGETS_EVT_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Handshake with peer completed </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4faa6c363c44309f10d8c31675c0d6eed76" prot="public">
+          <name>BT_GADGETS_EVT_SETALERT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>SetAlert Directive </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fabeae1ffa11580fa098e9a841d527d044" prot="public">
+          <name>BT_GADGETS_EVT_DELETEALERT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>DeleteAlert Directive </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa0dd3d8bb0f549314249d7630eaca51ad" prot="public">
+          <name>BT_GADGETS_EVT_SETINDICATOR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>SetIndicator Directive </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa2eb615df00a353bc81ef980643d8f4c2" prot="public">
+          <name>BT_GADGETS_EVT_CLEARINDICATOR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>ClearIndicator Directive </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa5686bc99907ade1d56bdf36a15f4d2f4" prot="public">
+          <name>BT_GADGETS_EVT_STATEUPDATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>StateUpdate Directive </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa5624900c002e6fd1b665dba5f6acd1cf" prot="public">
+          <name>BT_GADGETS_EVT_SPEECHMARKS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Speechmarks Directive </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fae54171d32c8c59dff2065eae2517362c" prot="public">
+          <name>BT_GADGETS_EVT_MUSICTEMPO</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Tempo Directive </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fabb5dc31a422a977a3b665f396a42e2b5" prot="public">
+          <name>BT_GADGETS_EVT_CUSTOM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Custom Directive </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa7264f7713823997e91cb9121b274be9e" prot="public">
+          <name>BT_GADGETS_EVT_CUSTOM_SENT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Custom event sent </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Gadgets event types. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets_profile.h" line="61" column="1" bodyfile="include/bluetooth/services/gadgets_profile.h" bodystart="61" bodyend="91"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__bt__gadgets__profile_ga834a6a85b1c4860387d15db946fa26dc_1ga834a6a85b1c4860387d15db946fa26dc" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_gadgets_profile_cb_t) (const struct bt_gadgets_evt *evt)</definition>
+        <argsstring>)(const struct bt_gadgets_evt *evt)</argsstring>
+        <name>bt_gadgets_profile_cb_t</name>
+        <briefdescription>
+<para>Callback type for Gadget events. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets_profile.h" line="141" column="9" bodyfile="include/bluetooth/services/gadgets_profile.h" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__gadgets__profile_gaf67e2f183edabd303279b3b9547e421c_1gaf67e2f183edabd303279b3b9547e421c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_gadgets_profile_init</definition>
+        <argsstring>(bt_gadgets_profile_cb_t evt_handler)</argsstring>
+        <name>bt_gadgets_profile_init</name>
+        <param>
+          <type><ref refid="group__bt__gadgets__profile_ga834a6a85b1c4860387d15db946fa26dc_1ga834a6a85b1c4860387d15db946fa26dc" kindref="member">bt_gadgets_profile_cb_t</ref></type>
+          <declname>evt_handler</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the profile. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Initializes profile state and the underlying Gadgets Bluetooth Service.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">evt_handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>event handler function pointer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If initialization is successful. Otherwise, a negative value is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets_profile.h" line="153" column="5" declfile="include/bluetooth/services/gadgets_profile.h" declline="153" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gadgets__profile_ga4178b90aa8e964863178113fabd12ee7_1ga4178b90aa8e964863178113fabd12ee7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_gadgets_profile_adv_start</definition>
+        <argsstring>(bool bondable_type)</argsstring>
+        <name>bt_gadgets_profile_adv_start</name>
+        <param>
+          <type>bool</type>
+          <declname>bondable_type</declname>
+        </param>
+        <briefdescription>
+<para>Start advertising using the Gadgets advertisement format. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When connection is established, the profile will wait for the link to become encrypted, and the MTU exchange to complete (<ref refid="group__bt__gadgets__profile_gaec2dc9afb42592c908d886003810f5c3_1gaec2dc9afb42592c908d886003810f5c3" kindref="member">bt_gadgets_profile_mtu_exchanged</ref>). The handshake procedure is then automatically started.</para>
+<para><simplesect kind="note"><para>Advertisement is resumed automatically upon disconnect, unless <ref refid="group__bt__gadgets__profile_gaf3bcd31eb50122df91ac6f3b743b05b4_1gaf3bcd31eb50122df91ac6f3b743b05b4" kindref="member">bt_gadgets_profile_adv_stop</ref> is called first.</para>
+</simplesect>
+<simplesect kind="note"><para>Bluetooth connections established without calling this function first will be ignored by this module, such that other connections can be established without interference.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">bondable_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set to true if the &quot;new bond&quot; payload format should be used. False when reconnecting to bonded peer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If advertisement is successfully started. Otherwise, a negative value is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets_profile.h" line="175" column="5" declfile="include/bluetooth/services/gadgets_profile.h" declline="175" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gadgets__profile_gaf3bcd31eb50122df91ac6f3b743b05b4_1gaf3bcd31eb50122df91ac6f3b743b05b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_gadgets_profile_adv_stop</definition>
+        <argsstring>(void)</argsstring>
+        <name>bt_gadgets_profile_adv_stop</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Stop advertising using the Gadgets advertisement format, and prevents Gadgets advertisement from being resumed if an ongoing connection becomes disconnected. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Stops ongoing advertisement. Any new connection established without first calling <ref refid="group__bt__gadgets__profile_ga4178b90aa8e964863178113fabd12ee7_1ga4178b90aa8e964863178113fabd12ee7" kindref="member">bt_gadgets_profile_adv_start</ref> will be ignored by profile. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets_profile.h" line="185" column="6" declfile="include/bluetooth/services/gadgets_profile.h" declline="185" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gadgets__profile_gaec2dc9afb42592c908d886003810f5c3_1gaec2dc9afb42592c908d886003810f5c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_gadgets_profile_mtu_exchanged</definition>
+        <argsstring>(struct bt_conn *conn)</argsstring>
+        <name>bt_gadgets_profile_mtu_exchanged</name>
+        <param>
+          <type>struct bt_conn *</type>
+          <declname>conn</declname>
+        </param>
+        <briefdescription>
+<para>Inform Gadgets profile that the MTU exchange has been performed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The profile will not perform handshake with peer until MTU exchange has completed. The other prerequisites for the handshake are automatically detected (encryption using LE Secure Connections, and Notifications enabled).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The connection the MTU exchange applies to. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets_profile.h" line="196" column="6" declfile="include/bluetooth/services/gadgets_profile.h" declline="196" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gadgets__profile_ga1551763c0ea40dcd740290e45ed2f169_1ga1551763c0ea40dcd740290e45ed2f169" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_gadgets_profile_custom_event_json_send</definition>
+        <argsstring>(uint8_t *name, uint8_t *json)</argsstring>
+        <name>bt_gadgets_profile_custom_event_json_send</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>json</declname>
+        </param>
+        <briefdescription>
+<para>Send a custom event to Alexa using preconfigured custom event. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Custom events are constructed using user-specified protobuf format. This function uses a simple custom event structure with a single string as the payload. The string must be valid JSON for the cloud side to accept it. The namespace for this custom event is given by <verbatim>embed:rst:inline :kconfig:`CONFIG_BT_ALEXA_GADGETS_CAPABILITY_CUSTOM_NAMESPACE` </verbatim>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated event name string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">json</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated JSON string.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>When successful. Otherwise, a negative value is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets_profile.h" line="213" column="5" declfile="include/bluetooth/services/gadgets_profile.h" declline="213" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gadgets__profile_gac77612524e15cd32ca40a9d2169c3738_1gac77612524e15cd32ca40a9d2169c3738" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_gadgets_profile_custom_event_send</definition>
+        <argsstring>(uint8_t *encoded_data, size_t len)</argsstring>
+        <name>bt_gadgets_profile_custom_event_send</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>encoded_data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Send a pre-encoded custom event to Alexa. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Custom events are constructed using user-specified protobuf format. The user of this function must encode the data using the chosen protobuf format and pass the encoded buffer to this function (i.e. the output from pb_encode()). See here for more information: <ulink url="https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/custom-interface.html#events">https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/custom-interface.html#events</ulink></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">encoded_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data encoded using pb_encode() </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length in bytes of encoded data</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>When successful. Otherwise, a negative value is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets_profile.h" line="231" column="5" declfile="include/bluetooth/services/gadgets_profile.h" declline="231" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_ALEXA_GADGETS_PROFILE_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_ALEXA_GADGETS_PROFILE_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>CONFIG_BT_ALEXA_GADGETS_CAPABILITY_MUSICDATA</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;alexaGadgetMusicDataTempoDirective.pb.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;alexaGadgetMusicDataTempoDirectivePayload.pb.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>CONFIG_BT_ALEXA_GADGETS_CAPABILITY_ALERTS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;alertsSetAlertDirective.pb.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;alertsSetAlertDirectivePayload.pb.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;alertsDeleteAlertDirective.pb.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;alertsDeleteAlertDirectivePayload.pb.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>CONFIG_BT_ALEXA_GADGETS_CAPABILITY_SPEECHDATA</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;alexaGadgetSpeechDataSpeechmarksDirective.pb.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;alexaGadgetSpeechDataSpeechmarksDirectivePayload.pb.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>CONFIG_BT_ALEXA_GADGETS_CAPABILITY_STATELISTENER</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;alexaGadgetStateListenerStateUpdateDirective.pb.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;alexaGadgetStateListenerStateUpdateDirectivePayload.pb.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>CONFIG_BT_ALEXA_GADGETS_CAPABILITY_NOTIFICATIONS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;notificationsSetIndicatorDirective.pb.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;notificationsSetIndicatorDirectivePayload.pb.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;notificationsClearIndicatorDirective.pb.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1ga07b0617ffa14a591dfa0a89e13bc0e4f" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1ga07b0617ffa14a591dfa0a89e13bc0e4f" kindref="member">bt_gadgets_evt_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="63" refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa28d6de60fbf275ee64663cc54d00ce73" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa28d6de60fbf275ee64663cc54d00ce73" kindref="member">BT_GADGETS_EVT_READY</ref>,</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4faa6c363c44309f10d8c31675c0d6eed76" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4faa6c363c44309f10d8c31675c0d6eed76" kindref="member">BT_GADGETS_EVT_SETALERT</ref>,</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fabeae1ffa11580fa098e9a841d527d044" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fabeae1ffa11580fa098e9a841d527d044" kindref="member">BT_GADGETS_EVT_DELETEALERT</ref>,</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa0dd3d8bb0f549314249d7630eaca51ad" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa0dd3d8bb0f549314249d7630eaca51ad" kindref="member">BT_GADGETS_EVT_SETINDICATOR</ref>,</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa2eb615df00a353bc81ef980643d8f4c2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa2eb615df00a353bc81ef980643d8f4c2" kindref="member">BT_GADGETS_EVT_CLEARINDICATOR</ref>,</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa5686bc99907ade1d56bdf36a15f4d2f4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa5686bc99907ade1d56bdf36a15f4d2f4" kindref="member">BT_GADGETS_EVT_STATEUPDATE</ref>,</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81" refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa5624900c002e6fd1b665dba5f6acd1cf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa5624900c002e6fd1b665dba5f6acd1cf" kindref="member">BT_GADGETS_EVT_SPEECHMARKS</ref>,</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84" refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fae54171d32c8c59dff2065eae2517362c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fae54171d32c8c59dff2065eae2517362c" kindref="member">BT_GADGETS_EVT_MUSICTEMPO</ref>,</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87" refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fabb5dc31a422a977a3b665f396a42e2b5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fabb5dc31a422a977a3b665f396a42e2b5" kindref="member">BT_GADGETS_EVT_CUSTOM</ref>,</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa7264f7713823997e91cb9121b274be9e" kindref="member">BT_GADGETS_EVT_CUSTOM_SENT</ref></highlight></codeline>
+<codeline lineno="91" refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fa7264f7713823997e91cb9121b274be9e" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94" refid="structbt__gadgets__evt" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__gadgets__evt" kindref="compound">bt_gadgets_evt</ref><sp/>{</highlight></codeline>
+<codeline lineno="95" refid="structbt__gadgets__evt_a1b52d1dda2df4755fdce8cd0d1d379ee_1a1b52d1dda2df4755fdce8cd0d1d379ee" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1ga07b0617ffa14a591dfa0a89e13bc0e4f" kindref="member">bt_gadgets_evt_type</ref><sp/><ref refid="structbt__gadgets__evt_a1b52d1dda2df4755fdce8cd0d1d379ee_1a1b52d1dda2df4755fdce8cd0d1d379ee" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">union<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Note:<sp/>these<sp/>are<sp/>the<sp/>structs<sp/>generated<sp/>by<sp/>protoc<sp/>compiler,</highlight></codeline>
+<codeline lineno="98"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<sp/>based<sp/>on<sp/>.proto<sp/>files.</highlight></codeline>
+<codeline lineno="99"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<sp/>Abstraction<sp/>not<sp/>added<sp/>in<sp/>order<sp/>to<sp/>reference<sp/>original<sp/>doc:</highlight></codeline>
+<codeline lineno="100"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<sp/>https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/defined-interfaces.html</highlight></codeline>
+<codeline lineno="101"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>CONFIG_BT_ALEXA_GADGETS_CAPABILITY_NOTIFICATIONS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">_notifications_SetIndicatorDirectivePayloadProto<sp/>*set_indicator;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>CONFIG_BT_ALEXA_GADGETS_CAPABILITY_ALERTS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">_alerts_SetAlertDirectivePayloadProto<sp/>*set_alert;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">_alerts_DeleteAlertDirectivePayloadProto<sp/>*delete_alert;</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>CONFIG_BT_ALEXA_GADGETS_CAPABILITY_STATELISTENER</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">_alexaGadgetStateListener_StateUpdateDirectivePayloadProto<sp/>*state_update;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>CONFIG_BT_ALEXA_GADGETS_CAPABILITY_SPEECHDATA</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">_alexaGadgetSpeechData_SpeechmarksDirectivePayloadProto<sp/>*speech_marks;</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>CONFIG_BT_ALEXA_GADGETS_CAPABILITY_MUSICDATA</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">_alexaGadgetMusicData_TempoDirectivePayloadProto<sp/>*music_tempo;</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="133" refid="structbt__gadgets__evt_a5193aa1fbdd374032ef4825e2141e1ff_1a5193aa1fbdd374032ef4825e2141e1ff" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structbt__gadgets__evt_a5193aa1fbdd374032ef4825e2141e1ff_1a5193aa1fbdd374032ef4825e2141e1ff" kindref="member">name</ref>;</highlight></codeline>
+<codeline lineno="134" refid="structbt__gadgets__evt_ad51fd550f96b5ce2bcce9f94bb351548_1ad51fd550f96b5ce2bcce9f94bb351548" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structbt__gadgets__evt_ad51fd550f96b5ce2bcce9f94bb351548_1ad51fd550f96b5ce2bcce9f94bb351548" kindref="member">payload</ref>;</highlight></codeline>
+<codeline lineno="135" refid="structbt__gadgets__evt_af76b7337f26b0f3fde00f7cc8ef5dab5_1af76b7337f26b0f3fde00f7cc8ef5dab5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structbt__gadgets__evt_af76b7337f26b0f3fde00f7cc8ef5dab5_1af76b7337f26b0f3fde00f7cc8ef5dab5" kindref="member">size</ref>;</highlight></codeline>
+<codeline lineno="136" refid="structbt__gadgets__evt_a0feceb86ef3e1e45c909563fd661308c_1a0feceb86ef3e1e45c909563fd661308c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/><ref refid="structbt__gadgets__evt_a0feceb86ef3e1e45c909563fd661308c_1a0feceb86ef3e1e45c909563fd661308c" kindref="member">custom_directive</ref>;</highlight></codeline>
+<codeline lineno="137" refid="structbt__gadgets__evt_a455d80408e9bdf1dc46c577aad6e5753_1a455d80408e9bdf1dc46c577aad6e5753" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/><ref refid="structbt__gadgets__evt_a455d80408e9bdf1dc46c577aad6e5753_1a455d80408e9bdf1dc46c577aad6e5753" kindref="member">parameters</ref>;</highlight></codeline>
+<codeline lineno="138"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141" refid="group__bt__gadgets__profile_ga834a6a85b1c4860387d15db946fa26dc_1ga834a6a85b1c4860387d15db946fa26dc" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__bt__gadgets__profile_ga834a6a85b1c4860387d15db946fa26dc_1ga834a6a85b1c4860387d15db946fa26dc" kindref="member">bt_gadgets_profile_cb_t</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__gadgets__evt" kindref="compound">bt_gadgets_evt</ref><sp/>*evt);</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153" refid="group__bt__gadgets__profile_gaf67e2f183edabd303279b3b9547e421c_1gaf67e2f183edabd303279b3b9547e421c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__gadgets__profile_gaf67e2f183edabd303279b3b9547e421c_1gaf67e2f183edabd303279b3b9547e421c" kindref="member">bt_gadgets_profile_init</ref>(<ref refid="group__bt__gadgets__profile_ga834a6a85b1c4860387d15db946fa26dc_1ga834a6a85b1c4860387d15db946fa26dc" kindref="member">bt_gadgets_profile_cb_t</ref><sp/>evt_handler);</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175" refid="group__bt__gadgets__profile_ga4178b90aa8e964863178113fabd12ee7_1ga4178b90aa8e964863178113fabd12ee7" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__gadgets__profile_ga4178b90aa8e964863178113fabd12ee7_1ga4178b90aa8e964863178113fabd12ee7" kindref="member">bt_gadgets_profile_adv_start</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>bondable_type);</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185" refid="group__bt__gadgets__profile_gaf3bcd31eb50122df91ac6f3b743b05b4_1gaf3bcd31eb50122df91ac6f3b743b05b4" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__bt__gadgets__profile_gaf3bcd31eb50122df91ac6f3b743b05b4_1gaf3bcd31eb50122df91ac6f3b743b05b4" kindref="member">bt_gadgets_profile_adv_stop</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight></codeline>
+<codeline lineno="196" refid="group__bt__gadgets__profile_gaec2dc9afb42592c908d886003810f5c3_1gaec2dc9afb42592c908d886003810f5c3" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__bt__gadgets__profile_gaec2dc9afb42592c908d886003810f5c3_1gaec2dc9afb42592c908d886003810f5c3" kindref="member">bt_gadgets_profile_mtu_exchanged</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_conn<sp/>*conn);</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight></codeline>
+<codeline lineno="213" refid="group__bt__gadgets__profile_ga1551763c0ea40dcd740290e45ed2f169_1ga1551763c0ea40dcd740290e45ed2f169" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__gadgets__profile_ga1551763c0ea40dcd740290e45ed2f169_1ga1551763c0ea40dcd740290e45ed2f169" kindref="member">bt_gadgets_profile_custom_event_json_send</ref>(uint8_t<sp/>*<ref refid="structbt__gadgets__evt_a5193aa1fbdd374032ef4825e2141e1ff_1a5193aa1fbdd374032ef4825e2141e1ff" kindref="member">name</ref>,<sp/>uint8_t<sp/>*json);</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"></highlight></codeline>
+<codeline lineno="231" refid="group__bt__gadgets__profile_gac77612524e15cd32ca40a9d2169c3738_1gac77612524e15cd32ca40a9d2169c3738" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__gadgets__profile_gac77612524e15cd32ca40a9d2169c3738_1gac77612524e15cd32ca40a9d2169c3738" kindref="member">bt_gadgets_profile_custom_event_send</ref>(uint8_t<sp/>*encoded_data,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>len);</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="234"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="236"><highlight class="normal"></highlight></codeline>
+<codeline lineno="241"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_ALEXA_GADGETS_PROFILE_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/services/gadgets_profile.h"/>
+  </compounddef>
+</doxygen>

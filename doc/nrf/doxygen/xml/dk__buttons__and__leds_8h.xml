@@ -1,0 +1,796 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dk__buttons__and__leds_8h" kind="file" language="C++">
+    <compoundname>dk_buttons_and_leds.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <includes local="no">sys/slist.h</includes>
+    <includedby refid="ui_8h" local="no">applications/asset_tracker/src/ui/include/ui.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/dk_buttons_and_leds.h</label>
+        <link refid="dk__buttons__and__leds_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>sys/slist.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="3">
+        <label>applications/asset_tracker/src/ui/include/led_pwm.h</label>
+        <link refid="led__pwm_8h"/>
+      </node>
+      <node id="2">
+        <label>applications/asset_tracker/src/ui/include/ui.h</label>
+        <link refid="ui_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/dk_buttons_and_leds.h</label>
+        <link refid="dk__buttons__and__leds_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structbutton__handler" prot="public">button_handler</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__dk__buttons__and__leds_gac4d9429bb475b986ddd71c06537f599d_1gac4d9429bb475b986ddd71c06537f599d" prot="public" static="no">
+        <name>DK_NO_LEDS_MSK</name>
+        <initializer>(0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="23" column="9" bodyfile="include/dk_buttons_and_leds.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__dk__buttons__and__leds_gabfc0b0b436ff1f541e7c076420819604_1gabfc0b0b436ff1f541e7c076420819604" prot="public" static="no">
+        <name>DK_LED1</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="24" column="9" bodyfile="include/dk_buttons_and_leds.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__dk__buttons__and__leds_gabd7cc318d4ed54c24cf89ead771dcaf9_1gabd7cc318d4ed54c24cf89ead771dcaf9" prot="public" static="no">
+        <name>DK_LED2</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="25" column="9" bodyfile="include/dk_buttons_and_leds.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__dk__buttons__and__leds_ga898936c9d5babd20b14406f34880f7fd_1ga898936c9d5babd20b14406f34880f7fd" prot="public" static="no">
+        <name>DK_LED3</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="26" column="9" bodyfile="include/dk_buttons_and_leds.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__dk__buttons__and__leds_ga69c31090e93ad277b60d0c25a22f2302_1ga69c31090e93ad277b60d0c25a22f2302" prot="public" static="no">
+        <name>DK_LED4</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="27" column="9" bodyfile="include/dk_buttons_and_leds.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__dk__buttons__and__leds_gaa625961b3da635a4b706e9d552ca948f_1gaa625961b3da635a4b706e9d552ca948f" prot="public" static="no">
+        <name>DK_LED1_MSK</name>
+        <initializer>BIT(<ref refid="group__dk__buttons__and__leds_gabfc0b0b436ff1f541e7c076420819604_1gabfc0b0b436ff1f541e7c076420819604" kindref="member">DK_LED1</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="28" column="9" bodyfile="include/dk_buttons_and_leds.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__dk__buttons__and__leds_ga1de2f8629a113c35296a3e72b735478d_1ga1de2f8629a113c35296a3e72b735478d" prot="public" static="no">
+        <name>DK_LED2_MSK</name>
+        <initializer>BIT(<ref refid="group__dk__buttons__and__leds_gabd7cc318d4ed54c24cf89ead771dcaf9_1gabd7cc318d4ed54c24cf89ead771dcaf9" kindref="member">DK_LED2</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="29" column="9" bodyfile="include/dk_buttons_and_leds.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__dk__buttons__and__leds_ga353881bc28c249b7bfa2a445c9724c98_1ga353881bc28c249b7bfa2a445c9724c98" prot="public" static="no">
+        <name>DK_LED3_MSK</name>
+        <initializer>BIT(<ref refid="group__dk__buttons__and__leds_ga898936c9d5babd20b14406f34880f7fd_1ga898936c9d5babd20b14406f34880f7fd" kindref="member">DK_LED3</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="30" column="9" bodyfile="include/dk_buttons_and_leds.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__dk__buttons__and__leds_ga7acca9aa4ffb1e20f716f0579225c9af_1ga7acca9aa4ffb1e20f716f0579225c9af" prot="public" static="no">
+        <name>DK_LED4_MSK</name>
+        <initializer>BIT(<ref refid="group__dk__buttons__and__leds_ga69c31090e93ad277b60d0c25a22f2302_1ga69c31090e93ad277b60d0c25a22f2302" kindref="member">DK_LED4</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="31" column="9" bodyfile="include/dk_buttons_and_leds.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__dk__buttons__and__leds_ga701c94529c61f2314ce98a4bd5db8bcb_1ga701c94529c61f2314ce98a4bd5db8bcb" prot="public" static="no">
+        <name>DK_ALL_LEDS_MSK</name>
+        <initializer>			   (<ref refid="group__dk__buttons__and__leds_gaa625961b3da635a4b706e9d552ca948f_1gaa625961b3da635a4b706e9d552ca948f" kindref="member">DK_LED1_MSK</ref> | <ref refid="group__dk__buttons__and__leds_ga1de2f8629a113c35296a3e72b735478d_1ga1de2f8629a113c35296a3e72b735478d" kindref="member">DK_LED2_MSK</ref> |\
+			   <ref refid="group__dk__buttons__and__leds_ga353881bc28c249b7bfa2a445c9724c98_1ga353881bc28c249b7bfa2a445c9724c98" kindref="member">DK_LED3_MSK</ref> | <ref refid="group__dk__buttons__and__leds_ga7acca9aa4ffb1e20f716f0579225c9af_1ga7acca9aa4ffb1e20f716f0579225c9af" kindref="member">DK_LED4_MSK</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="32" column="9" bodyfile="include/dk_buttons_and_leds.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__dk__buttons__and__leds_ga22d66709f9ff1eb15480958153b84b9e_1ga22d66709f9ff1eb15480958153b84b9e" prot="public" static="no">
+        <name>DK_NO_BTNS_MSK</name>
+        <initializer>(0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="35" column="9" bodyfile="include/dk_buttons_and_leds.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__dk__buttons__and__leds_ga9029a4de3273c0e3cdf8d0b416e73597_1ga9029a4de3273c0e3cdf8d0b416e73597" prot="public" static="no">
+        <name>DK_BTN1</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="36" column="9" bodyfile="include/dk_buttons_and_leds.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__dk__buttons__and__leds_ga678ca1aa1bc2ee68b4cd05f2508f8eff_1ga678ca1aa1bc2ee68b4cd05f2508f8eff" prot="public" static="no">
+        <name>DK_BTN2</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="37" column="9" bodyfile="include/dk_buttons_and_leds.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__dk__buttons__and__leds_ga027bfaa693a589e37e8f1031c4e12165_1ga027bfaa693a589e37e8f1031c4e12165" prot="public" static="no">
+        <name>DK_BTN3</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="38" column="9" bodyfile="include/dk_buttons_and_leds.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__dk__buttons__and__leds_gacf4ca7c42257a96c06ea10e571a163f0_1gacf4ca7c42257a96c06ea10e571a163f0" prot="public" static="no">
+        <name>DK_BTN4</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="39" column="9" bodyfile="include/dk_buttons_and_leds.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__dk__buttons__and__leds_ga505df3449971adc408ad8415534c32a7_1ga505df3449971adc408ad8415534c32a7" prot="public" static="no">
+        <name>DK_BTN1_MSK</name>
+        <initializer>BIT(<ref refid="group__dk__buttons__and__leds_ga9029a4de3273c0e3cdf8d0b416e73597_1ga9029a4de3273c0e3cdf8d0b416e73597" kindref="member">DK_BTN1</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="40" column="9" bodyfile="include/dk_buttons_and_leds.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__dk__buttons__and__leds_gab4bdd15f477cc359c1f46d66eaa49781_1gab4bdd15f477cc359c1f46d66eaa49781" prot="public" static="no">
+        <name>DK_BTN2_MSK</name>
+        <initializer>BIT(<ref refid="group__dk__buttons__and__leds_ga678ca1aa1bc2ee68b4cd05f2508f8eff_1ga678ca1aa1bc2ee68b4cd05f2508f8eff" kindref="member">DK_BTN2</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="41" column="9" bodyfile="include/dk_buttons_and_leds.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__dk__buttons__and__leds_gad2d903f99accb575a071c02436411f27_1gad2d903f99accb575a071c02436411f27" prot="public" static="no">
+        <name>DK_BTN3_MSK</name>
+        <initializer>BIT(<ref refid="group__dk__buttons__and__leds_ga027bfaa693a589e37e8f1031c4e12165_1ga027bfaa693a589e37e8f1031c4e12165" kindref="member">DK_BTN3</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="42" column="9" bodyfile="include/dk_buttons_and_leds.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__dk__buttons__and__leds_ga9b05474ac229268a3b12dc553db71987_1ga9b05474ac229268a3b12dc553db71987" prot="public" static="no">
+        <name>DK_BTN4_MSK</name>
+        <initializer>BIT(<ref refid="group__dk__buttons__and__leds_gacf4ca7c42257a96c06ea10e571a163f0_1gacf4ca7c42257a96c06ea10e571a163f0" kindref="member">DK_BTN4</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="43" column="9" bodyfile="include/dk_buttons_and_leds.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__dk__buttons__and__leds_ga71e14b8323201b748ac7b849ed023e16_1ga71e14b8323201b748ac7b849ed023e16" prot="public" static="no">
+        <name>DK_ALL_BTNS_MSK</name>
+        <initializer>			  (<ref refid="group__dk__buttons__and__leds_ga505df3449971adc408ad8415534c32a7_1ga505df3449971adc408ad8415534c32a7" kindref="member">DK_BTN1_MSK</ref> | <ref refid="group__dk__buttons__and__leds_gab4bdd15f477cc359c1f46d66eaa49781_1gab4bdd15f477cc359c1f46d66eaa49781" kindref="member">DK_BTN2_MSK</ref> | \
+			  <ref refid="group__dk__buttons__and__leds_gad2d903f99accb575a071c02436411f27_1gad2d903f99accb575a071c02436411f27" kindref="member">DK_BTN3_MSK</ref> | <ref refid="group__dk__buttons__and__leds_ga9b05474ac229268a3b12dc553db71987_1ga9b05474ac229268a3b12dc553db71987" kindref="member">DK_BTN4_MSK</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="44" column="9" bodyfile="include/dk_buttons_and_leds.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__dk__buttons__and__leds_gafdb4d479095b8675fd1f04a2dfe39587_1gafdb4d479095b8675fd1f04a2dfe39587" prot="public" static="no">
+        <type>void(*</type>
+        <definition>button_handler_t</definition>
+        <argsstring>)(uint32_t button_state, uint32_t has_changed)</argsstring>
+        <name>button_handler_t</name>
+        <briefdescription>
+<para>Callback that is executed when a button state change is detected. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>button_state</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bitmask of button states. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>has_changed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bitmask that shows which buttons have changed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="53" column="9" bodyfile="include/dk_buttons_and_leds.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__dk__buttons__and__leds_gaa058cd393eca7d9171735b9c3e736299_1gaa058cd393eca7d9171735b9c3e736299" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dk_leds_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>dk_leds_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize the library to control the LEDs. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="66" column="5" declfile="include/dk_buttons_and_leds.h" declline="66" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dk__buttons__and__leds_ga6e1ddbe90454414faf3580d54df8072e_1ga6e1ddbe90454414faf3580d54df8072e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dk_buttons_init</definition>
+        <argsstring>(button_handler_t button_handler)</argsstring>
+        <name>dk_buttons_init</name>
+        <param>
+          <type><ref refid="group__dk__buttons__and__leds_gafdb4d479095b8675fd1f04a2dfe39587_1gafdb4d479095b8675fd1f04a2dfe39587" kindref="member">button_handler_t</ref></type>
+          <declname>button_handler</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the library to read the button state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="structbutton__handler" kindref="compound">button_handler</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback handler for button state changes.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="75" column="5" declfile="include/dk_buttons_and_leds.h" declline="75" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dk__buttons__and__leds_ga74e120d08cb80855a084812abaf6d00c_1ga74e120d08cb80855a084812abaf6d00c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void dk_button_handler_add</definition>
+        <argsstring>(struct button_handler *handler)</argsstring>
+        <name>dk_button_handler_add</name>
+        <param>
+          <type>struct <ref refid="structbutton__handler" kindref="compound">button_handler</ref> *</type>
+          <declname>handler</declname>
+        </param>
+        <briefdescription>
+<para>Add a dynamic button handler callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>In addition to the button handler function passed to <ref refid="group__dk__buttons__and__leds_ga6e1ddbe90454414faf3580d54df8072e_1ga6e1ddbe90454414faf3580d54df8072e" kindref="member">dk_buttons_init</ref>, any number of button handlers can be added and removed at runtime.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Handler structure. Must point to statically allocated memory. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="86" column="6" declfile="include/dk_buttons_and_leds.h" declline="86" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dk__buttons__and__leds_ga0ae139dc02870250cd9b1fe01cb3ca80_1ga0ae139dc02870250cd9b1fe01cb3ca80" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dk_button_handler_remove</definition>
+        <argsstring>(struct button_handler *handler)</argsstring>
+        <name>dk_button_handler_remove</name>
+        <param>
+          <type>struct <ref refid="structbutton__handler" kindref="compound">button_handler</ref> *</type>
+          <declname>handler</declname>
+        </param>
+        <briefdescription>
+<para>Remove a dynamic button handler callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Handler to remove.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully removed the handler. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOENT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This button handler was not present. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="95" column="5" declfile="include/dk_buttons_and_leds.h" declline="95" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dk__buttons__and__leds_ga202b02775f7a5be11c5db7a7a17dd4d2_1ga202b02775f7a5be11c5db7a7a17dd4d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void dk_read_buttons</definition>
+        <argsstring>(uint32_t *button_state, uint32_t *has_changed)</argsstring>
+        <name>dk_read_buttons</name>
+        <param>
+          <type>uint32_t *</type>
+          <declname>button_state</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>has_changed</declname>
+        </param>
+        <briefdescription>
+<para>Read current button states. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>button_state</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bitmask of button states. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>has_changed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bitmask that shows which buttons have changed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="102" column="6" declfile="include/dk_buttons_and_leds.h" declline="102" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dk__buttons__and__leds_ga6a3512b7fc6b720f57cd059c3ed5c21c_1ga6a3512b7fc6b720f57cd059c3ed5c21c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint32_t</type>
+        <definition>uint32_t dk_get_buttons</definition>
+        <argsstring>(void)</argsstring>
+        <name>dk_get_buttons</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Get current button state from internal variable. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Bitmask of button states. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="108" column="10" declfile="include/dk_buttons_and_leds.h" declline="108" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dk__buttons__and__leds_gacadba1cf019d3d224a979e38cdb8a78c_1gacadba1cf019d3d224a979e38cdb8a78c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dk_set_leds</definition>
+        <argsstring>(uint32_t leds)</argsstring>
+        <name>dk_set_leds</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>leds</declname>
+        </param>
+        <briefdescription>
+<para>Set value of LED pins as specified in one bitmask. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>leds</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bitmask that defines which LEDs to turn on and off.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="117" column="5" declfile="include/dk_buttons_and_leds.h" declline="117" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dk__buttons__and__leds_ga1b20c6d8aef91d291c2770bc5ce160c9_1ga1b20c6d8aef91d291c2770bc5ce160c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dk_set_leds_state</definition>
+        <argsstring>(uint32_t leds_on_mask, uint32_t leds_off_mask)</argsstring>
+        <name>dk_set_leds_state</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>leds_on_mask</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>leds_off_mask</declname>
+        </param>
+        <briefdescription>
+<para>Set value of LED pins as specified in two bitmasks. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>leds_on_mask</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bitmask that defines which LEDs to turn on. If this bitmask overlaps with <computeroutput>leds_off_mask</computeroutput>, <computeroutput>leds_on_mask</computeroutput> has priority.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>leds_off_mask</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bitmask that defines which LEDs to turn off. If this bitmask overlaps with <computeroutput>leds_on_mask</computeroutput>, <computeroutput>leds_on_mask</computeroutput> has priority.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="133" column="5" declfile="include/dk_buttons_and_leds.h" declline="133" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dk__buttons__and__leds_gaf4a80acb74c55f6315054b123a7a0690_1gaf4a80acb74c55f6315054b123a7a0690" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dk_set_led</definition>
+        <argsstring>(uint8_t led_idx, uint32_t val)</argsstring>
+        <name>dk_set_led</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>led_idx</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+<para>Set a single LED value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function turns a single LED on or off.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>led_idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the LED. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value for the LED: 1 - turn on, 0 - turn off</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="group__dk__buttons__and__leds_ga77c2a73f932124ec6edd4b3d04c37128_1ga77c2a73f932124ec6edd4b3d04c37128" kindref="member">dk_set_led_on</ref>, <ref refid="group__dk__buttons__and__leds_ga934ea6de370f2f70bc5da1d63d1ee1e2_1ga934ea6de370f2f70bc5da1d63d1ee1e2" kindref="member">dk_set_led_off</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="147" column="5" declfile="include/dk_buttons_and_leds.h" declline="147" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dk__buttons__and__leds_ga77c2a73f932124ec6edd4b3d04c37128_1ga77c2a73f932124ec6edd4b3d04c37128" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dk_set_led_on</definition>
+        <argsstring>(uint8_t led_idx)</argsstring>
+        <name>dk_set_led_on</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>led_idx</declname>
+        </param>
+        <briefdescription>
+<para>Turn a single LED on. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>led_idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the LED.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="156" column="5" declfile="include/dk_buttons_and_leds.h" declline="156" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dk__buttons__and__leds_ga934ea6de370f2f70bc5da1d63d1ee1e2_1ga934ea6de370f2f70bc5da1d63d1ee1e2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dk_set_led_off</definition>
+        <argsstring>(uint8_t led_idx)</argsstring>
+        <name>dk_set_led_off</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>led_idx</declname>
+        </param>
+        <briefdescription>
+<para>Turn a single LED off. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>led_idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the LED.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dk_buttons_and_leds.h" line="165" column="5" declfile="include/dk_buttons_and_leds.h" declline="165" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Module for handling buttons and LEDs on Nordic DKs. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2018<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>DK_BUTTON_AND_LEDS_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DK_BUTTON_AND_LEDS_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/slist.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="group__dk__buttons__and__leds_gac4d9429bb475b986ddd71c06537f599d_1gac4d9429bb475b986ddd71c06537f599d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DK_NO_LEDS_MSK<sp/><sp/><sp/><sp/>(0)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="group__dk__buttons__and__leds_gabfc0b0b436ff1f541e7c076420819604_1gabfc0b0b436ff1f541e7c076420819604" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DK_LED1<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="group__dk__buttons__and__leds_gabd7cc318d4ed54c24cf89ead771dcaf9_1gabd7cc318d4ed54c24cf89ead771dcaf9" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DK_LED2<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="group__dk__buttons__and__leds_ga898936c9d5babd20b14406f34880f7fd_1ga898936c9d5babd20b14406f34880f7fd" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DK_LED3<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="group__dk__buttons__and__leds_ga69c31090e93ad277b60d0c25a22f2302_1ga69c31090e93ad277b60d0c25a22f2302" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DK_LED4<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="group__dk__buttons__and__leds_gaa625961b3da635a4b706e9d552ca948f_1gaa625961b3da635a4b706e9d552ca948f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DK_LED1_MSK<sp/><sp/><sp/><sp/><sp/><sp/><sp/>BIT(DK_LED1)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="group__dk__buttons__and__leds_ga1de2f8629a113c35296a3e72b735478d_1ga1de2f8629a113c35296a3e72b735478d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DK_LED2_MSK<sp/><sp/><sp/><sp/><sp/><sp/><sp/>BIT(DK_LED2)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="group__dk__buttons__and__leds_ga353881bc28c249b7bfa2a445c9724c98_1ga353881bc28c249b7bfa2a445c9724c98" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DK_LED3_MSK<sp/><sp/><sp/><sp/><sp/><sp/><sp/>BIT(DK_LED3)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="group__dk__buttons__and__leds_ga7acca9aa4ffb1e20f716f0579225c9af_1ga7acca9aa4ffb1e20f716f0579225c9af" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DK_LED4_MSK<sp/><sp/><sp/><sp/><sp/><sp/><sp/>BIT(DK_LED4)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="group__dk__buttons__and__leds_ga701c94529c61f2314ce98a4bd5db8bcb_1ga701c94529c61f2314ce98a4bd5db8bcb" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DK_ALL_LEDS_MSK<sp/><sp/><sp/>(DK_LED1_MSK<sp/>|<sp/>DK_LED2_MSK<sp/>|\</highlight></codeline>
+<codeline lineno="33"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>DK_LED3_MSK<sp/>|<sp/>DK_LED4_MSK)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="group__dk__buttons__and__leds_ga22d66709f9ff1eb15480958153b84b9e_1ga22d66709f9ff1eb15480958153b84b9e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DK_NO_BTNS_MSK<sp/><sp/><sp/>(0)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="group__dk__buttons__and__leds_ga9029a4de3273c0e3cdf8d0b416e73597_1ga9029a4de3273c0e3cdf8d0b416e73597" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DK_BTN1<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="group__dk__buttons__and__leds_ga678ca1aa1bc2ee68b4cd05f2508f8eff_1ga678ca1aa1bc2ee68b4cd05f2508f8eff" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DK_BTN2<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="group__dk__buttons__and__leds_ga027bfaa693a589e37e8f1031c4e12165_1ga027bfaa693a589e37e8f1031c4e12165" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DK_BTN3<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="group__dk__buttons__and__leds_gacf4ca7c42257a96c06ea10e571a163f0_1gacf4ca7c42257a96c06ea10e571a163f0" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DK_BTN4<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="group__dk__buttons__and__leds_ga505df3449971adc408ad8415534c32a7_1ga505df3449971adc408ad8415534c32a7" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DK_BTN1_MSK<sp/><sp/><sp/><sp/><sp/><sp/>BIT(DK_BTN1)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="group__dk__buttons__and__leds_gab4bdd15f477cc359c1f46d66eaa49781_1gab4bdd15f477cc359c1f46d66eaa49781" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DK_BTN2_MSK<sp/><sp/><sp/><sp/><sp/><sp/>BIT(DK_BTN2)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="group__dk__buttons__and__leds_gad2d903f99accb575a071c02436411f27_1gad2d903f99accb575a071c02436411f27" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DK_BTN3_MSK<sp/><sp/><sp/><sp/><sp/><sp/>BIT(DK_BTN3)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="group__dk__buttons__and__leds_ga9b05474ac229268a3b12dc553db71987_1ga9b05474ac229268a3b12dc553db71987" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DK_BTN4_MSK<sp/><sp/><sp/><sp/><sp/><sp/>BIT(DK_BTN4)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="group__dk__buttons__and__leds_ga71e14b8323201b748ac7b849ed023e16_1ga71e14b8323201b748ac7b849ed023e16" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DK_ALL_BTNS_MSK<sp/><sp/>(DK_BTN1_MSK<sp/>|<sp/>DK_BTN2_MSK<sp/>|<sp/>\</highlight></codeline>
+<codeline lineno="45"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>DK_BTN3_MSK<sp/>|<sp/>DK_BTN4_MSK)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="group__dk__buttons__and__leds_gafdb4d479095b8675fd1f04a2dfe39587_1gafdb4d479095b8675fd1f04a2dfe39587" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__dk__buttons__and__leds_gafdb4d479095b8675fd1f04a2dfe39587_1gafdb4d479095b8675fd1f04a2dfe39587" kindref="member">button_handler_t</ref>)(uint32_t<sp/>button_state,<sp/>uint32_t<sp/>has_changed);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="structbutton__handler" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbutton__handler" kindref="compound">button_handler</ref><sp/>{</highlight></codeline>
+<codeline lineno="57" refid="structbutton__handler_a66bb427509a37e42a1925c1919ce053b_1a66bb427509a37e42a1925c1919ce053b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__dk__buttons__and__leds_gafdb4d479095b8675fd1f04a2dfe39587_1gafdb4d479095b8675fd1f04a2dfe39587" kindref="member">button_handler_t</ref><sp/><ref refid="structbutton__handler_a66bb427509a37e42a1925c1919ce053b_1a66bb427509a37e42a1925c1919ce053b" kindref="member">cb</ref>;<sp/></highlight></codeline>
+<codeline lineno="58" refid="structbutton__handler_a07af093ffb41b2ba84621f64f2f4348a_1a07af093ffb41b2ba84621f64f2f4348a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sys_snode_t<sp/><ref refid="structbutton__handler_a07af093ffb41b2ba84621f64f2f4348a_1a07af093ffb41b2ba84621f64f2f4348a" kindref="member">node</ref>;<sp/></highlight></codeline>
+<codeline lineno="59"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="group__dk__buttons__and__leds_gaa058cd393eca7d9171735b9c3e736299_1gaa058cd393eca7d9171735b9c3e736299" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dk__buttons__and__leds_gaa058cd393eca7d9171735b9c3e736299_1gaa058cd393eca7d9171735b9c3e736299" kindref="member">dk_leds_init</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="group__dk__buttons__and__leds_ga6e1ddbe90454414faf3580d54df8072e_1ga6e1ddbe90454414faf3580d54df8072e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dk__buttons__and__leds_ga6e1ddbe90454414faf3580d54df8072e_1ga6e1ddbe90454414faf3580d54df8072e" kindref="member">dk_buttons_init</ref>(<ref refid="group__dk__buttons__and__leds_gafdb4d479095b8675fd1f04a2dfe39587_1gafdb4d479095b8675fd1f04a2dfe39587" kindref="member">button_handler_t</ref><sp/><ref refid="structbutton__handler" kindref="compound">button_handler</ref>);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="group__dk__buttons__and__leds_ga74e120d08cb80855a084812abaf6d00c_1ga74e120d08cb80855a084812abaf6d00c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__dk__buttons__and__leds_ga74e120d08cb80855a084812abaf6d00c_1ga74e120d08cb80855a084812abaf6d00c" kindref="member">dk_button_handler_add</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbutton__handler" kindref="compound">button_handler</ref><sp/>*handler);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="group__dk__buttons__and__leds_ga0ae139dc02870250cd9b1fe01cb3ca80_1ga0ae139dc02870250cd9b1fe01cb3ca80" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dk__buttons__and__leds_ga0ae139dc02870250cd9b1fe01cb3ca80_1ga0ae139dc02870250cd9b1fe01cb3ca80" kindref="member">dk_button_handler_remove</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbutton__handler" kindref="compound">button_handler</ref><sp/>*handler);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102" refid="group__dk__buttons__and__leds_ga202b02775f7a5be11c5db7a7a17dd4d2_1ga202b02775f7a5be11c5db7a7a17dd4d2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__dk__buttons__and__leds_ga202b02775f7a5be11c5db7a7a17dd4d2_1ga202b02775f7a5be11c5db7a7a17dd4d2" kindref="member">dk_read_buttons</ref>(uint32_t<sp/>*button_state,<sp/>uint32_t<sp/>*has_changed);</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108" refid="group__dk__buttons__and__leds_ga6a3512b7fc6b720f57cd059c3ed5c21c_1ga6a3512b7fc6b720f57cd059c3ed5c21c" refkind="member"><highlight class="normal">uint32_t<sp/><ref refid="group__dk__buttons__and__leds_ga6a3512b7fc6b720f57cd059c3ed5c21c_1ga6a3512b7fc6b720f57cd059c3ed5c21c" kindref="member">dk_get_buttons</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117" refid="group__dk__buttons__and__leds_gacadba1cf019d3d224a979e38cdb8a78c_1gacadba1cf019d3d224a979e38cdb8a78c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dk__buttons__and__leds_gacadba1cf019d3d224a979e38cdb8a78c_1gacadba1cf019d3d224a979e38cdb8a78c" kindref="member">dk_set_leds</ref>(uint32_t<sp/>leds);</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133" refid="group__dk__buttons__and__leds_ga1b20c6d8aef91d291c2770bc5ce160c9_1ga1b20c6d8aef91d291c2770bc5ce160c9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dk__buttons__and__leds_ga1b20c6d8aef91d291c2770bc5ce160c9_1ga1b20c6d8aef91d291c2770bc5ce160c9" kindref="member">dk_set_leds_state</ref>(uint32_t<sp/>leds_on_mask,<sp/>uint32_t<sp/>leds_off_mask);</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147" refid="group__dk__buttons__and__leds_gaf4a80acb74c55f6315054b123a7a0690_1gaf4a80acb74c55f6315054b123a7a0690" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dk__buttons__and__leds_gaf4a80acb74c55f6315054b123a7a0690_1gaf4a80acb74c55f6315054b123a7a0690" kindref="member">dk_set_led</ref>(uint8_t<sp/>led_idx,<sp/>uint32_t<sp/>val);</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156" refid="group__dk__buttons__and__leds_ga77c2a73f932124ec6edd4b3d04c37128_1ga77c2a73f932124ec6edd4b3d04c37128" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dk__buttons__and__leds_ga77c2a73f932124ec6edd4b3d04c37128_1ga77c2a73f932124ec6edd4b3d04c37128" kindref="member">dk_set_led_on</ref>(uint8_t<sp/>led_idx);</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165" refid="group__dk__buttons__and__leds_ga934ea6de370f2f70bc5da1d63d1ee1e2_1ga934ea6de370f2f70bc5da1d63d1ee1e2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dk__buttons__and__leds_ga934ea6de370f2f70bc5da1d63d1ee1e2_1ga934ea6de370f2f70bc5da1d63d1ee1e2" kindref="member">dk_set_led_off</ref>(uint8_t<sp/>led_idx);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>DK_BUTTON_AND_LEDS_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/dk_buttons_and_leds.h"/>
+  </compounddef>
+</doxygen>

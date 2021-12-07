@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__hrs__client__measurement" kind="struct" language="C++" prot="public">
+    <compoundname>bt_hrs_client_measurement</compoundname>
+    <includes refid="hrs__client_8h" local="no">hrs_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__hrs__client__measurement_ad76b5e24aae01ced5c1e03112089a871_1ad76b5e24aae01ced5c1e03112089a871" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__hrs__flags" kindref="compound">bt_hrs_flags</ref></type>
+        <definition>struct bt_hrs_flags bt_hrs_client_measurement::flags</definition>
+        <argsstring></argsstring>
+        <name>flags</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Flags structure. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="95" column="19" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hrs__client__measurement_a85c6860ccaed52cfd4f51d11a77d7dbb_1a85c6860ccaed52cfd4f51d11a77d7dbb" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hrs_client_measurement::rr_intervals_count</definition>
+        <argsstring></argsstring>
+        <name>rr_intervals_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>RR-intervals count. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="98" column="9" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hrs__client__measurement_ad455927df8c3cd13c668294e7bb61b1b_1ad455927df8c3cd13c668294e7bb61b1b" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_hrs_client_measurement::rr_intervals[CONFIG_BT_HRS_CLIENT_RR_INTERVALS_COUNT]</definition>
+        <argsstring>[CONFIG_BT_HRS_CLIENT_RR_INTERVALS_COUNT]</argsstring>
+        <name>rr_intervals</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>RR-intervals represented by 1/1024 second as unit. Present if <ref refid="structbt__hrs__flags_ab544a63926570cce8348ffed16c914fc_1ab544a63926570cce8348ffed16c914fc" kindref="member">bt_hrs_flags::rr_intervals_present</ref> is set. The interval with index 0 is older then the interval with index 1. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="104" column="10" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hrs__client__measurement_a8397ad60debee12feb7c7e4f213afdd1_1a8397ad60debee12feb7c7e4f213afdd1" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_hrs_client_measurement::hr_value</definition>
+        <argsstring></argsstring>
+        <name>hr_value</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Heart Rate Measurement Value in beats per minute unit. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="107" column="10" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hrs__client__measurement_a7430f9ba421bb267efe87acc6cefb9fd_1a7430f9ba421bb267efe87acc6cefb9fd" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_hrs_client_measurement::energy_expended</definition>
+        <argsstring></argsstring>
+        <name>energy_expended</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Energy Expended in joule unit. Present if <ref refid="structbt__hrs__flags_a0ea2492fa18ea2437c765ae19ef9c8bb_1a0ea2492fa18ea2437c765ae19ef9c8bb" kindref="member">bt_hrs_flags::energy_expended_present</ref> is set. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="112" column="10" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Data structure of the Heart Rate Measurement characteristic. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_hrs_client_measurement</label>
+        <link refid="structbt__hrs__client__measurement"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>flags</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_hrs_flags</label>
+        <link refid="structbt__hrs__flags"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/hrs_client.h" line="93" column="1" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="93" bodyend="113"/>
+    <listofallmembers>
+      <member refid="structbt__hrs__client__measurement_a7430f9ba421bb267efe87acc6cefb9fd_1a7430f9ba421bb267efe87acc6cefb9fd" prot="public" virt="non-virtual"><scope>bt_hrs_client_measurement</scope><name>energy_expended</name></member>
+      <member refid="structbt__hrs__client__measurement_ad76b5e24aae01ced5c1e03112089a871_1ad76b5e24aae01ced5c1e03112089a871" prot="public" virt="non-virtual"><scope>bt_hrs_client_measurement</scope><name>flags</name></member>
+      <member refid="structbt__hrs__client__measurement_a8397ad60debee12feb7c7e4f213afdd1_1a8397ad60debee12feb7c7e4f213afdd1" prot="public" virt="non-virtual"><scope>bt_hrs_client_measurement</scope><name>hr_value</name></member>
+      <member refid="structbt__hrs__client__measurement_ad455927df8c3cd13c668294e7bb61b1b_1ad455927df8c3cd13c668294e7bb61b1b" prot="public" virt="non-virtual"><scope>bt_hrs_client_measurement</scope><name>rr_intervals</name></member>
+      <member refid="structbt__hrs__client__measurement_a85c6860ccaed52cfd4f51d11a77d7dbb_1a85c6860ccaed52cfd4f51d11a77d7dbb" prot="public" virt="non-virtual"><scope>bt_hrs_client_measurement</scope><name>rr_intervals_count</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

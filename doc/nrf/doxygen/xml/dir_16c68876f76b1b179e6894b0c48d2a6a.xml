@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_16c68876f76b1b179e6894b0c48d2a6a" kind="dir">
+    <compoundname>applications/machine_learning/configuration</compoundname>
+    <innerdir refid="dir_cf3f4c112b31f4db44723bb6d13bd312">applications/machine_learning/configuration/common</innerdir>
+    <innerdir refid="dir_1752cc3834fb416c4c0a54d0d1912999">applications/machine_learning/configuration/nrf52840dk_nrf52840</innerdir>
+    <innerdir refid="dir_d1f2c4ec0f81b2cde645f3573df1479e">applications/machine_learning/configuration/nrf5340dk_nrf5340_cpuapp</innerdir>
+    <innerdir refid="dir_add21578c7b6750c4d9205b95662f7a8">applications/machine_learning/configuration/thingy52_nrf52832</innerdir>
+    <innerdir refid="dir_7ebd07e9b3bd059a87d67222bdc332d3">applications/machine_learning/configuration/thingy53_nrf5340_cpuapp</innerdir>
+    <innerdir refid="dir_8c2b6f9e3e9dbcc530ec5ba322956930">applications/machine_learning/configuration/thingy53_nrf5340_cpuapp_ns</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/machine_learning/configuration/"/>
+  </compounddef>
+</doxygen>

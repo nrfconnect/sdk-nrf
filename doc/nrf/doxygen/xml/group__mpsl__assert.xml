@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__mpsl__assert" kind="group">
+    <compoundname>mpsl_assert</compoundname>
+    <title>Multiprotocol Service Layer assert</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__mpsl__assert_1gaac13c13d0d6aaa101b3fa666d62aeac5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mpsl_assert_handle</definition>
+        <argsstring>(char *file, uint32_t line)</argsstring>
+        <name>mpsl_assert_handle</name>
+        <param>
+          <type>char *</type>
+          <declname>file</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>line</declname>
+        </param>
+        <briefdescription>
+<para>Application-defined sink for the MPSL assertion mechanism. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The file name where the assertion occurred. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>line</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The line number where the assertion occurred. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/mpsl/mpsl_assert.h" line="29" column="6" declfile="include/mpsl/mpsl_assert.h" declline="29" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>MPSL assert. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

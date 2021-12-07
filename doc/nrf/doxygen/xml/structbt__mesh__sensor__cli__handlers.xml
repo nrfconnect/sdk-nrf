@@ -1,0 +1,387 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__sensor__cli__handlers" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_sensor_cli_handlers</compoundname>
+    <includes refid="sensor__cli_8h" local="no">sensor_cli.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__sensor__cli__handlers_a88febee8085ee8e84fc757b2bd0f5fe1_1a88febee8085ee8e84fc757b2bd0f5fe1" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_mesh_sensor_cli_handlers::data) (struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_type *sensor, const struct sensor_value *value)</definition>
+        <argsstring>)(struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_type *sensor, const struct sensor_value *value)</argsstring>
+        <name>data</name>
+        <briefdescription>
+<para>Sensor data callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Called when the client receives sensor sample data, either as a result of calling <ref refid="group__bt__mesh__sensor__cli_gabd71ee58fea78e865d79a634776bf89e_1gabd71ee58fea78e865d79a634776bf89e" kindref="member">bt_mesh_sensor_cli_get</ref>, or as an unsolicited message.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor client receiving the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interpreted sensor data value as an array of channels. The length of the array matches the sensor channel count. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="140" column="1" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="140" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__cli__handlers_aba336e51b11830f7b2d331c3eeae3165_1aba336e51b11830f7b2d331c3eeae3165" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_mesh_sensor_cli_handlers::sensor) (struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_info *sensor)</definition>
+        <argsstring>)(struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_info *sensor)</argsstring>
+        <name>sensor</name>
+        <briefdescription>
+<para>Sensor description callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Called when the client receives sensor descriptors, either as a result of calling <ref refid="group__bt__mesh__sensor__cli_gaa0f440dca1aa31c01323d692eeea4e29_1gaa0f440dca1aa31c01323d692eeea4e29" kindref="member">bt_mesh_sensor_cli_all_get</ref> or <ref refid="group__bt__mesh__sensor__cli_ga939275d0189af0a6e00c4f6a754582e1_1ga939275d0189af0a6e00c4f6a754582e1" kindref="member">bt_mesh_sensor_cli_desc_get</ref>, or as an unsolicited message.</para>
+<para>The sensor description does not reference the sensor type directly, to allow discovery of sensor types unknown to the client. To get the sensor type of a known sensor, call <ref refid="group__bt__mesh__sensor_ga44c23ada7b88628ae74f211d189d97a6_1ga44c23ada7b88628ae74f211d189d97a6" kindref="member">bt_mesh_sensor_type_get</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor client receiving the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor information for a single sensor. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="159" column="1" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="159" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__cli__handlers_a86f03299427d7e4ac054ca114ef7257a_1a86f03299427d7e4ac054ca114ef7257a" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_mesh_sensor_cli_handlers::cadence) (struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_type *sensor, const struct bt_mesh_sensor_cadence_status *cadence)</definition>
+        <argsstring>)(struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_type *sensor, const struct bt_mesh_sensor_cadence_status *cadence)</argsstring>
+        <name>cadence</name>
+        <briefdescription>
+<para>Sensor cadence callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Called when the client receives the cadence of a sensor, either as a result of calling one of <ref refid="group__bt__mesh__sensor__cli_ga2a6f449dbe1205f2d748f0a940e0149e_1ga2a6f449dbe1205f2d748f0a940e0149e" kindref="member">bt_mesh_sensor_cli_cadence_get</ref>, <ref refid="group__bt__mesh__sensor__cli_ga0efe93f4da2462773e5328cdfb3a2abd_1ga0efe93f4da2462773e5328cdfb3a2abd" kindref="member">bt_mesh_sensor_cli_cadence_set</ref> or <ref refid="group__bt__mesh__sensor__cli_gac32184b3d1d819dc97166ca663dd940d_1gac32184b3d1d819dc97166ca663dd940d" kindref="member">bt_mesh_sensor_cli_cadence_set_unack</ref>, or as an unsolicited message.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor client receiving the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cadence</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor cadence information. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="176" column="1" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="176" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__cli__handlers_a92da6ea4d18b088549796c7484e343a4_1a92da6ea4d18b088549796c7484e343a4" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_mesh_sensor_cli_handlers::settings) (struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_type *sensor, const uint16_t *ids, uint32_t count)</definition>
+        <argsstring>)(struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_type *sensor, const uint16_t *ids, uint32_t count)</argsstring>
+        <name>settings</name>
+        <briefdescription>
+<para>Sensor settings list callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Called when the client receives the full list of sensor settings, as a result of calling <ref refid="group__bt__mesh__sensor__cli_ga29cc60fc836d01369ecf788a4ad5b0f8_1ga29cc60fc836d01369ecf788a4ad5b0f8" kindref="member">bt_mesh_sensor_cli_settings_get</ref> or as an unsolicited message.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor client receiving the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ids</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Available sensor setting IDs. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of sensor setting IDs. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="193" column="1" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="193" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__cli__handlers_ab796b7f3ad7a0c051ae16457039e0c94_1ab796b7f3ad7a0c051ae16457039e0c94" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_mesh_sensor_cli_handlers::setting_status) (struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_type *sensor, const struct bt_mesh_sensor_setting_status *setting)</definition>
+        <argsstring>)(struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_type *sensor, const struct bt_mesh_sensor_setting_status *setting)</argsstring>
+        <name>setting_status</name>
+        <briefdescription>
+<para>Sensor setting status callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Called when the client receives a sensor setting status, either as result of calling <ref refid="group__bt__mesh__sensor__cli_ga139e6168d9de6078b57d1f2b0a8ad570_1ga139e6168d9de6078b57d1f2b0a8ad570" kindref="member">bt_mesh_sensor_cli_setting_get</ref>, <ref refid="group__bt__mesh__sensor__cli_ga0ed746e75c0038fa6cf6f86e54c2cc5e_1ga0ed746e75c0038fa6cf6f86e54c2cc5e" kindref="member">bt_mesh_sensor_cli_setting_set</ref>, <ref refid="group__bt__mesh__sensor__cli_gac6e4a1c0210b765a44fab88414f3ccc3_1gac6e4a1c0210b765a44fab88414f3ccc3" kindref="member">bt_mesh_sensor_cli_setting_set_unack</ref>, or as an unsolicited message.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor client receiving the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">setting</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor setting information. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="210" column="1" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="210" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__cli__handlers_a72602f372fc9569176dd9d38fa1e7fef_1a72602f372fc9569176dd9d38fa1e7fef" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_mesh_sensor_cli_handlers::series_entry) (struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_type *sensor, uint8_t index, uint8_t count, const struct bt_mesh_sensor_series_entry *entry)</definition>
+        <argsstring>)(struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_type *sensor, uint8_t index, uint8_t count, const struct bt_mesh_sensor_series_entry *entry)</argsstring>
+        <name>series_entry</name>
+        <briefdescription>
+<para>Series entry callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Called when the client receives series entries, either as result of calling one of <ref refid="group__bt__mesh__sensor__cli_ga7e4fe3e5fae30a09aab00c7424db5b0a_1ga7e4fe3e5fae30a09aab00c7424db5b0a" kindref="member">bt_mesh_sensor_cli_series_entry_get</ref> or <ref refid="group__bt__mesh__sensor__cli_gaf567ff00b05362c5656e9f7c33fb4ccc_1gaf567ff00b05362c5656e9f7c33fb4ccc" kindref="member">bt_mesh_sensor_cli_series_entries_get</ref>, or as a result of an unsolicited message.</para>
+<para>If the received series entry message contains several entries, this callback is called once per entry, with the <computeroutput>index</computeroutput> and <computeroutput>count</computeroutput> parameters indicating the progress.</para>
+<para><simplesect kind="note"><para>The <computeroutput>index</computeroutput> and <computeroutput>count</computeroutput> parameters does not necessarily match the total number of series entries of the sensor, as the callback may be the result of a filtered query.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor client receiving the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of this entry in the list of entries received. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Total number of entries received. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">entry</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Single sensor series entry. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="238" column="1" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="238" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__cli__handlers_a2cf50d0274b95677f400607bab8cbe75_1a2cf50d0274b95677f400607bab8cbe75" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_mesh_sensor_cli_handlers::unknown_type) (struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t id, uint32_t opcode)</definition>
+        <argsstring>)(struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t id, uint32_t opcode)</argsstring>
+        <name>unknown_type</name>
+        <briefdescription>
+<para>Unknown type callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Called when the client receives a message with a sensor type it doesn&apos;t have type information for.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor client receiving the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor type ID. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">opcode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The opcode of the message containing the unknown sensor type. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="255" column="1" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="255" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Sensor client handler functions. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/sensor_cli.h" line="126" column="1" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="126" bodyend="258"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__sensor__cli__handlers_a86f03299427d7e4ac054ca114ef7257a_1a86f03299427d7e4ac054ca114ef7257a" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_cli_handlers</scope><name>cadence</name></member>
+      <member refid="structbt__mesh__sensor__cli__handlers_a88febee8085ee8e84fc757b2bd0f5fe1_1a88febee8085ee8e84fc757b2bd0f5fe1" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_cli_handlers</scope><name>data</name></member>
+      <member refid="structbt__mesh__sensor__cli__handlers_aba336e51b11830f7b2d331c3eeae3165_1aba336e51b11830f7b2d331c3eeae3165" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_cli_handlers</scope><name>sensor</name></member>
+      <member refid="structbt__mesh__sensor__cli__handlers_a72602f372fc9569176dd9d38fa1e7fef_1a72602f372fc9569176dd9d38fa1e7fef" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_cli_handlers</scope><name>series_entry</name></member>
+      <member refid="structbt__mesh__sensor__cli__handlers_ab796b7f3ad7a0c051ae16457039e0c94_1ab796b7f3ad7a0c051ae16457039e0c94" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_cli_handlers</scope><name>setting_status</name></member>
+      <member refid="structbt__mesh__sensor__cli__handlers_a92da6ea4d18b088549796c7484e343a4_1a92da6ea4d18b088549796c7484e343a4" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_cli_handlers</scope><name>settings</name></member>
+      <member refid="structbt__mesh__sensor__cli__handlers_a2cf50d0274b95677f400607bab8cbe75_1a2cf50d0274b95677f400607bab8cbe75" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_cli_handlers</scope><name>unknown_type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

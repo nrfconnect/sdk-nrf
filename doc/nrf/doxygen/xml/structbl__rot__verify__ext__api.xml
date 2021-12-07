@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbl__rot__verify__ext__api" kind="struct" language="C++" prot="public">
+    <compoundname>bl_rot_verify_ext_api</compoundname>
+    <includes refid="bl__crypto_8h" local="no">bl_crypto.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbl__rot__verify__ext__api_a8bb6f46b202a26a802a8d735df18a28f_1a8bb6f46b202a26a802a8d735df18a28f" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bl__crypto_gae834e35f1667645ff403a6ef60c4f987_1gae834e35f1667645ff403a6ef60c4f987" kindref="member">bl_root_of_trust_verify_t</ref></type>
+        <definition>bl_root_of_trust_verify_t bl_rot_verify_ext_api::bl_root_of_trust_verify</definition>
+        <argsstring></argsstring>
+        <name>bl_root_of_trust_verify</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="203" column="27" bodyfile="include/bl_crypto.h" bodystart="203" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Structure describing the BL_ROT_VERIFY EXT_API. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bl_crypto.h" line="202" column="1" bodyfile="include/bl_crypto.h" bodystart="202" bodyend="204"/>
+    <listofallmembers>
+      <member refid="structbl__rot__verify__ext__api_a8bb6f46b202a26a802a8d735df18a28f_1a8bb6f46b202a26a802a8d735df18a28f" prot="public" virt="non-virtual"><scope>bl_rot_verify_ext_api</scope><name>bl_root_of_trust_verify</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

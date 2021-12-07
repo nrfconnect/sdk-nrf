@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structpelion__state__event" kind="struct" language="C++" prot="public">
+    <compoundname>pelion_state_event</compoundname>
+    <includes refid="pelion__event_8h" local="no">pelion_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structpelion__state__event_a56a5a3fe7bfd80f6a6f8f487f54fcf95_1a56a5a3fe7bfd80f6a6f8f487f54fcf95" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header pelion_state_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/pelion_client/src/events/pelion_event.h" line="37" column="19" bodyfile="applications/pelion_client/src/events/pelion_event.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structpelion__state__event_a1df2a786e4ee481b8df1152e6c61ca63_1a1df2a786e4ee481b8df1152e6c61ca63" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__pelion__state__event_ga17199c5dd6fbca573fccd18367ddbcbc_1ga17199c5dd6fbca573fccd18367ddbcbc" kindref="member">pelion_state</ref></type>
+        <definition>enum pelion_state pelion_state_event::state</definition>
+        <argsstring></argsstring>
+        <name>state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/pelion_client/src/events/pelion_event.h" line="39" column="18" bodyfile="applications/pelion_client/src/events/pelion_event.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Pelion state event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>pelion_state_event</label>
+        <link refid="structpelion__state__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/pelion_client/src/events/pelion_event.h" line="36" column="1" bodyfile="applications/pelion_client/src/events/pelion_event.h" bodystart="36" bodyend="40"/>
+    <listofallmembers>
+      <member refid="structpelion__state__event_a56a5a3fe7bfd80f6a6f8f487f54fcf95_1a56a5a3fe7bfd80f6a6f8f487f54fcf95" prot="public" virt="non-virtual"><scope>pelion_state_event</scope><name>header</name></member>
+      <member refid="structpelion__state__event_a1df2a786e4ee481b8df1152e6c61ca63_1a1df2a786e4ee481b8df1152e6c61ca63" prot="public" virt="non-virtual"><scope>pelion_state_event</scope><name>state</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

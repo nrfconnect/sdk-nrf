@@ -1,0 +1,478 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__nfc__spi" kind="group">
+    <compoundname>st25r3911b_nfc_spi</compoundname>
+    <title>ST25R3911B NFC Reader SPI</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__st25r3911b__nfc__spi_1ga09a2d85bdb2d2e49d7858bff71a54ab0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_spi_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>st25r3911b_spi_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize ST25R3911B NFC Reader SPI hardware interface. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function initializes the hardware SPI interface according to ST25R3911B IC documentation chapter 1.2.12.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_spi.h" line="37" column="5" declfile="lib/st25r3911b/st25r3911b_spi.h" declline="37" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfc__spi_1ga4def850235c6dd5b3aabc75bd7adad05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_multiple_reg_write</definition>
+        <argsstring>(uint8_t start_reg, uint8_t *val, size_t len)</argsstring>
+        <name>st25r3911b_multiple_reg_write</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>start_reg</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>val</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Write multiple NFC Reader registers. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The register address is auto-incrementing. Registers are written in the order ascending from the starting address.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">start_reg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The address of the register from which the writing will start. See <ref refid="group__st25r3911b__reg" kindref="compound">Registers</ref> for the register addresses. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Register values to write. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of registers to write.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_spi.h" line="54" column="5" declfile="lib/st25r3911b/st25r3911b_spi.h" declline="54" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfc__spi_1ga1e58a194fc1c5681ad6da9b6c04784d3" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int st25r3911b_reg_write</definition>
+        <argsstring>(uint8_t reg, uint8_t val)</argsstring>
+        <name>st25r3911b_reg_write</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>reg</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+<para>Write a single NFCA Reader register. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">reg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Register address (see <ref refid="group__st25r3911b__reg" kindref="compound">Registers</ref>). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value to write.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_spi.h" line="65" column="19" bodyfile="lib/st25r3911b/st25r3911b_spi.h" bodystart="65" bodyend="68"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfc__spi_1ga8ed404f870d7227dbcc398feb44423d9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_multiple_reg_read</definition>
+        <argsstring>(uint8_t start_reg, uint8_t *val, size_t len)</argsstring>
+        <name>st25r3911b_multiple_reg_read</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>start_reg</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>val</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Read multiple NFC Reader registers. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The register address is auto-incrementing. Registers are read in the order ascending from the starting address.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">start_reg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The address of the register from which the reading will start. See <ref refid="group__st25r3911b__reg" kindref="compound">Registers</ref> for the register addresses. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Read registers values. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of registers to read.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_spi.h" line="86" column="5" declfile="lib/st25r3911b/st25r3911b_spi.h" declline="86" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfc__spi_1ga2ae400acdeb83a9b221e9bbbf30aff0c" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int st25r3911b_reg_read</definition>
+        <argsstring>(uint8_t reg, uint8_t *val)</argsstring>
+        <name>st25r3911b_reg_read</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>reg</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+<para>Read a single NFC Reader register. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">reg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Register address (see <ref refid="group__st25r3911b__reg" kindref="compound">Registers</ref>). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Read register value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_spi.h" line="96" column="19" bodyfile="lib/st25r3911b/st25r3911b_spi.h" bodystart="96" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfc__spi_1ga77530b9c5b53f274ca7d0e63cb3108ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_cmd_execute</definition>
+        <argsstring>(uint8_t cmd)</argsstring>
+        <name>st25r3911b_cmd_execute</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>cmd</declname>
+        </param>
+        <briefdescription>
+<para>Execute an NFC Reader direct command. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Direct commands are used to automate certain activities.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cmd</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Direct command (see <ref refid="group__st25r3911b__direct__command" kindref="compound">Direct command</ref>).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_spi.h" line="110" column="5" declfile="lib/st25r3911b/st25r3911b_spi.h" declline="110" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfc__spi_1ga9050502e76d6511fa4b06b7d3ec1dbf0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_reg_modify</definition>
+        <argsstring>(uint8_t reg, uint8_t clr_mask, uint8_t set_mask)</argsstring>
+        <name>st25r3911b_reg_modify</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>reg</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>clr_mask</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>set_mask</declname>
+        </param>
+        <briefdescription>
+<para>Modify a single NFC Reader register. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The first register value is read, then the bits selected by the clear mask are cleared. Finally, the bits selected by the set mask are set.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">reg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Register address (see <ref refid="group__st25r3911b__reg" kindref="compound">Registers</ref>). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">clr_mask</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bitmask that defines which register bits to clear. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set_mask</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bitmask that defines which register bits to set.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_spi.h" line="127" column="5" declfile="lib/st25r3911b/st25r3911b_spi.h" declline="127" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfc__spi_1gaf3a0cacd3862a3f6b0b3b0e7f096da37" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_fifo_read</definition>
+        <argsstring>(uint8_t *data, size_t length)</argsstring>
+        <name>st25r3911b_fifo_read</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>length</declname>
+        </param>
+        <briefdescription>
+<para>Read NFC Reader FIFO data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Data from FIFO is read by SPI. The data length to read can be in the range of 1 to 96 bytes.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Read FIFO data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of data to read.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_spi.h" line="140" column="5" declfile="lib/st25r3911b/st25r3911b_spi.h" declline="140" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfc__spi_1ga4d942b86abc52bf5114b7bf9aac3beee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_fifo_write</definition>
+        <argsstring>(uint8_t *data, size_t length)</argsstring>
+        <name>st25r3911b_fifo_write</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>length</declname>
+        </param>
+        <briefdescription>
+<para>Write NFC Reader FIFO data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Data from FIFO is written by SPI.The data length to write can be in the range of 1 to 96 bytes.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>FIFO data to write. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of data to write.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_spi.h" line="153" column="5" declfile="lib/st25r3911b/st25r3911b_spi.h" declline="153" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__nfc__spi_1ga626f4b68d5c1426241d923cc8d122702" prot="public" static="no">
+        <name>ST25R3911B_MAX_FIFO_LEN</name>
+        <initializer>96</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>ST25R3911B FIFO maximum length. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_spi.h" line="27" column="9" bodyfile="lib/st25r3911b/st25r3911b_spi.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the ST25R3911B NFC Reader SPI communication. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

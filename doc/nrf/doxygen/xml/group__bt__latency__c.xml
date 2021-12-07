@@ -1,0 +1,216 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__latency__c" kind="group">
+    <compoundname>bt_latency_c</compoundname>
+    <title>Bluetooth LE GATT Latency Client API</title>
+    <innerclass refid="structbt__latency__client__cb" prot="public">bt_latency_client_cb</innerclass>
+    <innerclass refid="structbt__latency__client" prot="public">bt_latency_client</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__latency__c_1ga837640474be6e0d8f21359043775a4ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_latency_client_init</definition>
+        <argsstring>(struct bt_latency_client *latency, const struct bt_latency_client_cb *cb)</argsstring>
+        <name>bt_latency_client_init</name>
+        <param>
+          <type>struct <ref refid="structbt__latency__client" kindref="compound">bt_latency_client</ref> *</type>
+          <declname>latency</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__latency__client__cb" kindref="compound">bt_latency_client_cb</ref> *</type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the GATT latency client. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">latency</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Latency client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callbacks.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>(-EINVAL)</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Special error code used when the input parameters are invalid. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>(-EALREADY)</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Special error code used when the latency client has been initialed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/latency_client.h" line="68" column="5" declfile="include/bluetooth/services/latency_client.h" declline="68" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__latency__c_1ga7b94e9d5bf039380f7aa3c361f57486a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_latency_handles_assign</definition>
+        <argsstring>(struct bt_gatt_dm *dm, struct bt_latency_client *latency)</argsstring>
+        <name>bt_latency_handles_assign</name>
+        <param>
+          <type>struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__latency__client" kindref="compound">bt_latency_client</ref> *</type>
+          <declname>latency</declname>
+        </param>
+        <briefdescription>
+<para>Assign handles to the latency client instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function should be called when a link with a peer has been established, to associate the link to this instance of the module. This makes it possible to handle several links and associate each link to a particular instance of this module. The GATT attribute handles are provided by the GATT Discovery Manager.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">latency</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Latency client instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>(-ENOTSUP)</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Special error code used when the UUID of the service does not match the expected UUID. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>(-EINVAL)</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Special error code used when the UUID characteristic or value descriptor not found. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/latency_client.h" line="89" column="5" declfile="include/bluetooth/services/latency_client.h" declline="89" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__latency__c_1gadccc144fbc5a5162187f91420b8e07b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_latency_request</definition>
+        <argsstring>(struct bt_latency_client *latency, const void *data, uint16_t len)</argsstring>
+        <name>bt_latency_request</name>
+        <param>
+          <type>struct <ref refid="structbt__latency__client" kindref="compound">bt_latency_client</ref> *</type>
+          <declname>latency</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Write data to the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">latency</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Latency client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data length.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>(-EALREADY)</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Special error code used when the asynchronous request is waiting for a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/latency_client.h" line="103" column="5" declfile="include/bluetooth/services/latency_client.h" declline="103" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Bluetooth LE GATT Latency Client. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

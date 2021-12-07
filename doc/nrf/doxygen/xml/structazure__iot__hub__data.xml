@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structazure__iot__hub__data" kind="struct" language="C++" prot="public">
+    <compoundname>azure_iot_hub_data</compoundname>
+    <includes refid="azure__iot__hub_8h" local="no">azure_iot_hub.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structazure__iot__hub__data_afa48d6e94c0f2218b5988b9c96e3d7f2_1afa48d6e94c0f2218b5988b9c96e3d7f2" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structazure__iot__hub__topic__data" kindref="compound">azure_iot_hub_topic_data</ref></type>
+        <definition>struct azure_iot_hub_topic_data azure_iot_hub_data::topic</definition>
+        <argsstring></argsstring>
+        <name>topic</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Topic data is sent/received on. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="142" column="31" bodyfile="include/net/azure_iot_hub.h" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structazure__iot__hub__data_a749af1c9109a65c5363fcaf6fcf24d42_1a749af1c9109a65c5363fcaf6fcf24d42" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* azure_iot_hub_data::ptr</definition>
+        <argsstring></argsstring>
+        <name>ptr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to data sent/received from Azure IoT Hub. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="144" column="6" bodyfile="include/net/azure_iot_hub.h" bodystart="144" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structazure__iot__hub__data_a1cf979bd155a77f6b109f36f4ecf72e8_1a1cf979bd155a77f6b109f36f4ecf72e8" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t azure_iot_hub_data::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="146" column="8" bodyfile="include/net/azure_iot_hub.h" bodystart="146" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structazure__iot__hub__data_a330e56359324c3197564840009ce7175_1a330e56359324c3197564840009ce7175" prot="public" static="no" mutable="no">
+        <type>enum mqtt_qos</type>
+        <definition>enum mqtt_qos azure_iot_hub_data::qos</definition>
+        <argsstring></argsstring>
+        <name>qos</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Quality of Service for the message. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="148" column="14" bodyfile="include/net/azure_iot_hub.h" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structazure__iot__hub__data_a45a73297b2694abda458af2037dd881e_1a45a73297b2694abda458af2037dd881e" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t azure_iot_hub_data::message_id</definition>
+        <argsstring></argsstring>
+        <name>message_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Message id used for the message, used to match acknowledgments. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="150" column="10" bodyfile="include/net/azure_iot_hub.h" bodystart="150" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structazure__iot__hub__data_a9daa5ff901bb499ccdd1067e8a44ede9_1a9daa5ff901bb499ccdd1067e8a44ede9" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t azure_iot_hub_data::dup_flag</definition>
+        <argsstring></argsstring>
+        <name>dup_flag</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Duplicate flag. 1 indicates the message is a retransmission, Usually triggered by missing publication acknowledgment. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="154" column="9" bodyfile="include/net/azure_iot_hub.h" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structazure__iot__hub__data_ab902efef4030bc32b704833a32cb60fb_1ab902efef4030bc32b704833a32cb60fb" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t azure_iot_hub_data::retain_flag</definition>
+        <argsstring></argsstring>
+        <name>retain_flag</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Retain flag. 1 indicates to the IoT hub that the message should be stored persistently. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="158" column="9" bodyfile="include/net/azure_iot_hub.h" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Azure IoT Hub transmission data. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>azure_iot_hub_data</label>
+        <link refid="structazure__iot__hub__data"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>topic</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>azure_iot_hub_prop_bag</label>
+        <link refid="structazure__iot__hub__prop__bag"/>
+      </node>
+      <node id="2">
+        <label>azure_iot_hub_topic_data</label>
+        <link refid="structazure__iot__hub__topic__data"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>prop_bag</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/net/azure_iot_hub.h" line="140" column="1" bodyfile="include/net/azure_iot_hub.h" bodystart="140" bodyend="159"/>
+    <listofallmembers>
+      <member refid="structazure__iot__hub__data_a9daa5ff901bb499ccdd1067e8a44ede9_1a9daa5ff901bb499ccdd1067e8a44ede9" prot="public" virt="non-virtual"><scope>azure_iot_hub_data</scope><name>dup_flag</name></member>
+      <member refid="structazure__iot__hub__data_a1cf979bd155a77f6b109f36f4ecf72e8_1a1cf979bd155a77f6b109f36f4ecf72e8" prot="public" virt="non-virtual"><scope>azure_iot_hub_data</scope><name>len</name></member>
+      <member refid="structazure__iot__hub__data_a45a73297b2694abda458af2037dd881e_1a45a73297b2694abda458af2037dd881e" prot="public" virt="non-virtual"><scope>azure_iot_hub_data</scope><name>message_id</name></member>
+      <member refid="structazure__iot__hub__data_a749af1c9109a65c5363fcaf6fcf24d42_1a749af1c9109a65c5363fcaf6fcf24d42" prot="public" virt="non-virtual"><scope>azure_iot_hub_data</scope><name>ptr</name></member>
+      <member refid="structazure__iot__hub__data_a330e56359324c3197564840009ce7175_1a330e56359324c3197564840009ce7175" prot="public" virt="non-virtual"><scope>azure_iot_hub_data</scope><name>qos</name></member>
+      <member refid="structazure__iot__hub__data_ab902efef4030bc32b704833a32cb60fb_1ab902efef4030bc32b704833a32cb60fb" prot="public" virt="non-virtual"><scope>azure_iot_hub_data</scope><name>retain_flag</name></member>
+      <member refid="structazure__iot__hub__data_afa48d6e94c0f2218b5988b9c96e3d7f2_1afa48d6e94c0f2218b5988b9c96e3d7f2" prot="public" virt="non-virtual"><scope>azure_iot_hub_data</scope><name>topic</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

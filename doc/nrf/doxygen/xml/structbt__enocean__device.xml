@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__enocean__device" kind="struct" language="C++" prot="public">
+    <compoundname>bt_enocean_device</compoundname>
+    <includes refid="enocean_8h" local="no">enocean.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__enocean__device_aa7b648470da8a5b989e97414683fb4f0_1aa7b648470da8a5b989e97414683fb4f0" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_enocean_device::seq</definition>
+        <argsstring></argsstring>
+        <name>seq</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Most recent sequence number. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="47" column="10" bodyfile="include/bluetooth/enocean.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__enocean__device_aefa2553c0cd7502986d21db07ba459e2_1aefa2553c0cd7502986d21db07ba459e2" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_enocean_device::flags</definition>
+        <argsstring></argsstring>
+        <name>flags</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Internal flags field. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="48" column="9" bodyfile="include/bluetooth/enocean.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__enocean__device_a4f2835b7dce106e91339ac4da6e39278_1a4f2835b7dce106e91339ac4da6e39278" prot="public" static="no" mutable="no">
+        <type>int8_t</type>
+        <definition>int8_t bt_enocean_device::rssi</definition>
+        <argsstring></argsstring>
+        <name>rssi</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Most recent RSSI measurement. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="49" column="8" bodyfile="include/bluetooth/enocean.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__enocean__device_ab7c8540ae9772d00e665185c6c51e81f_1ab7c8540ae9772d00e665185c6c51e81f" prot="public" static="no" mutable="no">
+        <type>bt_addr_le_t</type>
+        <definition>bt_addr_le_t bt_enocean_device::addr</definition>
+        <argsstring></argsstring>
+        <name>addr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device address. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="50" column="14" bodyfile="include/bluetooth/enocean.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__enocean__device_a4588eb5c0194b6f0678a779ce70d6913_1a4588eb5c0194b6f0678a779ce70d6913" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_enocean_device::key[16]</definition>
+        <argsstring>[16]</argsstring>
+        <name>key</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device key. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="51" column="9" bodyfile="include/bluetooth/enocean.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>EnOcean device representation. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/enocean.h" line="46" column="1" bodyfile="include/bluetooth/enocean.h" bodystart="46" bodyend="52"/>
+    <listofallmembers>
+      <member refid="structbt__enocean__device_ab7c8540ae9772d00e665185c6c51e81f_1ab7c8540ae9772d00e665185c6c51e81f" prot="public" virt="non-virtual"><scope>bt_enocean_device</scope><name>addr</name></member>
+      <member refid="structbt__enocean__device_aefa2553c0cd7502986d21db07ba459e2_1aefa2553c0cd7502986d21db07ba459e2" prot="public" virt="non-virtual"><scope>bt_enocean_device</scope><name>flags</name></member>
+      <member refid="structbt__enocean__device_a4588eb5c0194b6f0678a779ce70d6913_1a4588eb5c0194b6f0678a779ce70d6913" prot="public" virt="non-virtual"><scope>bt_enocean_device</scope><name>key</name></member>
+      <member refid="structbt__enocean__device_a4f2835b7dce106e91339ac4da6e39278_1a4f2835b7dce106e91339ac4da6e39278" prot="public" virt="non-virtual"><scope>bt_enocean_device</scope><name>rssi</name></member>
+      <member refid="structbt__enocean__device_aa7b648470da8a5b989e97414683fb4f0_1aa7b648470da8a5b989e97414683fb4f0" prot="public" virt="non-virtual"><scope>bt_enocean_device</scope><name>seq</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

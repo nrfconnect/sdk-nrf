@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnrf__cloud__pgps__init__param" kind="struct" language="C++" prot="public">
+    <compoundname>nrf_cloud_pgps_init_param</compoundname>
+    <includes refid="nrf__cloud__pgps_8h" local="no">nrf_cloud_pgps.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnrf__cloud__pgps__init__param_a8cab3736938df5ef4a0ad21196d83ba5_1a8cab3736938df5ef4a0ad21196d83ba5" prot="public" static="no" mutable="no">
+        <type><ref refid="group__nrf__cloud__pgps_ga7ad2ea3e7e17c17ed3aad15ec722e8c1_1ga7ad2ea3e7e17c17ed3aad15ec722e8c1" kindref="member">pgps_event_handler_t</ref></type>
+        <definition>pgps_event_handler_t nrf_cloud_pgps_init_param::event_handler</definition>
+        <argsstring></argsstring>
+        <name>event_handler</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event handler that is registered with the module. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="153" column="22" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="153" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__pgps__init__param_a2206572ae2f756230497a3bb93256368_1a2206572ae2f756230497a3bb93256368" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t nrf_cloud_pgps_init_param::storage_base</definition>
+        <argsstring></argsstring>
+        <name>storage_base</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Flash storage address. Must be on a Flash page boundary. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="155" column="10" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="155" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__pgps__init__param_ae1b7b9d9059604644c208b0db93830f7_1ae1b7b9d9059604644c208b0db93830f7" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t nrf_cloud_pgps_init_param::storage_size</definition>
+        <argsstring></argsstring>
+        <name>storage_size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Flash storage size. Must be a multiple of a Flash page in size, in bytes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="157" column="10" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Initialization parameters for the module. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="5">
+        <label>gps_pgps_request</label>
+        <link refid="structgps__pgps__request"/>
+      </node>
+      <node id="2">
+        <label>nrf_cloud_pgps_event</label>
+        <link refid="structnrf__cloud__pgps__event"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>prediction</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>request</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>nrf_cloud_pgps_init_param</label>
+        <link refid="structnrf__cloud__pgps__init__param"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>event_handler</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>nrf_cloud_pgps_prediction</label>
+        <link refid="structnrf__cloud__pgps__prediction"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>time</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>nrf_cloud_pgps_system_time</label>
+        <link refid="structnrf__cloud__pgps__system__time"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/net/nrf_cloud_pgps.h" line="151" column="1" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="151" bodyend="158"/>
+    <listofallmembers>
+      <member refid="structnrf__cloud__pgps__init__param_a8cab3736938df5ef4a0ad21196d83ba5_1a8cab3736938df5ef4a0ad21196d83ba5" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_init_param</scope><name>event_handler</name></member>
+      <member refid="structnrf__cloud__pgps__init__param_a2206572ae2f756230497a3bb93256368_1a2206572ae2f756230497a3bb93256368" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_init_param</scope><name>storage_base</name></member>
+      <member refid="structnrf__cloud__pgps__init__param_ae1b7b9d9059604644c208b0db93830f7_1ae1b7b9d9059604644c208b0db93830f7" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_init_param</scope><name>storage_size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

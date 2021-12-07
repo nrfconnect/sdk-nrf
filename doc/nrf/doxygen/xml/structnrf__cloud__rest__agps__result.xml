@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnrf__cloud__rest__agps__result" kind="struct" language="C++" prot="public">
+    <compoundname>nrf_cloud_rest_agps_result</compoundname>
+    <includes refid="nrf__cloud__rest_8h" local="no">nrf_cloud_rest.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnrf__cloud__rest__agps__result_a534bbc6f8b4f0c6249117eed61767c9c_1a534bbc6f8b4f0c6249117eed61767c9c" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* nrf_cloud_rest_agps_result::buf</definition>
+        <argsstring></argsstring>
+        <name>buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>User-provided buffer to hold AGPS data </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="128" column="6" bodyfile="include/net/nrf_cloud_rest.h" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__rest__agps__result_a218aa8df684cb3aefe44b25d2c24a13e_1a218aa8df684cb3aefe44b25d2c24a13e" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t nrf_cloud_rest_agps_result::buf_sz</definition>
+        <argsstring></argsstring>
+        <name>buf_sz</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of user-provided buffer </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="130" column="8" bodyfile="include/net/nrf_cloud_rest.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__rest__agps__result_a737d6e4bb4815ccb1977dd4a8ae29bbc_1a737d6e4bb4815ccb1977dd4a8ae29bbc" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t nrf_cloud_rest_agps_result::agps_sz</definition>
+        <argsstring></argsstring>
+        <name>agps_sz</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of the AGPS data copied into buffer </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="132" column="8" bodyfile="include/net/nrf_cloud_rest.h" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>nRF Cloud Assisted GPS (A-GPS) result </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/nrf_cloud_rest.h" line="126" column="1" bodyfile="include/net/nrf_cloud_rest.h" bodystart="126" bodyend="133"/>
+    <listofallmembers>
+      <member refid="structnrf__cloud__rest__agps__result_a737d6e4bb4815ccb1977dd4a8ae29bbc_1a737d6e4bb4815ccb1977dd4a8ae29bbc" prot="public" virt="non-virtual"><scope>nrf_cloud_rest_agps_result</scope><name>agps_sz</name></member>
+      <member refid="structnrf__cloud__rest__agps__result_a534bbc6f8b4f0c6249117eed61767c9c_1a534bbc6f8b4f0c6249117eed61767c9c" prot="public" virt="non-virtual"><scope>nrf_cloud_rest_agps_result</scope><name>buf</name></member>
+      <member refid="structnrf__cloud__rest__agps__result_a218aa8df684cb3aefe44b25d2c24a13e_1a218aa8df684cb3aefe44b25d2c24a13e" prot="public" virt="non-virtual"><scope>nrf_cloud_rest_agps_result</scope><name>buf_sz</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

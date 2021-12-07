@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="method__cellular_8h" kind="file" language="C++">
+    <compoundname>method_cellular.h</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="method__cellular_8h_a62b08f7556aa77d32c3585e83cc214a6_1a62b08f7556aa77d32c3585e83cc214a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int method_cellular_location_get</definition>
+        <argsstring>(const struct location_method_config *config)</argsstring>
+        <name>method_cellular_location_get</name>
+        <param>
+          <type>const struct <ref refid="structlocation__method__config" kindref="compound">location_method_config</ref> *</type>
+          <declname>config</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/method_cellular.h" line="10" column="5" declfile="lib/location/method_cellular.h" declline="10" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="method__cellular_8h_a3866e84d6d48f3f59711ece7a1b1d26d_1a3866e84d6d48f3f59711ece7a1b1d26d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int method_cellular_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>method_cellular_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/method_cellular.h" line="11" column="5" declfile="lib/location/method_cellular.h" declline="11" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="method__cellular_8h_a705ac838d2326ec287ab72f6d76c5e11_1a705ac838d2326ec287ab72f6d76c5e11" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int method_cellular_cancel</definition>
+        <argsstring>(void)</argsstring>
+        <name>method_cellular_cancel</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/method_cellular.h" line="12" column="5" declfile="lib/location/method_cellular.h" declline="12" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>METHOD_CELLULAR_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>METHOD_CELLULAR_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10" refid="method__cellular_8h_a62b08f7556aa77d32c3585e83cc214a6_1a62b08f7556aa77d32c3585e83cc214a6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="method__cellular_8h_a62b08f7556aa77d32c3585e83cc214a6_1a62b08f7556aa77d32c3585e83cc214a6" kindref="member">method_cellular_location_get</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlocation__method__config" kindref="compound">location_method_config</ref><sp/>*config);</highlight></codeline>
+<codeline lineno="11" refid="method__cellular_8h_a3866e84d6d48f3f59711ece7a1b1d26d_1a3866e84d6d48f3f59711ece7a1b1d26d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="method__cellular_8h_a3866e84d6d48f3f59711ece7a1b1d26d_1a3866e84d6d48f3f59711ece7a1b1d26d" kindref="member">method_cellular_init</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="12" refid="method__cellular_8h_a705ac838d2326ec287ab72f6d76c5e11_1a705ac838d2326ec287ab72f6d76c5e11" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="method__cellular_8h_a705ac838d2326ec287ab72f6d76c5e11_1a705ac838d2326ec287ab72f6d76c5e11" kindref="member">method_cellular_cancel</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>METHOD_CELLULAR_H<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="lib/location/method_cellular.h"/>
+  </compounddef>
+</doxygen>

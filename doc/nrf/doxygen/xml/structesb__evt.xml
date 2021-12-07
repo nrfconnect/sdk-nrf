@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structesb__evt" kind="struct" language="C++" prot="public">
+    <compoundname>esb_evt</compoundname>
+    <includes refid="esb_8h" local="no">esb.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structesb__evt_aa91068c7f45106fb3f11b45d22f1b06f_1aa91068c7f45106fb3f11b45d22f1b06f" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__esb_ga4ba19219b64bdcd34f7ca2e47a170b2b_1ga4ba19219b64bdcd34f7ca2e47a170b2b" kindref="member">esb_evt_id</ref></type>
+        <definition>enum esb_evt_id esb_evt::evt_id</definition>
+        <argsstring></argsstring>
+        <name>evt_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Enhanced ShockBurst event ID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="210" column="16" bodyfile="include/esb.h" bodystart="210" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structesb__evt_a0a6b9396097560202971df2f91fe6352_1a0a6b9396097560202971df2f91fe6352" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t esb_evt::tx_attempts</definition>
+        <argsstring></argsstring>
+        <name>tx_attempts</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of TX retransmission attempts. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="211" column="10" bodyfile="include/esb.h" bodystart="211" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Enhanced ShockBurst event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/esb.h" line="209" column="1" bodyfile="include/esb.h" bodystart="209" bodyend="212"/>
+    <listofallmembers>
+      <member refid="structesb__evt_aa91068c7f45106fb3f11b45d22f1b06f_1aa91068c7f45106fb3f11b45d22f1b06f" prot="public" virt="non-virtual"><scope>esb_evt</scope><name>evt_id</name></member>
+      <member refid="structesb__evt_a0a6b9396097560202971df2f91fe6352_1a0a6b9396097560202971df2f91fe6352" prot="public" virt="non-virtual"><scope>esb_evt</scope><name>tx_attempts</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

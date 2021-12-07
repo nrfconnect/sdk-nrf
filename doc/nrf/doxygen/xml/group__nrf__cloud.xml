@@ -1,0 +1,1546 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nrf__cloud" kind="group">
+    <compoundname>nrf_cloud</compoundname>
+    <title>nRF Cloud</title>
+    <innerclass refid="structnrf__cloud__fota__job__info" prot="public">nrf_cloud_fota_job_info</innerclass>
+    <innerclass refid="structnrf__cloud__settings__fota__job" prot="public">nrf_cloud_settings_fota_job</innerclass>
+    <innerclass refid="structnrf__cloud__data" prot="public">nrf_cloud_data</innerclass>
+    <innerclass refid="structnrf__cloud__topic" prot="public">nrf_cloud_topic</innerclass>
+    <innerclass refid="structnrf__cloud__sensor__list" prot="public">nrf_cloud_sensor_list</innerclass>
+    <innerclass refid="structnrf__cloud__connect__param" prot="public">nrf_cloud_connect_param</innerclass>
+    <innerclass refid="structnrf__cloud__sensor__data" prot="public">nrf_cloud_sensor_data</innerclass>
+    <innerclass refid="structnrf__cloud__evt" prot="public">nrf_cloud_evt</innerclass>
+    <innerclass refid="structnrf__cloud__tx__data" prot="public">nrf_cloud_tx_data</innerclass>
+    <innerclass refid="structnrf__cloud__svc__info__fota" prot="public">nrf_cloud_svc_info_fota</innerclass>
+    <innerclass refid="structnrf__cloud__svc__info__ui" prot="public">nrf_cloud_svc_info_ui</innerclass>
+    <innerclass refid="structnrf__cloud__modem__info" prot="public">nrf_cloud_modem_info</innerclass>
+    <innerclass refid="structnrf__cloud__svc__info" prot="public">nrf_cloud_svc_info</innerclass>
+    <innerclass refid="structnrf__cloud__device__status" prot="public">nrf_cloud_device_status</innerclass>
+    <innerclass refid="structnrf__cloud__init__param" prot="public">nrf_cloud_init_param</innerclass>
+    <innergroup refid="group__nrf__cloud__mqtt__msg__ids">MQTT message IDs for nRF Cloud.</innergroup>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nrf__cloud_1gabfa69ba752561f778c2f055e1ef7c46f" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_evt_type</name>
+        <enumvalue id="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46facb33822983411b22dd18f41c1d74045e" prot="public">
+          <name>NRF_CLOUD_EVT_TRANSPORT_CONNECTED</name>
+          <initializer>= 0x1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The transport to the nRF Cloud is established. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa3c915fb24bae33e0412b4bf578010962" prot="public">
+          <name>NRF_CLOUD_EVT_TRANSPORT_CONNECTING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>In the process of connecting to nRF Cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46faed7a13bf4296a959baf2384307429bf4" prot="public">
+          <name>NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>There was a request from nRF Cloud to associate the device with a user on the nRF Cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa94964b5607b056a4d781ee5de7355c32" prot="public">
+          <name>NRF_CLOUD_EVT_USER_ASSOCIATED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The device is successfully associated with a user. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46faefde723fbee891cc13ce5d016f9eeac2" prot="public">
+          <name>NRF_CLOUD_EVT_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The device can now start sending sensor data to the cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa18c9aca64aa204f172c0fa7f5a031e2f" prot="public">
+          <name>NRF_CLOUD_EVT_RX_DATA</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The device received data from the cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa4688afbefc81db7663e9eafe1cea5a2f" prot="public">
+          <name>NRF_CLOUD_EVT_SENSOR_DATA_ACK</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The data sent to the cloud was acknowledged. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa0fab1bb66c3b4cde300a5893712d2b95" prot="public">
+          <name>NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The transport was disconnected. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa85ef1eb9717bf75a065e7bc2754eb9b2" prot="public">
+          <name>NRF_CLOUD_EVT_FOTA_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The device should be restarted to apply a firmware upgrade </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa0af1e2654a60982a1e033cea0af42956" prot="public">
+          <name>NRF_CLOUD_EVT_ERROR</name>
+          <initializer>= 0xFF</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>There was an error communicating with the cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Asynchronous nRF Cloud events notified by the module. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="83" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="83" bodyend="106"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__nrf__cloud_1gae0b5f5ab1c4955313ccf23d16ef92379" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_disconnect_status</name>
+        <enumvalue id="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1ggae0b5f5ab1c4955313ccf23d16ef92379a126a8c45d9236189f984e0c319efdbb1" prot="public">
+          <name>NRF_CLOUD_DISCONNECT_USER_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1ggae0b5f5ab1c4955313ccf23d16ef92379a7f77ee26b6edc3dc9f4aa1086f1dcc57" prot="public">
+          <name>NRF_CLOUD_DISCONNECT_CLOSED_BY_REMOTE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1ggae0b5f5ab1c4955313ccf23d16ef92379ab560114d19cb4b5e3d552972c91cdae5" prot="public">
+          <name>NRF_CLOUD_DISCONNECT_INVALID_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1ggae0b5f5ab1c4955313ccf23d16ef92379af2cdc53e269ee61341ebd713dee10453" prot="public">
+          <name>NRF_CLOUD_DISCONNECT_MISC</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1ggae0b5f5ab1c4955313ccf23d16ef92379a851911ecd225e943a87bb590be92e382" prot="public">
+          <name>NRF_CLOUD_DISCONNECT_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>@ nRF Cloud disconnect status. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="109" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="109" bodyend="115"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__nrf__cloud_1ga450958e31d88872e957ee628744e7b84" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_connect_result</name>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a50d3971e2fcd198040935cf906333cc6" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_SUCCESS</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a65e547a85d3938ccda0987610625db37" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_ERR_NOT_INITD</name>
+          <initializer>= -1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84ad38217bd3901bcf0ed1f8fb54e4531d0" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_ERR_INVALID_PARAM</name>
+          <initializer>= -2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84ad0ad3ed9df9f871c6b41b21f9a788d9a" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_ERR_NETWORK</name>
+          <initializer>= -3</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a62ec689ab48f60c7b254c6092946e123" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_ERR_BACKEND</name>
+          <initializer>= -4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a1e7bae15ec6df7f5470911c47611b09e" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_ERR_MISC</name>
+          <initializer>= -5</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a23f281f5652a565f7d0c436c3053accd" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_ERR_NO_MEM</name>
+          <initializer>= -6</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84af1c442c50d9df13a73b9539e13e7e0a6" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_ERR_PRV_KEY</name>
+          <initializer>= -7</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Invalid private key </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a2168a1f7989ebb7088f00f276cd072a3" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_ERR_CERT</name>
+          <initializer>= -8</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Invalid CA or client cert </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a3cb716a3e70ec5cc1c60f04380a99932" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_ERR_CERT_MISC</name>
+          <initializer>= -9</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Other cert issue </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a2759a72e69ee806990fe5df7016b959d" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_ERR_TIMEOUT_NO_DATA</name>
+          <initializer>= -10</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Timeout, SIM card may be out of data </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a0e21122e3c19f7961a956bde31ebf311" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_ERR_ALREADY_CONNECTED</name>
+          <initializer>= -11</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>@ nRF Cloud connect result. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="118" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="118" bodyend="135"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__nrf__cloud_1ga4bc09b90a1841097cf01260cb14e27dc" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_sensor</name>
+        <enumvalue id="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dcaa0c0842e74c188a8ba7547499c8374eb" prot="public">
+          <name>NRF_CLOUD_SENSOR_GPS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The GPS sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca0fb464ae63c2c49d45035135a984c0b3" prot="public">
+          <name>NRF_CLOUD_SENSOR_FLIP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The FLIP movement sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca14c0a0279e788dd87556276df3bb8aa6" prot="public">
+          <name>NRF_CLOUD_SENSOR_BUTTON</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The Button press sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca3b3ec8d33e0ed4ec3981e5e32e21b1f5" prot="public">
+          <name>NRF_CLOUD_SENSOR_TEMP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The TEMP sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca6f0d3ce5e24a229bc0094dd7297c3429" prot="public">
+          <name>NRF_CLOUD_SENSOR_HUMID</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The Humidity sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca7b4d5a2fe68b8da490b19282eb991c6a" prot="public">
+          <name>NRF_CLOUD_SENSOR_AIR_PRESS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The Air Pressure sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca5c3f99f01f27dad06c540756862b8b06" prot="public">
+          <name>NRF_CLOUD_SENSOR_AIR_QUAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The Air Quality sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca6d252076baa386af557a2d5f7b4c813c" prot="public">
+          <name>NRF_CLOUD_LTE_LINK_RSRP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The RSPR data obtained from the modem. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dcad0f68a96b97fa176ec9e69440e2555e1" prot="public">
+          <name>NRF_CLOUD_DEVICE_INFO</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The descriptive DEVICE data indicating its status. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dcaf6ccb5984b908fcd81b7bfe07560304d" prot="public">
+          <name>NRF_CLOUD_SENSOR_LIGHT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The light sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Sensor types supported by the nRF Cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="138" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="138" bodyend="159"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__nrf__cloud_1ga9e1550556f82615f1a1b92290fa35743" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_topic_type</name>
+        <enumvalue id="group__nrf__cloud_ga9e1550556f82615f1a1b92290fa35743_1gga9e1550556f82615f1a1b92290fa35743a429d84513773e9abd7fafa012a138fc0" prot="public">
+          <name>NRF_CLOUD_TOPIC_STATE</name>
+          <initializer>= 0x1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Endpoint used to update the cloud-side device shadow state . </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga9e1550556f82615f1a1b92290fa35743_1gga9e1550556f82615f1a1b92290fa35743aa1dd32014a9e2d6f5ecf7c3e91c615ea" prot="public">
+          <name>NRF_CLOUD_TOPIC_MESSAGE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Endpoint used to directly message the nRF Cloud Web UI. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga9e1550556f82615f1a1b92290fa35743_1gga9e1550556f82615f1a1b92290fa35743a6b2ed93d98ec1ba7b6a7a5e8db86260e" prot="public">
+          <name>NRF_CLOUD_TOPIC_BULK</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Endpoint used to publish bulk messages to nRF Cloud. Bulk messages combine multiple messages into a single message that will be unwrapped and re-published to the message topic in the nRF Cloud backend. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Topic types supported by nRF Cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="162" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="162" bodyend="172"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__nrf__cloud_1ga1359b0c3333f11b0d06aa46f99e3668d" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_fota_status</name>
+        <enumvalue id="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da7089f40402e2be5976a2fd9510525c01" prot="public">
+          <name>NRF_CLOUD_FOTA_QUEUED</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da0bd02e5a9bba46681d0c99cc8bdaf3a6" prot="public">
+          <name>NRF_CLOUD_FOTA_IN_PROGRESS</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da0ccba35720713a7b590ce96bc9016bd4" prot="public">
+          <name>NRF_CLOUD_FOTA_FAILED</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da9204d44f2610cbd44048fdf773830e18" prot="public">
+          <name>NRF_CLOUD_FOTA_SUCCEEDED</name>
+          <initializer>= 3</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da4815e53b116abc60a184b7b4044829e8" prot="public">
+          <name>NRF_CLOUD_FOTA_TIMED_OUT</name>
+          <initializer>= 4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da113218cb3d4a95f542bbc15afccb6d49" prot="public">
+          <name>NRF_CLOUD_FOTA_CANCELED</name>
+          <initializer>= 5</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da8d8eb86de405a73396ed7cd3b4c7e718" prot="public">
+          <name>NRF_CLOUD_FOTA_REJECTED</name>
+          <initializer>= 6</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da9da91b253b5d07b289424c3ab4e6ea25" prot="public">
+          <name>NRF_CLOUD_FOTA_DOWNLOADING</name>
+          <initializer>= 7</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>FOTA status reported to nRF Cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="175" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="175" bodyend="184"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__nrf__cloud_1ga6b3a7153a10a31b72dbb6c0ba5c12c32" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_fota_type</name>
+        <enumvalue id="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1gga6b3a7153a10a31b72dbb6c0ba5c12c32a241b27c5b3dbbcab41ddc400b512b484" prot="public">
+          <name>NRF_CLOUD_FOTA_TYPE__FIRST</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1gga6b3a7153a10a31b72dbb6c0ba5c12c32a239b4785e4cbead13f0fe5597c11c73d" prot="public">
+          <name>NRF_CLOUD_FOTA_APPLICATION</name>
+          <initializer>= NRF_CLOUD_FOTA_TYPE__FIRST</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Application update. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1gga6b3a7153a10a31b72dbb6c0ba5c12c32ae1adb793c1c920711603ebbded787ca1" prot="public">
+          <name>NRF_CLOUD_FOTA_MODEM</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Modem update. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1gga6b3a7153a10a31b72dbb6c0ba5c12c32ab39a1f015d21e65f17e864158a77e1e3" prot="public">
+          <name>NRF_CLOUD_FOTA_BOOTLOADER</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Bootloader update. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1gga6b3a7153a10a31b72dbb6c0ba5c12c32a847260b1404cefda80afd1da815a5104" prot="public">
+          <name>NRF_CLOUD_FOTA_TYPE__INVALID</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>FOTA update type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="187" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="187" bodyend="198"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__nrf__cloud_1ga5ed03bbd4bf5aa1c0117a948324c5730" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_fota_validate_status</name>
+        <enumvalue id="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730add28e1dea9874728e034b149d56d3f03" prot="public">
+          <name>NRF_CLOUD_FOTA_VALIDATE_NONE</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730aed0bfe9d621309ea631b2cbbe1294e5e" prot="public">
+          <name>NRF_CLOUD_FOTA_VALIDATE_PENDING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730a0cad29a0c1c69ca632ca865eb0b16cf3" prot="public">
+          <name>NRF_CLOUD_FOTA_VALIDATE_PASS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730a1441df440e0f95097115c2ef605134fb" prot="public">
+          <name>NRF_CLOUD_FOTA_VALIDATE_FAIL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730aa5b14cb5c4007a03b29df8c14c830bb3" prot="public">
+          <name>NRF_CLOUD_FOTA_VALIDATE_UNKNOWN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730a836871a9320912b7dc5791a2d9c78c85" prot="public">
+          <name>NRF_CLOUD_FOTA_VALIDATE_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Validity of an in-progress/installed FOTA update </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="214" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="214" bodyend="221"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__nrf__cloud_1gaf64999062e1a8b99a963570664862acf" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_shadow_info</name>
+        <enumvalue id="group__nrf__cloud_gaf64999062e1a8b99a963570664862acf_1ggaf64999062e1a8b99a963570664862acfa06ae7163bdc8d0ca2c1ab6148f32a10e" prot="public">
+          <name>NRF_CLOUD_INFO_NO_CHANGE</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Data will not be modified </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gaf64999062e1a8b99a963570664862acf_1ggaf64999062e1a8b99a963570664862acfae386122f659e10581f16995cc456c9ae" prot="public">
+          <name>NRF_CLOUD_INFO_SET</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Data will be set/updated </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gaf64999062e1a8b99a963570664862acf_1ggaf64999062e1a8b99a963570664862acfa6c2011cb99f0a362b5e33b42ef6729c3" prot="public">
+          <name>NRF_CLOUD_INFO_CLEAR</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Data section will be cleared </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>How the info sections are handled when encoding shadow data. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="324" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="324" bodyend="331"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__nrf__cloud_1gaba76a1d354a998fcc241531440b28770" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* nrf_cloud_event_handler_t) (const struct nrf_cloud_evt *evt)</definition>
+        <argsstring>)(const struct nrf_cloud_evt *evt)</argsstring>
+        <name>nrf_cloud_event_handler_t</name>
+        <briefdescription>
+<para>Event handler registered with the module to handle asynchronous events from the module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The event and any associated parameters. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="378" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="378" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nrf__cloud_1ga1d7e9e66df5c45750c6479c0439f49fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_init</definition>
+        <argsstring>(const struct nrf_cloud_init_param *param)</argsstring>
+        <name>nrf_cloud_init</name>
+        <param>
+          <type>const struct <ref refid="structnrf__cloud__init__param" kindref="compound">nrf_cloud_init_param</ref> *</type>
+          <declname>param</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>This API must be called prior to using nRF Cloud and it must return successfully.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Initialization parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EACCES</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Already initialized or <ref refid="group__nrf__cloud_gaadc1db382c8b1ab5537d74f85d23505d_1gaadc1db382c8b1ab5537d74f85d23505d" kindref="member">nrf_cloud_uninit</ref> is in progress. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="404" column="5" declfile="include/net/nrf_cloud.h" declline="404" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_1gaadc1db382c8b1ab5537d74f85d23505d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_uninit</definition>
+        <argsstring>(void)</argsstring>
+        <name>nrf_cloud_uninit</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Uninitialize nRF Cloud; disconnects cloud connection and cleans up allocated memory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>If nRF Cloud FOTA is enabled and a FOTA job is active uninit will not be performed.</para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EBUSY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If a FOTA job is in progress. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="417" column="5" declfile="include/net/nrf_cloud.h" declline="417" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_1ga7c240d996183a476685ef5cd4e2267f1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_connect</definition>
+        <argsstring>(const struct nrf_cloud_connect_param *param)</argsstring>
+        <name>nrf_cloud_connect</name>
+        <param>
+          <type>const struct <ref refid="structnrf__cloud__connect__param" kindref="compound">nrf_cloud_connect_param</ref> *</type>
+          <declname>param</declname>
+        </param>
+        <briefdescription>
+<para>Connect to the cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>In any stage of connecting to the cloud, an <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa0af1e2654a60982a1e033cea0af42956" kindref="member">NRF_CLOUD_EVT_ERROR</ref> might be received. If it is received before <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46facb33822983411b22dd18f41c1d74045e" kindref="member">NRF_CLOUD_EVT_TRANSPORT_CONNECTED</ref>, the application may repeat the call to <ref refid="group__nrf__cloud_ga7c240d996183a476685ef5cd4e2267f1_1ga7c240d996183a476685ef5cd4e2267f1" kindref="member">nrf_cloud_connect</ref> to try again.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters to be used for the connection.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>Connect</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>result defined by enum nrf_cloud_connect_result. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="431" column="5" declfile="include/net/nrf_cloud.h" declline="431" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_1ga1dc3c251c2ed661d50acd5257e30daae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_sensor_data_send</definition>
+        <argsstring>(const struct nrf_cloud_sensor_data *param)</argsstring>
+        <name>nrf_cloud_sensor_data_send</name>
+        <param>
+          <type>const struct <ref refid="structnrf__cloud__sensor__data" kindref="compound">nrf_cloud_sensor_data</ref> *</type>
+          <declname>param</declname>
+        </param>
+        <briefdescription>
+<para>Send sensor data reliably. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This API should only be called after receiving an <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46faefde723fbee891cc13ce5d016f9eeac2" kindref="member">NRF_CLOUD_EVT_READY</ref> event. If the API succeeds, you can expect the <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa4688afbefc81db7663e9eafe1cea5a2f" kindref="member">NRF_CLOUD_EVT_SENSOR_DATA_ACK</ref> event for data sent with a valid tag value.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor data; the data pointed to by param-&gt;data.ptr must be a string.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EACCES</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Cloud connection is not established; wait for <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46faefde723fbee891cc13ce5d016f9eeac2" kindref="member">NRF_CLOUD_EVT_READY</ref>. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="449" column="5" declfile="include/net/nrf_cloud.h" declline="449" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_1ga3005fcfbe5d564e7dedd63d5966ee997" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_shadow_update</definition>
+        <argsstring>(const struct nrf_cloud_sensor_data *param)</argsstring>
+        <name>nrf_cloud_shadow_update</name>
+        <param>
+          <type>const struct <ref refid="structnrf__cloud__sensor__data" kindref="compound">nrf_cloud_sensor_data</ref> *</type>
+          <declname>param</declname>
+        </param>
+        <briefdescription>
+<para>Update the device shadow with sensor data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor data; the data pointed to by param-&gt;data.ptr must be a valid JSON string.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EACCES</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Cloud connection is not established; wait for <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46faefde723fbee891cc13ce5d016f9eeac2" kindref="member">NRF_CLOUD_EVT_READY</ref>. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="461" column="5" declfile="include/net/nrf_cloud.h" declline="461" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_1gaa516af4650d8d4a82760474e9c66c6df" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_shadow_device_status_update</definition>
+        <argsstring>(const struct nrf_cloud_device_status *const dev_status)</argsstring>
+        <name>nrf_cloud_shadow_device_status_update</name>
+        <param>
+          <type>const struct <ref refid="structnrf__cloud__device__status" kindref="compound">nrf_cloud_device_status</ref> *const</type>
+          <declname>dev_status</declname>
+        </param>
+        <briefdescription>
+<para>Update the device status in the shadow. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dev_status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Device status to be encoded.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EACCES</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Cloud connection is not established; wait for <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46faefde723fbee891cc13ce5d016f9eeac2" kindref="member">NRF_CLOUD_EVT_READY</ref>. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="472" column="5" declfile="include/net/nrf_cloud.h" declline="472" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_1gab8d2abab8fbb5457992f80e4a417bb17" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_sensor_data_stream</definition>
+        <argsstring>(const struct nrf_cloud_sensor_data *param)</argsstring>
+        <name>nrf_cloud_sensor_data_stream</name>
+        <param>
+          <type>const struct <ref refid="structnrf__cloud__sensor__data" kindref="compound">nrf_cloud_sensor_data</ref> *</type>
+          <declname>param</declname>
+        </param>
+        <briefdescription>
+<para>Stream sensor data. Uses lowest QoS; no acknowledgment,. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This API should only be called after receiving an <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46faefde723fbee891cc13ce5d016f9eeac2" kindref="member">NRF_CLOUD_EVT_READY</ref> event.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor data; tag value is ignored.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EACCES</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Cloud connection is not established; wait for <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46faefde723fbee891cc13ce5d016f9eeac2" kindref="member">NRF_CLOUD_EVT_READY</ref>. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="486" column="5" declfile="include/net/nrf_cloud.h" declline="486" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_1ga61d5a537212bdfce72502630593cd4f1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_send</definition>
+        <argsstring>(const struct nrf_cloud_tx_data *msg)</argsstring>
+        <name>nrf_cloud_send</name>
+        <param>
+          <type>const struct <ref refid="structnrf__cloud__tx__data" kindref="compound">nrf_cloud_tx_data</ref> *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+<para>Send data to nRF Cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This API is used to send pre-encoded data to nRF Cloud.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a structure containting data and topic information.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EACCES</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Cloud connection is not established; wait for <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46faefde723fbee891cc13ce5d016f9eeac2" kindref="member">NRF_CLOUD_EVT_READY</ref>. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="500" column="5" declfile="include/net/nrf_cloud.h" declline="500" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_1gad30bcdc3634113f6442b690d85405765" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_disconnect</definition>
+        <argsstring>(void)</argsstring>
+        <name>nrf_cloud_disconnect</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Disconnect from the cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This API may be called any time after receiving the <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46facb33822983411b22dd18f41c1d74045e" kindref="member">NRF_CLOUD_EVT_TRANSPORT_CONNECTED</ref> event. If the API succeeds, you can expect the <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa0fab1bb66c3b4cde300a5893712d2b95" kindref="member">NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED</ref> event.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EACCES</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Cloud connection is not established; wait for <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46facb33822983411b22dd18f41c1d74045e" kindref="member">NRF_CLOUD_EVT_TRANSPORT_CONNECTED</ref>. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="515" column="5" declfile="include/net/nrf_cloud.h" declline="515" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_1ga2823e93063091c70c3010a37a5edfdb6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nrf_cloud_process</definition>
+        <argsstring>(void)</argsstring>
+        <name>nrf_cloud_process</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function that must be called periodically to keep the module functional. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="521" column="6" declfile="include/net/nrf_cloud.h" declline="521" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_1ga633ff97ccfe1c6df476177994c3b7633" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_modem_fota_completed</definition>
+        <argsstring>(const bool fota_success)</argsstring>
+        <name>nrf_cloud_modem_fota_completed</name>
+        <param>
+          <type>const bool</type>
+          <declname>fota_success</declname>
+        </param>
+        <briefdescription>
+<para>The application has handled re-init after a modem FOTA update and the LTE link has been re-established. This function must be called in order to complete the modem update. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">fota_success</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>true if modem update was successful, false otherwise.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="533" column="5" declfile="include/net/nrf_cloud.h" declline="533" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_1ga443200bdf749275976df40a3ac3412a7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_service_info_json_encode</definition>
+        <argsstring>(const struct nrf_cloud_svc_info *const svc_inf, cJSON *const svc_inf_obj)</argsstring>
+        <name>nrf_cloud_service_info_json_encode</name>
+        <param>
+          <type>const struct <ref refid="structnrf__cloud__svc__info" kindref="compound">nrf_cloud_svc_info</ref> *const</type>
+          <declname>svc_inf</declname>
+        </param>
+        <param>
+          <type>cJSON *const</type>
+          <declname>svc_inf_obj</declname>
+        </param>
+        <briefdescription>
+<para>Add service info into the provided cJSON object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">svc_inf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Service info to add. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">svc_inf_obj</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>cJSON object to which service info will be added.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="544" column="5" declfile="include/net/nrf_cloud.h" declline="544" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_1ga81f02b50e17f91219a67f36591398c2f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_modem_info_json_encode</definition>
+        <argsstring>(const struct nrf_cloud_modem_info *const mod_inf, cJSON *const mod_inf_obj)</argsstring>
+        <name>nrf_cloud_modem_info_json_encode</name>
+        <param>
+          <type>const struct <ref refid="structnrf__cloud__modem__info" kindref="compound">nrf_cloud_modem_info</ref> *const</type>
+          <declname>mod_inf</declname>
+        </param>
+        <param>
+          <type>cJSON *const</type>
+          <declname>mod_inf_obj</declname>
+        </param>
+        <briefdescription>
+<para>Add modem info into the provided cJSON object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>To add modem info, CONFIG_MODEM_INFO must be enabled.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">mod_inf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Modem info to add. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">mod_inf_obj</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>cJSON object to which modem info will be added.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="558" column="5" declfile="include/net/nrf_cloud.h" declline="558" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_1ga5f04a8cec21e334048883dfd6056a760" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_client_id_get</definition>
+        <argsstring>(char *id_buf, size_t id_len)</argsstring>
+        <name>nrf_cloud_client_id_get</name>
+        <param>
+          <type>char *</type>
+          <declname>id_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>id_len</declname>
+        </param>
+        <briefdescription>
+<para>Function to retrieve the current device ID. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">id_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to receive the device ID. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">id_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of buffer (NRF_CLOUD_CLIENT_ID_MAX_LEN).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="570" column="5" declfile="include/net/nrf_cloud.h" declline="570" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_1ga44795de56ebd34e465c6deb094c0eb21" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_tenant_id_get</definition>
+        <argsstring>(char *id_buf, size_t id_len)</argsstring>
+        <name>nrf_cloud_tenant_id_get</name>
+        <param>
+          <type>char *</type>
+          <declname>id_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>id_len</declname>
+        </param>
+        <briefdescription>
+<para>Function to retrieve the current customer tenant ID. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">id_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to receive the tenant ID. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">id_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of buffer (NRF_CLOUD_TENANT_ID_MAX_LEN).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="581" column="5" declfile="include/net/nrf_cloud.h" declline="581" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_1gaa10af80579a93b73db9cefb83eac81fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_jwt_generate</definition>
+        <argsstring>(uint32_t time_valid_s, char *const jwt_buf, size_t jwt_buf_sz)</argsstring>
+        <name>nrf_cloud_jwt_generate</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>time_valid_s</declname>
+        </param>
+        <param>
+          <type>char *const</type>
+          <declname>jwt_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>jwt_buf_sz</declname>
+        </param>
+        <briefdescription>
+<para>Function to generate a JWT to be used with nRF Cloud&apos;s REST API. This library&apos;s configured values for client id and sec tag (NRF_CLOUD_SEC_TAG) will be used for generating the JWT. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">time_valid_s</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>How long (seconds) the JWT will be valid. Maximum duration specified by <ref refid="group__nrf__cloud_ga8fbdd5dbb1224d27751a14c55ebead68_1ga8fbdd5dbb1224d27751a14c55ebead68" kindref="member">NRF_CLOUD_JWT_VALID_TIME_S_MAX</ref>. If zero, NRF_CLOUD_JWT_VALID_TIME_S_DEF will be used. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">jwt_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to hold the JWT. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">jwt_buf_sz</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the buffer (recommended size &gt;= 600 bytes).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>JWT generated successfully. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIME</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Modem does not have valid date/time, JWT not generated. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A negative value indicates an error. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="598" column="5" declfile="include/net/nrf_cloud.h" declline="598" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nrf__cloud_1gaf1fb84dac37607ed1d5f0a7891483384" prot="public" static="no">
+        <name>IS_VALID_USER_TAG</name>
+        <param><defname>tag</defname></param>
+        <initializer>				((tag &gt;= <ref refid="group__nrf__cloud__mqtt__msg__ids_ga9f8b89e76e25136540d92b5b08960d08_1ga9f8b89e76e25136540d92b5b08960d08" kindref="member">NCT_MSG_ID_USER_TAG_BEGIN</ref>) &amp;&amp; \
+				(tag &lt;= <ref refid="group__nrf__cloud__mqtt__msg__ids_gabedf9d074c7a9ec8f9ef5ed82aff7b51_1gabedf9d074c7a9ec8f9ef5ed82aff7b51" kindref="member">NCT_MSG_ID_USER_TAG_END</ref>))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Determines if an MQTT message ID is a user specified tag to be used for ACK matching </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="52" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_1ga957252baf3606e7e08b4df2ed9a99a16" prot="public" static="no">
+        <name>NRF_CLOUD_SETTINGS_NAME</name>
+        <initializer>&quot;nrf_cloud&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>nRF Cloud&apos;s string identifier for persistent settings </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="55" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_1gaca4bb4ecd80d3d6b2e69573d2ae23a7d" prot="public" static="no">
+        <name>NRF_CLOUD_SETTINGS_FOTA_KEY</name>
+        <initializer>&quot;fota&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="56" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_1gaefa27dc00597b3396c26b0d1e43f5179" prot="public" static="no">
+        <name>NRF_CLOUD_SETTINGS_FOTA_JOB</name>
+        <initializer>&quot;job&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="57" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_1gae53c676ae8ae4dfe181099deb494480b" prot="public" static="no">
+        <name>NRF_CLOUD_SETTINGS_FULL_FOTA</name>
+        <initializer>						<ref refid="group__nrf__cloud_ga957252baf3606e7e08b4df2ed9a99a16_1ga957252baf3606e7e08b4df2ed9a99a16" kindref="member">NRF_CLOUD_SETTINGS_NAME</ref> \
+						&quot;/&quot; \
+						<ref refid="group__nrf__cloud_gaca4bb4ecd80d3d6b2e69573d2ae23a7d_1gaca4bb4ecd80d3d6b2e69573d2ae23a7d" kindref="member">NRF_CLOUD_SETTINGS_FOTA_KEY</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>String used when defining a settings handler for FOTA </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="59" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_1gaf28d7d05f55c6acf1dedb67f3e0a14f1" prot="public" static="no">
+        <name>NRF_CLOUD_SETTINGS_FULL_FOTA_JOB</name>
+        <initializer>						<ref refid="group__nrf__cloud_gae53c676ae8ae4dfe181099deb494480b_1gae53c676ae8ae4dfe181099deb494480b" kindref="member">NRF_CLOUD_SETTINGS_FULL_FOTA</ref> \
+						&quot;/&quot; \
+						<ref refid="group__nrf__cloud_gaefa27dc00597b3396c26b0d1e43f5179_1gaefa27dc00597b3396c26b0d1e43f5179" kindref="member">NRF_CLOUD_SETTINGS_FOTA_JOB</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>String used when saving FOTA job info to settings </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="63" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_1gac82efc4777da62991cc0a14b0202c51d" prot="public" static="no">
+        <name>NRF_CLOUD_FOTA_VER</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current FOTA version number </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="68" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_1gac2e8b1e48c840d1e5643953ae0fa81e3" prot="public" static="no">
+        <name>NRF_CLOUD_FOTA_VER_STR</name>
+        <initializer>&quot;fota_v&quot; STRINGIFY(<ref refid="group__nrf__cloud_gac82efc4777da62991cc0a14b0202c51d_1gac82efc4777da62991cc0a14b0202c51d" kindref="member">NRF_CLOUD_FOTA_VER</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current FOTA version string used in device shadow </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="70" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_1ga2d605911fd901b0d69820adf7ed82d6d" prot="public" static="no">
+        <name>NRF_CLOUD_STAGE_ID_MAX_LEN</name>
+        <initializer>8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Max length of nRF Cloud&apos;s stage/environment name </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="72" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_1ga914ce87ff2d4900a6fe149449c549247" prot="public" static="no">
+        <name>NRF_CLOUD_TENANT_ID_MAX_LEN</name>
+        <initializer>64</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Max length of a tenant ID on nRF Cloud </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="74" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_1ga06e4361cf1bfbc65f9efbbdd2a0b78c3" prot="public" static="no">
+        <name>NRF_CLOUD_CLIENT_ID_MAX_LEN</name>
+        <initializer>64</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Max length of a device&apos;s MQTT client ID (device ID) on nRF Cloud </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="76" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_1ga8fbdd5dbb1224d27751a14c55ebead68" prot="public" static="no">
+        <name>NRF_CLOUD_JWT_VALID_TIME_S_MAX</name>
+        <initializer>(7 * 24 * 60 * 60)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum valid duration for JWTs generated by <ref refid="group__nrf__cloud_gaa10af80579a93b73db9cefb83eac81fd_1gaa10af80579a93b73db9cefb83eac81fd" kindref="member">nrf_cloud_jwt_generate</ref> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="78" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_1ga82cda44e72db92a4049b9b36b7ef77f5" prot="public" static="no">
+        <name>NRF_CLOUD_JWT_VALID_TIME_S_DEF</name>
+        <initializer>(10 * 60)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Default valid duration for JWTs generated by <ref refid="group__nrf__cloud_gaa10af80579a93b73db9cefb83eac81fd_1gaa10af80579a93b73db9cefb83eac81fd" kindref="member">nrf_cloud_jwt_generate</ref> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="80" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_1ga448090d9b3948302259cc798ff381806" prot="public" static="no">
+        <name>NRF_CLOUD_FOTA_JOB_ID_SIZE</name>
+        <initializer>(32 + 4 + 1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of nRF Cloud FOTA job ID; version 4 UUID: 32 bytes, 4 hyphens, NULL </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="201" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="201" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

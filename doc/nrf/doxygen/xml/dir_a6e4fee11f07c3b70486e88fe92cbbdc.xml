@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_a6e4fee11f07c3b70486e88fe92cbbdc" kind="dir">
+    <compoundname>applications</compoundname>
+    <innerdir refid="dir_31cbaae3defe0316c39bf37c9fc361fe">applications/asset_tracker</innerdir>
+    <innerdir refid="dir_e32fc894313f7343cc339d4b9e57b64e">applications/asset_tracker_v2</innerdir>
+    <innerdir refid="dir_2664717f2f9be061f9bc23d1ce45ef03">applications/connectivity_bridge</innerdir>
+    <innerdir refid="dir_b930f3977dc1babf69e9e53fd1f81a47">applications/machine_learning</innerdir>
+    <innerdir refid="dir_4fdcc07ab1a6ca77f9533e0f4fb71bcb">applications/nrf_desktop</innerdir>
+    <innerdir refid="dir_f447e90cbeba857130e87a677c4c5d89">applications/pelion_client</innerdir>
+    <innerdir refid="dir_1352b0b5eea396ebf6578f4d5e7f4585">applications/serial_lte_modem</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/"/>
+  </compounddef>
+</doxygen>

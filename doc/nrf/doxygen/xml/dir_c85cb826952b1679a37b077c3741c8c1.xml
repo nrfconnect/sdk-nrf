@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_c85cb826952b1679a37b077c3741c8c1" kind="dir">
+    <compoundname>subsys</compoundname>
+    <innerdir refid="dir_178f685fd0cdbb92a3f3351941109780">subsys/zigbee</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="subsys/"/>
+  </compounddef>
+</doxygen>

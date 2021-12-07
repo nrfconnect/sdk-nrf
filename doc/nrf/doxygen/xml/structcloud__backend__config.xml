@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structcloud__backend__config" kind="struct" language="C++" prot="public">
+    <compoundname>cloud_backend_config</compoundname>
+    <includes refid="cloud_8h" local="no">cloud.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structcloud__backend__config_a586e80eca5fe09fe681af7e1f12026c5_1a586e80eca5fe09fe681af7e1f12026c5" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* cloud_backend_config::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="196" column="6" bodyfile="include/net/cloud.h" bodystart="196" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__backend__config_a314c7287e4d3fe7c43fd3fc9553e3703_1a314c7287e4d3fe7c43fd3fc9553e3703" prot="public" static="no" mutable="no">
+        <type><ref refid="group__cloud__api_ga3257fcdffa6d48cea667361250191cfa_1ga3257fcdffa6d48cea667361250191cfa" kindref="member">cloud_evt_handler_t</ref></type>
+        <definition>cloud_evt_handler_t cloud_backend_config::handler</definition>
+        <argsstring></argsstring>
+        <name>handler</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="197" column="21" bodyfile="include/net/cloud.h" bodystart="197" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__backend__config_a115d08868139859a7e4b01041814cb50_1a115d08868139859a7e4b01041814cb50" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int cloud_backend_config::socket</definition>
+        <argsstring></argsstring>
+        <name>socket</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="198" column="5" bodyfile="include/net/cloud.h" bodystart="198" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__backend__config_a323f6462a5e69dc16388a206f5bcf32b_1a323f6462a5e69dc16388a206f5bcf32b" prot="public" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* cloud_backend_config::user_data</definition>
+        <argsstring></argsstring>
+        <name>user_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="199" column="6" bodyfile="include/net/cloud.h" bodystart="199" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__backend__config_a2db54bdf1de45b70dc9aefb0b551e2b2_1a2db54bdf1de45b70dc9aefb0b551e2b2" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* cloud_backend_config::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="200" column="6" bodyfile="include/net/cloud.h" bodystart="200" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__backend__config_ac63a49c0c26381112222741d7c97a7fe_1ac63a49c0c26381112222741d7c97a7fe" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t cloud_backend_config::id_len</definition>
+        <argsstring></argsstring>
+        <name>id_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="201" column="8" bodyfile="include/net/cloud.h" bodystart="201" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Structure for cloud backend configuration. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>cloud_api</label>
+        <link refid="structcloud__api"/>
+      </node>
+      <node id="2">
+        <label>cloud_backend</label>
+        <link refid="structcloud__backend"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>api</edgelabel>
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>config</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>cloud_backend_config</label>
+        <link refid="structcloud__backend__config"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>handler</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/net/cloud.h" line="195" column="1" bodyfile="include/net/cloud.h" bodystart="195" bodyend="202"/>
+    <listofallmembers>
+      <member refid="structcloud__backend__config_a314c7287e4d3fe7c43fd3fc9553e3703_1a314c7287e4d3fe7c43fd3fc9553e3703" prot="public" virt="non-virtual"><scope>cloud_backend_config</scope><name>handler</name></member>
+      <member refid="structcloud__backend__config_a2db54bdf1de45b70dc9aefb0b551e2b2_1a2db54bdf1de45b70dc9aefb0b551e2b2" prot="public" virt="non-virtual"><scope>cloud_backend_config</scope><name>id</name></member>
+      <member refid="structcloud__backend__config_ac63a49c0c26381112222741d7c97a7fe_1ac63a49c0c26381112222741d7c97a7fe" prot="public" virt="non-virtual"><scope>cloud_backend_config</scope><name>id_len</name></member>
+      <member refid="structcloud__backend__config_a586e80eca5fe09fe681af7e1f12026c5_1a586e80eca5fe09fe681af7e1f12026c5" prot="public" virt="non-virtual"><scope>cloud_backend_config</scope><name>name</name></member>
+      <member refid="structcloud__backend__config_a115d08868139859a7e4b01041814cb50_1a115d08868139859a7e4b01041814cb50" prot="public" virt="non-virtual"><scope>cloud_backend_config</scope><name>socket</name></member>
+      <member refid="structcloud__backend__config_a323f6462a5e69dc16388a206f5bcf32b_1a323f6462a5e69dc16388a206f5bcf32b" prot="public" virt="non-virtual"><scope>cloud_backend_config</scope><name>user_data</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

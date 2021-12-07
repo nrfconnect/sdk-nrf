@@ -1,0 +1,237 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__nus__client" kind="group">
+    <compoundname>bt_nus_client</compoundname>
+    <title>Bluetooth LE GATT NUS Client API</title>
+    <innerclass refid="structbt__nus__client__handles" prot="public">bt_nus_client_handles</innerclass>
+    <innerclass refid="structbt__nus__client__cb" prot="public">bt_nus_client_cb</innerclass>
+    <innerclass refid="structbt__nus__client" prot="public">bt_nus_client</innerclass>
+    <innerclass refid="structbt__nus__client__init__param" prot="public">bt_nus_client_init_param</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__nus__client_1gaa9ea231170c9b215a66ffa1bdfc86d6c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_nus_client_init</definition>
+        <argsstring>(struct bt_nus_client *nus, const struct bt_nus_client_init_param *init_param)</argsstring>
+        <name>bt_nus_client_init</name>
+        <param>
+          <type>struct <ref refid="structbt__nus__client" kindref="compound">bt_nus_client</ref> *</type>
+          <declname>nus</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__nus__client__init__param" kindref="compound">bt_nus_client_init_param</ref> *</type>
+          <declname>init_param</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the NUS Client module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function initializes the NUS Client module with callbacks provided by the user.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">nus</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>NUS Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">init_param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>NUS Client initialization parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus_client.h" line="120" column="5" declfile="include/bluetooth/services/nus_client.h" declline="120" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__nus__client_1ga99d23cc84813e4acd54e0bafc254fd19" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_nus_client_send</definition>
+        <argsstring>(struct bt_nus_client *nus, const uint8_t *data, uint16_t len)</argsstring>
+        <name>bt_nus_client_send</name>
+        <param>
+          <type>struct <ref refid="structbt__nus__client" kindref="compound">bt_nus_client</ref> *</type>
+          <declname>nus</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Send data to the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function writes to the RX Characteristic of the server.</para>
+<para><simplesect kind="note"><para>This procedure is asynchronous. Therefore, the data to be sent must remain valid while the function is active.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">nus</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>NUS Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to be transmitted. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of data.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus_client.h" line="137" column="5" declfile="include/bluetooth/services/nus_client.h" declline="137" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__nus__client_1ga6fb12e388ca2200e93ba2542b7de88b7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_nus_handles_assign</definition>
+        <argsstring>(struct bt_gatt_dm *dm, struct bt_nus_client *nus)</argsstring>
+        <name>bt_nus_handles_assign</name>
+        <param>
+          <type>struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__nus__client" kindref="compound">bt_nus_client</ref> *</type>
+          <declname>nus</declname>
+        </param>
+        <briefdescription>
+<para>Assign handles to the NUS Client instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function should be called when a link with a peer has been established to associate the link to this instance of the module. This makes it possible to handle several links and associate each link to a particular instance of this module. The GATT attribute handles are provided by the GATT DB discovery module.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">nus</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>NUS Client instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>(-ENOTSUP)</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Special error code used when UUID of the service does not match the expected UUID. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Otherwise</parametername>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus_client.h" line="156" column="5" declfile="include/bluetooth/services/nus_client.h" declline="156" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__nus__client_1gaac9915b863ac3a284be5478a6dc64c70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_nus_subscribe_receive</definition>
+        <argsstring>(struct bt_nus_client *nus)</argsstring>
+        <name>bt_nus_subscribe_receive</name>
+        <param>
+          <type>struct <ref refid="structbt__nus__client" kindref="compound">bt_nus_client</ref> *</type>
+          <declname>nus</declname>
+        </param>
+        <briefdescription>
+<para>Request the peer to start sending notifications for the TX Characteristic. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function enables notifications for the NUS TX Characteristic at the peer by writing to the CCC descriptor of the NUS TX Characteristic.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">nus</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>NUS Client instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus_client.h" line="170" column="5" declfile="include/bluetooth/services/nus_client.h" declline="170" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Bluetooth LE GATT Nordic UART Service (NUS) Client. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

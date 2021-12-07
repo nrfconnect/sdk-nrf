@@ -1,0 +1,391 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__t4t__hl__procedure" kind="group">
+    <compoundname>nfc_t4t_hl_procedure</compoundname>
+    <title>NFC T4T High Level Procedure</title>
+    <innerclass refid="structnfc__t4t__hl__procedure__cb" prot="public">nfc_t4t_hl_procedure_cb</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nfc__t4t__hl__procedure_1ga90858cf624981b851cb0df52722983b7" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nfc_t4t_hl_procedure_select</name>
+        <enumvalue id="group__nfc__t4t__hl__procedure_ga90858cf624981b851cb0df52722983b7_1gga90858cf624981b851cb0df52722983b7a59160d986dfc93efb645bafde0953c3c" prot="public">
+          <name>NFC_T4T_HL_PROCEDURE_NDEF_APP_SELECT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>NDEF App select. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__hl__procedure_ga90858cf624981b851cb0df52722983b7_1gga90858cf624981b851cb0df52722983b7abb77f0c1335db555d34af367c3675be2" prot="public">
+          <name>NFC_T4T_HL_PROCEDURE_CC_SELECT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>CC file select. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__hl__procedure_ga90858cf624981b851cb0df52722983b7_1gga90858cf624981b851cb0df52722983b7a516d5a6a09dbb01ba809dbe20de7e9cf" prot="public">
+          <name>NFC_T4T_HL_PROCEDURE_NDEF_FILE_SELECT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>NDEF file select. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Type of selection procedure. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/hl_procedure.h" line="25" column="1" bodyfile="include/nfc/t4t/hl_procedure.h" bodystart="25" bodyend="34"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__t4t__hl__procedure_1ga658dc604246ec88c6c48720c7df2eb05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_hl_procedure_on_data_received</definition>
+        <argsstring>(const uint8_t *data, size_t len)</argsstring>
+        <name>nfc_t4t_hl_procedure_on_data_received</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Handle High Level Procedure received data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Function for handling the received data. It should be called immediately upon receiving the ISO-DEP data.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to received data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Received data length.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/hl_procedure.h" line="93" column="5" declfile="include/nfc/t4t/hl_procedure.h" declline="93" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__hl__procedure_1ga58f491543fe88016c03d80ae143c4688" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_hl_procedure_cb_register</definition>
+        <argsstring>(const struct nfc_t4t_hl_procedure_cb *cb)</argsstring>
+        <name>nfc_t4t_hl_procedure_cb_register</name>
+        <param>
+          <type>const struct <ref refid="structnfc__t4t__hl__procedure__cb" kindref="compound">nfc_t4t_hl_procedure_cb</ref> *</type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Register High Level Procedure callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Function for register callback. It should be used to provides synchronization between NFC T4T operation.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to callback structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/hl_procedure.h" line="105" column="5" declfile="include/nfc/t4t/hl_procedure.h" declline="105" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__hl__procedure_1gad2ca40605c06e8572791c4f3853768ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_hl_procedure_ndef_tag_app_select</definition>
+        <argsstring>(void)</argsstring>
+        <name>nfc_t4t_hl_procedure_ndef_tag_app_select</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Perform NDEF Tag Application Select Procedure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/hl_procedure.h" line="112" column="5" declfile="include/nfc/t4t/hl_procedure.h" declline="112" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__hl__procedure_1gab4f9d37b03ee4d234fea71c5bf2ac50d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_hl_procedure_cc_select</definition>
+        <argsstring>(void)</argsstring>
+        <name>nfc_t4t_hl_procedure_cc_select</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Perform NDEF Tag Capability Container Select Procedure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/hl_procedure.h" line="119" column="5" declfile="include/nfc/t4t/hl_procedure.h" declline="119" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__hl__procedure_1ga1976a6b22a2d8c1769e4c06ca36e6002" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_hl_procedure_cc_read</definition>
+        <argsstring>(struct nfc_t4t_cc_file *cc)</argsstring>
+        <name>nfc_t4t_hl_procedure_cc_read</name>
+        <param>
+          <type>struct <ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref> *</type>
+          <declname>cc</declname>
+        </param>
+        <briefdescription>
+<para>Perform Capability Container Read Procedure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">cc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Capability Cointainer descriptor.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/hl_procedure.h" line="128" column="5" declfile="include/nfc/t4t/hl_procedure.h" declline="128" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__hl__procedure_1gad5eb9e940967be61d62bea8c84f3b568" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_hl_procedure_ndef_file_select</definition>
+        <argsstring>(uint16_t id)</argsstring>
+        <name>nfc_t4t_hl_procedure_ndef_file_select</name>
+        <param>
+          <type>uint16_t</type>
+          <declname>id</declname>
+        </param>
+        <briefdescription>
+<para>Perform NDEF file Select Procedure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>File Identifier</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/hl_procedure.h" line="137" column="5" declfile="include/nfc/t4t/hl_procedure.h" declline="137" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__hl__procedure_1gac8a895f1c15b0b510f8d62a0a4b59c23" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_hl_procedure_ndef_read</definition>
+        <argsstring>(struct nfc_t4t_cc_file *cc, uint8_t *ndef_buff, uint16_t ndef_len)</argsstring>
+        <name>nfc_t4t_hl_procedure_ndef_read</name>
+        <param>
+          <type>struct <ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref> *</type>
+          <declname>cc</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>ndef_buff</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>ndef_len</declname>
+        </param>
+        <briefdescription>
+<para>Perform NDEF Read Procedure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">cc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to Capability Containers descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">ndef_buff</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to buffer where the NDEF file will be stored. The NDEF Read procedure is an asynchronous operation, the data buffer have to be keep until this procedure will be finished. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ndef_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of NDEF file buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/hl_procedure.h" line="151" column="5" declfile="include/nfc/t4t/hl_procedure.h" declline="151" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__hl__procedure_1ga356f7b2f32af9ad7818df5de71bd05d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_hl_procedure_ndef_update</definition>
+        <argsstring>(struct nfc_t4t_cc_file *cc, uint8_t *ndef_data, uint16_t ndef_len)</argsstring>
+        <name>nfc_t4t_hl_procedure_ndef_update</name>
+        <param>
+          <type>struct <ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref> *</type>
+          <declname>cc</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>ndef_data</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>ndef_len</declname>
+        </param>
+        <briefdescription>
+<para>Perform NDEF Update Procedure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to Capability Containers descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ndef_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the NDEF file data. The NDEF Read procedure is an asynchronous operation, the data buffer have to be keep until this procedure will be finished. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ndef_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of NDEF file.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/hl_procedure.h" line="166" column="5" declfile="include/nfc/t4t/hl_procedure.h" declline="166" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>NFC T4T High Level Procedure API. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

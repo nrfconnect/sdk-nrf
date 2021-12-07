@@ -1,0 +1,290 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__rscs" kind="group">
+    <compoundname>bt_rscs</compoundname>
+    <title>Running Speed and Cadence Service API</title>
+    <innerclass refid="structbt__rsc__supported__loc" prot="public">bt_rsc_supported_loc</innerclass>
+    <innerclass refid="structbt__rscs__features" prot="public">bt_rscs_features</innerclass>
+    <innerclass refid="structbt__rscs__cp__cb" prot="public">bt_rscs_cp_cb</innerclass>
+    <innerclass refid="structbt__rscs__init__params" prot="public">bt_rscs_init_params</innerclass>
+    <innerclass refid="structbt__rscs__measurement" prot="public">bt_rscs_measurement</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__rscs_1gaedd524a7087566075a8d47508f5f8645" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_rscs_location</name>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a743948513d40304b9c690618bebc029c" prot="public">
+          <name>RSC_LOC_OTHER</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a05c08d84fae4c56f1f968ffb3451d631" prot="public">
+          <name>RSC_LOC_TOP_OF_SHOE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a9298d37a233d428dfa04e6c10527af4f" prot="public">
+          <name>RSC_LOC_IN_SHOE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a7f199ecf093b52e7595e06eca1cd3a43" prot="public">
+          <name>RSC_LOC_HIP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a062a8744c16ea6691dd2177c8736e87e" prot="public">
+          <name>RSC_LOC_FRONT_WHEEL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645aaebf1ceeafed3b3aad188dd5dbe8455f" prot="public">
+          <name>RSC_LOC_LEFT_CRANK</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645ae6c6db4f211637dd63902ce33dfc732d" prot="public">
+          <name>RSC_LOC_RIGHT_CRANK</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a7b22e23c0753c4ad5883177428cc714f" prot="public">
+          <name>RSC_LOC_LEFT_PEDAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645ae0c0bd423dfafe52e6e2ae8572badef5" prot="public">
+          <name>RSC_LOC_RIGHT_PEDAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a1ae3582e7d9910fdfa2065ff90df4cbf" prot="public">
+          <name>RSC_LOC_FRONT_HUB</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a8f8253bfa68630814280942f247a746d" prot="public">
+          <name>RSC_LOC_REAR_DROPOUT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645ab86edc46702bd808f3080d5a48ff502f" prot="public">
+          <name>RSC_LOC_CHAINSTAY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a5ac49d2b0cbd1219cd0474508cac01d6" prot="public">
+          <name>RSC_LOC_REAR_WHEEL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a0b22ae994fdcb38d63047fe183349984" prot="public">
+          <name>RSC_LOC_REAR_HUB</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a1a1ab499a21bda8c0e777bfeaeaa6cb6" prot="public">
+          <name>RSC_LOC_CHEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645af55424e4bd122586468d0ce3e9337faf" prot="public">
+          <name>RSC_LOC_SPIDER</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645a730916c6ec1ce05f6a094f5af31ac952" prot="public">
+          <name>RSC_LOC_CHAIN_RING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_gaedd524a7087566075a8d47508f5f8645_1ggaedd524a7087566075a8d47508f5f8645ac8cacbae8b08bb65a565e9874236c79f" prot="public">
+          <name>RSC_LOC_AMT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>RSC Sensor Locations. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="24" column="1" bodyfile="include/bluetooth/services/rscs.h" bodystart="24" bodyend="44"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__rscs_1ga3f78bfa4c6d97a8205b22ac795620f57" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_rscs_evt</name>
+        <enumvalue id="group__bt__rscs_ga3f78bfa4c6d97a8205b22ac795620f57_1gga3f78bfa4c6d97a8205b22ac795620f57a9097216795b86beb1ce49df006239955" prot="public">
+          <name>RSCS_EVT_MEAS_NOTIFY_ENABLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Measurement notification enable. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__rscs_ga3f78bfa4c6d97a8205b22ac795620f57_1gga3f78bfa4c6d97a8205b22ac795620f57a0d3d10eb136c3337364f59a9f6c43141" prot="public">
+          <name>RSCS_EVT_MEAS_NOTIFY_DISABLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Measurement notification disable. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Running Speed and Cadence Service events. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="86" column="1" bodyfile="include/bluetooth/services/rscs.h" bodystart="86" bodyend="92"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__bt__rscs_1gac831ad9ae949de8a046921a7a4361f99" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_rscs_evt_handler) (enum bt_rscs_evt evt)</definition>
+        <argsstring>)(enum bt_rscs_evt evt)</argsstring>
+        <name>bt_rscs_evt_handler</name>
+        <briefdescription>
+<para>Running Speed and Cadence Service event handler type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="95" column="9" bodyfile="include/bluetooth/services/rscs.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__rscs_1ga81abdb2482f79c331c32807dc9b2eaab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_rscs_measurement_send</definition>
+        <argsstring>(struct bt_conn *conn, const struct bt_rscs_measurement *measurement)</argsstring>
+        <name>bt_rscs_measurement_send</name>
+        <param>
+          <type>struct bt_conn *</type>
+          <declname>conn</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__rscs__measurement" kindref="compound">bt_rscs_measurement</ref> *</type>
+          <declname>measurement</declname>
+        </param>
+        <briefdescription>
+<para>Function for sending Running Speed and Cadence measurement. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The application calls this function after having performed a Running Speed and Cadence measurement. If notification has been enabled, the measurement data is encoded and sent to the client.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to connection object, or NULL if sent to all connected peers. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>measurement</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to new running speed and cadence measurement.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="175" column="5" declfile="include/bluetooth/services/rscs.h" declline="175" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__rscs_1ga3cc2e68c47512445505ca17f5811a12f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_rscs_init</definition>
+        <argsstring>(const struct bt_rscs_init_params *init)</argsstring>
+        <name>bt_rscs_init</name>
+        <param>
+          <type>const struct <ref refid="structbt__rscs__init__params" kindref="compound">bt_rscs_init_params</ref> *</type>
+          <declname>init</declname>
+        </param>
+        <briefdescription>
+<para>Function for initializing the Running Speed and Cadence Service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>init</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Initialization parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="184" column="5" declfile="include/bluetooth/services/rscs.h" declline="184" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Running Speed and Cadence Service (RSCS). </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

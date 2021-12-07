@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__shell__bt__nus" kind="group">
+    <compoundname>shell_bt_nus</compoundname>
+    <title>Nordic UART Service (NUS) shell transport</title>
+    <innerclass refid="structshell__bt__nus__ctrl__blk" prot="public">shell_bt_nus_ctrl_blk</innerclass>
+    <innerclass refid="structshell__bt__nus" prot="public">shell_bt_nus</innerclass>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__shell__bt__nus_1ga2d5e05db031c5cf1324e6254affb9f5f" prot="public" static="no" mutable="no">
+        <type>const struct shell_transport_api</type>
+        <definition>const struct shell_transport_api shell_bt_nus_transport_api</definition>
+        <argsstring></argsstring>
+        <name>shell_bt_nus_transport_api</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/shell/shell_bt_nus.h" line="26" column="39" declfile="include/shell/shell_bt_nus.h" declline="26" declcolumn="39"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__shell__bt__nus_1gad81e3b88456b7ebb230d963c3fbde53a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int shell_bt_nus_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>shell_bt_nus_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize the NUS shell transport instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function initializes a shell thread and the Nordic UART Service.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/shell/shell_bt_nus.h" line="66" column="5" declfile="include/shell/shell_bt_nus.h" declline="66" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__shell__bt__nus_1ga6948adf5ea1a565f2d97b304917cd081" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void shell_bt_nus_enable</definition>
+        <argsstring>(struct bt_conn *conn)</argsstring>
+        <name>shell_bt_nus_enable</name>
+        <param>
+          <type>struct bt_conn *</type>
+          <declname>conn</declname>
+        </param>
+        <briefdescription>
+<para>Enable the NUS shell transport instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function should be called when the connection is established.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connection handle. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/shell/shell_bt_nus.h" line="75" column="6" declfile="include/shell/shell_bt_nus.h" declline="75" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__shell__bt__nus_1gae36e210956395ed80f3cb137c245cc02" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void shell_bt_nus_disable</definition>
+        <argsstring>(void)</argsstring>
+        <name>shell_bt_nus_disable</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Disable the NUS shell transport instance. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/shell/shell_bt_nus.h" line="80" column="6" declfile="include/shell/shell_bt_nus.h" declline="80" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__shell__bt__nus_1ga1f6d5aca8a1b5c9e83ac9b358236d030" prot="public" static="no">
+        <name>SHELL_BT_NUS_DEFINE</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_tx_ringbuf_size</defname></param>
+        <param><defname>_rx_ringbuf_size</defname></param>
+        <initializer>	static struct <ref refid="structshell__bt__nus__ctrl__blk" kindref="compound">shell_bt_nus_ctrl_blk</ref> _name##_ctrl_blk;		\
+	RING_BUF_DECLARE(_name##_tx_ringbuf, _tx_ringbuf_size);		\
+	RING_BUF_DECLARE(_name##_rx_ringbuf, _rx_ringbuf_size);		\
+	static const struct <ref refid="structshell__bt__nus" kindref="compound">shell_bt_nus</ref> _name##_shell_bt_nus = {	\
+		.ctrl_blk = &amp;_name##_ctrl_blk,				\
+		.tx_ringbuf = &amp;_name##_tx_ringbuf,			\
+		.rx_ringbuf = &amp;_name##_rx_ringbuf,			\
+	};								\
+	struct shell_transport _name = {				\
+		.api = &amp;<ref refid="group__shell__bt__nus_ga2d5e05db031c5cf1324e6254affb9f5f_1ga2d5e05db031c5cf1324e6254affb9f5f" kindref="member">shell_bt_nus_transport_api</ref>,			\
+		.ctx = (struct <ref refid="structshell__bt__nus" kindref="compound">shell_bt_nus</ref> *)&amp;_name##_shell_bt_nus	\
+	}</initializer>
+        <briefdescription>
+<para>Macro for creating an instance of the module. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/shell/shell_bt_nus.h" line="44" column="9" bodyfile="include/shell/shell_bt_nus.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Nordic UART Service (NUS) shell transport API. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

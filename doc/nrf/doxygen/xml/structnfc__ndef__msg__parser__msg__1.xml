@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__ndef__msg__parser__msg__1" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_ndef_msg_parser_msg_1</compoundname>
+    <includes refid="msg__parser_8h" local="no">msg_parser.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__ndef__msg__parser__msg__1_ad1c1b4ebecde1f1dd57c09b4c747308b_1ad1c1b4ebecde1f1dd57c09b4c747308b" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref></type>
+        <definition>struct nfc_ndef_msg_desc nfc_ndef_msg_parser_msg_1::msg_desc</definition>
+        <argsstring></argsstring>
+        <name>msg_desc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/msg_parser.h" line="29" column="24" bodyfile="include/nfc/ndef/msg_parser.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__msg__parser__msg__1_a4a75de38ec6293498491738092095d7b_1a4a75de38ec6293498491738092095d7b" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+        <definition>struct nfc_ndef_record_desc* nfc_ndef_msg_parser_msg_1::record_desc_array[1]</definition>
+        <argsstring>[1]</argsstring>
+        <name>record_desc_array</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/msg_parser.h" line="30" column="27" bodyfile="include/nfc/ndef/msg_parser.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__msg__parser__msg__1_a728319ae5051c57a898a7ccbd33bb046_1a728319ae5051c57a898a7ccbd33bb046" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structnfc__ndef__bin__payload__desc" kindref="compound">nfc_ndef_bin_payload_desc</ref></type>
+        <definition>struct nfc_ndef_bin_payload_desc nfc_ndef_msg_parser_msg_1::bin_pay_desc[1]</definition>
+        <argsstring>[1]</argsstring>
+        <name>bin_pay_desc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/msg_parser.h" line="31" column="32" bodyfile="include/nfc/ndef/msg_parser.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__msg__parser__msg__1_a4a6e4c5187d69bd043c62a1927c5ddc0_1a4a6e4c5187d69bd043c62a1927c5ddc0" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref></type>
+        <definition>struct nfc_ndef_record_desc nfc_ndef_msg_parser_msg_1::rec_desc[1]</definition>
+        <argsstring>[1]</argsstring>
+        <name>rec_desc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/msg_parser.h" line="32" column="27" bodyfile="include/nfc/ndef/msg_parser.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Memory allocated for a one-record message. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>nfc_ndef_bin_payload_desc</label>
+        <link refid="structnfc__ndef__bin__payload__desc"/>
+      </node>
+      <node id="2">
+        <label>nfc_ndef_msg_desc</label>
+        <link refid="structnfc__ndef__msg__desc"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>record</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>nfc_ndef_msg_parser_msg_1</label>
+        <link refid="structnfc__ndef__msg__parser__msg__1"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>msg_desc</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>rec_desc</edgelabel>
+          <edgelabel>record_desc_array</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>bin_pay_desc</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>nfc_ndef_record_desc</label>
+        <link refid="structnfc__ndef__record__desc"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/nfc/ndef/msg_parser.h" line="28" column="1" bodyfile="include/nfc/ndef/msg_parser.h" bodystart="28" bodyend="33"/>
+    <listofallmembers>
+      <member refid="structnfc__ndef__msg__parser__msg__1_a728319ae5051c57a898a7ccbd33bb046_1a728319ae5051c57a898a7ccbd33bb046" prot="public" virt="non-virtual"><scope>nfc_ndef_msg_parser_msg_1</scope><name>bin_pay_desc</name></member>
+      <member refid="structnfc__ndef__msg__parser__msg__1_ad1c1b4ebecde1f1dd57c09b4c747308b_1ad1c1b4ebecde1f1dd57c09b4c747308b" prot="public" virt="non-virtual"><scope>nfc_ndef_msg_parser_msg_1</scope><name>msg_desc</name></member>
+      <member refid="structnfc__ndef__msg__parser__msg__1_a4a6e4c5187d69bd043c62a1927c5ddc0_1a4a6e4c5187d69bd043c62a1927c5ddc0" prot="public" virt="non-virtual"><scope>nfc_ndef_msg_parser_msg_1</scope><name>rec_desc</name></member>
+      <member refid="structnfc__ndef__msg__parser__msg__1_a4a75de38ec6293498491738092095d7b_1a4a75de38ec6293498491738092095d7b" prot="public" virt="non-virtual"><scope>nfc_ndef_msg_parser_msg_1</scope><name>record_desc_array</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

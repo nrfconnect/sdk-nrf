@@ -1,0 +1,1542 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__light__ctrl__cli" kind="group">
+    <compoundname>bt_mesh_light_ctrl_cli</compoundname>
+    <title>Light Lightness Control Client</title>
+    <innerclass refid="structbt__mesh__light__ctrl__cli__handlers" prot="public">bt_mesh_light_ctrl_cli_handlers</innerclass>
+    <innerclass refid="structbt__mesh__light__ctrl__cli" prot="public">bt_mesh_light_ctrl_cli</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__cli_1ga1d02497631ecb42411503c128ab660a8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_cli_mode_get</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, bool *rsp)</argsstring>
+        <name>bt_mesh_light_ctrl_cli_mode_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__cli" kindref="compound">bt_mesh_light_ctrl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>bool *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Get a Light Lightness Control Server&apos;s current Mode. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The Mode determines whether the Server is actively controlling its Lightness Server&apos;s state.</para>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__light__ctrl__cli__handlers_a9ded7fd2b8a0bb18712bc3b96fa5e050_1a9ded7fd2b8a0bb18712bc3b96fa5e050" kindref="member">bt_mesh_light_ctrl_cli_handlers::mode</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response status buffer, returning the Server&apos;s current mode, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="174" column="5" declfile="include/bluetooth/mesh/light_ctrl_cli.h" declline="174" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__cli_1ga38929b37b947993ac121b23469fe1638" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_cli_mode_set</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, bool enabled, bool *rsp)</argsstring>
+        <name>bt_mesh_light_ctrl_cli_mode_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__cli" kindref="compound">bt_mesh_light_ctrl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>enabled</declname>
+        </param>
+        <param>
+          <type>bool *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Set a Light Lightness Control Server&apos;s current Mode. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The Mode determines whether the Server is actively controlling its Lightness Server&apos;s state.</para>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__light__ctrl__cli__handlers_a9ded7fd2b8a0bb18712bc3b96fa5e050_1a9ded7fd2b8a0bb18712bc3b96fa5e050" kindref="member">bt_mesh_light_ctrl_cli_handlers::mode</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">enabled</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The new Mode to set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response status buffer, returning the Server&apos;s current mode, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="201" column="5" declfile="include/bluetooth/mesh/light_ctrl_cli.h" declline="201" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__cli_1ga9cd731b1ee26701c92dba34e87aff6a5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_cli_mode_set_unack</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, bool enabled)</argsstring>
+        <name>bt_mesh_light_ctrl_cli_mode_set_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__cli" kindref="compound">bt_mesh_light_ctrl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>enabled</declname>
+        </param>
+        <briefdescription>
+<para>Set a Light Lightness Control Server&apos;s current Mode without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The Mode determines whether the Server is actively controlling its Lightness Server&apos;s state.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">enabled</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The new Mode to set.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="221" column="5" declfile="include/bluetooth/mesh/light_ctrl_cli.h" declline="221" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__cli_1ga199eb17c94bb14b6b71c5c9217badc81" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_cli_occupancy_enabled_get</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, bool *rsp)</argsstring>
+        <name>bt_mesh_light_ctrl_cli_occupancy_enabled_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__cli" kindref="compound">bt_mesh_light_ctrl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>bool *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Get a Light Lightness Control Server&apos;s current Occupancy Mode. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The Occupancy Mode determines whether the Server accepts messages from Occupancy Servers.</para>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__light__ctrl__cli__handlers_ae53a1305f1fd6b4f4f46c012df790bf7_1ae53a1305f1fd6b4f4f46c012df790bf7" kindref="member">bt_mesh_light_ctrl_cli_handlers::occupancy_mode</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response status buffer, returning whether the Server&apos;s occupancy mode is currently enabled, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="249" column="5" declfile="include/bluetooth/mesh/light_ctrl_cli.h" declline="249" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__cli_1gaaddc0ef3347215ee5c71f77da2208299" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_cli_occupancy_enabled_set</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, bool enabled, bool *rsp)</argsstring>
+        <name>bt_mesh_light_ctrl_cli_occupancy_enabled_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__cli" kindref="compound">bt_mesh_light_ctrl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>enabled</declname>
+        </param>
+        <param>
+          <type>bool *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Set a Light Lightness Control Server&apos;s current Occupancy Mode. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The Occupancy Mode determines whether the Server accepts messages from Occupancy Servers.</para>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__light__ctrl__cli__handlers_ae53a1305f1fd6b4f4f46c012df790bf7_1ae53a1305f1fd6b4f4f46c012df790bf7" kindref="member">bt_mesh_light_ctrl_cli_handlers::occupancy_mode</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">enabled</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The new Occupancy Mode to set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response status buffer, returning whether the Server&apos;s occupancy mode is currently enabled, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="278" column="5" declfile="include/bluetooth/mesh/light_ctrl_cli.h" declline="278" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__cli_1gaf7989e695331b4a007a9d499bc0deaca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_cli_occupancy_enabled_set_unack</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, bool enabled)</argsstring>
+        <name>bt_mesh_light_ctrl_cli_occupancy_enabled_set_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__cli" kindref="compound">bt_mesh_light_ctrl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>enabled</declname>
+        </param>
+        <briefdescription>
+<para>Set a Light Lightness Control Server&apos;s current Occupancy Mode without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The Occupancy Mode determines whether the Server accepts messages from Occupancy Servers.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">enabled</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The new Occupancy Mode to set.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="298" column="5" declfile="include/bluetooth/mesh/light_ctrl_cli.h" declline="298" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__cli_1ga4c7d793783e0fa914a5767c4e18feba9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_cli_light_onoff_get</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_onoff_status *rsp)</argsstring>
+        <name>bt_mesh_light_ctrl_cli_light_onoff_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__cli" kindref="compound">bt_mesh_light_ctrl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__onoff__status" kindref="compound">bt_mesh_onoff_status</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Get a Light Lightness Control Server&apos;s current OnOff state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The OnOff state determines whether the Server is currently keeping the light of its Lightness Server on.</para>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__light__ctrl__cli__handlers_ae5a94b276ba851b0608773efb1b879d8_1ae5a94b276ba851b0608773efb1b879d8" kindref="member">bt_mesh_light_ctrl_cli_handlers::light_onoff</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response status buffer, returning the Server&apos;s current OnOff state, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="325" column="5" declfile="include/bluetooth/mesh/light_ctrl_cli.h" declline="325" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__cli_1gae9156a9315efd89fe6162c53770c066e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_cli_light_onoff_set</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_onoff_set *set, struct bt_mesh_onoff_status *rsp)</argsstring>
+        <name>bt_mesh_light_ctrl_cli_light_onoff_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__cli" kindref="compound">bt_mesh_light_ctrl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__onoff__set" kindref="compound">bt_mesh_onoff_set</ref> *</type>
+          <declname>set</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__onoff__status" kindref="compound">bt_mesh_onoff_status</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Tell a Light Lightness Control Server to turn the light on or off. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The OnOff state determines whether the Server is currently keeping the light of its Lightness Server on.</para>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__light__ctrl__cli__handlers_ae5a94b276ba851b0608773efb1b879d8_1ae5a94b276ba851b0608773efb1b879d8" kindref="member">bt_mesh_light_ctrl_cli_handlers::light_onoff</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set parameters. The <computeroutput>transition::time</computeroutput> parameter may be set to override the Server&apos;s default fade time, or <computeroutput>transition</computeroutput> may be set to NULL. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response status buffer, returning the Server&apos;s current OnOff state, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="355" column="5" declfile="include/bluetooth/mesh/light_ctrl_cli.h" declline="355" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__cli_1ga01f618f9217b63db75d267ccd5f2db0f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_cli_light_onoff_set_unack</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_onoff_set *set)</argsstring>
+        <name>bt_mesh_light_ctrl_cli_light_onoff_set_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__cli" kindref="compound">bt_mesh_light_ctrl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__onoff__set" kindref="compound">bt_mesh_onoff_set</ref> *</type>
+          <declname>set</declname>
+        </param>
+        <briefdescription>
+<para>Tell a Light Lightness Control Server to turn the light on or off without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The OnOff state determines whether the Server is currently keeping the light of its Lightness Server on.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set parameters. The <computeroutput>transition::time</computeroutput> parameter may be set to override the Server&apos;s default fade time, or <computeroutput>transition</computeroutput> may be set to NULL.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="378" column="5" declfile="include/bluetooth/mesh/light_ctrl_cli.h" declline="378" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__cli_1ga45115cd7f6aad4985360dbb0f3ca76ba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_cli_prop_get</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, enum bt_mesh_light_ctrl_prop id, struct sensor_value *rsp)</argsstring>
+        <name>bt_mesh_light_ctrl_cli_prop_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__cli" kindref="compound">bt_mesh_light_ctrl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1ga10519c425d86f6f27012839001e43c7f" kindref="member">bt_mesh_light_ctrl_prop</ref></type>
+          <declname>id</declname>
+        </param>
+        <param>
+          <type>struct sensor_value *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Get a Light Lightness Control Server property value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Properties are the configuration parameters for the Light Lightness Control Server. Each property value is represented as a single sensor channel.</para>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__light__ctrl__cli__handlers_ad94e8b305bbee0f2afc1b8e7a34d0638_1ad94e8b305bbee0f2afc1b8e7a34d0638" kindref="member">bt_mesh_light_ctrl_cli_handlers::prop</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Lightness Control Server property to get. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Property value response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="406" column="5" declfile="include/bluetooth/mesh/light_ctrl_cli.h" declline="406" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__cli_1gaacc16c40fc19ab79120de8e6b49e7e83" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_cli_prop_set</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, enum bt_mesh_light_ctrl_prop id, const struct sensor_value *val, struct sensor_value *rsp)</argsstring>
+        <name>bt_mesh_light_ctrl_cli_prop_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__cli" kindref="compound">bt_mesh_light_ctrl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1ga10519c425d86f6f27012839001e43c7f" kindref="member">bt_mesh_light_ctrl_prop</ref></type>
+          <declname>id</declname>
+        </param>
+        <param>
+          <type>const struct sensor_value *</type>
+          <declname>val</declname>
+        </param>
+        <param>
+          <type>struct sensor_value *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Set a Light Lightness Control Server property value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Properties are the configuration parameters for the Light Lightness Control Server. Each property value is represented as a single sensor channel.</para>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__light__ctrl__cli__handlers_ad94e8b305bbee0f2afc1b8e7a34d0638_1ad94e8b305bbee0f2afc1b8e7a34d0638" kindref="member">bt_mesh_light_ctrl_cli_handlers::prop</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Lightness Control Server property to set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New property value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Property value response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="436" column="5" declfile="include/bluetooth/mesh/light_ctrl_cli.h" declline="436" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__cli_1ga65080806649d27a777ae162eae9a4980" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_cli_prop_set_unack</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, enum bt_mesh_light_ctrl_prop id, const struct sensor_value *val)</argsstring>
+        <name>bt_mesh_light_ctrl_cli_prop_set_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__cli" kindref="compound">bt_mesh_light_ctrl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__bt__mesh__light__ctrl_ga10519c425d86f6f27012839001e43c7f_1ga10519c425d86f6f27012839001e43c7f" kindref="member">bt_mesh_light_ctrl_prop</ref></type>
+          <declname>id</declname>
+        </param>
+        <param>
+          <type>const struct sensor_value *</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+<para>Set a Light Lightness Control Server property value without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Properties are the configuration parameters for the Light Lightness Control Server. Each property value is represented as a single sensor channel.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Lightness Control Server property to set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New property value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="459" column="5" declfile="include/bluetooth/mesh/light_ctrl_cli.h" declline="459" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__cli_1gabe1236f4ba88a9b039d0cc1edaf07982" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_cli_coeff_get</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, enum bt_mesh_light_ctrl_coeff id, float *rsp)</argsstring>
+        <name>bt_mesh_light_ctrl_cli_coeff_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__cli" kindref="compound">bt_mesh_light_ctrl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__bt__mesh__light__ctrl_ga8a2366f5d561f74e2d58e4010081adeb_1ga8a2366f5d561f74e2d58e4010081adeb" kindref="member">bt_mesh_light_ctrl_coeff</ref></type>
+          <declname>id</declname>
+        </param>
+        <param>
+          <type>float *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Get a Light Lightness Control Server Regulator Coefficient value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Regulator coefficients are the configuration parameters for the Light Lightness Control Server Illuminance Regulator.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Lightness Control Server coefficient to get. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Coefficient value response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="484" column="5" declfile="include/bluetooth/mesh/light_ctrl_cli.h" declline="484" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__cli_1gae3d6053ae83fae4f8a0ad0f3ac3a5de0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_cli_coeff_set</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, enum bt_mesh_light_ctrl_coeff id, float val, float *rsp)</argsstring>
+        <name>bt_mesh_light_ctrl_cli_coeff_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__cli" kindref="compound">bt_mesh_light_ctrl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__bt__mesh__light__ctrl_ga8a2366f5d561f74e2d58e4010081adeb_1ga8a2366f5d561f74e2d58e4010081adeb" kindref="member">bt_mesh_light_ctrl_coeff</ref></type>
+          <declname>id</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>val</declname>
+        </param>
+        <param>
+          <type>float *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Set a Light Lightness Control Server Regulator Coefficient value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Regulator coefficients are the configuration parameters for the Light Lightness Control Server Illuminance Regulator.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Lightness Control Server coefficient to set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New coefficient value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Coefficient value response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message and populated the <computeroutput>rsp</computeroutput> buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="510" column="5" declfile="include/bluetooth/mesh/light_ctrl_cli.h" declline="510" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__cli_1ga8ab7911c641370df2c13695b164a27af" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_cli_coeff_set_unack</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx, enum bt_mesh_light_ctrl_coeff id, float val)</argsstring>
+        <name>bt_mesh_light_ctrl_cli_coeff_set_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__cli" kindref="compound">bt_mesh_light_ctrl_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__bt__mesh__light__ctrl_ga8a2366f5d561f74e2d58e4010081adeb_1ga8a2366f5d561f74e2d58e4010081adeb" kindref="member">bt_mesh_light_ctrl_coeff</ref></type>
+          <declname>id</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+<para>Set a Light Lightness Control Server Regulator Coefficient value without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Regulator coefficients are the configuration parameters for the Light Lightness Control Server Illuminance Regulator.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client model to send on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Lightness Control Server coefficient to set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New coefficient value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="532" column="5" declfile="include/bluetooth/mesh/light_ctrl_cli.h" declline="532" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__light__ctrl__cli_1gac2d4614ffe39530480f30f2c015d62ed" prot="public" static="no">
+        <name>BT_MESH_LIGHT_CTRL_CLI_INIT</name>
+        <param><defname>_handlers</defname></param>
+        <initializer>	{                                                                      \
+		.handlers = _handlers,                                         \
+	}</initializer>
+        <briefdescription>
+<para>Initialization parameters for the <ref refid="group__bt__mesh__light__ctrl__cli" kindref="compound">Light Lightness Control Client</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_handlers</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional message handler structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="structbt__mesh__light__ctrl__cli__handlers" kindref="compound">bt_mesh_light_ctrl_cli_handlers</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="36" column="9" bodyfile="include/bluetooth/mesh/light_ctrl_cli.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__light__ctrl__cli_1ga86ed33ffd10bbe26bc426c52767b3881" prot="public" static="no">
+        <name>BT_MESH_MODEL_LIGHT_CTRL_CLI</name>
+        <param><defname>_cli</defname></param>
+        <initializer>	BT_MESH_MODEL_CB(                                                     \
+		BT_MESH_MODEL_ID_LIGHT_LC_CLI, _bt_mesh_light_ctrl_cli_op,    \
+		&amp;(_cli)-&gt;pub,                                                 \
+		BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__light__ctrl__cli" kindref="compound">bt_mesh_light_ctrl_cli</ref>, _cli), \
+		&amp;_bt_mesh_light_ctrl_cli_cb)</initializer>
+        <briefdescription>
+<para>Light Lightness Control Client model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__light__ctrl__cli" kindref="compound">Light Lightness Control Client</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_cli.h" line="47" column="9" bodyfile="include/bluetooth/mesh/light_ctrl_cli.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Light Lightness Control Client model API. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

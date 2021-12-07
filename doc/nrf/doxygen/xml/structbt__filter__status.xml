@@ -1,0 +1,140 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__filter__status" kind="struct" language="C++" prot="public">
+    <compoundname>bt_filter_status</compoundname>
+    <includes refid="scan_8h" local="no">scan.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__filter__status_a4df847962fec7f020e5631c707ff7605_1a4df847962fec7f020e5631c707ff7605" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool bt_filter_status::all_mode</definition>
+        <argsstring></argsstring>
+        <name>all_mode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Filter mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="115" column="6" bodyfile="include/bluetooth/scan.h" bodystart="115" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__filter__status_ae1b490d2654cc25b73f71baa225460a6_1ae1b490d2654cc25b73f71baa225460a6" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__scan__filter__info" kindref="compound">bt_scan_filter_info</ref></type>
+        <definition>struct bt_scan_filter_info bt_filter_status::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Name filters info. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="118" column="26" bodyfile="include/bluetooth/scan.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__filter__status_a7fde7cfb0dffc45de641a8404e6d0bd9_1a7fde7cfb0dffc45de641a8404e6d0bd9" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__scan__filter__info" kindref="compound">bt_scan_filter_info</ref></type>
+        <definition>struct bt_scan_filter_info bt_filter_status::short_name</definition>
+        <argsstring></argsstring>
+        <name>short_name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Short name filters info. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="121" column="26" bodyfile="include/bluetooth/scan.h" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__filter__status_a39649325612c87a37e4c407e2223112f_1a39649325612c87a37e4c407e2223112f" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__scan__filter__info" kindref="compound">bt_scan_filter_info</ref></type>
+        <definition>struct bt_scan_filter_info bt_filter_status::addr</definition>
+        <argsstring></argsstring>
+        <name>addr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Address filters info. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="124" column="26" bodyfile="include/bluetooth/scan.h" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__filter__status_a4947cdb9a16038cb5b073ac9b89e0cbf_1a4947cdb9a16038cb5b073ac9b89e0cbf" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__scan__filter__info" kindref="compound">bt_scan_filter_info</ref></type>
+        <definition>struct bt_scan_filter_info bt_filter_status::uuid</definition>
+        <argsstring></argsstring>
+        <name>uuid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>UUID filters info. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="127" column="26" bodyfile="include/bluetooth/scan.h" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__filter__status_a3c69dd4e91988ce7fc00cc80e25e6f3f_1a3c69dd4e91988ce7fc00cc80e25e6f3f" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__scan__filter__info" kindref="compound">bt_scan_filter_info</ref></type>
+        <definition>struct bt_scan_filter_info bt_filter_status::appearance</definition>
+        <argsstring></argsstring>
+        <name>appearance</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Appearance filter info. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="130" column="26" bodyfile="include/bluetooth/scan.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__filter__status_a0c37aa5839565723b28870528e0e36a0_1a0c37aa5839565723b28870528e0e36a0" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__scan__filter__info" kindref="compound">bt_scan_filter_info</ref></type>
+        <definition>struct bt_scan_filter_info bt_filter_status::manufacturer_data</definition>
+        <argsstring></argsstring>
+        <name>manufacturer_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Appearance filter info. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="133" column="26" bodyfile="include/bluetooth/scan.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Filter status structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_filter_status</label>
+        <link refid="structbt__filter__status"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>addr</edgelabel>
+          <edgelabel>appearance</edgelabel>
+          <edgelabel>manufacturer_data</edgelabel>
+          <edgelabel>name</edgelabel>
+          <edgelabel>short_name</edgelabel>
+          <edgelabel>uuid</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_scan_filter_info</label>
+        <link refid="structbt__scan__filter__info"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/scan.h" line="113" column="1" bodyfile="include/bluetooth/scan.h" bodystart="113" bodyend="134"/>
+    <listofallmembers>
+      <member refid="structbt__filter__status_a39649325612c87a37e4c407e2223112f_1a39649325612c87a37e4c407e2223112f" prot="public" virt="non-virtual"><scope>bt_filter_status</scope><name>addr</name></member>
+      <member refid="structbt__filter__status_a4df847962fec7f020e5631c707ff7605_1a4df847962fec7f020e5631c707ff7605" prot="public" virt="non-virtual"><scope>bt_filter_status</scope><name>all_mode</name></member>
+      <member refid="structbt__filter__status_a3c69dd4e91988ce7fc00cc80e25e6f3f_1a3c69dd4e91988ce7fc00cc80e25e6f3f" prot="public" virt="non-virtual"><scope>bt_filter_status</scope><name>appearance</name></member>
+      <member refid="structbt__filter__status_a0c37aa5839565723b28870528e0e36a0_1a0c37aa5839565723b28870528e0e36a0" prot="public" virt="non-virtual"><scope>bt_filter_status</scope><name>manufacturer_data</name></member>
+      <member refid="structbt__filter__status_ae1b490d2654cc25b73f71baa225460a6_1ae1b490d2654cc25b73f71baa225460a6" prot="public" virt="non-virtual"><scope>bt_filter_status</scope><name>name</name></member>
+      <member refid="structbt__filter__status_a7fde7cfb0dffc45de641a8404e6d0bd9_1a7fde7cfb0dffc45de641a8404e6d0bd9" prot="public" virt="non-virtual"><scope>bt_filter_status</scope><name>short_name</name></member>
+      <member refid="structbt__filter__status_a4947cdb9a16038cb5b073ac9b89e0cbf_1a4947cdb9a16038cb5b073ac9b89e0cbf" prot="public" virt="non-virtual"><scope>bt_filter_status</scope><name>uuid</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

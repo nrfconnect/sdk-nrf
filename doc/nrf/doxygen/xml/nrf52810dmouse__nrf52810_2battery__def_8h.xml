@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="nrf52810dmouse__nrf52810_2battery__def_8h" kind="file" language="C++">
+    <compoundname>battery_def.h</compoundname>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="nrf52810dmouse__nrf52810_2battery__def_8h_a3342fb952bedf1c29df98acdfbd1a2f6_1a3342fb952bedf1c29df98acdfbd1a2f6" prot="public" static="no">
+        <name>BATTERY_MEAS_ADC_INPUT</name>
+        <initializer>NRF_SAADC_INPUT_AIN2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/battery_def.h" line="16" column="9" bodyfile="applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/battery_def.h" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="nrf52810dmouse__nrf52810_2battery__def_8h_a34920d8c24bd8bfb4df770cfbe22ca29_1a34920d8c24bd8bfb4df770cfbe22ca29" prot="public" static="no">
+        <name>BATTERY_MEAS_ADC_GAIN</name>
+        <initializer>ADC_GAIN_1_4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/battery_def.h" line="17" column="9" bodyfile="applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/battery_def.h" bodystart="17" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="nrf52810dmouse__nrf52810_2battery__def_8h_ae6d75e178de3c7ad3a6a949a279cc5b2_1ae6d75e178de3c7ad3a6a949a279cc5b2" prot="public" static="no">
+        <name>BATTERY_MEAS_VOLTAGE_GAIN</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/battery_def.h" line="18" column="9" bodyfile="applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/battery_def.h" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="nrf52810dmouse__nrf52810_2battery__def_8h_ad87a3112275520edceea701146e096ec_1ad87a3112275520edceea701146e096ec" prot="public" static="no" mutable="no">
+        <type>const struct @49</type>
+        <definition>const struct @49 battery_def_include_once</definition>
+        <argsstring></argsstring>
+        <name>battery_def_include_once</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/battery_def.h" line="14" column="38"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf52810dmouse__nrf52810_2battery__def_8h_a37532dba8db70a9b37220715e75324f9_1a37532dba8db70a9b37220715e75324f9" prot="public" static="yes" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t battery_voltage_to_soc[]</definition>
+        <argsstring>[]</argsstring>
+        <name>battery_voltage_to_soc</name>
+        <initializer>= {
+ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,
+ 1,  1,  2,  2,  2,  2,  3,  3,  3,  4,  4,  5,  5,  6,  6,  7,  8,  9,  9, 10,
+11, 13, 14, 15, 16, 18, 19, 21, 23, 24, 26, 28, 31, 33, 35, 37, 40, 42, 45, 47,
+50, 52, 54, 57, 59, 62, 64, 66, 68, 71, 73, 75, 76, 78, 80, 81, 83, 84, 85, 86,
+88, 89, 90, 90, 91, 92, 93, 93, 94, 94, 95, 95, 96, 96, 96, 97, 97, 97, 97, 98,
+98, 98, 98, 98, 98, 98, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 100,
+100
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/battery_def.h" line="25" column="22" bodyfile="applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/battery_def.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>configuration<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>from<sp/>battery<sp/>level<sp/>measuring</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/>*<sp/>module<sp/>and<sp/>holds<sp/>information<sp/>about<sp/>battery<sp/>characteristic.</highlight></codeline>
+<codeline lineno="9"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>structure<sp/>enforces<sp/>the<sp/>header<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>in<sp/>the<sp/>build.</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*<sp/>Violating<sp/>this<sp/>requirement<sp/>triggers<sp/>a<sp/>multiple<sp/>definition<sp/>error<sp/>at<sp/>link<sp/>time.</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14" refid="nrf52810dmouse__nrf52810_2battery__def_8h_ad87a3112275520edceea701146e096ec_1ad87a3112275520edceea701146e096ec" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{}<sp/><ref refid="nrf52810dmouse__nrf52810_2battery__def_8h_ad87a3112275520edceea701146e096ec_1ad87a3112275520edceea701146e096ec" kindref="member">battery_def_include_once</ref>;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16" refid="nrf52810dmouse__nrf52810_2battery__def_8h_a3342fb952bedf1c29df98acdfbd1a2f6_1a3342fb952bedf1c29df98acdfbd1a2f6" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BATTERY_MEAS_ADC_INPUT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NRF_SAADC_INPUT_AIN2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17" refid="nrf52810dmouse__nrf52810_2battery__def_8h_a34920d8c24bd8bfb4df770cfbe22ca29_1a34920d8c24bd8bfb4df770cfbe22ca29" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BATTERY_MEAS_ADC_GAIN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ADC_GAIN_1_4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="nrf52810dmouse__nrf52810_2battery__def_8h_ae6d75e178de3c7ad3a6a949a279cc5b2_1ae6d75e178de3c7ad3a6a949a279cc5b2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BATTERY_MEAS_VOLTAGE_GAIN<sp/><sp/><sp/><sp/><sp/><sp/><sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Converting<sp/>measured<sp/>battery<sp/>voltage[mV]<sp/>to<sp/>State<sp/>of<sp/>Charge[%].</highlight></codeline>
+<codeline lineno="21"><highlight class="comment"><sp/>*<sp/>First<sp/>element<sp/>corresponds<sp/>to<sp/>CONFIG_DESKTOP_BATTERY_MIN_LEVEL.</highlight></codeline>
+<codeline lineno="22"><highlight class="comment"><sp/>*<sp/>Each<sp/>element<sp/>is<sp/>CONFIG_DESKTOP_VOLTAGE_TO_SOC_DELTA<sp/>higher<sp/>than<sp/>previous.</highlight></codeline>
+<codeline lineno="23"><highlight class="comment"><sp/>*<sp/>Defined<sp/>separately<sp/>for<sp/>every<sp/>configuration.</highlight></codeline>
+<codeline lineno="24"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="nrf52810dmouse__nrf52810_2battery__def_8h_a37532dba8db70a9b37220715e75324f9_1a37532dba8db70a9b37220715e75324f9" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/><ref refid="nrf52810dmouse__nrf52810_2battery__def_8h_a37532dba8db70a9b37220715e75324f9_1a37532dba8db70a9b37220715e75324f9" kindref="member">battery_voltage_to_soc</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/>0,<sp/><sp/>0,<sp/><sp/>0,<sp/><sp/>0,<sp/><sp/>0,<sp/><sp/>0,<sp/><sp/>0,<sp/><sp/>0,<sp/><sp/>0,<sp/><sp/>0,<sp/><sp/>0,<sp/><sp/>0,<sp/><sp/>0,<sp/><sp/>0,<sp/><sp/>0,<sp/><sp/>1,<sp/><sp/>1,<sp/><sp/>1,<sp/><sp/>1,<sp/><sp/>1,</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/>1,<sp/><sp/>1,<sp/><sp/>2,<sp/><sp/>2,<sp/><sp/>2,<sp/><sp/>2,<sp/><sp/>3,<sp/><sp/>3,<sp/><sp/>3,<sp/><sp/>4,<sp/><sp/>4,<sp/><sp/>5,<sp/><sp/>5,<sp/><sp/>6,<sp/><sp/>6,<sp/><sp/>7,<sp/><sp/>8,<sp/><sp/>9,<sp/><sp/>9,<sp/>10,</highlight></codeline>
+<codeline lineno="28"><highlight class="normal">11,<sp/>13,<sp/>14,<sp/>15,<sp/>16,<sp/>18,<sp/>19,<sp/>21,<sp/>23,<sp/>24,<sp/>26,<sp/>28,<sp/>31,<sp/>33,<sp/>35,<sp/>37,<sp/>40,<sp/>42,<sp/>45,<sp/>47,</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">50,<sp/>52,<sp/>54,<sp/>57,<sp/>59,<sp/>62,<sp/>64,<sp/>66,<sp/>68,<sp/>71,<sp/>73,<sp/>75,<sp/>76,<sp/>78,<sp/>80,<sp/>81,<sp/>83,<sp/>84,<sp/>85,<sp/>86,</highlight></codeline>
+<codeline lineno="30"><highlight class="normal">88,<sp/>89,<sp/>90,<sp/>90,<sp/>91,<sp/>92,<sp/>93,<sp/>93,<sp/>94,<sp/>94,<sp/>95,<sp/>95,<sp/>96,<sp/>96,<sp/>96,<sp/>97,<sp/>97,<sp/>97,<sp/>97,<sp/>98,</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">98,<sp/>98,<sp/>98,<sp/>98,<sp/>98,<sp/>98,<sp/>99,<sp/>99,<sp/>99,<sp/>99,<sp/>99,<sp/>99,<sp/>99,<sp/>99,<sp/>99,<sp/>99,<sp/>99,<sp/>99,<sp/>99,<sp/>100,</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">100</highlight></codeline>
+<codeline lineno="33"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/battery_def.h"/>
+  </compounddef>
+</doxygen>

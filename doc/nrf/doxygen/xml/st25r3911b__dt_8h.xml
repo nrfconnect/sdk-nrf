@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="st25r3911b__dt_8h" kind="file" language="C++">
+    <compoundname>st25r3911b_dt.h</compoundname>
+    <includes local="no">devicetree.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>lib/st25r3911b/st25r3911b_dt.h</label>
+        <link refid="st25r3911b__dt_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>devicetree.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="st25r3911b__dt_8h_a796c9427c2277cec8eec0ec8355f91e6_1a796c9427c2277cec8eec0ec8355f91e6" prot="public" static="no">
+        <name>ST25R3911B_NODE</name>
+        <initializer>DT_INST(0, st_st25r3911b)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_dt.h" line="22" column="9" bodyfile="lib/st25r3911b/st25r3911b_dt.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>ST25R3911B_DT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_DT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*<sp/>Internal,<sp/>shared<sp/>header<sp/>to<sp/>access<sp/>the<sp/>the<sp/>ST25R3911B<sp/>devicetree<sp/>node.</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;devicetree.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*<sp/>Devicetree<sp/>API<sp/>node<sp/>identifier<sp/>for<sp/>the<sp/>ST25R3911B<sp/>NFC<sp/>reader.</highlight></codeline>
+<codeline lineno="18"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="19"><highlight class="comment"><sp/>*<sp/>This<sp/>is<sp/>the<sp/>first<sp/>status<sp/>&quot;okay&quot;<sp/>node<sp/>with<sp/>compatible<sp/>&quot;st,st25r3911b&quot;,</highlight></codeline>
+<codeline lineno="20"><highlight class="comment"><sp/>*<sp/>as<sp/>long<sp/>as<sp/>at<sp/>least<sp/>one<sp/>such<sp/>node<sp/>exists<sp/>in<sp/>the<sp/>devicetree.</highlight></codeline>
+<codeline lineno="21"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22" refid="st25r3911b__dt_8h_a796c9427c2277cec8eec0ec8355f91e6_1a796c9427c2277cec8eec0ec8355f91e6" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_NODE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>DT_INST(0,<sp/>st_st25r3911b)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>ST25R3911B_DT_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="lib/st25r3911b/st25r3911b_dt.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__plvl__range__status" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_plvl_range_status</compoundname>
+    <includes refid="gen__plvl_8h" local="no">gen_plvl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__plvl__range__status_a439617f0c3b46afd41e3bbfdf9c5f405_1a439617f0c3b46afd41e3bbfdf9c5f405" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1ga6fcaf7e02af730b2100af1ef0a01f323" kindref="member">bt_mesh_model_status</ref></type>
+        <definition>enum bt_mesh_model_status bt_mesh_plvl_range_status::status</definition>
+        <argsstring></argsstring>
+        <name>status</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Status of the previous operation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl.h" line="60" column="26" bodyfile="include/bluetooth/mesh/gen_plvl.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__range__status_adb6bdf91929ae90eb0c8564a55c78bf0_1adb6bdf91929ae90eb0c8564a55c78bf0" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__plvl__range" kindref="compound">bt_mesh_plvl_range</ref></type>
+        <definition>struct bt_mesh_plvl_range bt_mesh_plvl_range_status::range</definition>
+        <argsstring></argsstring>
+        <name>range</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current Power Level range. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl.h" line="62" column="25" bodyfile="include/bluetooth/mesh/gen_plvl.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Power Level range message parameters. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_mesh_plvl_range</label>
+        <link refid="structbt__mesh__plvl__range"/>
+      </node>
+      <node id="1">
+        <label>bt_mesh_plvl_range_status</label>
+        <link refid="structbt__mesh__plvl__range__status"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>range</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/gen_plvl.h" line="58" column="1" bodyfile="include/bluetooth/mesh/gen_plvl.h" bodystart="58" bodyend="63"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__plvl__range__status_adb6bdf91929ae90eb0c8564a55c78bf0_1adb6bdf91929ae90eb0c8564a55c78bf0" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_range_status</scope><name>range</name></member>
+      <member refid="structbt__mesh__plvl__range__status_a439617f0c3b46afd41e3bbfdf9c5f405_1a439617f0c3b46afd41e3bbfdf9c5f405" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_range_status</scope><name>status</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

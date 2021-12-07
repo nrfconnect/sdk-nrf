@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structical__parser__evt" kind="struct" language="C++" prot="public">
+    <compoundname>ical_parser_evt</compoundname>
+    <includes refid="icalendar__parser_8h" local="no">icalendar_parser.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structical__parser__evt_aa63feb61b0030e0adde356d4baaf7325_1aa63feb61b0030e0adde356d4baaf7325" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1ga640f2a121fe99d2b283f7edbe19313dc" kindref="member">ical_parser_evt_id</ref></type>
+        <definition>enum ical_parser_evt_id ical_parser_evt::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event ID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/icalendar_parser.h" line="82" column="24" bodyfile="include/net/icalendar_parser.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structical__parser__evt_aa9ba44008493bf6ddc9f11f939029b3d_1aa9ba44008493bf6ddc9f11f939029b3d" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1gafafd0a950e7a24b211ad2bc7b7827d89" kindref="member">ical_parser_error_id</ref></type>
+        <definition>enum ical_parser_error_id ical_parser_evt::error</definition>
+        <argsstring></argsstring>
+        <name>error</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Error cause. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/icalendar_parser.h" line="84" column="26" bodyfile="include/net/icalendar_parser.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structical__parser__evt_aad8c779ee87e2d0d2384c2ccf9fd3534_1aad8c779ee87e2d0d2384c2ccf9fd3534" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structical__component" kindref="compound">ical_component</ref></type>
+        <definition>struct ical_component ical_parser_evt::ical_com</definition>
+        <argsstring></argsstring>
+        <name>ical_com</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Calendar component data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/icalendar_parser.h" line="86" column="21" bodyfile="include/net/icalendar_parser.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>iCalendar parser event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>ical_component</label>
+        <link refid="structical__component"/>
+      </node>
+      <node id="1">
+        <label>ical_parser_evt</label>
+        <link refid="structical__parser__evt"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>ical_com</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/net/icalendar_parser.h" line="80" column="1" bodyfile="include/net/icalendar_parser.h" bodystart="80" bodyend="87"/>
+    <listofallmembers>
+      <member refid="structical__parser__evt_aa9ba44008493bf6ddc9f11f939029b3d_1aa9ba44008493bf6ddc9f11f939029b3d" prot="public" virt="non-virtual"><scope>ical_parser_evt</scope><name>error</name></member>
+      <member refid="structical__parser__evt_aad8c779ee87e2d0d2384c2ccf9fd3534_1aad8c779ee87e2d0d2384c2ccf9fd3534" prot="public" virt="non-virtual"><scope>ical_parser_evt</scope><name>ical_com</name></member>
+      <member refid="structical__parser__evt_aa63feb61b0030e0adde356d4baaf7325_1aa63feb61b0030e0adde356d4baaf7325" prot="public" virt="non-virtual"><scope>ical_parser_evt</scope><name>id</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

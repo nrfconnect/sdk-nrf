@@ -1,0 +1,233 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="motion_8h" kind="file" language="C++">
+    <compoundname>motion.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <includedby refid="src_2cloud__codec_2cloud__codec_8h" local="yes">applications/asset_tracker/src/cloud_codec/cloud_codec.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/asset_tracker/src/motion/motion.h</label>
+        <link refid="motion_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>applications/asset_tracker/src/cloud_codec/cloud_codec.h</label>
+        <link refid="src_2cloud__codec_2cloud__codec_8h"/>
+      </node>
+      <node id="1">
+        <label>applications/asset_tracker/src/motion/motion.h</label>
+        <link refid="motion_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structmotion__acceleration__data__t" prot="public">motion_acceleration_data_t</innerclass>
+    <innerclass refid="structmotion__data__t" prot="public">motion_data_t</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__motion_ga64b2808569cc487467165359f9d0cada_1ga64b2808569cc487467165359f9d0cada" prot="public" static="no" strong="no">
+        <type></type>
+        <name>motion_orientation_state_t</name>
+        <enumvalue id="group__motion_ga64b2808569cc487467165359f9d0cada_1gga64b2808569cc487467165359f9d0cadaaa91a1784d0d709505e126a943aaae60b" prot="public">
+          <name>MOTION_ORIENTATION_NOT_KNOWN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Initial state. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__motion_ga64b2808569cc487467165359f9d0cada_1gga64b2808569cc487467165359f9d0cadaa184135c7438053d9f5f145584fff2ba5" prot="public">
+          <name>MOTION_ORIENTATION_NORMAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Has normal orientation. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__motion_ga64b2808569cc487467165359f9d0cada_1gga64b2808569cc487467165359f9d0cadaa1e6d48979af1fa169ed7f219fc5703e4" prot="public">
+          <name>MOTION_ORIENTATION_UPSIDE_DOWN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>System is upside down. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__motion_ga64b2808569cc487467165359f9d0cada_1gga64b2808569cc487467165359f9d0cadaa15937f01cb4171f079e479e5935e1bef" prot="public">
+          <name>MOTION_ORIENTATION_ON_SIDE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>System is placed on its side. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Orientation states. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/motion/motion.h" line="28" column="1" bodyfile="applications/asset_tracker/src/motion/motion.h" bodystart="28" bodyend="33"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__motion_ga4a3913a069cb52526e20bfa3c6c6aa53_1ga4a3913a069cb52526e20bfa3c6c6aa53" prot="public" static="no" strong="no">
+        <type></type>
+        <name>motion_activity_state_t</name>
+        <enumvalue id="group__motion_ga4a3913a069cb52526e20bfa3c6c6aa53_1gga4a3913a069cb52526e20bfa3c6c6aa53adae0c138a03b5322084da22ea7c02d10" prot="public">
+          <name>MOTION_ACTIVITY_NOT_KNOWN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Initial state. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__motion_ga4a3913a069cb52526e20bfa3c6c6aa53_1gga4a3913a069cb52526e20bfa3c6c6aa53ac8095dc1713b4ebefc390dbcb88e46df" prot="public">
+          <name>MOTION_ACTIVITY_ACTIVE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Activity threshold exceeded. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__motion_ga4a3913a069cb52526e20bfa3c6c6aa53_1gga4a3913a069cb52526e20bfa3c6c6aa53a84a1f4950ab23817700b01dbdb9bb5e4" prot="public">
+          <name>MOTION_ACTIVITY_INACTIVE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Inactivity threshold exceeded. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Activity states. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/motion/motion.h" line="36" column="1" bodyfile="applications/asset_tracker/src/motion/motion.h" bodystart="36" bodyend="40"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__motion_ga18619500c1f329408af7836931e8ff19_1ga18619500c1f329408af7836931e8ff19" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* motion_handler_t) (motion_data_t motion_data)</definition>
+        <argsstring>)(motion_data_t motion_data)</argsstring>
+        <name>motion_handler_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/motion/motion.h" line="55" column="9" bodyfile="applications/asset_tracker/src/motion/motion.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__motion_ga26ab198d7e3a474fc4ad884aceab7f1b_1ga26ab198d7e3a474fc4ad884aceab7f1b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int motion_init_and_start</definition>
+        <argsstring>(struct k_work_q *work_q, motion_handler_t motion_handler)</argsstring>
+        <name>motion_init_and_start</name>
+        <param>
+          <type>struct k_work_q *</type>
+          <declname>work_q</declname>
+        </param>
+        <param>
+          <type><ref refid="group__motion_ga18619500c1f329408af7836931e8ff19_1ga18619500c1f329408af7836931e8ff19" kindref="member">motion_handler_t</ref></type>
+          <declname>motion_handler</declname>
+        </param>
+        <briefdescription>
+<para>Initialize and start the motion module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>0 if the operation was successful, otherwise a (negative) error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/motion/motion.h" line="62" column="5" declfile="applications/asset_tracker/src/motion/motion.h" declline="62" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__motion_ga08e995bdbe8d8b845a556ceb1ab5a2b4_1ga08e995bdbe8d8b845a556ceb1ab5a2b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void motion_simulate_trigger</definition>
+        <argsstring>(void)</argsstring>
+        <name>motion_simulate_trigger</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Manually trigger the motion module to fetch data. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/motion/motion.h" line="68" column="6" declfile="applications/asset_tracker/src/motion/motion.h" declline="68" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MOTION_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MOTION_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="group__motion_ga64b2808569cc487467165359f9d0cada_1ga64b2808569cc487467165359f9d0cada" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="29" refid="group__motion_ga64b2808569cc487467165359f9d0cada_1gga64b2808569cc487467165359f9d0cadaaa91a1784d0d709505e126a943aaae60b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__motion_ga64b2808569cc487467165359f9d0cada_1gga64b2808569cc487467165359f9d0cadaaa91a1784d0d709505e126a943aaae60b" kindref="member">MOTION_ORIENTATION_NOT_KNOWN</ref>,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="30" refid="group__motion_ga64b2808569cc487467165359f9d0cada_1gga64b2808569cc487467165359f9d0cadaa184135c7438053d9f5f145584fff2ba5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__motion_ga64b2808569cc487467165359f9d0cada_1gga64b2808569cc487467165359f9d0cadaa184135c7438053d9f5f145584fff2ba5" kindref="member">MOTION_ORIENTATION_NORMAL</ref>,<sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="31" refid="group__motion_ga64b2808569cc487467165359f9d0cada_1gga64b2808569cc487467165359f9d0cadaa1e6d48979af1fa169ed7f219fc5703e4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__motion_ga64b2808569cc487467165359f9d0cada_1gga64b2808569cc487467165359f9d0cadaa1e6d48979af1fa169ed7f219fc5703e4" kindref="member">MOTION_ORIENTATION_UPSIDE_DOWN</ref>,<sp/></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__motion_ga64b2808569cc487467165359f9d0cada_1gga64b2808569cc487467165359f9d0cadaa15937f01cb4171f079e479e5935e1bef" kindref="member">MOTION_ORIENTATION_ON_SIDE</ref><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="33" refid="group__motion_ga64b2808569cc487467165359f9d0cada_1gga64b2808569cc487467165359f9d0cadaa15937f01cb4171f079e479e5935e1bef" refkind="member"><highlight class="normal">}<sp/><ref refid="group__motion_ga64b2808569cc487467165359f9d0cada_1ga64b2808569cc487467165359f9d0cada" kindref="member">motion_orientation_state_t</ref>;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="group__motion_ga4a3913a069cb52526e20bfa3c6c6aa53_1ga4a3913a069cb52526e20bfa3c6c6aa53" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="37" refid="group__motion_ga4a3913a069cb52526e20bfa3c6c6aa53_1gga4a3913a069cb52526e20bfa3c6c6aa53adae0c138a03b5322084da22ea7c02d10" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__motion_ga4a3913a069cb52526e20bfa3c6c6aa53_1gga4a3913a069cb52526e20bfa3c6c6aa53adae0c138a03b5322084da22ea7c02d10" kindref="member">MOTION_ACTIVITY_NOT_KNOWN</ref>,<sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="38" refid="group__motion_ga4a3913a069cb52526e20bfa3c6c6aa53_1gga4a3913a069cb52526e20bfa3c6c6aa53ac8095dc1713b4ebefc390dbcb88e46df" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__motion_ga4a3913a069cb52526e20bfa3c6c6aa53_1gga4a3913a069cb52526e20bfa3c6c6aa53ac8095dc1713b4ebefc390dbcb88e46df" kindref="member">MOTION_ACTIVITY_ACTIVE</ref>,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="39" refid="group__motion_ga4a3913a069cb52526e20bfa3c6c6aa53_1gga4a3913a069cb52526e20bfa3c6c6aa53a84a1f4950ab23817700b01dbdb9bb5e4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__motion_ga4a3913a069cb52526e20bfa3c6c6aa53_1gga4a3913a069cb52526e20bfa3c6c6aa53a84a1f4950ab23817700b01dbdb9bb5e4" kindref="member">MOTION_ACTIVITY_INACTIVE</ref>,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="40"><highlight class="normal">}<sp/><ref refid="group__motion_ga4a3913a069cb52526e20bfa3c6c6aa53_1ga4a3913a069cb52526e20bfa3c6c6aa53" kindref="member">motion_activity_state_t</ref>;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="structmotion__acceleration__data__t" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="43" refid="structmotion__acceleration__data__t_a518a1d666fde6fdd75978fe0b2ef4b0b_1a518a1d666fde6fdd75978fe0b2ef4b0b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structmotion__acceleration__data__t_a518a1d666fde6fdd75978fe0b2ef4b0b_1a518a1d666fde6fdd75978fe0b2ef4b0b" kindref="member">x</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="44" refid="structmotion__acceleration__data__t_a94fd5c371f0cc43c01d074b74b80c42a_1a94fd5c371f0cc43c01d074b74b80c42a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structmotion__acceleration__data__t_a94fd5c371f0cc43c01d074b74b80c42a_1a94fd5c371f0cc43c01d074b74b80c42a" kindref="member">y</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="45" refid="structmotion__acceleration__data__t_a184c8821d0bbfc713453fc4d06cae5b4_1a184c8821d0bbfc713453fc4d06cae5b4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structmotion__acceleration__data__t_a184c8821d0bbfc713453fc4d06cae5b4_1a184c8821d0bbfc713453fc4d06cae5b4" kindref="member">z</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="46"><highlight class="normal">}<sp/><ref refid="structmotion__acceleration__data__t" kindref="compound">motion_acceleration_data_t</ref>;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="structmotion__data__t" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="49" refid="structmotion__data__t_a0500d5252235cf323adf17bdce10b97d_1a0500d5252235cf323adf17bdce10b97d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__motion_ga64b2808569cc487467165359f9d0cada_1ga64b2808569cc487467165359f9d0cada" kindref="member">motion_orientation_state_t</ref><sp/><ref refid="structmotion__data__t_a0500d5252235cf323adf17bdce10b97d_1a0500d5252235cf323adf17bdce10b97d" kindref="member">orientation</ref>;</highlight></codeline>
+<codeline lineno="50" refid="structmotion__data__t_a09ace1ed6ca03a6d7c26688ab4583e47_1a09ace1ed6ca03a6d7c26688ab4583e47" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structmotion__acceleration__data__t" kindref="compound">motion_acceleration_data_t</ref><sp/><ref refid="structmotion__data__t_a09ace1ed6ca03a6d7c26688ab4583e47_1a09ace1ed6ca03a6d7c26688ab4583e47" kindref="member">acceleration</ref>;</highlight></codeline>
+<codeline lineno="52" refid="structmotion__data__t_aca0a97d9d930c34e83b7c4c5f2629b53_1aca0a97d9d930c34e83b7c4c5f2629b53" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int64_t<sp/><ref refid="structmotion__data__t_aca0a97d9d930c34e83b7c4c5f2629b53_1aca0a97d9d930c34e83b7c4c5f2629b53" kindref="member">ts</ref>;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">}<sp/><ref refid="structmotion__data__t" kindref="compound">motion_data_t</ref>;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="group__motion_ga18619500c1f329408af7836931e8ff19_1ga18619500c1f329408af7836931e8ff19" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__motion_ga18619500c1f329408af7836931e8ff19_1ga18619500c1f329408af7836931e8ff19" kindref="member">motion_handler_t</ref>)(<ref refid="structmotion__data__t" kindref="compound">motion_data_t</ref><sp/><sp/>motion_data);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="group__motion_ga26ab198d7e3a474fc4ad884aceab7f1b_1ga26ab198d7e3a474fc4ad884aceab7f1b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__motion_ga26ab198d7e3a474fc4ad884aceab7f1b_1ga26ab198d7e3a474fc4ad884aceab7f1b" kindref="member">motion_init_and_start</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>k_work_q<sp/>*work_q,</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__motion_ga18619500c1f329408af7836931e8ff19_1ga18619500c1f329408af7836931e8ff19" kindref="member">motion_handler_t</ref><sp/>motion_handler);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="group__motion_ga08e995bdbe8d8b845a556ceb1ab5a2b4_1ga08e995bdbe8d8b845a556ceb1ab5a2b4" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__motion_ga08e995bdbe8d8b845a556ceb1ab5a2b4_1ga08e995bdbe8d8b845a556ceb1ab5a2b4" kindref="member">motion_simulate_trigger</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>MOTION_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/asset_tracker/src/motion/motion.h"/>
+  </compounddef>
+</doxygen>

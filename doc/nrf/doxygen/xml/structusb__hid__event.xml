@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structusb__hid__event" kind="struct" language="C++" prot="public">
+    <compoundname>usb_hid_event</compoundname>
+    <includes refid="usb__event_8h" local="no">usb_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structusb__hid__event_acd65c28422968b03aee83bb11342a0f3_1acd65c28422968b03aee83bb11342a0f3" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header usb_hid_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event header. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/usb_event.h" line="50" column="19" bodyfile="applications/nrf_desktop/src/events/usb_event.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structusb__hid__event_acb1749f414656a185bd8c1196e7f9933_1acb1749f414656a185bd8c1196e7f9933" prot="public" static="no" mutable="no">
+        <type>const void *</type>
+        <definition>const void* usb_hid_event::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>USB HID device id. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/usb_event.h" line="52" column="12" bodyfile="applications/nrf_desktop/src/events/usb_event.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structusb__hid__event_a421211537b87a62daffb4ce3856af7df_1a421211537b87a62daffb4ce3856af7df" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool usb_hid_event::enabled</definition>
+        <argsstring></argsstring>
+        <name>enabled</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/usb_event.h" line="53" column="6" bodyfile="applications/nrf_desktop/src/events/usb_event.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>USB HID event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>usb_hid_event</label>
+        <link refid="structusb__hid__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/nrf_desktop/src/events/usb_event.h" line="49" column="1" bodyfile="applications/nrf_desktop/src/events/usb_event.h" bodystart="49" bodyend="54"/>
+    <listofallmembers>
+      <member refid="structusb__hid__event_a421211537b87a62daffb4ce3856af7df_1a421211537b87a62daffb4ce3856af7df" prot="public" virt="non-virtual"><scope>usb_hid_event</scope><name>enabled</name></member>
+      <member refid="structusb__hid__event_acd65c28422968b03aee83bb11342a0f3_1acd65c28422968b03aee83bb11342a0f3" prot="public" virt="non-virtual"><scope>usb_hid_event</scope><name>header</name></member>
+      <member refid="structusb__hid__event_acb1749f414656a185bd8c1196e7f9933_1acb1749f414656a185bd8c1196e7f9933" prot="public" virt="non-virtual"><scope>usb_hid_event</scope><name>id</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__ndef__ch__msg__records" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_ndef_ch_msg_records</compoundname>
+    <includes refid="ch__msg_8h" local="no">ch_msg.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__ndef__ch__msg__records_ae71de861f614cac7defdda0a48a14af8_1ae71de861f614cac7defdda0a48a14af8" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+        <definition>const struct nfc_ndef_record_desc* nfc_ndef_ch_msg_records::ac</definition>
+        <argsstring></argsstring>
+        <name>ac</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Array of the Alternative Carrier Records. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_msg.h" line="40" column="33" bodyfile="include/nfc/ndef/ch_msg.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__ch__msg__records_af07b491320ea80bb20b0f660cebd3752_1af07b491320ea80bb20b0f660cebd3752" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+        <definition>const struct nfc_ndef_record_desc* nfc_ndef_ch_msg_records::carrier</definition>
+        <argsstring></argsstring>
+        <name>carrier</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Array of the Carrier Records. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_msg.h" line="43" column="33" bodyfile="include/nfc/ndef/ch_msg.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__ch__msg__records_a74c0497a038ac2a99b306d3f69c8edcc_1a74c0497a038ac2a99b306d3f69c8edcc" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t nfc_ndef_ch_msg_records::cnt</definition>
+        <argsstring></argsstring>
+        <name>cnt</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Count of the Alternative Carrier Records and the Carrier Records. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_msg.h" line="46" column="8" bodyfile="include/nfc/ndef/ch_msg.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>NFC NDEF Connection Handover message structure. This structure contains all needed records needed to create the Connection Handover message. It can conatains one or more the Alternative Carrier Records and the Carrier Records. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>nfc_ndef_ch_msg_records</label>
+        <link refid="structnfc__ndef__ch__msg__records"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>ac</edgelabel>
+          <edgelabel>carrier</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>nfc_ndef_record_desc</label>
+        <link refid="structnfc__ndef__record__desc"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/nfc/ndef/ch_msg.h" line="38" column="1" bodyfile="include/nfc/ndef/ch_msg.h" bodystart="38" bodyend="47"/>
+    <listofallmembers>
+      <member refid="structnfc__ndef__ch__msg__records_ae71de861f614cac7defdda0a48a14af8_1ae71de861f614cac7defdda0a48a14af8" prot="public" virt="non-virtual"><scope>nfc_ndef_ch_msg_records</scope><name>ac</name></member>
+      <member refid="structnfc__ndef__ch__msg__records_af07b491320ea80bb20b0f660cebd3752_1af07b491320ea80bb20b0f660cebd3752" prot="public" virt="non-virtual"><scope>nfc_ndef_ch_msg_records</scope><name>carrier</name></member>
+      <member refid="structnfc__ndef__ch__msg__records_a74c0497a038ac2a99b306d3f69c8edcc_1a74c0497a038ac2a99b306d3f69c8edcc" prot="public" virt="non-virtual"><scope>nfc_ndef_ch_msg_records</scope><name>cnt</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

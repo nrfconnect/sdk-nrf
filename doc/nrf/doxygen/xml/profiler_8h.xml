@@ -1,0 +1,1473 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="profiler_8h" kind="file" language="C++">
+    <compoundname>profiler.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <includes local="no">sys/util.h</includes>
+    <includes local="no">sys/__assert.h</includes>
+    <includedby refid="hid__event_8h" local="yes">applications/nrf_desktop/src/events/hid_event.h</includedby>
+    <includedby refid="hids__event_8h" local="yes">applications/nrf_desktop/src/events/hids_event.h</includedby>
+    <includedby refid="event__manager_8h" local="no">include/event_manager.h</includedby>
+    <includedby refid="event__manager__profiler_8h" local="no">include/event_manager_profiler.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/profiler.h</label>
+        <link refid="profiler_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>sys/__assert.h</label>
+      </node>
+      <node id="3">
+        <label>sys/util.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="11">
+        <label>applications/asset_tracker_v2/include/nrf9160dk_nrf9160_ns/led_state_def.h</label>
+        <link refid="asset__tracker__v2_2include_2nrf9160dk__nrf9160__ns_2led__state__def_8h"/>
+      </node>
+      <node id="12">
+        <label>applications/asset_tracker_v2/include/thingy91_nrf9160_ns/led_state_def.h</label>
+        <link refid="asset__tracker__v2_2include_2thingy91__nrf9160__ns_2led__state__def_8h"/>
+      </node>
+      <node id="5">
+        <label>applications/asset_tracker_v2/src/events/app_module_event.h</label>
+        <link refid="app__module__event_8h"/>
+      </node>
+      <node id="6">
+        <label>applications/asset_tracker_v2/src/events/cloud_module_event.h</label>
+        <link refid="cloud__module__event_8h"/>
+      </node>
+      <node id="7">
+        <label>applications/asset_tracker_v2/src/events/data_module_event.h</label>
+        <link refid="data__module__event_8h"/>
+      </node>
+      <node id="8">
+        <label>applications/asset_tracker_v2/src/events/debug_module_event.h</label>
+        <link refid="debug__module__event_8h"/>
+      </node>
+      <node id="9">
+        <label>applications/asset_tracker_v2/src/events/gps_module_event.h</label>
+        <link refid="gps__module__event_8h"/>
+      </node>
+      <node id="10">
+        <label>applications/asset_tracker_v2/src/events/led_state_event.h</label>
+        <link refid="led__state__event_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>applications/asset_tracker_v2/src/events/modem_module_event.h</label>
+        <link refid="modem__module__event_8h"/>
+      </node>
+      <node id="14">
+        <label>applications/asset_tracker_v2/src/events/sensor_module_event.h</label>
+        <link refid="sensor__module__event_8h"/>
+      </node>
+      <node id="15">
+        <label>applications/asset_tracker_v2/src/events/ui_module_event.h</label>
+        <link refid="ui__module__event_8h"/>
+      </node>
+      <node id="16">
+        <label>applications/asset_tracker_v2/src/events/util_module_event.h</label>
+        <link refid="util__module__event_8h"/>
+      </node>
+      <node id="17">
+        <label>applications/connectivity_bridge/src/events/ble_ctrl_event.h</label>
+        <link refid="ble__ctrl__event_8h"/>
+      </node>
+      <node id="18">
+        <label>applications/connectivity_bridge/src/events/ble_data_event.h</label>
+        <link refid="ble__data__event_8h"/>
+      </node>
+      <node id="19">
+        <label>applications/connectivity_bridge/src/events/cdc_data_event.h</label>
+        <link refid="cdc__data__event_8h"/>
+      </node>
+      <node id="20">
+        <label>applications/connectivity_bridge/src/events/fs_event.h</label>
+        <link refid="fs__event_8h"/>
+      </node>
+      <node id="21">
+        <label>applications/connectivity_bridge/src/events/peer_conn_event.h</label>
+        <link refid="peer__conn__event_8h"/>
+      </node>
+      <node id="22">
+        <label>applications/connectivity_bridge/src/events/power_event.h</label>
+        <link refid="applications_2connectivity__bridge_2src_2events_2power__event_8h"/>
+      </node>
+      <node id="23">
+        <label>applications/connectivity_bridge/src/events/uart_data_event.h</label>
+        <link refid="uart__data__event_8h"/>
+      </node>
+      <node id="25">
+        <label>applications/machine_learning/configuration/nrf52840dk_nrf52840/led_state_def.h</label>
+        <link refid="machine__learning_2configuration_2nrf52840dk__nrf52840_2led__state__def_8h"/>
+      </node>
+      <node id="26">
+        <label>applications/machine_learning/configuration/nrf5340dk_nrf5340_cpuapp/led_state_def.h</label>
+        <link refid="machine__learning_2configuration_2nrf5340dk__nrf5340__cpuapp_2led__state__def_8h"/>
+      </node>
+      <node id="27">
+        <label>applications/machine_learning/configuration/thingy52_nrf52832/led_state_def.h</label>
+        <link refid="machine__learning_2configuration_2thingy52__nrf52832_2led__state__def_8h"/>
+      </node>
+      <node id="28">
+        <label>applications/machine_learning/configuration/thingy53_nrf5340_cpuapp/led_state_def.h</label>
+        <link refid="machine__learning_2configuration_2thingy53__nrf5340__cpuapp_2led__state__def_8h"/>
+      </node>
+      <node id="29">
+        <label>applications/machine_learning/configuration/thingy53_nrf5340_cpuapp_ns/led_state_def.h</label>
+        <link refid="machine__learning_2configuration_2thingy53__nrf5340__cpuapp__ns_2led__state__def_8h"/>
+      </node>
+      <node id="24">
+        <label>applications/machine_learning/src/events/ei_data_forwarder_event.h</label>
+        <link refid="ei__data__forwarder__event_8h"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>applications/machine_learning/src/events/ml_result_event.h</label>
+        <link refid="ml__result__event_8h"/>
+      </node>
+      <node id="31">
+        <label>applications/machine_learning/src/events/ml_state_event.h</label>
+        <link refid="ml__state__event_8h"/>
+      </node>
+      <node id="32">
+        <label>applications/machine_learning/src/events/sensor_sim_event.h</label>
+        <link refid="sensor__sim__event_8h"/>
+      </node>
+      <node id="68">
+        <label>applications/nrf_desktop/configuration/common/led_state.h</label>
+        <link refid="nrf__desktop_2configuration_2common_2led__state_8h"/>
+      </node>
+      <node id="35">
+        <label>applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/ble_discovery_def.h</label>
+        <link refid="nrf52820dongle__nrf52820_2ble__discovery__def_8h"/>
+      </node>
+      <node id="36">
+        <label>applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/ble_scan_def.h</label>
+        <link refid="nrf52820dongle__nrf52820_2ble__scan__def_8h"/>
+      </node>
+      <node id="37">
+        <label>applications/nrf_desktop/configuration/nrf52833dk_nrf52833/ble_discovery_def.h</label>
+        <link refid="nrf52833dk__nrf52833_2ble__discovery__def_8h"/>
+      </node>
+      <node id="38">
+        <label>applications/nrf_desktop/configuration/nrf52833dk_nrf52833/ble_scan_def.h</label>
+        <link refid="nrf52833dk__nrf52833_2ble__scan__def_8h"/>
+      </node>
+      <node id="39">
+        <label>applications/nrf_desktop/configuration/nrf52833dongle_nrf52833/ble_discovery_def.h</label>
+        <link refid="nrf52833dongle__nrf52833_2ble__discovery__def_8h"/>
+      </node>
+      <node id="40">
+        <label>applications/nrf_desktop/configuration/nrf52833dongle_nrf52833/ble_scan_def.h</label>
+        <link refid="nrf52833dongle__nrf52833_2ble__scan__def_8h"/>
+      </node>
+      <node id="41">
+        <label>applications/nrf_desktop/configuration/nrf52840dk_nrf52840/ble_discovery_def.h</label>
+        <link refid="nrf52840dk__nrf52840_2ble__discovery__def_8h"/>
+      </node>
+      <node id="42">
+        <label>applications/nrf_desktop/configuration/nrf52840dk_nrf52840/ble_scan_def.h</label>
+        <link refid="nrf52840dk__nrf52840_2ble__scan__def_8h"/>
+      </node>
+      <node id="43">
+        <label>applications/nrf_desktop/configuration/nrf52840dongle_nrf52840/ble_discovery_def.h</label>
+        <link refid="nrf52840dongle__nrf52840_2ble__discovery__def_8h"/>
+      </node>
+      <node id="44">
+        <label>applications/nrf_desktop/configuration/nrf52840dongle_nrf52840/ble_scan_def.h</label>
+        <link refid="nrf52840dongle__nrf52840_2ble__scan__def_8h"/>
+      </node>
+      <node id="45">
+        <label>applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp/ble_discovery_def.h</label>
+        <link refid="nrf5340dk__nrf5340__cpuapp_2ble__discovery__def_8h"/>
+      </node>
+      <node id="46">
+        <label>applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp/ble_scan_def.h</label>
+        <link refid="nrf5340dk__nrf5340__cpuapp_2ble__scan__def_8h"/>
+      </node>
+      <node id="33">
+        <label>applications/nrf_desktop/src/events/battery_event.h</label>
+        <link refid="battery__event_8h"/>
+      </node>
+      <node id="34">
+        <label>applications/nrf_desktop/src/events/ble_event.h</label>
+        <link refid="ble__event_8h"/>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>applications/nrf_desktop/src/events/config_event.h</label>
+        <link refid="config__event_8h"/>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>applications/nrf_desktop/src/events/cpu_load_event.h</label>
+        <link refid="cpu__load__event_8h"/>
+      </node>
+      <node id="2">
+        <label>applications/nrf_desktop/src/events/hid_event.h</label>
+        <link refid="hid__event_8h"/>
+      </node>
+      <node id="3">
+        <label>applications/nrf_desktop/src/events/hids_event.h</label>
+        <link refid="hids__event_8h"/>
+      </node>
+      <node id="50">
+        <label>applications/nrf_desktop/src/events/motion_event.h</label>
+        <link refid="motion__event_8h"/>
+      </node>
+      <node id="51">
+        <label>applications/nrf_desktop/src/events/passkey_event.h</label>
+        <link refid="passkey__event_8h"/>
+      </node>
+      <node id="52">
+        <label>applications/nrf_desktop/src/events/selector_event.h</label>
+        <link refid="selector__event_8h"/>
+      </node>
+      <node id="53">
+        <label>applications/nrf_desktop/src/events/usb_event.h</label>
+        <link refid="usb__event_8h"/>
+      </node>
+      <node id="54">
+        <label>applications/nrf_desktop/src/events/wheel_event.h</label>
+        <link refid="wheel__event_8h"/>
+      </node>
+      <node id="48">
+        <label>applications/nrf_desktop/src/util/config_channel_transport.h</label>
+        <link refid="config__channel__transport_8h"/>
+      </node>
+      <node id="56">
+        <label>applications/pelion_client/configuration/nrf52840dk_nrf52840/led_state_def.h</label>
+        <link refid="pelion__client_2configuration_2nrf52840dk__nrf52840_2led__state__def_8h"/>
+      </node>
+      <node id="57">
+        <label>applications/pelion_client/configuration/nrf5340dk_nrf5340_cpuapp/led_state_def.h</label>
+        <link refid="pelion__client_2configuration_2nrf5340dk__nrf5340__cpuapp_2led__state__def_8h"/>
+      </node>
+      <node id="58">
+        <label>applications/pelion_client/configuration/nrf5340dk_nrf5340_cpuapp_ns/led_state_def.h</label>
+        <link refid="pelion__client_2configuration_2nrf5340dk__nrf5340__cpuapp__ns_2led__state__def_8h"/>
+      </node>
+      <node id="59">
+        <label>applications/pelion_client/configuration/nrf9160dk_nrf9160_ns/led_state_def.h</label>
+        <link refid="pelion__client_2configuration_2nrf9160dk__nrf9160__ns_2led__state__def_8h"/>
+      </node>
+      <node id="55">
+        <label>applications/pelion_client/src/events/pelion_event.h</label>
+        <link refid="pelion__event_8h"/>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+      </node>
+      <node id="60">
+        <label>include/caf/events/ble_common_event.h</label>
+        <link refid="ble__common__event_8h"/>
+      </node>
+      <node id="61">
+        <label>include/caf/events/ble_smp_event.h</label>
+        <link refid="ble__smp__event_8h"/>
+      </node>
+      <node id="62">
+        <label>include/caf/events/button_event.h</label>
+        <link refid="button__event_8h"/>
+      </node>
+      <node id="63">
+        <label>include/caf/events/click_event.h</label>
+        <link refid="click__event_8h"/>
+      </node>
+      <node id="64">
+        <label>include/caf/events/factory_reset_event.h</label>
+        <link refid="factory__reset__event_8h"/>
+      </node>
+      <node id="65">
+        <label>include/caf/events/force_power_down_event.h</label>
+        <link refid="force__power__down__event_8h"/>
+      </node>
+      <node id="66">
+        <label>include/caf/events/keep_alive_event.h</label>
+        <link refid="keep__alive__event_8h"/>
+      </node>
+      <node id="67">
+        <label>include/caf/events/led_event.h</label>
+        <link refid="led__event_8h"/>
+        <childnode refid="68" relation="include">
+        </childnode>
+      </node>
+      <node id="69">
+        <label>include/caf/events/module_state_event.h</label>
+        <link refid="module__state__event_8h"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="70">
+        <label>include/caf/events/net_state_event.h</label>
+        <link refid="net__state__event_8h"/>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+      </node>
+      <node id="71">
+        <label>include/caf/events/power_event.h</label>
+        <link refid="include_2caf_2events_2power__event_8h"/>
+      </node>
+      <node id="72">
+        <label>include/caf/events/power_manager_event.h</label>
+        <link refid="power__manager__event_8h"/>
+      </node>
+      <node id="73">
+        <label>include/caf/events/sensor_event.h</label>
+        <link refid="sensor__event_8h"/>
+      </node>
+      <node id="4">
+        <label>include/event_manager.h</label>
+        <link refid="event__manager_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+      </node>
+      <node id="74">
+        <label>include/event_manager_profiler.h</label>
+        <link refid="event__manager__profiler_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/profiler.h</label>
+        <link refid="profiler_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="74" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structprofiler__event__enabled__bm" prot="public">profiler_event_enabled_bm</innerclass>
+    <innerclass refid="structlog__event__buf" prot="public">log_event_buf</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__profiler_ga1773d77149a83eeb24fa98431a3bbd0c_1ga1773d77149a83eeb24fa98431a3bbd0c" prot="public" static="no">
+        <name>CONFIG_PROFILER_MAX_NUMBER_OF_APPLICATION_EVENTS</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum number of events. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="24" column="9" bodyfile="include/profiler.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__profiler_gaf5f1aa14d4ba40bfca0b2928d05dada3_1gaf5f1aa14d4ba40bfca0b2928d05dada3" prot="public" static="no">
+        <name>CONFIG_PROFILER_NUMBER_OF_INTERNAL_EVENTS</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of internal events. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="29" column="9" bodyfile="include/profiler.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__profiler_ga73fbb9bd4540f0db682089a1de850b14_1ga73fbb9bd4540f0db682089a1de850b14" prot="public" static="no">
+        <name>PROFILER_MAX_NUMBER_OF_APPLICATION_AND_INTERNAL_EVENTS</name>
+        <initializer>	((<ref refid="group__profiler_ga1773d77149a83eeb24fa98431a3bbd0c_1ga1773d77149a83eeb24fa98431a3bbd0c" kindref="member">CONFIG_PROFILER_MAX_NUMBER_OF_APPLICATION_EVENTS</ref>) + \
+	(<ref refid="group__profiler_gaf5f1aa14d4ba40bfca0b2928d05dada3_1gaf5f1aa14d4ba40bfca0b2928d05dada3" kindref="member">CONFIG_PROFILER_NUMBER_OF_INTERNAL_EVENTS</ref>))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum number of events including user application events and internal events. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="33" column="9" bodyfile="include/profiler.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1ga89852e0ad202010e105fec68bcf32b0c" prot="public" static="no" strong="no">
+        <type></type>
+        <name>profiler_arg</name>
+        <enumvalue id="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca678202bddcd4779c81f72b14b7b8cbae" prot="public">
+          <name>PROFILER_ARG_U8</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca899a6c2002edfef4f60c7e75a4a2cf69" prot="public">
+          <name>PROFILER_ARG_S8</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0caa387e8b7208038189c01369162a52735" prot="public">
+          <name>PROFILER_ARG_U16</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca96122842997a14b3aca0da742f82aec1" prot="public">
+          <name>PROFILER_ARG_S16</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0cab21cd820de822e41d279d031f10aa9b8" prot="public">
+          <name>PROFILER_ARG_U32</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca815733ff998318cfc958e1660a65c3b1" prot="public">
+          <name>PROFILER_ARG_S32</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca299fe4adc1aa65b416c377cf04b7686f" prot="public">
+          <name>PROFILER_ARG_STRING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca21f5b43a7cc989eff99cd3cfd8f84466" prot="public">
+          <name>PROFILER_ARG_TIMESTAMP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Data types for profiling. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="56" column="1" bodyfile="include/profiler.h" bodystart="56" bodyend="65"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__profiler_ga0f2a03e1f83334f0db71a0062918fceb_1ga0f2a03e1f83334f0db71a0062918fceb" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t profiler_num_events</definition>
+        <argsstring></argsstring>
+        <name>profiler_num_events</name>
+        <briefdescription>
+<para>Number of event types registered in the Profiler. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="51" column="16" declfile="include/profiler.h" declline="51" declcolumn="16"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__profiler_ga375a45b926b010d935b8a30553222e63_1ga375a45b926b010d935b8a30553222e63" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int profiler_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>profiler_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize the Profiler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>This function is thread-safe, but not safe to use in interrupts.</para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="88" column="5" declfile="include/profiler.h" declline="88" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_gae125c3995785c915be880a92dab0d6c4_1gae125c3995785c915be880a92dab0d6c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void profiler_term</definition>
+        <argsstring>(void)</argsstring>
+        <name>profiler_term</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Terminate the Profiler. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="97" column="6" declfile="include/profiler.h" declline="97" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_gac15c886614d3ee5c3a3405936d39f34d_1gac15c886614d3ee5c3a3405936d39f34d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const char *</type>
+        <definition>const char * profiler_get_event_descr</definition>
+        <argsstring>(size_t profiler_event_id)</argsstring>
+        <name>profiler_get_event_descr</name>
+        <param>
+          <type>size_t</type>
+          <declname>profiler_event_id</declname>
+        </param>
+        <briefdescription>
+<para>Retrieve the description of an event type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>profiler_event_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event ID.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Event description. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="109" column="12" declfile="include/profiler.h" declline="109" declcolumn="12"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_ga82d756f3c6784263dc1ab4b4a966cee4_1ga82d756f3c6784263dc1ab4b4a966cee4" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_profiling_enabled</definition>
+        <argsstring>(size_t profiler_event_id)</argsstring>
+        <name>is_profiling_enabled</name>
+        <param>
+          <type>size_t</type>
+          <declname>profiler_event_id</declname>
+        </param>
+        <briefdescription>
+<para>Check if profiling is enabled for a given event type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>profiler_event_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event ID.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Logical value indicating if the event type is currently profiled. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="123" column="20" bodyfile="include/profiler.h" bodystart="123" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_ga8989953e56676d2f45f00fe27ab6fc28_1ga8989953e56676d2f45f00fe27ab6fc28" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint16_t</type>
+        <definition>uint16_t profiler_register_event_type</definition>
+        <argsstring>(const char *name, const char *const *args, const enum profiler_arg *arg_types, uint8_t arg_cnt)</argsstring>
+        <name>profiler_register_event_type</name>
+        <param>
+          <type>const char *</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>const char *const *</type>
+          <declname>args</declname>
+        </param>
+        <param>
+          <type>const enum <ref refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1ga89852e0ad202010e105fec68bcf32b0c" kindref="member">profiler_arg</ref> *</type>
+          <declname>arg_types</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>arg_cnt</declname>
+        </param>
+        <briefdescription>
+<para>Register an event type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>This function is thread-safe, but not safe to use in interrupts.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the event type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>args</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Names of data values sent with the event. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>arg_types</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Types of data values sent with the event. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>arg_cnt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of data values sent with the event.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>ID assigned to the event type. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="146" column="10" declfile="include/profiler.h" declline="146" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_ga176d440a55afda0f8778f6a2d4ba5607_1ga176d440a55afda0f8778f6a2d4ba5607" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void profiler_log_start</definition>
+        <argsstring>(struct log_event_buf *buf)</argsstring>
+        <name>profiler_log_start</name>
+        <param>
+          <type>struct <ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref> *</type>
+          <declname>buf</declname>
+        </param>
+        <briefdescription>
+<para>Initialize a buffer for the data of an event. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="161" column="6" declfile="include/profiler.h" declline="161" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_ga0bb341e6119f5bbfe0036e56c97a15a3_1ga0bb341e6119f5bbfe0036e56c97a15a3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void profiler_log_encode_uint32</definition>
+        <argsstring>(struct log_event_buf *buf, uint32_t data)</argsstring>
+        <name>profiler_log_encode_uint32</name>
+        <param>
+          <type>struct <ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref> *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Encode and add uint32_t data type to a buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>The buffer must be initialized with <ref refid="group__profiler_ga176d440a55afda0f8778f6a2d4ba5607_1ga176d440a55afda0f8778f6a2d4ba5607" kindref="member">profiler_log_start</ref> before calling this function.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to add to the buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="175" column="6" declfile="include/profiler.h" declline="175" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_gaa528114afe4dd551b8405b8a3bc99071_1gaa528114afe4dd551b8405b8a3bc99071" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void profiler_log_encode_int32</definition>
+        <argsstring>(struct log_event_buf *buf, int32_t data)</argsstring>
+        <name>profiler_log_encode_int32</name>
+        <param>
+          <type>struct <ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref> *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Encode and add int32_t data type to a buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>The buffer must be initialized with <ref refid="group__profiler_ga176d440a55afda0f8778f6a2d4ba5607_1ga176d440a55afda0f8778f6a2d4ba5607" kindref="member">profiler_log_start</ref> before calling this function.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to add to the buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="190" column="6" declfile="include/profiler.h" declline="190" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_ga791756eceb337d778575ebfd66010071_1ga791756eceb337d778575ebfd66010071" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void profiler_log_encode_uint16</definition>
+        <argsstring>(struct log_event_buf *buf, uint16_t data)</argsstring>
+        <name>profiler_log_encode_uint16</name>
+        <param>
+          <type>struct <ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref> *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Encode and add uint16_t data type to a buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>The buffer must be initialized with <ref refid="group__profiler_ga176d440a55afda0f8778f6a2d4ba5607_1ga176d440a55afda0f8778f6a2d4ba5607" kindref="member">profiler_log_start</ref> before calling this function.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to add to the buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="205" column="6" declfile="include/profiler.h" declline="205" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_ga839fca8f6eef9033606026ff8aeafa91_1ga839fca8f6eef9033606026ff8aeafa91" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void profiler_log_encode_int16</definition>
+        <argsstring>(struct log_event_buf *buf, int16_t data)</argsstring>
+        <name>profiler_log_encode_int16</name>
+        <param>
+          <type>struct <ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref> *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>int16_t</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Encode and add int16_t data type to a buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>The buffer must be initialized with <ref refid="group__profiler_ga176d440a55afda0f8778f6a2d4ba5607_1ga176d440a55afda0f8778f6a2d4ba5607" kindref="member">profiler_log_start</ref> before calling this function.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to add to the buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="220" column="6" declfile="include/profiler.h" declline="220" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_ga68ca82c3fadfbcbefefcdcb0140f0755_1ga68ca82c3fadfbcbefefcdcb0140f0755" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void profiler_log_encode_uint8</definition>
+        <argsstring>(struct log_event_buf *buf, uint8_t data)</argsstring>
+        <name>profiler_log_encode_uint8</name>
+        <param>
+          <type>struct <ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref> *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Encode and add uint8_t data type to a buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>The buffer must be initialized with <ref refid="group__profiler_ga176d440a55afda0f8778f6a2d4ba5607_1ga176d440a55afda0f8778f6a2d4ba5607" kindref="member">profiler_log_start</ref> before calling this function.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to add to the buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="235" column="6" declfile="include/profiler.h" declline="235" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_gadaf621e1df80d49a1aec8af067431d69_1gadaf621e1df80d49a1aec8af067431d69" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void profiler_log_encode_int8</definition>
+        <argsstring>(struct log_event_buf *buf, int8_t data)</argsstring>
+        <name>profiler_log_encode_int8</name>
+        <param>
+          <type>struct <ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref> *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>int8_t</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Encode and add int8_t data type to a buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>The buffer must be initialized with <ref refid="group__profiler_ga176d440a55afda0f8778f6a2d4ba5607_1ga176d440a55afda0f8778f6a2d4ba5607" kindref="member">profiler_log_start</ref> before calling this function.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to add to the buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="250" column="6" declfile="include/profiler.h" declline="250" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_ga14b5fa05c4158aeaf9c0df0147c45382_1ga14b5fa05c4158aeaf9c0df0147c45382" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void profiler_log_encode_string</definition>
+        <argsstring>(struct log_event_buf *buf, const char *string)</argsstring>
+        <name>profiler_log_encode_string</name>
+        <param>
+          <type>struct <ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref> *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>string</declname>
+        </param>
+        <briefdescription>
+<para>Encode and add string to a buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum 255 characters can be sent (the rest is ommited).</para>
+<para><simplesect kind="warning"><para>The buffer must be initialized with <ref refid="group__profiler_ga176d440a55afda0f8778f6a2d4ba5607_1ga176d440a55afda0f8778f6a2d4ba5607" kindref="member">profiler_log_start</ref> before calling this function.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>string</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>String to add to the buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="267" column="6" declfile="include/profiler.h" declline="267" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_ga93557044119d9b29df8b8913275da555_1ga93557044119d9b29df8b8913275da555" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void profiler_log_add_mem_address</definition>
+        <argsstring>(struct log_event_buf *buf, const void *mem_address)</argsstring>
+        <name>profiler_log_add_mem_address</name>
+        <param>
+          <type>struct <ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref> *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>mem_address</declname>
+        </param>
+        <briefdescription>
+<para>Encode and add the event&apos;s address in memory to the buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This information is used for event identification.</para>
+<para><simplesect kind="warning"><para>The buffer must be initialized with <ref refid="group__profiler_ga176d440a55afda0f8778f6a2d4ba5607_1ga176d440a55afda0f8778f6a2d4ba5607" kindref="member">profiler_log_start</ref> before calling this function.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>mem_address</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Memory address to encode. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="285" column="6" declfile="include/profiler.h" declline="285" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__profiler_gab72de937bd51654b2178f49b10c2b46d_1gab72de937bd51654b2178f49b10c2b46d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void profiler_log_send</definition>
+        <argsstring>(struct log_event_buf *buf, uint16_t event_type_id)</argsstring>
+        <name>profiler_log_send</name>
+        <param>
+          <type>struct <ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref> *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>event_type_id</declname>
+        </param>
+        <briefdescription>
+<para>Send data from the buffer to the host. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function only sends data that is already stored in the buffer. Use <ref refid="group__profiler_ga0bb341e6119f5bbfe0036e56c97a15a3_1ga0bb341e6119f5bbfe0036e56c97a15a3" kindref="member">profiler_log_encode_uint32</ref>, <ref refid="group__profiler_gaa528114afe4dd551b8405b8a3bc99071_1gaa528114afe4dd551b8405b8a3bc99071" kindref="member">profiler_log_encode_int32</ref>, <ref refid="group__profiler_ga791756eceb337d778575ebfd66010071_1ga791756eceb337d778575ebfd66010071" kindref="member">profiler_log_encode_uint16</ref>, <ref refid="group__profiler_ga839fca8f6eef9033606026ff8aeafa91_1ga839fca8f6eef9033606026ff8aeafa91" kindref="member">profiler_log_encode_int16</ref>, <ref refid="group__profiler_ga68ca82c3fadfbcbefefcdcb0140f0755_1ga68ca82c3fadfbcbefefcdcb0140f0755" kindref="member">profiler_log_encode_uint8</ref>, <ref refid="group__profiler_gadaf621e1df80d49a1aec8af067431d69_1gadaf621e1df80d49a1aec8af067431d69" kindref="member">profiler_log_encode_int8</ref>, <ref refid="group__profiler_ga14b5fa05c4158aeaf9c0df0147c45382_1ga14b5fa05c4158aeaf9c0df0147c45382" kindref="member">profiler_log_encode_string</ref> or <ref refid="group__profiler_ga93557044119d9b29df8b8913275da555_1ga93557044119d9b29df8b8913275da555" kindref="member">profiler_log_add_mem_address</ref> to add data to the buffer.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>event_type_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event type ID as assigned to the event type when it is registered. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="307" column="6" declfile="include/profiler.h" declline="307" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2018<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_PROFILER_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_PROFILER_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/util.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/__assert.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>CONFIG_PROFILER_MAX_NUMBER_OF_APPLICATION_EVENTS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="group__profiler_ga1773d77149a83eeb24fa98431a3bbd0c_1ga1773d77149a83eeb24fa98431a3bbd0c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CONFIG_PROFILER_MAX_NUMBER_OF_APPLICATION_EVENTS<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>CONFIG_PROFILER_NUMBER_OF_INTERNAL_EVENTS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="group__profiler_gaf5f1aa14d4ba40bfca0b2928d05dada3_1gaf5f1aa14d4ba40bfca0b2928d05dada3" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CONFIG_PROFILER_NUMBER_OF_INTERNAL_EVENTS<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="group__profiler_ga73fbb9bd4540f0db682089a1de850b14_1ga73fbb9bd4540f0db682089a1de850b14" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PROFILER_MAX_NUMBER_OF_APPLICATION_AND_INTERNAL_EVENTS<sp/>\</highlight></codeline>
+<codeline lineno="34"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>((CONFIG_PROFILER_MAX_NUMBER_OF_APPLICATION_EVENTS)<sp/>+<sp/>\</highlight></codeline>
+<codeline lineno="35"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(CONFIG_PROFILER_NUMBER_OF_INTERNAL_EVENTS))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="structprofiler__event__enabled__bm" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structprofiler__event__enabled__bm" kindref="compound">profiler_event_enabled_bm</ref><sp/>{</highlight></codeline>
+<codeline lineno="41" refid="structprofiler__event__enabled__bm_a82c22682103fa890d168346d83e87026_1a82c22682103fa890d168346d83e87026" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ATOMIC_DEFINE(<ref refid="structprofiler__event__enabled__bm_a82c22682103fa890d168346d83e87026_1a82c22682103fa890d168346d83e87026" kindref="member">flags</ref>,<sp/><ref refid="group__profiler_ga73fbb9bd4540f0db682089a1de850b14_1ga73fbb9bd4540f0db682089a1de850b14" kindref="member">PROFILER_MAX_NUMBER_OF_APPLICATION_AND_INTERNAL_EVENTS</ref>);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structprofiler__event__enabled__bm" kindref="compound">profiler_event_enabled_bm</ref><sp/>_profiler_event_enabled_bm;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>uint8_t<sp/><ref refid="group__profiler_ga0f2a03e1f83334f0db71a0062918fceb_1ga0f2a03e1f83334f0db71a0062918fceb" kindref="member">profiler_num_events</ref>;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1ga89852e0ad202010e105fec68bcf32b0c" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1ga89852e0ad202010e105fec68bcf32b0c" kindref="member">profiler_arg</ref><sp/>{</highlight></codeline>
+<codeline lineno="57" refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca678202bddcd4779c81f72b14b7b8cbae" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca678202bddcd4779c81f72b14b7b8cbae" kindref="member">PROFILER_ARG_U8</ref>,</highlight></codeline>
+<codeline lineno="58" refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca899a6c2002edfef4f60c7e75a4a2cf69" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca899a6c2002edfef4f60c7e75a4a2cf69" kindref="member">PROFILER_ARG_S8</ref>,</highlight></codeline>
+<codeline lineno="59" refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0caa387e8b7208038189c01369162a52735" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0caa387e8b7208038189c01369162a52735" kindref="member">PROFILER_ARG_U16</ref>,</highlight></codeline>
+<codeline lineno="60" refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca96122842997a14b3aca0da742f82aec1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca96122842997a14b3aca0da742f82aec1" kindref="member">PROFILER_ARG_S16</ref>,</highlight></codeline>
+<codeline lineno="61" refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0cab21cd820de822e41d279d031f10aa9b8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0cab21cd820de822e41d279d031f10aa9b8" kindref="member">PROFILER_ARG_U32</ref>,</highlight></codeline>
+<codeline lineno="62" refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca815733ff998318cfc958e1660a65c3b1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca815733ff998318cfc958e1660a65c3b1" kindref="member">PROFILER_ARG_S32</ref>,</highlight></codeline>
+<codeline lineno="63" refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca299fe4adc1aa65b416c377cf04b7686f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca299fe4adc1aa65b416c377cf04b7686f" kindref="member">PROFILER_ARG_STRING</ref>,</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca21f5b43a7cc989eff99cd3cfd8f84466" kindref="member">PROFILER_ARG_TIMESTAMP</ref></highlight></codeline>
+<codeline lineno="65" refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1gga89852e0ad202010e105fec68bcf32b0ca21f5b43a7cc989eff99cd3cfd8f84466" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="structlog__event__buf" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref><sp/>{</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_PROFILER</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="structlog__event__buf_a9d5ddd14dc5014ca275490f04dd5dfae_1a9d5ddd14dc5014ca275490f04dd5dfae" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*<ref refid="structlog__event__buf_a9d5ddd14dc5014ca275490f04dd5dfae_1a9d5ddd14dc5014ca275490f04dd5dfae" kindref="member">payload</ref>;</highlight></codeline>
+<codeline lineno="75" refid="structlog__event__buf_aaeffb97aaf63f2d4a75bfbd632d9a441_1aaeffb97aaf63f2d4a75bfbd632d9a441" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structlog__event__buf_aaeffb97aaf63f2d4a75bfbd632d9a441_1aaeffb97aaf63f2d4a75bfbd632d9a441" kindref="member">payload_start</ref>[CONFIG_PROFILER_CUSTOM_EVENT_BUF_LEN];</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_PROFILER</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="group__profiler_ga375a45b926b010d935b8a30553222e63_1ga375a45b926b010d935b8a30553222e63" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__profiler_ga375a45b926b010d935b8a30553222e63_1ga375a45b926b010d935b8a30553222e63" kindref="member">profiler_init</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__profiler_ga375a45b926b010d935b8a30553222e63_1ga375a45b926b010d935b8a30553222e63" kindref="member">profiler_init</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">)<sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;<sp/>}</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_PROFILER</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97" refid="group__profiler_gae125c3995785c915be880a92dab0d6c4_1gae125c3995785c915be880a92dab0d6c4" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__profiler_gae125c3995785c915be880a92dab0d6c4_1gae125c3995785c915be880a92dab0d6c4" kindref="member">profiler_term</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__profiler_gae125c3995785c915be880a92dab0d6c4_1gae125c3995785c915be880a92dab0d6c4" kindref="member">profiler_term</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">)<sp/>{}</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_PROFILER</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="109" refid="group__profiler_gac15c886614d3ee5c3a3405936d39f34d_1gac15c886614d3ee5c3a3405936d39f34d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="group__profiler_gac15c886614d3ee5c3a3405936d39f34d_1gac15c886614d3ee5c3a3405936d39f34d" kindref="member">profiler_get_event_descr</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>profiler_event_id);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="group__profiler_gac15c886614d3ee5c3a3405936d39f34d_1gac15c886614d3ee5c3a3405936d39f34d" kindref="member">profiler_get_event_descr</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>profiler_event_id)</highlight></codeline>
+<codeline lineno="112"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>NULL;</highlight></codeline>
+<codeline lineno="114"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123" refid="group__profiler_ga82d756f3c6784263dc1ab4b4a966cee4_1ga82d756f3c6784263dc1ab4b4a966cee4" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__profiler_ga82d756f3c6784263dc1ab4b4a966cee4_1ga82d756f3c6784263dc1ab4b4a966cee4" kindref="member">is_profiling_enabled</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>profiler_event_id)</highlight></codeline>
+<codeline lineno="124"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(IS_ENABLED(CONFIG_PROFILER))<sp/>{</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__ASSERT_NO_MSG(profiler_event_id<sp/>&lt;</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__profiler_ga73fbb9bd4540f0db682089a1de850b14_1ga73fbb9bd4540f0db682089a1de850b14" kindref="member">PROFILER_MAX_NUMBER_OF_APPLICATION_AND_INTERNAL_EVENTS</ref>);</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>atomic_test_bit(_profiler_event_enabled_bm.<ref refid="structprofiler__event__enabled__bm_a82c22682103fa890d168346d83e87026_1a82c22682103fa890d168346d83e87026" kindref="member">flags</ref>,<sp/>profiler_event_id);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_PROFILER</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146" refid="group__profiler_ga8989953e56676d2f45f00fe27ab6fc28_1ga8989953e56676d2f45f00fe27ab6fc28" refkind="member"><highlight class="normal">uint16_t<sp/><ref refid="group__profiler_ga8989953e56676d2f45f00fe27ab6fc28_1ga8989953e56676d2f45f00fe27ab6fc28" kindref="member">profiler_register_event_type</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*name,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>*args,</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1ga89852e0ad202010e105fec68bcf32b0c" kindref="member">profiler_arg</ref><sp/>*arg_types,</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>arg_cnt);</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>uint16_t<sp/><ref refid="group__profiler_ga8989953e56676d2f45f00fe27ab6fc28_1ga8989953e56676d2f45f00fe27ab6fc28" kindref="member">profiler_register_event_type</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*name,</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>*args,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1ga89852e0ad202010e105fec68bcf32b0c" kindref="member">profiler_arg</ref><sp/>*arg_types,</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>arg_cnt)<sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;<sp/>}</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_PROFILER</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="161" refid="group__profiler_ga176d440a55afda0f8778f6a2d4ba5607_1ga176d440a55afda0f8778f6a2d4ba5607" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__profiler_ga176d440a55afda0f8778f6a2d4ba5607_1ga176d440a55afda0f8778f6a2d4ba5607" kindref="member">profiler_log_start</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref><sp/>*buf);</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__profiler_ga176d440a55afda0f8778f6a2d4ba5607_1ga176d440a55afda0f8778f6a2d4ba5607" kindref="member">profiler_log_start</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref><sp/>*buf)<sp/>{}</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_PROFILER</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="175" refid="group__profiler_ga0bb341e6119f5bbfe0036e56c97a15a3_1ga0bb341e6119f5bbfe0036e56c97a15a3" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__profiler_ga0bb341e6119f5bbfe0036e56c97a15a3_1ga0bb341e6119f5bbfe0036e56c97a15a3" kindref="member">profiler_log_encode_uint32</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref><sp/>*buf,<sp/>uint32_t<sp/>data);</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__profiler_ga0bb341e6119f5bbfe0036e56c97a15a3_1ga0bb341e6119f5bbfe0036e56c97a15a3" kindref="member">profiler_log_encode_uint32</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref><sp/>*buf,</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/>data)<sp/>{}</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_PROFILER</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="190" refid="group__profiler_gaa528114afe4dd551b8405b8a3bc99071_1gaa528114afe4dd551b8405b8a3bc99071" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__profiler_gaa528114afe4dd551b8405b8a3bc99071_1gaa528114afe4dd551b8405b8a3bc99071" kindref="member">profiler_log_encode_int32</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref><sp/>*buf,<sp/>int32_t<sp/>data);</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__profiler_gaa528114afe4dd551b8405b8a3bc99071_1gaa528114afe4dd551b8405b8a3bc99071" kindref="member">profiler_log_encode_int32</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref><sp/>*buf,</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int32_t<sp/>data)<sp/>{}</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_PROFILER</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="205" refid="group__profiler_ga791756eceb337d778575ebfd66010071_1ga791756eceb337d778575ebfd66010071" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__profiler_ga791756eceb337d778575ebfd66010071_1ga791756eceb337d778575ebfd66010071" kindref="member">profiler_log_encode_uint16</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref><sp/>*buf,<sp/>uint16_t<sp/>data);</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__profiler_ga791756eceb337d778575ebfd66010071_1ga791756eceb337d778575ebfd66010071" kindref="member">profiler_log_encode_uint16</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref><sp/>*buf,</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/>data)<sp/>{}</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"></highlight></codeline>
+<codeline lineno="219"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_PROFILER</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="220" refid="group__profiler_ga839fca8f6eef9033606026ff8aeafa91_1ga839fca8f6eef9033606026ff8aeafa91" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__profiler_ga839fca8f6eef9033606026ff8aeafa91_1ga839fca8f6eef9033606026ff8aeafa91" kindref="member">profiler_log_encode_int16</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref><sp/>*buf,<sp/>int16_t<sp/>data);</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__profiler_ga839fca8f6eef9033606026ff8aeafa91_1ga839fca8f6eef9033606026ff8aeafa91" kindref="member">profiler_log_encode_int16</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref><sp/>*buf,</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/>data)<sp/>{}</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="225"><highlight class="normal"></highlight></codeline>
+<codeline lineno="234"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_PROFILER</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="235" refid="group__profiler_ga68ca82c3fadfbcbefefcdcb0140f0755_1ga68ca82c3fadfbcbefefcdcb0140f0755" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__profiler_ga68ca82c3fadfbcbefefcdcb0140f0755_1ga68ca82c3fadfbcbefefcdcb0140f0755" kindref="member">profiler_log_encode_uint8</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref><sp/>*buf,<sp/>uint8_t<sp/>data);</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="237"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__profiler_ga68ca82c3fadfbcbefefcdcb0140f0755_1ga68ca82c3fadfbcbefefcdcb0140f0755" kindref="member">profiler_log_encode_uint8</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref><sp/>*buf,</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>data)<sp/>{}</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="240"><highlight class="normal"></highlight></codeline>
+<codeline lineno="249"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_PROFILER</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="250" refid="group__profiler_gadaf621e1df80d49a1aec8af067431d69_1gadaf621e1df80d49a1aec8af067431d69" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__profiler_gadaf621e1df80d49a1aec8af067431d69_1gadaf621e1df80d49a1aec8af067431d69" kindref="member">profiler_log_encode_int8</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref><sp/>*buf,<sp/>int8_t<sp/>data);</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="252"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__profiler_gadaf621e1df80d49a1aec8af067431d69_1gadaf621e1df80d49a1aec8af067431d69" kindref="member">profiler_log_encode_int8</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref><sp/>*buf,</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int8_t<sp/>data)<sp/>{}</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="255"><highlight class="normal"></highlight></codeline>
+<codeline lineno="266"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_PROFILER</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="267" refid="group__profiler_ga14b5fa05c4158aeaf9c0df0147c45382_1ga14b5fa05c4158aeaf9c0df0147c45382" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__profiler_ga14b5fa05c4158aeaf9c0df0147c45382_1ga14b5fa05c4158aeaf9c0df0147c45382" kindref="member">profiler_log_encode_string</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref><sp/>*buf,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keywordtype">string</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="269"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__profiler_ga14b5fa05c4158aeaf9c0df0147c45382_1ga14b5fa05c4158aeaf9c0df0147c45382" kindref="member">profiler_log_encode_string</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref><sp/>*buf,</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keywordtype">string</highlight><highlight class="normal">)<sp/>{}</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="272"><highlight class="normal"></highlight></codeline>
+<codeline lineno="273"><highlight class="normal"></highlight></codeline>
+<codeline lineno="284"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_PROFILER</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="285" refid="group__profiler_ga93557044119d9b29df8b8913275da555_1ga93557044119d9b29df8b8913275da555" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__profiler_ga93557044119d9b29df8b8913275da555_1ga93557044119d9b29df8b8913275da555" kindref="member">profiler_log_add_mem_address</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref><sp/>*buf,</highlight></codeline>
+<codeline lineno="286"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*mem_address);</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="288"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__profiler_ga93557044119d9b29df8b8913275da555_1ga93557044119d9b29df8b8913275da555" kindref="member">profiler_log_add_mem_address</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref><sp/>*buf,</highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*mem_address)<sp/>{}</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="291"><highlight class="normal"></highlight></codeline>
+<codeline lineno="292"><highlight class="normal"></highlight></codeline>
+<codeline lineno="306"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_PROFILER</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="307" refid="group__profiler_gab72de937bd51654b2178f49b10c2b46d_1gab72de937bd51654b2178f49b10c2b46d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__profiler_gab72de937bd51654b2178f49b10c2b46d_1gab72de937bd51654b2178f49b10c2b46d" kindref="member">profiler_log_send</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref><sp/>*buf,<sp/>uint16_t<sp/>event_type_id);</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="309"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__profiler_gab72de937bd51654b2178f49b10c2b46d_1gab72de937bd51654b2178f49b10c2b46d" kindref="member">profiler_log_send</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlog__event__buf" kindref="compound">log_event_buf</ref><sp/>*buf,</highlight></codeline>
+<codeline lineno="310"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/>event_type_id)<sp/>{}</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="312"><highlight class="normal"></highlight></codeline>
+<codeline lineno="313"><highlight class="normal"></highlight></codeline>
+<codeline lineno="318"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_PROFILER_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/profiler.h"/>
+  </compounddef>
+</doxygen>

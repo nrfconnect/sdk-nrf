@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__t4t__tlv__block__file__access" kind="group">
+    <compoundname>nfc_t4t_tlv_block_file_access</compoundname>
+    <title>Possible values of file</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__t4t__tlv__block__file__access_1gabeb091aaf2a1f71d06119abe2de3f639" prot="public" static="no">
+        <name>NFC_T4T_TLV_BLOCK_CONTROL_FILE_READ_ACCESS_GRANTED</name>
+        <initializer>0x00</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Read access granted without any security. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/tlv_block.h" line="30" column="9" bodyfile="include/nfc/t4t/tlv_block.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t4t__tlv__block__file__access_1gafe9c818816a240f53d4fb640fcd66f78" prot="public" static="no">
+        <name>NFC_T4T_TLV_BLOCK_CONTROL_FILE_WRITE_ACCESS_GRANTED</name>
+        <initializer>0x00</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Write access granted without any security. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/tlv_block.h" line="33" column="9" bodyfile="include/nfc/t4t/tlv_block.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t4t__tlv__block__file__access_1gab4e05e3da4811a7eb47bfea619523188" prot="public" static="no">
+        <name>NFC_T4T_TLV_BLOCK_CONTROL_FILE_WRITE_ACCESS_DISABLED</name>
+        <initializer>0xFF</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>No write access granted without any security (read-only). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/tlv_block.h" line="36" column="9" bodyfile="include/nfc/t4t/tlv_block.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>read/write access condition field. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

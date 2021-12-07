@@ -1,0 +1,216 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="time_8h" kind="file" language="C++">
+    <compoundname>time.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <includes local="no">bluetooth/mesh.h</includes>
+    <includedby refid="time__cli_8h" local="no">include/bluetooth/mesh/time_cli.h</includedby>
+    <includedby refid="time__srv_8h" local="no">include/bluetooth/mesh/time_srv.h</includedby>
+    <includedby refid="date__time_8h" local="no">include/date_time.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/bluetooth/mesh/time.h</label>
+        <link refid="time_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/mesh.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="3">
+        <label>include/bluetooth/mesh/models.h</label>
+        <link refid="models_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>include/bluetooth/mesh/scheduler_srv.h</label>
+        <link refid="scheduler__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/mesh/time.h</label>
+        <link refid="time_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/bluetooth/mesh/time_cli.h</label>
+        <link refid="time__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>include/bluetooth/mesh/time_srv.h</label>
+        <link refid="time__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>include/bluetooth/mesh/vnd/silvair_enocean_srv.h</label>
+        <link refid="silvair__enocean__srv_8h"/>
+      </node>
+      <node id="7">
+        <label>include/date_time.h</label>
+        <link refid="date__time_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structbt__mesh__time__tai" prot="public">bt_mesh_time_tai</innerclass>
+    <innerclass refid="structbt__mesh__time__status" prot="public">bt_mesh_time_status</innerclass>
+    <innerclass refid="structbt__mesh__time__zone__change" prot="public">bt_mesh_time_zone_change</innerclass>
+    <innerclass refid="structbt__mesh__time__zone__status" prot="public">bt_mesh_time_zone_status</innerclass>
+    <innerclass refid="structbt__mesh__time__tai__utc__change" prot="public">bt_mesh_time_tai_utc_change</innerclass>
+    <innerclass refid="structbt__mesh__time__tai__utc__delta__status" prot="public">bt_mesh_time_tai_utc_delta_status</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__mesh__time_ga1952fe4bd180eb64253acb1f7deb00a4_1ga1952fe4bd180eb64253acb1f7deb00a4" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_time_role</name>
+        <enumvalue id="group__bt__mesh__time_ga1952fe4bd180eb64253acb1f7deb00a4_1gga1952fe4bd180eb64253acb1f7deb00a4ae160336ff70dafd1f07a9af8331d3ebd" prot="public">
+          <name>BT_MESH_TIME_NONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Does not participate in propagation of time information. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__time_ga1952fe4bd180eb64253acb1f7deb00a4_1gga1952fe4bd180eb64253acb1f7deb00a4a4be06ab4ddcd932520ae569285dfad5b" prot="public">
+          <name>BT_MESH_TIME_AUTHORITY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Publishes Time Status messages but does not process received Time Status messages. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__time_ga1952fe4bd180eb64253acb1f7deb00a4_1gga1952fe4bd180eb64253acb1f7deb00a4a409b8f9683b261858fe7ef923158e3db" prot="public">
+          <name>BT_MESH_TIME_RELAY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Processes received and publishes Time Status messages. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__time_ga1952fe4bd180eb64253acb1f7deb00a4_1gga1952fe4bd180eb64253acb1f7deb00a4afbc49635d6a2c0f73dc2887ebb975cd3" prot="public">
+          <name>BT_MESH_TIME_CLIENT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Does not publish but processes received Time Status messages. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Time Role states </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time.h" line="24" column="1" bodyfile="include/bluetooth/mesh/time.h" bodystart="24" bodyend="35"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_MESH_TIME_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/mesh.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="group__bt__mesh__time_ga1952fe4bd180eb64253acb1f7deb00a4_1ga1952fe4bd180eb64253acb1f7deb00a4" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__time_ga1952fe4bd180eb64253acb1f7deb00a4_1ga1952fe4bd180eb64253acb1f7deb00a4" kindref="member">bt_mesh_time_role</ref><sp/>{</highlight></codeline>
+<codeline lineno="26" refid="group__bt__mesh__time_ga1952fe4bd180eb64253acb1f7deb00a4_1gga1952fe4bd180eb64253acb1f7deb00a4ae160336ff70dafd1f07a9af8331d3ebd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__time_ga1952fe4bd180eb64253acb1f7deb00a4_1gga1952fe4bd180eb64253acb1f7deb00a4ae160336ff70dafd1f07a9af8331d3ebd" kindref="member">BT_MESH_TIME_NONE</ref>,</highlight></codeline>
+<codeline lineno="30" refid="group__bt__mesh__time_ga1952fe4bd180eb64253acb1f7deb00a4_1gga1952fe4bd180eb64253acb1f7deb00a4a4be06ab4ddcd932520ae569285dfad5b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__time_ga1952fe4bd180eb64253acb1f7deb00a4_1gga1952fe4bd180eb64253acb1f7deb00a4a4be06ab4ddcd932520ae569285dfad5b" kindref="member">BT_MESH_TIME_AUTHORITY</ref>,</highlight></codeline>
+<codeline lineno="32" refid="group__bt__mesh__time_ga1952fe4bd180eb64253acb1f7deb00a4_1gga1952fe4bd180eb64253acb1f7deb00a4a409b8f9683b261858fe7ef923158e3db" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__time_ga1952fe4bd180eb64253acb1f7deb00a4_1gga1952fe4bd180eb64253acb1f7deb00a4a409b8f9683b261858fe7ef923158e3db" kindref="member">BT_MESH_TIME_RELAY</ref>,</highlight></codeline>
+<codeline lineno="34" refid="group__bt__mesh__time_ga1952fe4bd180eb64253acb1f7deb00a4_1gga1952fe4bd180eb64253acb1f7deb00a4afbc49635d6a2c0f73dc2887ebb975cd3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__time_ga1952fe4bd180eb64253acb1f7deb00a4_1gga1952fe4bd180eb64253acb1f7deb00a4afbc49635d6a2c0f73dc2887ebb975cd3" kindref="member">BT_MESH_TIME_CLIENT</ref>,</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="structbt__mesh__time__tai" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__time__tai" kindref="compound">bt_mesh_time_tai</ref><sp/>{</highlight></codeline>
+<codeline lineno="39" refid="structbt__mesh__time__tai_a9c6068b78bfbac659c047391e537d5ef_1a9c6068b78bfbac659c047391e537d5ef" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/><ref refid="structbt__mesh__time__tai_a9c6068b78bfbac659c047391e537d5ef_1a9c6068b78bfbac659c047391e537d5ef" kindref="member">sec</ref>:40,<sp/></highlight></codeline>
+<codeline lineno="40" refid="structbt__mesh__time__tai_aef69cdcc45f3ca7a512a151c5669aeba_1aef69cdcc45f3ca7a512a151c5669aeba" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structbt__mesh__time__tai_aef69cdcc45f3ca7a512a151c5669aeba_1aef69cdcc45f3ca7a512a151c5669aeba" kindref="member">subsec</ref>:8;<sp/></highlight></codeline>
+<codeline lineno="41"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="structbt__mesh__time__status" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__time__status" kindref="compound">bt_mesh_time_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="46" refid="structbt__mesh__time__status_a561467e58cfb4f1c715385b4ddee36c3_1a561467e58cfb4f1c715385b4ddee36c3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__time__tai" kindref="compound">bt_mesh_time_tai</ref><sp/><ref refid="structbt__mesh__time__status_a561467e58cfb4f1c715385b4ddee36c3_1a561467e58cfb4f1c715385b4ddee36c3" kindref="member">tai</ref>;</highlight></codeline>
+<codeline lineno="48" refid="structbt__mesh__time__status_a06c1df34010f6ec5b288b231f4aaf7fe_1a06c1df34010f6ec5b288b231f4aaf7fe" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/><ref refid="structbt__mesh__time__status_a06c1df34010f6ec5b288b231f4aaf7fe_1a06c1df34010f6ec5b288b231f4aaf7fe" kindref="member">uncertainty</ref>;</highlight></codeline>
+<codeline lineno="50" refid="structbt__mesh__time__status_a7762cd6360c1ee172cc50cab145bed11_1a7762cd6360c1ee172cc50cab145bed11" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structbt__mesh__time__status_a7762cd6360c1ee172cc50cab145bed11_1a7762cd6360c1ee172cc50cab145bed11" kindref="member">tai_utc_delta</ref>;</highlight></codeline>
+<codeline lineno="52" refid="structbt__mesh__time__status_a27bfd28dc268c9d9d664960198ee52e3_1a27bfd28dc268c9d9d664960198ee52e3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structbt__mesh__time__status_a27bfd28dc268c9d9d664960198ee52e3_1a27bfd28dc268c9d9d664960198ee52e3" kindref="member">time_zone_offset</ref>;</highlight></codeline>
+<codeline lineno="54" refid="structbt__mesh__time__status_a1b35723f052d9d0e6f8ffd466d71b335_1a1b35723f052d9d0e6f8ffd466d71b335" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__time__status_a1b35723f052d9d0e6f8ffd466d71b335_1a1b35723f052d9d0e6f8ffd466d71b335" kindref="member">is_authority</ref>;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58" refid="structbt__mesh__time__zone__change" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__time__zone__change" kindref="compound">bt_mesh_time_zone_change</ref><sp/>{</highlight></codeline>
+<codeline lineno="60" refid="structbt__mesh__time__zone__change_abec61089b0af1185069ec8ad150323c9_1abec61089b0af1185069ec8ad150323c9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structbt__mesh__time__zone__change_abec61089b0af1185069ec8ad150323c9_1abec61089b0af1185069ec8ad150323c9" kindref="member">new_offset</ref>;</highlight></codeline>
+<codeline lineno="62" refid="structbt__mesh__time__zone__change_aaf316d3cfd333027ac173da35ebe4bf8_1aaf316d3cfd333027ac173da35ebe4bf8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/><ref refid="structbt__mesh__time__zone__change_aaf316d3cfd333027ac173da35ebe4bf8_1aaf316d3cfd333027ac173da35ebe4bf8" kindref="member">timestamp</ref>;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="structbt__mesh__time__zone__status" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__time__zone__status" kindref="compound">bt_mesh_time_zone_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="68" refid="structbt__mesh__time__zone__status_a66a0e16cdb24a6f0ecfa1cf1955bda70_1a66a0e16cdb24a6f0ecfa1cf1955bda70" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structbt__mesh__time__zone__status_a66a0e16cdb24a6f0ecfa1cf1955bda70_1a66a0e16cdb24a6f0ecfa1cf1955bda70" kindref="member">current_offset</ref>;</highlight></codeline>
+<codeline lineno="70" refid="structbt__mesh__time__zone__status_a1e550f9f334dede564df1b76506055ae_1a1e550f9f334dede564df1b76506055ae" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__time__zone__change" kindref="compound">bt_mesh_time_zone_change</ref><sp/><ref refid="structbt__mesh__time__zone__status_a1e550f9f334dede564df1b76506055ae_1a1e550f9f334dede564df1b76506055ae" kindref="member">time_zone_change</ref>;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="structbt__mesh__time__tai__utc__change" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__time__tai__utc__change" kindref="compound">bt_mesh_time_tai_utc_change</ref><sp/>{</highlight></codeline>
+<codeline lineno="76" refid="structbt__mesh__time__tai__utc__change_addfa7ad7036f96e4547c3d5c17bd2982_1addfa7ad7036f96e4547c3d5c17bd2982" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structbt__mesh__time__tai__utc__change_addfa7ad7036f96e4547c3d5c17bd2982_1addfa7ad7036f96e4547c3d5c17bd2982" kindref="member">delta_new</ref>;</highlight></codeline>
+<codeline lineno="78" refid="structbt__mesh__time__tai__utc__change_af21b7bb24d170613652700f0f1f7830a_1af21b7bb24d170613652700f0f1f7830a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/><ref refid="structbt__mesh__time__tai__utc__change_af21b7bb24d170613652700f0f1f7830a_1af21b7bb24d170613652700f0f1f7830a" kindref="member">timestamp</ref>;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="structbt__mesh__time__tai__utc__delta__status" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__time__tai__utc__delta__status" kindref="compound">bt_mesh_time_tai_utc_delta_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="84" refid="structbt__mesh__time__tai__utc__delta__status_af94f97f849780409a19fe2849eab1b64_1af94f97f849780409a19fe2849eab1b64" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structbt__mesh__time__tai__utc__delta__status_af94f97f849780409a19fe2849eab1b64_1af94f97f849780409a19fe2849eab1b64" kindref="member">delta_current</ref>;</highlight></codeline>
+<codeline lineno="86" refid="structbt__mesh__time__tai__utc__delta__status_a6b4d311acf3a927ff1261564e355303a_1a6b4d311acf3a927ff1261564e355303a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__time__tai__utc__change" kindref="compound">bt_mesh_time_tai_utc_change</ref><sp/><ref refid="structbt__mesh__time__tai__utc__delta__status_a6b4d311acf3a927ff1261564e355303a_1a6b4d311acf3a927ff1261564e355303a" kindref="member">tai_utc_change</ref>;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_OP_TIME_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x37)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_OP_TIME_SET<sp/>BT_MESH_MODEL_OP_1(0x5C)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_OP_TIME_STATUS<sp/>BT_MESH_MODEL_OP_1(0x5D)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_OP_TIME_ROLE_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x38)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_OP_TIME_ROLE_SET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x39)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_OP_TIME_ROLE_STATUS<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x3A)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_OP_TIME_ZONE_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x3B)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_OP_TIME_ZONE_SET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x3C)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_OP_TIME_ZONE_STATUS<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x3D)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_OP_TAI_UTC_DELTA_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x3E)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_OP_TAI_UTC_DELTA_SET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x3F)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_OP_TAI_UTC_DELTA_STATUS<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x40)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_MSG_LEN_GET<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_MSG_LEN_TIME_SET<sp/>10</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_MSG_LEN_TIME_STATUS<sp/>10</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_MSG_LEN_TIME_ROLE_SET<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_MSG_LEN_TIME_ROLE_STATUS<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_MSG_LEN_TIME_ZONE_SET<sp/>6</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_MSG_LEN_TIME_ZONE_STATUS<sp/>7</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_MSG_LEN_TAI_UTC_DELTA_SET<sp/>7</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_TIME_MSG_LEN_TAI_UTC_DELTA_STATUS<sp/>9</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_MESH_TIME_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/mesh/time.h"/>
+  </compounddef>
+</doxygen>

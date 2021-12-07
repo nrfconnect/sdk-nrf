@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structst25r3911b__nfca__buf" kind="struct" language="C++" prot="public">
+    <compoundname>st25r3911b_nfca_buf</compoundname>
+    <includes refid="st25r3911b__nfca_8h" local="no">st25r3911b_nfca.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structst25r3911b__nfca__buf_aef6622972d946cea5ac0dc77309594dd_1aef6622972d946cea5ac0dc77309594dd" prot="public" static="no" mutable="no">
+        <type>uint8_t *</type>
+        <definition>uint8_t* st25r3911b_nfca_buf::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Data to TX/RX. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="71" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structst25r3911b__nfca__buf_af88bae4449806d07fd435c058e12c16a_1af88bae4449806d07fd435c058e12c16a" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t st25r3911b_nfca_buf::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Data length. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="74" column="8" bodyfile="include/st25r3911b_nfca.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>NFC-A transceiver buffer. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/st25r3911b_nfca.h" line="69" column="1" bodyfile="include/st25r3911b_nfca.h" bodystart="69" bodyend="75"/>
+    <listofallmembers>
+      <member refid="structst25r3911b__nfca__buf_aef6622972d946cea5ac0dc77309594dd_1aef6622972d946cea5ac0dc77309594dd" prot="public" virt="non-virtual"><scope>st25r3911b_nfca_buf</scope><name>data</name></member>
+      <member refid="structst25r3911b__nfca__buf_af88bae4449806d07fd435c058e12c16a_1af88bae4449806d07fd435c058e12c16a" prot="public" virt="non-virtual"><scope>st25r3911b_nfca_buf</scope><name>len</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

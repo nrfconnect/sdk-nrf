@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__t4t__hl__procedure__cb" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_t4t_hl_procedure_cb</compoundname>
+    <includes refid="hl__procedure_8h" local="no">hl_procedure.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__t4t__hl__procedure__cb_ad9366be49e62bf700acc18f80966ace5_1ad9366be49e62bf700acc18f80966ace5" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* nfc_t4t_hl_procedure_cb::selected) (enum nfc_t4t_hl_procedure_select type)</definition>
+        <argsstring>)(enum nfc_t4t_hl_procedure_select type)</argsstring>
+        <name>selected</name>
+        <briefdescription>
+<para>HL Procedure selected callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The selection of applications or files is completed.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of selection command. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/hl_procedure.h" line="48" column="1" bodyfile="include/nfc/t4t/hl_procedure.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__hl__procedure__cb_a6880f5cc86ecc9f5d18aebe535c19082_1a6880f5cc86ecc9f5d18aebe535c19082" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* nfc_t4t_hl_procedure_cb::cc_read) (struct nfc_t4t_cc_file *cc)</definition>
+        <argsstring>)(struct nfc_t4t_cc_file *cc)</argsstring>
+        <name>cc_read</name>
+        <briefdescription>
+<para>HL Procedure CC file read callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The CC file of Type 4 Tag read operation is completed successfully.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to CC file data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/hl_procedure.h" line="57" column="1" bodyfile="include/nfc/t4t/hl_procedure.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__hl__procedure__cb_a6d23265b065912838f55ac400f281030_1a6d23265b065912838f55ac400f281030" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* nfc_t4t_hl_procedure_cb::ndef_read) (uint16_t file_id, const uint8_t *data, size_t len)</definition>
+        <argsstring>)(uint16_t file_id, const uint8_t *data, size_t len)</argsstring>
+        <name>ndef_read</name>
+        <briefdescription>
+<para>HL Procedure NDEF file read callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The NDEF file of Type 4 Tag read operation is completed successfully.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">file_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>File Identifier </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to received NDEF file data. The data buffer is assigned by <ref refid="group__nfc__t4t__hl__procedure_gac8a895f1c15b0b510f8d62a0a4b59c23_1gac8a895f1c15b0b510f8d62a0a4b59c23" kindref="member">nfc_t4t_hl_procedure_ndef_read</ref> function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Received data length. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/hl_procedure.h" line="70" column="1" bodyfile="include/nfc/t4t/hl_procedure.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__hl__procedure__cb_a4f4d02ce643eb7d597ff8ac27776c50c_1a4f4d02ce643eb7d597ff8ac27776c50c" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* nfc_t4t_hl_procedure_cb::ndef_updated) (uint16_t file_id)</definition>
+        <argsstring>)(uint16_t file_id)</argsstring>
+        <name>ndef_updated</name>
+        <briefdescription>
+<para>HL Procedure NDEF file updated callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The NDEF file of Typ 4 Tag update operation is completed successfully.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>id File Identifier. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/hl_procedure.h" line="79" column="1" bodyfile="include/nfc/t4t/hl_procedure.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>NFC T4T High Level Procedure callback structure. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This structure is used to control command exchenge with NFC Type 4 Tag. </para>
+    </detaileddescription>
+    <location file="include/nfc/t4t/hl_procedure.h" line="41" column="1" bodyfile="include/nfc/t4t/hl_procedure.h" bodystart="41" bodyend="80"/>
+    <listofallmembers>
+      <member refid="structnfc__t4t__hl__procedure__cb_a6880f5cc86ecc9f5d18aebe535c19082_1a6880f5cc86ecc9f5d18aebe535c19082" prot="public" virt="non-virtual"><scope>nfc_t4t_hl_procedure_cb</scope><name>cc_read</name></member>
+      <member refid="structnfc__t4t__hl__procedure__cb_a6d23265b065912838f55ac400f281030_1a6d23265b065912838f55ac400f281030" prot="public" virt="non-virtual"><scope>nfc_t4t_hl_procedure_cb</scope><name>ndef_read</name></member>
+      <member refid="structnfc__t4t__hl__procedure__cb_a4f4d02ce643eb7d597ff8ac27776c50c_1a4f4d02ce643eb7d597ff8ac27776c50c" prot="public" virt="non-virtual"><scope>nfc_t4t_hl_procedure_cb</scope><name>ndef_updated</name></member>
+      <member refid="structnfc__t4t__hl__procedure__cb_ad9366be49e62bf700acc18f80966ace5_1ad9366be49e62bf700acc18f80966ace5" prot="public" virt="non-virtual"><scope>nfc_t4t_hl_procedure_cb</scope><name>selected</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

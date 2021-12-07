@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structcpu__load__event" kind="struct" language="C++" prot="public">
+    <compoundname>cpu_load_event</compoundname>
+    <includes refid="cpu__load__event_8h" local="no">cpu_load_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structcpu__load__event_a222edb9058cc1c61d5f4a98b493db41d_1a222edb9058cc1c61d5f4a98b493db41d" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header cpu_load_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event header. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/cpu_load_event.h" line="25" column="19" bodyfile="applications/nrf_desktop/src/events/cpu_load_event.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcpu__load__event_a791ed23a6327db50bec75d6535be106a_1a791ed23a6327db50bec75d6535be106a" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t cpu_load_event::load</definition>
+        <argsstring></argsstring>
+        <name>load</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>CPU load [in 0,001% units]. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/cpu_load_event.h" line="27" column="10" bodyfile="applications/nrf_desktop/src/events/cpu_load_event.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>CPU load event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>cpu_load_event</label>
+        <link refid="structcpu__load__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/nrf_desktop/src/events/cpu_load_event.h" line="24" column="1" bodyfile="applications/nrf_desktop/src/events/cpu_load_event.h" bodystart="24" bodyend="28"/>
+    <listofallmembers>
+      <member refid="structcpu__load__event_a222edb9058cc1c61d5f4a98b493db41d_1a222edb9058cc1c61d5f4a98b493db41d" prot="public" virt="non-virtual"><scope>cpu_load_event</scope><name>header</name></member>
+      <member refid="structcpu__load__event_a791ed23a6327db50bec75d6535be106a_1a791ed23a6327db50bec75d6535be106a" prot="public" virt="non-virtual"><scope>cpu_load_event</scope><name>load</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__supl__os" kind="group">
+    <compoundname>supl_os</compoundname>
+    <title>SUPL OS client</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__supl__os_1ga29bcf93a1731f09636d0a524e9014752" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int supl_session</definition>
+        <argsstring>(const struct nrf_modem_gnss_agps_data_frame *const agps_request)</argsstring>
+        <name>supl_session</name>
+        <param>
+          <type>const struct nrf_modem_gnss_agps_data_frame *const</type>
+          <declname>agps_request</declname>
+        </param>
+        <briefdescription>
+<para>Start a SUPL session. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">agps_request</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This contain the information about the AGPS data that the GNSS module is requesting from the server.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 SUPL session was successful. &lt;0 SUPL session failed. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/supl_os_client.h" line="31" column="5" declfile="include/supl_os_client.h" declline="31" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__supl__os_1ga74812fffa5178f38a33c6ee177d46460" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int supl_init</definition>
+        <argsstring>(const struct supl_api *const api)</argsstring>
+        <name>supl_init</name>
+        <param>
+          <type>const struct supl_api *const</type>
+          <declname>api</declname>
+        </param>
+        <briefdescription>
+<para>Setup the API and the buffers required by the SUPL client libray. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">api</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Function pointers to the API required by SUPL client library to work.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 SUPL client library was initialized successfully. &lt;0 Failed to initialize the SUPL client library. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/supl_os_client.h" line="43" column="5" declfile="include/supl_os_client.h" declline="43" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

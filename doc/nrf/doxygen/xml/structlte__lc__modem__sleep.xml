@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlte__lc__modem__sleep" kind="struct" language="C++" prot="public">
+    <compoundname>lte_lc_modem_sleep</compoundname>
+    <includes refid="lte__lc_8h" local="no">lte_lc.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlte__lc__modem__sleep_a37b796bdfab9f27e03c8572c3558a5d8_1a37b796bdfab9f27e03c8572c3558a5d8" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__lte__lc_ga1fcb5117146bd440555e01baf4270f8c_1ga1fcb5117146bd440555e01baf4270f8c" kindref="member">lte_lc_modem_sleep_type</ref></type>
+        <definition>enum lte_lc_modem_sleep_type lte_lc_modem_sleep::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="397" column="29" bodyfile="include/modem/lte_lc.h" bodystart="397" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__modem__sleep_aeedbcb3fce2fcbb667fa3e1487e3daba_1aeedbcb3fce2fcbb667fa3e1487e3daba" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t lte_lc_modem_sleep::time</definition>
+        <argsstring></argsstring>
+        <name>time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="400" column="9" bodyfile="include/modem/lte_lc.h" bodystart="400" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/modem/lte_lc.h" line="396" column="1" bodyfile="include/modem/lte_lc.h" bodystart="396" bodyend="401"/>
+    <listofallmembers>
+      <member refid="structlte__lc__modem__sleep_aeedbcb3fce2fcbb667fa3e1487e3daba_1aeedbcb3fce2fcbb667fa3e1487e3daba" prot="public" virt="non-virtual"><scope>lte_lc_modem_sleep</scope><name>time</name></member>
+      <member refid="structlte__lc__modem__sleep_a37b796bdfab9f27e03c8572c3558a5d8_1a37b796bdfab9f27e03c8572c3558a5d8" prot="public" virt="non-virtual"><scope>lte_lc_modem_sleep</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

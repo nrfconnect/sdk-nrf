@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_f120738490f65f1b4b5ab2af32c6868e" kind="dir">
+    <compoundname>applications/serial_lte_modem/src/ftp_c</compoundname>
+    <innerfile refid="slm__at__ftp_8h">slm_at_ftp.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/serial_lte_modem/src/ftp_c/"/>
+  </compounddef>
+</doxygen>

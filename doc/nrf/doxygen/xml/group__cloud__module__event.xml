@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__cloud__module__event" kind="group">
+    <compoundname>cloud_module_event</compoundname>
+    <title>Cloud module event</title>
+    <innerclass refid="structcloud__module__event__data" prot="public">cloud_module_event_data</innerclass>
+    <innerclass refid="structcloud__module__data__ack" prot="public">cloud_module_data_ack</innerclass>
+    <innerclass refid="structcloud__module__event" prot="public">cloud_module_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__cloud__module__event_1ga14be80b1af7ae873ef7bc34eba0036ec" prot="public" static="no" strong="no">
+        <type></type>
+        <name>cloud_module_event_type</name>
+        <enumvalue id="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca30bd0a019f29f6dbba94f47e59d459d3" prot="public">
+          <name>CLOUD_EVT_CONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca7f4f61ab1c2141f8c4c5354d914c6473" prot="public">
+          <name>CLOUD_EVT_DISCONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca327335bba4b9dd730ad17bf2a94eddf0" prot="public">
+          <name>CLOUD_EVT_CONNECTING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036ecae5cfd1c7b12f624f4e1f41dd80f28e33" prot="public">
+          <name>CLOUD_EVT_CONNECTION_TIMEOUT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca54f9dd49554ae0855e4c291ba01b714a" prot="public">
+          <name>CLOUD_EVT_CONFIG_RECEIVED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036ecaf9e55b562b4ffd20e490364a813fc929" prot="public">
+          <name>CLOUD_EVT_CONFIG_EMPTY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036ecab341959d608eb475f3b6799c40d8d84f" prot="public">
+          <name>CLOUD_EVT_FOTA_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca8e45fa8a7b8b58c36330bbc21100ca49" prot="public">
+          <name>CLOUD_EVT_DATA_ACK</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036ecae5467f17716324ebd1801a044ca06843" prot="public">
+          <name>CLOUD_EVT_SHUTDOWN_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__module__event_ga14be80b1af7ae873ef7bc34eba0036ec_1gga14be80b1af7ae873ef7bc34eba0036eca8d49eb658f77345c2b65ced6d58fed38" prot="public">
+          <name>CLOUD_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Cloud event types submitted by Cloud module. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/cloud_module_event.h" line="25" column="1" bodyfile="applications/asset_tracker_v2/src/events/cloud_module_event.h" bodystart="25" bodyend="36"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Cloud module event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

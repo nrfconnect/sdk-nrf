@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structzigbee__fota__event__dl" kind="struct" language="C++" prot="public">
+    <compoundname>zigbee_fota_event_dl</compoundname>
+    <includes refid="zigbee__fota_8h" local="no">zigbee_fota.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structzigbee__fota__event__dl_a7056c59ed66dec6dc377f5406e8ae84a_1a7056c59ed66dec6dc377f5406e8ae84a" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int zigbee_fota_event_dl::progress</definition>
+        <argsstring></argsstring>
+        <name>progress</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_fota.h" line="51" column="5" bodyfile="include/zigbee/zigbee_fota.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Zigbee FOTA download progress event data. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/zigbee/zigbee_fota.h" line="50" column="1" bodyfile="include/zigbee/zigbee_fota.h" bodystart="50" bodyend="52"/>
+    <listofallmembers>
+      <member refid="structzigbee__fota__event__dl_a7056c59ed66dec6dc377f5406e8ae84a_1a7056c59ed66dec6dc377f5406e8ae84a" prot="public" virt="non-virtual"><scope>zigbee_fota_event_dl</scope><name>progress</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_4fff61b75fe24f97fdde2ec04e075be5" kind="dir">
+    <compoundname>lib/st25r3911b</compoundname>
+    <innerfile refid="st25r3911b__common_8h">st25r3911b_common.h</innerfile>
+    <innerfile refid="st25r3911b__dt_8h">st25r3911b_dt.h</innerfile>
+    <innerfile refid="st25r3911b__interrupt_8h">st25r3911b_interrupt.h</innerfile>
+    <innerfile refid="st25r3911b__reg_8h">st25r3911b_reg.h</innerfile>
+    <innerfile refid="st25r3911b__spi_8h">st25r3911b_spi.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/st25r3911b/"/>
+  </compounddef>
+</doxygen>

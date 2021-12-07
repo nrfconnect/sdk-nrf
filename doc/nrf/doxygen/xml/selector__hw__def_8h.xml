@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="selector__hw__def_8h" kind="file" language="C++">
+    <compoundname>selector_hw_def.h</compoundname>
+    <includes refid="selector__hw_8h" local="yes">selector_hw.h</includes>
+    <incdepgraph>
+      <node id="2">
+        <label>selector_hw.h</label>
+        <link refid="selector__hw_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/selector_hw_def.h</label>
+        <link refid="selector__hw__def_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>caf/gpio_pins.h</label>
+        <link refid="gpio__pins_8h"/>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="selector__hw__def_8h_ac93e751f0172be4b4e79e07ca3850f7b_1ac93e751f0172be4b4e79e07ca3850f7b" prot="public" static="no" mutable="no">
+        <type>const struct @97</type>
+        <definition>const struct @97 selector_hw_def_include_once</definition>
+        <argsstring></argsstring>
+        <name>selector_hw_def_include_once</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/selector_hw_def.h" line="16" column="42"/>
+      </memberdef>
+      <memberdef kind="variable" id="selector__hw__def_8h_ae1b0edc0693314cd00cbbc80a2efd520_1ae1b0edc0693314cd00cbbc80a2efd520" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structgpio__pin" kindref="compound">gpio_pin</ref></type>
+        <definition>const struct gpio_pin pins0[]</definition>
+        <argsstring>[]</argsstring>
+        <name>pins0</name>
+        <initializer>= {
+	{ .port = 1, .pin = 11 },
+	{ .port = 1, .pin = 12 },
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/selector_hw_def.h" line="18" column="28" bodyfile="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/selector_hw_def.h" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="selector__hw__def_8h_a208bc8869c46beb8f4fd6170d03a0285_1a208bc8869c46beb8f4fd6170d03a0285" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structselector__config" kindref="compound">selector_config</ref></type>
+        <definition>const struct selector_config config0</definition>
+        <argsstring></argsstring>
+        <name>config0</name>
+        <initializer>= {
+	.id = CONFIG_DESKTOP_BLE_DONGLE_PEER_SELECTOR_ID,
+	.pins = <ref refid="selector__hw__def_8h_ae1b0edc0693314cd00cbbc80a2efd520_1ae1b0edc0693314cd00cbbc80a2efd520" kindref="member">pins0</ref>,
+	.pins_size = ARRAY_SIZE(<ref refid="selector__hw__def_8h_ae1b0edc0693314cd00cbbc80a2efd520_1ae1b0edc0693314cd00cbbc80a2efd520" kindref="member">pins0</ref>)
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/selector_hw_def.h" line="22" column="35" bodyfile="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/selector_hw_def.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="selector__hw__def_8h_a65bf78763123d7cf19ee294f94f4e564_1a65bf78763123d7cf19ee294f94f4e564" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structselector__config" kindref="compound">selector_config</ref> *</type>
+        <definition>const struct selector_config* selector_config[]</definition>
+        <argsstring>[]</argsstring>
+        <name>selector_config</name>
+        <initializer>= {
+	&amp;<ref refid="selector__hw__def_8h_a208bc8869c46beb8f4fd6170d03a0285_1a208bc8869c46beb8f4fd6170d03a0285" kindref="member">config0</ref>,
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/selector_hw_def.h" line="28" column="35" bodyfile="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/selector_hw_def.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="selector__hw_8h" kindref="compound">selector_hw.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>configuration<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>from<sp/>selector_hw<sp/>module</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*<sp/>and<sp/>holds<sp/>information<sp/>about<sp/>pins<sp/>used<sp/>by<sp/>module.</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>structure<sp/>enforces<sp/>the<sp/>header<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>in<sp/>the<sp/>build.</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*<sp/>Violating<sp/>this<sp/>requirement<sp/>triggers<sp/>a<sp/>multiple<sp/>definition<sp/>error<sp/>at<sp/>link<sp/>time.</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16" refid="selector__hw__def_8h_ac93e751f0172be4b4e79e07ca3850f7b_1ac93e751f0172be4b4e79e07ca3850f7b" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{}<sp/><ref refid="selector__hw__def_8h_ac93e751f0172be4b4e79e07ca3850f7b_1ac93e751f0172be4b4e79e07ca3850f7b" kindref="member">selector_hw_def_include_once</ref>;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="selector__hw__def_8h_ae1b0edc0693314cd00cbbc80a2efd520_1ae1b0edc0693314cd00cbbc80a2efd520" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structgpio__pin" kindref="compound">gpio_pin</ref><sp/><ref refid="selector__hw__def_8h_ae1b0edc0693314cd00cbbc80a2efd520_1ae1b0edc0693314cd00cbbc80a2efd520" kindref="member">pins0</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>.<ref refid="structgpio__pin_a212f457b42f09b06a050c865bd4f4f2c_1a212f457b42f09b06a050c865bd4f4f2c" kindref="member">port</ref><sp/>=<sp/>1,<sp/>.pin<sp/>=<sp/>11<sp/>},</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>.port<sp/>=<sp/>1,<sp/>.pin<sp/>=<sp/>12<sp/>},</highlight></codeline>
+<codeline lineno="21"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="22" refid="selector__hw__def_8h_a208bc8869c46beb8f4fd6170d03a0285_1a208bc8869c46beb8f4fd6170d03a0285" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structselector__config" kindref="compound">selector_config</ref><sp/><ref refid="selector__hw__def_8h_a208bc8869c46beb8f4fd6170d03a0285_1a208bc8869c46beb8f4fd6170d03a0285" kindref="member">config0</ref><sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.<ref refid="structselector__config_ad308b6dea76ad12accbb8747697c6b68_1ad308b6dea76ad12accbb8747697c6b68" kindref="member">id</ref><sp/>=<sp/>CONFIG_DESKTOP_BLE_DONGLE_PEER_SELECTOR_ID,</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.pins<sp/>=<sp/><ref refid="selector__hw__def_8h_ae1b0edc0693314cd00cbbc80a2efd520_1ae1b0edc0693314cd00cbbc80a2efd520" kindref="member">pins0</ref>,</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.pins_size<sp/>=<sp/>ARRAY_SIZE(<ref refid="selector__hw__def_8h_ae1b0edc0693314cd00cbbc80a2efd520_1ae1b0edc0693314cd00cbbc80a2efd520" kindref="member">pins0</ref>)</highlight></codeline>
+<codeline lineno="26"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="selector__hw__def_8h_a65bf78763123d7cf19ee294f94f4e564_1a65bf78763123d7cf19ee294f94f4e564" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structselector__config" kindref="compound">selector_config</ref><sp/>*<ref refid="structselector__config" kindref="compound">selector_config</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;<ref refid="selector__hw__def_8h_a208bc8869c46beb8f4fd6170d03a0285_1a208bc8869c46beb8f4fd6170d03a0285" kindref="member">config0</ref>,</highlight></codeline>
+<codeline lineno="30"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/selector_hw_def.h"/>
+  </compounddef>
+</doxygen>

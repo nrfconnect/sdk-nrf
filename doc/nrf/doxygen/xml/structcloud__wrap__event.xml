@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structcloud__wrap__event" kind="struct" language="C++" prot="public">
+    <compoundname>cloud_wrap_event</compoundname>
+    <includes refid="cloud__wrapper_8h" local="no">cloud_wrapper.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structcloud__wrap__event_a0e873cd9f33e9268b752c3bb1af73f0c_1a0e873cd9f33e9268b752c3bb1af73f0c" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="cloud__wrapper_8h_a5f4fcf8b6c0050fa5f87fbbe03463ce8_1a5f4fcf8b6c0050fa5f87fbbe03463ce8" kindref="member">cloud_wrap_event_type</ref></type>
+        <definition>enum cloud_wrap_event_type cloud_wrap_event::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_wrapper.h" line="45" column="27" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_wrapper.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__wrap__event_a951aa095148d6289aa2b4656af9bb729_1a951aa095148d6289aa2b4656af9bb729" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structcloud__wrap__event__data" kindref="compound">cloud_wrap_event_data</ref></type>
+        <definition>struct cloud_wrap_event_data cloud_wrap_event::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_wrapper.h" line="48" column="28" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_wrapper.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__wrap__event_aae8f4361db3740354b8391a9425b9f3b_1aae8f4361db3740354b8391a9425b9f3b" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int cloud_wrap_event::err</definition>
+        <argsstring></argsstring>
+        <name>err</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_wrapper.h" line="49" column="5" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_wrapper.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__wrap__event_ae7fcc278d8f7318cea89b47b3792e6e4_1ae7fcc278d8f7318cea89b47b3792e6e4" prot="public" static="no" mutable="no">
+        <type>union cloud_wrap_event::@7</type>
+        <definition>union cloud_wrap_event::@7 cloud_wrap_event::@8</definition>
+        <argsstring></argsstring>
+        <name>@8</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_wrapper.h" line="50" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>cloud_wrap_event</label>
+        <link refid="structcloud__wrap__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>data</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>cloud_wrap_event_data</label>
+        <link refid="structcloud__wrap__event__data"/>
+      </node>
+    </collaborationgraph>
+    <location file="applications/asset_tracker_v2/src/cloud/cloud_wrapper.h" line="44" column="1" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_wrapper.h" bodystart="44" bodyend="51"/>
+    <listofallmembers>
+      <member refid="structcloud__wrap__event_a951aa095148d6289aa2b4656af9bb729_1a951aa095148d6289aa2b4656af9bb729" prot="public" virt="non-virtual"><scope>cloud_wrap_event</scope><name>data</name></member>
+      <member refid="structcloud__wrap__event_aae8f4361db3740354b8391a9425b9f3b_1aae8f4361db3740354b8391a9425b9f3b" prot="public" virt="non-virtual"><scope>cloud_wrap_event</scope><name>err</name></member>
+      <member refid="structcloud__wrap__event_a0e873cd9f33e9268b752c3bb1af73f0c_1a0e873cd9f33e9268b752c3bb1af73f0c" prot="public" virt="non-virtual"><scope>cloud_wrap_event</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

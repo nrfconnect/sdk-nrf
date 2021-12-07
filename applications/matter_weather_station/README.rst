@@ -47,7 +47,7 @@ Matter weather station build types
 ==================================
 
 The Matter weather station application does not use a single :file:`prj.conf` file.
-Configuration files are provided for different build types and they are located in the `configuration/thingy53_nrf5340_cpuapp` directory.
+Configuration files are provided for different build types and they are located in the ``configuration/thingy53_nrf5340_cpuapp`` directory.
 
 The :file:`prj.conf` file represents a ``debug`` build type.
 Other build types are covered by dedicated files with the build type added as a suffix to the ``prj`` part, as per the following list.

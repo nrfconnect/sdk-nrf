@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structevent__dyndata" kind="struct" language="C++" prot="public">
+    <compoundname>event_dyndata</compoundname>
+    <includes refid="event__manager_8h" local="no">event_manager.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structevent__dyndata_a554c78e4d3964df414018072fe32fb0f_1a554c78e4d3964df414018072fe32fb0f" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t event_dyndata::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of the dynamic data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="78" column="8" bodyfile="include/event_manager.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structevent__dyndata_af145369673da714cd680144f4d38cc4a_1af145369673da714cd680144f4d38cc4a" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t event_dyndata::data[0]</definition>
+        <argsstring>[0]</argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Dynamic data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="81" column="9" bodyfile="include/event_manager.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Dynamic event data. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>When defining an event structure, the dynamic event data must be placed as the last field. </para>
+    </detaileddescription>
+    <location file="include/event_manager.h" line="76" column="1" bodyfile="include/event_manager.h" bodystart="76" bodyend="82"/>
+    <listofallmembers>
+      <member refid="structevent__dyndata_af145369673da714cd680144f4d38cc4a_1af145369673da714cd680144f4d38cc4a" prot="public" virt="non-virtual"><scope>event_dyndata</scope><name>data</name></member>
+      <member refid="structevent__dyndata_a554c78e4d3964df414018072fe32fb0f_1a554c78e4d3964df414018072fe32fb0f" prot="public" virt="non-virtual"><scope>event_dyndata</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

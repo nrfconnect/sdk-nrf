@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__gps__module__event" kind="group">
+    <compoundname>gps_module_event</compoundname>
+    <title>GPS module event</title>
+    <innerclass refid="structgps__module__pvt" prot="public">gps_module_pvt</innerclass>
+    <innerclass refid="structgps__module__data" prot="public">gps_module_data</innerclass>
+    <innerclass refid="structgps__module__event" prot="public">gps_module_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__gps__module__event_1gade6be844c4a6150084262b37427cac88" prot="public" static="no" strong="no">
+        <type></type>
+        <name>gps_module_event_type</name>
+        <enumvalue id="group__gps__module__event_gade6be844c4a6150084262b37427cac88_1ggade6be844c4a6150084262b37427cac88a1223902ad80164740b0bd33f950f1a2c" prot="public">
+          <name>GPS_EVT_DATA_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gps__module__event_gade6be844c4a6150084262b37427cac88_1ggade6be844c4a6150084262b37427cac88a7a48baf4bfad5850841976d5c4ca0ddb" prot="public">
+          <name>GPS_EVT_TIMEOUT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gps__module__event_gade6be844c4a6150084262b37427cac88_1ggade6be844c4a6150084262b37427cac88a226c647bd6bed8dbabf13dd95bdb96a3" prot="public">
+          <name>GPS_EVT_ACTIVE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gps__module__event_gade6be844c4a6150084262b37427cac88_1ggade6be844c4a6150084262b37427cac88abda223b5d30aa502163316660fe8f735" prot="public">
+          <name>GPS_EVT_INACTIVE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gps__module__event_gade6be844c4a6150084262b37427cac88_1ggade6be844c4a6150084262b37427cac88a33bd9222cf6c3b7777b65e5755cc78bb" prot="public">
+          <name>GPS_EVT_SHUTDOWN_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gps__module__event_gade6be844c4a6150084262b37427cac88_1ggade6be844c4a6150084262b37427cac88a8c9e6564717121353794279c8ae821e0" prot="public">
+          <name>GPS_EVT_AGPS_NEEDED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gps__module__event_gade6be844c4a6150084262b37427cac88_1ggade6be844c4a6150084262b37427cac88aac45f559a365f86c1bb4604c79089373" prot="public">
+          <name>GPS_EVT_ERROR_CODE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>GPS event types submitted by GPS module. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/gps_module_event.h" line="28" column="1" bodyfile="applications/asset_tracker_v2/src/events/gps_module_event.h" bodystart="28" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__gps__module__event_1gafd54a51b9f980d5c3fdddc695ad2fedf" prot="public" static="no" strong="no">
+        <type></type>
+        <name>gps_module_format</name>
+        <enumvalue id="group__gps__module__event_gafd54a51b9f980d5c3fdddc695ad2fedf_1ggafd54a51b9f980d5c3fdddc695ad2fedfadada16a4203683473aa936705cd0c3b6" prot="public">
+          <name>GPS_MODULE_DATA_FORMAT_INVALID</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gps__module__event_gafd54a51b9f980d5c3fdddc695ad2fedf_1ggafd54a51b9f980d5c3fdddc695ad2fedfa86171b584e3a11f57290fc30e29e93fe" prot="public">
+          <name>GPS_MODULE_DATA_FORMAT_PVT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__gps__module__event_gafd54a51b9f980d5c3fdddc695ad2fedf_1ggafd54a51b9f980d5c3fdddc695ad2fedfa58543b59cdfae59e458111ec48754c51" prot="public">
+          <name>GPS_MODULE_DATA_FORMAT_NMEA</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/gps_module_event.h" line="47" column="1" bodyfile="applications/asset_tracker_v2/src/events/gps_module_event.h" bodystart="47" bodyend="51"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__gps__module__event_1ga2c09f82a74a460e474010c2c55e5ea44" prot="public" static="no">
+        <name>NMEA_MAX_LEN</name>
+        <initializer>83</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/gps_module_event.h" line="25" column="9" bodyfile="applications/asset_tracker_v2/src/events/gps_module_event.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>GPS module event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

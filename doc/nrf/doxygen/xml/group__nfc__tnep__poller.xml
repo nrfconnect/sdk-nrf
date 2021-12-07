@@ -1,0 +1,517 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__tnep__poller" kind="group">
+    <compoundname>nfc_tnep_poller</compoundname>
+    <title>TNEP Protocol for NFC Poller</title>
+    <innerclass refid="structnfc__tnep__poller__msg" prot="public">nfc_tnep_poller_msg</innerclass>
+    <innerclass refid="structnfc__tnep__poller__ndef__api" prot="public">nfc_tnep_poller_ndef_api</innerclass>
+    <innerclass refid="structnfc__tnep__poller__cb" prot="public">nfc_tnep_poller_cb</innerclass>
+    <innerclass refid="structnfc__tnep__buf" prot="public">nfc_tnep_buf</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nfc__tnep__poller_1ga3ba4d540264d91cb62c4026a548402dc" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nfc_tnep_tag_type</name>
+        <enumvalue id="group__nfc__tnep__poller_ga3ba4d540264d91cb62c4026a548402dc_1gga3ba4d540264d91cb62c4026a548402dca38abf77ababfa1e560e76e388d8560a5" prot="public">
+          <name>NFC_TNEP_TAG_TYPE_UNSUPPORTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>NFC unsupported Tag Type. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__tnep__poller_ga3ba4d540264d91cb62c4026a548402dc_1gga3ba4d540264d91cb62c4026a548402dcad4520f3729fbf28f48235bf06278a062" prot="public">
+          <name>NFC_TNEP_TAG_TYPE_T2T</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>NFC Type 2 Tag. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__tnep__poller_ga3ba4d540264d91cb62c4026a548402dc_1gga3ba4d540264d91cb62c4026a548402dcab5e0422c40815638d8e8fb852b75911a" prot="public">
+          <name>NFC_TNEP_TAG_TYPE_T4T</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>NFC Type 4 Tag. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>NFC TNEP Tag Type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="26" column="1" bodyfile="include/nfc/tnep/poller.h" bodystart="26" bodyend="35"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__tnep__poller_1gab7efa33d1df72db256d6fed1e7e1504b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_tnep_poller_init</definition>
+        <argsstring>(const struct nfc_tnep_buf *tx_buf)</argsstring>
+        <name>nfc_tnep_poller_init</name>
+        <param>
+          <type>const struct <ref refid="structnfc__tnep__buf" kindref="compound">nfc_tnep_buf</ref> *</type>
+          <declname>tx_buf</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the NFC TNEP Poller Device. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">tx_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to TNEP Poller Tx buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="173" column="5" declfile="include/nfc/tnep/poller.h" declline="173" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__tnep__poller_1ga28450802ed42b0d14296712d92dded07" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_tnep_poller_cb_register</definition>
+        <argsstring>(struct nfc_tnep_poller_cb *cb)</argsstring>
+        <name>nfc_tnep_poller_cb_register</name>
+        <param>
+          <type>struct <ref refid="structnfc__tnep__poller__cb" kindref="compound">nfc_tnep_poller_cb</ref> *</type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Register TNEP Poller callbacks. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Register callbacks to monitor the TNEP Poller data exchange.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback struct. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="181" column="6" declfile="include/nfc/tnep/poller.h" declline="181" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__tnep__poller_1ga89628bf3c93f1520ef503ad4ebd538ff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_tnep_poller_api_set</definition>
+        <argsstring>(const struct nfc_tnep_poller_ndef_api *api, enum nfc_tnep_tag_type tag_type)</argsstring>
+        <name>nfc_tnep_poller_api_set</name>
+        <param>
+          <type>const struct <ref refid="structnfc__tnep__poller__ndef__api" kindref="compound">nfc_tnep_poller_ndef_api</ref> *</type>
+          <declname>api</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__nfc__tnep__poller_ga3ba4d540264d91cb62c4026a548402dc_1ga3ba4d540264d91cb62c4026a548402dc" kindref="member">nfc_tnep_tag_type</ref></type>
+          <declname>tag_type</declname>
+        </param>
+        <briefdescription>
+<para>Set NDEF API for the NFC TNEP Poller Device. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function provides API for NDEF operation and indicates the NFC Device Tag Type. API can be changed in runtime but it must be set immediately after NFC Poller Device detects Tag Type during the Device Activation Activity.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">api</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the NDEF API structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">tag_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>NFC Device Tag Type.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="196" column="5" declfile="include/nfc/tnep/poller.h" declline="196" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__tnep__poller_1gae0fe643297cc5848a7a921c2ee7e9b86" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_tnep_poller_svc_search</definition>
+        <argsstring>(const struct nfc_ndef_msg_desc *ndef_msg, struct nfc_ndef_tnep_rec_svc_param *param, uint8_t *cnt)</argsstring>
+        <name>nfc_tnep_poller_svc_search</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref> *</type>
+          <declname>ndef_msg</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__tnep__rec__svc__param" kindref="compound">nfc_ndef_tnep_rec_svc_param</ref> *</type>
+          <declname>param</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>cnt</declname>
+        </param>
+        <briefdescription>
+<para>Search if NDEF Message contains TNEP Service Parameters Records. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Function for searching the TNEP Service Parameters Records in the given NDEF Message. NDEF Message has to be stored until all operations on services are finished.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ndef_msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The NDEF Message which can be the Initial TNEP Message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to structure where found service parameters will be stored. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">cnt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Count of service parameters which can be stored as an input. Count of found services parameters as an output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="214" column="5" declfile="include/nfc/tnep/poller.h" declline="214" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__tnep__poller_1gae5effff51ed4e42b1e7a9b528a6e7b9c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_tnep_poller_svc_select</definition>
+        <argsstring>(const struct nfc_tnep_buf *svc_buf, const struct nfc_ndef_tnep_rec_svc_param *svc, uint32_t max_ndef_area_size)</argsstring>
+        <name>nfc_tnep_poller_svc_select</name>
+        <param>
+          <type>const struct <ref refid="structnfc__tnep__buf" kindref="compound">nfc_tnep_buf</ref> *</type>
+          <declname>svc_buf</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__tnep__rec__svc__param" kindref="compound">nfc_ndef_tnep_rec_svc_param</ref> *</type>
+          <declname>svc</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>max_ndef_area_size</declname>
+        </param>
+        <briefdescription>
+<para>Select the TNEP Service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Function for selecting the given service. After service is selected NFC Poller waits a specific amount of time to perform the NDEF Read procedure to get new data from the NFC Tag device. This operation is asynchronous.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">svc_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer for new data from the NFC TNEP Tag Device. Buffer must be stored until the Select procedure is finished. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">svc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to The TNEP Service to select. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">max_ndef_area_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum size of NDEF Message.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="234" column="5" declfile="include/nfc/tnep/poller.h" declline="234" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__tnep__poller_1gab2ac537ba966ca89e1e6ed859f40daa8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_tnep_poller_svc_deselect</definition>
+        <argsstring>(void)</argsstring>
+        <name>nfc_tnep_poller_svc_deselect</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Deselect the TNEP Service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Function for deselecting the TNEP service. Service can be deselected also by selecting the other TNEP service without calling this function.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="246" column="5" declfile="include/nfc/tnep/poller.h" declline="246" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__tnep__poller_1ga07c04004412c03e6fb2c1e31125dc1b5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_tnep_poller_svc_read</definition>
+        <argsstring>(const struct nfc_tnep_buf *svc_buf)</argsstring>
+        <name>nfc_tnep_poller_svc_read</name>
+        <param>
+          <type>const struct <ref refid="structnfc__tnep__buf" kindref="compound">nfc_tnep_buf</ref> *</type>
+          <declname>svc_buf</declname>
+        </param>
+        <briefdescription>
+<para>Read the TNEP Service data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Function for reading the TNEP Service data. The Service must be selected first. This operation is asynchronous.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">svc_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to buffer for data to read. It must be kept until this operation is finished.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="259" column="5" declfile="include/nfc/tnep/poller.h" declline="259" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__tnep__poller_1ga4f2f8ab366a6e0bf3507f703c55a4bdb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_tnep_poller_svc_write</definition>
+        <argsstring>(const struct nfc_ndef_msg_desc *msg, const struct nfc_tnep_buf *resp_buf)</argsstring>
+        <name>nfc_tnep_poller_svc_write</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref> *</type>
+          <declname>msg</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structnfc__tnep__buf" kindref="compound">nfc_tnep_buf</ref> *</type>
+          <declname>resp_buf</declname>
+        </param>
+        <briefdescription>
+<para>Write the TNEP Service data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Function for writing the TNEP Service data. The Service must be selected first. After successful writing, library attempts to read new Service data after the specific amount of time. This operation is asynchronous.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the NDEF Message which will be written. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">resp_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to received data buffer. Buffer must be stored until the update procedure is finished.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="275" column="5" declfile="include/nfc/tnep/poller.h" declline="275" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__tnep__poller_1ga3aa3f3597d989ab56b0150b1f65a27bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_tnep_poller_on_ndef_read</definition>
+        <argsstring>(const uint8_t *data, size_t len)</argsstring>
+        <name>nfc_tnep_poller_on_ndef_read</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Indicate NDEF data read. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function must be called immediately after NFC Reader/Writer Device read new NDEF message from NFC TNEP Tag Device.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>NDEF Read raw data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Read data length.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="289" column="5" declfile="include/nfc/tnep/poller.h" declline="289" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__tnep__poller_1gacb0631a7a1192f6cc05849dd4c21a177" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_tnep_poller_on_ndef_write</definition>
+        <argsstring>(void)</argsstring>
+        <name>nfc_tnep_poller_on_ndef_write</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Indicate NDEF data write operation finish. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function must be called immediately after NFC Reader/Writer Device write NDEF message on NFC TNEP Tag Device.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="299" column="5" declfile="include/nfc/tnep/poller.h" declline="299" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__tnep__poller_1ga7aaef120e495ddffc5579250694a22d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const struct <ref refid="structnfc__ndef__tnep__rec__svc__param" kindref="compound">nfc_ndef_tnep_rec_svc_param</ref> *</type>
+        <definition>const struct nfc_ndef_tnep_rec_svc_param * active_service_get</definition>
+        <argsstring>(void)</argsstring>
+        <name>active_service_get</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Get the selected/active service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>Pointer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to the selected/active service. If no selected/active service then NULL pointer is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="306" column="40" declfile="include/nfc/tnep/poller.h" declline="306" declcolumn="40"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>TNEP Protocol for NFC Poller API. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

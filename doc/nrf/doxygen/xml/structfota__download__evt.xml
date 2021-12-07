@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structfota__download__evt" kind="struct" language="C++" prot="public">
+    <compoundname>fota_download_evt</compoundname>
+    <includes refid="fota__download_8h" local="no">fota_download.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structfota__download__evt_a04e8bdc226212ec351630856ee4f926b_1a04e8bdc226212ec351630856ee4f926b" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__fota__download_ga217989aeef171680eed63a79a9238ba2_1ga217989aeef171680eed63a79a9238ba2" kindref="member">fota_download_evt_id</ref></type>
+        <definition>enum fota_download_evt_id fota_download_evt::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/fota_download.h" line="66" column="26" bodyfile="include/net/fota_download.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structfota__download__evt_a2c524190ee0e8747ff83015be38a64bb_1a2c524190ee0e8747ff83015be38a64bb" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__fota__download_ga9dc903c6231f7c7de49dfa9d6a5c5d47_1ga9dc903c6231f7c7de49dfa9d6a5c5d47" kindref="member">fota_download_error_cause</ref></type>
+        <definition>enum fota_download_error_cause fota_download_evt::cause</definition>
+        <argsstring></argsstring>
+        <name>cause</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Error cause. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/fota_download.h" line="70" column="31" bodyfile="include/net/fota_download.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structfota__download__evt_ac6b7bf171b953f375635645f57802a98_1ac6b7bf171b953f375635645f57802a98" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int fota_download_evt::progress</definition>
+        <argsstring></argsstring>
+        <name>progress</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Download progress %. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/fota_download.h" line="72" column="5" bodyfile="include/net/fota_download.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structfota__download__evt_a1d7393e8707cd9fbfb8db2a612a088c1_1a1d7393e8707cd9fbfb8db2a612a088c1" prot="public" static="no" mutable="no">
+        <type>union fota_download_evt::@160</type>
+        <definition>union fota_download_evt::@160 fota_download_evt::@161</definition>
+        <argsstring></argsstring>
+        <name>@161</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/fota_download.h" line="73" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>FOTA download event data. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/fota_download.h" line="65" column="1" bodyfile="include/net/fota_download.h" bodystart="65" bodyend="74"/>
+    <listofallmembers>
+      <member refid="structfota__download__evt_a2c524190ee0e8747ff83015be38a64bb_1a2c524190ee0e8747ff83015be38a64bb" prot="public" virt="non-virtual"><scope>fota_download_evt</scope><name>cause</name></member>
+      <member refid="structfota__download__evt_a04e8bdc226212ec351630856ee4f926b_1a04e8bdc226212ec351630856ee4f926b" prot="public" virt="non-virtual"><scope>fota_download_evt</scope><name>id</name></member>
+      <member refid="structfota__download__evt_ac6b7bf171b953f375635645f57802a98_1ac6b7bf171b953f375635645f57802a98" prot="public" virt="non-virtual"><scope>fota_download_evt</scope><name>progress</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__bms__cb" kind="struct" language="C++" prot="public">
+    <compoundname>bt_bms_cb</compoundname>
+    <includes refid="bms_8h" local="no">bms.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__bms__cb_a2832fb9e9f88ab9996f8c7bb1cd69312_1a2832fb9e9f88ab9996f8c7bb1cd69312" prot="public" static="no" mutable="no">
+        <type>bool(*</type>
+        <definition>bool(* bt_bms_cb::authorize) (struct bt_conn *conn, struct bt_bms_authorize_params *params)</definition>
+        <argsstring>)(struct bt_conn *conn, struct bt_bms_authorize_params *params)</argsstring>
+        <name>authorize</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Operation authorization callback</para>
+<para>If this callback is set, support for BMS Authorization Code functionality is enabled. This function is called whenever an authorized operation is requested by the client.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connection object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Authorization parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the authorization was successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Otherwise. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bms.h" line="65" column="1" bodyfile="include/bluetooth/services/bms.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>BMS server callback structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/bms.h" line="52" column="1" bodyfile="include/bluetooth/services/bms.h" bodystart="52" bodyend="67"/>
+    <listofallmembers>
+      <member refid="structbt__bms__cb_a2832fb9e9f88ab9996f8c7bb1cd69312_1a2832fb9e9f88ab9996f8c7bb1cd69312" prot="public" virt="non-virtual"><scope>bt_bms_cb</scope><name>authorize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

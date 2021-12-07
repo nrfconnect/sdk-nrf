@@ -1,0 +1,314 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__light__ctl__srv" kind="group">
+    <compoundname>bt_mesh_light_ctl_srv</compoundname>
+    <title>Light CTL Server model</title>
+    <innerclass refid="structbt__mesh__light__ctl__srv" prot="public">bt_mesh_light_ctl_srv</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__light__ctl__srv_1gae5f1d7103df997834def22cfff8df2c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctl_pub</definition>
+        <argsstring>(struct bt_mesh_light_ctl_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_light_ctl_status *status)</argsstring>
+        <name>bt_mesh_light_ctl_pub</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctl__srv" kindref="compound">bt_mesh_light_ctl_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctl__status" kindref="compound">bt_mesh_light_ctl_status</ref> *</type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+<para>Publish the current CTL status. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Asynchronously publishes a CTL status message with the configured publish parameters.</para>
+<para><simplesect kind="note"><para>This API is only used for publishing unprompted status messages. Response messages for get and set messages are handled internally.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server instance to publish on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to send with the default publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current status.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl_srv.h" line="101" column="5" declfile="include/bluetooth/mesh/light_ctl_srv.h" declline="101" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctl__srv_1gae39ee8bccd063430694e8cbef5174fba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctl_range_pub</definition>
+        <argsstring>(struct bt_mesh_light_ctl_srv *srv, struct bt_mesh_msg_ctx *ctx, enum bt_mesh_model_status status)</argsstring>
+        <name>bt_mesh_light_ctl_range_pub</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctl__srv" kindref="compound">bt_mesh_light_ctl_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1ga6fcaf7e02af730b2100af1ef0a01f323" kindref="member">bt_mesh_model_status</ref></type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+<para>Publish the current CTL Range status. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Asynchronously publishes a CTL Range status message with the configured publish parameters.</para>
+<para><simplesect kind="note"><para>This API is only used for publishing unprompted status messages. Response messages for get and set messages are handled internally.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server instance to publish on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to send with the default publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current status.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl_srv.h" line="123" column="5" declfile="include/bluetooth/mesh/light_ctl_srv.h" declline="123" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctl__srv_1gaa88e64c7de48b7336f2880d004d589d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctl_default_pub</definition>
+        <argsstring>(struct bt_mesh_light_ctl_srv *srv, struct bt_mesh_msg_ctx *ctx)</argsstring>
+        <name>bt_mesh_light_ctl_default_pub</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctl__srv" kindref="compound">bt_mesh_light_ctl_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <briefdescription>
+<para>Publish the current CTL Default status. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Asynchronously publishes a CTL Default status message with the configured publish parameters.</para>
+<para><simplesect kind="note"><para>This API is only used for publishing unprompted status messages. Response messages for get and set messages are handled internally.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server instance to publish on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to send with the default publish parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl_srv.h" line="144" column="5" declfile="include/bluetooth/mesh/light_ctl_srv.h" declline="144" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__light__ctl__srv_1gac039e41d3a04ba6a3aa2261733a36369" prot="public" static="no">
+        <name>BT_MESH_LIGHT_CTL_SRV_INIT</name>
+        <param><defname>_lightness_handlers</defname></param>
+        <param><defname>_light_temp_handlers</defname></param>
+        <initializer>	{                                                                      \
+		.lightness_srv =                                               \
+			<ref refid="group__bt__mesh__lightness__srv_gad4d882bb56e763ede5cf4a9ae2744173_1gad4d882bb56e763ede5cf4a9ae2744173" kindref="member">BT_MESH_LIGHTNESS_SRV_INIT</ref>(_lightness_handlers),       \
+		.temp_srv = <ref refid="group__bt__mesh__light__temp__srv_ga277605bd0dd73b416820c1e5b1b14853_1ga277605bd0dd73b416820c1e5b1b14853" kindref="member">BT_MESH_LIGHT_TEMP_SRV_INIT</ref>(_light_temp_handlers), \
+	}</initializer>
+        <briefdescription>
+<para>Initialization parameters for a <ref refid="group__bt__mesh__light__ctl__srv" kindref="compound">Light CTL Server model</ref> instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_lightness_handlers</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Lightness server callbacks. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_light_temp_handlers</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light temperature server callbacks. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl_srv.h" line="35" column="9" bodyfile="include/bluetooth/mesh/light_ctl_srv.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__light__ctl__srv_1gac58704fd86f9c12280c59d8c39f0a78e" prot="public" static="no">
+        <name>BT_MESH_MODEL_LIGHT_CTL_SRV</name>
+        <param><defname>_srv</defname></param>
+        <initializer>	<ref refid="group__bt__mesh__lightness__srv_ga11bf9c8d17f93fa3326f23788846a31d_1ga11bf9c8d17f93fa3326f23788846a31d" kindref="member">BT_MESH_MODEL_LIGHTNESS_SRV</ref>(&amp;(_srv)-&gt;lightness_srv),                   \
+	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_CTL_SRV,                       \
+			 _bt_mesh_light_ctl_srv_op, &amp;(_srv)-&gt;pub,              \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__light__ctl__srv" kindref="compound">bt_mesh_light_ctl_srv</ref>, \
+						 _srv),                        \
+			 &amp;_bt_mesh_light_ctl_srv_cb),                          \
+	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_CTL_SETUP_SRV,                 \
+			 _bt_mesh_light_ctl_setup_srv_op, NULL,                \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__light__ctl__srv" kindref="compound">bt_mesh_light_ctl_srv</ref>, \
+						 _srv),                        \
+			 &amp;_bt_mesh_light_ctl_setup_srv_cb)</initializer>
+        <briefdescription>
+<para>Light CTL Server model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__light__ctl__srv" kindref="compound">Light CTL Server model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl_srv.h" line="48" column="9" bodyfile="include/bluetooth/mesh/light_ctl_srv.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Light CTL Server model. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

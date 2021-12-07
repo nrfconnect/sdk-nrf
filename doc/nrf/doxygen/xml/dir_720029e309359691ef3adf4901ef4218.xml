@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_720029e309359691ef3adf4901ef4218" kind="dir">
+    <compoundname>applications/asset_tracker/src/carrier_certs</compoundname>
+    <innerfile refid="src_2carrier__certs_2carrier__certs_8h">carrier_certs.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker/src/carrier_certs/"/>
+  </compounddef>
+</doxygen>

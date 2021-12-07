@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlwm2m__os__at__param__list" kind="struct" language="C++" prot="public">
+    <compoundname>lwm2m_os_at_param_list</compoundname>
+    <includes refid="lwm2m__os_8h" local="no">lwm2m_os.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlwm2m__os__at__param__list_a3c8f593c32a728ea067efa7268d97162_1a3c8f593c32a728ea067efa7268d97162" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t lwm2m_os_at_param_list::param_count</definition>
+        <argsstring></argsstring>
+        <name>param_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="105" column="8" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlwm2m__os__at__param__list_a91212d9442f60116a749047b1833580f_1a91212d9442f60116a749047b1833580f" prot="public" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* lwm2m_os_at_param_list::params</definition>
+        <argsstring></argsstring>
+        <name>params</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="106" column="6" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>List of AT parameters that compose an AT command or response. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="104" column="1" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="104" bodyend="107"/>
+    <listofallmembers>
+      <member refid="structlwm2m__os__at__param__list_a3c8f593c32a728ea067efa7268d97162_1a3c8f593c32a728ea067efa7268d97162" prot="public" virt="non-virtual"><scope>lwm2m_os_at_param_list</scope><name>param_count</name></member>
+      <member refid="structlwm2m__os__at__param__list_a91212d9442f60116a749047b1833580f_1a91212d9442f60116a749047b1833580f" prot="public" virt="non-virtual"><scope>lwm2m_os_at_param_list</scope><name>params</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,632 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__nfca" kind="group">
+    <compoundname>st25r3911b_nfca</compoundname>
+    <title>ST25R3911B NFC Reader NFC-A Technology</title>
+    <innerclass refid="structst25r3911b__nfca__buf" prot="public">st25r3911b_nfca_buf</innerclass>
+    <innerclass refid="structst25r3911b__nfca__sens__resp" prot="public">st25r3911b_nfca_sens_resp</innerclass>
+    <innerclass refid="structst25r3911b__nfca__tag__info" prot="public">st25r3911b_nfca_tag_info</innerclass>
+    <innerclass refid="structst25r3911b__nfca__crc" prot="public">st25r3911b_nfca_crc</innerclass>
+    <innerclass refid="structst25r3911b__nfca__cb" prot="public">st25r3911b_nfca_cb</innerclass>
+    <innergroup refid="group__st25r3911b__error">NFC-A protocol and transmission error.</innergroup>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__st25r3911b__nfca_1gaf280d5487f8a7a46504caa9e4f6390be" prot="public" static="no" strong="no">
+        <type></type>
+        <name>st25r3911b_nfca_tag_type</name>
+        <enumvalue id="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1ggaf280d5487f8a7a46504caa9e4f6390beac445d0c51848a5b50ec061147deec957" prot="public">
+          <name>ST25R3911B_NFCA_TAG_TYPE_T2T</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1ggaf280d5487f8a7a46504caa9e4f6390bea243b8c28ad15d90395582f30e35a0393" prot="public">
+          <name>ST25R3911B_NFCA_TAG_TYPE_T4T</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1ggaf280d5487f8a7a46504caa9e4f6390bea417d56353cecd34b2fa779466a6dbc03" prot="public">
+          <name>ST25R3911B_NFCA_TAG_TYPE_NFCDEP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1ggaf280d5487f8a7a46504caa9e4f6390beab0db281106d9c97b8d580c2017f76871" prot="public">
+          <name>ST25R3911B_NFCA_TAG_TYPE_T4T_NFCDEP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1ggaf280d5487f8a7a46504caa9e4f6390beaaf2c447ac23e6929bd69515ef2a44bd2" prot="public">
+          <name>ST25R3911B_NFCA_TAG_TYPE_T1T</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>NFC-A Tag types. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="52" column="1" bodyfile="include/st25r3911b_nfca.h" bodystart="52" bodyend="58"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__st25r3911b__nfca_1ga9bdb31bdc0dded0829dae8847090494b" prot="public" static="no" strong="no">
+        <type></type>
+        <name>st25r3911b_nfca_detect_cmd</name>
+        <enumvalue id="group__st25r3911b__nfca_ga9bdb31bdc0dded0829dae8847090494b_1gga9bdb31bdc0dded0829dae8847090494bac0e932c93e5b8e561924041c8002a13c" prot="public">
+          <name>ST25R3911B_NFCA_DETECT_CMD_ALL_REQ</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__st25r3911b__nfca_ga9bdb31bdc0dded0829dae8847090494b_1gga9bdb31bdc0dded0829dae8847090494bad20460569e6c117d5e861c550557c4b1" prot="public">
+          <name>ST25R3911B_NFCA_DETECT_CMD_SENS_REQ</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>NFC-A Tag detect command. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="62" column="1" bodyfile="include/st25r3911b_nfca.h" bodystart="62" bodyend="65"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__st25r3911b__nfca_1ga3f74998e11b1e777eff80e7d2d8609ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_nfca_init</definition>
+        <argsstring>(struct k_poll_event *events, uint8_t cnt, const struct st25r3911b_nfca_cb *cb)</argsstring>
+        <name>st25r3911b_nfca_init</name>
+        <param>
+          <type>struct k_poll_event *</type>
+          <declname>events</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>cnt</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structst25r3911b__nfca__cb" kindref="compound">st25r3911b_nfca_cb</ref> *</type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Initialize NFC Reader NFC-A technology. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function initializes everything that is required, like interrupts and common reader functionality.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">events</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>NFC-A Events. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cnt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event count. This driver needs 2 events. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="178" column="5" declfile="include/st25r3911b_nfca.h" declline="178" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfca_1ga9545d3bf0e53532a02596822e239f547" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_nfca_field_on</definition>
+        <argsstring>(void)</argsstring>
+        <name>st25r3911b_nfca_field_on</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Switch on the NFC Reader field. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If the field is switched on successfully, the <emphasis>nfca_cb.field_on()</emphasis> callback is called.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="189" column="5" declfile="include/st25r3911b_nfca.h" declline="189" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfca_1gaf50ceacaf08dd8ff0ee358c0e8fa2053" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_nfca_field_off</definition>
+        <argsstring>(void)</argsstring>
+        <name>st25r3911b_nfca_field_off</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Switch off the NFC Reader field. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If the field is switched off successfully, the <emphasis>nfca_cb.field_off()</emphasis> callback is called.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="199" column="5" declfile="include/st25r3911b_nfca.h" declline="199" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfca_1ga41d4a0a6a28122d0de094aa820ce31a8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_nfca_tag_detect</definition>
+        <argsstring>(enum st25r3911b_nfca_detect_cmd cmd)</argsstring>
+        <name>st25r3911b_nfca_tag_detect</name>
+        <param>
+          <type>enum <ref refid="group__st25r3911b__nfca_ga9bdb31bdc0dded0829dae8847090494b_1ga9bdb31bdc0dded0829dae8847090494b" kindref="member">st25r3911b_nfca_detect_cmd</ref></type>
+          <declname>cmd</declname>
+        </param>
+        <briefdescription>
+<para>Detect tag by sending a detection command. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The command is sent according to NFC Forum Digital 2.0 6.6. After success, the <emphasis>nfca_cb.tag_detected()</emphasis> callback is called.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cmd</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Command.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="212" column="5" declfile="include/st25r3911b_nfca.h" declline="212" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfca_1ga85fe067b0e729c1f3283171d4ce37253" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_nfca_anticollision_start</definition>
+        <argsstring>(void)</argsstring>
+        <name>st25r3911b_nfca_anticollision_start</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>NFC-A collision resolution procedure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The collision resolution procedure is described in NFC Forum Activity 2.0 9.4.4. After this procedure, <emphasis>nfca_cb.anticollision_completed()</emphasis> is called.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="223" column="5" declfile="include/st25r3911b_nfca.h" declline="223" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfca_1gae422cea60db829312b62b29ba5a61994" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_nfca_transfer</definition>
+        <argsstring>(const struct st25r3911b_nfca_buf *tx, const struct st25r3911b_nfca_buf *rx, uint32_t fdt, bool auto_crc)</argsstring>
+        <name>st25r3911b_nfca_transfer</name>
+        <param>
+          <type>const struct <ref refid="structst25r3911b__nfca__buf" kindref="compound">st25r3911b_nfca_buf</ref> *</type>
+          <declname>tx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structst25r3911b__nfca__buf" kindref="compound">st25r3911b_nfca_buf</ref> *</type>
+          <declname>rx</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>fdt</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>auto_crc</declname>
+        </param>
+        <briefdescription>
+<para>Exchange the specified amount of data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is a generic function for NFC-A data exchange.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">tx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>TX data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">rx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>RX data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">fdt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum frame delay time (according to NFC Forum Digital 2.0 6.10.1). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">auto_crc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If set, the CRC is generated automatically by the NFC Reader. Otherwise, the CRC must be added manually to the TX buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="239" column="5" declfile="include/st25r3911b_nfca.h" declline="239" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfca_1ga253ea18506de0423270e389b243792e7" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int st25r3911b_nfca_transfer_with_crc</definition>
+        <argsstring>(const struct st25r3911b_nfca_buf *tx, const struct st25r3911b_nfca_buf *rx, uint32_t fdt)</argsstring>
+        <name>st25r3911b_nfca_transfer_with_crc</name>
+        <param>
+          <type>const struct <ref refid="structst25r3911b__nfca__buf" kindref="compound">st25r3911b_nfca_buf</ref> *</type>
+          <declname>tx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structst25r3911b__nfca__buf" kindref="compound">st25r3911b_nfca_buf</ref> *</type>
+          <declname>rx</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>fdt</declname>
+        </param>
+        <briefdescription>
+<para>Exchange the specified amount of data with an automatically generated CRC. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">tx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>TX data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">rx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>RX data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">fdt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum frame delay time (according to NFC Forum Digital 2.0 6.10.1).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="254" column="19" bodyfile="include/st25r3911b_nfca.h" bodystart="254" bodyend="259"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfca_1gaf590cc132f1bf60ed6bfcd4e398f55b7" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int st25r3911b_nfca_transfer_without_crc</definition>
+        <argsstring>(const struct st25r3911b_nfca_buf *tx, const struct st25r3911b_nfca_buf *rx, uint32_t fdt)</argsstring>
+        <name>st25r3911b_nfca_transfer_without_crc</name>
+        <param>
+          <type>const struct <ref refid="structst25r3911b__nfca__buf" kindref="compound">st25r3911b_nfca_buf</ref> *</type>
+          <declname>tx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structst25r3911b__nfca__buf" kindref="compound">st25r3911b_nfca_buf</ref> *</type>
+          <declname>rx</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>fdt</declname>
+        </param>
+        <briefdescription>
+<para>Exchange the specified amount of data with a manually generated CRC. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The CRC must be added manually to the TX buffer.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">tx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>TX data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">rx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>RX data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">fdt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum frame delay time (according to NFC Forum Digital 2.0 6.10.1).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="274" column="19" bodyfile="include/st25r3911b_nfca.h" bodystart="274" bodyend="279"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfca_1ga10376019cd87a2e80bdc6ded845ba062" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_nfca_tag_sleep</definition>
+        <argsstring>(void)</argsstring>
+        <name>st25r3911b_nfca_tag_sleep</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Send NFC-A tag sleep command. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function sends the tag sleep command (according to NFC Forum Digital 2.0 6.9).</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="289" column="5" declfile="include/st25r3911b_nfca.h" declline="289" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfca_1ga1528b301a41ba86d4c24d9924513d569" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_nfca_crc_calculate</definition>
+        <argsstring>(const uint8_t *data, size_t len, struct st25r3911b_nfca_crc *crc_val)</argsstring>
+        <name>st25r3911b_nfca_crc_calculate</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structst25r3911b__nfca__crc" kindref="compound">st25r3911b_nfca_crc</ref> *</type>
+          <declname>crc_val</declname>
+        </param>
+        <briefdescription>
+<para>Calculate CRC 16 for NFC-A payload. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function generates an NFC-A CRC (according to NFC Forum Digital 2.0 6.4.1.3).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Payload data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data length. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">crc_val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>NFC-A CRC value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="303" column="5" declfile="include/st25r3911b_nfca.h" declline="303" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfca_1ga0f66a560da32fa383295e08be5271082" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_nfca_process</definition>
+        <argsstring>(void)</argsstring>
+        <name>st25r3911b_nfca_process</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Process NFC-A library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function must be called periodically from thread to process the NFC reader state and interrupts.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="314" column="5" declfile="include/st25r3911b_nfca.h" declline="314" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__nfca_1ga7ae9ab82a3b3b0e4698c571894f6d03c" prot="public" static="no">
+        <name>ST25R3911B_NFCA_EVENT_CNT</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>NFC-A Events count. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="26" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__nfca_1ga114e20452cbf14f78dc0269021d38213" prot="public" static="no">
+        <name>ST25R3911B_NFCA_CRC_LEN</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>NFC-A CRC length. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="29" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__nfca_1ga88c6a7b81368685325eeb6a06ca23cbb" prot="public" static="no">
+        <name>ST25R3911B_NFCA_NFCID1_MAX_LEN</name>
+        <initializer>10</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>NFC-A NFCID1 maximum length. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="32" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the ST25R3911B NFC Reader NFC-A Technology. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

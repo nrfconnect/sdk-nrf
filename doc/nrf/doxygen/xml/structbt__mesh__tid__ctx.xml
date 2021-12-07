@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__tid__ctx" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_tid_ctx</compoundname>
+    <includes refid="model__types_8h" local="no">model_types.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__tid__ctx_ad217f7ef826645c7d935b65cd840dd20_1ad217f7ef826645c7d935b65cd840dd20" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_tid_ctx::src</definition>
+        <argsstring></argsstring>
+        <name>src</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Source address. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/model_types.h" line="46" column="10" bodyfile="include/bluetooth/mesh/model_types.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__tid__ctx_a61767216a8940cbd4e0da9063f835185_1a61767216a8940cbd4e0da9063f835185" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_tid_ctx::dst</definition>
+        <argsstring></argsstring>
+        <name>dst</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Destination address. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/model_types.h" line="47" column="10" bodyfile="include/bluetooth/mesh/model_types.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__tid__ctx_a3a05464742972a13182e4f17e0ab93ec_1a3a05464742972a13182e4f17e0ab93ec" prot="public" static="no" mutable="no">
+        <type>uint64_t</type>
+        <definition>uint64_t bt_mesh_tid_ctx::timestamp</definition>
+        <argsstring></argsstring>
+        <name>timestamp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>System uptime of the transaction. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/model_types.h" line="48" column="10" bodyfile="include/bluetooth/mesh/model_types.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__tid__ctx_ad0414fccbccdee445b3554d9f3a8fb5f_1ad0414fccbccdee445b3554d9f3a8fb5f" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_tid_ctx::tid</definition>
+        <argsstring></argsstring>
+        <name>tid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transaction ID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/model_types.h" line="49" column="9" bodyfile="include/bluetooth/mesh/model_types.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Transaction ID context, storing information about the previous transaction in model spec messages. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/model_types.h" line="45" column="1" bodyfile="include/bluetooth/mesh/model_types.h" bodystart="45" bodyend="50"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__tid__ctx_a61767216a8940cbd4e0da9063f835185_1a61767216a8940cbd4e0da9063f835185" prot="public" virt="non-virtual"><scope>bt_mesh_tid_ctx</scope><name>dst</name></member>
+      <member refid="structbt__mesh__tid__ctx_ad217f7ef826645c7d935b65cd840dd20_1ad217f7ef826645c7d935b65cd840dd20" prot="public" virt="non-virtual"><scope>bt_mesh_tid_ctx</scope><name>src</name></member>
+      <member refid="structbt__mesh__tid__ctx_ad0414fccbccdee445b3554d9f3a8fb5f_1ad0414fccbccdee445b3554d9f3a8fb5f" prot="public" virt="non-virtual"><scope>bt_mesh_tid_ctx</scope><name>tid</name></member>
+      <member refid="structbt__mesh__tid__ctx_a3a05464742972a13182e4f17e0ab93ec_1a3a05464742972a13182e4f17e0ab93ec" prot="public" virt="non-virtual"><scope>bt_mesh_tid_ctx</scope><name>timestamp</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

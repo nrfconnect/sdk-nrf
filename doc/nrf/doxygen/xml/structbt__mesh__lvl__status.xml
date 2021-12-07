@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__lvl__status" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_lvl_status</compoundname>
+    <includes refid="gen__lvl_8h" local="no">gen_lvl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__lvl__status_a517593dfae3d78daa64890601522bf6e_1a517593dfae3d78daa64890601522bf6e" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t bt_mesh_lvl_status::current</definition>
+        <argsstring></argsstring>
+        <name>current</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current level value. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl.h" line="85" column="9" bodyfile="include/bluetooth/mesh/gen_lvl.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lvl__status_adfdf47bd7a778e0d2d1a45f8a01b7d06_1adfdf47bd7a778e0d2d1a45f8a01b7d06" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t bt_mesh_lvl_status::target</definition>
+        <argsstring></argsstring>
+        <name>target</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Target value for the ongoing transition. If there&apos;s no ongoing transition, <computeroutput>target</computeroutput> should match <computeroutput>value</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl.h" line="90" column="9" bodyfile="include/bluetooth/mesh/gen_lvl.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lvl__status_aca715a696f81b8d84d03e2b045e6ff6d_1aca715a696f81b8d84d03e2b045e6ff6d" prot="public" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t bt_mesh_lvl_status::remaining_time</definition>
+        <argsstring></argsstring>
+        <name>remaining_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Time remaining of the ongoing transition (in milliseconds), or <emphasis>SYS_FOREVER_MS</emphasis>. If there&apos;s no ongoing transition, <computeroutput>remaining_time</computeroutput> is 0. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl.h" line="96" column="9" bodyfile="include/bluetooth/mesh/gen_lvl.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Generic Level status message parameters. <linebreak/>
+ </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/gen_lvl.h" line="83" column="1" bodyfile="include/bluetooth/mesh/gen_lvl.h" bodystart="83" bodyend="97"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__lvl__status_a517593dfae3d78daa64890601522bf6e_1a517593dfae3d78daa64890601522bf6e" prot="public" virt="non-virtual"><scope>bt_mesh_lvl_status</scope><name>current</name></member>
+      <member refid="structbt__mesh__lvl__status_aca715a696f81b8d84d03e2b045e6ff6d_1aca715a696f81b8d84d03e2b045e6ff6d" prot="public" virt="non-virtual"><scope>bt_mesh_lvl_status</scope><name>remaining_time</name></member>
+      <member refid="structbt__mesh__lvl__status_adfdf47bd7a778e0d2d1a45f8a01b7d06_1adfdf47bd7a778e0d2d1a45f8a01b7d06" prot="public" virt="non-virtual"><scope>bt_mesh_lvl_status</scope><name>target</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

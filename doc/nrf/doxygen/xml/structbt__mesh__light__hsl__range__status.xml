@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__hsl__range__status" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_hsl_range_status</compoundname>
+    <includes refid="light__hsl_8h" local="no">light_hsl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__hsl__range__status_aa2c861c76b27c1b633afb4ba935a5201_1aa2c861c76b27c1b633afb4ba935a5201" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__mesh__model__types_ga6fcaf7e02af730b2100af1ef0a01f323_1ga6fcaf7e02af730b2100af1ef0a01f323" kindref="member">bt_mesh_model_status</ref></type>
+        <definition>enum bt_mesh_model_status bt_mesh_light_hsl_range_status::status_code</definition>
+        <argsstring></argsstring>
+        <name>status_code</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Range set status code </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl.h" line="173" column="26" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="173" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__hsl__range__status_aecd243c93e88d7df6f13fcb64fddc7b5_1aecd243c93e88d7df6f13fcb64fddc7b5" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__light__hue__sat__range" kindref="compound">bt_mesh_light_hue_sat_range</ref></type>
+        <definition>struct bt_mesh_light_hue_sat_range bt_mesh_light_hsl_range_status::range</definition>
+        <argsstring></argsstring>
+        <name>range</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Hue and saturation range </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl.h" line="175" column="34" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="175" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Light HSL range status message parameters. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_mesh_light_hsl_range_status</label>
+        <link refid="structbt__mesh__light__hsl__range__status"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>range</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bt_mesh_light_hue_sat</label>
+        <link refid="structbt__mesh__light__hue__sat"/>
+      </node>
+      <node id="2">
+        <label>bt_mesh_light_hue_sat_range</label>
+        <link refid="structbt__mesh__light__hue__sat__range"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>max</edgelabel>
+          <edgelabel>min</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/light_hsl.h" line="171" column="1" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="171" bodyend="176"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__hsl__range__status_aecd243c93e88d7df6f13fcb64fddc7b5_1aecd243c93e88d7df6f13fcb64fddc7b5" prot="public" virt="non-virtual"><scope>bt_mesh_light_hsl_range_status</scope><name>range</name></member>
+      <member refid="structbt__mesh__light__hsl__range__status_aa2c861c76b27c1b633afb4ba935a5201_1aa2c861c76b27c1b633afb4ba935a5201" prot="public" virt="non-virtual"><scope>bt_mesh_light_hsl_range_status</scope><name>status_code</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_8c2b6f9e3e9dbcc530ec5ba322956930" kind="dir">
+    <compoundname>applications/machine_learning/configuration/thingy53_nrf5340_cpuapp_ns</compoundname>
+    <innerfile refid="machine__learning_2configuration_2thingy53__nrf5340__cpuapp__ns_2buttons__def_8h">buttons_def.h</innerfile>
+    <innerfile refid="machine__learning_2configuration_2thingy53__nrf5340__cpuapp__ns_2click__detector__def_8h">click_detector_def.h</innerfile>
+    <innerfile refid="machine__learning_2configuration_2thingy53__nrf5340__cpuapp__ns_2led__state__def_8h">led_state_def.h</innerfile>
+    <innerfile refid="thingy53__nrf5340__cpuapp__ns_2sensor__manager__def_8h">sensor_manager_def.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/machine_learning/configuration/thingy53_nrf5340_cpuapp_ns/"/>
+  </compounddef>
+</doxygen>

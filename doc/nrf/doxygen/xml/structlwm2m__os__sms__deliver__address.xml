@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlwm2m__os__sms__deliver__address" kind="struct" language="C++" prot="public">
+    <compoundname>lwm2m_os_sms_deliver_address</compoundname>
+    <includes refid="lwm2m__os_8h" local="no">lwm2m_os.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlwm2m__os__sms__deliver__address_a279861aa1f8e9ef8bcbcc6ca38246b9d_1a279861aa1f8e9ef8bcbcc6ca38246b9d" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* lwm2m_os_sms_deliver_address::address_str</definition>
+        <argsstring></argsstring>
+        <name>address_str</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="67" column="8" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlwm2m__os__sms__deliver__address_a6bef89d88fe5b9b49c5c3fef6dd41875_1a6bef89d88fe5b9b49c5c3fef6dd41875" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t lwm2m_os_sms_deliver_address::length</definition>
+        <argsstring></argsstring>
+        <name>length</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="68" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="66" column="1" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="66" bodyend="69"/>
+    <listofallmembers>
+      <member refid="structlwm2m__os__sms__deliver__address_a279861aa1f8e9ef8bcbcc6ca38246b9d_1a279861aa1f8e9ef8bcbcc6ca38246b9d" prot="public" virt="non-virtual"><scope>lwm2m_os_sms_deliver_address</scope><name>address_str</name></member>
+      <member refid="structlwm2m__os__sms__deliver__address_a6bef89d88fe5b9b49c5c3fef6dd41875_1a6bef89d88fe5b9b49c5c3fef6dd41875" prot="public" virt="non-virtual"><scope>lwm2m_os_sms_deliver_address</scope><name>length</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

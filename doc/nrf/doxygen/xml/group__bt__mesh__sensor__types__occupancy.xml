@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__sensor__types__occupancy" kind="group">
+    <compoundname>bt_mesh_sensor_types_occupancy</compoundname>
+    <title>Occupancy sensor types</title>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__occupancy_1ga3861ecc62cb62cf27a69388981de6b15" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_motion_sensed</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_motion_sensed</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Motion sensed</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Motion sensed<itemizedlist>
+<listitem><para>Unit: Percent</para>
+</listitem><listitem><para>Encoding: 8 bit unsigned scalar (Resolution: 0.5 %)</para>
+</listitem><listitem><para>Range: 0 to 100.0 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="59" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="59" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__occupancy_1ga9ee53c69c31336eee6cb0424e4e8a41e" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_motion_threshold</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_motion_threshold</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Motion threshold</para>
+<para>This sensor type should be used as a sensor setting.</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Motion threshold<itemizedlist>
+<listitem><para>Unit: Percent</para>
+</listitem><listitem><para>Encoding: 8 bit unsigned scalar (Resolution: 0.5 %)</para>
+</listitem><listitem><para>Range: 0 to 100.0 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="71" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="71" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__occupancy_1gaa47dd58e6194fad8b2454f94b0ada609" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_people_count</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_people_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>People count</para>
+<para>Channels:<itemizedlist>
+<listitem><para>People count<itemizedlist>
+<listitem><para>Unit: <emphasis>unitless</emphasis></para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1)</para>
+</listitem><listitem><para>Range: 0 to 65533 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="81" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="81" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__occupancy_1ga5244fbc33d29ad82ad0da82a28506aa7" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_presence_detected</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_presence_detected</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Presence detected</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Presence detected<itemizedlist>
+<listitem><para>Unit: <emphasis>unitless</emphasis></para>
+</listitem><listitem><para>Encoding: boolean </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="90" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="90" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__occupancy_1ga6be82842961237743ea1b549c0c0b594" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_time_since_motion_sensed</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_time_since_motion_sensed</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Time since motion sensed</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Time since motion detected<itemizedlist>
+<listitem><para>Unit: Seconds</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1 second)</para>
+</listitem><listitem><para>Range: 0 to 65533 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="100" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="100" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__occupancy_1ga4014a59b23b3780c09228fbc49026107" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_time_since_presence_detected</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_time_since_presence_detected</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Time since presence detected</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Time since presence detected<itemizedlist>
+<listitem><para>Unit: Seconds</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1 second)</para>
+</listitem><listitem><para>Range: 0 to 65533 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="111" column="1" declfile="include/bluetooth/mesh/sensor_types.h" declline="111" declcolumn="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

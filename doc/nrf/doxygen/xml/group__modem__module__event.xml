@@ -1,0 +1,186 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__modem__module__event" kind="group">
+    <compoundname>modem_module_event</compoundname>
+    <title>Modem module event</title>
+    <innerclass refid="structmodem__module__cell" prot="public">modem_module_cell</innerclass>
+    <innerclass refid="structmodem__module__psm" prot="public">modem_module_psm</innerclass>
+    <innerclass refid="structmodem__module__edrx" prot="public">modem_module_edrx</innerclass>
+    <innerclass refid="structmodem__module__static__modem__data" prot="public">modem_module_static_modem_data</innerclass>
+    <innerclass refid="structmodem__module__dynamic__modem__data" prot="public">modem_module_dynamic_modem_data</innerclass>
+    <innerclass refid="structmodem__module__battery__data" prot="public">modem_module_battery_data</innerclass>
+    <innerclass refid="structmodem__module__neighbor__cells" prot="public">modem_module_neighbor_cells</innerclass>
+    <innerclass refid="structmodem__module__event" prot="public">modem_module_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__modem__module__event_1ga740174394280b905e512d3eca418e623" prot="public" static="no" strong="no">
+        <type></type>
+        <name>modem_module_event_type</name>
+        <enumvalue id="group__modem__module__event_ga740174394280b905e512d3eca418e623_1gga740174394280b905e512d3eca418e623acab1821c7a5ee1a379382d8238d6ea36" prot="public">
+          <name>MODEM_EVT_INITIALIZED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Event signalling that the modem library and AT command library have been initialized and are ready for use by other modules. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__module__event_ga740174394280b905e512d3eca418e623_1gga740174394280b905e512d3eca418e623a78ea245e70439a6253f3f1b577bcdfcf" prot="public">
+          <name>MODEM_EVT_LTE_CONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__module__event_ga740174394280b905e512d3eca418e623_1gga740174394280b905e512d3eca418e623a869b1e444e42c2bb5984d210983d2c23" prot="public">
+          <name>MODEM_EVT_LTE_DISCONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__module__event_ga740174394280b905e512d3eca418e623_1gga740174394280b905e512d3eca418e623a533cccbb5a3e60e7502b5e247cc38701" prot="public">
+          <name>MODEM_EVT_LTE_CONNECTING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__module__event_ga740174394280b905e512d3eca418e623_1gga740174394280b905e512d3eca418e623a13dfe7aa927ac4e1336bbfd80fce70c2" prot="public">
+          <name>MODEM_EVT_LTE_CELL_UPDATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__module__event_ga740174394280b905e512d3eca418e623_1gga740174394280b905e512d3eca418e623a2bd748530180c05fdc9630d94e91b5c7" prot="public">
+          <name>MODEM_EVT_LTE_PSM_UPDATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__module__event_ga740174394280b905e512d3eca418e623_1gga740174394280b905e512d3eca418e623a708a4d9b6fb32430afb06a0d2525d147" prot="public">
+          <name>MODEM_EVT_LTE_EDRX_UPDATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__module__event_ga740174394280b905e512d3eca418e623_1gga740174394280b905e512d3eca418e623a53ce92026069df4d8bfe0211fe3fa2bc" prot="public">
+          <name>MODEM_EVT_MODEM_STATIC_DATA_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__module__event_ga740174394280b905e512d3eca418e623_1gga740174394280b905e512d3eca418e623acb56624c7cbe978371a0a7184181bb72" prot="public">
+          <name>MODEM_EVT_MODEM_DYNAMIC_DATA_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__module__event_ga740174394280b905e512d3eca418e623_1gga740174394280b905e512d3eca418e623a357d3c21325de94b6b8e81fb66877492" prot="public">
+          <name>MODEM_EVT_MODEM_STATIC_DATA_NOT_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__module__event_ga740174394280b905e512d3eca418e623_1gga740174394280b905e512d3eca418e623a4636cacdad9356e733bfc045061f4b56" prot="public">
+          <name>MODEM_EVT_MODEM_DYNAMIC_DATA_NOT_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__module__event_ga740174394280b905e512d3eca418e623_1gga740174394280b905e512d3eca418e623a047dda1223d45c61aa178cac8a49f05f" prot="public">
+          <name>MODEM_EVT_NEIGHBOR_CELLS_DATA_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__module__event_ga740174394280b905e512d3eca418e623_1gga740174394280b905e512d3eca418e623a635ae31c33884e659237f41dc526c80d" prot="public">
+          <name>MODEM_EVT_NEIGHBOR_CELLS_DATA_NOT_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__module__event_ga740174394280b905e512d3eca418e623_1gga740174394280b905e512d3eca418e623ad4ddbfd7939a0810e21d3bd57a1a1ac8" prot="public">
+          <name>MODEM_EVT_BATTERY_DATA_NOT_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__module__event_ga740174394280b905e512d3eca418e623_1gga740174394280b905e512d3eca418e623ac40584d2af10be4f9c4cf6d7b8a3f267" prot="public">
+          <name>MODEM_EVT_BATTERY_DATA_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__module__event_ga740174394280b905e512d3eca418e623_1gga740174394280b905e512d3eca418e623a5dea9b3f7853b7bdc69b0276dcb63629" prot="public">
+          <name>MODEM_EVT_SHUTDOWN_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__module__event_ga740174394280b905e512d3eca418e623_1gga740174394280b905e512d3eca418e623a6a1f4bef740237947911576fe8ef3c88" prot="public">
+          <name>MODEM_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__module__event_ga740174394280b905e512d3eca418e623_1gga740174394280b905e512d3eca418e623aab043ba21760d7abea4df5db01f7190b" prot="public">
+          <name>MODEM_EVT_CARRIER_INITIALIZED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The carrier library has initialized the modem library and it is now ready to be used. When the carrier library is enabled, this event must be received before the modem module can proceed to initialize other dependencies and subsequently send MODEM_EVT_INITIALIZED. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__module__event_ga740174394280b905e512d3eca418e623_1gga740174394280b905e512d3eca418e623a27c47e1b54c4f0320b9bee254e0b5e48" prot="public">
+          <name>MODEM_EVT_CARRIER_FOTA_PENDING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Due to modem limitations for active TLS connections, the carrier library requires all other TLS connections in the system to be terminated while FOTA update is ongoing. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__module__event_ga740174394280b905e512d3eca418e623_1gga740174394280b905e512d3eca418e623af3cba2683ea98edf56eafc7e00082a03" prot="public">
+          <name>MODEM_EVT_CARRIER_FOTA_STOPPED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA update has been stopped and the application can set up TLS connections again. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__module__event_ga740174394280b905e512d3eca418e623_1gga740174394280b905e512d3eca418e623a0a8aa2274aeee300a1c25a766781208b" prot="public">
+          <name>MODEM_EVT_CARRIER_REBOOT_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The carrier library requests that the device reboots to apply downloaded firmware image(s) or for other reasons. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Modem event types submitted by Modem module. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="26" column="1" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="26" bodyend="66"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Modem module event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structutil__module__event" kind="struct" language="C++" prot="public">
+    <compoundname>util_module_event</compoundname>
+    <includes refid="util__module__event_8h" local="no">util_module_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structutil__module__event_a03389ca381118dfd19519116f3afda23_1a03389ca381118dfd19519116f3afda23" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header util_module_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/util_module_event.h" line="34" column="19" bodyfile="applications/asset_tracker_v2/src/events/util_module_event.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structutil__module__event_aa7bf225a35f5d86eb7e9c22b36948eb9_1aa7bf225a35f5d86eb7e9c22b36948eb9" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__util__module__event_ga5256775ef72e91c285cceb370436b3e6_1ga5256775ef72e91c285cceb370436b3e6" kindref="member">util_module_event_type</ref></type>
+        <definition>enum util_module_event_type util_module_event::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/util_module_event.h" line="35" column="28" bodyfile="applications/asset_tracker_v2/src/events/util_module_event.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structutil__module__event_ae2a76a906d6e5d46a8f12b6b5e196961_1ae2a76a906d6e5d46a8f12b6b5e196961" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__util__module__event_ga955deab111539ac798be4bdbf61bc297_1ga955deab111539ac798be4bdbf61bc297" kindref="member">shutdown_reason</ref></type>
+        <definition>enum shutdown_reason util_module_event::reason</definition>
+        <argsstring></argsstring>
+        <name>reason</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/util_module_event.h" line="36" column="21" bodyfile="applications/asset_tracker_v2/src/events/util_module_event.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Util event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>util_module_event</label>
+        <link refid="structutil__module__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/asset_tracker_v2/src/events/util_module_event.h" line="33" column="1" bodyfile="applications/asset_tracker_v2/src/events/util_module_event.h" bodystart="33" bodyend="37"/>
+    <listofallmembers>
+      <member refid="structutil__module__event_a03389ca381118dfd19519116f3afda23_1a03389ca381118dfd19519116f3afda23" prot="public" virt="non-virtual"><scope>util_module_event</scope><name>header</name></member>
+      <member refid="structutil__module__event_ae2a76a906d6e5d46a8f12b6b5e196961_1ae2a76a906d6e5d46a8f12b6b5e196961" prot="public" virt="non-virtual"><scope>util_module_event</scope><name>reason</name></member>
+      <member refid="structutil__module__event_aa7bf225a35f5d86eb7e9c22b36948eb9_1aa7bf225a35f5d86eb7e9c22b36948eb9" prot="public" virt="non-virtual"><scope>util_module_event</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

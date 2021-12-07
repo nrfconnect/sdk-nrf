@@ -1,0 +1,192 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="multithreading__lock_8h" kind="file" language="C++">
+    <compoundname>multithreading_lock.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>lib/multithreading_lock/multithreading_lock.h</label>
+        <link refid="multithreading__lock_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="multithreading__lock_8h_af16829f6b5a9dfd5ce02bf8536f25aff_1af16829f6b5a9dfd5ce02bf8536f25aff" prot="public" static="no">
+        <name>MULTITHREADING_LOCK_ACQUIRE</name>
+        <param></param>
+        <initializer>	<ref refid="multithreading__lock_8h_a964e4cc791ebd2590a7502e0f5713750_1a964e4cc791ebd2590a7502e0f5713750" kindref="member">multithreading_lock_acquire</ref>(K_FOREVER)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Macro for acquiring a lock </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/multithreading_lock/multithreading_lock.h" line="23" column="9" bodyfile="lib/multithreading_lock/multithreading_lock.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="multithreading__lock_8h_a2e4a31ac053c0270396d5f30dddb4123_1a2e4a31ac053c0270396d5f30dddb4123" prot="public" static="no">
+        <name>MULTITHREADING_LOCK_ACQUIRE_NO_WAIT</name>
+        <param></param>
+        <initializer>	<ref refid="multithreading__lock_8h_a964e4cc791ebd2590a7502e0f5713750_1a964e4cc791ebd2590a7502e0f5713750" kindref="member">multithreading_lock_acquire</ref>(K_NO_WAIT)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Macro for acquiring a lock without waiting. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/multithreading_lock/multithreading_lock.h" line="27" column="9" bodyfile="lib/multithreading_lock/multithreading_lock.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="multithreading__lock_8h_a638ebb9a670b499c02da064501d5884e_1a638ebb9a670b499c02da064501d5884e" prot="public" static="no">
+        <name>MULTITHREADING_LOCK_ACQUIRE_FOREVER_WAIT</name>
+        <param></param>
+        <initializer>	<ref refid="multithreading__lock_8h_a964e4cc791ebd2590a7502e0f5713750_1a964e4cc791ebd2590a7502e0f5713750" kindref="member">multithreading_lock_acquire</ref>(K_FOREVER)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Macro for acquiring a lock while waiting forever. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/multithreading_lock/multithreading_lock.h" line="31" column="9" bodyfile="lib/multithreading_lock/multithreading_lock.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="multithreading__lock_8h_a59a0a107bb7501b641eb57b99730c046_1a59a0a107bb7501b641eb57b99730c046" prot="public" static="no">
+        <name>MULTITHREADING_LOCK_RELEASE</name>
+        <param></param>
+        <initializer><ref refid="multithreading__lock_8h_aa54aaed2c216fc762e266b89d83763b1_1aa54aaed2c216fc762e266b89d83763b1" kindref="member">multithreading_lock_release</ref>()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Macro for releasing a lock </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/multithreading_lock/multithreading_lock.h" line="35" column="9" bodyfile="lib/multithreading_lock/multithreading_lock.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="multithreading__lock_8h_a964e4cc791ebd2590a7502e0f5713750_1a964e4cc791ebd2590a7502e0f5713750" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int multithreading_lock_acquire</definition>
+        <argsstring>(k_timeout_t timeout)</argsstring>
+        <name>multithreading_lock_acquire</name>
+        <param>
+          <type>k_timeout_t</type>
+          <declname>timeout</declname>
+        </param>
+        <briefdescription>
+<para>Try to take the lock with the specified blocking behavior. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This API call will be blocked for the time specified by <computeroutput>timeout</computeroutput> and then return error code.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">timeout</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Timeout value for the locking API.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Success </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EBUSY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Returned without waiting. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Waiting period timed out. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/multithreading_lock/multithreading_lock.h" line="49" column="5" declfile="lib/multithreading_lock/multithreading_lock.h" declline="49" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="multithreading__lock_8h_aa54aaed2c216fc762e266b89d83763b1_1aa54aaed2c216fc762e266b89d83763b1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void multithreading_lock_release</definition>
+        <argsstring>(void)</argsstring>
+        <name>multithreading_lock_release</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Unlock the lock. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This API is must be called only after lock is obtained. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/multithreading_lock/multithreading_lock.h" line="55" column="6" declfile="lib/multithreading_lock/multithreading_lock.h" declline="55" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>APIs for ensuring MPSL and BLE controller threadsafe operation. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>-<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MULTITHREADING_LOCK_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MULTITHREADING_LOCK_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="multithreading__lock_8h_af16829f6b5a9dfd5ce02bf8536f25aff_1af16829f6b5a9dfd5ce02bf8536f25aff" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MULTITHREADING_LOCK_ACQUIRE()<sp/>\</highlight></codeline>
+<codeline lineno="24"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>multithreading_lock_acquire(K_FOREVER)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="multithreading__lock_8h_a2e4a31ac053c0270396d5f30dddb4123_1a2e4a31ac053c0270396d5f30dddb4123" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MULTITHREADING_LOCK_ACQUIRE_NO_WAIT()<sp/>\</highlight></codeline>
+<codeline lineno="28"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>multithreading_lock_acquire(K_NO_WAIT)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="multithreading__lock_8h_a638ebb9a670b499c02da064501d5884e_1a638ebb9a670b499c02da064501d5884e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MULTITHREADING_LOCK_ACQUIRE_FOREVER_WAIT()<sp/>\</highlight></codeline>
+<codeline lineno="32"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>multithreading_lock_acquire(K_FOREVER)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="multithreading__lock_8h_a59a0a107bb7501b641eb57b99730c046_1a59a0a107bb7501b641eb57b99730c046" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MULTITHREADING_LOCK_RELEASE()<sp/>multithreading_lock_release()</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="multithreading__lock_8h_a964e4cc791ebd2590a7502e0f5713750_1a964e4cc791ebd2590a7502e0f5713750" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="multithreading__lock_8h_a964e4cc791ebd2590a7502e0f5713750_1a964e4cc791ebd2590a7502e0f5713750" kindref="member">multithreading_lock_acquire</ref>(k_timeout_t<sp/>timeout);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="multithreading__lock_8h_aa54aaed2c216fc762e266b89d83763b1_1aa54aaed2c216fc762e266b89d83763b1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="multithreading__lock_8h_aa54aaed2c216fc762e266b89d83763b1_1aa54aaed2c216fc762e266b89d83763b1" kindref="member">multithreading_lock_release</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>MULTITHREADING_LOCK_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="lib/multithreading_lock/multithreading_lock.h"/>
+  </compounddef>
+</doxygen>

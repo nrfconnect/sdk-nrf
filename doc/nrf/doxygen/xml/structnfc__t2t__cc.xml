@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__t2t__cc" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_t2t_cc</compoundname>
+    <includes refid="include_2nfc_2t2t_2parser_8h" local="no">parser.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__t2t__cc_ac49a0a1d33bd9645f8f8007b5ee1deba_1ac49a0a1d33bd9645f8f8007b5ee1deba" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_t2t_cc::major_version</definition>
+        <argsstring></argsstring>
+        <name>major_version</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Major version of the supported Type 2 Tag specification. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="55" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t2t__cc_a917a70e226ddf040361f765f6c8ce6ec_1a917a70e226ddf040361f765f6c8ce6ec" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_t2t_cc::minor_version</definition>
+        <argsstring></argsstring>
+        <name>minor_version</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Minor version of the supported Type 2 Tag specification. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="58" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t2t__cc_abf0e73e03b6baeed6d62550720d7b6b7_1abf0e73e03b6baeed6d62550720d7b6b7" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t nfc_t2t_cc::data_area_size</definition>
+        <argsstring></argsstring>
+        <name>data_area_size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of the data area in bytes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="61" column="10" bodyfile="include/nfc/t2t/parser.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t2t__cc_a115c20480b4d3e93f572df99839e4c7d_1a115c20480b4d3e93f572df99839e4c7d" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_t2t_cc::read_access</definition>
+        <argsstring></argsstring>
+        <name>read_access</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Read access for the data area. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="64" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t2t__cc_a6a3da10ddce4146c9bd4f9593841d4d5_1a6a3da10ddce4146c9bd4f9593841d4d5" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_t2t_cc::write_access</definition>
+        <argsstring></argsstring>
+        <name>write_access</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Write access for the data area. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="67" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Descriptor for the Capability Container (CC) bytes of a Type 2 Tag. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/nfc/t2t/parser.h" line="53" column="1" bodyfile="include/nfc/t2t/parser.h" bodystart="53" bodyend="68"/>
+    <listofallmembers>
+      <member refid="structnfc__t2t__cc_abf0e73e03b6baeed6d62550720d7b6b7_1abf0e73e03b6baeed6d62550720d7b6b7" prot="public" virt="non-virtual"><scope>nfc_t2t_cc</scope><name>data_area_size</name></member>
+      <member refid="structnfc__t2t__cc_ac49a0a1d33bd9645f8f8007b5ee1deba_1ac49a0a1d33bd9645f8f8007b5ee1deba" prot="public" virt="non-virtual"><scope>nfc_t2t_cc</scope><name>major_version</name></member>
+      <member refid="structnfc__t2t__cc_a917a70e226ddf040361f765f6c8ce6ec_1a917a70e226ddf040361f765f6c8ce6ec" prot="public" virt="non-virtual"><scope>nfc_t2t_cc</scope><name>minor_version</name></member>
+      <member refid="structnfc__t2t__cc_a115c20480b4d3e93f572df99839e4c7d_1a115c20480b4d3e93f572df99839e4c7d" prot="public" virt="non-virtual"><scope>nfc_t2t_cc</scope><name>read_access</name></member>
+      <member refid="structnfc__t2t__cc_a6a3da10ddce4146c9bd4f9593841d4d5_1a6a3da10ddce4146c9bd4f9593841d4d5" prot="public" virt="non-virtual"><scope>nfc_t2t_cc</scope><name>write_access</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structevent__subscriber" kind="struct" language="C++" prot="public">
+    <compoundname>event_subscriber</compoundname>
+    <includes refid="event__manager_8h" local="no">event_manager.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structevent__subscriber_a3020f6e11ac539832e8961cfe1960ab4_1a3020f6e11ac539832e8961cfe1960ab4" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structevent__listener" kindref="compound">event_listener</ref> *</type>
+        <definition>const struct event_listener* event_subscriber::listener</definition>
+        <argsstring></argsstring>
+        <name>listener</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the listener. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="103" column="27" bodyfile="include/event_manager.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Event subscriber. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="1">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/event_manager.h" line="101" column="1" bodyfile="include/event_manager.h" bodystart="101" bodyend="104"/>
+    <listofallmembers>
+      <member refid="structevent__subscriber_a3020f6e11ac539832e8961cfe1960ab4_1a3020f6e11ac539832e8961cfe1960ab4" prot="public" virt="non-virtual"><scope>event_subscriber</scope><name>listener</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_ba5758aab75291f21fb5cd8dea84a76e" kind="dir">
+    <compoundname>lib/location/wifi</compoundname>
+    <innerfile refid="wifi__here__rest_8h">wifi_here_rest.h</innerfile>
+    <innerfile refid="wifi__nrf__cloud__rest_8h">wifi_nrf_cloud_rest.h</innerfile>
+    <innerfile refid="wifi__service_8h">wifi_service.h</innerfile>
+    <innerfile refid="wifi__skyhook__rest_8h">wifi_skyhook_rest.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/location/wifi/"/>
+  </compounddef>
+</doxygen>

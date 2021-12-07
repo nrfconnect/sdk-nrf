@@ -1,0 +1,368 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__led__effect__CAF" kind="group">
+    <compoundname>led_effect_CAF</compoundname>
+    <title>LED Effect</title>
+    <innerclass refid="structled__color" prot="public">led_color</innerclass>
+    <innerclass refid="structled__effect__step" prot="public">led_effect_step</innerclass>
+    <innerclass refid="structled__effect" prot="public">led_effect</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__led__effect__CAF_1gae1ac79b5b5c393d453b851bdce2c9bbc" prot="public" static="no">
+        <name>COLOR_BRIGHTNESS_TO_PCT</name>
+        <param><defname>_val</defname></param>
+        <initializer>((_val * 100) / UINT8_MAX)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transform color brightness from 8-bit space to percentage representation.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>_val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Color brightness in 0-255 range</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Color brightness in 0-100 range </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/led_effect.h" line="68" column="9" bodyfile="include/caf/led_effect.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__led__effect__CAF_1ga0598a87619ee2a4515a7168a5c59fe62" prot="public" static="no">
+        <name>LED_COLOR</name>
+        <param><defname>_r</defname></param>
+        <param><defname>_g</defname></param>
+        <param><defname>_b</defname></param>
+        <initializer>		{				\
+		.c = {					\
+			<ref refid="group__led__effect__CAF_gae1ac79b5b5c393d453b851bdce2c9bbc_1gae1ac79b5b5c393d453b851bdce2c9bbc" kindref="member">COLOR_BRIGHTNESS_TO_PCT</ref>(_r),	\
+			<ref refid="group__led__effect__CAF_gae1ac79b5b5c393d453b851bdce2c9bbc_1gae1ac79b5b5c393d453b851bdce2c9bbc" kindref="member">COLOR_BRIGHTNESS_TO_PCT</ref>(_g),	\
+			<ref refid="group__led__effect__CAF_gae1ac79b5b5c393d453b851bdce2c9bbc_1gae1ac79b5b5c393d453b851bdce2c9bbc" kindref="member">COLOR_BRIGHTNESS_TO_PCT</ref>(_b)	\
+		}					\
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Create LED color initializer for LED turned on.</para>
+<para><simplesect kind="note"><para>As arguments, pass the brightness levels for every color channel. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/led_effect.h" line="74" column="9" bodyfile="include/caf/led_effect.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__led__effect__CAF_1ga7c6428435c2dc83069d5a843f4553691" prot="public" static="no">
+        <name>LED_NOCOLOR</name>
+        <param></param>
+        <initializer>		{			\
+		.c = {0, 0, 0}		\
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Create LED color initializer for LED turned off. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/led_effect.h" line="84" column="9" bodyfile="include/caf/led_effect.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__led__effect__CAF_1ga7fb4ef307bd2b1730f82410432b823c9" prot="public" static="no">
+        <name>LED_EFFECT_LED_ON</name>
+        <param><defname>_color</defname></param>
+        <initializer>	{									\
+		.steps = ((const struct <ref refid="structled__effect__step" kindref="compound">led_effect_step</ref>[]) {			\
+			{							\
+				.color = _color,				\
+				.substep_count = 1,				\
+				.substep_time = 0,				\
+			},							\
+		}),								\
+		.step_count = 1,						\
+		.loop_forever = false,						\
+	}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Create LED turned on effect initializer.</para>
+<para>LED color remains constant.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>_color</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Selected LED color. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/led_effect.h" line="94" column="9" bodyfile="include/caf/led_effect.h" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__led__effect__CAF_1ga6eb404e4fd938a846223091c2d5dbb97" prot="public" static="no">
+        <name>LED_EFFECT_LED_OFF</name>
+        <param></param>
+        <initializer><ref refid="group__led__effect__CAF_ga7fb4ef307bd2b1730f82410432b823c9_1ga7fb4ef307bd2b1730f82410432b823c9" kindref="member">LED_EFFECT_LED_ON</ref>(<ref refid="group__led__effect__CAF_ga7c6428435c2dc83069d5a843f4553691_1ga7c6428435c2dc83069d5a843f4553691" kindref="member">LED_NOCOLOR</ref>())</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Create LED turned off effect initializer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/led_effect.h" line="110" column="9" bodyfile="include/caf/led_effect.h" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__led__effect__CAF_1ga10c6fbe7e4d0c402529d9dfcb7ba143c" prot="public" static="no">
+        <name>LED_EFFECT_LED_ON_GO_OFF</name>
+        <param><defname>_color</defname></param>
+        <param><defname>_on_time</defname></param>
+        <param><defname>_off_delay</defname></param>
+        <initializer>	{									\
+		.steps = ((const struct <ref refid="structled__effect__step" kindref="compound">led_effect_step</ref>[]) {			\
+			{							\
+				.color = _color,				\
+				.substep_count = 1,				\
+				.substep_time = 0,				\
+			},							\
+			{							\
+				.color = _color,				\
+				.substep_count = 1,				\
+				.substep_time = (_on_time),			\
+			},							\
+			{							\
+				.color = <ref refid="group__led__effect__CAF_ga7c6428435c2dc83069d5a843f4553691_1ga7c6428435c2dc83069d5a843f4553691" kindref="member">LED_NOCOLOR</ref>(),				\
+				.substep_count = (_off_delay)/10,		\
+				.substep_time = 10,				\
+			},							\
+		}),								\
+		.step_count = 3,						\
+		.loop_forever = false,						\
+	}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Create LED turned on for a brief period effect initializer.</para>
+<para>LED color remains constant for a defined time, then goes off.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>_color</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Selected LED color. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_on_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time LED will remain on in milliseconds. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_off_delay</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time in which LED will gradually switch to off (in milliseconds). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/led_effect.h" line="121" column="9" bodyfile="include/caf/led_effect.h" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__led__effect__CAF_1ga3cbbf6d5748a1dd5c33af7d3e97fe2cf" prot="public" static="no">
+        <name>LED_EFFECT_LED_BLINK</name>
+        <param><defname>_period</defname></param>
+        <param><defname>_color</defname></param>
+        <initializer>	{									\
+		.steps = ((const struct <ref refid="structled__effect__step" kindref="compound">led_effect_step</ref>[]) {			\
+			{							\
+				.color = _color,				\
+				.substep_count = 1,				\
+				.substep_time = (_period),			\
+			},							\
+			{							\
+				.color = <ref refid="group__led__effect__CAF_ga7c6428435c2dc83069d5a843f4553691_1ga7c6428435c2dc83069d5a843f4553691" kindref="member">LED_NOCOLOR</ref>(),				\
+				.substep_count = 1,				\
+				.substep_time = (_period),			\
+			},							\
+		}),								\
+		.step_count = 2,						\
+		.loop_forever = true,						\
+	}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Create LED blinking effect initializer.</para>
+<para>LED color is periodically changed between the selected color and the LED turned off.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>_period</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Period of time between LED color switches. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_color</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Selected LED color. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/led_effect.h" line="152" column="9" bodyfile="include/caf/led_effect.h" bodystart="152" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__led__effect__CAF_1ga13326b14c6d61fff80085ec4b8ba9f88" prot="public" static="no">
+        <name>LED_EFFECT_LED_BREATH</name>
+        <param><defname>_period</defname></param>
+        <param><defname>_color</defname></param>
+        <initializer>	{										\
+		.steps = ((const struct <ref refid="structled__effect__step" kindref="compound">led_effect_step</ref>[]) {				\
+			{								\
+				.color = _color,					\
+				.substep_count = _BREATH_SUBSTEPS,			\
+				.substep_time = ((_period + (_BREATH_SUBSTEPS - 1))	\
+						/ _BREATH_SUBSTEPS),			\
+			},								\
+			{								\
+				.color = _color,					\
+				.substep_count = 1,					\
+				.substep_time = _period,				\
+			},								\
+			{								\
+				.color = <ref refid="group__led__effect__CAF_ga7c6428435c2dc83069d5a843f4553691_1ga7c6428435c2dc83069d5a843f4553691" kindref="member">LED_NOCOLOR</ref>(),					\
+				.substep_count = _BREATH_SUBSTEPS,			\
+				.substep_time = ((_period + (_BREATH_SUBSTEPS - 1))	\
+						/ _BREATH_SUBSTEPS),			\
+			},								\
+			{								\
+				.color = <ref refid="group__led__effect__CAF_ga7c6428435c2dc83069d5a843f4553691_1ga7c6428435c2dc83069d5a843f4553691" kindref="member">LED_NOCOLOR</ref>(),					\
+				.substep_count = 1,					\
+				.substep_time = _period,				\
+			},								\
+		}),									\
+		.step_count = 4,							\
+		.loop_forever = true,							\
+	}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Create LED breathing effect initializer.</para>
+<para>LED color is smoothly, gradually changed between the LED turned off and the selected color.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>_period</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Period of time for single substep. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_color</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Selected LED color. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/led_effect.h" line="184" column="9" bodyfile="include/caf/led_effect.h" bodystart="184" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__led__effect__CAF_1gaea100a048562972263ed4588d8684b4f" prot="public" static="no">
+        <name>LED_CLOCK_BLINK_PERIOD</name>
+        <initializer>200</initializer>
+        <briefdescription>
+<para>Period of time between color changes while the LED is blinking (LED clock effect). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/led_effect.h" line="219" column="9" bodyfile="include/caf/led_effect.h" bodystart="219" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__led__effect__CAF_1ga6e602686f3f9a4322db913c4dae3e376" prot="public" static="no">
+        <name>LED_CLOCK_SLEEP_PERIOD</name>
+        <initializer>1000</initializer>
+        <briefdescription>
+<para>Period of time when the LED is turned off (LED clock effect). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/led_effect.h" line="225" column="9" bodyfile="include/caf/led_effect.h" bodystart="225" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__led__effect__CAF_1gacf22320d8abba6632224271139df9cc4" prot="public" static="no">
+        <name>LED_EFFECT_LED_CLOCK</name>
+        <param><defname>_ticks</defname></param>
+        <param><defname>_color</defname></param>
+        <initializer>	{									\
+		.steps = ((const struct <ref refid="structled__effect__step" kindref="compound">led_effect_step</ref>[]) {			\
+			{							\
+				.color = <ref refid="group__led__effect__CAF_ga7c6428435c2dc83069d5a843f4553691_1ga7c6428435c2dc83069d5a843f4553691" kindref="member">LED_NOCOLOR</ref>(),				\
+				.substep_count = 1,				\
+				.substep_time = <ref refid="group__led__effect__CAF_ga6e602686f3f9a4322db913c4dae3e376_1ga6e602686f3f9a4322db913c4dae3e376" kindref="member">LED_CLOCK_SLEEP_PERIOD</ref>,		\
+			},							\
+			UTIL_LISTIFY(_ticks, _LED_CLOCK_TIK, _color)		\
+		}),								\
+		.step_count = (2 * _ticks + 1),					\
+		.loop_forever = true,						\
+	}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Create LED clock effect initializer.</para>
+<para>LED blinks a defined number of times, then it is turned off for a defined period of time. The sequence is repeated periodically.</para>
+<para><simplesect kind="note"><para>You can pass only one additional argument to the UTIL_LISTIFY macro, which in this case is LED color. Period is defined separately.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>_ticks</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of ticks. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_color</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Selected LED color. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/led_effect.h" line="258" column="9" bodyfile="include/caf/led_effect.h" bodystart="258" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>LED Effect. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

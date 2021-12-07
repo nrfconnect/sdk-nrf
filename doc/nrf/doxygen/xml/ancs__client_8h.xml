@@ -1,0 +1,1694 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="ancs__client_8h" kind="file" language="C++">
+    <compoundname>ancs_client.h</compoundname>
+    <includes local="no">bluetooth/gatt.h</includes>
+    <includes local="no">bluetooth/conn.h</includes>
+    <includes refid="gatt__dm_8h" local="no">bluetooth/gatt_dm.h</includes>
+    <incdepgraph>
+      <node id="4">
+        <label>bluetooth/gatt_dm.h</label>
+        <link refid="gatt__dm_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/services/ancs_client.h</label>
+        <link refid="ancs__client_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/conn.h</label>
+      </node>
+      <node id="2">
+        <label>bluetooth/gatt.h</label>
+      </node>
+      <node id="5">
+        <label>bluetooth/uuid.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structbt__ancs__notif__flags" prot="public">bt_ancs_notif_flags</innerclass>
+    <innerclass refid="structbt__ancs__evt__notif" prot="public">bt_ancs_evt_notif</innerclass>
+    <innerclass refid="structbt__ancs__attr" prot="public">bt_ancs_attr</innerclass>
+    <innerclass refid="structbt__ancs__attr__list" prot="public">bt_ancs_attr_list</innerclass>
+    <innerclass refid="structbt__ancs__attr__response" prot="public">bt_ancs_attr_response</innerclass>
+    <innerclass refid="structbt__ancs__parse__sm" prot="public">bt_ancs_parse_sm</innerclass>
+    <innerclass refid="structbt__ancs__client" prot="public">bt_ancs_client</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__ancs__client_gab3c3b656bf8e17c351d2c169e12ded80_1gab3c3b656bf8e17c351d2c169e12ded80" prot="public" static="no">
+        <name>BT_UUID_ANCS_VAL</name>
+        <initializer>	BT_UUID_128_ENCODE(0x7905f431, 0xb5ce, 0x4e99, 0xa40f, 0x4b1e122d00d0)</initializer>
+        <briefdescription>
+<para>Apple Notification Center Service UUID. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="27" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__ancs__client_gafbb3df82ff5a4d06c8a02c474ba4803f_1gafbb3df82ff5a4d06c8a02c474ba4803f" prot="public" static="no">
+        <name>BT_UUID_ANCS_NOTIFICATION_SOURCE_VAL</name>
+        <initializer>	BT_UUID_128_ENCODE(0x9fbf120d, 0x6301, 0x42d9, 0x8c58, 0x25e699a21dbd)</initializer>
+        <briefdescription>
+<para>Notification Source Characteristic UUID. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="31" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__ancs__client_ga7aafaf48e7218ccbc52ed209fafa4c3f_1ga7aafaf48e7218ccbc52ed209fafa4c3f" prot="public" static="no">
+        <name>BT_UUID_ANCS_CONTROL_POINT_VAL</name>
+        <initializer>	BT_UUID_128_ENCODE(0x69d1d8f3, 0x45e1, 0x49a8, 0x9821, 0x9bbdfdaad9d9)</initializer>
+        <briefdescription>
+<para>Control Point Characteristic UUID. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="35" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__ancs__client_ga75546ad677c50fbbbdf31276021a4c12_1ga75546ad677c50fbbbdf31276021a4c12" prot="public" static="no">
+        <name>BT_UUID_ANCS_DATA_SOURCE_VAL</name>
+        <initializer>	BT_UUID_128_ENCODE(0x22eac6e9, 0x24d6, 0x4bb5, 0xbe44, 0xb36ace7c7bfb)</initializer>
+        <briefdescription>
+<para>Data Source Characteristic UUID. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="39" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__ancs__client_gae85bbf86dd4774a07c302e6d5702d113_1gae85bbf86dd4774a07c302e6d5702d113" prot="public" static="no">
+        <name>BT_UUID_ANCS</name>
+        <initializer>BT_UUID_DECLARE_128(<ref refid="group__bt__ancs__client_gab3c3b656bf8e17c351d2c169e12ded80_1gab3c3b656bf8e17c351d2c169e12ded80" kindref="member">BT_UUID_ANCS_VAL</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="42" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__ancs__client_ga8b367b961cc773cf1c7a606e57dec259_1ga8b367b961cc773cf1c7a606e57dec259" prot="public" static="no">
+        <name>BT_UUID_ANCS_NOTIFICATION_SOURCE</name>
+        <initializer>	BT_UUID_DECLARE_128(<ref refid="group__bt__ancs__client_gafbb3df82ff5a4d06c8a02c474ba4803f_1gafbb3df82ff5a4d06c8a02c474ba4803f" kindref="member">BT_UUID_ANCS_NOTIFICATION_SOURCE_VAL</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="43" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__ancs__client_gac6acd9cab7e5b9b2ff2e823f1332c028_1gac6acd9cab7e5b9b2ff2e823f1332c028" prot="public" static="no">
+        <name>BT_UUID_ANCS_CONTROL_POINT</name>
+        <initializer>	BT_UUID_DECLARE_128(<ref refid="group__bt__ancs__client_ga7aafaf48e7218ccbc52ed209fafa4c3f_1ga7aafaf48e7218ccbc52ed209fafa4c3f" kindref="member">BT_UUID_ANCS_CONTROL_POINT_VAL</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="45" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__ancs__client_gaac91ff57eab66a22c533890bb4a98660_1gaac91ff57eab66a22c533890bb4a98660" prot="public" static="no">
+        <name>BT_UUID_ANCS_DATA_SOURCE</name>
+        <initializer>BT_UUID_DECLARE_128(<ref refid="group__bt__ancs__client_ga75546ad677c50fbbbdf31276021a4c12_1ga75546ad677c50fbbbdf31276021a4c12" kindref="member">BT_UUID_ANCS_DATA_SOURCE_VAL</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="47" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__ancs__client_ga4903008f9e8371bad1e37d4e0be3207d_1ga4903008f9e8371bad1e37d4e0be3207d" prot="public" static="no">
+        <name>BT_ANCS_ATTR_DATA_MAX</name>
+        <initializer>32</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum data length of an iOS notification attribute. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="50" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__ancs__client_ga09543b99bcf3d77a2ffb22b2ea427801_1ga09543b99bcf3d77a2ffb22b2ea427801" prot="public" static="no">
+        <name>BT_ANCS_CATEGORY_ID_COUNT</name>
+        <initializer>12</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of iOS notification categories: Other, Incoming Call, Missed Call, Voice Mail, Social, Schedule, Email, News, Health and Fitness, Business and Finance, Location, Entertainment. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="55" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__ancs__client_ga1bf95f570098a8e89126ff1449bf7089_1ga1bf95f570098a8e89126ff1449bf7089" prot="public" static="no">
+        <name>BT_ANCS_NOTIF_ATTR_COUNT</name>
+        <initializer>8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of iOS notification attributes: AppIdentifier, Title, Subtitle, Message, MessageSize, Date, PositiveActionLabel, NegativeActionLabel. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="59" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__ancs__client_gae4e02e6caa190c1da949156465dd978d_1gae4e02e6caa190c1da949156465dd978d" prot="public" static="no">
+        <name>BT_ANCS_APP_ATTR_COUNT</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of iOS application attributes: DisplayName. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="61" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__ancs__client_ga871b021868ef36756d31ca7927ad880c_1ga871b021868ef36756d31ca7927ad880c" prot="public" static="no">
+        <name>BT_ANCS_EVT_ID_COUNT</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of iOS notification events: Added, Modified, Removed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="63" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__ancs__client_ga765df094404430864c725f4ac447227c_1ga765df094404430864c725f4ac447227c" prot="public" static="no">
+        <name>BT_ANCS_NOTIF_DATA_LENGTH</name>
+        <initializer>8</initializer>
+        <briefdescription>
+<para>Length of the iOS notification data. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="66" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__ancs__client_ga20c955b94403e3d250d5c2dee1b1ae2a_1ga20c955b94403e3d250d5c2dee1b1ae2a" prot="public" static="no">
+        <name>BT_ANCS_EVENT_FLAG_SILENT</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>0b.......1 Silent: First (LSB) bit is set. All flags can be active at the same time. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="71" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__ancs__client_ga6b6d6dc0a6cc893a391634fee6527aed_1ga6b6d6dc0a6cc893a391634fee6527aed" prot="public" static="no">
+        <name>BT_ANCS_EVENT_FLAG_IMPORTANT</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>0b......1. Important: Second (LSB) bit is set. All flags can be active at the same time. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="75" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__ancs__client_gaa8cc1687aa6ffcb9926553d93ff88663_1gaa8cc1687aa6ffcb9926553d93ff88663" prot="public" static="no">
+        <name>BT_ANCS_EVENT_FLAG_PREEXISTING</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>0b.....1.. Pre-existing: Third (LSB) bit is set. All flags can be active at the same time. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="79" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__ancs__client_ga4ee4f3d7483b38b3eac67107b7a3aaf8_1ga4ee4f3d7483b38b3eac67107b7a3aaf8" prot="public" static="no">
+        <name>BT_ANCS_EVENT_FLAG_POSITIVE_ACTION</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>0b....1... Positive action: Fourth (LSB) bit is set. All flags can be active at the same time. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="83" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__ancs__client_ga3af8e0a09e39324e27b3ec2cf9e5a123_1ga3af8e0a09e39324e27b3ec2cf9e5a123" prot="public" static="no">
+        <name>BT_ANCS_EVENT_FLAG_NEGATIVE_ACTION</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>0b...1.... Negative action: Fifth (LSB) bit is set. All flags can be active at the same time. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="87" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__BT__ATT__ANCS__NP__ERROR__CODES_ga9a56d436095f234b9c76e9eac0de97aa_1ga9a56d436095f234b9c76e9eac0de97aa" prot="public" static="no">
+        <name>BT_ATT_ERR_ANCS_NP_UNKNOWN_COMMAND</name>
+        <initializer>0xA0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The command ID is unknown to the NP. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="93" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__BT__ATT__ANCS__NP__ERROR__CODES_ga9de2e561f6d6b2126646ce90a8058a13_1ga9de2e561f6d6b2126646ce90a8058a13" prot="public" static="no">
+        <name>BT_ATT_ERR_ANCS_NP_INVALID_COMMAND</name>
+        <initializer>0xA1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The command format is invalid. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="95" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__BT__ATT__ANCS__NP__ERROR__CODES_ga86d24186e58757f0645ec2606bf85e10_1ga86d24186e58757f0645ec2606bf85e10" prot="public" static="no">
+        <name>BT_ATT_ERR_ANCS_NP_INVALID_PARAMETER</name>
+        <initializer>0xA2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>One or more parameters do not exist in the NP. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="97" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__BT__ATT__ANCS__NP__ERROR__CODES_ga5c58d04768948281514b522470c9d15f_1ga5c58d04768948281514b522470c9d15f" prot="public" static="no">
+        <name>BT_ATT_ERR_ANCS_NP_ACTION_FAILED</name>
+        <initializer>0xA3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The action failed to be performed by the NP. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="99" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1ga77a8ed99169c1dc5b9d7896a6302c35f" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_ancs_category_id_val</name>
+        <enumvalue id="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fa527472b96bd62156500ccb0f98055ebd" prot="public">
+          <name>BT_ANCS_CATEGORY_ID_OTHER</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The iOS notification belongs to the &quot;Other&quot; category. <linebreak/>
+ </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fa5b93b3b3ae0599727b9cf6790d3ead3a" prot="public">
+          <name>BT_ANCS_CATEGORY_ID_INCOMING_CALL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The iOS notification belongs to the &quot;Incoming Call&quot; category. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fa6de6ea14f323f5c0ceb8235c4ef22754" prot="public">
+          <name>BT_ANCS_CATEGORY_ID_MISSED_CALL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The iOS notification belongs to the &quot;Missed Call&quot; category. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fac4580a28ee2765d30c87a65bc36bab31" prot="public">
+          <name>BT_ANCS_CATEGORY_ID_VOICE_MAIL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The iOS notification belongs to the &quot;Voice Mail&quot; category. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fab7faf9cc46deae539ce37726611b863c" prot="public">
+          <name>BT_ANCS_CATEGORY_ID_SOCIAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The iOS notification belongs to the &quot;Social&quot; category. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fa75aeadffdd5f4cad4f9cfeab4f29a5aa" prot="public">
+          <name>BT_ANCS_CATEGORY_ID_SCHEDULE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The iOS notification belongs to the &quot;Schedule&quot; category. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35faf9a043339a414049fbea61a6eb387bd9" prot="public">
+          <name>BT_ANCS_CATEGORY_ID_EMAIL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The iOS notification belongs to the &quot;Email&quot; category. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fac177782913a2c7ce48e7aeea7c476322" prot="public">
+          <name>BT_ANCS_CATEGORY_ID_NEWS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The iOS notification belongs to the &quot;News&quot; category. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fac943b882e6b7beb95d5d8a1daada49af" prot="public">
+          <name>BT_ANCS_CATEGORY_ID_HEALTH_AND_FITNESS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The iOS notification belongs to the &quot;Health and Fitness&quot; category. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fa173cb2152863ec5272097b7bf9aa1e02" prot="public">
+          <name>BT_ANCS_CATEGORY_ID_BUSINESS_AND_FINANCE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The iOS notification belongs to the &quot;Business and Finance&quot; category. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fa4e94a280cccc9173e13c2a51673f6c20" prot="public">
+          <name>BT_ANCS_CATEGORY_ID_LOCATION</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The iOS notification belongs to the &quot;Location&quot; category. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fa0d05cbe52605bdeaa48e8a604c568c90" prot="public">
+          <name>BT_ANCS_CATEGORY_ID_ENTERTAINMENT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The iOS notification belongs to the &quot;Entertainment&quot; category. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Category IDs for iOS notifications. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="103" column="1" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="103" bodyend="128"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__ancs__client_gac26f4374d0d464984c1b11e13f9b969b_1gac26f4374d0d464984c1b11e13f9b969b" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_ancs_evt_id_values</name>
+        <enumvalue id="group__bt__ancs__client_gac26f4374d0d464984c1b11e13f9b969b_1ggac26f4374d0d464984c1b11e13f9b969bab3afe17476ad55e85ae3d9a57efec6bf" prot="public">
+          <name>BT_ANCS_EVENT_ID_NOTIFICATION_ADDED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The iOS notification was added. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_gac26f4374d0d464984c1b11e13f9b969b_1ggac26f4374d0d464984c1b11e13f9b969ba901cf3781630b72ab9cae479f15b4db7" prot="public">
+          <name>BT_ANCS_EVENT_ID_NOTIFICATION_MODIFIED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The iOS notification was modified. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_gac26f4374d0d464984c1b11e13f9b969b_1ggac26f4374d0d464984c1b11e13f9b969bac7cb03c83622555f5b20c883cc1e5c18" prot="public">
+          <name>BT_ANCS_EVENT_ID_NOTIFICATION_REMOVED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The iOS notification was removed. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Event IDs for iOS notifications. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="131" column="1" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="131" bodyend="138"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__ancs__client_gaea2b08813c4cebb99af5460c8dc66bd2_1gaea2b08813c4cebb99af5460c8dc66bd2" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_ancs_cmd_id_val</name>
+        <enumvalue id="group__bt__ancs__client_gaea2b08813c4cebb99af5460c8dc66bd2_1ggaea2b08813c4cebb99af5460c8dc66bd2ac90e496cd64985c5ea0d84818f093390" prot="public">
+          <name>BT_ANCS_COMMAND_ID_GET_NOTIF_ATTRIBUTES</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Requests attributes to be sent from the NP to the NC for a given notification. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_gaea2b08813c4cebb99af5460c8dc66bd2_1ggaea2b08813c4cebb99af5460c8dc66bd2a020b2ba527e443de2c7b2d5de0ad0de2" prot="public">
+          <name>BT_ANCS_COMMAND_ID_GET_APP_ATTRIBUTES</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Requests attributes to be sent from the NP to the NC for a given iOS app. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_gaea2b08813c4cebb99af5460c8dc66bd2_1ggaea2b08813c4cebb99af5460c8dc66bd2a5a3ba39e81952ff87036ba9d18af2d8f" prot="public">
+          <name>BT_ANCS_COMMAND_ID_PERFORM_NOTIF_ACTION</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Requests an action to be performed on a given notification. For example, dismiss an alarm. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Control point command IDs that the Notification Consumer can send to the Notification Provider. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="143" column="1" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="143" bodyend="156"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__ancs__client_ga8d26a58bbc3eb9e7758318002e2bf111_1ga8d26a58bbc3eb9e7758318002e2bf111" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_ancs_action_id_values</name>
+        <enumvalue id="group__bt__ancs__client_ga8d26a58bbc3eb9e7758318002e2bf111_1gga8d26a58bbc3eb9e7758318002e2bf111a0840efb3b45fb612676c7fca069614cd" prot="public">
+          <name>BT_ANCS_ACTION_ID_POSITIVE</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Positive action. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_ga8d26a58bbc3eb9e7758318002e2bf111_1gga8d26a58bbc3eb9e7758318002e2bf111ad765de856d36236fd0b16e0c46ce4650" prot="public">
+          <name>BT_ANCS_ACTION_ID_NEGATIVE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Negative action. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>IDs for actions that can be performed for iOS notifications. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="159" column="1" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="159" bodyend="164"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__ancs__client_ga3e8d4afcc9865d3647cea5b406b4755a_1ga3e8d4afcc9865d3647cea5b406b4755a" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_ancs_app_attr_id_val</name>
+        <enumvalue id="group__bt__ancs__client_ga3e8d4afcc9865d3647cea5b406b4755a_1gga3e8d4afcc9865d3647cea5b406b4755aa764ad5b6269c3523c7aca070d10a4541" prot="public">
+          <name>BT_ANCS_APP_ATTR_ID_DISPLAY_NAME</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Command used to get the display name for an app identifier. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>App attribute ID values. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Currently, only one value is defined. However, the number of app attributes might increase. For this reason, they are stored in an enumeration. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="170" column="1" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="170" bodyend="173"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1gab270403132c9a7cfb1ad43992bf73b83" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_ancs_notif_attr_id_val</name>
+        <enumvalue id="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83ad52b1ad25668f439308d4eea9f5d5501" prot="public">
+          <name>BT_ANCS_NOTIF_ATTR_ID_APP_IDENTIFIER</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Identifies that the attribute data is of an &quot;App Identifier&quot; type. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83ace82549f9e033ace74337c23c11db370" prot="public">
+          <name>BT_ANCS_NOTIF_ATTR_ID_TITLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Identifies that the attribute data is a &quot;Title&quot;. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83a53e6e4890559c7d10b1320b343ca2c47" prot="public">
+          <name>BT_ANCS_NOTIF_ATTR_ID_SUBTITLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Identifies that the attribute data is a &quot;Subtitle&quot;. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83a0f4151f0bc9fb79212448a420dd17b07" prot="public">
+          <name>BT_ANCS_NOTIF_ATTR_ID_MESSAGE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Identifies that the attribute data is a &quot;Message&quot;. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83a4355c0a59896beb7f900c5e7501f431a" prot="public">
+          <name>BT_ANCS_NOTIF_ATTR_ID_MESSAGE_SIZE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Identifies that the attribute data is a &quot;Message Size&quot;. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83ad38a572699bfe5a046e8d99b7cbbd1b1" prot="public">
+          <name>BT_ANCS_NOTIF_ATTR_ID_DATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Identifies that the attribute data is a &quot;Date&quot;. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83a9dd0884990166732902f9b0759a76200" prot="public">
+          <name>BT_ANCS_NOTIF_ATTR_ID_POSITIVE_ACTION_LABEL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The notification has a &quot;Positive action&quot; that can be executed associated with it. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83ab6f11c41b8c359dbd033baad129c6182" prot="public">
+          <name>BT_ANCS_NOTIF_ATTR_ID_NEGATIVE_ACTION_LABEL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The notification has a &quot;Negative action&quot; that can be executed associated with it. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>IDs for iOS notification attributes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="176" column="1" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="176" bodyend="193"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1gac6979db89c35b9750706b6e7d007cb15" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_ancs_parse_state</name>
+        <enumvalue id="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15afe39d50bf4387948f90ba43eba24c7b5" prot="public">
+          <name>BT_ANCS_PARSE_STATE_COMMAND_ID</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Parsing the command ID. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15a69fab90ffcec7af11e4cdcc289d69bdd" prot="public">
+          <name>BT_ANCS_PARSE_STATE_NOTIF_UID</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Parsing the notification UID. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15ab7038b04ff708b54b5b080a950abbebb" prot="public">
+          <name>BT_ANCS_PARSE_STATE_APP_ID</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Parsing app ID. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15a85afeb1f4c8858072c483728559f99f6" prot="public">
+          <name>BT_ANCS_PARSE_STATE_ATTR_ID</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Parsing attribute ID. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15a5d74b3334f338cb60f887253dae4c311" prot="public">
+          <name>BT_ANCS_PARSE_STATE_ATTR_LEN1</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Parsing the LSB of the attribute length. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15a9f604e8c831612879c4bfc01f1669e88" prot="public">
+          <name>BT_ANCS_PARSE_STATE_ATTR_LEN2</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Parsing the MSB of the attribute length. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15adb0f5f41841a99c1e821aff9e58feb5f" prot="public">
+          <name>BT_ANCS_PARSE_STATE_ATTR_DATA</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Parsing the attribute data. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15a151355aa7fc8862be8512d64c8f07c9a" prot="public">
+          <name>BT_ANCS_PARSE_STATE_ATTR_SKIP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Parsing is skipped for the rest of an attribute (or entire attribute). </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15a05abe02e126d406cb364a11135a903d9" prot="public">
+          <name>BT_ANCS_PARSE_STATE_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Parsing for one attribute is done. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Parsing states for received iOS notification and app attributes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="210" column="1" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="210" bodyend="229"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__bt__ancs__client_ga01d8b60e12b2de32330e5730459baa71_1ga01d8b60e12b2de32330e5730459baa71" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_ancs_ns_notif_cb) (struct bt_ancs_client *ancs_c, int err, const struct bt_ancs_evt_notif *notif)</definition>
+        <argsstring>)(struct bt_ancs_client *ancs_c, int err, const struct bt_ancs_evt_notif *notif)</argsstring>
+        <name>bt_ancs_ns_notif_cb</name>
+        <briefdescription>
+<para>Notification Source notification callback function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ancs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ANCS client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>0 if the notification is valid. Otherwise, contains a (negative) error code. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">notif</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>iOS notification structure. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="303" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="303" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bt__ancs__client_gadeb66d8c1af4a77668cbff3d035a6bfd_1gadeb66d8c1af4a77668cbff3d035a6bfd" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_ancs_ds_notif_cb) (struct bt_ancs_client *ancs_c, const struct bt_ancs_attr_response *response)</definition>
+        <argsstring>)(struct bt_ancs_client *ancs_c, const struct bt_ancs_attr_response *response)</argsstring>
+        <name>bt_ancs_ds_notif_cb</name>
+        <briefdescription>
+<para>Data Source notification callback function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ancs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ANCS client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">response</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Attribute response structure. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="311" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="311" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bt__ancs__client_ga0194ae4d50ec7baa561b4474940df4db_1ga0194ae4d50ec7baa561b4474940df4db" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_ancs_write_cb) (struct bt_ancs_client *ancs_c, uint8_t err)</definition>
+        <argsstring>)(struct bt_ancs_client *ancs_c, uint8_t err)</argsstring>
+        <name>bt_ancs_write_cb</name>
+        <briefdescription>
+<para>Write response callback function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ancs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ANCS client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ATT error code. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="319" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="319" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__ancs__client_gac70611e08cbbd2965389ba940de0df43_1gac70611e08cbbd2965389ba940de0df43" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_ancs_client_init</definition>
+        <argsstring>(struct bt_ancs_client *ancs_c)</argsstring>
+        <name>bt_ancs_client_init</name>
+        <param>
+          <type>struct <ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref> *</type>
+          <declname>ancs_c</declname>
+        </param>
+        <briefdescription>
+<para>Function for initializing the ANCS client. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">ancs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ANCS client instance. This structure must be supplied by the application. It is initialized by this function and will later be used to identify this particular client instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the client was initialized successfully. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="434" column="5" declfile="include/bluetooth/services/ancs_client.h" declline="434" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__ancs__client_gaed557ade7e70d932f1598a0e85cbe826_1gaed557ade7e70d932f1598a0e85cbe826" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_ancs_subscribe_notification_source</definition>
+        <argsstring>(struct bt_ancs_client *ancs_c, bt_ancs_ns_notif_cb func)</argsstring>
+        <name>bt_ancs_subscribe_notification_source</name>
+        <param>
+          <type>struct <ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref> *</type>
+          <declname>ancs_c</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__ancs__client_ga01d8b60e12b2de32330e5730459baa71_1ga01d8b60e12b2de32330e5730459baa71" kindref="member">bt_ancs_ns_notif_cb</ref></type>
+          <declname>func</declname>
+        </param>
+        <briefdescription>
+<para>Function for writing to the CCCD to enable notifications from the Apple Notification Service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ancs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ANCS client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback function for handling notification.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If writing to the CCCD was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="445" column="5" declfile="include/bluetooth/services/ancs_client.h" declline="445" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__ancs__client_ga26fc894972066e3fe900777e443e8a03_1ga26fc894972066e3fe900777e443e8a03" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_ancs_subscribe_data_source</definition>
+        <argsstring>(struct bt_ancs_client *ancs_c, bt_ancs_ds_notif_cb func)</argsstring>
+        <name>bt_ancs_subscribe_data_source</name>
+        <param>
+          <type>struct <ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref> *</type>
+          <declname>ancs_c</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__ancs__client_gadeb66d8c1af4a77668cbff3d035a6bfd_1gadeb66d8c1af4a77668cbff3d035a6bfd" kindref="member">bt_ancs_ds_notif_cb</ref></type>
+          <declname>func</declname>
+        </param>
+        <briefdescription>
+<para>Function for writing to the CCCD to enable data source notifications from the ANCS. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ancs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ANCS client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback function for handling notification.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If writing to the CCCD was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="456" column="5" declfile="include/bluetooth/services/ancs_client.h" declline="456" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__ancs__client_gacf2e72760d954046ae8b4086b6d3c43e_1gacf2e72760d954046ae8b4086b6d3c43e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_ancs_unsubscribe_notification_source</definition>
+        <argsstring>(struct bt_ancs_client *ancs_c)</argsstring>
+        <name>bt_ancs_unsubscribe_notification_source</name>
+        <param>
+          <type>struct <ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref> *</type>
+          <declname>ancs_c</declname>
+        </param>
+        <briefdescription>
+<para>Function for writing to the CCCD to disable notifications from the ANCS. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ancs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ANCS client instance</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If writing to the CCCD was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="466" column="5" declfile="include/bluetooth/services/ancs_client.h" declline="466" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__ancs__client_ga157d0522c31dc138627834ce7e70f598_1ga157d0522c31dc138627834ce7e70f598" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_ancs_unsubscribe_data_source</definition>
+        <argsstring>(struct bt_ancs_client *ancs_c)</argsstring>
+        <name>bt_ancs_unsubscribe_data_source</name>
+        <param>
+          <type>struct <ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref> *</type>
+          <declname>ancs_c</declname>
+        </param>
+        <briefdescription>
+<para>Function for writing to the CCCD to disable data source notifications from the ANCS. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ancs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ANCS client instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If writing to the CCCD was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="475" column="5" declfile="include/bluetooth/services/ancs_client.h" declline="475" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__ancs__client_ga371ce5da7b03b642d806c686eafcc73c_1ga371ce5da7b03b642d806c686eafcc73c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_ancs_register_attr</definition>
+        <argsstring>(struct bt_ancs_client *ancs_c, const enum bt_ancs_notif_attr_id_val id, uint8_t *data, const uint16_t len)</argsstring>
+        <name>bt_ancs_register_attr</name>
+        <param>
+          <type>struct <ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref> *</type>
+          <declname>ancs_c</declname>
+        </param>
+        <param>
+          <type>const enum <ref refid="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1gab270403132c9a7cfb1ad43992bf73b83" kindref="member">bt_ancs_notif_attr_id_val</ref></type>
+          <declname>id</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const uint16_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Function for registering attributes that will be requested when <ref refid="group__bt__ancs__client_ga67237a15a7926fa229249feeac8cbb43_1ga67237a15a7926fa229249feeac8cbb43" kindref="member">bt_ancs_request_attrs</ref> is called. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ancs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ANCS client instance on which the attribute is registered. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ID of the attribute that is added. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer where the data of the attribute can be stored. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the buffer where the data of the attribute can be stored.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If all operations are successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="488" column="5" declfile="include/bluetooth/services/ancs_client.h" declline="488" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__ancs__client_ga64ee40e8ccc444c89186b4c1c9801ce0_1ga64ee40e8ccc444c89186b4c1c9801ce0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_ancs_register_app_attr</definition>
+        <argsstring>(struct bt_ancs_client *ancs_c, const enum bt_ancs_app_attr_id_val id, uint8_t *data, const uint16_t len)</argsstring>
+        <name>bt_ancs_register_app_attr</name>
+        <param>
+          <type>struct <ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref> *</type>
+          <declname>ancs_c</declname>
+        </param>
+        <param>
+          <type>const enum <ref refid="group__bt__ancs__client_ga3e8d4afcc9865d3647cea5b406b4755a_1ga3e8d4afcc9865d3647cea5b406b4755a" kindref="member">bt_ancs_app_attr_id_val</ref></type>
+          <declname>id</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const uint16_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Function for registering attributes that will be requested when <ref refid="group__bt__ancs__client_gae11cb0d6242d42443c3d3c6cf929c9ba_1gae11cb0d6242d42443c3d3c6cf929c9ba" kindref="member">bt_ancs_request_app_attr</ref> is called. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ancs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ANCS client instance on which the attribute is registered. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ID of the attribute that is added. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer where the data of the attribute can be stored. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the buffer where the data of the attribute can be stored.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If all operations are successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="503" column="5" declfile="include/bluetooth/services/ancs_client.h" declline="503" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__ancs__client_ga67237a15a7926fa229249feeac8cbb43_1ga67237a15a7926fa229249feeac8cbb43" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_ancs_request_attrs</definition>
+        <argsstring>(struct bt_ancs_client *ancs_c, const struct bt_ancs_evt_notif *notif, bt_ancs_write_cb func)</argsstring>
+        <name>bt_ancs_request_attrs</name>
+        <param>
+          <type>struct <ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref> *</type>
+          <declname>ancs_c</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__ancs__evt__notif" kindref="compound">bt_ancs_evt_notif</ref> *</type>
+          <declname>notif</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__ancs__client_ga0194ae4d50ec7baa561b4474940df4db_1ga0194ae4d50ec7baa561b4474940df4db" kindref="member">bt_ancs_write_cb</ref></type>
+          <declname>func</declname>
+        </param>
+        <briefdescription>
+<para>Function for requesting attributes for a notification. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ancs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ANCS client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">notif</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the notification whose attributes will be requested from the Notification Provider. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback function for handling NP write response.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If all operations are successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="517" column="5" declfile="include/bluetooth/services/ancs_client.h" declline="517" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__ancs__client_gae11cb0d6242d42443c3d3c6cf929c9ba_1gae11cb0d6242d42443c3d3c6cf929c9ba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_ancs_request_app_attr</definition>
+        <argsstring>(struct bt_ancs_client *ancs_c, const uint8_t *app_id, uint32_t len, bt_ancs_write_cb func)</argsstring>
+        <name>bt_ancs_request_app_attr</name>
+        <param>
+          <type>struct <ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref> *</type>
+          <declname>ancs_c</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>app_id</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>len</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__ancs__client_ga0194ae4d50ec7baa561b4474940df4db_1ga0194ae4d50ec7baa561b4474940df4db" kindref="member">bt_ancs_write_cb</ref></type>
+          <declname>func</declname>
+        </param>
+        <briefdescription>
+<para>Function for requesting attributes for a given app. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ancs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ANCS client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">app_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>App identifier of the app for which the app attributes are requested. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the app identifier. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback function for handling NP write response.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If all operations are successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="531" column="5" declfile="include/bluetooth/services/ancs_client.h" declline="531" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__ancs__client_gaafd27f6a3a7771da280e5e2a7f1145b4_1gaafd27f6a3a7771da280e5e2a7f1145b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_ancs_notification_action</definition>
+        <argsstring>(struct bt_ancs_client *ancs_c, uint32_t uuid, enum bt_ancs_action_id_values action_id, bt_ancs_write_cb func)</argsstring>
+        <name>bt_ancs_notification_action</name>
+        <param>
+          <type>struct <ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref> *</type>
+          <declname>ancs_c</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>uuid</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__bt__ancs__client_ga8d26a58bbc3eb9e7758318002e2bf111_1ga8d26a58bbc3eb9e7758318002e2bf111" kindref="member">bt_ancs_action_id_values</ref></type>
+          <declname>action_id</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__ancs__client_ga0194ae4d50ec7baa561b4474940df4db_1ga0194ae4d50ec7baa561b4474940df4db" kindref="member">bt_ancs_write_cb</ref></type>
+          <declname>func</declname>
+        </param>
+        <briefdescription>
+<para>Function for performing a notification action. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ancs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ANCS client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">uuid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The UUID of the notification for which to perform the action. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">action_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Perform a positive or negative action. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback function for handling NP write response.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation is successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="545" column="5" declfile="include/bluetooth/services/ancs_client.h" declline="545" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__ancs__client_gaf127b9ef82ff0ccc57efe00aff1fc697_1gaf127b9ef82ff0ccc57efe00aff1fc697" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_ancs_handles_assign</definition>
+        <argsstring>(struct bt_gatt_dm *dm, struct bt_ancs_client *ancs_c)</argsstring>
+        <name>bt_ancs_handles_assign</name>
+        <param>
+          <type>struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref> *</type>
+          <declname>ancs_c</declname>
+        </param>
+        <briefdescription>
+<para>Function for assigning handles to ANCS client instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Call this function when a link has been established with a peer to associate the link to this instance of the module. This makes it possible to handle several links and associate each link to a particular instance of this module.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">ancs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ANCS client instance for associating the link.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation is successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="562" column="5" declfile="include/bluetooth/services/ancs_client.h" declline="562" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_ANCS_CLIENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_ANCS_CLIENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/gatt.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/conn.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="gatt__dm_8h" kindref="compound">bluetooth/gatt_dm.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="group__bt__ancs__client_gab3c3b656bf8e17c351d2c169e12ded80_1gab3c3b656bf8e17c351d2c169e12ded80" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_ANCS_VAL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="28"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_UUID_128_ENCODE(0x7905f431,<sp/>0xb5ce,<sp/>0x4e99,<sp/>0xa40f,<sp/>0x4b1e122d00d0)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="group__bt__ancs__client_gafbb3df82ff5a4d06c8a02c474ba4803f_1gafbb3df82ff5a4d06c8a02c474ba4803f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_ANCS_NOTIFICATION_SOURCE_VAL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="32"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_UUID_128_ENCODE(0x9fbf120d,<sp/>0x6301,<sp/>0x42d9,<sp/>0x8c58,<sp/>0x25e699a21dbd)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="group__bt__ancs__client_ga7aafaf48e7218ccbc52ed209fafa4c3f_1ga7aafaf48e7218ccbc52ed209fafa4c3f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_ANCS_CONTROL_POINT_VAL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="36"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_UUID_128_ENCODE(0x69d1d8f3,<sp/>0x45e1,<sp/>0x49a8,<sp/>0x9821,<sp/>0x9bbdfdaad9d9)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="group__bt__ancs__client_ga75546ad677c50fbbbdf31276021a4c12_1ga75546ad677c50fbbbdf31276021a4c12" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_ANCS_DATA_SOURCE_VAL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="40"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_UUID_128_ENCODE(0x22eac6e9,<sp/>0x24d6,<sp/>0x4bb5,<sp/>0xbe44,<sp/>0xb36ace7c7bfb)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="group__bt__ancs__client_gae85bbf86dd4774a07c302e6d5702d113_1gae85bbf86dd4774a07c302e6d5702d113" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_ANCS<sp/>BT_UUID_DECLARE_128(BT_UUID_ANCS_VAL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="group__bt__ancs__client_ga8b367b961cc773cf1c7a606e57dec259_1ga8b367b961cc773cf1c7a606e57dec259" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_ANCS_NOTIFICATION_SOURCE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="44"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_UUID_DECLARE_128(BT_UUID_ANCS_NOTIFICATION_SOURCE_VAL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="group__bt__ancs__client_gac6acd9cab7e5b9b2ff2e823f1332c028_1gac6acd9cab7e5b9b2ff2e823f1332c028" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_ANCS_CONTROL_POINT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="46"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_UUID_DECLARE_128(BT_UUID_ANCS_CONTROL_POINT_VAL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="group__bt__ancs__client_gaac91ff57eab66a22c533890bb4a98660_1gaac91ff57eab66a22c533890bb4a98660" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_UUID_ANCS_DATA_SOURCE<sp/>BT_UUID_DECLARE_128(BT_UUID_ANCS_DATA_SOURCE_VAL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="group__bt__ancs__client_ga4903008f9e8371bad1e37d4e0be3207d_1ga4903008f9e8371bad1e37d4e0be3207d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_ANCS_ATTR_DATA_MAX<sp/>32</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="group__bt__ancs__client_ga09543b99bcf3d77a2ffb22b2ea427801_1ga09543b99bcf3d77a2ffb22b2ea427801" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_ANCS_CATEGORY_ID_COUNT<sp/>12</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="group__bt__ancs__client_ga1bf95f570098a8e89126ff1449bf7089_1ga1bf95f570098a8e89126ff1449bf7089" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_ANCS_NOTIF_ATTR_COUNT<sp/>8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="group__bt__ancs__client_gae4e02e6caa190c1da949156465dd978d_1gae4e02e6caa190c1da949156465dd978d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_ANCS_APP_ATTR_COUNT<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63" refid="group__bt__ancs__client_ga871b021868ef36756d31ca7927ad880c_1ga871b021868ef36756d31ca7927ad880c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_ANCS_EVT_ID_COUNT<sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="group__bt__ancs__client_ga765df094404430864c725f4ac447227c_1ga765df094404430864c725f4ac447227c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_ANCS_NOTIF_DATA_LENGTH<sp/>8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71" refid="group__bt__ancs__client_ga20c955b94403e3d250d5c2dee1b1ae2a_1ga20c955b94403e3d250d5c2dee1b1ae2a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_ANCS_EVENT_FLAG_SILENT<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="group__bt__ancs__client_ga6b6d6dc0a6cc893a391634fee6527aed_1ga6b6d6dc0a6cc893a391634fee6527aed" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_ANCS_EVENT_FLAG_IMPORTANT<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="group__bt__ancs__client_gaa8cc1687aa6ffcb9926553d93ff88663_1gaa8cc1687aa6ffcb9926553d93ff88663" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_ANCS_EVENT_FLAG_PREEXISTING<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83" refid="group__bt__ancs__client_ga4ee4f3d7483b38b3eac67107b7a3aaf8_1ga4ee4f3d7483b38b3eac67107b7a3aaf8" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_ANCS_EVENT_FLAG_POSITIVE_ACTION<sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87" refid="group__bt__ancs__client_ga3af8e0a09e39324e27b3ec2cf9e5a123_1ga3af8e0a09e39324e27b3ec2cf9e5a123" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_ANCS_EVENT_FLAG_NEGATIVE_ACTION<sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="group__BT__ATT__ANCS__NP__ERROR__CODES_ga9a56d436095f234b9c76e9eac0de97aa_1ga9a56d436095f234b9c76e9eac0de97aa" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_ATT_ERR_ANCS_NP_UNKNOWN_COMMAND<sp/>0xA0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="group__BT__ATT__ANCS__NP__ERROR__CODES_ga9de2e561f6d6b2126646ce90a8058a13_1ga9de2e561f6d6b2126646ce90a8058a13" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_ATT_ERR_ANCS_NP_INVALID_COMMAND<sp/>0xA1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97" refid="group__BT__ATT__ANCS__NP__ERROR__CODES_ga86d24186e58757f0645ec2606bf85e10_1ga86d24186e58757f0645ec2606bf85e10" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_ATT_ERR_ANCS_NP_INVALID_PARAMETER<sp/>0xA2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99" refid="group__BT__ATT__ANCS__NP__ERROR__CODES_ga5c58d04768948281514b522470c9d15f_1ga5c58d04768948281514b522470c9d15f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_ATT_ERR_ANCS_NP_ACTION_FAILED<sp/>0xA3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103" refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1ga77a8ed99169c1dc5b9d7896a6302c35f" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1ga77a8ed99169c1dc5b9d7896a6302c35f" kindref="member">bt_ancs_category_id_val</ref><sp/>{</highlight></codeline>
+<codeline lineno="105" refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fa527472b96bd62156500ccb0f98055ebd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fa527472b96bd62156500ccb0f98055ebd" kindref="member">BT_ANCS_CATEGORY_ID_OTHER</ref>,</highlight></codeline>
+<codeline lineno="107" refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fa5b93b3b3ae0599727b9cf6790d3ead3a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fa5b93b3b3ae0599727b9cf6790d3ead3a" kindref="member">BT_ANCS_CATEGORY_ID_INCOMING_CALL</ref>,</highlight></codeline>
+<codeline lineno="109" refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fa6de6ea14f323f5c0ceb8235c4ef22754" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fa6de6ea14f323f5c0ceb8235c4ef22754" kindref="member">BT_ANCS_CATEGORY_ID_MISSED_CALL</ref>,</highlight></codeline>
+<codeline lineno="111" refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fac4580a28ee2765d30c87a65bc36bab31" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fac4580a28ee2765d30c87a65bc36bab31" kindref="member">BT_ANCS_CATEGORY_ID_VOICE_MAIL</ref>,</highlight></codeline>
+<codeline lineno="113" refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fab7faf9cc46deae539ce37726611b863c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fab7faf9cc46deae539ce37726611b863c" kindref="member">BT_ANCS_CATEGORY_ID_SOCIAL</ref>,</highlight></codeline>
+<codeline lineno="115" refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fa75aeadffdd5f4cad4f9cfeab4f29a5aa" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fa75aeadffdd5f4cad4f9cfeab4f29a5aa" kindref="member">BT_ANCS_CATEGORY_ID_SCHEDULE</ref>,</highlight></codeline>
+<codeline lineno="117" refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35faf9a043339a414049fbea61a6eb387bd9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35faf9a043339a414049fbea61a6eb387bd9" kindref="member">BT_ANCS_CATEGORY_ID_EMAIL</ref>,</highlight></codeline>
+<codeline lineno="119" refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fac177782913a2c7ce48e7aeea7c476322" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fac177782913a2c7ce48e7aeea7c476322" kindref="member">BT_ANCS_CATEGORY_ID_NEWS</ref>,</highlight></codeline>
+<codeline lineno="121" refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fac943b882e6b7beb95d5d8a1daada49af" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fac943b882e6b7beb95d5d8a1daada49af" kindref="member">BT_ANCS_CATEGORY_ID_HEALTH_AND_FITNESS</ref>,</highlight></codeline>
+<codeline lineno="123" refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fa173cb2152863ec5272097b7bf9aa1e02" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fa173cb2152863ec5272097b7bf9aa1e02" kindref="member">BT_ANCS_CATEGORY_ID_BUSINESS_AND_FINANCE</ref>,</highlight></codeline>
+<codeline lineno="125" refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fa4e94a280cccc9173e13c2a51673f6c20" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fa4e94a280cccc9173e13c2a51673f6c20" kindref="member">BT_ANCS_CATEGORY_ID_LOCATION</ref>,</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fa0d05cbe52605bdeaa48e8a604c568c90" kindref="member">BT_ANCS_CATEGORY_ID_ENTERTAINMENT</ref></highlight></codeline>
+<codeline lineno="128" refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1gga77a8ed99169c1dc5b9d7896a6302c35fa0d05cbe52605bdeaa48e8a604c568c90" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131" refid="group__bt__ancs__client_gac26f4374d0d464984c1b11e13f9b969b_1gac26f4374d0d464984c1b11e13f9b969b" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_gac26f4374d0d464984c1b11e13f9b969b_1gac26f4374d0d464984c1b11e13f9b969b" kindref="member">bt_ancs_evt_id_values</ref><sp/>{</highlight></codeline>
+<codeline lineno="133" refid="group__bt__ancs__client_gac26f4374d0d464984c1b11e13f9b969b_1ggac26f4374d0d464984c1b11e13f9b969bab3afe17476ad55e85ae3d9a57efec6bf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gac26f4374d0d464984c1b11e13f9b969b_1ggac26f4374d0d464984c1b11e13f9b969bab3afe17476ad55e85ae3d9a57efec6bf" kindref="member">BT_ANCS_EVENT_ID_NOTIFICATION_ADDED</ref>,</highlight></codeline>
+<codeline lineno="135" refid="group__bt__ancs__client_gac26f4374d0d464984c1b11e13f9b969b_1ggac26f4374d0d464984c1b11e13f9b969ba901cf3781630b72ab9cae479f15b4db7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gac26f4374d0d464984c1b11e13f9b969b_1ggac26f4374d0d464984c1b11e13f9b969ba901cf3781630b72ab9cae479f15b4db7" kindref="member">BT_ANCS_EVENT_ID_NOTIFICATION_MODIFIED</ref>,</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gac26f4374d0d464984c1b11e13f9b969b_1ggac26f4374d0d464984c1b11e13f9b969bac7cb03c83622555f5b20c883cc1e5c18" kindref="member">BT_ANCS_EVENT_ID_NOTIFICATION_REMOVED</ref></highlight></codeline>
+<codeline lineno="138" refid="group__bt__ancs__client_gac26f4374d0d464984c1b11e13f9b969b_1ggac26f4374d0d464984c1b11e13f9b969bac7cb03c83622555f5b20c883cc1e5c18" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143" refid="group__bt__ancs__client_gaea2b08813c4cebb99af5460c8dc66bd2_1gaea2b08813c4cebb99af5460c8dc66bd2" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_gaea2b08813c4cebb99af5460c8dc66bd2_1gaea2b08813c4cebb99af5460c8dc66bd2" kindref="member">bt_ancs_cmd_id_val</ref><sp/>{</highlight></codeline>
+<codeline lineno="147" refid="group__bt__ancs__client_gaea2b08813c4cebb99af5460c8dc66bd2_1ggaea2b08813c4cebb99af5460c8dc66bd2ac90e496cd64985c5ea0d84818f093390" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gaea2b08813c4cebb99af5460c8dc66bd2_1ggaea2b08813c4cebb99af5460c8dc66bd2ac90e496cd64985c5ea0d84818f093390" kindref="member">BT_ANCS_COMMAND_ID_GET_NOTIF_ATTRIBUTES</ref>,</highlight></codeline>
+<codeline lineno="151" refid="group__bt__ancs__client_gaea2b08813c4cebb99af5460c8dc66bd2_1ggaea2b08813c4cebb99af5460c8dc66bd2a020b2ba527e443de2c7b2d5de0ad0de2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gaea2b08813c4cebb99af5460c8dc66bd2_1ggaea2b08813c4cebb99af5460c8dc66bd2a020b2ba527e443de2c7b2d5de0ad0de2" kindref="member">BT_ANCS_COMMAND_ID_GET_APP_ATTRIBUTES</ref>,</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gaea2b08813c4cebb99af5460c8dc66bd2_1ggaea2b08813c4cebb99af5460c8dc66bd2a5a3ba39e81952ff87036ba9d18af2d8f" kindref="member">BT_ANCS_COMMAND_ID_PERFORM_NOTIF_ACTION</ref></highlight></codeline>
+<codeline lineno="156" refid="group__bt__ancs__client_gaea2b08813c4cebb99af5460c8dc66bd2_1ggaea2b08813c4cebb99af5460c8dc66bd2a5a3ba39e81952ff87036ba9d18af2d8f" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159" refid="group__bt__ancs__client_ga8d26a58bbc3eb9e7758318002e2bf111_1ga8d26a58bbc3eb9e7758318002e2bf111" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_ga8d26a58bbc3eb9e7758318002e2bf111_1ga8d26a58bbc3eb9e7758318002e2bf111" kindref="member">bt_ancs_action_id_values</ref><sp/>{</highlight></codeline>
+<codeline lineno="161" refid="group__bt__ancs__client_ga8d26a58bbc3eb9e7758318002e2bf111_1gga8d26a58bbc3eb9e7758318002e2bf111a0840efb3b45fb612676c7fca069614cd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_ga8d26a58bbc3eb9e7758318002e2bf111_1gga8d26a58bbc3eb9e7758318002e2bf111a0840efb3b45fb612676c7fca069614cd" kindref="member">BT_ANCS_ACTION_ID_POSITIVE</ref><sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_ga8d26a58bbc3eb9e7758318002e2bf111_1gga8d26a58bbc3eb9e7758318002e2bf111ad765de856d36236fd0b16e0c46ce4650" kindref="member">BT_ANCS_ACTION_ID_NEGATIVE</ref></highlight></codeline>
+<codeline lineno="164" refid="group__bt__ancs__client_ga8d26a58bbc3eb9e7758318002e2bf111_1gga8d26a58bbc3eb9e7758318002e2bf111ad765de856d36236fd0b16e0c46ce4650" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170" refid="group__bt__ancs__client_ga3e8d4afcc9865d3647cea5b406b4755a_1ga3e8d4afcc9865d3647cea5b406b4755a" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_ga3e8d4afcc9865d3647cea5b406b4755a_1ga3e8d4afcc9865d3647cea5b406b4755a" kindref="member">bt_ancs_app_attr_id_val</ref><sp/>{</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_ga3e8d4afcc9865d3647cea5b406b4755a_1gga3e8d4afcc9865d3647cea5b406b4755aa764ad5b6269c3523c7aca070d10a4541" kindref="member">BT_ANCS_APP_ATTR_ID_DISPLAY_NAME</ref><sp/>=<sp/>0</highlight></codeline>
+<codeline lineno="173" refid="group__bt__ancs__client_ga3e8d4afcc9865d3647cea5b406b4755a_1gga3e8d4afcc9865d3647cea5b406b4755aa764ad5b6269c3523c7aca070d10a4541" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176" refid="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1gab270403132c9a7cfb1ad43992bf73b83" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1gab270403132c9a7cfb1ad43992bf73b83" kindref="member">bt_ancs_notif_attr_id_val</ref><sp/>{</highlight></codeline>
+<codeline lineno="178" refid="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83ad52b1ad25668f439308d4eea9f5d5501" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83ad52b1ad25668f439308d4eea9f5d5501" kindref="member">BT_ANCS_NOTIF_ATTR_ID_APP_IDENTIFIER</ref><sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="180" refid="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83ace82549f9e033ace74337c23c11db370" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83ace82549f9e033ace74337c23c11db370" kindref="member">BT_ANCS_NOTIF_ATTR_ID_TITLE</ref>,</highlight></codeline>
+<codeline lineno="182" refid="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83a53e6e4890559c7d10b1320b343ca2c47" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83a53e6e4890559c7d10b1320b343ca2c47" kindref="member">BT_ANCS_NOTIF_ATTR_ID_SUBTITLE</ref>,</highlight></codeline>
+<codeline lineno="184" refid="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83a0f4151f0bc9fb79212448a420dd17b07" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83a0f4151f0bc9fb79212448a420dd17b07" kindref="member">BT_ANCS_NOTIF_ATTR_ID_MESSAGE</ref>,</highlight></codeline>
+<codeline lineno="186" refid="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83a4355c0a59896beb7f900c5e7501f431a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83a4355c0a59896beb7f900c5e7501f431a" kindref="member">BT_ANCS_NOTIF_ATTR_ID_MESSAGE_SIZE</ref>,</highlight></codeline>
+<codeline lineno="188" refid="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83ad38a572699bfe5a046e8d99b7cbbd1b1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83ad38a572699bfe5a046e8d99b7cbbd1b1" kindref="member">BT_ANCS_NOTIF_ATTR_ID_DATE</ref>,</highlight></codeline>
+<codeline lineno="190" refid="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83a9dd0884990166732902f9b0759a76200" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83a9dd0884990166732902f9b0759a76200" kindref="member">BT_ANCS_NOTIF_ATTR_ID_POSITIVE_ACTION_LABEL</ref>,</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83ab6f11c41b8c359dbd033baad129c6182" kindref="member">BT_ANCS_NOTIF_ATTR_ID_NEGATIVE_ACTION_LABEL</ref></highlight></codeline>
+<codeline lineno="193" refid="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1ggab270403132c9a7cfb1ad43992bf73b83ab6f11c41b8c359dbd033baad129c6182" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight></codeline>
+<codeline lineno="196" refid="structbt__ancs__notif__flags" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__ancs__notif__flags" kindref="compound">bt_ancs_notif_flags</ref><sp/>{</highlight></codeline>
+<codeline lineno="198" refid="structbt__ancs__notif__flags_a23e9f811611e5a6ff5b0a5877ff9f0a9_1a23e9f811611e5a6ff5b0a5877ff9f0a9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__ancs__notif__flags_a23e9f811611e5a6ff5b0a5877ff9f0a9_1a23e9f811611e5a6ff5b0a5877ff9f0a9" kindref="member">silent</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="200" refid="structbt__ancs__notif__flags_a331684846c246ffe7cba5fec9b1b7e29_1a331684846c246ffe7cba5fec9b1b7e29" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__ancs__notif__flags_a331684846c246ffe7cba5fec9b1b7e29_1a331684846c246ffe7cba5fec9b1b7e29" kindref="member">important</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="202" refid="structbt__ancs__notif__flags_a13aeb945b19a72fb1561f4aaf28f8d03_1a13aeb945b19a72fb1561f4aaf28f8d03" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__ancs__notif__flags_a13aeb945b19a72fb1561f4aaf28f8d03_1a13aeb945b19a72fb1561f4aaf28f8d03" kindref="member">pre_existing</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="204" refid="structbt__ancs__notif__flags_a2be8f53199b2a3888acba051e4361979_1a2be8f53199b2a3888acba051e4361979" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__ancs__notif__flags_a2be8f53199b2a3888acba051e4361979_1a2be8f53199b2a3888acba051e4361979" kindref="member">positive_action</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="206" refid="structbt__ancs__notif__flags_a16f53189763335ac34e08ea00c5ced1a_1a16f53189763335ac34e08ea00c5ced1a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__ancs__notif__flags_a16f53189763335ac34e08ea00c5ced1a_1a16f53189763335ac34e08ea00c5ced1a" kindref="member">negative_action</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="207"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight></codeline>
+<codeline lineno="210" refid="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1gac6979db89c35b9750706b6e7d007cb15" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1gac6979db89c35b9750706b6e7d007cb15" kindref="member">bt_ancs_parse_state</ref><sp/>{</highlight></codeline>
+<codeline lineno="212" refid="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15afe39d50bf4387948f90ba43eba24c7b5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15afe39d50bf4387948f90ba43eba24c7b5" kindref="member">BT_ANCS_PARSE_STATE_COMMAND_ID</ref>,</highlight></codeline>
+<codeline lineno="214" refid="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15a69fab90ffcec7af11e4cdcc289d69bdd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15a69fab90ffcec7af11e4cdcc289d69bdd" kindref="member">BT_ANCS_PARSE_STATE_NOTIF_UID</ref>,</highlight></codeline>
+<codeline lineno="216" refid="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15ab7038b04ff708b54b5b080a950abbebb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15ab7038b04ff708b54b5b080a950abbebb" kindref="member">BT_ANCS_PARSE_STATE_APP_ID</ref>,</highlight></codeline>
+<codeline lineno="218" refid="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15a85afeb1f4c8858072c483728559f99f6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15a85afeb1f4c8858072c483728559f99f6" kindref="member">BT_ANCS_PARSE_STATE_ATTR_ID</ref>,</highlight></codeline>
+<codeline lineno="220" refid="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15a5d74b3334f338cb60f887253dae4c311" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15a5d74b3334f338cb60f887253dae4c311" kindref="member">BT_ANCS_PARSE_STATE_ATTR_LEN1</ref>,</highlight></codeline>
+<codeline lineno="222" refid="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15a9f604e8c831612879c4bfc01f1669e88" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15a9f604e8c831612879c4bfc01f1669e88" kindref="member">BT_ANCS_PARSE_STATE_ATTR_LEN2</ref>,</highlight></codeline>
+<codeline lineno="224" refid="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15adb0f5f41841a99c1e821aff9e58feb5f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15adb0f5f41841a99c1e821aff9e58feb5f" kindref="member">BT_ANCS_PARSE_STATE_ATTR_DATA</ref>,</highlight></codeline>
+<codeline lineno="226" refid="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15a151355aa7fc8862be8512d64c8f07c9a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15a151355aa7fc8862be8512d64c8f07c9a" kindref="member">BT_ANCS_PARSE_STATE_ATTR_SKIP</ref>,</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15a05abe02e126d406cb364a11135a903d9" kindref="member">BT_ANCS_PARSE_STATE_DONE</ref></highlight></codeline>
+<codeline lineno="229" refid="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1ggac6979db89c35b9750706b6e7d007cb15a05abe02e126d406cb364a11135a903d9" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight></codeline>
+<codeline lineno="232" refid="structbt__ancs__evt__notif" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__ancs__evt__notif" kindref="compound">bt_ancs_evt_notif</ref><sp/>{</highlight></codeline>
+<codeline lineno="234" refid="structbt__ancs__evt__notif_acb89602acd3884a3df0ec087352b095e_1acb89602acd3884a3df0ec087352b095e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__ancs__evt__notif_acb89602acd3884a3df0ec087352b095e_1acb89602acd3884a3df0ec087352b095e" kindref="member">notif_uid</ref>;</highlight></codeline>
+<codeline lineno="236" refid="structbt__ancs__evt__notif_a762b9062e2596c36ca92e357a8afa31a_1a762b9062e2596c36ca92e357a8afa31a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_gac26f4374d0d464984c1b11e13f9b969b_1gac26f4374d0d464984c1b11e13f9b969b" kindref="member">bt_ancs_evt_id_values</ref><sp/><ref refid="structbt__ancs__evt__notif_a762b9062e2596c36ca92e357a8afa31a_1a762b9062e2596c36ca92e357a8afa31a" kindref="member">evt_id</ref>;</highlight></codeline>
+<codeline lineno="240" refid="structbt__ancs__evt__notif_a835f03da8d137d785e07b5cf4414b2b0_1a835f03da8d137d785e07b5cf4414b2b0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__ancs__notif__flags" kindref="compound">bt_ancs_notif_flags</ref><sp/><ref refid="structbt__ancs__evt__notif_a835f03da8d137d785e07b5cf4414b2b0_1a835f03da8d137d785e07b5cf4414b2b0" kindref="member">evt_flags</ref>;</highlight></codeline>
+<codeline lineno="244" refid="structbt__ancs__evt__notif_abaa55e70df8cb7cd61e0ec2ad7e12ae6_1abaa55e70df8cb7cd61e0ec2ad7e12ae6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1ga77a8ed99169c1dc5b9d7896a6302c35f" kindref="member">bt_ancs_category_id_val</ref><sp/><ref refid="structbt__ancs__evt__notif_abaa55e70df8cb7cd61e0ec2ad7e12ae6_1abaa55e70df8cb7cd61e0ec2ad7e12ae6" kindref="member">category_id</ref>;</highlight></codeline>
+<codeline lineno="246" refid="structbt__ancs__evt__notif_a337e4272eecc3a306fef06ac8b4ad5b1_1a337e4272eecc3a306fef06ac8b4ad5b1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__ancs__evt__notif_a337e4272eecc3a306fef06ac8b4ad5b1_1a337e4272eecc3a306fef06ac8b4ad5b1" kindref="member">category_count</ref>;</highlight></codeline>
+<codeline lineno="247"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"></highlight></codeline>
+<codeline lineno="252" refid="structbt__ancs__attr" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__ancs__attr" kindref="compound">bt_ancs_attr</ref><sp/>{</highlight></codeline>
+<codeline lineno="254" refid="structbt__ancs__attr_afbd32d89d0c4138ee0bcc40a41367b31_1afbd32d89d0c4138ee0bcc40a41367b31" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__ancs__attr_afbd32d89d0c4138ee0bcc40a41367b31_1afbd32d89d0c4138ee0bcc40a41367b31" kindref="member">attr_len</ref>;</highlight></codeline>
+<codeline lineno="256" refid="structbt__ancs__attr_a10a13e571e473866a4be881be4e984d3_1a10a13e571e473866a4be881be4e984d3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__ancs__attr_a10a13e571e473866a4be881be4e984d3_1a10a13e571e473866a4be881be4e984d3" kindref="member">attr_id</ref>;</highlight></codeline>
+<codeline lineno="258" refid="structbt__ancs__attr_a3f22c12f870b768f1dc4acb63eb98426_1a3f22c12f870b768f1dc4acb63eb98426" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*<ref refid="structbt__ancs__attr_a3f22c12f870b768f1dc4acb63eb98426_1a3f22c12f870b768f1dc4acb63eb98426" kindref="member">attr_data</ref>;</highlight></codeline>
+<codeline lineno="259"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"></highlight></codeline>
+<codeline lineno="262" refid="structbt__ancs__attr__list" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__ancs__attr__list" kindref="compound">bt_ancs_attr_list</ref><sp/>{</highlight></codeline>
+<codeline lineno="266" refid="structbt__ancs__attr__list_aa6f9a05b02a6de11a36de4b1f6905045_1aa6f9a05b02a6de11a36de4b1f6905045" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structbt__ancs__attr__list_aa6f9a05b02a6de11a36de4b1f6905045_1aa6f9a05b02a6de11a36de4b1f6905045" kindref="member">get</ref>;</highlight></codeline>
+<codeline lineno="271" refid="structbt__ancs__attr__list_a8315f278ab5362e790a6c6b333e1d665_1a8315f278ab5362e790a6c6b333e1d665" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__ancs__attr__list_a8315f278ab5362e790a6c6b333e1d665_1a8315f278ab5362e790a6c6b333e1d665" kindref="member">attr_id</ref>;</highlight></codeline>
+<codeline lineno="275" refid="structbt__ancs__attr__list_a04f2842e711d872a7ce887b128d7b21b_1a04f2842e711d872a7ce887b128d7b21b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__ancs__attr__list_a04f2842e711d872a7ce887b128d7b21b_1a04f2842e711d872a7ce887b128d7b21b" kindref="member">attr_len</ref>;</highlight></codeline>
+<codeline lineno="277" refid="structbt__ancs__attr__list_aa1e16f37aaf45a4f645b1da1912c94e7_1aa1e16f37aaf45a4f645b1da1912c94e7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*<ref refid="structbt__ancs__attr__list_aa1e16f37aaf45a4f645b1da1912c94e7_1aa1e16f37aaf45a4f645b1da1912c94e7" kindref="member">attr_data</ref>;</highlight></codeline>
+<codeline lineno="278"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"></highlight></codeline>
+<codeline lineno="280"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref>;</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"></highlight></codeline>
+<codeline lineno="283" refid="structbt__ancs__attr__response" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__ancs__attr__response" kindref="compound">bt_ancs_attr_response</ref><sp/>{</highlight></codeline>
+<codeline lineno="285" refid="structbt__ancs__attr__response_a83af091fe0719fde482b361b8f20a3d0_1a83af091fe0719fde482b361b8f20a3d0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_gaea2b08813c4cebb99af5460c8dc66bd2_1gaea2b08813c4cebb99af5460c8dc66bd2" kindref="member">bt_ancs_cmd_id_val</ref><sp/><ref refid="structbt__ancs__attr__response_a83af091fe0719fde482b361b8f20a3d0_1a83af091fe0719fde482b361b8f20a3d0" kindref="member">command_id</ref>;</highlight></codeline>
+<codeline lineno="289" refid="structbt__ancs__attr__response_a15c7c13b893050a47d1bc4bb20f95a3e_1a15c7c13b893050a47d1bc4bb20f95a3e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__ancs__attr" kindref="compound">bt_ancs_attr</ref><sp/><ref refid="structbt__ancs__attr__response_a15c7c13b893050a47d1bc4bb20f95a3e_1a15c7c13b893050a47d1bc4bb20f95a3e" kindref="member">attr</ref>;</highlight></codeline>
+<codeline lineno="291" refid="structbt__ancs__attr__response_a59aa45d93a1db35806853ce804cb84eb_1a59aa45d93a1db35806853ce804cb84eb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__ancs__attr__response_a59aa45d93a1db35806853ce804cb84eb_1a59aa45d93a1db35806853ce804cb84eb" kindref="member">notif_uid</ref>;</highlight></codeline>
+<codeline lineno="293" refid="structbt__ancs__attr__response_ae8dea3dd54739ea4e45928c6cbbdb948_1ae8dea3dd54739ea4e45928c6cbbdb948" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__ancs__attr__response_ae8dea3dd54739ea4e45928c6cbbdb948_1ae8dea3dd54739ea4e45928c6cbbdb948" kindref="member">app_id</ref>[<ref refid="group__bt__ancs__client_ga4903008f9e8371bad1e37d4e0be3207d_1ga4903008f9e8371bad1e37d4e0be3207d" kindref="member">BT_ANCS_ATTR_DATA_MAX</ref>];</highlight></codeline>
+<codeline lineno="294"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"></highlight></codeline>
+<codeline lineno="303" refid="group__bt__ancs__client_ga01d8b60e12b2de32330e5730459baa71_1ga01d8b60e12b2de32330e5730459baa71" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__bt__ancs__client_ga01d8b60e12b2de32330e5730459baa71_1ga01d8b60e12b2de32330e5730459baa71" kindref="member">bt_ancs_ns_notif_cb</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref><sp/>*ancs_c,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>err,</highlight></codeline>
+<codeline lineno="304"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__ancs__evt__notif" kindref="compound">bt_ancs_evt_notif</ref><sp/>*notif);</highlight></codeline>
+<codeline lineno="305"><highlight class="normal"></highlight></codeline>
+<codeline lineno="311" refid="group__bt__ancs__client_gadeb66d8c1af4a77668cbff3d035a6bfd_1gadeb66d8c1af4a77668cbff3d035a6bfd" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__bt__ancs__client_gadeb66d8c1af4a77668cbff3d035a6bfd_1gadeb66d8c1af4a77668cbff3d035a6bfd" kindref="member">bt_ancs_ds_notif_cb</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref><sp/>*ancs_c,</highlight></codeline>
+<codeline lineno="312"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__ancs__attr__response" kindref="compound">bt_ancs_attr_response</ref><sp/>*response);</highlight></codeline>
+<codeline lineno="313"><highlight class="normal"></highlight></codeline>
+<codeline lineno="319" refid="group__bt__ancs__client_ga0194ae4d50ec7baa561b4474940df4db_1ga0194ae4d50ec7baa561b4474940df4db" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__bt__ancs__client_ga0194ae4d50ec7baa561b4474940df4db_1ga0194ae4d50ec7baa561b4474940df4db" kindref="member">bt_ancs_write_cb</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref><sp/>*ancs_c,</highlight></codeline>
+<codeline lineno="320"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>err);</highlight></codeline>
+<codeline lineno="321"><highlight class="normal"></highlight></codeline>
+<codeline lineno="322" refid="structbt__ancs__parse__sm" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__ancs__parse__sm" kindref="compound">bt_ancs_parse_sm</ref><sp/>{</highlight></codeline>
+<codeline lineno="327" refid="structbt__ancs__parse__sm_a146d854954db7ea475b404a630dca0be_1a146d854954db7ea475b404a630dca0be" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__ancs__attr__list" kindref="compound">bt_ancs_attr_list</ref><sp/>*<ref refid="structbt__ancs__parse__sm_a146d854954db7ea475b404a630dca0be_1a146d854954db7ea475b404a630dca0be" kindref="member">attr_list</ref>;</highlight></codeline>
+<codeline lineno="331" refid="structbt__ancs__parse__sm_a8f2bb284462a7be6a6b28d69f572a6f7_1a8f2bb284462a7be6a6b28d69f572a6f7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__ancs__parse__sm_a8f2bb284462a7be6a6b28d69f572a6f7_1a8f2bb284462a7be6a6b28d69f572a6f7" kindref="member">attr_count</ref>;</highlight></codeline>
+<codeline lineno="335" refid="structbt__ancs__parse__sm_ad721afe235fa17aa3239225e420373a3_1ad721afe235fa17aa3239225e420373a3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__ancs__parse__sm_ad721afe235fa17aa3239225e420373a3_1ad721afe235fa17aa3239225e420373a3" kindref="member">expected_number_of_attrs</ref>;</highlight></codeline>
+<codeline lineno="337" refid="structbt__ancs__parse__sm_af3380e14f7f332f02870fcd84d26accf_1af3380e14f7f332f02870fcd84d26accf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_gac6979db89c35b9750706b6e7d007cb15_1gac6979db89c35b9750706b6e7d007cb15" kindref="member">bt_ancs_parse_state</ref><sp/><ref refid="structbt__ancs__parse__sm_af3380e14f7f332f02870fcd84d26accf_1af3380e14f7f332f02870fcd84d26accf" kindref="member">parse_state</ref>;</highlight></codeline>
+<codeline lineno="342" refid="structbt__ancs__parse__sm_a5de7adb458ae232669f5b76ed1b8b5b9_1a5de7adb458ae232669f5b76ed1b8b5b9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_gaea2b08813c4cebb99af5460c8dc66bd2_1gaea2b08813c4cebb99af5460c8dc66bd2" kindref="member">bt_ancs_cmd_id_val</ref><sp/><ref refid="structbt__ancs__parse__sm_a5de7adb458ae232669f5b76ed1b8b5b9_1a5de7adb458ae232669f5b76ed1b8b5b9" kindref="member">command_id</ref>;</highlight></codeline>
+<codeline lineno="344" refid="structbt__ancs__parse__sm_a50fce3f0a08e168d6cbe9a8ab212ef40_1a50fce3f0a08e168d6cbe9a8ab212ef40" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*<ref refid="structbt__ancs__parse__sm_a50fce3f0a08e168d6cbe9a8ab212ef40_1a50fce3f0a08e168d6cbe9a8ab212ef40" kindref="member">data_dest</ref>;</highlight></codeline>
+<codeline lineno="346" refid="structbt__ancs__parse__sm_aab2b9a3f46c6035cc2cf61c930f945bf_1aab2b9a3f46c6035cc2cf61c930f945bf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__ancs__parse__sm_aab2b9a3f46c6035cc2cf61c930f945bf_1aab2b9a3f46c6035cc2cf61c930f945bf" kindref="member">current_attr_index</ref>;</highlight></codeline>
+<codeline lineno="348" refid="structbt__ancs__parse__sm_ac69f5afb98462592f3bf03c9cb932fa3_1ac69f5afb98462592f3bf03c9cb932fa3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__ancs__parse__sm_ac69f5afb98462592f3bf03c9cb932fa3_1ac69f5afb98462592f3bf03c9cb932fa3" kindref="member">current_app_id_index</ref>;</highlight></codeline>
+<codeline lineno="349"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="350"><highlight class="normal"></highlight></codeline>
+<codeline lineno="352" refid="structbt__ancs__client" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref><sp/>{</highlight></codeline>
+<codeline lineno="354" refid="structbt__ancs__client_a186c7f0f46b03d363be43ddf318eb66a_1a186c7f0f46b03d363be43ddf318eb66a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_conn<sp/>*<ref refid="structbt__ancs__client_a186c7f0f46b03d363be43ddf318eb66a_1a186c7f0f46b03d363be43ddf318eb66a" kindref="member">conn</ref>;</highlight></codeline>
+<codeline lineno="355"><highlight class="normal"></highlight></codeline>
+<codeline lineno="357" refid="structbt__ancs__client_a723b2d5ea091dc8b251b84d5453dd162_1a723b2d5ea091dc8b251b84d5453dd162" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>atomic_t<sp/><ref refid="structbt__ancs__client_a723b2d5ea091dc8b251b84d5453dd162_1a723b2d5ea091dc8b251b84d5453dd162" kindref="member">state</ref>;</highlight></codeline>
+<codeline lineno="358"><highlight class="normal"></highlight></codeline>
+<codeline lineno="360" refid="structbt__ancs__client_ad781c870ad716e5cce3695dc814ccf82_1ad781c870ad716e5cce3695dc814ccf82" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__ancs__client_ad781c870ad716e5cce3695dc814ccf82_1ad781c870ad716e5cce3695dc814ccf82" kindref="member">handle_cp</ref>;</highlight></codeline>
+<codeline lineno="361"><highlight class="normal"></highlight></codeline>
+<codeline lineno="363" refid="structbt__ancs__client_ab20d061012e88974f46faf3ac9691707_1ab20d061012e88974f46faf3ac9691707" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__ancs__client_ab20d061012e88974f46faf3ac9691707_1ab20d061012e88974f46faf3ac9691707" kindref="member">handle_ns</ref>;</highlight></codeline>
+<codeline lineno="364"><highlight class="normal"></highlight></codeline>
+<codeline lineno="366" refid="structbt__ancs__client_aaab17a4377de234cc58ee812a9213226_1aaab17a4377de234cc58ee812a9213226" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__ancs__client_aaab17a4377de234cc58ee812a9213226_1aaab17a4377de234cc58ee812a9213226" kindref="member">handle_ns_ccc</ref>;</highlight></codeline>
+<codeline lineno="367"><highlight class="normal"></highlight></codeline>
+<codeline lineno="369" refid="structbt__ancs__client_a2ebb3484ee99f6aae3c4e78c765c3533_1a2ebb3484ee99f6aae3c4e78c765c3533" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__ancs__client_a2ebb3484ee99f6aae3c4e78c765c3533_1a2ebb3484ee99f6aae3c4e78c765c3533" kindref="member">handle_ds</ref>;</highlight></codeline>
+<codeline lineno="370"><highlight class="normal"></highlight></codeline>
+<codeline lineno="372" refid="structbt__ancs__client_aa0302fe31fb476eb596d5b7c60335b49_1aa0302fe31fb476eb596d5b7c60335b49" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__ancs__client_aa0302fe31fb476eb596d5b7c60335b49_1aa0302fe31fb476eb596d5b7c60335b49" kindref="member">handle_ds_ccc</ref>;</highlight></codeline>
+<codeline lineno="373"><highlight class="normal"></highlight></codeline>
+<codeline lineno="375" refid="structbt__ancs__client_abd863fbdef516e22da293ec9c38a2718_1abd863fbdef516e22da293ec9c38a2718" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_gatt_write_params<sp/><ref refid="structbt__ancs__client_abd863fbdef516e22da293ec9c38a2718_1abd863fbdef516e22da293ec9c38a2718" kindref="member">cp_write_params</ref>;</highlight></codeline>
+<codeline lineno="376"><highlight class="normal"></highlight></codeline>
+<codeline lineno="378" refid="structbt__ancs__client_a2b10cfb6338f51f55514ed198c587917_1a2b10cfb6338f51f55514ed198c587917" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_ga0194ae4d50ec7baa561b4474940df4db_1ga0194ae4d50ec7baa561b4474940df4db" kindref="member">bt_ancs_write_cb</ref><sp/><ref refid="structbt__ancs__client_a2b10cfb6338f51f55514ed198c587917_1a2b10cfb6338f51f55514ed198c587917" kindref="member">cp_write_cb</ref>;</highlight></codeline>
+<codeline lineno="379"><highlight class="normal"></highlight></codeline>
+<codeline lineno="381" refid="structbt__ancs__client_a32fcc5230c7a9ff8fb3b0ab2c30c0839_1a32fcc5230c7a9ff8fb3b0ab2c30c0839" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__ancs__client_a32fcc5230c7a9ff8fb3b0ab2c30c0839_1a32fcc5230c7a9ff8fb3b0ab2c30c0839" kindref="member">cp_data</ref>[CONFIG_BT_ANCS_CLIENT_CP_BUFF_SIZE];</highlight></codeline>
+<codeline lineno="382"><highlight class="normal"></highlight></codeline>
+<codeline lineno="384" refid="structbt__ancs__client_a1c4df58713798b57601bac429f99fdf0_1a1c4df58713798b57601bac429f99fdf0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_gatt_subscribe_params<sp/><ref refid="structbt__ancs__client_a1c4df58713798b57601bac429f99fdf0_1a1c4df58713798b57601bac429f99fdf0" kindref="member">ns_notif_params</ref>;</highlight></codeline>
+<codeline lineno="385"><highlight class="normal"></highlight></codeline>
+<codeline lineno="387" refid="structbt__ancs__client_a25727049aba74dd536c585f8c1f3d787_1a25727049aba74dd536c585f8c1f3d787" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_ga01d8b60e12b2de32330e5730459baa71_1ga01d8b60e12b2de32330e5730459baa71" kindref="member">bt_ancs_ns_notif_cb</ref><sp/><ref refid="structbt__ancs__client_a25727049aba74dd536c585f8c1f3d787_1a25727049aba74dd536c585f8c1f3d787" kindref="member">ns_notif_cb</ref>;</highlight></codeline>
+<codeline lineno="388"><highlight class="normal"></highlight></codeline>
+<codeline lineno="390" refid="structbt__ancs__client_a8af9f133d2b0c931a1f45acc8bd73737_1a8af9f133d2b0c931a1f45acc8bd73737" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_gatt_subscribe_params<sp/><ref refid="structbt__ancs__client_a8af9f133d2b0c931a1f45acc8bd73737_1a8af9f133d2b0c931a1f45acc8bd73737" kindref="member">ds_notif_params</ref>;</highlight></codeline>
+<codeline lineno="391"><highlight class="normal"></highlight></codeline>
+<codeline lineno="393" refid="structbt__ancs__client_a235a7f73ff8d81ba40e6a3c091ef0a7a_1a235a7f73ff8d81ba40e6a3c091ef0a7a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gadeb66d8c1af4a77668cbff3d035a6bfd_1gadeb66d8c1af4a77668cbff3d035a6bfd" kindref="member">bt_ancs_ds_notif_cb</ref><sp/><ref refid="structbt__ancs__client_a235a7f73ff8d81ba40e6a3c091ef0a7a_1a235a7f73ff8d81ba40e6a3c091ef0a7a" kindref="member">ds_notif_cb</ref>;</highlight></codeline>
+<codeline lineno="394"><highlight class="normal"></highlight></codeline>
+<codeline lineno="399"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__ancs__attr__list" kindref="compound">bt_ancs_attr_list</ref></highlight></codeline>
+<codeline lineno="400" refid="structbt__ancs__client_a42a6c113fbb61a584c71146e6e1f8681_1a42a6c113fbb61a584c71146e6e1f8681" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structbt__ancs__client_a42a6c113fbb61a584c71146e6e1f8681_1a42a6c113fbb61a584c71146e6e1f8681" kindref="member">ancs_notif_attr_list</ref>[<ref refid="group__bt__ancs__client_ga1bf95f570098a8e89126ff1449bf7089_1ga1bf95f570098a8e89126ff1449bf7089" kindref="member">BT_ANCS_NOTIF_ATTR_COUNT</ref>];</highlight></codeline>
+<codeline lineno="401"><highlight class="normal"></highlight></codeline>
+<codeline lineno="406"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__ancs__attr__list" kindref="compound">bt_ancs_attr_list</ref></highlight></codeline>
+<codeline lineno="407" refid="structbt__ancs__client_a2bd73840b380554701786b1567ddf2d3_1a2bd73840b380554701786b1567ddf2d3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structbt__ancs__client_a2bd73840b380554701786b1567ddf2d3_1a2bd73840b380554701786b1567ddf2d3" kindref="member">ancs_app_attr_list</ref>[<ref refid="group__bt__ancs__client_gae4e02e6caa190c1da949156465dd978d_1gae4e02e6caa190c1da949156465dd978d" kindref="member">BT_ANCS_APP_ATTR_COUNT</ref>];</highlight></codeline>
+<codeline lineno="408"><highlight class="normal"></highlight></codeline>
+<codeline lineno="412" refid="structbt__ancs__client_af56b5c8a384b5f48a5722f8cca15d287_1af56b5c8a384b5f48a5722f8cca15d287" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__ancs__client_af56b5c8a384b5f48a5722f8cca15d287_1af56b5c8a384b5f48a5722f8cca15d287" kindref="member">number_of_requested_attr</ref>;</highlight></codeline>
+<codeline lineno="413"><highlight class="normal"></highlight></codeline>
+<codeline lineno="417" refid="structbt__ancs__client_a9eb72ca4bdd6294509729e04a20810d8_1a9eb72ca4bdd6294509729e04a20810d8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__ancs__parse__sm" kindref="compound">bt_ancs_parse_sm</ref><sp/><ref refid="structbt__ancs__client_a9eb72ca4bdd6294509729e04a20810d8_1a9eb72ca4bdd6294509729e04a20810d8" kindref="member">parse_info</ref>;</highlight></codeline>
+<codeline lineno="418"><highlight class="normal"></highlight></codeline>
+<codeline lineno="421" refid="structbt__ancs__client_af61c4a5906379158bfd7683d101bad29_1af61c4a5906379158bfd7683d101bad29" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__ancs__attr__response" kindref="compound">bt_ancs_attr_response</ref><sp/><ref refid="structbt__ancs__client_af61c4a5906379158bfd7683d101bad29_1af61c4a5906379158bfd7683d101bad29" kindref="member">attr_response</ref>;</highlight></codeline>
+<codeline lineno="422"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="423"><highlight class="normal"></highlight></codeline>
+<codeline lineno="434" refid="group__bt__ancs__client_gac70611e08cbbd2965389ba940de0df43_1gac70611e08cbbd2965389ba940de0df43" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_gac70611e08cbbd2965389ba940de0df43_1gac70611e08cbbd2965389ba940de0df43" kindref="member">bt_ancs_client_init</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref><sp/>*ancs_c);</highlight></codeline>
+<codeline lineno="435"><highlight class="normal"></highlight></codeline>
+<codeline lineno="445" refid="group__bt__ancs__client_gaed557ade7e70d932f1598a0e85cbe826_1gaed557ade7e70d932f1598a0e85cbe826" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_gaed557ade7e70d932f1598a0e85cbe826_1gaed557ade7e70d932f1598a0e85cbe826" kindref="member">bt_ancs_subscribe_notification_source</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref><sp/>*ancs_c,</highlight></codeline>
+<codeline lineno="446"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_ga01d8b60e12b2de32330e5730459baa71_1ga01d8b60e12b2de32330e5730459baa71" kindref="member">bt_ancs_ns_notif_cb</ref><sp/>func);</highlight></codeline>
+<codeline lineno="447"><highlight class="normal"></highlight></codeline>
+<codeline lineno="456" refid="group__bt__ancs__client_ga26fc894972066e3fe900777e443e8a03_1ga26fc894972066e3fe900777e443e8a03" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_ga26fc894972066e3fe900777e443e8a03_1ga26fc894972066e3fe900777e443e8a03" kindref="member">bt_ancs_subscribe_data_source</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref><sp/>*ancs_c,</highlight></codeline>
+<codeline lineno="457"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_gadeb66d8c1af4a77668cbff3d035a6bfd_1gadeb66d8c1af4a77668cbff3d035a6bfd" kindref="member">bt_ancs_ds_notif_cb</ref><sp/>func);</highlight></codeline>
+<codeline lineno="458"><highlight class="normal"></highlight></codeline>
+<codeline lineno="466" refid="group__bt__ancs__client_gacf2e72760d954046ae8b4086b6d3c43e_1gacf2e72760d954046ae8b4086b6d3c43e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_gacf2e72760d954046ae8b4086b6d3c43e_1gacf2e72760d954046ae8b4086b6d3c43e" kindref="member">bt_ancs_unsubscribe_notification_source</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref><sp/>*ancs_c);</highlight></codeline>
+<codeline lineno="467"><highlight class="normal"></highlight></codeline>
+<codeline lineno="475" refid="group__bt__ancs__client_ga157d0522c31dc138627834ce7e70f598_1ga157d0522c31dc138627834ce7e70f598" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_ga157d0522c31dc138627834ce7e70f598_1ga157d0522c31dc138627834ce7e70f598" kindref="member">bt_ancs_unsubscribe_data_source</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref><sp/>*ancs_c);</highlight></codeline>
+<codeline lineno="476"><highlight class="normal"></highlight></codeline>
+<codeline lineno="488" refid="group__bt__ancs__client_ga371ce5da7b03b642d806c686eafcc73c_1ga371ce5da7b03b642d806c686eafcc73c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_ga371ce5da7b03b642d806c686eafcc73c_1ga371ce5da7b03b642d806c686eafcc73c" kindref="member">bt_ancs_register_attr</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref><sp/>*ancs_c,</highlight></codeline>
+<codeline lineno="489"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_gab270403132c9a7cfb1ad43992bf73b83_1gab270403132c9a7cfb1ad43992bf73b83" kindref="member">bt_ancs_notif_attr_id_val</ref><sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="490"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*data,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint16_t<sp/>len);</highlight></codeline>
+<codeline lineno="491"><highlight class="normal"></highlight></codeline>
+<codeline lineno="503" refid="group__bt__ancs__client_ga64ee40e8ccc444c89186b4c1c9801ce0_1ga64ee40e8ccc444c89186b4c1c9801ce0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_ga64ee40e8ccc444c89186b4c1c9801ce0_1ga64ee40e8ccc444c89186b4c1c9801ce0" kindref="member">bt_ancs_register_app_attr</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref><sp/>*ancs_c,</highlight></codeline>
+<codeline lineno="504"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_ga3e8d4afcc9865d3647cea5b406b4755a_1ga3e8d4afcc9865d3647cea5b406b4755a" kindref="member">bt_ancs_app_attr_id_val</ref><sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="505"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*data,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint16_t<sp/>len);</highlight></codeline>
+<codeline lineno="506"><highlight class="normal"></highlight></codeline>
+<codeline lineno="517" refid="group__bt__ancs__client_ga67237a15a7926fa229249feeac8cbb43_1ga67237a15a7926fa229249feeac8cbb43" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_ga67237a15a7926fa229249feeac8cbb43_1ga67237a15a7926fa229249feeac8cbb43" kindref="member">bt_ancs_request_attrs</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref><sp/>*ancs_c,</highlight></codeline>
+<codeline lineno="518"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__ancs__evt__notif" kindref="compound">bt_ancs_evt_notif</ref><sp/>*notif,</highlight></codeline>
+<codeline lineno="519"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_ga0194ae4d50ec7baa561b4474940df4db_1ga0194ae4d50ec7baa561b4474940df4db" kindref="member">bt_ancs_write_cb</ref><sp/>func);</highlight></codeline>
+<codeline lineno="520"><highlight class="normal"></highlight></codeline>
+<codeline lineno="531" refid="group__bt__ancs__client_gae11cb0d6242d42443c3d3c6cf929c9ba_1gae11cb0d6242d42443c3d3c6cf929c9ba" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_gae11cb0d6242d42443c3d3c6cf929c9ba_1gae11cb0d6242d42443c3d3c6cf929c9ba" kindref="member">bt_ancs_request_app_attr</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref><sp/>*ancs_c,</highlight></codeline>
+<codeline lineno="532"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*<ref refid="structbt__ancs__attr__response_ae8dea3dd54739ea4e45928c6cbbdb948_1ae8dea3dd54739ea4e45928c6cbbdb948" kindref="member">app_id</ref>,<sp/>uint32_t<sp/>len,</highlight></codeline>
+<codeline lineno="533"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_ga0194ae4d50ec7baa561b4474940df4db_1ga0194ae4d50ec7baa561b4474940df4db" kindref="member">bt_ancs_write_cb</ref><sp/>func);</highlight></codeline>
+<codeline lineno="534"><highlight class="normal"></highlight></codeline>
+<codeline lineno="545" refid="group__bt__ancs__client_gaafd27f6a3a7771da280e5e2a7f1145b4_1gaafd27f6a3a7771da280e5e2a7f1145b4" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_gaafd27f6a3a7771da280e5e2a7f1145b4_1gaafd27f6a3a7771da280e5e2a7f1145b4" kindref="member">bt_ancs_notification_action</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref><sp/>*ancs_c,<sp/>uint32_t<sp/>uuid,</highlight></codeline>
+<codeline lineno="546"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_ga8d26a58bbc3eb9e7758318002e2bf111_1ga8d26a58bbc3eb9e7758318002e2bf111" kindref="member">bt_ancs_action_id_values</ref><sp/>action_id,</highlight></codeline>
+<codeline lineno="547"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__ancs__client_ga0194ae4d50ec7baa561b4474940df4db_1ga0194ae4d50ec7baa561b4474940df4db" kindref="member">bt_ancs_write_cb</ref><sp/>func);</highlight></codeline>
+<codeline lineno="548"><highlight class="normal"></highlight></codeline>
+<codeline lineno="562" refid="group__bt__ancs__client_gaf127b9ef82ff0ccc57efe00aff1fc697_1gaf127b9ef82ff0ccc57efe00aff1fc697" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__ancs__client_gaf127b9ef82ff0ccc57efe00aff1fc697_1gaf127b9ef82ff0ccc57efe00aff1fc697" kindref="member">bt_ancs_handles_assign</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_gatt_dm<sp/>*dm,</highlight></codeline>
+<codeline lineno="563"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__ancs__client" kindref="compound">bt_ancs_client</ref><sp/>*ancs_c);</highlight></codeline>
+<codeline lineno="564"><highlight class="normal"></highlight></codeline>
+<codeline lineno="565"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="566"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="567"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="568"><highlight class="normal"></highlight></codeline>
+<codeline lineno="573"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_ANCS_CLIENT_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/services/ancs_client.h"/>
+  </compounddef>
+</doxygen>

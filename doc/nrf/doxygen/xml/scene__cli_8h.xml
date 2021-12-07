@@ -1,0 +1,994 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="scene__cli_8h" kind="file" language="C++">
+    <compoundname>scene_cli.h</compoundname>
+    <includes refid="scene_8h" local="no">bluetooth/mesh/scene.h</includes>
+    <includedby refid="models_8h" local="no">include/bluetooth/mesh/models.h</includedby>
+    <incdepgraph>
+      <node id="3">
+        <label>bluetooth/mesh/model_types.h</label>
+        <link refid="model__types_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bluetooth/mesh/scene.h</label>
+        <link refid="scene_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/mesh/scene_cli.h</label>
+        <link refid="scene__cli_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bluetooth/mesh.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>include/bluetooth/mesh/models.h</label>
+        <link refid="models_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/mesh/scene_cli.h</label>
+        <link refid="scene__cli_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>include/bluetooth/mesh/vnd/silvair_enocean_srv.h</label>
+        <link refid="silvair__enocean__srv_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structbt__mesh__scene__register" prot="public">bt_mesh_scene_register</innerclass>
+    <innerclass refid="structbt__mesh__scene__cli" prot="public">bt_mesh_scene_cli</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__scene__cli_ga01f037a317909cca7b7cef5399a78bac_1ga01f037a317909cca7b7cef5399a78bac" prot="public" static="no">
+        <name>BT_MESH_MODEL_SCENE_CLI</name>
+        <param><defname>_cli</defname></param>
+        <initializer>	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_SCENE_CLI, _bt_mesh_scene_cli_op,    \
+			 &amp;(_cli)-&gt;pub,                                         \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref>,     \
+						 _cli),                        \
+			 &amp;_bt_mesh_scene_cli_cb)</initializer>
+        <briefdescription>
+<para>Scene Client model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__scene__cli" kindref="compound">Scene Client model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="31" column="9" bodyfile="include/bluetooth/mesh/scene_cli.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__scene__cli_ga9c5a1d560d9141e779b52da2b3c5c69f_1ga9c5a1d560d9141e779b52da2b3c5c69f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_scene_cli_get</definition>
+        <argsstring>(struct bt_mesh_scene_cli *cli, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_scene_state *rsp)</argsstring>
+        <name>bt_mesh_scene_cli_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__state" kindref="compound">bt_mesh_scene_state</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Get the current state of a Scene Server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. The response will always be passed to the <ref refid="structbt__mesh__scene__cli_a0945c74c7ff478669e7295b0b6564eee_1a0945c74c7ff478669e7295b0b6564eee" kindref="member">bt_mesh_scene_cli::status</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene client model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to use the configured publication parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully got the scene state. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="104" column="5" declfile="include/bluetooth/mesh/scene_cli.h" declline="104" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__scene__cli_ga2dded8265e1d4121cfa38c778ebef3db_1ga2dded8265e1d4121cfa38c778ebef3db" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_scene_cli_register_get</definition>
+        <argsstring>(struct bt_mesh_scene_cli *cli, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_scene_register *rsp)</argsstring>
+        <name>bt_mesh_scene_cli_register_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__register" kindref="compound">bt_mesh_scene_register</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Get the full scene register of a Scene Server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. The response will always be passed to the <ref refid="structbt__mesh__scene__cli_aaeee21f6e0f5b5c50a76b44f9e5ddfa2_1aaeee21f6e0f5b5c50a76b44f9e5ddfa2" kindref="member">bt_mesh_scene_cli::scene_register</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene client model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to use the configured publication parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response buffer, or NULL to keep from blocking. If the <computeroutput>rsp.scenes</computeroutput> parameter points to a valid buffer, it will be filled with at most <computeroutput>rsp.count</computeroutput> number of scenes, and <computeroutput>rsp.count</computeroutput> will be changed to reflect the number of retrieved scenes.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully got the scene register. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="129" column="5" declfile="include/bluetooth/mesh/scene_cli.h" declline="129" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__scene__cli_ga2f090e49a35b5bc405ee7b85aeb50af9_1ga2f090e49a35b5bc405ee7b85aeb50af9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_scene_cli_store</definition>
+        <argsstring>(struct bt_mesh_scene_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t scene, struct bt_mesh_scene_register *rsp)</argsstring>
+        <name>bt_mesh_scene_cli_store</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>scene</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__register" kindref="compound">bt_mesh_scene_register</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Store the current state as a scene. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. The response will always be passed to the <ref refid="structbt__mesh__scene__cli_aaeee21f6e0f5b5c50a76b44f9e5ddfa2_1aaeee21f6e0f5b5c50a76b44f9e5ddfa2" kindref="member">bt_mesh_scene_cli::scene_register</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene client model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to use the configured publication parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">scene</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene number to store. Cannot be <ref refid="group__bt__mesh__scene_gaf68df55bc0247c8e0d90182c34fa35d5_1gaf68df55bc0247c8e0d90182c34fa35d5" kindref="member">BT_MESH_SCENE_NONE</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response buffer, or NULL to keep from blocking. If the <computeroutput>rsp.scenes</computeroutput> parameter points to a valid buffer, it will be filled with at most <computeroutput>rsp.count</computeroutput> number of scenes, and <computeroutput>rsp.count</computeroutput> will be changed to reflect the number of retrieved scenes.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the store message and processed the response. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid scene number. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="156" column="5" declfile="include/bluetooth/mesh/scene_cli.h" declline="156" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__scene__cli_gabe540db7e449f4bc8b8bb20eedec2747_1gabe540db7e449f4bc8b8bb20eedec2747" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_scene_cli_store_unack</definition>
+        <argsstring>(struct bt_mesh_scene_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t scene)</argsstring>
+        <name>bt_mesh_scene_cli_store_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>scene</declname>
+        </param>
+        <briefdescription>
+<para>Store the current state as a scene without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene client model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to use the configured publication parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">scene</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene number to store. Cannot be <ref refid="group__bt__mesh__scene_gaf68df55bc0247c8e0d90182c34fa35d5_1gaf68df55bc0247c8e0d90182c34fa35d5" kindref="member">BT_MESH_SCENE_NONE</ref>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the store message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid scene number. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="173" column="5" declfile="include/bluetooth/mesh/scene_cli.h" declline="173" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__scene__cli_gada866b3d00baaa267629d26e905f069a_1gada866b3d00baaa267629d26e905f069a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_scene_cli_delete</definition>
+        <argsstring>(struct bt_mesh_scene_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t scene, struct bt_mesh_scene_register *rsp)</argsstring>
+        <name>bt_mesh_scene_cli_delete</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>scene</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__register" kindref="compound">bt_mesh_scene_register</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Delete the given scene. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. The response will always be passed to the <ref refid="structbt__mesh__scene__cli_aaeee21f6e0f5b5c50a76b44f9e5ddfa2_1aaeee21f6e0f5b5c50a76b44f9e5ddfa2" kindref="member">bt_mesh_scene_cli::scene_register</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene client model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to use the configured publication parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">scene</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene to delete. Cannot be <ref refid="group__bt__mesh__scene_gaf68df55bc0247c8e0d90182c34fa35d5_1gaf68df55bc0247c8e0d90182c34fa35d5" kindref="member">BT_MESH_SCENE_NONE</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response buffer, or NULL to keep from blocking. If the <computeroutput>rsp.scenes</computeroutput> parameter points to a valid buffer, it will be filled with at most <computeroutput>rsp.count</computeroutput> number of scenes, and <computeroutput>rsp.count</computeroutput> will be changed to reflect the number of retrieved scenes.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the delete message and processed the response. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid scene number. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="199" column="5" declfile="include/bluetooth/mesh/scene_cli.h" declline="199" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__scene__cli_ga60e2029ae355f1746e155e0cad844978_1ga60e2029ae355f1746e155e0cad844978" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_scene_cli_delete_unack</definition>
+        <argsstring>(struct bt_mesh_scene_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t scene)</argsstring>
+        <name>bt_mesh_scene_cli_delete_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>scene</declname>
+        </param>
+        <briefdescription>
+<para>Delete the given scene without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene client model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to use the configured publication parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">scene</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene to delete. Cannot be <ref refid="group__bt__mesh__scene_gaf68df55bc0247c8e0d90182c34fa35d5_1gaf68df55bc0247c8e0d90182c34fa35d5" kindref="member">BT_MESH_SCENE_NONE</ref>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the delete message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid scene number. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="216" column="5" declfile="include/bluetooth/mesh/scene_cli.h" declline="216" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__scene__cli_gac4dc2207179d715580d5dd5cb9350269_1gac4dc2207179d715580d5dd5cb9350269" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_scene_cli_recall</definition>
+        <argsstring>(struct bt_mesh_scene_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t scene, const struct bt_mesh_model_transition *transition, struct bt_mesh_scene_state *rsp)</argsstring>
+        <name>bt_mesh_scene_cli_recall</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>scene</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref> *</type>
+          <declname>transition</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__state" kindref="compound">bt_mesh_scene_state</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Recall the given scene. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>All models that participate in the scene will transition to the stored scene state with the given transition parameters.</para>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. The response will always be passed to the <ref refid="structbt__mesh__scene__cli_a0945c74c7ff478669e7295b0b6564eee_1a0945c74c7ff478669e7295b0b6564eee" kindref="member">bt_mesh_scene_cli::status</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene client model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to use the configured publication parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">scene</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene to recall. Cannot be <ref refid="group__bt__mesh__scene_gaf68df55bc0247c8e0d90182c34fa35d5_1gaf68df55bc0247c8e0d90182c34fa35d5" kindref="member">BT_MESH_SCENE_NONE</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">transition</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters for the scene transition, or NULL to use the target&apos;s default parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the recall message and processed the response. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid scene number or transition parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="243" column="5" declfile="include/bluetooth/mesh/scene_cli.h" declline="243" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__scene__cli_gac9e84f28ec16c468c805fd29b7d4cdc7_1gac9e84f28ec16c468c805fd29b7d4cdc7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_scene_cli_recall_unack</definition>
+        <argsstring>(struct bt_mesh_scene_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t scene, const struct bt_mesh_model_transition *transition)</argsstring>
+        <name>bt_mesh_scene_cli_recall_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>scene</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref> *</type>
+          <declname>transition</declname>
+        </param>
+        <briefdescription>
+<para>Recall the given scene without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>All models that participate in the scene will transition to the stored scene state with the given transition parameters.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene client model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to use the configured publication parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">scene</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene to recall. Cannot be <ref refid="group__bt__mesh__scene_gaf68df55bc0247c8e0d90182c34fa35d5_1gaf68df55bc0247c8e0d90182c34fa35d5" kindref="member">BT_MESH_SCENE_NONE</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">transition</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters for the scene transition, or NULL to use the target&apos;s default parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the recall message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid scene number or transition parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="266" column="5" declfile="include/bluetooth/mesh/scene_cli.h" declline="266" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_MESH_SCENE_CLI_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SCENE_CLI_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="scene_8h" kindref="compound">bluetooth/mesh/scene.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref>;</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="group__bt__mesh__scene__cli_ga01f037a317909cca7b7cef5399a78bac_1ga01f037a317909cca7b7cef5399a78bac" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_MODEL_SCENE_CLI(_cli)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="32"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_SCENE_CLI,<sp/>_bt_mesh_scene_cli_op,<sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="33"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;(_cli)-&gt;pub,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="34"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_USER_DATA(struct<sp/>bt_mesh_scene_cli,<sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="35"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_cli),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="36"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;_bt_mesh_scene_cli_cb)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="structbt__mesh__scene__register" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__scene__register" kindref="compound">bt_mesh_scene_register</ref><sp/>{</highlight></codeline>
+<codeline lineno="41" refid="structbt__mesh__scene__register_a29276fff8d72b0c184e720cc19ce0073_1a29276fff8d72b0c184e720cc19ce0073" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__scene_ga2839518fe4e7237b19a640d8e94bc193_1ga2839518fe4e7237b19a640d8e94bc193" kindref="member">bt_mesh_scene_status</ref><sp/><ref refid="structbt__mesh__scene__register_a29276fff8d72b0c184e720cc19ce0073_1a29276fff8d72b0c184e720cc19ce0073" kindref="member">status</ref>;</highlight></codeline>
+<codeline lineno="43" refid="structbt__mesh__scene__register_a59f046ac3105ff1b230a08a8945f8a5e_1a59f046ac3105ff1b230a08a8945f8a5e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__mesh__scene__register_a59f046ac3105ff1b230a08a8945f8a5e_1a59f046ac3105ff1b230a08a8945f8a5e" kindref="member">current</ref>;</highlight></codeline>
+<codeline lineno="45" refid="structbt__mesh__scene__register_aafd7c4f88a4d3e0383a422dc3973cb69_1aafd7c4f88a4d3e0383a422dc3973cb69" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__scene__register_aafd7c4f88a4d3e0383a422dc3973cb69_1aafd7c4f88a4d3e0383a422dc3973cb69" kindref="member">count</ref>;</highlight></codeline>
+<codeline lineno="47" refid="structbt__mesh__scene__register_a92950ee03d458a110b49f9d5478b33cb_1a92950ee03d458a110b49f9d5478b33cb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__packed<sp/>uint16_t<sp/>*<ref refid="structbt__mesh__scene__register_a92950ee03d458a110b49f9d5478b33cb_1a92950ee03d458a110b49f9d5478b33cb" kindref="member">scenes</ref>;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="structbt__mesh__scene__cli" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref><sp/>{</highlight></codeline>
+<codeline lineno="58" refid="structbt__mesh__scene__cli_a0945c74c7ff478669e7295b0b6564eee_1a0945c74c7ff478669e7295b0b6564eee" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structbt__mesh__scene__cli_a0945c74c7ff478669e7295b0b6564eee_1a0945c74c7ff478669e7295b0b6564eee" kindref="member">status</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__scene__state" kindref="compound">bt_mesh_scene_state</ref><sp/>*state);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="structbt__mesh__scene__cli_aaeee21f6e0f5b5c50a76b44f9e5ddfa2_1aaeee21f6e0f5b5c50a76b44f9e5ddfa2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structbt__mesh__scene__cli_aaeee21f6e0f5b5c50a76b44f9e5ddfa2_1aaeee21f6e0f5b5c50a76b44f9e5ddfa2" kindref="member">scene_register</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__scene__register" kindref="compound">bt_mesh_scene_register</ref><sp/>*reg);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Composition<sp/>data<sp/>entry<sp/>pointer.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="structbt__mesh__scene__cli_a5ed82b1b7c0b404b601a842923da6e23_1a5ed82b1b7c0b404b601a842923da6e23" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model<sp/>*<ref refid="structbt__mesh__scene__cli_a5ed82b1b7c0b404b601a842923da6e23_1a5ed82b1b7c0b404b601a842923da6e23" kindref="member">model</ref>;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Model<sp/>publication<sp/>parameters.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="structbt__mesh__scene__cli_a41dcbbab655125d30393202124e7c218_1a41dcbbab655125d30393202124e7c218" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_pub<sp/><ref refid="structbt__mesh__scene__cli_a41dcbbab655125d30393202124e7c218_1a41dcbbab655125d30393202124e7c218" kindref="member">pub</ref>;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Publication<sp/>message<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77" refid="structbt__mesh__scene__cli_ab3ea8a49b9e4139b132d44274502fbf5_1ab3ea8a49b9e4139b132d44274502fbf5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">net_buf_simple<sp/><ref refid="structbt__mesh__scene__cli_ab3ea8a49b9e4139b132d44274502fbf5_1ab3ea8a49b9e4139b132d44274502fbf5" kindref="member">pub_msg</ref>;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Publication<sp/>message<sp/>buffer.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="structbt__mesh__scene__cli_a877e2d0cc8b09ae035e440601cec68df_1a877e2d0cc8b09ae035e440601cec68df" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__scene__cli_a877e2d0cc8b09ae035e440601cec68df_1a877e2d0cc8b09ae035e440601cec68df" kindref="member">buf</ref>[BT_MESH_MODEL_BUF_LEN(BT_MESH_SCENE_OP_RECALL,</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_SCENE_MSG_MAXLEN_RECALL)];</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Ack<sp/>context<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="structbt__mesh__scene__cli_a7c21e7d3b8448979b936e17d300f2cc8_1a7c21e7d3b8448979b936e17d300f2cc8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ack_ctx<sp/><ref refid="structbt__mesh__scene__cli_a7c21e7d3b8448979b936e17d300f2cc8_1a7c21e7d3b8448979b936e17d300f2cc8" kindref="member">ack_ctx</ref>;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Transaction<sp/>ID<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84" refid="structbt__mesh__scene__cli_ac641f581e81083c6ebebcf8b11e0eea2_1ac641f581e81083c6ebebcf8b11e0eea2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__scene__cli_ac641f581e81083c6ebebcf8b11e0eea2_1ac641f581e81083c6ebebcf8b11e0eea2" kindref="member">tid</ref>;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104" refid="group__bt__mesh__scene__cli_ga9c5a1d560d9141e779b52da2b3c5c69f_1ga9c5a1d560d9141e779b52da2b3c5c69f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__scene__cli_ga9c5a1d560d9141e779b52da2b3c5c69f_1ga9c5a1d560d9141e779b52da2b3c5c69f" kindref="member">bt_mesh_scene_cli_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__scene__state" kindref="compound">bt_mesh_scene_state</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129" refid="group__bt__mesh__scene__cli_ga2dded8265e1d4121cfa38c778ebef3db_1ga2dded8265e1d4121cfa38c778ebef3db" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__scene__cli_ga2dded8265e1d4121cfa38c778ebef3db_1ga2dded8265e1d4121cfa38c778ebef3db" kindref="member">bt_mesh_scene_cli_register_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__scene__register" kindref="compound">bt_mesh_scene_register</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156" refid="group__bt__mesh__scene__cli_ga2f090e49a35b5bc405ee7b85aeb50af9_1ga2f090e49a35b5bc405ee7b85aeb50af9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__scene__cli_ga2f090e49a35b5bc405ee7b85aeb50af9_1ga2f090e49a35b5bc405ee7b85aeb50af9" kindref="member">bt_mesh_scene_cli_store</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,<sp/>uint16_t<sp/>scene,</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__scene__register" kindref="compound">bt_mesh_scene_register</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173" refid="group__bt__mesh__scene__cli_gabe540db7e449f4bc8b8bb20eedec2747_1gabe540db7e449f4bc8b8bb20eedec2747" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__scene__cli_gabe540db7e449f4bc8b8bb20eedec2747_1gabe540db7e449f4bc8b8bb20eedec2747" kindref="member">bt_mesh_scene_cli_store_unack</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,<sp/>uint16_t<sp/>scene);</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="199" refid="group__bt__mesh__scene__cli_gada866b3d00baaa267629d26e905f069a_1gada866b3d00baaa267629d26e905f069a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__scene__cli_gada866b3d00baaa267629d26e905f069a_1gada866b3d00baaa267629d26e905f069a" kindref="member">bt_mesh_scene_cli_delete</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,<sp/>uint16_t<sp/>scene,</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__scene__register" kindref="compound">bt_mesh_scene_register</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight></codeline>
+<codeline lineno="216" refid="group__bt__mesh__scene__cli_ga60e2029ae355f1746e155e0cad844978_1ga60e2029ae355f1746e155e0cad844978" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__scene__cli_ga60e2029ae355f1746e155e0cad844978_1ga60e2029ae355f1746e155e0cad844978" kindref="member">bt_mesh_scene_cli_delete_unack</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,<sp/>uint16_t<sp/>scene);</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"></highlight></codeline>
+<codeline lineno="243" refid="group__bt__mesh__scene__cli_gac4dc2207179d715580d5dd5cb9350269_1gac4dc2207179d715580d5dd5cb9350269" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__scene__cli_gac4dc2207179d715580d5dd5cb9350269_1gac4dc2207179d715580d5dd5cb9350269" kindref="member">bt_mesh_scene_cli_recall</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref><sp/>*cli,</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,<sp/>uint16_t<sp/>scene,</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref><sp/>*transition,</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__scene__state" kindref="compound">bt_mesh_scene_state</ref><sp/>*rsp);</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"></highlight></codeline>
+<codeline lineno="266" refid="group__bt__mesh__scene__cli_gac9e84f28ec16c468c805fd29b7d4cdc7_1gac9e84f28ec16c468c805fd29b7d4cdc7" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__scene__cli_gac9e84f28ec16c468c805fd29b7d4cdc7_1gac9e84f28ec16c468c805fd29b7d4cdc7" kindref="member">bt_mesh_scene_cli_recall_unack</ref>(</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref><sp/>*cli,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/>scene,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref><sp/>*transition);</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"></highlight></codeline>
+<codeline lineno="271"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_op<sp/>_bt_mesh_scene_cli_op[];</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_cb<sp/>_bt_mesh_scene_cli_cb;</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="276"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="278"><highlight class="normal"></highlight></codeline>
+<codeline lineno="279"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_MESH_SCENE_CLI_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="280"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/mesh/scene_cli.h"/>
+  </compounddef>
+</doxygen>

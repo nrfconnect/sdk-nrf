@@ -1,0 +1,855 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="silvair__enocean__srv_8h" kind="file" language="C++">
+    <compoundname>silvair_enocean_srv.h</compoundname>
+    <includes refid="models_8h" local="no">bluetooth/mesh/models.h</includes>
+    <includes local="no">bluetooth/addr.h</includes>
+    <includes local="no">sys/slist.h</includes>
+    <incdepgraph>
+      <node id="30">
+        <label>bluetooth/mesh/gen_battery.h</label>
+        <link refid="gen__battery_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>bluetooth/mesh/gen_battery_cli.h</label>
+        <link refid="gen__battery__cli_8h"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>bluetooth/mesh/gen_battery_srv.h</label>
+        <link refid="gen__battery__srv_8h"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>bluetooth/mesh/gen_dtt.h</label>
+        <link refid="gen__dtt_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>bluetooth/mesh/gen_dtt_cli.h</label>
+        <link refid="gen__dtt__cli_8h"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>bluetooth/mesh/gen_dtt_srv.h</label>
+        <link refid="gen__dtt__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>bluetooth/mesh/gen_loc.h</label>
+        <link refid="gen__loc_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>bluetooth/mesh/gen_loc_cli.h</label>
+        <link refid="gen__loc__cli_8h"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>bluetooth/mesh/gen_loc_srv.h</label>
+        <link refid="gen__loc__srv_8h"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>bluetooth/mesh/gen_lvl.h</label>
+        <link refid="gen__lvl_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>bluetooth/mesh/gen_lvl_cli.h</label>
+        <link refid="gen__lvl__cli_8h"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>bluetooth/mesh/gen_lvl_srv.h</label>
+        <link refid="gen__lvl__srv_8h"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>bluetooth/mesh/gen_onoff.h</label>
+        <link refid="gen__onoff_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>bluetooth/mesh/gen_onoff_cli.h</label>
+        <link refid="gen__onoff__cli_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>bluetooth/mesh/gen_onoff_srv.h</label>
+        <link refid="gen__onoff__srv_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>bluetooth/mesh/gen_plvl.h</label>
+        <link refid="gen__plvl_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>bluetooth/mesh/gen_plvl_cli.h</label>
+        <link refid="gen__plvl__cli_8h"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>bluetooth/mesh/gen_plvl_srv.h</label>
+        <link refid="gen__plvl__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>bluetooth/mesh/gen_ponoff.h</label>
+        <link refid="gen__ponoff_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>bluetooth/mesh/gen_ponoff_cli.h</label>
+        <link refid="gen__ponoff__cli_8h"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>bluetooth/mesh/gen_ponoff_srv.h</label>
+        <link refid="gen__ponoff__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>bluetooth/mesh/gen_prop.h</label>
+        <link refid="gen__prop_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>bluetooth/mesh/gen_prop_cli.h</label>
+        <link refid="gen__prop__cli_8h"/>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>bluetooth/mesh/gen_prop_srv.h</label>
+        <link refid="gen__prop__srv_8h"/>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="53">
+        <label>bluetooth/mesh/light_ctl.h</label>
+        <link refid="light__ctl_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="52">
+        <label>bluetooth/mesh/light_ctl_cli.h</label>
+        <link refid="light__ctl__cli_8h"/>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>bluetooth/mesh/light_ctl_srv.h</label>
+        <link refid="light__ctl__srv_8h"/>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>bluetooth/mesh/light_ctrl.h</label>
+        <link refid="light__ctrl_8h"/>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="51">
+        <label>bluetooth/mesh/light_ctrl_cli.h</label>
+        <link refid="light__ctrl__cli_8h"/>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>bluetooth/mesh/light_ctrl_srv.h</label>
+        <link refid="light__ctrl__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="60">
+        <label>bluetooth/mesh/light_hsl.h</label>
+        <link refid="light__hsl_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="59">
+        <label>bluetooth/mesh/light_hsl_cli.h</label>
+        <link refid="light__hsl__cli_8h"/>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="61">
+        <label>bluetooth/mesh/light_hsl_srv.h</label>
+        <link refid="light__hsl__srv_8h"/>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="63">
+        <label>bluetooth/mesh/light_hue_srv.h</label>
+        <link refid="light__hue__srv_8h"/>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="62">
+        <label>bluetooth/mesh/light_sat_srv.h</label>
+        <link refid="light__sat__srv_8h"/>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="54">
+        <label>bluetooth/mesh/light_temp_srv.h</label>
+        <link refid="light__temp__srv_8h"/>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="57">
+        <label>bluetooth/mesh/light_xyl.h</label>
+        <link refid="light__xyl_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="56">
+        <label>bluetooth/mesh/light_xyl_cli.h</label>
+        <link refid="light__xyl__cli_8h"/>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="58">
+        <label>bluetooth/mesh/light_xyl_srv.h</label>
+        <link refid="light__xyl__srv_8h"/>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>bluetooth/mesh/lightness.h</label>
+        <link refid="lightness_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>bluetooth/mesh/lightness_cli.h</label>
+        <link refid="lightness__cli_8h"/>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>bluetooth/mesh/lightness_srv.h</label>
+        <link refid="lightness__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bluetooth/mesh/model_types.h</label>
+        <link refid="model__types_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bluetooth/mesh/models.h</label>
+        <link refid="models_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>bluetooth/mesh/properties.h</label>
+        <link refid="properties_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>bluetooth/mesh/scene.h</label>
+        <link refid="scene_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="68">
+        <label>bluetooth/mesh/scene_cli.h</label>
+        <link refid="scene__cli_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>bluetooth/mesh/scene_srv.h</label>
+        <link refid="scene__srv_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="70">
+        <label>bluetooth/mesh/scheduler.h</label>
+        <link refid="scheduler_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="69">
+        <label>bluetooth/mesh/scheduler_cli.h</label>
+        <link refid="scheduler__cli_8h"/>
+        <childnode refid="70" relation="include">
+        </childnode>
+      </node>
+      <node id="71">
+        <label>bluetooth/mesh/scheduler_srv.h</label>
+        <link refid="scheduler__srv_8h"/>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>bluetooth/mesh/sensor.h</label>
+        <link refid="sensor_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>bluetooth/mesh/sensor_cli.h</label>
+        <link refid="sensor__cli_8h"/>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>bluetooth/mesh/sensor_srv.h</label>
+        <link refid="sensor__srv_8h"/>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>bluetooth/mesh/sensor_types.h</label>
+        <link refid="sensor__types_8h"/>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="65">
+        <label>bluetooth/mesh/time.h</label>
+        <link refid="time_8h"/>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="64">
+        <label>bluetooth/mesh/time_cli.h</label>
+        <link refid="time__cli_8h"/>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="67">
+        <label>bluetooth/mesh/time_srv.h</label>
+        <link refid="time__srv_8h"/>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/mesh/vnd/silvair_enocean_srv.h</label>
+        <link refid="silvair__enocean__srv_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="73">
+        <label>bluetooth/addr.h</label>
+      </node>
+      <node id="3">
+        <label>bluetooth/mesh.h</label>
+      </node>
+      <node id="5">
+        <label>bluetooth/mesh/cfg_cli.h</label>
+      </node>
+      <node id="6">
+        <label>bluetooth/mesh/cfg_srv.h</label>
+      </node>
+      <node id="7">
+        <label>bluetooth/mesh/health_cli.h</label>
+      </node>
+      <node id="8">
+        <label>bluetooth/mesh/health_srv.h</label>
+      </node>
+      <node id="42">
+        <label>drivers/sensor.h</label>
+      </node>
+      <node id="13">
+        <label>settings/settings.h</label>
+      </node>
+      <node id="43">
+        <label>stdlib.h</label>
+      </node>
+      <node id="15">
+        <label>sys/slist.h</label>
+      </node>
+      <node id="34">
+        <label>sys/util.h</label>
+      </node>
+      <node id="14">
+        <label>toolchain/common.h</label>
+      </node>
+      <node id="72">
+        <label>zephyr.h</label>
+      </node>
+      <node id="66">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structbt__mesh__silvair__enocean__srv" prot="public">bt_mesh_silvair_enocean_srv</innerclass>
+    <innerclass refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button" prot="public">bt_mesh_silvair_enocean_srv::bt_mesh_silvair_enocean_button</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__silvair__enocean__srv_ga2a758ff5a507bd250cd1b1884d46a4f7_1ga2a758ff5a507bd250cd1b1884d46a4f7" prot="public" static="no">
+        <name>BT_MESH_COMPANY_ID_SILVAIR</name>
+        <initializer>0x0136</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="26" column="9" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__silvair__enocean__srv_gaf9efc1743ba3582f10f965956b4d49aa_1gaf9efc1743ba3582f10f965956b4d49aa" prot="public" static="no">
+        <name>BT_MESH_MODEL_ID_SILVAIR_ENOCEAN_SRV</name>
+        <initializer>0x0001</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="27" column="9" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__silvair__enocean__srv_ga54dddaa402af6a6f7d56fd4aff8d0b6c_1ga54dddaa402af6a6f7d56fd4aff8d0b6c" prot="public" static="no">
+        <name>BT_MESH_SILVAIR_ENOCEAN_PROXY_BUTTONS</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="28" column="9" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__silvair__enocean__srv_ga53e8e96d4b1d1080c746451d3a5182f7_1ga53e8e96d4b1d1080c746451d3a5182f7" prot="public" static="no">
+        <name>BT_MESH_MODEL_SILVAIR_ENOCEAN_SRV</name>
+        <param><defname>_srv</defname></param>
+        <initializer>	BT_MESH_MODEL_VND_CB(<ref refid="group__bt__mesh__silvair__enocean__srv_ga2a758ff5a507bd250cd1b1884d46a4f7_1ga2a758ff5a507bd250cd1b1884d46a4f7" kindref="member">BT_MESH_COMPANY_ID_SILVAIR</ref>,                       \
+			     <ref refid="group__bt__mesh__silvair__enocean__srv_gaf9efc1743ba3582f10f965956b4d49aa_1gaf9efc1743ba3582f10f965956b4d49aa" kindref="member">BT_MESH_MODEL_ID_SILVAIR_ENOCEAN_SRV</ref>,             \
+			     _bt_mesh_silvair_enocean_srv_op, &amp;(_srv)-&gt;pub,    \
+			     BT_MESH_MODEL_USER_DATA(                          \
+				struct <ref refid="structbt__mesh__silvair__enocean__srv" kindref="compound">bt_mesh_silvair_enocean_srv</ref>, _srv),     \
+			     &amp;_bt_mesh_silvair_enocean_srv_cb)</initializer>
+        <briefdescription>
+<para>Silvair Enocean Proxy Server model entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__silvair__enocean__srv" kindref="compound">Silvair EnOcean Server model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="92" column="9" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__silvair__enocean__srv_gac5dd5af828311cbbfdc686d9b6898160_1gac5dd5af828311cbbfdc686d9b6898160" prot="public" static="no">
+        <name>BT_MESH_MODEL_SILVAIR_ENOCEAN_BUTTON</name>
+        <param><defname>_srv</defname></param>
+        <param><defname>_idx</defname></param>
+        <initializer>		<ref refid="group__bt__mesh__lvl__cli_ga3f0e23dded46fae30198c83f456ab7ee_1ga3f0e23dded46fae30198c83f456ab7ee" kindref="member">BT_MESH_MODEL_LVL_CLI</ref>(&amp;(_srv)-&gt;buttons[_idx].lvl),             \
+		<ref refid="group__bt__mesh__onoff__cli_ga583568678890461bcdd4a1a8f09c1512_1ga583568678890461bcdd4a1a8f09c1512" kindref="member">BT_MESH_MODEL_ONOFF_CLI</ref>(&amp;(_srv)-&gt;buttons[_idx].onoff)</initializer>
+        <briefdescription>
+<para>Model entries for a button for a Silvair Enocean Proxy Server model. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>One of these should be added for each rocker switch handled by the Silvair Enocean Proxy Server instance, each on its own element. This macro includes the Generic Level Client and Generic OnOff Client.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__lightness__srv" kindref="compound">Light Lightness Server model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Button index for the model entries. Must be in the range 0 to <computeroutput>BT_MESH_SILVAIR_ENOCEAN_PROXY_BUTTONS</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="112" column="9" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__mesh__silvair__enocean__srv_ga7e067bd42554b3d83a274db92de3bb4f_1ga7e067bd42554b3d83a274db92de3bb4f" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_silvair_enocean_state</name>
+        <enumvalue id="group__bt__mesh__silvair__enocean__srv_ga7e067bd42554b3d83a274db92de3bb4f_1gga7e067bd42554b3d83a274db92de3bb4fa87c68f01860836f9f0d4a9d236ea1ad5" prot="public">
+          <name>BT_MESH_SILVAIR_ENOCEAN_STATE_IDLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Idle state </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__silvair__enocean__srv_ga7e067bd42554b3d83a274db92de3bb4f_1gga7e067bd42554b3d83a274db92de3bb4fa3323da655c5cbd1885ef51956bc1d92c" prot="public">
+          <name>BT_MESH_SILVAIR_ENOCEAN_STATE_WAIT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Waiting state </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__silvair__enocean__srv_ga7e067bd42554b3d83a274db92de3bb4f_1gga7e067bd42554b3d83a274db92de3bb4fa5d03e59c3e038f206145be52f3ad7751" prot="public">
+          <name>BT_MESH_SILVAIR_ENOCEAN_STATE_DELTA</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Delta sending state </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Silvair Enocean Proxy Server state machine state </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="43" column="1" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="43" bodyend="50"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*<sp/>Work<sp/>based<sp/>on<sp/>EnOcean<sp/>Proxy<sp/>Server<sp/>model,<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Silvair<sp/>sp.<sp/>z<sp/>o.o.</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="6"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_MESH_SILVAIR_ENOCEAN_SRV_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SILVAIR_ENOCEAN_SRV_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="models_8h" kindref="compound">bluetooth/mesh/models.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/addr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/slist.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="group__bt__mesh__silvair__enocean__srv_ga2a758ff5a507bd250cd1b1884d46a4f7_1ga2a758ff5a507bd250cd1b1884d46a4f7" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_COMPANY_ID_SILVAIR<sp/>0x0136</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="group__bt__mesh__silvair__enocean__srv_gaf9efc1743ba3582f10f965956b4d49aa_1gaf9efc1743ba3582f10f965956b4d49aa" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_MODEL_ID_SILVAIR_ENOCEAN_SRV<sp/>0x0001</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="group__bt__mesh__silvair__enocean__srv_ga54dddaa402af6a6f7d56fd4aff8d0b6c_1ga54dddaa402af6a6f7d56fd4aff8d0b6c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SILVAIR_ENOCEAN_PROXY_BUTTONS<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_op<sp/>_bt_mesh_silvair_enocean_srv_op[];</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_cb<sp/>_bt_mesh_silvair_enocean_srv_cb;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SILVAIR_ENOCEAN_PROXY_OP<sp/>BT_MESH_MODEL_OP_3(0xF4,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="36"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_COMPANY_ID_SILVAIR)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SILVAIR_ENOCEAN_PROXY_MSG_MINLEN<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SILVAIR_ENOCEAN_PROXY_MSG_MAXLEN<sp/>23</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="group__bt__mesh__silvair__enocean__srv_ga7e067bd42554b3d83a274db92de3bb4f_1ga7e067bd42554b3d83a274db92de3bb4f" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__silvair__enocean__srv_ga7e067bd42554b3d83a274db92de3bb4f_1ga7e067bd42554b3d83a274db92de3bb4f" kindref="member">bt_mesh_silvair_enocean_state</ref><sp/>{</highlight></codeline>
+<codeline lineno="45" refid="group__bt__mesh__silvair__enocean__srv_ga7e067bd42554b3d83a274db92de3bb4f_1gga7e067bd42554b3d83a274db92de3bb4fa87c68f01860836f9f0d4a9d236ea1ad5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__silvair__enocean__srv_ga7e067bd42554b3d83a274db92de3bb4f_1gga7e067bd42554b3d83a274db92de3bb4fa87c68f01860836f9f0d4a9d236ea1ad5" kindref="member">BT_MESH_SILVAIR_ENOCEAN_STATE_IDLE</ref>,</highlight></codeline>
+<codeline lineno="47" refid="group__bt__mesh__silvair__enocean__srv_ga7e067bd42554b3d83a274db92de3bb4f_1gga7e067bd42554b3d83a274db92de3bb4fa3323da655c5cbd1885ef51956bc1d92c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__silvair__enocean__srv_ga7e067bd42554b3d83a274db92de3bb4f_1gga7e067bd42554b3d83a274db92de3bb4fa3323da655c5cbd1885ef51956bc1d92c" kindref="member">BT_MESH_SILVAIR_ENOCEAN_STATE_WAIT</ref>,</highlight></codeline>
+<codeline lineno="49" refid="group__bt__mesh__silvair__enocean__srv_ga7e067bd42554b3d83a274db92de3bb4f_1gga7e067bd42554b3d83a274db92de3bb4fa5d03e59c3e038f206145be52f3ad7751" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__silvair__enocean__srv_ga7e067bd42554b3d83a274db92de3bb4f_1gga7e067bd42554b3d83a274db92de3bb4fa5d03e59c3e038f206145be52f3ad7751" kindref="member">BT_MESH_SILVAIR_ENOCEAN_STATE_DELTA</ref>,</highlight></codeline>
+<codeline lineno="50"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="structbt__mesh__silvair__enocean__srv" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__silvair__enocean__srv" kindref="compound">bt_mesh_silvair_enocean_srv</ref><sp/>{</highlight></codeline>
+<codeline lineno="55" refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button" refkind="compound"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button" kindref="compound">bt_mesh_silvair_enocean_button</ref><sp/>{</highlight></codeline>
+<codeline lineno="57" refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_ae7cb64966f005a3d1502f9d17dcf1a7b_1ae7cb64966f005a3d1502f9d17dcf1a7b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__lvl__cli" kindref="compound">bt_mesh_lvl_cli</ref><sp/><ref refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_ae7cb64966f005a3d1502f9d17dcf1a7b_1ae7cb64966f005a3d1502f9d17dcf1a7b" kindref="member">lvl</ref>;</highlight></codeline>
+<codeline lineno="59" refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_a5b8baf44118314d154d53d4a85c16547_1a5b8baf44118314d154d53d4a85c16547" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__onoff__cli" kindref="compound">bt_mesh_onoff_cli</ref><sp/><ref refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_a5b8baf44118314d154d53d4a85c16547_1a5b8baf44118314d154d53d4a85c16547" kindref="member">onoff</ref>;</highlight></codeline>
+<codeline lineno="61" refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_ab2ca0e4a303d29af616dc2bbbb7acde7_1ab2ca0e4a303d29af616dc2bbbb7acde7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__silvair__enocean__srv_ga7e067bd42554b3d83a274db92de3bb4f_1ga7e067bd42554b3d83a274db92de3bb4f" kindref="member">bt_mesh_silvair_enocean_state</ref><sp/><ref refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_ab2ca0e4a303d29af616dc2bbbb7acde7_1ab2ca0e4a303d29af616dc2bbbb7acde7" kindref="member">state</ref>;</highlight></codeline>
+<codeline lineno="63" refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_a4db20f6c5e021aa4252dcfc7da546f08_1a4db20f6c5e021aa4252dcfc7da546f08" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_a4db20f6c5e021aa4252dcfc7da546f08_1a4db20f6c5e021aa4252dcfc7da546f08" kindref="member">target</ref>;</highlight></codeline>
+<codeline lineno="65" refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_aa1fe6c94489a4fc398c5cd3be66d9e88_1aa1fe6c94489a4fc398c5cd3be66d9e88" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_aa1fe6c94489a4fc398c5cd3be66d9e88_1aa1fe6c94489a4fc398c5cd3be66d9e88" kindref="member">tick_count</ref>;</highlight></codeline>
+<codeline lineno="67" refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_a6fb9c8a75d4fd11895ace27646bc3bf3_1a6fb9c8a75d4fd11895ace27646bc3bf3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">k_work_delayable<sp/><ref refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button_a6fb9c8a75d4fd11895ace27646bc3bf3_1a6fb9c8a75d4fd11895ace27646bc3bf3" kindref="member">timer</ref>;</highlight></codeline>
+<codeline lineno="68" refid="structbt__mesh__silvair__enocean__srv_adb11fc53535f4d08ffea85d909836e6d_1adb11fc53535f4d08ffea85d909836e6d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/><ref refid="structbt__mesh__silvair__enocean__srv_adb11fc53535f4d08ffea85d909836e6d_1adb11fc53535f4d08ffea85d909836e6d" kindref="member">buttons</ref>[<ref refid="group__bt__mesh__silvair__enocean__srv_ga54dddaa402af6a6f7d56fd4aff8d0b6c_1ga54dddaa402af6a6f7d56fd4aff8d0b6c" kindref="member">BT_MESH_SILVAIR_ENOCEAN_PROXY_BUTTONS</ref>];</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71" refid="structbt__mesh__silvair__enocean__srv_afe703559c666e8cd2026f1f7077df31e_1afe703559c666e8cd2026f1f7077df31e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>bt_addr_le_t<sp/><ref refid="structbt__mesh__silvair__enocean__srv_afe703559c666e8cd2026f1f7077df31e_1afe703559c666e8cd2026f1f7077df31e" kindref="member">addr</ref>;</highlight></codeline>
+<codeline lineno="73" refid="structbt__mesh__silvair__enocean__srv_a44443c98d73ee922597473f7f1a58ff4_1a44443c98d73ee922597473f7f1a58ff4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model_pub<sp/><ref refid="structbt__mesh__silvair__enocean__srv_a44443c98d73ee922597473f7f1a58ff4_1a44443c98d73ee922597473f7f1a58ff4" kindref="member">pub</ref>;</highlight></codeline>
+<codeline lineno="75" refid="structbt__mesh__silvair__enocean__srv_a7351f76a6a774711e37d942641f8da03_1a7351f76a6a774711e37d942641f8da03" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">net_buf_simple<sp/><ref refid="structbt__mesh__silvair__enocean__srv_a7351f76a6a774711e37d942641f8da03_1a7351f76a6a774711e37d942641f8da03" kindref="member">pub_buf</ref>;</highlight></codeline>
+<codeline lineno="77" refid="structbt__mesh__silvair__enocean__srv_a40fae8cdd2ecefaae9156b56c4235a4a_1a40fae8cdd2ecefaae9156b56c4235a4a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__silvair__enocean__srv_a40fae8cdd2ecefaae9156b56c4235a4a_1a40fae8cdd2ecefaae9156b56c4235a4a" kindref="member">pub_data</ref>[BT_MESH_MODEL_BUF_LEN(</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_SILVAIR_ENOCEAN_PROXY_OP,</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_SILVAIR_ENOCEAN_PROXY_MSG_MAXLEN)];</highlight></codeline>
+<codeline lineno="81" refid="structbt__mesh__silvair__enocean__srv_a4eea49eddd84b5fea8d6c022c5cf7a3d_1a4eea49eddd84b5fea8d6c022c5cf7a3d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_model<sp/>*<ref refid="structbt__mesh__silvair__enocean__srv_a4eea49eddd84b5fea8d6c022c5cf7a3d_1a4eea49eddd84b5fea8d6c022c5cf7a3d" kindref="member">mod</ref>;</highlight></codeline>
+<codeline lineno="83" refid="structbt__mesh__silvair__enocean__srv_a63c011cf93be13fbc15d5ddc3ba41c50_1a63c011cf93be13fbc15d5ddc3ba41c50" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sys_snode_t<sp/><ref refid="structbt__mesh__silvair__enocean__srv_a63c011cf93be13fbc15d5ddc3ba41c50_1a63c011cf93be13fbc15d5ddc3ba41c50" kindref="member">entry</ref>;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="group__bt__mesh__silvair__enocean__srv_ga53e8e96d4b1d1080c746451d3a5182f7_1ga53e8e96d4b1d1080c746451d3a5182f7" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_MODEL_SILVAIR_ENOCEAN_SRV(_srv)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="93"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_VND_CB(BT_MESH_COMPANY_ID_SILVAIR,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="94"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_ID_SILVAIR_ENOCEAN_SRV,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="95"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_bt_mesh_silvair_enocean_srv_op,<sp/>&amp;(_srv)-&gt;pub,<sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="96"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_USER_DATA(<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="97"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>struct<sp/>bt_mesh_silvair_enocean_srv,<sp/>_srv),<sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="98"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;_bt_mesh_silvair_enocean_srv_cb)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112" refid="group__bt__mesh__silvair__enocean__srv_gac5dd5af828311cbbfdc686d9b6898160_1gac5dd5af828311cbbfdc686d9b6898160" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_MODEL_SILVAIR_ENOCEAN_BUTTON(_srv,<sp/>_idx)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="113"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_LVL_CLI(&amp;(_srv)-&gt;buttons[_idx].lvl),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="114"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_ONOFF_CLI(&amp;(_srv)-&gt;buttons[_idx].onoff)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_MESH_SILVAIR_ENOCEAN_SRV_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h"/>
+  </compounddef>
+</doxygen>

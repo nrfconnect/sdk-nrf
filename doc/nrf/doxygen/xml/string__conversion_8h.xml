@@ -1,0 +1,353 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="string__conversion_8h" kind="file" language="C++">
+    <compoundname>string_conversion.h</compoundname>
+    <includes local="no">stdint.h</includes>
+    <includes local="no">stdbool.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>lib/sms/string_conversion.h</label>
+        <link refid="string__conversion_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>stdbool.h</label>
+      </node>
+      <node id="2">
+        <label>stdint.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="string__conversion_8h_aedae6f517534093d67e3fb9a8cc25341_1aedae6f517534093d67e3fb9a8cc25341" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint8_t</type>
+        <definition>uint8_t string_conversion_ascii_to_gsm7bit</definition>
+        <argsstring>(const uint8_t *data, uint8_t data_len, uint8_t *out_data, uint8_t *out_bytes, uint8_t *out_chars, bool packing)</argsstring>
+        <name>string_conversion_ascii_to_gsm7bit</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>data_len</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>out_data</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>out_bytes</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>out_chars</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>packing</declname>
+        </param>
+        <briefdescription>
+<para>Convert ASCII characters into GSM 7 bit Default Alphabet character set. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>ascii_to_7bit_table conversion table is used. Optionally perform also packing for the resulting 7 bit string. Note that the 7 bit string may be longer than the original due to possible extension table usage. Each extended character needs an escape code in addition to the character code in extension table.</para>
+<para>References: 3GPP TS 23.038 chapter 6.2.1: GSM 7 bit Default Alphabet</para>
+<para>Input parameters:</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to array of characters to be converted. No null termination. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of characters to be converted, max 160. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">out_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to buffer for the converted string. Shall have allocation of 160 bytes, or in case of less than 80 input characters, at least 2*data_len to make sure that buffer overflow will not happen. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">out_bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a byte to return number of valid bytes in out_data. May be NULL if not needed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">out_chars</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a byte to return number of 7 bit characters, i.e. septets (including possible escape characters) in out_data. May be NULL if not needed. Same as out_bytes, when packing=false. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">packing</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True if the converted 7bit string has to be packed.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of converted characters (same as data_len if all converted successfully). </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/string_conversion.h" line="41" column="9" declfile="lib/sms/string_conversion.h" declline="41" declcolumn="9"/>
+      </memberdef>
+      <memberdef kind="function" id="string__conversion_8h_a12f92970ce505a04a09922ec36348d4c_1a12f92970ce505a04a09922ec36348d4c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint8_t</type>
+        <definition>uint8_t string_conversion_gsm7bit_to_ascii</definition>
+        <argsstring>(const uint8_t *data, uint8_t *out_data, uint8_t num_char, bool packed)</argsstring>
+        <name>string_conversion_gsm7bit_to_ascii</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>out_data</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>num_char</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>packed</declname>
+        </param>
+        <briefdescription>
+<para>Convert GSM 7 bit Default Alphabet characters to ASCII characters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>gsm7bit_to_ascii_table conversion table is used. Perform also unpacking of the 7 bit string before conversion, if caller indicates that the string is packed.</para>
+<para>References: 3GPP TS 23.038 chapter 6.2.1: GSM 7 bit Default Alphabet</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to array of characters to be converted. No null termination. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">out_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to buffer for the converted string. Shall have allocation of at least &quot;num_char&quot; bytes. Note that this function does not add null termination at the end of the string. It should be done by caller, when needed. (In that case it could be useful to actually allocate num_char+1 bytes here.) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">num_char</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of 7-bit characters to be unpacked, including possible escape codes. Also indicates maximum allowed number of characters to be stored to output buffer by this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">packed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True if the 7bit string is packed, i.e. has to be unpacked before conversion.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of valid bytes/characters in &quot;out_data&quot;. May be less than &quot;num_char&quot; in the case that the 7 bit string contains &quot;escape/extended code&quot; sequences, that are converted to single ASCII characters. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/string_conversion.h" line="72" column="9" declfile="lib/sms/string_conversion.h" declline="72" declcolumn="9"/>
+      </memberdef>
+      <memberdef kind="function" id="string__conversion_8h_aaa170c4b125927249ccd3504e83c7914_1aaa170c4b125927249ccd3504e83c7914" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint8_t</type>
+        <definition>uint8_t string_conversion_7bit_sms_packing</definition>
+        <argsstring>(uint8_t *data, uint8_t data_len)</argsstring>
+        <name>string_conversion_7bit_sms_packing</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>data_len</declname>
+        </param>
+        <briefdescription>
+<para>Performs SMS packing for a string using GSM 7 bit character set. The result is stored in the same memory buffer that contains the input string to be packed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Description of the packing functionality: Unpacked data bits: bit number: 7 6 5 4 3 2 1 0 data byte 0: 0 1a 1b 1c 1d 1e 1f 1g d1 data byte 1: 0 2a 3b 2c 2d 2e 2f 2g d2 data byte 2: 0 3a 3b 3c 3d 3e 3f 3g d3 and so on...</para>
+<para>Packed data bits: bit number: 7 6 5 4 3 2 1 0 data byte 0: 2g 1a 1b 1c 1d 1e 1f 1g d1&gt;&gt;0 | d2&lt;&lt;7 data byte 1: 3f 3g 2a 2b 2c 2d 2e 2f d2&gt;&gt;1 | d3&lt;&lt;6 data byte 2: 4e 4f 4g 3a 3b 3c 3d 3e d3&gt;&gt;2 | d4&lt;&lt;5 data byte 3: 5d 5e 5f 5g 4a 4b 4c 4d d4&gt;&gt;3 | d5&lt;&lt;4 data byte 4: 6c 6d 6e 6f 6g 5a 5b 5c d5&gt;&gt;4 | d6&lt;&lt;3 data byte 5: 7b 7c 7d 7e 7f 7g 6a 6b d6&gt;&gt;5 | d7&lt;&lt;2 data byte 6: 8a 8b 8c 8d 8e 8f 8g 7a d7&gt;&gt;6 | d8&lt;&lt;1 data byte 7: Ag 9a 9b 9c 9d 9e 9f 9g d9&gt;&gt;0 | dA&lt;&lt;7 data byte 8: Bf Bg Aa Ab Ac Ad Ae Af dA&gt;&gt;1 | dB&lt;&lt;6 and so on...</para>
+<para>References: 3GPP TS 23.038 chapter 6.1.2.1: SMS Packing</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to array of characters to be packed (no null termination needed). Also the packed characters are stored into this buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of characters to be packed</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of valid bytes in the packed character data. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/string_conversion.h" line="111" column="9" declfile="lib/sms/string_conversion.h" declline="111" declcolumn="9"/>
+      </memberdef>
+      <memberdef kind="function" id="string__conversion_8h_a54f836163f40491f2bf62edcf03fc386_1a54f836163f40491f2bf62edcf03fc386" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint8_t</type>
+        <definition>uint8_t string_conversion_7bit_sms_unpacking</definition>
+        <argsstring>(const uint8_t *packed, uint8_t *unpacked, uint8_t num_char)</argsstring>
+        <name>string_conversion_7bit_sms_unpacking</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>packed</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>unpacked</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>num_char</declname>
+        </param>
+        <briefdescription>
+<para>Performs unpacking of a packed GSM 7 bit string as described below. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>   Packed data bits:
+   bit number:   7   6   5   4   3   2   1   0
+   data byte 0: 2g  1a  1b  1c  1d  1e  1f  1g      p0
+   data byte 1: 3f  3g  2a  2b  2c  2d  2e  2f      p1
+   data byte 2: 4e  4f  4g  3a  3b  3c  3d  3e      p2
+   data byte 3: 5d  5e  5f  5g  4a  4b  4c  4d      p3
+   data byte 4: 6c  6d  6e  6f  6g  5a  5b  5c      p4
+   data byte 5: 7b  7c  7d  7e  7f  7g  6a  6b      p5
+   data byte 6: 8a  8b  8c  8d  8e  8f  8g  7a      p6
+   data byte 7: Ag  9a  9b  9c  9d  9e  9f  9g      p7
+   data byte 8: Bf  Bg  Aa  Ab  Ac  Ad  Ae  Af      p8
+   and so on...
+
+   Unpacked data bits:
+   bit number:   7   6   5   4   3   2   1   0
+   data byte 0:  0  1a  1b  1c  1d  1e  1f  1g       p0 &amp; 7F
+   data byte 1:  0  2a  3b  2c  2d  2e  2f  2g      (p1 &lt;&lt; 1 | p0 &gt;&gt; 7) &amp; 7F
+   data byte 2:  0  3a  3b  3c  3d  3e  3f  3g      (p2 &lt;&lt; 2 | p1 &gt;&gt; 6) &amp; 7F
+   data byte 3:  0  4a  4b  4c  4d  4e  4f  4g      (p3 &lt;&lt; 3 | p2 &gt;&gt; 5) &amp; 7F
+   data byte 4:  0  5a  5b  5c  5d  5e  5f  5g      (p4 &lt;&lt; 4 | p3 &gt;&gt; 4) &amp; 7F
+   data byte 5:  0  6a  6b  6c  6d  6e  6f  6g      (p5 &lt;&lt; 5 | p4 &gt;&gt; 3) &amp; 7F
+   data byte 6:  0  7a  7b  7c  7d  7e  7f  7g      (p6 &lt;&lt; 6 | p5 &gt;&gt; 2) &amp; 7F
+   data byte 7:  0  8a  8b  8c  8d  8e  8f  8g      (p7 &lt;&lt; 7 | p6 &gt;&gt; 1) &amp; 7F
+   data byte 8:  0  9a  9b  9c  9d  9e  9f  9g      (p7 &lt;&lt; 0 | p6 &gt;&gt; 8) &amp; 7F
+   data byte 9:  0  Aa  Ab  Ac  Ad  Ae  Af  Ag      (p8 &lt;&lt; 1 | p7 &gt;&gt; 7) &amp; 7F
+   data byte A:  0  Ba  Bb  Bc  Bd  Be  Bf  Bg      (p9 &lt;&lt; 2 | p8 &gt;&gt; 6) &amp; 7F
+   and so on...
+</verbatim> References: 3GPP TS 23.038 chapter 6.1.2.1: SMS Packing</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">packed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to buffer containing the packed string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">num_char</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of 7-bit characters (i.e. septets) to be unpacked, including possible escape codes. Also indicates maximum allowed number of characters to be stored to output buffer by this function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">unpacked</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to buffer to store the unpacked string. Allocated size shall be at least &quot;num_char&quot; bytes.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of valid bytes/characters in the unpacked string &quot;unpacked&quot;. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/string_conversion.h" line="156" column="9" declfile="lib/sms/string_conversion.h" declline="156" declcolumn="9"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_STRING_CONVERSION_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_STRING_CONVERSION_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdint.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdbool.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="string__conversion_8h_aedae6f517534093d67e3fb9a8cc25341_1aedae6f517534093d67e3fb9a8cc25341" refkind="member"><highlight class="normal">uint8_t<sp/><ref refid="string__conversion_8h_aedae6f517534093d67e3fb9a8cc25341_1aedae6f517534093d67e3fb9a8cc25341" kindref="member">string_conversion_ascii_to_gsm7bit</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*data,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><sp/>data_len,</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*out_data,</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*out_bytes,</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*out_chars,</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>packing);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="string__conversion_8h_a12f92970ce505a04a09922ec36348d4c_1a12f92970ce505a04a09922ec36348d4c" refkind="member"><highlight class="normal">uint8_t<sp/><ref refid="string__conversion_8h_a12f92970ce505a04a09922ec36348d4c_1a12f92970ce505a04a09922ec36348d4c" kindref="member">string_conversion_gsm7bit_to_ascii</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*data,</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*out_data,</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><sp/>num_char,</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>packed);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111" refid="string__conversion_8h_aaa170c4b125927249ccd3504e83c7914_1aaa170c4b125927249ccd3504e83c7914" refkind="member"><highlight class="normal">uint8_t<sp/><ref refid="string__conversion_8h_aaa170c4b125927249ccd3504e83c7914_1aaa170c4b125927249ccd3504e83c7914" kindref="member">string_conversion_7bit_sms_packing</ref>(uint8_t<sp/>*data,<sp/>uint8_t<sp/>data_len);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156" refid="string__conversion_8h_a54f836163f40491f2bf62edcf03fc386_1a54f836163f40491f2bf62edcf03fc386" refkind="member"><highlight class="normal">uint8_t<sp/><ref refid="string__conversion_8h_a54f836163f40491f2bf62edcf03fc386_1a54f836163f40491f2bf62edcf03fc386" kindref="member">string_conversion_7bit_sms_unpacking</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*packed,</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*unpacked,</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><sp/>num_char);</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>STRING_CONVERSION_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="lib/sms/string_conversion.h"/>
+  </compounddef>
+</doxygen>

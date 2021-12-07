@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="zigbee__logger__eprxzcl_8h" kind="file" language="C++">
+    <compoundname>zigbee_logger_eprxzcl.h</compoundname>
+    <includes local="no">zboss_api.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/zigbee/zigbee_logger_eprxzcl.h</label>
+        <link refid="zigbee__logger__eprxzcl_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>zboss_api.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__zigbee__logger__ep_ga6c4249a44d074d6f6892612a4cc6e1a0_1ga6c4249a44d074d6f6892612a4cc6e1a0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>zb_uint8_t</type>
+        <definition>zb_uint8_t zigbee_logger_eprxzcl_ep_handler</definition>
+        <argsstring>(zb_bufid_t bufid)</argsstring>
+        <name>zigbee_logger_eprxzcl_ep_handler</name>
+        <param>
+          <type>zb_bufid_t</type>
+          <declname>bufid</declname>
+        </param>
+        <briefdescription>
+<para>Handler function which may be called to log an incoming frame onto zigbee endpoint. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When this function is called as a callback bound to endpoint via ZB_AF_SET_ENDPOINT_HANDLER(), (directly or indirectly) it produces a log line similar to the following: <programlisting><codeline><highlight class="normal">Received<sp/>ZCL<sp/>command<sp/>(17):<sp/>src_addr=0x0000(short)<sp/>src_ep=64<sp/>dst_ep=64</highlight></codeline>
+<codeline><highlight class="normal">cluster_id=0x0000<sp/>profile_id=0x0104<sp/>rssi=0<sp/>cmd_dir=0<sp/>common_cmd=1<sp/>cmd_id=0x00</highlight></codeline>
+<codeline><highlight class="normal">cmd_seq=128<sp/>disable_def_resp=0<sp/>manuf_code=void<sp/>payload=[0700]<sp/>(17)</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bufid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Reference to zigbee buffer holding received zcl command to be logged</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>ZB_FALSE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>in all conditions. This enables possibility to use this function directly as zigbee stack endpoint handler. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_logger_eprxzcl.h" line="47" column="12" declfile="include/zigbee/zigbee_logger_eprxzcl.h" declline="47" declcolumn="12"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>ZIGBEE_COMMON_ZIGBEE_LOGGER_EPRXZCL_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ZIGBEE_COMMON_ZIGBEE_LOGGER_EPRXZCL_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zboss_api.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="group__zigbee__logger__ep_ga6c4249a44d074d6f6892612a4cc6e1a0_1ga6c4249a44d074d6f6892612a4cc6e1a0" refkind="member"><highlight class="normal">zb_uint8_t<sp/><ref refid="group__zigbee__logger__ep_ga6c4249a44d074d6f6892612a4cc6e1a0_1ga6c4249a44d074d6f6892612a4cc6e1a0" kindref="member">zigbee_logger_eprxzcl_ep_handler</ref>(zb_bufid_t<sp/>bufid);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>ZIGBEE_COMMON_ZIGBEE_LOGGER_EPRXZCL_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/zigbee/zigbee_logger_eprxzcl.h"/>
+  </compounddef>
+</doxygen>

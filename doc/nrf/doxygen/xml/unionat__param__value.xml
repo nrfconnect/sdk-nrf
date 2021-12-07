@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="unionat__param__value" kind="union" language="C++" prot="public">
+    <compoundname>at_param_value</compoundname>
+    <includes refid="at__params_8h" local="no">at_params.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="unionat__param__value_a15f1fb83d823eb9f3f094630b4449ff9_1a15f1fb83d823eb9f3f094630b4449ff9" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t at_param_value::int_val</definition>
+        <argsstring></argsstring>
+        <name>int_val</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Integer value. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="52" column="9" bodyfile="include/modem/at_params.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="unionat__param__value_ae407513cc6e65afcc0805a46534aba4f_1ae407513cc6e65afcc0805a46534aba4f" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* at_param_value::str_val</definition>
+        <argsstring></argsstring>
+        <name>str_val</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>String value. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="54" column="6" bodyfile="include/modem/at_params.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="unionat__param__value_a5e46fbbee7378b135033668a083ff3d5_1a5e46fbbee7378b135033668a083ff3d5" prot="public" static="no" mutable="no">
+        <type>uint32_t *</type>
+        <definition>uint32_t* at_param_value::array_val</definition>
+        <argsstring></argsstring>
+        <name>array_val</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Array of uint32_t </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="56" column="10" bodyfile="include/modem/at_params.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Parameter value. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/modem/at_params.h" line="50" column="1" bodyfile="include/modem/at_params.h" bodystart="50" bodyend="57"/>
+    <listofallmembers>
+      <member refid="unionat__param__value_a5e46fbbee7378b135033668a083ff3d5_1a5e46fbbee7378b135033668a083ff3d5" prot="public" virt="non-virtual"><scope>at_param_value</scope><name>array_val</name></member>
+      <member refid="unionat__param__value_a15f1fb83d823eb9f3f094630b4449ff9_1a15f1fb83d823eb9f3f094630b4449ff9" prot="public" virt="non-virtual"><scope>at_param_value</scope><name>int_val</name></member>
+      <member refid="unionat__param__value_ae407513cc6e65afcc0805a46534aba4f_1ae407513cc6e65afcc0805a46534aba4f" prot="public" virt="non-virtual"><scope>at_param_value</scope><name>str_val</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

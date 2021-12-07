@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__sensor__module__event" kind="group">
+    <compoundname>sensor_module_event</compoundname>
+    <title>Sensor module event</title>
+    <innerclass refid="structsensor__module__data" prot="public">sensor_module_data</innerclass>
+    <innerclass refid="structsensor__module__accel__data" prot="public">sensor_module_accel_data</innerclass>
+    <innerclass refid="structsensor__module__event" prot="public">sensor_module_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__sensor__module__event_1ga18364a1850d66750f93a1c251978a8a1" prot="public" static="no" strong="no">
+        <type></type>
+        <name>sensor_module_event_type</name>
+        <enumvalue id="group__sensor__module__event_ga18364a1850d66750f93a1c251978a8a1_1gga18364a1850d66750f93a1c251978a8a1a24858f33aedf07a9e584d69a6331420e" prot="public">
+          <name>SENSOR_EVT_MOVEMENT_DATA_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__sensor__module__event_ga18364a1850d66750f93a1c251978a8a1_1gga18364a1850d66750f93a1c251978a8a1ae0662cc4ec08d11ce29ffde5d7f09407" prot="public">
+          <name>SENSOR_EVT_ENVIRONMENTAL_DATA_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__sensor__module__event_ga18364a1850d66750f93a1c251978a8a1_1gga18364a1850d66750f93a1c251978a8a1acbeae90ccebbd509319e39f2c3b91879" prot="public">
+          <name>SENSOR_EVT_ENVIRONMENTAL_NOT_SUPPORTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__sensor__module__event_ga18364a1850d66750f93a1c251978a8a1_1gga18364a1850d66750f93a1c251978a8a1abf00911572922c7dbf1e423ce4e60226" prot="public">
+          <name>SENSOR_EVT_SHUTDOWN_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__sensor__module__event_ga18364a1850d66750f93a1c251978a8a1_1gga18364a1850d66750f93a1c251978a8a1a8bf83d2d69e924577b412792b2a09fe0" prot="public">
+          <name>SENSOR_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Sensor event types su bmitted by Sensor module. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/sensor_module_event.h" line="26" column="1" bodyfile="applications/asset_tracker_v2/src/events/sensor_module_event.h" bodystart="26" bodyend="32"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__sensor__module__event_1gabcc0a397eca63aa2092e9788f0e55c7a" prot="public" static="no">
+        <name>ACCELEROMETER_AXIS_COUNT</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/sensor_module_event.h" line="23" column="9" bodyfile="applications/asset_tracker_v2/src/events/sensor_module_event.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Sensor module event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

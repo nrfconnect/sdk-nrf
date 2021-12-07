@@ -1,0 +1,162 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__sensor__setting" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_sensor_setting</compoundname>
+    <includes refid="sensor_8h" local="no">sensor.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__sensor__setting_a0525a9b02d8696f710a1f2d2a5e5e058_1a0525a9b02d8696f710a1f2d2a5e5e058" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref> *</type>
+        <definition>const struct bt_mesh_sensor_type* bt_mesh_sensor_setting::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sensor type of this setting. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="226" column="32" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="226" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__setting_ae387273c522af81ae4a889f6970a7a0a_1ae387273c522af81ae4a889f6970a7a0a" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_mesh_sensor_setting::get) (struct bt_mesh_sensor *sensor, const struct bt_mesh_sensor_setting *setting, struct bt_mesh_msg_ctx *ctx, struct sensor_value *rsp)</definition>
+        <argsstring>)(struct bt_mesh_sensor *sensor, const struct bt_mesh_sensor_setting *setting, struct bt_mesh_msg_ctx *ctx, struct sensor_value *rsp)</argsstring>
+        <name>get</name>
+        <briefdescription>
+<para>Getter for this sensor setting. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor this setting belongs to. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">setting</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to this setting structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context parameters for the packet this call originated from, or NULL if this call wasn&apos;t triggered by a packet. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response buffer for the setting value. Points to an array with the number of channels specified by the setting sensor type. All channels must be filled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="242" column="1" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="242" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__setting_a24296f949ee0a28f9e30a3b7bd9f2a83_1a24296f949ee0a28f9e30a3b7bd9f2a83" prot="public" static="no" mutable="no">
+        <type>int(*</type>
+        <definition>int(* bt_mesh_sensor_setting::set) (struct bt_mesh_sensor *sensor, const struct bt_mesh_sensor_setting *setting, struct bt_mesh_msg_ctx *ctx, const struct sensor_value *value)</definition>
+        <argsstring>)(struct bt_mesh_sensor *sensor, const struct bt_mesh_sensor_setting *setting, struct bt_mesh_msg_ctx *ctx, const struct sensor_value *value)</argsstring>
+        <name>set</name>
+        <briefdescription>
+<para>Setter for this sensor setting. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Should only be specified for writable sensor settings.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor this setting belongs to. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">setting</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to this setting structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context parameters for the packet this call originated from, or NULL if this call wasn&apos;t triggered by a packet. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New setting value. Contains the number of channels specified by the setting sensor type.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, or (negative) error code otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="261" column="1" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="261" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Single sensor setting. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>bt_mesh_sensor_channel</label>
+        <link refid="structbt__mesh__sensor__channel"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>format</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bt_mesh_sensor_format</label>
+        <link refid="structbt__mesh__sensor__format"/>
+      </node>
+      <node id="1">
+        <label>bt_mesh_sensor_setting</label>
+        <link refid="structbt__mesh__sensor__setting"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_mesh_sensor_type</label>
+        <link refid="structbt__mesh__sensor__type"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>channels</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/sensor.h" line="224" column="1" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="224" bodyend="266"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__sensor__setting_ae387273c522af81ae4a889f6970a7a0a_1ae387273c522af81ae4a889f6970a7a0a" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_setting</scope><name>get</name></member>
+      <member refid="structbt__mesh__sensor__setting_a24296f949ee0a28f9e30a3b7bd9f2a83_1a24296f949ee0a28f9e30a3b7bd9f2a83" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_setting</scope><name>set</name></member>
+      <member refid="structbt__mesh__sensor__setting_a0525a9b02d8696f710a1f2d2a5e5e058_1a0525a9b02d8696f710a1f2d2a5e5e058" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_setting</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

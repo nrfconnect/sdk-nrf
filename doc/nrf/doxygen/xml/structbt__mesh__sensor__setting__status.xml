@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__sensor__setting__status" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_sensor_setting_status</compoundname>
+    <includes refid="sensor__cli_8h" local="no">sensor_cli.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__sensor__setting__status_a2df032310528f7fcd0a2420b16966557_1a2df032310528f7fcd0a2420b16966557" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref> *</type>
+        <definition>const struct bt_mesh_sensor_type* bt_mesh_sensor_setting_status::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Setting type </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="95" column="32" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__setting__status_ad6e8bc964e039aa0298eb2bc55967c10_1ad6e8bc964e039aa0298eb2bc55967c10" prot="public" static="no" mutable="no">
+        <type>struct sensor_value</type>
+        <definition>struct sensor_value bt_mesh_sensor_setting_status::value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX]</definition>
+        <argsstring>[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX]</argsstring>
+        <name>value</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Setting value. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="97" column="19" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__setting__status_a0e6c83b536755283c1eb1677a341e30c_1a0e6c83b536755283c1eb1677a341e30c" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool bt_mesh_sensor_setting_status::writable</definition>
+        <argsstring></argsstring>
+        <name>writable</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Whether the setting can be written to. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="99" column="6" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Sensor settings parameters. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>bt_mesh_sensor_channel</label>
+        <link refid="structbt__mesh__sensor__channel"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>format</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bt_mesh_sensor_format</label>
+        <link refid="structbt__mesh__sensor__format"/>
+      </node>
+      <node id="1">
+        <label>bt_mesh_sensor_setting_status</label>
+        <link refid="structbt__mesh__sensor__setting__status"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_mesh_sensor_type</label>
+        <link refid="structbt__mesh__sensor__type"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>channels</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/sensor_cli.h" line="93" column="1" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="93" bodyend="100"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__sensor__setting__status_a2df032310528f7fcd0a2420b16966557_1a2df032310528f7fcd0a2420b16966557" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_setting_status</scope><name>type</name></member>
+      <member refid="structbt__mesh__sensor__setting__status_ad6e8bc964e039aa0298eb2bc55967c10_1ad6e8bc964e039aa0298eb2bc55967c10" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_setting_status</scope><name>value</name></member>
+      <member refid="structbt__mesh__sensor__setting__status_a0e6c83b536755283c1eb1677a341e30c_1a0e6c83b536755283c1eb1677a341e30c" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_setting_status</scope><name>writable</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

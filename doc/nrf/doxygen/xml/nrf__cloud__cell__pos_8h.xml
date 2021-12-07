@@ -1,0 +1,315 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="nrf__cloud__cell__pos_8h" kind="file" language="C++">
+    <compoundname>nrf_cloud_cell_pos.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <includes refid="lte__lc_8h" local="no">modem/lte_lc.h</includes>
+    <includes local="no">cJSON.h</includes>
+    <includedby refid="nrf__cloud__rest_8h" local="no">include/net/nrf_cloud_rest.h</includedby>
+    <incdepgraph>
+      <node id="3">
+        <label>modem/lte_lc.h</label>
+        <link refid="lte__lc_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/net/nrf_cloud_cell_pos.h</label>
+        <link refid="nrf__cloud__cell__pos_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>cJSON.h</label>
+      </node>
+      <node id="4">
+        <label>stdbool.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>include/net/nrf_cloud_cell_pos.h</label>
+        <link refid="nrf__cloud__cell__pos_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/net/nrf_cloud_rest.h</label>
+        <link refid="nrf__cloud__rest_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structnrf__cloud__cell__pos__result" prot="public">nrf_cloud_cell_pos_result</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nrf__cloud__cell__pos__omit_gac25d4f34b5901d96cc51074ba52f2489_1gac25d4f34b5901d96cc51074ba52f2489" prot="public" static="no">
+        <name>NRF_CLOUD_CELL_POS_OMIT_TIME_ADV</name>
+        <initializer><ref refid="group__lte__lc_ga4cef12240755a4f2cd473f3ecc64c1f0_1ga4cef12240755a4f2cd473f3ecc64c1f0" kindref="member">LTE_LC_CELL_TIMING_ADVANCE_INVALID</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_cell_pos.h" line="43" column="9" bodyfile="include/net/nrf_cloud_cell_pos.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__cell__pos__omit_gac2ef3baa00faace0e3cbb5e7f577a088_1gac2ef3baa00faace0e3cbb5e7f577a088" prot="public" static="no">
+        <name>NRF_CLOUD_CELL_POS_OMIT_RSRQ</name>
+        <initializer><ref refid="group__lte__lc_ga4d3b89eb0a8d1590bb253eac35c252c4_1ga4d3b89eb0a8d1590bb253eac35c252c4" kindref="member">LTE_LC_CELL_RSRQ_INVALID</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_cell_pos.h" line="44" column="9" bodyfile="include/net/nrf_cloud_cell_pos.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__cell__pos__omit_gabad5e99f706c94d1d49cc48fc7a18f2e_1gabad5e99f706c94d1d49cc48fc7a18f2e" prot="public" static="no">
+        <name>NRF_CLOUD_CELL_POS_OMIT_RSRP</name>
+        <initializer><ref refid="group__lte__lc_ga5f8bc9c9f2303bb2cbe4036ae5b9b05a_1ga5f8bc9c9f2303bb2cbe4036ae5b9b05a" kindref="member">LTE_LC_CELL_RSRP_INVALID</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_cell_pos.h" line="45" column="9" bodyfile="include/net/nrf_cloud_cell_pos.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__cell__pos__omit_ga6de630510a56d7374bf7d05f717c3108_1ga6de630510a56d7374bf7d05f717c3108" prot="public" static="no">
+        <name>NRF_CLOUD_CELL_POS_OMIT_EARFCN</name>
+        <initializer>UINT32_MAX</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_cell_pos.h" line="46" column="9" bodyfile="include/net/nrf_cloud_cell_pos.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__cell__pos_gab31e9c9f7665e443110cdfb83c99c709_1gab31e9c9f7665e443110cdfb83c99c709" prot="public" static="no">
+        <name>NRF_CLOUD_CELL_POS_TIME_ADV_MAX</name>
+        <initializer><ref refid="group__lte__lc_gaaf135bb70fdf0c29469f7ddf768eec03_1gaaf135bb70fdf0c29469f7ddf768eec03" kindref="member">LTE_LC_CELL_TIMING_ADVANCE_MAX</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_cell_pos.h" line="49" column="9" bodyfile="include/net/nrf_cloud_cell_pos.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nrf__cloud__cell__pos_ga1a10f4b2178d3e44a94fa079642ae847_1ga1a10f4b2178d3e44a94fa079642ae847" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_cell_pos_type</name>
+        <enumvalue id="group__nrf__cloud__cell__pos_ga1a10f4b2178d3e44a94fa079642ae847_1gga1a10f4b2178d3e44a94fa079642ae847ae5d7ab4fef5920cfcde2cb5bd480c03b" prot="public">
+          <name>CELL_POS_TYPE_SINGLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__cell__pos_ga1a10f4b2178d3e44a94fa079642ae847_1gga1a10f4b2178d3e44a94fa079642ae847a80d776602378012eb9afdd978dc89c60" prot="public">
+          <name>CELL_POS_TYPE_MULTI</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Cellular positioning request type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_cell_pos.h" line="27" column="1" bodyfile="include/net/nrf_cloud_cell_pos.h" bodystart="27" bodyend="30"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nrf__cloud__cell__pos_gadb4277fc37358b74729a1feb3553d72f_1gadb4277fc37358b74729a1feb3553d72f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_cell_pos_request_json_get</definition>
+        <argsstring>(const struct lte_lc_cells_info *const cells_inf, const bool request_loc, cJSON **req_obj_out)</argsstring>
+        <name>nrf_cloud_cell_pos_request_json_get</name>
+        <param>
+          <type>const struct <ref refid="structlte__lc__cells__info" kindref="compound">lte_lc_cells_info</ref> *const</type>
+          <declname>cells_inf</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>request_loc</declname>
+        </param>
+        <param>
+          <type>cJSON **</type>
+          <declname>req_obj_out</declname>
+        </param>
+        <briefdescription>
+<para>Get the reference to a cJSON object containing a cell position request. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cells_inf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cell info. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>request_loc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, cloud will send location to the device. If false, cloud will not send location to the device. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>req_obj_out</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer used to get the reference to the generated cJSON object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_cell_pos.h" line="94" column="5" declfile="include/net/nrf_cloud_cell_pos.h" declline="94" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__cell__pos_ga16d13425d2dfb00b0753a70b2b3c96c9_1ga16d13425d2dfb00b0753a70b2b3c96c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_cell_pos_process</definition>
+        <argsstring>(const char *buf, struct nrf_cloud_cell_pos_result *result)</argsstring>
+        <name>nrf_cloud_cell_pos_process</name>
+        <param>
+          <type>const char *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__cell__pos__result" kindref="compound">nrf_cloud_cell_pos_result</ref> *</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+<para>Processes cellular positioning data received from nRF Cloud via MQTT or REST. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to data received from nRF Cloud. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>result</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to buffer for parsing result.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If processed successfully and cell-based location found. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>1</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If processed successfully but no cell-based location found. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_cell_pos.h" line="106" column="5" declfile="include/net/nrf_cloud_cell_pos.h" declline="106" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Module to provide nRF Cloud cellular positioning support to nRF9160 SiP. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NRF_CLOUD_CELL_POS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_CELL_POS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="lte__lc_8h" kindref="compound">modem/lte_lc.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cJSON.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="group__nrf__cloud__cell__pos_ga1a10f4b2178d3e44a94fa079642ae847_1ga1a10f4b2178d3e44a94fa079642ae847" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__cell__pos_ga1a10f4b2178d3e44a94fa079642ae847_1ga1a10f4b2178d3e44a94fa079642ae847" kindref="member">nrf_cloud_cell_pos_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="28" refid="group__nrf__cloud__cell__pos_ga1a10f4b2178d3e44a94fa079642ae847_1gga1a10f4b2178d3e44a94fa079642ae847ae5d7ab4fef5920cfcde2cb5bd480c03b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__cell__pos_ga1a10f4b2178d3e44a94fa079642ae847_1gga1a10f4b2178d3e44a94fa079642ae847ae5d7ab4fef5920cfcde2cb5bd480c03b" kindref="member">CELL_POS_TYPE_SINGLE</ref>,</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud__cell__pos_ga1a10f4b2178d3e44a94fa079642ae847_1gga1a10f4b2178d3e44a94fa079642ae847a80d776602378012eb9afdd978dc89c60" kindref="member">CELL_POS_TYPE_MULTI</ref></highlight></codeline>
+<codeline lineno="30" refid="group__nrf__cloud__cell__pos_ga1a10f4b2178d3e44a94fa079642ae847_1gga1a10f4b2178d3e44a94fa079642ae847a80d776602378012eb9afdd978dc89c60" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="structnrf__cloud__cell__pos__result" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__cell__pos__result" kindref="compound">nrf_cloud_cell_pos_result</ref><sp/>{</highlight></codeline>
+<codeline lineno="34" refid="structnrf__cloud__cell__pos__result_a4ef82b06953d6b9c6e9acc0c46a514f5_1a4ef82b06953d6b9c6e9acc0c46a514f5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__cell__pos_ga1a10f4b2178d3e44a94fa079642ae847_1ga1a10f4b2178d3e44a94fa079642ae847" kindref="member">nrf_cloud_cell_pos_type</ref><sp/><ref refid="structnrf__cloud__cell__pos__result_a4ef82b06953d6b9c6e9acc0c46a514f5_1a4ef82b06953d6b9c6e9acc0c46a514f5" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="35" refid="structnrf__cloud__cell__pos__result_a10ee2809bc0ecbb967bb9cd489d2ff40_1a10ee2809bc0ecbb967bb9cd489d2ff40" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__cell__pos__result_a10ee2809bc0ecbb967bb9cd489d2ff40_1a10ee2809bc0ecbb967bb9cd489d2ff40" kindref="member">lat</ref>;</highlight></codeline>
+<codeline lineno="36" refid="structnrf__cloud__cell__pos__result_a32ad58f0ed0ac1d2a1bae278f22970d6_1a32ad58f0ed0ac1d2a1bae278f22970d6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__cell__pos__result_a32ad58f0ed0ac1d2a1bae278f22970d6_1a32ad58f0ed0ac1d2a1bae278f22970d6" kindref="member">lon</ref>;</highlight></codeline>
+<codeline lineno="37" refid="structnrf__cloud__cell__pos__result_a402c3ec83b799e52e626619b8c3251ff_1a402c3ec83b799e52e626619b8c3251ff" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structnrf__cloud__cell__pos__result_a402c3ec83b799e52e626619b8c3251ff_1a402c3ec83b799e52e626619b8c3251ff" kindref="member">unc</ref>;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="group__nrf__cloud__cell__pos__omit_gac25d4f34b5901d96cc51074ba52f2489_1gac25d4f34b5901d96cc51074ba52f2489" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_CELL_POS_OMIT_TIME_ADV<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>LTE_LC_CELL_TIMING_ADVANCE_INVALID</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="group__nrf__cloud__cell__pos__omit_gac2ef3baa00faace0e3cbb5e7f577a088_1gac2ef3baa00faace0e3cbb5e7f577a088" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_CELL_POS_OMIT_RSRQ<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>LTE_LC_CELL_RSRQ_INVALID</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="group__nrf__cloud__cell__pos__omit_gabad5e99f706c94d1d49cc48fc7a18f2e_1gabad5e99f706c94d1d49cc48fc7a18f2e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_CELL_POS_OMIT_RSRP<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>LTE_LC_CELL_RSRP_INVALID</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="group__nrf__cloud__cell__pos__omit_ga6de630510a56d7374bf7d05f717c3108_1ga6de630510a56d7374bf7d05f717c3108" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_CELL_POS_OMIT_EARFCN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UINT32_MAX</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="group__nrf__cloud__cell__pos_gab31e9c9f7665e443110cdfb83c99c709_1gab31e9c9f7665e443110cdfb83c99c709" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_CELL_POS_TIME_ADV_MAX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>LTE_LC_CELL_TIMING_ADVANCE_MAX</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(CONFIG_NRF_CLOUD_MQTT)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*nrf_cloud_cell_pos_response_t)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__cell__pos__result" kindref="compound">nrf_cloud_cell_pos_result</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>pos);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nrf_cloud_cell_pos_request(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlte__lc__cells__info" kindref="compound">lte_lc_cells_info</ref><sp/>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>cells_inf,</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>request_loc,<sp/>nrf_cloud_cell_pos_response_t<sp/>cb);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>CONFIG_NRF_CLOUD_MQTT<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94" refid="group__nrf__cloud__cell__pos_gadb4277fc37358b74729a1feb3553d72f_1gadb4277fc37358b74729a1feb3553d72f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__cell__pos_gadb4277fc37358b74729a1feb3553d72f_1gadb4277fc37358b74729a1feb3553d72f" kindref="member">nrf_cloud_cell_pos_request_json_get</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlte__lc__cells__info" kindref="compound">lte_lc_cells_info</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>cells_inf,</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>request_loc,<sp/>cJSON<sp/>**req_obj_out);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106" refid="group__nrf__cloud__cell__pos_ga16d13425d2dfb00b0753a70b2b3c96c9_1ga16d13425d2dfb00b0753a70b2b3c96c9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud__cell__pos_ga16d13425d2dfb00b0753a70b2b3c96c9_1ga16d13425d2dfb00b0753a70b2b3c96c9" kindref="member">nrf_cloud_cell_pos_process</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*buf,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__cell__pos__result" kindref="compound">nrf_cloud_cell_pos_result</ref><sp/>*result);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>NRF_CLOUD_CELL_POS_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/net/nrf_cloud_cell_pos.h"/>
+  </compounddef>
+</doxygen>

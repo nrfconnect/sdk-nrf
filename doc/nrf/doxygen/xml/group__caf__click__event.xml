@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__caf__click__event" kind="group">
+    <compoundname>caf_click_event</compoundname>
+    <title>CAF Click Event</title>
+    <innerclass refid="structclick__event" prot="public">click_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__caf__click__event_1gaa4ab9acde58c39ed8f273e894f51fa69" prot="public" static="no" strong="no">
+        <type></type>
+        <name>click</name>
+        <enumvalue id="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1ggaa4ab9acde58c39ed8f273e894f51fa69a172bbcfbcfb06569269d34823b08cc71" prot="public">
+          <name>CLICK_NONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Button pressed and held for a period of time that is too long for CLICK_SHORT, but too short for CLICK_LONG. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1ggaa4ab9acde58c39ed8f273e894f51fa69a2363d3cf0ada4db1ee267ee337d67d3f" prot="public">
+          <name>CLICK_SHORT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Button pressed and released after a short time. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1ggaa4ab9acde58c39ed8f273e894f51fa69adfcb136d5d952a22b314f033e7317322" prot="public">
+          <name>CLICK_LONG</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Button pressed and held for a long period of time. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1ggaa4ab9acde58c39ed8f273e894f51fa69a6a6b9152bd1cc0b637573c34e69c1e73" prot="public">
+          <name>CLICK_DOUBLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Two sequences of the button press and release in a short time interval. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1ggaa4ab9acde58c39ed8f273e894f51fa69ae88fb2356d399f1866fd553515274906" prot="public">
+          <name>CLICK_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Number of click types. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Click types. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The click type refers to the way a button can be pressed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/click_event.h" line="28" column="1" bodyfile="include/caf/events/click_event.h" bodystart="28" bodyend="45"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>CAF Click Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

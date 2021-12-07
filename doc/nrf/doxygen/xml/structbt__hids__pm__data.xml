@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__hids__pm__data" kind="struct" language="C++" prot="public">
+    <compoundname>bt_hids_pm_data</compoundname>
+    <includes refid="hids_8h" local="no">hids.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__hids__pm__data_ab72d0e88f3fe09eb0cc1348a7a17b9c0_1ab72d0e88f3fe09eb0cc1348a7a17b9c0" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__hids_ga4b9aee4e69b4bf5a340f6d7201fa2d11_1ga4b9aee4e69b4bf5a340f6d7201fa2d11" kindref="member">bt_hids_pm_evt_handler_t</ref></type>
+        <definition>bt_hids_pm_evt_handler_t bt_hids_pm_data::evt_handler</definition>
+        <argsstring></argsstring>
+        <name>evt_handler</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Callback with new Protocol Mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="359" column="26" bodyfile="include/bluetooth/services/hids.h" bodystart="359" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Protocol Mode. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/hids.h" line="357" column="1" bodyfile="include/bluetooth/services/hids.h" bodystart="357" bodyend="360"/>
+    <listofallmembers>
+      <member refid="structbt__hids__pm__data_ab72d0e88f3fe09eb0cc1348a7a17b9c0_1ab72d0e88f3fe09eb0cc1348a7a17b9c0" prot="public" virt="non-virtual"><scope>bt_hids_pm_data</scope><name>evt_handler</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

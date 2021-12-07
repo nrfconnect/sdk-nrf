@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_e20674fa9bb9636777012f2ea677369f" kind="dir">
+    <compoundname>include/nfc/ndef</compoundname>
+    <innerfile refid="ndef_2ch_8h">ch.h</innerfile>
+    <innerfile refid="ch__msg_8h">ch_msg.h</innerfile>
+    <innerfile refid="ch__rec__parser_8h">ch_rec_parser.h</innerfile>
+    <innerfile refid="launchapp__msg_8h">launchapp_msg.h</innerfile>
+    <innerfile refid="launchapp__rec_8h">launchapp_rec.h</innerfile>
+    <innerfile refid="le__oob__rec_8h">le_oob_rec.h</innerfile>
+    <innerfile refid="le__oob__rec__parser_8h">le_oob_rec_parser.h</innerfile>
+    <innerfile refid="msg_8h">msg.h</innerfile>
+    <innerfile refid="msg__parser_8h">msg_parser.h</innerfile>
+    <innerfile refid="payload__type__common_8h">payload_type_common.h</innerfile>
+    <innerfile refid="record_8h">record.h</innerfile>
+    <innerfile refid="record__parser_8h">record_parser.h</innerfile>
+    <innerfile refid="text__rec_8h">text_rec.h</innerfile>
+    <innerfile refid="tnep__rec_8h">tnep_rec.h</innerfile>
+    <innerfile refid="uri__msg_8h">uri_msg.h</innerfile>
+    <innerfile refid="uri__rec_8h">uri_rec.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/nfc/ndef/"/>
+  </compounddef>
+</doxygen>

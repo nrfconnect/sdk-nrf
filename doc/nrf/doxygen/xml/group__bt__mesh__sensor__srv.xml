@@ -1,0 +1,238 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__sensor__srv" kind="group">
+    <compoundname>bt_mesh_sensor_srv</compoundname>
+    <title>Sensor Server model</title>
+    <innerclass refid="structbt__mesh__sensor__srv" prot="public">bt_mesh_sensor_srv</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__sensor__srv_1gaffb1de2f53c9d9fb046ee9f8a26d0db8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_sensor_srv_pub</definition>
+        <argsstring>(struct bt_mesh_sensor_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_sensor *sensor, const struct sensor_value *value)</argsstring>
+        <name>bt_mesh_sensor_srv_pub</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__srv" kindref="compound">bt_mesh_sensor_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor" kindref="compound">bt_mesh_sensor</ref> *</type>
+          <declname>sensor</declname>
+        </param>
+        <param>
+          <type>const struct sensor_value *</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Publish a sensor value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Immediately publishes the given sensor value, without checking thresholds or intervals.</para>
+<para><simplesect kind="see"><para><ref refid="group__bt__mesh__sensor__srv_gaffb1de2f53c9d9fb046ee9f8a26d0db8_1gaffb1de2f53c9d9fb046ee9f8a26d0db8" kindref="member">bt_mesh_sensor_srv_pub</ref></para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor server instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to publish with, or NULL to publish on the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor to publish with. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor value to publish, interpreted as an array of sensor channel values matching the sensor channels specified by the sensor type. The length of the array must match the sensor channel count.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, or (negative) error code otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_srv.h" line="118" column="5" declfile="include/bluetooth/mesh/sensor_srv.h" declline="118" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__sensor__srv_1ga93b1dbd6ca9e8f44a9c0aab1f1bdb873" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_sensor_srv_sample</definition>
+        <argsstring>(struct bt_mesh_sensor_srv *srv, struct bt_mesh_sensor *sensor)</argsstring>
+        <name>bt_mesh_sensor_srv_sample</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__srv" kindref="compound">bt_mesh_sensor_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor" kindref="compound">bt_mesh_sensor</ref> *</type>
+          <declname>sensor</declname>
+        </param>
+        <briefdescription>
+<para>Make the server to take a sample of the sensor, and publish if the value changed sufficiently. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Works the same way as <ref refid="group__bt__mesh__sensor__srv_gaffb1de2f53c9d9fb046ee9f8a26d0db8_1gaffb1de2f53c9d9fb046ee9f8a26d0db8" kindref="member">bt_mesh_sensor_srv_pub()</ref>, except that the server makes a decision on whether to publish the value based on the delta from the previous publication and the sensor&apos;s threshold parameters. Only single channel sensor values will be considered.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor server instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor instance to sample.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The sensor value was published. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EBUSY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Failed sampling the sensor value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The sensor value has not changed sufficiently to require a publication. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_srv.h" line="143" column="5" declfile="include/bluetooth/mesh/sensor_srv.h" declline="143" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__sensor__srv_1gab1db5d7cec9724f02c78bfd7cf5870c6" prot="public" static="no">
+        <name>BT_MESH_SENSOR_SRV_INIT</name>
+        <param><defname>_sensors</defname></param>
+        <param><defname>_count</defname></param>
+        <initializer>	{                                                                      \
+		.sensor_array = _sensors,                                      \
+		.sensor_count =                                                \
+			MIN(CONFIG_BT_MESH_SENSOR_SRV_SENSORS_MAX, _count),    \
+	}</initializer>
+        <briefdescription>
+<para>Initialization parameters for <ref refid="group__bt__mesh__sensor__srv" kindref="compound">Sensor Server model</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>A sensor server can only represent one sensor instance of each sensor type. Duplicate sensors will be ignored.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_sensors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of pointers to sensors owned by this server. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of sensors in the array. Can at most be <verbatim>embed:rst:inline :kconfig:`CONFIG_BT_MESH_SENSOR_SRV_SENSORS_MAX` </verbatim>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_srv.h" line="35" column="9" bodyfile="include/bluetooth/mesh/sensor_srv.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__sensor__srv_1ga4e13ea7793701d679206ee210ec9e8f8" prot="public" static="no">
+        <name>BT_MESH_MODEL_SENSOR_SRV</name>
+        <param><defname>_srv</defname></param>
+        <initializer>	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_SENSOR_SRV, _bt_mesh_sensor_srv_op,  \
+			 &amp;(_srv)-&gt;pub,                                         \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__sensor__srv" kindref="compound">bt_mesh_sensor_srv</ref>,    \
+						 _srv),                        \
+			 &amp;_bt_mesh_sensor_srv_cb),                             \
+	BT_MESH_MODEL(BT_MESH_MODEL_ID_SENSOR_SETUP_SRV,                       \
+		      _bt_mesh_sensor_setup_srv_op,                            \
+		      &amp;(_srv)-&gt;setup_pub,                                      \
+		      BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__sensor__srv" kindref="compound">bt_mesh_sensor_srv</ref>,       \
+					      _srv))</initializer>
+        <briefdescription>
+<para>Sensor Server model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__sensor__srv" kindref="compound">Sensor Server model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_srv.h" line="48" column="9" bodyfile="include/bluetooth/mesh/sensor_srv.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Sensor Server. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

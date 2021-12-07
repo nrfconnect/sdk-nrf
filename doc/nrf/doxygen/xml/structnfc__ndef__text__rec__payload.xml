@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__ndef__text__rec__payload" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_ndef_text_rec_payload</compoundname>
+    <includes refid="text__rec_8h" local="no">text_rec.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__ndef__text__rec__payload_ac31cacdfeebf5e843349b1bff2ccebb6_1ac31cacdfeebf5e843349b1bff2ccebb6" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__nfc__text__rec_gab91c41d8bb56d793f6bb21890e1206aa_1gab91c41d8bb56d793f6bb21890e1206aa" kindref="member">nfc_ndef_text_rec_utf</ref></type>
+        <definition>enum nfc_ndef_text_rec_utf nfc_ndef_text_rec_payload::utf</definition>
+        <argsstring></argsstring>
+        <name>utf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Type of the Unicode Transformation Format. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/text_rec.h" line="44" column="27" bodyfile="include/nfc/ndef/text_rec.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__text__rec__payload_a1a74cebd69ad2a24d99b8b85b9878086_1a1a74cebd69ad2a24d99b8b85b9878086" prot="public" static="no" mutable="no">
+        <type>uint8_t const  *</type>
+        <definition>uint8_t const* nfc_ndef_text_rec_payload::lang_code</definition>
+        <argsstring></argsstring>
+        <name>lang_code</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the IANA language code. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/text_rec.h" line="46" column="15" bodyfile="include/nfc/ndef/text_rec.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__text__rec__payload_a844040b686c53942d22de890ede3c60c_1a844040b686c53942d22de890ede3c60c" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_ndef_text_rec_payload::lang_code_len</definition>
+        <argsstring></argsstring>
+        <name>lang_code_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of the IANA language code. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/text_rec.h" line="48" column="9" bodyfile="include/nfc/ndef/text_rec.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__text__rec__payload_aeeb26b85a4d6321fc33130a195c58b5a_1aeeb26b85a4d6321fc33130a195c58b5a" prot="public" static="no" mutable="no">
+        <type>uint8_t const  *</type>
+        <definition>uint8_t const* nfc_ndef_text_rec_payload::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the user text. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/text_rec.h" line="50" column="15" bodyfile="include/nfc/ndef/text_rec.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__text__rec__payload_a8e46beb3c7fbbc42c5e1fe5bea0377be_1a8e46beb3c7fbbc42c5e1fe5bea0377be" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t nfc_ndef_text_rec_payload::data_len</definition>
+        <argsstring></argsstring>
+        <name>data_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of the user text. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/text_rec.h" line="52" column="10" bodyfile="include/nfc/ndef/text_rec.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Text record payload descriptor. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/nfc/ndef/text_rec.h" line="42" column="1" bodyfile="include/nfc/ndef/text_rec.h" bodystart="42" bodyend="53"/>
+    <listofallmembers>
+      <member refid="structnfc__ndef__text__rec__payload_aeeb26b85a4d6321fc33130a195c58b5a_1aeeb26b85a4d6321fc33130a195c58b5a" prot="public" virt="non-virtual"><scope>nfc_ndef_text_rec_payload</scope><name>data</name></member>
+      <member refid="structnfc__ndef__text__rec__payload_a8e46beb3c7fbbc42c5e1fe5bea0377be_1a8e46beb3c7fbbc42c5e1fe5bea0377be" prot="public" virt="non-virtual"><scope>nfc_ndef_text_rec_payload</scope><name>data_len</name></member>
+      <member refid="structnfc__ndef__text__rec__payload_a1a74cebd69ad2a24d99b8b85b9878086_1a1a74cebd69ad2a24d99b8b85b9878086" prot="public" virt="non-virtual"><scope>nfc_ndef_text_rec_payload</scope><name>lang_code</name></member>
+      <member refid="structnfc__ndef__text__rec__payload_a844040b686c53942d22de890ede3c60c_1a844040b686c53942d22de890ede3c60c" prot="public" virt="non-virtual"><scope>nfc_ndef_text_rec_payload</scope><name>lang_code_len</name></member>
+      <member refid="structnfc__ndef__text__rec__payload_ac31cacdfeebf5e843349b1bff2ccebb6_1ac31cacdfeebf5e843349b1bff2ccebb6" prot="public" virt="non-virtual"><scope>nfc_ndef_text_rec_payload</scope><name>utf</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__regulator__tim__displ__reg" kind="group">
+    <compoundname>st25r3911b_regulator_tim_displ_reg</compoundname>
+    <title>Regulator and</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__regulator__tim__displ__reg_1gac92c4ac747a09fb648dab9a6e3137ad9" prot="public" static="no">
+        <name>ST25R3911B_REG_REGULATOR_TIM_DISP_MRT_ON</name>
+        <initializer>BIT(0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="547" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="547" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__regulator__tim__displ__reg_1gab8e3c16948ab748821801a7505b67cb9" prot="public" static="no">
+        <name>ST25R3911B_REG_REGULATOR_TIM_DISP_NRT_ON</name>
+        <initializer>BIT(1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="548" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="548" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__regulator__tim__displ__reg_1gaea0104ada19f9045a43a42d0cfeec99e" prot="public" static="no">
+        <name>ST25R3911B_REG_REGULATOR_TIM_DISP_GPT_ON</name>
+        <initializer>BIT(2)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="549" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="549" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__regulator__tim__displ__reg_1ga1f5fe072172ea6c106b6d4cd27b01394" prot="public" static="no">
+        <name>ST25R3911B_REG_REGULATOR_TIM_DISP_REG_0</name>
+        <initializer>BIT(4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="550" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="550" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__regulator__tim__displ__reg_1gabd7e595a0276e022c120bbc5ed38b5bd" prot="public" static="no">
+        <name>ST25R3911B_REG_REGULATOR_TIM_DISP_REG_1</name>
+        <initializer>BIT(5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="551" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="551" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__regulator__tim__displ__reg_1ga9aa1c966d0caca8a94f2315cdf7a5183" prot="public" static="no">
+        <name>ST25R3911B_REG_REGULATOR_TIM_DISP_REG_2</name>
+        <initializer>BIT(6)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="552" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="552" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__regulator__tim__displ__reg_1ga20b62d0562e81d0703c4ea41da325df9" prot="public" static="no">
+        <name>ST25R3911B_REG_REGULATOR_TIM_DISP_REG_3</name>
+        <initializer>BIT(7)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="553" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="553" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__regulator__tim__displ__reg_1gafd6dd57dd73e2d42b9eaaad50a656b95" prot="public" static="no">
+        <name>ST25R3911B_REG_REGULATOR_TIM_DISP_REG_POS</name>
+        <initializer>(4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="554" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="554" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Timer Display Register bits </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

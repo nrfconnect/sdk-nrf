@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnrf__cloud__svc__info" kind="struct" language="C++" prot="public">
+    <compoundname>nrf_cloud_svc_info</compoundname>
+    <includes refid="nrf__cloud_8h" local="no">nrf_cloud.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnrf__cloud__svc__info_a431971042c9ab62d1af15df8a4c809b9_1a431971042c9ab62d1af15df8a4c809b9" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structnrf__cloud__svc__info__fota" kindref="compound">nrf_cloud_svc_info_fota</ref> *</type>
+        <definition>struct nrf_cloud_svc_info_fota* nrf_cloud_svc_info::fota</definition>
+        <argsstring></argsstring>
+        <name>fota</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Specify FOTA components to enable, set to NULL to remove the FOTA entry </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="351" column="30" bodyfile="include/net/nrf_cloud.h" bodystart="351" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__svc__info_a80c56834a9947af4b84a30e7211313b2_1a80c56834a9947af4b84a30e7211313b2" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structnrf__cloud__svc__info__ui" kindref="compound">nrf_cloud_svc_info_ui</ref> *</type>
+        <definition>struct nrf_cloud_svc_info_ui* nrf_cloud_svc_info::ui</definition>
+        <argsstring></argsstring>
+        <name>ui</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Specify UI components to enable, set to NULL to remove the UI entry </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="353" column="28" bodyfile="include/net/nrf_cloud.h" bodystart="353" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Structure to specify which components are added to the encoded service info object. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>nrf_cloud_svc_info</label>
+        <link refid="structnrf__cloud__svc__info"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>fota</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>ui</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>nrf_cloud_svc_info_fota</label>
+        <link refid="structnrf__cloud__svc__info__fota"/>
+      </node>
+      <node id="3">
+        <label>nrf_cloud_svc_info_ui</label>
+        <link refid="structnrf__cloud__svc__info__ui"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/net/nrf_cloud.h" line="349" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="349" bodyend="354"/>
+    <listofallmembers>
+      <member refid="structnrf__cloud__svc__info_a431971042c9ab62d1af15df8a4c809b9_1a431971042c9ab62d1af15df8a4c809b9" prot="public" virt="non-virtual"><scope>nrf_cloud_svc_info</scope><name>fota</name></member>
+      <member refid="structnrf__cloud__svc__info_a80c56834a9947af4b84a30e7211313b2_1a80c56834a9947af4b84a30e7211313b2" prot="public" virt="non-virtual"><scope>nrf_cloud_svc_info</scope><name>ui</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

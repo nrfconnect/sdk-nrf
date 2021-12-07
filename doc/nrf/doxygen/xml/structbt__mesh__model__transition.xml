@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__model__transition" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_model_transition</compoundname>
+    <includes refid="model__types_8h" local="no">model_types.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__model__transition_a379edf32df457ab3dd9cd8ac1a66f051_1a379edf32df457ab3dd9cd8ac1a66f051" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_mesh_model_transition::time</definition>
+        <argsstring></argsstring>
+        <name>time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transition time value in milliseconds </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/model_types.h" line="37" column="10" bodyfile="include/bluetooth/mesh/model_types.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__model__transition_a22e05787d6336fee5b171126bda4400c_1a22e05787d6336fee5b171126bda4400c" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_mesh_model_transition::delay</definition>
+        <argsstring></argsstring>
+        <name>delay</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Message execution delay in milliseconds </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/model_types.h" line="38" column="10" bodyfile="include/bluetooth/mesh/model_types.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Generic Transition parameters for the model messages.</para>
+<para><simplesect kind="note"><para>Time can not be larger than <ref refid="group__bt__mesh__model__types_ga0683efc6f4d79111c243c62aef62cf7b_1ga0683efc6f4d79111c243c62aef62cf7b" kindref="member">BT_MESH_MODEL_TRANSITION_TIME_MAX_MS</ref> and delay can not be larger than <ref refid="group__bt__mesh__model__types_gaf667f5db2d3e71953d6be5d3aebc303e_1gaf667f5db2d3e71953d6be5d3aebc303e" kindref="member">BT_MESH_MODEL_DELAY_TIME_MAX_MS</ref>. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/model_types.h" line="36" column="1" bodyfile="include/bluetooth/mesh/model_types.h" bodystart="36" bodyend="39"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__model__transition_a22e05787d6336fee5b171126bda4400c_1a22e05787d6336fee5b171126bda4400c" prot="public" virt="non-virtual"><scope>bt_mesh_model_transition</scope><name>delay</name></member>
+      <member refid="structbt__mesh__model__transition_a379edf32df457ab3dd9cd8ac1a66f051_1a379edf32df457ab3dd9cd8ac1a66f051" prot="public" virt="non-virtual"><scope>bt_mesh_model_transition</scope><name>time</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

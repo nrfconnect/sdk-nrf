@@ -1,0 +1,479 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__location" kind="group">
+    <compoundname>location</compoundname>
+    <title>Location library</title>
+    <innerclass refid="structlocation__datetime" prot="public">location_datetime</innerclass>
+    <innerclass refid="structlocation__data" prot="public">location_data</innerclass>
+    <innerclass refid="structlocation__event__data" prot="public">location_event_data</innerclass>
+    <innerclass refid="structlocation__gnss__config" prot="public">location_gnss_config</innerclass>
+    <innerclass refid="structlocation__cellular__config" prot="public">location_cellular_config</innerclass>
+    <innerclass refid="structlocation__wifi__config" prot="public">location_wifi_config</innerclass>
+    <innerclass refid="structlocation__method__config" prot="public">location_method_config</innerclass>
+    <innerclass refid="structlocation__config" prot="public">location_config</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__location_1gaf90edf6d88c090d3e8276ce08903aa23" prot="public" static="no" strong="no">
+        <type></type>
+        <name>location_method</name>
+        <enumvalue id="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1ggaf90edf6d88c090d3e8276ce08903aa23a053f7548cda4066dc441b505e7519e38" prot="public">
+          <name>LOCATION_METHOD_CELLULAR</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>LTE cellular positioning. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1ggaf90edf6d88c090d3e8276ce08903aa23ad1acb2a85e993474589e59a3cc7f8385" prot="public">
+          <name>LOCATION_METHOD_GNSS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Global Navigation Satellite System (GNSS). </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1ggaf90edf6d88c090d3e8276ce08903aa23aab98ee76ddf33adef6e1b48e69ff9e8f" prot="public">
+          <name>LOCATION_METHOD_WIFI</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Wi-Fi positioning. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Location method. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="29" column="1" bodyfile="include/modem/location.h" bodystart="29" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__location_1gaf80a37a2073df0cebf87479799e2e9b2" prot="public" static="no" strong="no">
+        <type></type>
+        <name>location_event_id</name>
+        <enumvalue id="group__location_gaf80a37a2073df0cebf87479799e2e9b2_1ggaf80a37a2073df0cebf87479799e2e9b2a9965b6c4b604a2e8692a7b2ef03b20bb" prot="public">
+          <name>LOCATION_EVT_LOCATION</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Location update. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__location_gaf80a37a2073df0cebf87479799e2e9b2_1ggaf80a37a2073df0cebf87479799e2e9b2aed7f3594fb89a73d73b92de3c2320510" prot="public">
+          <name>LOCATION_EVT_TIMEOUT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Getting location timed out. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__location_gaf80a37a2073df0cebf87479799e2e9b2_1ggaf80a37a2073df0cebf87479799e2e9b2a7afe51200524d1b6fbd9d51f8deaf9d9" prot="public">
+          <name>LOCATION_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>An error occurred when trying to get the location. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__location_gaf80a37a2073df0cebf87479799e2e9b2_1ggaf80a37a2073df0cebf87479799e2e9b2a68f849167bb110099b8e7dd024486c35" prot="public">
+          <name>LOCATION_EVT_GNSS_ASSISTANCE_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>GNSS is requesting assistance data. Application should obtain the data and send it to <ref refid="group__location_ga7541c07045e27a3fd556c6064c3059a9_1ga7541c07045e27a3fd556c6064c3059a9" kindref="member">location_agps_data_process()</ref>. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event IDs. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="39" column="1" bodyfile="include/modem/location.h" bodystart="39" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__location_1gaedb56e1b41aaf462ff8f1382a82ee498" prot="public" static="no" strong="no">
+        <type></type>
+        <name>location_accuracy</name>
+        <enumvalue id="group__location_gaedb56e1b41aaf462ff8f1382a82ee498_1ggaedb56e1b41aaf462ff8f1382a82ee498a021f82f21d726b60fe502b89c6a0b8e1" prot="public">
+          <name>LOCATION_ACCURACY_LOW</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Allow lower accuracy to conserve power. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__location_gaedb56e1b41aaf462ff8f1382a82ee498_1ggaedb56e1b41aaf462ff8f1382a82ee498adb68f95b909cc74390e4971e07a5d8f2" prot="public">
+          <name>LOCATION_ACCURACY_NORMAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Normal accuracy. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Location accuracy. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="54" column="1" bodyfile="include/modem/location.h" bodystart="54" bodyend="59"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__location_1ga065818dd61883219339120739cf46c7d" prot="public" static="no" strong="no">
+        <type></type>
+        <name>location_service</name>
+        <enumvalue id="group__location_ga065818dd61883219339120739cf46c7d_1gga065818dd61883219339120739cf46c7da7a9f6b274dd868e2207018caead4abdb" prot="public">
+          <name>LOCATION_SERVICE_ANY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Use any location service that has been configured to be available. This is useful when only one service is configured but can also be used even if several services are available. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__location_ga065818dd61883219339120739cf46c7d_1gga065818dd61883219339120739cf46c7da531179b7dfe592985920bc42f536f24a" prot="public">
+          <name>LOCATION_SERVICE_NRF_CLOUD</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>nRF Cloud location service. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__location_ga065818dd61883219339120739cf46c7d_1gga065818dd61883219339120739cf46c7dadbc3fe150a93c16f35f9ebd27f4d80dd" prot="public">
+          <name>LOCATION_SERVICE_HERE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>HERE location service. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__location_ga065818dd61883219339120739cf46c7d_1gga065818dd61883219339120739cf46c7dae459eac195b1144fadc09df62cea3a8b" prot="public">
+          <name>LOCATION_SERVICE_SKYHOOK</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Skyhook location service. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__location_ga065818dd61883219339120739cf46c7d_1gga065818dd61883219339120739cf46c7da375546f5e2d5cbfe6acb7d613f307093" prot="public">
+          <name>LOCATION_SERVICE_POLTE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Polte location service. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Location service. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="62" column="1" bodyfile="include/modem/location.h" bodystart="62" bodyend="77"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__location_1gab537a6011cb1d01b5aaf30c770b2dfb9" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* location_event_handler_t) (const struct location_event_data *event_data)</definition>
+        <argsstring>)(const struct location_event_data *event_data)</argsstring>
+        <name>location_event_handler_t</name>
+        <briefdescription>
+<para>Event handler prototype. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">event_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="215" column="9" bodyfile="include/modem/location.h" bodystart="215" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__location_1gaf2694b8546f0ca5ba8fe8d5a8fcc5ffa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int location_init</definition>
+        <argsstring>(location_event_handler_t event_handler)</argsstring>
+        <name>location_init</name>
+        <param>
+          <type><ref refid="group__location_gab537a6011cb1d01b5aaf30c770b2dfb9_1gab537a6011cb1d01b5aaf30c770b2dfb9" kindref="member">location_event_handler_t</ref></type>
+          <declname>event_handler</declname>
+        </param>
+        <briefdescription>
+<para>Initializes the library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Initializes the library and sets the event handler function. The first call to this function must be called before going to LTE normal mode. This can be called multiple times, which sets the event handler again.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">event_handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event handler function.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, or negative error code on failure. </para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given event_handler is NULL. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Failed to obtain Wi-Fi interface. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="230" column="5" declfile="include/modem/location.h" declline="230" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__location_1gad240207e5dec3509c1e07db80e15953f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int location_request</definition>
+        <argsstring>(const struct location_config *config)</argsstring>
+        <name>location_request</name>
+        <param>
+          <type>const struct <ref refid="structlocation__config" kindref="compound">location_config</ref> *</type>
+          <declname>config</declname>
+        </param>
+        <briefdescription>
+<para>Requests the current position or starts periodic position updates. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Requests the current position using the given configuration. Depending on the configuration, a single position or periodic position updates are given. If the position request is successful, the results are delivered to the event handler function in LOCATION_EVT_LOCATION event. Otherwise LOCATION_EVT_TIMEOUT or LOCATION_EVT_ERROR event is triggered.</para>
+<para>In periodic mode, position update is always attempted after the configured interval regardless of the outcome of any previous attempt. Periodic position updates can be stopped by calling location_cancel().</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">config</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Used configuration or NULL to get a single position update with the default configuration. Default configuration has the following location methods in priority order (if they are enabled in library configuration): GNSS, Wi-Fi and Cellular.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, or negative error code on failure. </para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EPERM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Library not initialized. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EBUSY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Previous location request still ongoing. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid configuration given. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="255" column="5" declfile="include/modem/location.h" declline="255" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__location_1ga7ccc76b7895707d67b64fa516c029c4f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int location_request_cancel</definition>
+        <argsstring>(void)</argsstring>
+        <name>location_request_cancel</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Cancels periodic position updates. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>0 on success, or negative error code on failure. </para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EPERM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Library not initialized. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="263" column="5" declfile="include/modem/location.h" declline="263" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__location_1gaa2acf9a8fab52e2ee4b60c3677a016f8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void location_config_defaults_set</definition>
+        <argsstring>(struct location_config *config, uint8_t methods_count, enum location_method *method_types)</argsstring>
+        <name>location_config_defaults_set</name>
+        <param>
+          <type>struct <ref refid="structlocation__config" kindref="compound">location_config</ref> *</type>
+          <declname>config</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>methods_count</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1gaf90edf6d88c090d3e8276ce08903aa23" kindref="member">location_method</ref> *</type>
+          <declname>method_types</declname>
+        </param>
+        <briefdescription>
+<para>Sets the default values to a given configuration. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">config</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Configuration to be supplied with default values. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">methods_count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of location methods. This must not exceed CONFIG_LOCATION_METHODS_LIST_SIZE. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">method_types</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>List of location method types in priority order. Location methods with these types are initialized with default values into given configuration. List size must be as given in &apos;methods_count&apos;. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="275" column="6" declfile="include/modem/location.h" declline="275" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__location_1gacaf5f6d605cfc1231e59270984a62593" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const char *</type>
+        <definition>const char * location_method_str</definition>
+        <argsstring>(enum location_method method)</argsstring>
+        <name>location_method_str</name>
+        <param>
+          <type>enum <ref refid="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1gaf90edf6d88c090d3e8276ce08903aa23" kindref="member">location_method</ref></type>
+          <declname>method</declname>
+        </param>
+        <briefdescription>
+<para>Return location method as a string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">method</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Location method.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Location method in string format. Returns &quot;Unknown&quot; if given method is not known. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="287" column="12" declfile="include/modem/location.h" declline="287" declcolumn="12"/>
+      </memberdef>
+      <memberdef kind="function" id="group__location_1ga7541c07045e27a3fd556c6064c3059a9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int location_agps_data_process</definition>
+        <argsstring>(const char *buf, size_t buf_len)</argsstring>
+        <name>location_agps_data_process</name>
+        <param>
+          <type>const char *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buf_len</declname>
+        </param>
+        <briefdescription>
+<para>Feed in A-GPS data to be processed by library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If Location library is not receiving A-GPS assistance data directly from nRF Cloud, it throws event LOCATION_EVT_GNSS_ASSISTANCE_REQUEST when assistance is needed. Once application has obtained the assistance data it can be handed over to Location library using this function.</para>
+<para>Note that the data must be formatted similarly to the nRF Cloud A-GPS data, see for example nrf_cloud_agps_schema_v1.h.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data received. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">buf_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer size of data to be processed.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, or negative error code on failure. </para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Given buffer NULL or buffer length zero. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="305" column="5" declfile="include/modem/location.h" declline="305" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,805 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__adp536x" kind="group">
+    <compoundname>adp536x</compoundname>
+    <title>Driver for ADP536X</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__adp536x_1ga43ed145b35109a816df27ca6a1140816" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int adp536x_init</definition>
+        <argsstring>(const char *dev_name)</argsstring>
+        <name>adp536x_init</name>
+        <param>
+          <type>const char *</type>
+          <declname>dev_name</declname>
+        </param>
+        <briefdescription>
+<para>Initialize ADP536X. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dev_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the device name.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="57" column="5" declfile="include/adp536x.h" declline="57" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__adp536x_1ga35e717fea6ae2632d3328ce05bf4ca59" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int adp536x_vbus_current_set</definition>
+        <argsstring>(uint8_t value)</argsstring>
+        <name>adp536x_vbus_current_set</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Set the VBUS current limit. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The upper current threshold in LSB.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="67" column="5" declfile="include/adp536x.h" declline="67" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__adp536x_1ga00be7647ab3c8e65b6d4dda1e2b6cdb3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int adp536x_charger_current_set</definition>
+        <argsstring>(uint8_t value)</argsstring>
+        <name>adp536x_charger_current_set</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Set the charger current. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The charger current in LSB.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="77" column="5" declfile="include/adp536x.h" declline="77" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__adp536x_1ga2a6e5888462b242051e4a5df38040481" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int adp536x_charger_termination_voltage_set</definition>
+        <argsstring>(uint8_t value)</argsstring>
+        <name>adp536x_charger_termination_voltage_set</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Set the charger termination voltage. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function configures the maximum battery voltage where the charger remains active.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The charger termination voltage.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="90" column="5" declfile="include/adp536x.h" declline="90" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__adp536x_1ga3caea49813091fb8ded1cdc9f87fa808" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int adp536x_charging_enable</definition>
+        <argsstring>(bool enable)</argsstring>
+        <name>adp536x_charging_enable</name>
+        <param>
+          <type>bool</type>
+          <declname>enable</declname>
+        </param>
+        <briefdescription>
+<para>Enable charging. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">enable</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The requested charger operation state.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="100" column="5" declfile="include/adp536x.h" declline="100" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__adp536x_1ga97d602329420e28e23981e9c96da6208" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int adp536x_charger_status_1_read</definition>
+        <argsstring>(uint8_t *buf)</argsstring>
+        <name>adp536x_charger_status_1_read</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buf</declname>
+        </param>
+        <briefdescription>
+<para>Read the STATUS1 register. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The read value of the STATUS1 register.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="110" column="5" declfile="include/adp536x.h" declline="110" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__adp536x_1gaeeb84da0f77866f42d31557c2c96abb9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int adp536x_charger_status_2_read</definition>
+        <argsstring>(uint8_t *buf)</argsstring>
+        <name>adp536x_charger_status_2_read</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buf</declname>
+        </param>
+        <briefdescription>
+<para>Read the STATUS2 register. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The read value of the STATUS2 register.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="120" column="5" declfile="include/adp536x.h" declline="120" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__adp536x_1ga3afa859f40a1826fd26406cab0bd990c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int adp536x_oc_chg_hiccup_set</definition>
+        <argsstring>(bool enable)</argsstring>
+        <name>adp536x_oc_chg_hiccup_set</name>
+        <param>
+          <type>bool</type>
+          <declname>enable</declname>
+        </param>
+        <briefdescription>
+<para>Enable charge hiccup protection mode. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">enable</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The requested hiccup protection state.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="130" column="5" declfile="include/adp536x.h" declline="130" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__adp536x_1gad7f4d021cb925c98efafdd55178e36ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int adp536x_oc_dis_hiccup_set</definition>
+        <argsstring>(bool enable)</argsstring>
+        <name>adp536x_oc_dis_hiccup_set</name>
+        <param>
+          <type>bool</type>
+          <declname>enable</declname>
+        </param>
+        <briefdescription>
+<para>Enable discharge hiccup protection mode. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">enable</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The requested hiccup protection state.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="140" column="5" declfile="include/adp536x.h" declline="140" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__adp536x_1ga8558bdd9022949df737393aacad59cad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int adp536x_buckbst_enable</definition>
+        <argsstring>(bool enable)</argsstring>
+        <name>adp536x_buckbst_enable</name>
+        <param>
+          <type>bool</type>
+          <declname>enable</declname>
+        </param>
+        <briefdescription>
+<para>Enable the buck/boost regulator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">enable</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The requested regulator operation state.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="150" column="5" declfile="include/adp536x.h" declline="150" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__adp536x_1ga70b418850877c3ed6b58bfb0c2fe22ea" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int adp536x_buck_1v8_set</definition>
+        <argsstring>(void)</argsstring>
+        <name>adp536x_buck_1v8_set</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Set the buck regulator to 1.8 V. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="158" column="5" declfile="include/adp536x.h" declline="158" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__adp536x_1gac439f505adb1f9a7364e7c8af3c0a4b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int adp536x_buckbst_3v3_set</definition>
+        <argsstring>(void)</argsstring>
+        <name>adp536x_buckbst_3v3_set</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Set the buck/boost regulator to 3.3 V. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="166" column="5" declfile="include/adp536x.h" declline="166" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__adp536x_1ga5cb19317562181331d333650562e5ad3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int adp536x_factory_reset</definition>
+        <argsstring>(void)</argsstring>
+        <name>adp536x_factory_reset</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Reset the device to its default values. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="174" column="5" declfile="include/adp536x.h" declline="174" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__adp536x_1ga302f62999b927797e51e6ddf97a6d3c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int adp536x_oc_chg_current_set</definition>
+        <argsstring>(uint8_t value)</argsstring>
+        <name>adp536x_oc_chg_current_set</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Set the charge over-current threshold. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The over-current threshold.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="184" column="5" declfile="include/adp536x.h" declline="184" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__adp536x_1ga1560deec1118cb1c9dc9f92ce2ccf80c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int adp536x_buck_discharge_set</definition>
+        <argsstring>(bool enable)</argsstring>
+        <name>adp536x_buck_discharge_set</name>
+        <param>
+          <type>bool</type>
+          <declname>enable</declname>
+        </param>
+        <briefdescription>
+<para>Set the buck discharge resistor status. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">enable</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Boolean value to enable or disable the discharge resistor.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="194" column="5" declfile="include/adp536x.h" declline="194" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__adp536x_1ga853e8f608e1e154c296bd7fb80a62449" prot="public" static="no">
+        <name>ADP536X_VBUS_ILIM_50mA</name>
+        <initializer>0x00</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="20" column="9" bodyfile="include/adp536x.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1gaa1913db1bfa7ace11b83086fb868f69e" prot="public" static="no">
+        <name>ADP536X_VBUS_ILIM_100mA</name>
+        <initializer>0x01</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="21" column="9" bodyfile="include/adp536x.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1gae8abc4224acfbba1ca980f96fb09109f" prot="public" static="no">
+        <name>ADP536X_VBUS_ILIM_150mA</name>
+        <initializer>0x02</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="22" column="9" bodyfile="include/adp536x.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1gaeabf1c4f7c7e052add053f954acb2a0c" prot="public" static="no">
+        <name>ADP536X_VBUS_ILIM_200mA</name>
+        <initializer>0x03</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="23" column="9" bodyfile="include/adp536x.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1ga443a758a07cfa01b4316ecd8864cfb3f" prot="public" static="no">
+        <name>ADP536X_VBUS_ILIM_250mA</name>
+        <initializer>0x04</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="24" column="9" bodyfile="include/adp536x.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1gae75200ab1c57eeaf11c82a9ba3ea8693" prot="public" static="no">
+        <name>ADP536X_VBUS_ILIM_300mA</name>
+        <initializer>0x05</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="25" column="9" bodyfile="include/adp536x.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1gad0aec3d7acd52123529b5365ae0e6086" prot="public" static="no">
+        <name>ADP536X_VBUS_ILIM_400mA</name>
+        <initializer>0x06</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="26" column="9" bodyfile="include/adp536x.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1ga6680b5ac27835794de1490179d566b73" prot="public" static="no">
+        <name>ADP536X_VBUS_ILIM_500mA</name>
+        <initializer>0x07</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="27" column="9" bodyfile="include/adp536x.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1ga4d9ee4866c76525154738922bb86f968" prot="public" static="no">
+        <name>ADP536X_CHG_CURRENT_10mA</name>
+        <initializer>0x00</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="30" column="9" bodyfile="include/adp536x.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1ga33911b0c3cd695a351652bdaeaf397a7" prot="public" static="no">
+        <name>ADP536X_CHG_CURRENT_50mA</name>
+        <initializer>0x04</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="31" column="9" bodyfile="include/adp536x.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1ga98ae0d4c540f5ba84d201dd3ca31a599" prot="public" static="no">
+        <name>ADP536X_CHG_CURRENT_100mA</name>
+        <initializer>0x09</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="32" column="9" bodyfile="include/adp536x.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1ga6a7d10d431dbb0f87d75215ba7def4ab" prot="public" static="no">
+        <name>ADP536X_CHG_CURRENT_150mA</name>
+        <initializer>0x0E</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="33" column="9" bodyfile="include/adp536x.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1gac8b4cb08be4999aa2a7ef807c68d5386" prot="public" static="no">
+        <name>ADP536X_CHG_CURRENT_200mA</name>
+        <initializer>0x13</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="34" column="9" bodyfile="include/adp536x.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1gabc5cca50ab914005515863d6d60cb7ff" prot="public" static="no">
+        <name>ADP536X_CHG_CURRENT_250mA</name>
+        <initializer>0x18</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="35" column="9" bodyfile="include/adp536x.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1ga4c8280fd68f59d98e22750b3587f1ea6" prot="public" static="no">
+        <name>ADP536X_CHG_CURRENT_300mA</name>
+        <initializer>0x1D</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="36" column="9" bodyfile="include/adp536x.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1gadc1b9ec5ee32de54f1c53704dc2e247f" prot="public" static="no">
+        <name>ADP536X_CHG_CURRENT_320mA</name>
+        <initializer>0x1F</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="37" column="9" bodyfile="include/adp536x.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1ga6c29f0fae58bcef5f0ebe649afd4d735" prot="public" static="no">
+        <name>ADP536X_OC_CHG_THRESHOLD_25mA</name>
+        <initializer>0x00</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="40" column="9" bodyfile="include/adp536x.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1gac0d5dda8210b4a2d00266dd2d9fb4247" prot="public" static="no">
+        <name>ADP536X_OC_CHG_THRESHOLD_50mA</name>
+        <initializer>0x01</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="41" column="9" bodyfile="include/adp536x.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1ga8574bf8f7bea0e97a5c31cc56b8f9ac3" prot="public" static="no">
+        <name>ADP536X_OC_CHG_THRESHOLD_100mA</name>
+        <initializer>0x02</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="42" column="9" bodyfile="include/adp536x.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1ga95f3bf1e880c0b4c88841958fac5dcc0" prot="public" static="no">
+        <name>ADP536X_OC_CHG_THRESHOLD_150mA</name>
+        <initializer>0x03</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="43" column="9" bodyfile="include/adp536x.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1ga563729e6bec9d2553cc45bac9973af24" prot="public" static="no">
+        <name>ADP536X_OC_CHG_THRESHOLD_200mA</name>
+        <initializer>0x04</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="44" column="9" bodyfile="include/adp536x.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1gaae3bb13b84950317767f93a649201ceb" prot="public" static="no">
+        <name>ADP536X_OC_CHG_THRESHOLD_250mA</name>
+        <initializer>0x05</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="45" column="9" bodyfile="include/adp536x.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1gac09de27415105cf8b71a70e26c5a1bf5" prot="public" static="no">
+        <name>ADP536X_OC_CHG_THRESHOLD_300mA</name>
+        <initializer>0x06</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="46" column="9" bodyfile="include/adp536x.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__adp536x_1ga8dfd1bf06366b3048c155abdaf9f6421" prot="public" static="no">
+        <name>ADP536X_OC_CHG_THRESHOLD_400mA</name>
+        <initializer>0x07</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/adp536x.h" line="47" column="9" bodyfile="include/adp536x.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,380 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="include_2nfc_2t2t_2parser_8h" kind="file" language="C++">
+    <compoundname>parser.h</compoundname>
+    <includes local="no">stdint.h</includes>
+    <includes refid="t2t_2tlv__block_8h" local="no">nfc/t2t/tlv_block.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/nfc/t2t/parser.h</label>
+        <link refid="include_2nfc_2t2t_2parser_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>nfc/t2t/tlv_block.h</label>
+        <link refid="t2t_2tlv__block_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stdint.h</label>
+      </node>
+      <node id="4">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structnfc__t2t__sn" prot="public">nfc_t2t_sn</innerclass>
+    <innerclass refid="structnfc__t2t__cc" prot="public">nfc_t2t_cc</innerclass>
+    <innerclass refid="structnfc__t2t" prot="public">nfc_t2t</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__t2t__parser_ga25f701fac758c2c6602253b3d2763695_1ga25f701fac758c2c6602253b3d2763695" prot="public" static="no">
+        <name>NFC_T2T_DESC_DEF</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_max_blocks</defname></param>
+        <initializer>	static struct <ref refid="structnfc__t2t__tlv__block" kindref="compound">nfc_t2t_tlv_block</ref>  _name##_tlv_block_array[_max_blocks]; \
+	static struct <ref refid="structnfc__t2t" kindref="compound">nfc_t2t</ref> <ref refid="group__nfc__t2t__parser_ga7e0592a96292d15600d8abe46c3674cd_1ga7e0592a96292d15600d8abe46c3674cd" kindref="member">NFC_T2T_DESC</ref>(_name) =                            \
+	{                                                                      \
+		.max_tlv_blocks = _max_blocks,                                 \
+		.tlv_block_array = _name##_tlv_block_array,                    \
+		.tlv_count = 0                                                 \
+	}</initializer>
+        <briefdescription>
+<para>Create and initialize a Type 2 Tag descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates and initializes a static instance of an <ref refid="structnfc__t2t" kindref="compound">nfc_t2t</ref> structure and an array of <ref refid="group__nfc__t2t__tlv__block" kindref="compound">Type 2 Tag TLV blocks</ref> descriptors.</para>
+<para>Use the macro <ref refid="group__nfc__t2t__parser_ga7e0592a96292d15600d8abe46c3674cd_1ga7e0592a96292d15600d8abe46c3674cd" kindref="member">NFC_T2T_DESC</ref> to access the Type 2 Tag descriptor instance.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the created descriptor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_max_blocks</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of <ref refid="group__nfc__t2t__tlv__block" kindref="compound">Type 2 Tag TLV blocks</ref> descriptors that can be stored in the array. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="106" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t2t__parser_ga7e0592a96292d15600d8abe46c3674cd_1ga7e0592a96292d15600d8abe46c3674cd" prot="public" static="no">
+        <name>NFC_T2T_DESC</name>
+        <param><defname>_name</defname></param>
+        <initializer>(_name##_t2t)</initializer>
+        <briefdescription>
+<para>Access the <ref refid="structnfc__t2t" kindref="compound">nfc_t2t</ref> instance that was created with <ref refid="group__nfc__t2t__parser_ga25f701fac758c2c6602253b3d2763695_1ga25f701fac758c2c6602253b3d2763695" kindref="member">NFC_T2T_DESC_DEF</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="118" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t2t__parser_ga102ad794bb6029cf11cd537e65161fb8_1ga102ad794bb6029cf11cd537e65161fb8" prot="public" static="no">
+        <name>NFC_T2T_NFC_FORUM_DEFINED_DATA</name>
+        <initializer>0xE1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Value indicating that the Type 2 Tag contains NFC Forum defined data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="121" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t2t__parser_gab55123039b381beb70bc9d2f4f6b080b_1gab55123039b381beb70bc9d2f4f6b080b" prot="public" static="no">
+        <name>NFC_T2T_UID_BCC_CASCADE_BYTE</name>
+        <initializer>0x88</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Value used for calculating the first BCC byte of a Type 2 Tag serial number. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="126" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t2t__parser_ga4e51e1a30a6ac1782a58974c0a45d558_1ga4e51e1a30a6ac1782a58974c0a45d558" prot="public" static="no">
+        <name>NFC_T2T_SUPPORTED_MAJOR_VERSION</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Supported major version of the Type 2 Tag specification. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="130" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t2t__parser_ga9e7069153bb658cf30367199823f6c09_1ga9e7069153bb658cf30367199823f6c09" prot="public" static="no">
+        <name>NFC_T2T_SUPPORTED_MINOR_VERSION</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Supported minor version of the Type 2 Tag specification. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="133" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t2t__parser_gaf1c87f814fe5e0e4e8a4e4d497d69b28_1gaf1c87f814fe5e0e4e8a4e4d497d69b28" prot="public" static="no">
+        <name>NFC_T2T_BLOCK_SIZE</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Type 2 Tag block size in bytes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="136" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t2t__parser_ga992bc2e3dff817a1857630e95bb8bb8c_1ga992bc2e3dff817a1857630e95bb8bb8c" prot="public" static="no">
+        <name>NFC_T2T_CC_BLOCK_OFFSET</name>
+        <initializer>12</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Offset of the Capability Container area in the Type 2 Tag. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="139" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t2t__parser_gac759ddf1b1dedcd9ead7c79b545c6740_1gac759ddf1b1dedcd9ead7c79b545c6740" prot="public" static="no">
+        <name>NFC_T2T_FIRST_DATA_BLOCK_OFFSET</name>
+        <initializer>16</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Offset of the data area in the Type 2 Tag. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="142" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__t2t__parser_ga534e5604b9e598368f14e7e97c753a89_1ga534e5604b9e598368f14e7e97c753a89" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_t2t_clear</definition>
+        <argsstring>(struct nfc_t2t *t2t)</argsstring>
+        <name>nfc_t2t_clear</name>
+        <param>
+          <type>struct <ref refid="structnfc__t2t" kindref="compound">nfc_t2t</ref> *</type>
+          <declname>t2t</declname>
+        </param>
+        <briefdescription>
+<para>Clear the <ref refid="structnfc__t2t" kindref="compound">nfc_t2t</ref> structure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">t2t</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the structure that should be cleared. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="150" column="6" declfile="include/nfc/t2t/parser.h" declline="150" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t2t__parser_ga3c9d4d75f246211fcfc84ec2062f8ea7_1ga3c9d4d75f246211fcfc84ec2062f8ea7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t2t_parse</definition>
+        <argsstring>(struct nfc_t2t *t2t, const uint8_t *raw_data)</argsstring>
+        <name>nfc_t2t_parse</name>
+        <param>
+          <type>struct <ref refid="structnfc__t2t" kindref="compound">nfc_t2t</ref> *</type>
+          <declname>t2t</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>raw_data</declname>
+        </param>
+        <briefdescription>
+<para>Parse raw data that was read from a Type 2 Tag. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function parses the header and the following TLV blocks of a Type 2 Tag. The data is read from a buffer and stored in a <ref refid="structnfc__t2t" kindref="compound">nfc_t2t</ref> structure.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">t2t</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the structure that will be filled with parsed data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">raw_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer with raw data from the tag (should point at the first byte of the first block of the tag).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="167" column="5" declfile="include/nfc/t2t/parser.h" declline="167" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t2t__parser_ga7337e690d90bd306cd10b5ea593dcc31_1ga7337e690d90bd306cd10b5ea593dcc31" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_t2t_printout</definition>
+        <argsstring>(const struct nfc_t2t *t2t)</argsstring>
+        <name>nfc_t2t_printout</name>
+        <param>
+          <type>const struct <ref refid="structnfc__t2t" kindref="compound">nfc_t2t</ref> *</type>
+          <declname>t2t</declname>
+        </param>
+        <briefdescription>
+<para>Print parsed contents of the Type 2 Tag. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">t2t</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the structure that should be printed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="174" column="6" declfile="include/nfc/t2t/parser.h" declline="174" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NFC_T2T_PARSER_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T2T_PARSER_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdint.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="t2t_2tlv__block_8h" kindref="compound">nfc/t2t/tlv_block.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="structnfc__t2t__sn" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t2t__sn" kindref="compound">nfc_t2t_sn</ref><sp/>{</highlight></codeline>
+<codeline lineno="29" refid="structnfc__t2t__sn_aabb60644317e9ac690b10f424dcf2d45_1aabb60644317e9ac690b10f424dcf2d45" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnfc__t2t__sn_aabb60644317e9ac690b10f424dcf2d45_1aabb60644317e9ac690b10f424dcf2d45" kindref="member">manufacturer_id</ref>;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="structnfc__t2t__sn_a45c0edb9ba5ed45cab94be15949ec022_1a45c0edb9ba5ed45cab94be15949ec022" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnfc__t2t__sn_a45c0edb9ba5ed45cab94be15949ec022_1a45c0edb9ba5ed45cab94be15949ec022" kindref="member">serial_number_part_1</ref>;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="structnfc__t2t__sn_ad62036d18fb0b69c5a0215f13fb768e0_1ad62036d18fb0b69c5a0215f13fb768e0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structnfc__t2t__sn_ad62036d18fb0b69c5a0215f13fb768e0_1ad62036d18fb0b69c5a0215f13fb768e0" kindref="member">serial_number_part_2</ref>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="structnfc__t2t__sn_aee4644a13ecb81ffdfd53c795971a878_1aee4644a13ecb81ffdfd53c795971a878" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnfc__t2t__sn_aee4644a13ecb81ffdfd53c795971a878_1aee4644a13ecb81ffdfd53c795971a878" kindref="member">check_byte_0</ref>;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="structnfc__t2t__sn_ab53fad5ea9899388032bdae36dc781bb_1ab53fad5ea9899388032bdae36dc781bb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnfc__t2t__sn_ab53fad5ea9899388032bdae36dc781bb_1ab53fad5ea9899388032bdae36dc781bb" kindref="member">check_byte_1</ref>;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="structnfc__t2t__sn_a35f55942d46816bb60623605da3d076f_1a35f55942d46816bb60623605da3d076f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/></highlight><highlight class="keyword">internal</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="structnfc__t2t__cc" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t2t__cc" kindref="compound">nfc_t2t_cc</ref><sp/>{</highlight></codeline>
+<codeline lineno="55" refid="structnfc__t2t__cc_ac49a0a1d33bd9645f8f8007b5ee1deba_1ac49a0a1d33bd9645f8f8007b5ee1deba" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnfc__t2t__cc_ac49a0a1d33bd9645f8f8007b5ee1deba_1ac49a0a1d33bd9645f8f8007b5ee1deba" kindref="member">major_version</ref>;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58" refid="structnfc__t2t__cc_a917a70e226ddf040361f765f6c8ce6ec_1a917a70e226ddf040361f765f6c8ce6ec" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnfc__t2t__cc_a917a70e226ddf040361f765f6c8ce6ec_1a917a70e226ddf040361f765f6c8ce6ec" kindref="member">minor_version</ref>;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="structnfc__t2t__cc_abf0e73e03b6baeed6d62550720d7b6b7_1abf0e73e03b6baeed6d62550720d7b6b7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnfc__t2t__cc_abf0e73e03b6baeed6d62550720d7b6b7_1abf0e73e03b6baeed6d62550720d7b6b7" kindref="member">data_area_size</ref>;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="structnfc__t2t__cc_a115c20480b4d3e93f572df99839e4c7d_1a115c20480b4d3e93f572df99839e4c7d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnfc__t2t__cc_a115c20480b4d3e93f572df99839e4c7d_1a115c20480b4d3e93f572df99839e4c7d" kindref="member">read_access</ref>;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="structnfc__t2t__cc_a6a3da10ddce4146c9bd4f9593841d4d5_1a6a3da10ddce4146c9bd4f9593841d4d5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnfc__t2t__cc_a6a3da10ddce4146c9bd4f9593841d4d5_1a6a3da10ddce4146c9bd4f9593841d4d5" kindref="member">write_access</ref>;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="structnfc__t2t" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t2t" kindref="compound">nfc_t2t</ref><sp/>{</highlight></codeline>
+<codeline lineno="74" refid="structnfc__t2t_a391bc16311562db60f47cd32760af5a3_1a391bc16311562db60f47cd32760af5a3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t2t__sn" kindref="compound">nfc_t2t_sn</ref><sp/><ref refid="structnfc__t2t_a391bc16311562db60f47cd32760af5a3_1a391bc16311562db60f47cd32760af5a3" kindref="member">sn</ref>;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77" refid="structnfc__t2t_a7e33c69a56963a1b462a1641e9a926dd_1a7e33c69a56963a1b462a1641e9a926dd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnfc__t2t_a7e33c69a56963a1b462a1641e9a926dd_1a7e33c69a56963a1b462a1641e9a926dd" kindref="member">lock_bytes</ref>;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80" refid="structnfc__t2t_a23c1c6139d937b7783161fc4f5803621_1a23c1c6139d937b7783161fc4f5803621" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t2t__cc" kindref="compound">nfc_t2t_cc</ref><sp/><ref refid="structnfc__t2t_a23c1c6139d937b7783161fc4f5803621_1a23c1c6139d937b7783161fc4f5803621" kindref="member">cc</ref>;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83" refid="structnfc__t2t_a885979963531c504d6a37422b061f706_1a885979963531c504d6a37422b061f706" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint16_t<sp/><ref refid="structnfc__t2t_a885979963531c504d6a37422b061f706_1a885979963531c504d6a37422b061f706" kindref="member">max_tlv_blocks</ref>;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="structnfc__t2t_a712736f4ecbb894915a13f425fea084d_1a712736f4ecbb894915a13f425fea084d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t2t__tlv__block" kindref="compound">nfc_t2t_tlv_block</ref><sp/>*<ref refid="structnfc__t2t_a712736f4ecbb894915a13f425fea084d_1a712736f4ecbb894915a13f425fea084d" kindref="member">tlv_block_array</ref>;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89" refid="structnfc__t2t_a2ad84b7ffce8fb889798f3f4830f79b4_1a2ad84b7ffce8fb889798f3f4830f79b4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnfc__t2t_a2ad84b7ffce8fb889798f3f4830f79b4_1a2ad84b7ffce8fb889798f3f4830f79b4" kindref="member">tlv_count</ref>;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106" refid="group__nfc__t2t__parser_ga25f701fac758c2c6602253b3d2763695_1ga25f701fac758c2c6602253b3d2763695" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T2T_DESC_DEF(_name,<sp/>_max_blocks)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="107"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>static<sp/>struct<sp/>nfc_t2t_tlv_block<sp/><sp/>_name##_tlv_block_array[_max_blocks];<sp/>\</highlight></codeline>
+<codeline lineno="108"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>static<sp/>struct<sp/>nfc_t2t<sp/>NFC_T2T_DESC(_name)<sp/>=<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="109"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="110"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.max_tlv_blocks<sp/>=<sp/>_max_blocks,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="111"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.tlv_block_array<sp/>=<sp/>_name##_tlv_block_array,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="112"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.tlv_count<sp/>=<sp/>0<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="113"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118" refid="group__nfc__t2t__parser_ga7e0592a96292d15600d8abe46c3674cd_1ga7e0592a96292d15600d8abe46c3674cd" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T2T_DESC(_name)<sp/>(_name##_t2t)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121" refid="group__nfc__t2t__parser_ga102ad794bb6029cf11cd537e65161fb8_1ga102ad794bb6029cf11cd537e65161fb8" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T2T_NFC_FORUM_DEFINED_DATA<sp/><sp/><sp/><sp/><sp/><sp/>0xE1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126" refid="group__nfc__t2t__parser_gab55123039b381beb70bc9d2f4f6b080b_1gab55123039b381beb70bc9d2f4f6b080b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T2T_UID_BCC_CASCADE_BYTE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x88</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130" refid="group__nfc__t2t__parser_ga4e51e1a30a6ac1782a58974c0a45d558_1ga4e51e1a30a6ac1782a58974c0a45d558" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T2T_SUPPORTED_MAJOR_VERSION<sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133" refid="group__nfc__t2t__parser_ga9e7069153bb658cf30367199823f6c09_1ga9e7069153bb658cf30367199823f6c09" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T2T_SUPPORTED_MINOR_VERSION<sp/><sp/><sp/><sp/><sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136" refid="group__nfc__t2t__parser_gaf1c87f814fe5e0e4e8a4e4d497d69b28_1gaf1c87f814fe5e0e4e8a4e4d497d69b28" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T2T_BLOCK_SIZE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139" refid="group__nfc__t2t__parser_ga992bc2e3dff817a1857630e95bb8bb8c_1ga992bc2e3dff817a1857630e95bb8bb8c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T2T_CC_BLOCK_OFFSET<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>12</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142" refid="group__nfc__t2t__parser_gac759ddf1b1dedcd9ead7c79b545c6740_1gac759ddf1b1dedcd9ead7c79b545c6740" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T2T_FIRST_DATA_BLOCK_OFFSET<sp/><sp/><sp/><sp/><sp/>16</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150" refid="group__nfc__t2t__parser_ga534e5604b9e598368f14e7e97c753a89_1ga534e5604b9e598368f14e7e97c753a89" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t2t__parser_ga534e5604b9e598368f14e7e97c753a89_1ga534e5604b9e598368f14e7e97c753a89" kindref="member">nfc_t2t_clear</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t2t" kindref="compound">nfc_t2t</ref><sp/>*t2t);</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="167" refid="group__nfc__t2t__parser_ga3c9d4d75f246211fcfc84ec2062f8ea7_1ga3c9d4d75f246211fcfc84ec2062f8ea7" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t2t__parser_ga3c9d4d75f246211fcfc84ec2062f8ea7_1ga3c9d4d75f246211fcfc84ec2062f8ea7" kindref="member">nfc_t2t_parse</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t2t" kindref="compound">nfc_t2t</ref><sp/>*t2t,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*raw_data);</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="174" refid="group__nfc__t2t__parser_ga7337e690d90bd306cd10b5ea593dcc31_1ga7337e690d90bd306cd10b5ea593dcc31" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t2t__parser_ga7337e690d90bd306cd10b5ea593dcc31_1ga7337e690d90bd306cd10b5ea593dcc31" kindref="member">nfc_t2t_printout</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t2t" kindref="compound">nfc_t2t</ref><sp/>*t2t);</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>NFC_T2T_PARSER_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/nfc/t2t/parser.h"/>
+  </compounddef>
+</doxygen>

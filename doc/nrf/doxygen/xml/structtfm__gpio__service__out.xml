@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structtfm__gpio__service__out" kind="struct" language="C++" prot="public">
+    <compoundname>tfm_gpio_service_out</compoundname>
+    <includes refid="tfm__ioctl__api_8h" local="no">tfm_ioctl_api.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structtfm__gpio__service__out_aa5beb9215924ce3423c21992448fda33_1aa5beb9215924ce3423c21992448fda33" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t tfm_gpio_service_out::result</definition>
+        <argsstring></argsstring>
+        <name>result</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/tfm/tfm_ioctl_api.h" line="75" column="10" bodyfile="include/tfm/tfm_ioctl_api.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Output list for each GPIO platform service. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/tfm/tfm_ioctl_api.h" line="74" column="1" bodyfile="include/tfm/tfm_ioctl_api.h" bodystart="74" bodyend="76"/>
+    <listofallmembers>
+      <member refid="structtfm__gpio__service__out_aa5beb9215924ce3423c21992448fda33_1aa5beb9215924ce3423c21992448fda33" prot="public" virt="non-virtual"><scope>tfm_gpio_service_out</scope><name>result</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

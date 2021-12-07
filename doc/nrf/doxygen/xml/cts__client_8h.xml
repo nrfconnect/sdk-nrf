@@ -1,0 +1,432 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="cts__client_8h" kind="file" language="C++">
+    <compoundname>cts_client.h</compoundname>
+    <includes local="no">bluetooth/gatt.h</includes>
+    <includes local="no">bluetooth/conn.h</includes>
+    <includes refid="gatt__dm_8h" local="no">bluetooth/gatt_dm.h</includes>
+    <incdepgraph>
+      <node id="4">
+        <label>bluetooth/gatt_dm.h</label>
+        <link refid="gatt__dm_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/services/cts_client.h</label>
+        <link refid="cts__client_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/conn.h</label>
+      </node>
+      <node id="2">
+        <label>bluetooth/gatt.h</label>
+      </node>
+      <node id="5">
+        <label>bluetooth/uuid.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structbt__cts__exact__time__256" prot="public">bt_cts_exact_time_256</innerclass>
+    <innerclass refid="structbt__cts__adjust__reason" prot="public">bt_cts_adjust_reason</innerclass>
+    <innerclass refid="structbt__cts__current__time" prot="public">bt_cts_current_time</innerclass>
+    <innerclass refid="structbt__cts__client" prot="public">bt_cts_client</innerclass>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__bt__gatt__cts__c_gabfb977421f36ad2fc0567242e5a829e6_1gabfb977421f36ad2fc0567242e5a829e6" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_cts_read_cb) (struct bt_cts_client *cts_c, struct bt_cts_current_time *current_time, int err)</definition>
+        <argsstring>)(struct bt_cts_client *cts_c, struct bt_cts_current_time *current_time, int err)</argsstring>
+        <name>bt_cts_read_cb</name>
+        <briefdescription>
+<para>Read complete callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is called when the read operation finishes.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cts_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current Time Service client structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>current_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The current time value that was read. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Error code. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="62" column="9" bodyfile="include/bluetooth/services/cts_client.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bt__gatt__cts__c_ga385428a3225d5730001bb3ab1d4cefb2_1ga385428a3225d5730001bb3ab1d4cefb2" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_cts_notify_cb) (struct bt_cts_client *cts_c, struct bt_cts_current_time *current_time)</definition>
+        <argsstring>)(struct bt_cts_client *cts_c, struct bt_cts_current_time *current_time)</argsstring>
+        <name>bt_cts_notify_cb</name>
+        <briefdescription>
+<para>Value notification callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is called every time the server sends a notification for a changed value.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cts_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current Time Service client structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>current_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The notified current time value. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="74" column="9" bodyfile="include/bluetooth/services/cts_client.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__gatt__cts__c_ga7f51a070279476de6813bfd313ccc471_1ga7f51a070279476de6813bfd313ccc471" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_cts_client_init</definition>
+        <argsstring>(struct bt_cts_client *cts_c)</argsstring>
+        <name>bt_cts_client_init</name>
+        <param>
+          <type>struct <ref refid="structbt__cts__client" kindref="compound">bt_cts_client</ref> *</type>
+          <declname>cts_c</declname>
+        </param>
+        <briefdescription>
+<para>Function for initializing the Current Time Service client. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">cts_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current Time Service client structure. This structure must be supplied by the application. It is initialized by this function and can later be used to identify this particular client instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the client was initialized successfully. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="114" column="5" declfile="include/bluetooth/services/cts_client.h" declline="114" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__cts__c_gaa7c447c73d0dae3b356a5348c8d46950_1gaa7c447c73d0dae3b356a5348c8d46950" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_cts_read_current_time</definition>
+        <argsstring>(struct bt_cts_client *cts_c, bt_cts_read_cb func)</argsstring>
+        <name>bt_cts_read_current_time</name>
+        <param>
+          <type>struct <ref refid="structbt__cts__client" kindref="compound">bt_cts_client</ref> *</type>
+          <declname>cts_c</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__gatt__cts__c_gabfb977421f36ad2fc0567242e5a829e6_1gabfb977421f36ad2fc0567242e5a829e6" kindref="member">bt_cts_read_cb</ref></type>
+          <declname>func</declname>
+        </param>
+        <briefdescription>
+<para>Function for reading the peer&apos;s Current Time Service Current Time characteristic. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cts_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current Time Service client structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The callback function.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If all operations are successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="124" column="5" declfile="include/bluetooth/services/cts_client.h" declline="124" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__cts__c_ga6bec49db3b3c30799be65c9fcb8d72a1_1ga6bec49db3b3c30799be65c9fcb8d72a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_cts_subscribe_current_time</definition>
+        <argsstring>(struct bt_cts_client *cts_c, bt_cts_notify_cb func)</argsstring>
+        <name>bt_cts_subscribe_current_time</name>
+        <param>
+          <type>struct <ref refid="structbt__cts__client" kindref="compound">bt_cts_client</ref> *</type>
+          <declname>cts_c</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__gatt__cts__c_ga385428a3225d5730001bb3ab1d4cefb2_1ga385428a3225d5730001bb3ab1d4cefb2" kindref="member">bt_cts_notify_cb</ref></type>
+          <declname>func</declname>
+        </param>
+        <briefdescription>
+<para>Subscribe to the current time value change notification. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cts_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current Time Service client structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The callback function.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="135" column="5" declfile="include/bluetooth/services/cts_client.h" declline="135" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__cts__c_gaebc851feed6f38390ac753f006af6519_1gaebc851feed6f38390ac753f006af6519" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_cts_unsubscribe_current_time</definition>
+        <argsstring>(struct bt_cts_client *cts_c)</argsstring>
+        <name>bt_cts_unsubscribe_current_time</name>
+        <param>
+          <type>struct <ref refid="structbt__cts__client" kindref="compound">bt_cts_client</ref> *</type>
+          <declname>cts_c</declname>
+        </param>
+        <briefdescription>
+<para>Remove the subscription. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cts_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current Time Service client structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="146" column="5" declfile="include/bluetooth/services/cts_client.h" declline="146" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__cts__c_gaeacbe21559ea371c35acecab6505efb3_1gaeacbe21559ea371c35acecab6505efb3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_cts_handles_assign</definition>
+        <argsstring>(struct bt_gatt_dm *dm, struct bt_cts_client *cts_c)</argsstring>
+        <name>bt_cts_handles_assign</name>
+        <param>
+          <type>struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__cts__client" kindref="compound">bt_cts_client</ref> *</type>
+          <declname>cts_c</declname>
+        </param>
+        <briefdescription>
+<para>Function for assigning handles to this instance of cts_c. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Call this function when a link has been established with a peer to associate the link to this instance of the module. This makes it possible to handle several links and associate each link to a particular instance of this module.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">cts_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current Time Service client structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation is successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="161" column="5" declfile="include/bluetooth/services/cts_client.h" declline="161" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_CTS_CLIENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_CTS_CLIENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/gatt.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/conn.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="gatt__dm_8h" kindref="compound">bluetooth/gatt_dm.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="structbt__cts__exact__time__256" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__cts__exact__time__256" kindref="compound">bt_cts_exact_time_256</ref><sp/>{</highlight></codeline>
+<codeline lineno="28" refid="structbt__cts__exact__time__256_a625d235fba92ec6c2aebfbf5961e13ce_1a625d235fba92ec6c2aebfbf5961e13ce" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__cts__exact__time__256_a625d235fba92ec6c2aebfbf5961e13ce_1a625d235fba92ec6c2aebfbf5961e13ce" kindref="member">year</ref>;</highlight></codeline>
+<codeline lineno="29" refid="structbt__cts__exact__time__256_a621840e17f1acbdba99262a54cebf6b9_1a621840e17f1acbdba99262a54cebf6b9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__cts__exact__time__256_a621840e17f1acbdba99262a54cebf6b9_1a621840e17f1acbdba99262a54cebf6b9" kindref="member">month</ref>;</highlight></codeline>
+<codeline lineno="30" refid="structbt__cts__exact__time__256_a2b7bc0af6987c528037d53565bc9ded5_1a2b7bc0af6987c528037d53565bc9ded5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__cts__exact__time__256_a2b7bc0af6987c528037d53565bc9ded5_1a2b7bc0af6987c528037d53565bc9ded5" kindref="member">day</ref>;</highlight></codeline>
+<codeline lineno="31" refid="structbt__cts__exact__time__256_a55a8592791354258e723cd782589d1b6_1a55a8592791354258e723cd782589d1b6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__cts__exact__time__256_a55a8592791354258e723cd782589d1b6_1a55a8592791354258e723cd782589d1b6" kindref="member">hours</ref>;</highlight></codeline>
+<codeline lineno="32" refid="structbt__cts__exact__time__256_a983158e3c9d1bcd123422b01c2e46bec_1a983158e3c9d1bcd123422b01c2e46bec" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__cts__exact__time__256_a983158e3c9d1bcd123422b01c2e46bec_1a983158e3c9d1bcd123422b01c2e46bec" kindref="member">minutes</ref>;</highlight></codeline>
+<codeline lineno="33" refid="structbt__cts__exact__time__256_a27f2940456fcdffcd9c044d4b362b6c7_1a27f2940456fcdffcd9c044d4b362b6c7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__cts__exact__time__256_a27f2940456fcdffcd9c044d4b362b6c7_1a27f2940456fcdffcd9c044d4b362b6c7" kindref="member">seconds</ref>;</highlight></codeline>
+<codeline lineno="34" refid="structbt__cts__exact__time__256_a200f5f95bffa2adab58e09defaf6020d_1a200f5f95bffa2adab58e09defaf6020d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__cts__exact__time__256_a200f5f95bffa2adab58e09defaf6020d_1a200f5f95bffa2adab58e09defaf6020d" kindref="member">day_of_week</ref>;</highlight></codeline>
+<codeline lineno="35" refid="structbt__cts__exact__time__256_a14a454b8d7826c29f1c164e7d5e843cc_1a14a454b8d7826c29f1c164e7d5e843cc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__cts__exact__time__256_a14a454b8d7826c29f1c164e7d5e843cc_1a14a454b8d7826c29f1c164e7d5e843cc" kindref="member">fractions256</ref>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="structbt__cts__adjust__reason" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__cts__adjust__reason" kindref="compound">bt_cts_adjust_reason</ref><sp/>{</highlight></codeline>
+<codeline lineno="40" refid="structbt__cts__adjust__reason_a20873f76962a748266c429b47813e11f_1a20873f76962a748266c429b47813e11f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__cts__adjust__reason_a20873f76962a748266c429b47813e11f_1a20873f76962a748266c429b47813e11f" kindref="member">manual_time_update</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="41" refid="structbt__cts__adjust__reason_a007c64171469cad81226b89691b09328_1a007c64171469cad81226b89691b09328" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__cts__adjust__reason_a007c64171469cad81226b89691b09328_1a007c64171469cad81226b89691b09328" kindref="member">external_reference_time_update</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="42" refid="structbt__cts__adjust__reason_a7a0911b4c683512baedd95b64387e954_1a7a0911b4c683512baedd95b64387e954" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__cts__adjust__reason_a7a0911b4c683512baedd95b64387e954_1a7a0911b4c683512baedd95b64387e954" kindref="member">change_of_time_zone</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="43" refid="structbt__cts__adjust__reason_afce5e4bff08046aac4de1781b94e27c3_1afce5e4bff08046aac4de1781b94e27c3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__cts__adjust__reason_afce5e4bff08046aac4de1781b94e27c3_1afce5e4bff08046aac4de1781b94e27c3" kindref="member">change_of_daylight_savings_time</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="structbt__cts__current__time" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__cts__current__time" kindref="compound">bt_cts_current_time</ref><sp/>{</highlight></codeline>
+<codeline lineno="48" refid="structbt__cts__current__time_a0a2da9c07edc019c132f0c40e963bfa5_1a0a2da9c07edc019c132f0c40e963bfa5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__cts__exact__time__256" kindref="compound">bt_cts_exact_time_256</ref><sp/><ref refid="structbt__cts__current__time_a0a2da9c07edc019c132f0c40e963bfa5_1a0a2da9c07edc019c132f0c40e963bfa5" kindref="member">exact_time_256</ref>;</highlight></codeline>
+<codeline lineno="49" refid="structbt__cts__current__time_a0e315bc2045da7b2cdfad92228e1e258_1a0e315bc2045da7b2cdfad92228e1e258" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__cts__adjust__reason" kindref="compound">bt_cts_adjust_reason</ref><sp/><ref refid="structbt__cts__current__time_a0e315bc2045da7b2cdfad92228e1e258_1a0e315bc2045da7b2cdfad92228e1e258" kindref="member">adjust_reason</ref>;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__cts__client" kindref="compound">bt_cts_client</ref>;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="group__bt__gatt__cts__c_gabfb977421f36ad2fc0567242e5a829e6_1gabfb977421f36ad2fc0567242e5a829e6" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__bt__gatt__cts__c_gabfb977421f36ad2fc0567242e5a829e6_1gabfb977421f36ad2fc0567242e5a829e6" kindref="member">bt_cts_read_cb</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__cts__client" kindref="compound">bt_cts_client</ref><sp/>*cts_c,</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__cts__current__time" kindref="compound">bt_cts_current_time</ref><sp/>*current_time,</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>err);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="group__bt__gatt__cts__c_ga385428a3225d5730001bb3ab1d4cefb2_1ga385428a3225d5730001bb3ab1d4cefb2" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__bt__gatt__cts__c_ga385428a3225d5730001bb3ab1d4cefb2_1ga385428a3225d5730001bb3ab1d4cefb2" kindref="member">bt_cts_notify_cb</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__cts__client" kindref="compound">bt_cts_client</ref><sp/>*cts_c,</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__cts__current__time" kindref="compound">bt_cts_current_time</ref><sp/>*current_time);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="structbt__cts__client" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__cts__client" kindref="compound">bt_cts_client</ref><sp/>{</highlight></codeline>
+<codeline lineno="80" refid="structbt__cts__client_aab18c5f5d16f543c393715f1aa24ea10_1aab18c5f5d16f543c393715f1aa24ea10" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_conn<sp/>*<ref refid="structbt__cts__client_aab18c5f5d16f543c393715f1aa24ea10_1aab18c5f5d16f543c393715f1aa24ea10" kindref="member">conn</ref>;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83" refid="structbt__cts__client_adc69f7b90b0b959edc24af383852e9cc_1adc69f7b90b0b959edc24af383852e9cc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__cts__client_adc69f7b90b0b959edc24af383852e9cc_1adc69f7b90b0b959edc24af383852e9cc" kindref="member">handle_ct</ref>;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="structbt__cts__client_a5cc69a754026946c14eb8ca50317bc7c_1a5cc69a754026946c14eb8ca50317bc7c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__cts__client_a5cc69a754026946c14eb8ca50317bc7c_1a5cc69a754026946c14eb8ca50317bc7c" kindref="member">handle_ct_ccc</ref>;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89" refid="structbt__cts__client_aae10bf567e00a06a9bc1d9d71b9758d4_1aae10bf567e00a06a9bc1d9d71b9758d4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>atomic_t<sp/><ref refid="structbt__cts__client_aae10bf567e00a06a9bc1d9d71b9758d4_1aae10bf567e00a06a9bc1d9d71b9758d4" kindref="member">state</ref>;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="structbt__cts__client_a2547fd2fef419998b7a47aaf554e5619_1a2547fd2fef419998b7a47aaf554e5619" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_gatt_read_params<sp/><ref refid="structbt__cts__client_a2547fd2fef419998b7a47aaf554e5619_1a2547fd2fef419998b7a47aaf554e5619" kindref="member">read_params</ref>;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="structbt__cts__client_a89c93fdb87902f7a18f6fd50e57acfa4_1a89c93fdb87902f7a18f6fd50e57acfa4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_gatt_subscribe_params<sp/><ref refid="structbt__cts__client_a89c93fdb87902f7a18f6fd50e57acfa4_1a89c93fdb87902f7a18f6fd50e57acfa4" kindref="member">notify_params</ref>;</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98" refid="structbt__cts__client_a0bf89bcc970dc52049213cd9c13c414d_1a0bf89bcc970dc52049213cd9c13c414d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gatt__cts__c_gabfb977421f36ad2fc0567242e5a829e6_1gabfb977421f36ad2fc0567242e5a829e6" kindref="member">bt_cts_read_cb</ref><sp/><ref refid="structbt__cts__client_a0bf89bcc970dc52049213cd9c13c414d_1a0bf89bcc970dc52049213cd9c13c414d" kindref="member">read_cb</ref>;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101" refid="structbt__cts__client_a7c997ac0e9414f04093f4eefd42d768e_1a7c997ac0e9414f04093f4eefd42d768e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gatt__cts__c_ga385428a3225d5730001bb3ab1d4cefb2_1ga385428a3225d5730001bb3ab1d4cefb2" kindref="member">bt_cts_notify_cb</ref><sp/><ref refid="structbt__cts__client_a7c997ac0e9414f04093f4eefd42d768e_1a7c997ac0e9414f04093f4eefd42d768e" kindref="member">notify_cb</ref>;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114" refid="group__bt__gatt__cts__c_ga7f51a070279476de6813bfd313ccc471_1ga7f51a070279476de6813bfd313ccc471" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__gatt__cts__c_ga7f51a070279476de6813bfd313ccc471_1ga7f51a070279476de6813bfd313ccc471" kindref="member">bt_cts_client_init</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__cts__client" kindref="compound">bt_cts_client</ref><sp/>*cts_c);</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124" refid="group__bt__gatt__cts__c_gaa7c447c73d0dae3b356a5348c8d46950_1gaa7c447c73d0dae3b356a5348c8d46950" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__gatt__cts__c_gaa7c447c73d0dae3b356a5348c8d46950_1gaa7c447c73d0dae3b356a5348c8d46950" kindref="member">bt_cts_read_current_time</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__cts__client" kindref="compound">bt_cts_client</ref><sp/>*cts_c,<sp/><ref refid="group__bt__gatt__cts__c_gabfb977421f36ad2fc0567242e5a829e6_1gabfb977421f36ad2fc0567242e5a829e6" kindref="member">bt_cts_read_cb</ref><sp/>func);</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135" refid="group__bt__gatt__cts__c_ga6bec49db3b3c30799be65c9fcb8d72a1_1ga6bec49db3b3c30799be65c9fcb8d72a1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__gatt__cts__c_ga6bec49db3b3c30799be65c9fcb8d72a1_1ga6bec49db3b3c30799be65c9fcb8d72a1" kindref="member">bt_cts_subscribe_current_time</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__cts__client" kindref="compound">bt_cts_client</ref><sp/>*cts_c,</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__gatt__cts__c_ga385428a3225d5730001bb3ab1d4cefb2_1ga385428a3225d5730001bb3ab1d4cefb2" kindref="member">bt_cts_notify_cb</ref><sp/>func);</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146" refid="group__bt__gatt__cts__c_gaebc851feed6f38390ac753f006af6519_1gaebc851feed6f38390ac753f006af6519" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__gatt__cts__c_gaebc851feed6f38390ac753f006af6519_1gaebc851feed6f38390ac753f006af6519" kindref="member">bt_cts_unsubscribe_current_time</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__cts__client" kindref="compound">bt_cts_client</ref><sp/>*cts_c);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161" refid="group__bt__gatt__cts__c_gaeacbe21559ea371c35acecab6505efb3_1gaeacbe21559ea371c35acecab6505efb3" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__gatt__cts__c_gaeacbe21559ea371c35acecab6505efb3_1gaeacbe21559ea371c35acecab6505efb3" kindref="member">bt_cts_handles_assign</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_gatt_dm<sp/>*dm,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__cts__client" kindref="compound">bt_cts_client</ref><sp/>*cts_c);</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_CTS_CLIENT_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/services/cts_client.h"/>
+  </compounddef>
+</doxygen>

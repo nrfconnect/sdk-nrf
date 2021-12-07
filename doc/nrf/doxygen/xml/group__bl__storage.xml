@@ -1,0 +1,311 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bl__storage" kind="group">
+    <compoundname>bl_storage</compoundname>
+    <title>Bootloader storage (protected data).</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bl__storage_1ga588b9be770d1f9f90e8d97ace8aefb35" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint32_t</type>
+        <definition>uint32_t s0_address_read</definition>
+        <argsstring>(void)</argsstring>
+        <name>s0_address_read</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for reading address of slot 0. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Address of slot 0. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_storage.h" line="29" column="10" declfile="include/bl_storage.h" declline="29" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bl__storage_1gac1b4e16ed57411c4dcf6271c4f763b9b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint32_t</type>
+        <definition>uint32_t s1_address_read</definition>
+        <argsstring>(void)</argsstring>
+        <name>s1_address_read</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for reading address of slot 1. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Address of slot 1. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_storage.h" line="36" column="10" declfile="include/bl_storage.h" declline="36" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bl__storage_1ga5f01045a46e0cd6015081a1ecf33597d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint32_t</type>
+        <definition>uint32_t num_public_keys_read</definition>
+        <argsstring>(void)</argsstring>
+        <name>num_public_keys_read</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for reading number of public key data slots. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Number of public key data slots. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_storage.h" line="43" column="10" declfile="include/bl_storage.h" declline="43" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bl__storage_1ga398093b212163efead6fa1eca64cb943" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int verify_public_keys</definition>
+        <argsstring>(void)</argsstring>
+        <name>verify_public_keys</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function for reading number of public key data slots. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if all keys are ok </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EHASHFF</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if one or more keys contains an aligned 0xFFFF. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_storage.h" line="51" column="5" declfile="include/bl_storage.h" declline="51" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bl__storage_1gafc1ba8e35c0fac3cca8f6b612481d4d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int public_key_data_read</definition>
+        <argsstring>(uint32_t key_idx, uint8_t *p_buf, size_t buf_size)</argsstring>
+        <name>public_key_data_read</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>key_idx</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>p_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buf_size</declname>
+        </param>
+        <briefdescription>
+<para>Function for reading public key data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">key_idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of key. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">p_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to area where key data will be stored. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">buf_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of buffer, in bytes, provided in p_buf.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of bytes written to p_buf is successful. </para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Key has been invalidated. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The provided buffer is too small. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>key_idx is too large. There is no key with that index. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_storage.h" line="65" column="5" declfile="include/bl_storage.h" declline="65" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bl__storage_1ga93cdbed56da0e3cd0ffa705715863aad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void invalidate_public_key</definition>
+        <argsstring>(uint32_t key_idx)</argsstring>
+        <name>invalidate_public_key</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>key_idx</declname>
+        </param>
+        <briefdescription>
+<para>Function for invalidating a public key. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The public key will no longer be returned by <ref refid="group__bl__storage_gafc1ba8e35c0fac3cca8f6b612481d4d7_1gafc1ba8e35c0fac3cca8f6b612481d4d7" kindref="member">public_key_data_read</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">key_idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of key. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_storage.h" line="74" column="6" declfile="include/bl_storage.h" declline="74" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bl__storage_1gaacac770d76ca679ddf51cd8f5795c5bd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint16_t</type>
+        <definition>uint16_t num_monotonic_counter_slots</definition>
+        <argsstring>(void)</argsstring>
+        <name>num_monotonic_counter_slots</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Get the number of monotonic counter slots. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The number of slots. If the provision page does not contain the information, 0 is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_storage.h" line="82" column="10" declfile="include/bl_storage.h" declline="82" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bl__storage_1ga475fc73d5a2fb32c71fac3f2f2050ace" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint16_t</type>
+        <definition>uint16_t get_monotonic_counter</definition>
+        <argsstring>(void)</argsstring>
+        <name>get_monotonic_counter</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Get the current HW monotonic counter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The current value of the counter. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_storage.h" line="89" column="10" declfile="include/bl_storage.h" declline="89" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bl__storage_1ga25942db469f294b46e3344e9efbb83c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int set_monotonic_counter</definition>
+        <argsstring>(uint16_t new_counter)</argsstring>
+        <name>set_monotonic_counter</name>
+        <param>
+          <type>uint16_t</type>
+          <declname>new_counter</declname>
+        </param>
+        <briefdescription>
+<para>Set the current HW monotonic counter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>FYI for users looking at the values directly in flash: Values are stored with their bits flipped. This is to squeeze one more value out of the counter.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">new_counter</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The new counter value. Must be larger than the current value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The counter was updated successfully. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><computeroutput>new_counter</computeroutput> is invalid (must be larger than current counter, and cannot be 0xFFFF). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>There are no more free counter slots (see <verbatim>embed:rst:inline :kconfig:`CONFIG_SB_NUM_VER_COUNTER_SLOTS` </verbatim>). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_storage.h" line="107" column="5" declfile="include/bl_storage.h" declline="107" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

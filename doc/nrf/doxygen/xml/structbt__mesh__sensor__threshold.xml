@@ -1,0 +1,140 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__sensor__threshold" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_sensor_threshold</compoundname>
+    <includes refid="sensor_8h" local="no">sensor.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__sensor__threshold_a2e7cd7ebec09c2ccd2061845f77fed40_1a2e7cd7ebec09c2ccd2061845f77fed40" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__mesh__sensor_ga56d81b2eeefd39c1913bc6ddcd03f48b_1ga56d81b2eeefd39c1913bc6ddcd03f48b" kindref="member">bt_mesh_sensor_delta</ref></type>
+        <definition>enum bt_mesh_sensor_delta bt_mesh_sensor_threshold::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Type of delta threshold </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="117" column="26" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="117" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__threshold_aa4be0ffa3088764302e3327bff8cf9bd_1aa4be0ffa3088764302e3327bff8cf9bd" prot="public" static="no" mutable="no">
+        <type>struct sensor_value</type>
+        <definition>struct sensor_value bt_mesh_sensor_threshold::up</definition>
+        <argsstring></argsstring>
+        <name>up</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Minimal delta for a positive change. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="119" column="19" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__threshold_ae97be306a9032c57bc001fe2a8f2f0fc_1ae97be306a9032c57bc001fe2a8f2f0fc" prot="public" static="no" mutable="no">
+        <type>struct sensor_value</type>
+        <definition>struct sensor_value bt_mesh_sensor_threshold::down</definition>
+        <argsstring></argsstring>
+        <name>down</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Minimal delta for a negative change. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="121" column="19" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__threshold_aa1f6d18a94b37c7e951fd44c88616c27_1aa1f6d18a94b37c7e951fd44c88616c27" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_sensor_threshold::@132</type>
+        <definition>struct bt_mesh_sensor_threshold::@132 bt_mesh_sensor_threshold::delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Delta threshold values.</para>
+<para>Denotes the minimal sensor value change that should cause the sensor to publish its value. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="122" column="7"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__threshold_a6419310364451fa7f6681fbb3cc15b28_1a6419310364451fa7f6681fbb3cc15b28" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__mesh__sensor_ga0fdc9041080c8b6252c0a9d37a99a4c1_1ga0fdc9041080c8b6252c0a9d37a99a4c1" kindref="member">bt_mesh_sensor_cadence</ref></type>
+        <definition>enum bt_mesh_sensor_cadence bt_mesh_sensor_threshold::cadence</definition>
+        <argsstring></argsstring>
+        <name>cadence</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Cadence when the sensor value is inside the range.</para>
+<para>If the cadence is fast when the value is inside the range, it&apos;s normal when it&apos;s outside the range. If the cadence is normal when the value is inside the range, it&apos;s fast outside the range. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="136" column="28" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__threshold_ab3f20eb82601ba7783baec23d11a98d3_1ab3f20eb82601ba7783baec23d11a98d3" prot="public" static="no" mutable="no">
+        <type>struct sensor_value</type>
+        <definition>struct sensor_value bt_mesh_sensor_threshold::low</definition>
+        <argsstring></argsstring>
+        <name>low</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Lower boundary for the range based sensor cadence threshold. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="139" column="19" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__threshold_ae44f611505b91210e2851ec4dbfcb83c_1ae44f611505b91210e2851ec4dbfcb83c" prot="public" static="no" mutable="no">
+        <type>struct sensor_value</type>
+        <definition>struct sensor_value bt_mesh_sensor_threshold::high</definition>
+        <argsstring></argsstring>
+        <name>high</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Upper boundary for the range based sensor cadence threshold. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="142" column="19" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__threshold_a5ffc0bf32ac6e0e8585f24583c0f0f14_1a5ffc0bf32ac6e0e8585f24583c0f0f14" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_sensor_threshold::@133</type>
+        <definition>struct bt_mesh_sensor_threshold::@133 bt_mesh_sensor_threshold::range</definition>
+        <argsstring></argsstring>
+        <name>range</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Range based threshold values.</para>
+<para>Denotes the value range in which the sensor should be in fast cadence mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="143" column="7"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Sensor thresholds for publishing. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/sensor.h" line="109" column="1" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="109" bodyend="144"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__sensor__threshold_a6419310364451fa7f6681fbb3cc15b28_1a6419310364451fa7f6681fbb3cc15b28" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_threshold</scope><name>cadence</name></member>
+      <member refid="structbt__mesh__sensor__threshold_aa1f6d18a94b37c7e951fd44c88616c27_1aa1f6d18a94b37c7e951fd44c88616c27" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_threshold</scope><name>delta</name></member>
+      <member refid="structbt__mesh__sensor__threshold_ae97be306a9032c57bc001fe2a8f2f0fc_1ae97be306a9032c57bc001fe2a8f2f0fc" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_threshold</scope><name>down</name></member>
+      <member refid="structbt__mesh__sensor__threshold_ae44f611505b91210e2851ec4dbfcb83c_1ae44f611505b91210e2851ec4dbfcb83c" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_threshold</scope><name>high</name></member>
+      <member refid="structbt__mesh__sensor__threshold_ab3f20eb82601ba7783baec23d11a98d3_1ab3f20eb82601ba7783baec23d11a98d3" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_threshold</scope><name>low</name></member>
+      <member refid="structbt__mesh__sensor__threshold_a5ffc0bf32ac6e0e8585f24583c0f0f14_1a5ffc0bf32ac6e0e8585f24583c0f0f14" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_threshold</scope><name>range</name></member>
+      <member refid="structbt__mesh__sensor__threshold_a2e7cd7ebec09c2ccd2061845f77fed40_1a2e7cd7ebec09c2ccd2061845f77fed40" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_threshold</scope><name>type</name></member>
+      <member refid="structbt__mesh__sensor__threshold_aa4be0ffa3088764302e3327bff8cf9bd_1aa4be0ffa3088764302e3327bff8cf9bd" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_threshold</scope><name>up</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

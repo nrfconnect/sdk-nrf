@@ -1,0 +1,466 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__ndef__tnep__rec" kind="group">
+    <compoundname>nfc_ndef_tnep_rec</compoundname>
+    <title>TNEP records API</title>
+    <innerclass refid="structnfc__ndef__tnep__rec__status" prot="public">nfc_ndef_tnep_rec_status</innerclass>
+    <innerclass refid="structnfc__ndef__tnep__rec__svc__select" prot="public">nfc_ndef_tnep_rec_svc_select</innerclass>
+    <innerclass refid="structnfc__ndef__tnep__rec__svc__param" prot="public">nfc_ndef_tnep_rec_svc_param</innerclass>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__nfc__ndef__tnep__rec_1ga92763c4e36c7893e0e7cd834c6a7848f" prot="public" static="no" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t nfc_ndef_tnep_rec_type_svc_param[]</definition>
+        <argsstring>[]</argsstring>
+        <name>nfc_ndef_tnep_rec_type_svc_param</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/tnep_rec.h" line="31" column="22" declfile="include/nfc/ndef/tnep_rec.h" declline="31" declcolumn="22"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__nfc__ndef__tnep__rec_1ga41f680e5ba6d7d4afcf8f3dd7976b505" prot="public" static="no" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t nfc_ndef_tnep_rec_type_svc_select[]</definition>
+        <argsstring>[]</argsstring>
+        <name>nfc_ndef_tnep_rec_type_svc_select</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/tnep_rec.h" line="32" column="22" declfile="include/nfc/ndef/tnep_rec.h" declline="32" declcolumn="22"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__nfc__ndef__tnep__rec_1gac080e2daca0080f468355d1c5996e1c7" prot="public" static="no" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t nfc_ndef_tnep_rec_type_status[]</definition>
+        <argsstring>[]</argsstring>
+        <name>nfc_ndef_tnep_rec_type_status</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/tnep_rec.h" line="33" column="22" declfile="include/nfc/ndef/tnep_rec.h" declline="33" declcolumn="22"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__ndef__tnep__rec_1ga383ca57c5ae0da2419c34e899b46c79c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_tnep_rec_status_payload</definition>
+        <argsstring>(struct nfc_ndef_tnep_rec_status *payload_desc, uint8_t *buffer, uint32_t *len)</argsstring>
+        <name>nfc_ndef_tnep_rec_status_payload</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__tnep__rec__status" kindref="compound">nfc_ndef_tnep_rec_status</ref> *</type>
+          <declname>payload_desc</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Payload constructor for the NDEF TNEP Status Record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">payload_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the TNEP status record description. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the payload destination. If NULL, function will calculate the expected size of the Text record payload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the available memory to write as input. Size of the generated record payload as output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/tnep_rec.h" line="87" column="5" declfile="include/nfc/ndef/tnep_rec.h" declline="87" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__tnep__rec_1ga7b47a8927df8ccc63eb8a5f7cfc98b95" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_tnep_rec_svc_select_payload</definition>
+        <argsstring>(struct nfc_ndef_tnep_rec_svc_select *payload_desc, uint8_t *buffer, uint32_t *len)</argsstring>
+        <name>nfc_ndef_tnep_rec_svc_select_payload</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__tnep__rec__svc__select" kindref="compound">nfc_ndef_tnep_rec_svc_select</ref> *</type>
+          <declname>payload_desc</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Payload constructor for the TNEP Service Select Record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">payload_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the TNEP service select record description. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the payload destination. If NULL, function will calculate the expected size of the Text record payload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the available memory to write as input. Size of the generated record payload as output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/tnep_rec.h" line="103" column="5" declfile="include/nfc/ndef/tnep_rec.h" declline="103" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__tnep__rec_1gabe671d362db57137aecc4fc3ea41b1b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_tnep_rec_svc_param_payload</definition>
+        <argsstring>(struct nfc_ndef_tnep_rec_svc_param *payload_desc, uint8_t *buffer, uint32_t *len)</argsstring>
+        <name>nfc_ndef_tnep_rec_svc_param_payload</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__tnep__rec__svc__param" kindref="compound">nfc_ndef_tnep_rec_svc_param</ref> *</type>
+          <declname>payload_desc</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Payload constructor for the Service Parameter Record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">payload_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the TNEP service parameters record description. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the payload destination. If NULL, function will calculate the expected size of the Text record payload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the available memory to write as input. Size of the generated record payload as output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/tnep_rec.h" line="119" column="5" declfile="include/nfc/ndef/tnep_rec.h" declline="119" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__ndef__tnep__rec_1ga9f863241867e6d4651bd7aff6a8394f4" prot="public" static="no">
+        <name>NFC_NDEF_TNEP_REC_TYPE_LEN</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/tnep_rec.h" line="25" column="9" bodyfile="include/nfc/ndef/tnep_rec.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__tnep__rec_1ga441f15ed19c569f29036ed92cf01c9a2" prot="public" static="no">
+        <name>NFC_TNEP_STATUS_RECORD_DESC_DEF</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_status</defname></param>
+        <initializer>	struct <ref refid="structnfc__ndef__tnep__rec__status" kindref="compound">nfc_ndef_tnep_rec_status</ref> _name = {                         \
+		.status = _status,                                        \
+	};                                                                \
+									  \
+	<ref refid="group__nfc__ndef__record_ga981ac373f5af603b36c7ab2c488785a6_1ga981ac373f5af603b36c7ab2c488785a6" kindref="member">NFC_NDEF_GENERIC_RECORD_DESC_DEF</ref>(_name, <ref refid="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1gga2091295307fa8161219648a88df172a8ace6c9ee74852eebbdb1421e85c4e0041" kindref="member">TNF_WELL_KNOWN</ref>,           \
+					 0, 0,                            \
+					 <ref refid="group__nfc__ndef__tnep__rec_gac080e2daca0080f468355d1c5996e1c7_1gac080e2daca0080f468355d1c5996e1c7" kindref="member">nfc_ndef_tnep_rec_type_status</ref>,   \
+					 <ref refid="group__nfc__ndef__tnep__rec_ga9f863241867e6d4651bd7aff6a8394f4_1ga9f863241867e6d4651bd7aff6a8394f4" kindref="member">NFC_NDEF_TNEP_REC_TYPE_LEN</ref>,      \
+					 <ref refid="group__nfc__ndef__tnep__rec_ga383ca57c5ae0da2419c34e899b46c79c_1ga383ca57c5ae0da2419c34e899b46c79c" kindref="member">nfc_ndef_tnep_rec_status_payload</ref>,\
+					 &amp;(_name))</initializer>
+        <briefdescription>
+<para>Macro for creating and initializing a NFC NDEF record descriptor for a TENP Status Record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates and initializes an instance of type <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> and an instance of type <ref refid="structnfc__ndef__tnep__rec__status" kindref="compound">nfc_ndef_tnep_rec_status</ref>, which together constitute an instance of a TNEP status record.</para>
+<para>Use the macro <ref refid="group__nfc__ndef__tnep__rec_ga43b70c920ac53289eb050432868628e2_1ga43b70c920ac53289eb050432868628e2" kindref="member">NFC_NDEF_TNEP_RECORD_DESC</ref> to access the NDEF TENP record descriptor instance. Use name to access a TNEP Status description.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the created record descriptor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>TNEP Message Status. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/tnep_rec.h" line="136" column="9" bodyfile="include/nfc/ndef/tnep_rec.h" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__tnep__rec_1ga7883b8d58a53f9ac2ce609c0587f8f4e" prot="public" static="no">
+        <name>NFC_TNEP_SERIVCE_SELECT_RECORD_DESC_DEF</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_uri_length</defname></param>
+        <param><defname>_uri</defname></param>
+        <initializer>	struct <ref refid="structnfc__ndef__tnep__rec__svc__select" kindref="compound">nfc_ndef_tnep_rec_svc_select</ref> _name = {                          \
+		.uri_len = _uri_length,                                        \
+		.uri = _uri,	                                               \
+	};                                                                     \
+									       \
+	<ref refid="group__nfc__ndef__record_ga981ac373f5af603b36c7ab2c488785a6_1ga981ac373f5af603b36c7ab2c488785a6" kindref="member">NFC_NDEF_GENERIC_RECORD_DESC_DEF</ref>(_name, <ref refid="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1gga2091295307fa8161219648a88df172a8ace6c9ee74852eebbdb1421e85c4e0041" kindref="member">TNF_WELL_KNOWN</ref>,                \
+					 0, 0,                                 \
+					 <ref refid="group__nfc__ndef__tnep__rec_ga41f680e5ba6d7d4afcf8f3dd7976b505_1ga41f680e5ba6d7d4afcf8f3dd7976b505" kindref="member">nfc_ndef_tnep_rec_type_svc_select</ref>,    \
+					 <ref refid="group__nfc__ndef__tnep__rec_ga9f863241867e6d4651bd7aff6a8394f4_1ga9f863241867e6d4651bd7aff6a8394f4" kindref="member">NFC_NDEF_TNEP_REC_TYPE_LEN</ref>,           \
+					 <ref refid="group__nfc__ndef__tnep__rec_ga7b47a8927df8ccc63eb8a5f7cfc98b95_1ga7b47a8927df8ccc63eb8a5f7cfc98b95" kindref="member">nfc_ndef_tnep_rec_svc_select_payload</ref>, \
+					 &amp;(_name))</initializer>
+        <briefdescription>
+<para>Macro for creating and initializing a NFC NDEF record descriptor for a TNEP Service Select Record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates and initializes an instance of type <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> and an instance of type <ref refid="structnfc__ndef__tnep__rec__svc__select" kindref="compound">nfc_ndef_tnep_rec_svc_select</ref>, which together constitute an instance of a TNEP service select record.</para>
+<para>Use the macro <ref refid="group__nfc__ndef__tnep__rec_ga43b70c920ac53289eb050432868628e2_1ga43b70c920ac53289eb050432868628e2" kindref="member">NFC_NDEF_TNEP_RECORD_DESC</ref> to access the NDEF TNEP record descriptor instance. Use name to access a TNEP Service Select description.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the created record descriptor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_uri_length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the following Service Name URI. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_uri</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Service Name URI. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/tnep_rec.h" line="163" column="9" bodyfile="include/nfc/ndef/tnep_rec.h" bodystart="163" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__tnep__rec_1gacafb3ea73a200ade3d01a74e26399f5a" prot="public" static="no">
+        <name>NFC_TNEP_SERIVCE_PARAM_RECORD_DESC_DEF</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_tnep_version</defname></param>
+        <param><defname>_uri_length</defname></param>
+        <param><defname>_uri</defname></param>
+        <param><defname>_mode</defname></param>
+        <param><defname>_min_time</defname></param>
+        <param><defname>_max_time_ext</defname></param>
+        <param><defname>_max_message_size</defname></param>
+        <initializer>	struct <ref refid="structnfc__ndef__tnep__rec__svc__param" kindref="compound">nfc_ndef_tnep_rec_svc_param</ref> _name = {                          \
+		.version = _tnep_version,                                     \
+		.uri_length = _uri_length,                                    \
+		.uri = _uri,                                                  \
+		.communication_mode = _mode,                                  \
+		.min_time = _min_time,                                        \
+		.max_time_ext = _max_time_ext,                                \
+		.max_size = _max_message_size,                                \
+	};                                                                    \
+									      \
+	<ref refid="group__nfc__ndef__record_ga981ac373f5af603b36c7ab2c488785a6_1ga981ac373f5af603b36c7ab2c488785a6" kindref="member">NFC_NDEF_GENERIC_RECORD_DESC_DEF</ref>(_name, <ref refid="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1gga2091295307fa8161219648a88df172a8ace6c9ee74852eebbdb1421e85c4e0041" kindref="member">TNF_WELL_KNOWN</ref>,               \
+					 0, 0,                                \
+					 <ref refid="group__nfc__ndef__tnep__rec_ga92763c4e36c7893e0e7cd834c6a7848f_1ga92763c4e36c7893e0e7cd834c6a7848f" kindref="member">nfc_ndef_tnep_rec_type_svc_param</ref>,    \
+					 <ref refid="group__nfc__ndef__tnep__rec_ga9f863241867e6d4651bd7aff6a8394f4_1ga9f863241867e6d4651bd7aff6a8394f4" kindref="member">NFC_NDEF_TNEP_REC_TYPE_LEN</ref>,          \
+					 <ref refid="group__nfc__ndef__tnep__rec_gabe671d362db57137aecc4fc3ea41b1b4_1gabe671d362db57137aecc4fc3ea41b1b4" kindref="member">nfc_ndef_tnep_rec_svc_param_payload</ref>, \
+					 &amp;(_name))</initializer>
+        <briefdescription>
+<para>Macro for creating and initializing a NFC NDEF record descriptor for a TNEP Service Parameter Record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates and initializes an instance of type <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> and an instance of type <ref refid="structnfc__ndef__tnep__rec__svc__param" kindref="compound">nfc_ndef_tnep_rec_svc_param</ref>, which together constitute an instance of a TNEP service parameter record.</para>
+<para>Use the macro <ref refid="group__nfc__ndef__tnep__rec_ga43b70c920ac53289eb050432868628e2_1ga43b70c920ac53289eb050432868628e2" kindref="member">NFC_NDEF_TNEP_RECORD_DESC</ref> to access the NDEF TNEP record descriptor instance. Use name to access a TNEP Service Parameter description.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the created record descriptor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_tnep_version</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>TNEP Version. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_uri_length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Service name uri length in bytes. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_uri</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Service name uri. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_mode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>TNEP communication mode. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_min_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum waiting time. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_max_time_ext</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of waiting time extensions. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_max_message_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum NDEF message size in bytes. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/tnep_rec.h" line="201" column="9" bodyfile="include/nfc/ndef/tnep_rec.h" bodystart="197" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__tnep__rec_1ga43b70c920ac53289eb050432868628e2" prot="public" static="no">
+        <name>NFC_NDEF_TNEP_RECORD_DESC</name>
+        <param><defname>_name</defname></param>
+        <initializer><ref refid="group__nfc__ndef__record_ga854ffeb62045f58c823adedf3f0ed615_1ga854ffeb62045f58c823adedf3f0ed615" kindref="member">NFC_NDEF_GENERIC_RECORD_DESC</ref>(_name)</initializer>
+        <briefdescription>
+<para>Macro for accessing the NFC NDEF TNEP record descriptor instance that was created with <ref refid="group__nfc__ndef__tnep__rec_ga43b70c920ac53289eb050432868628e2_1ga43b70c920ac53289eb050432868628e2" kindref="member">NFC_NDEF_TNEP_RECORD_DESC</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/tnep_rec.h" line="224" column="9" bodyfile="include/nfc/ndef/tnep_rec.h" bodystart="224" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Generation of NFC NDEF TNEP specific record descriptions. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

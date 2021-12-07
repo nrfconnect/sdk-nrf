@@ -1,0 +1,414 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__t4t__isodep" kind="group">
+    <compoundname>nfc_t4t_isodep</compoundname>
+    <title>NFC Type 4 Tag ISO-DEP</title>
+    <innerclass refid="structnfc__t4t__isodep__tag" prot="public">nfc_t4t_isodep_tag</innerclass>
+    <innerclass refid="structnfc__t4t__isodep__cb" prot="public">nfc_t4t_isodep_cb</innerclass>
+    <innergroup refid="group__isodep__error">ISO-DEP Protocol error</innergroup>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nfc__t4t__isodep_1gac253eb67748b027115894a4ffc58f275" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nfc_t4t_isodep_fsd</name>
+        <enumvalue id="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a3f3b13159c1ad8102847b28c8dfe2dfe" prot="public">
+          <name>NFC_T4T_ISODEP_FSD_16</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>16-byte frame size. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275af91321ed3281593da723bd9e3425a13c" prot="public">
+          <name>NFC_T4T_ISODEP_FSD_24</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>24-byte frame size. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a137778ded758f4dc12bf4dff341f885b" prot="public">
+          <name>NFC_T4T_ISODEP_FSD_32</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>32-byte frame size. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275acea78a385433fef0901baf4933b96c2d" prot="public">
+          <name>NFC_T4T_ISODEP_FSD_40</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>40-byte frame size. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275ac53bf32b072263019224442f6494793c" prot="public">
+          <name>NFC_T4T_ISODEP_FSD_48</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>48-byte frame size. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a013b657f624b06bb065ec8bf1554796c" prot="public">
+          <name>NFC_T4T_ISODEP_FSD_64</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>64-byte frame size. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a28f920c3f31931d76021c9788fd79ef6" prot="public">
+          <name>NFC_T4T_ISODEP_FSD_96</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>96-byte frame size. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a5267a96b31bf5c158489cfe11a690097" prot="public">
+          <name>NFC_T4T_ISODEP_FSD_128</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>128-byte frame size. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1ggac253eb67748b027115894a4ffc58f275a6f9d14a7fff36d4dc25700765d19cc43" prot="public">
+          <name>NFC_T4T_ISODEP_FSD_256</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>256-byte frame size. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>NFC Type 4 Tag ISO-DEP frame size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="81" column="1" bodyfile="include/nfc/t4t/isodep.h" bodystart="81" bodyend="108"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__t4t__isodep_1ga9ff839d76d33bc880049d0a0665ae06c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_isodep_rats_send</definition>
+        <argsstring>(enum nfc_t4t_isodep_fsd fsd, uint8_t did)</argsstring>
+        <name>nfc_t4t_isodep_rats_send</name>
+        <param>
+          <type>enum <ref refid="group__nfc__t4t__isodep_gac253eb67748b027115894a4ffc58f275_1gac253eb67748b027115894a4ffc58f275" kindref="member">nfc_t4t_isodep_fsd</ref></type>
+          <declname>fsd</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>did</declname>
+        </param>
+        <briefdescription>
+<para>Send a Request for Answer to Select (RATS). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function sends a RATS command according to NFC Forum Digital Specification 2.0 14.6.1. The RATS command is used by Reader/Writer to negotiate the maximum frame size and the bit rate divisors with the Listener. This function must be called before <ref refid="group__nfc__t4t__isodep_ga661bc7f4fbe514d8a7161b4e4d3fe19a_1ga661bc7f4fbe514d8a7161b4e4d3fe19a" kindref="member">nfc_t4t_isodep_transmit</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">fsd</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Frame size for the Reader/Writer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">did</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Logical number of the addressed Listener. Usually it should be set to 0 in case of communication with one Listener.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>According to NFC Forum Digital Specification 2.0, FSD must be set to 256 bytes.</para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="176" column="5" declfile="include/nfc/t4t/isodep.h" declline="176" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__isodep_1ga9e434a9ef3cbc1310af460dfda425bc1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_isodep_tag_deselect</definition>
+        <argsstring>(void)</argsstring>
+        <name>nfc_t4t_isodep_tag_deselect</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Send a Deselect command. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Function for sending S(DESELECT) frame according to NFC Forum Digital Specification 2.0 16.2.7. Reader/Writer deactivates a Listener by sending this command.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="187" column="5" declfile="include/nfc/t4t/isodep.h" declline="187" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__isodep_1ga4589d21d98031f41e8d83453b66f9745" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_isodep_data_received</definition>
+        <argsstring>(const uint8_t *data, size_t data_len, int err)</argsstring>
+        <name>nfc_t4t_isodep_data_received</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>data_len</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>err</declname>
+        </param>
+        <briefdescription>
+<para>Handle NFC ISO-DEP protocol received data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Function for handling the received data. It should be called immediately upon receiving the data from Reader/Writer. In case of a transmission error, the error recovery procedure will be started.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the received data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Received data length. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Transmission error.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="203" column="5" declfile="include/nfc/t4t/isodep.h" declline="203" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__isodep_1ga661bc7f4fbe514d8a7161b4e4d3fe19a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_isodep_transmit</definition>
+        <argsstring>(const uint8_t *data, size_t data_len)</argsstring>
+        <name>nfc_t4t_isodep_transmit</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>data_len</declname>
+        </param>
+        <briefdescription>
+<para>Exchange the specified amount of data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function can be called when a Tag is in selected state after calling <ref refid="group__nfc__t4t__isodep_ga9ff839d76d33bc880049d0a0665ae06c_1ga9ff839d76d33bc880049d0a0665ae06c" kindref="member">nfc_t4t_isodep_rats_send</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data to transfer over ISO-DEP protocol. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the data to transmit.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="216" column="5" declfile="include/nfc/t4t/isodep.h" declline="216" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__isodep_1gae5b90a4d46139b4a7f0ee76187cb2d28" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_t4t_isodep_on_timeout</definition>
+        <argsstring>(void)</argsstring>
+        <name>nfc_t4t_isodep_on_timeout</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Handle a transmission timeout error. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function must be called when a Reader/Writer detects a timeout in the Tag Response. When a timeout occurs, then the timeout error recovery procedure is started. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="225" column="6" declfile="include/nfc/t4t/isodep.h" declline="225" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__isodep_1gaaf341c030d05c07e5061ac0f09bfd92a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_isodep_init</definition>
+        <argsstring>(uint8_t *tx_buf, size_t tx_size, uint8_t *rx_buf, size_t rx_size, const struct nfc_t4t_isodep_cb *cb)</argsstring>
+        <name>nfc_t4t_isodep_init</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>tx_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>tx_size</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>rx_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>rx_size</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structnfc__t4t__isodep__cb" kindref="compound">nfc_t4t_isodep_cb</ref> *</type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Initialize NFC ISO-DEP protocol. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function prepares a buffer for the ISO-DEP protocol and validates it size.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">tx_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer for TX data. Data is set there before sending. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">tx_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the TX buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">rx_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer for RX data. Data is set there after receiving valid data from an NFC Tag. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">rx_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the RX buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="243" column="5" declfile="include/nfc/t4t/isodep.h" declline="243" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__t4t__isodep_1gae5f55ab1ede9beb54ea5e13ad3daec91" prot="public" static="no">
+        <name>NFC_T4T_ISODEP_HIST_MAX_LEN</name>
+        <initializer>15</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum historical bytes count in RATS Response. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="42" column="9" bodyfile="include/nfc/t4t/isodep.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>NFC Type 4 Tag ISO-DEP API. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

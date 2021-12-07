@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_3229dc35f2c18efbeebe9c947d869ea2" kind="dir">
+    <compoundname>include/zigbee</compoundname>
+    <innerfile refid="zigbee__app__utils_8h">zigbee_app_utils.h</innerfile>
+    <innerfile refid="zigbee__error__handler_8h">zigbee_error_handler.h</innerfile>
+    <innerfile refid="zigbee__fota_8h">zigbee_fota.h</innerfile>
+    <innerfile refid="zigbee__logger__eprxzcl_8h">zigbee_logger_eprxzcl.h</innerfile>
+    <innerfile refid="zigbee__zcl__scenes_8h">zigbee_zcl_scenes.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/zigbee/"/>
+  </compounddef>
+</doxygen>

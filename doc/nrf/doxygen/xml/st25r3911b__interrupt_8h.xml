@@ -1,0 +1,642 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="st25r3911b__interrupt_8h" kind="file" language="C++">
+    <compoundname>st25r3911b_interrupt.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <includes local="no">kernel.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>lib/st25r3911b/st25r3911b_interrupt.h</label>
+        <link refid="st25r3911b__interrupt_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>kernel.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__irq__def_gaf7f934eba1e5c03ea9895889f23745b3_1gaf7f934eba1e5c03ea9895889f23745b3" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_ALL</name>
+        <initializer>(0xFFFFFFUL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="29" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_ga3eada2d8b79f56809eb0fb9b2323dabc_1ga3eada2d8b79f56809eb0fb9b2323dabc" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_NONE</name>
+        <initializer>(0UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="30" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_ga894ed14c11d5435a9a9c7b3fd92c4612_1ga894ed14c11d5435a9a9c7b3fd92c4612" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_OSC</name>
+        <initializer>(0x80UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="31" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_ga0c8117ce8d9f3e76fe170e819a40ef30_1ga0c8117ce8d9f3e76fe170e819a40ef30" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_FWL</name>
+        <initializer>(0x40UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="32" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_gacb49e10ac0092ac53f023009d415b054_1gacb49e10ac0092ac53f023009d415b054" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_RXS</name>
+        <initializer>(0x20UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="33" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_gac00faf89dac208b704d1c5582b08847c_1gac00faf89dac208b704d1c5582b08847c" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_RXE</name>
+        <initializer>(0x10UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="34" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_ga01a6c5860a79c153a64c281a102ead81_1ga01a6c5860a79c153a64c281a102ead81" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_TXE</name>
+        <initializer>(0x08UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="35" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_gaba702304c78d07e754a1e73a7f95fb54_1gaba702304c78d07e754a1e73a7f95fb54" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_COL</name>
+        <initializer>(0x04UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="36" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_gac4a6a5d0de28ff99c7e7f83ef746efd0_1gac4a6a5d0de28ff99c7e7f83ef746efd0" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_TIM</name>
+        <initializer>(0x02UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="37" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_ga8a001dfaf3236ee999e28a41e0566bff_1ga8a001dfaf3236ee999e28a41e0566bff" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_ERR</name>
+        <initializer>(0x01UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="38" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_ga5aca1535f423aae4b0a1dc7b855f4c20_1ga5aca1535f423aae4b0a1dc7b855f4c20" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_DCT</name>
+        <initializer>(0x8000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="40" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_ga89babf704577e708a25664bfaf8e549c_1ga89babf704577e708a25664bfaf8e549c" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_NRE</name>
+        <initializer>(0x4000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="41" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_ga258ce444ed4b48aa1b957f4142f28b72_1ga258ce444ed4b48aa1b957f4142f28b72" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_GPE</name>
+        <initializer>(0x2000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="42" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_ga89503c3b79155d55d61f6c0cf901b890_1ga89503c3b79155d55d61f6c0cf901b890" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_EON</name>
+        <initializer>(0x1000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="43" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_gafcac1a1c748ba93f6f3ddb0cf51d3642_1gafcac1a1c748ba93f6f3ddb0cf51d3642" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_EOF</name>
+        <initializer>(0x0800UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="44" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_ga2a8201ea99f3db308f2998fae557e648_1ga2a8201ea99f3db308f2998fae557e648" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_CAC</name>
+        <initializer>(0x0400UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="45" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_ga17c24b1d9c09aae0583d6306f08e64b8_1ga17c24b1d9c09aae0583d6306f08e64b8" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_CAT</name>
+        <initializer>(0x0200UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="46" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_gafb99d149af956359b358eed0ec3b99ee_1gafb99d149af956359b358eed0ec3b99ee" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_NFCT</name>
+        <initializer>(0x0100UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="47" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_gad0b6c033cd7fb05aeac7ad9f9cbd147d_1gad0b6c033cd7fb05aeac7ad9f9cbd147d" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_CRC</name>
+        <initializer>(0x800000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="49" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_ga4d3a181c6f30a1eb1adaef2126d782eb_1ga4d3a181c6f30a1eb1adaef2126d782eb" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_PAR</name>
+        <initializer>(0x400000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="50" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_gafcb20d5c9fe62f63291aa684f0647071_1gafcb20d5c9fe62f63291aa684f0647071" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_ERR2</name>
+        <initializer>(0x200000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="51" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_gae02b5fc4697625c5d14293e763e32c47_1gae02b5fc4697625c5d14293e763e32c47" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_ERR1</name>
+        <initializer>(0x100000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="52" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_ga5df2c378611afdb14be9ace049d46171_1ga5df2c378611afdb14be9ace049d46171" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_WT</name>
+        <initializer>(0x080000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="53" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_gab8283cf016975990637203e7d8eb3680_1gab8283cf016975990637203e7d8eb3680" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_WAM</name>
+        <initializer>(0x040000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="54" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_gaead70569a7c4191f517edf45e6ca707e_1gaead70569a7c4191f517edf45e6ca707e" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_WPH</name>
+        <initializer>(0x020000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="55" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__irq__def_gac6395ee88a20d4c291d3e7c8b1a47e8b_1gac6395ee88a20d4c291d3e7c8b1a47e8b" prot="public" static="no">
+        <name>ST25R3911B_IRQ_MASK_WCAP</name>
+        <initializer>(0x010000UL)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="56" column="9" bodyfile="lib/st25r3911b/st25r3911b_interrupt.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__st25r3911b__interrupts_ga1efc786a5aa67dae2e2167984e4c1c32_1ga1efc786a5aa67dae2e2167984e4c1c32" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_irq_init</definition>
+        <argsstring>(struct k_sem *irq_sem)</argsstring>
+        <name>st25r3911b_irq_init</name>
+        <param>
+          <type>struct k_sem *</type>
+          <declname>irq_sem</declname>
+        </param>
+        <briefdescription>
+<para>Initialize NFC Reader interrupts. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The NFC Reader informs about interruptions by a rising edge on the pin. This function initializes the GPIO interface to handle this.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">irq_sem</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Semaphore needed to synchronize processing interrupts from other context.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="74" column="5" declfile="lib/st25r3911b/st25r3911b_interrupt.h" declline="74" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__interrupts_gad850f0c2bc6cc240e053cee826581966_1gad850f0c2bc6cc240e053cee826581966" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_irq_modify</definition>
+        <argsstring>(uint32_t clr_mask, uint32_t set_mask)</argsstring>
+        <name>st25r3911b_irq_modify</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>clr_mask</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>set_mask</declname>
+        </param>
+        <briefdescription>
+<para>Modify NFC Reader interrupts. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function modifies the currently enabled interrupts. The set mask covers the clear mask, which means that first, interrupts from the clear mask are disabled, and then interrupts from the set mask are enabled. The mask can be composed of several interrupts. For example: <computeroutput>mask = ST25R3911B_IRQ_MASK_PAR | ST25R3911B_IRQ_MASK_CRC</computeroutput></para>
+<para>See <ref refid="group__st25r3911b__irq__def" kindref="compound">ST25R3911B interrupts definition</ref> for available interrupts.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">clr_mask</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interrupts clear mask. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set_mask</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interrupts set mask.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="93" column="5" declfile="lib/st25r3911b/st25r3911b_interrupt.h" declline="93" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__interrupts_ga05660a3a9b35fe3718269aa24decdd29_1ga05660a3a9b35fe3718269aa24decdd29" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_irq_enable</definition>
+        <argsstring>(uint32_t mask)</argsstring>
+        <name>st25r3911b_irq_enable</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>mask</declname>
+        </param>
+        <briefdescription>
+<para>Enable NFC Reader interrupts. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The interrupts mask can be composed of several interrupts (see <ref refid="group__st25r3911b__irq__def" kindref="compound">ST25R3911B interrupts definition</ref>).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">mask</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interrupts to enable mask.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="105" column="5" declfile="lib/st25r3911b/st25r3911b_interrupt.h" declline="105" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__interrupts_ga95b756d12d03f54acd1a4e29e5a99ccd_1ga95b756d12d03f54acd1a4e29e5a99ccd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_irq_disable</definition>
+        <argsstring>(uint32_t mask)</argsstring>
+        <name>st25r3911b_irq_disable</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>mask</declname>
+        </param>
+        <briefdescription>
+<para>Disable NFC Reader interrupts. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The interrupts mask can be composed of several interrupts (see <ref refid="group__st25r3911b__irq__def" kindref="compound">ST25R3911B interrupts definition</ref>).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">mask</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interrupts to disable mask.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="117" column="5" declfile="lib/st25r3911b/st25r3911b_interrupt.h" declline="117" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__interrupts_ga62675ef6f9e2a111b16ed3c6d962ca46_1ga62675ef6f9e2a111b16ed3c6d962ca46" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r39_irq_clear</definition>
+        <argsstring>(void)</argsstring>
+        <name>st25r39_irq_clear</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Clear NFC Reader interrupts status. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Interrupts are cleared by reading NFC Reader interrupts registers.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="127" column="5" declfile="lib/st25r3911b/st25r3911b_interrupt.h" declline="127" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__interrupts_gae18f90d958eeb1ac08145a4f111c3337_1gae18f90d958eeb1ac08145a4f111c3337" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint32_t</type>
+        <definition>uint32_t st25r3911b_irq_wait_for_irq</definition>
+        <argsstring>(uint32_t mask, int32_t timeout)</argsstring>
+        <name>st25r3911b_irq_wait_for_irq</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>mask</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>timeout</declname>
+        </param>
+        <briefdescription>
+<para>Wait for NFC Reader interrupts. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function can wait for one interrupt or for several (defined by a mask). It returns after an interrupt occurs or after a time-out.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">mask</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interrupts mask (see <ref refid="group__st25r3911b__irq__def" kindref="compound">ST25R3911B interrupts definition</ref>). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">timeout</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Wait time in milliseconds.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Interrupts status. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="140" column="10" declfile="lib/st25r3911b/st25r3911b_interrupt.h" declline="140" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__interrupts_ga61609d145f7b5b31a4b0d5774fbba729_1ga61609d145f7b5b31a4b0d5774fbba729" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint32_t</type>
+        <definition>uint32_t st25r3911b_irq_read</definition>
+        <argsstring>(void)</argsstring>
+        <name>st25r3911b_irq_read</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Read NFC Reader interrupts status. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Three interrupts status registers are read and their status is returned.</para>
+<para><simplesect kind="return"><para>Interrupts status. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_interrupt.h" line="149" column="10" declfile="lib/st25r3911b/st25r3911b_interrupt.h" declline="149" declcolumn="10"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>ST25R3911B_INTERRUPT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_INTERRUPT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;kernel.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="group__st25r3911b__irq__def_gaf7f934eba1e5c03ea9895889f23745b3_1gaf7f934eba1e5c03ea9895889f23745b3" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_ALL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0xFFFFFFUL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="group__st25r3911b__irq__def_ga3eada2d8b79f56809eb0fb9b2323dabc_1ga3eada2d8b79f56809eb0fb9b2323dabc" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_NONE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="group__st25r3911b__irq__def_ga894ed14c11d5435a9a9c7b3fd92c4612_1ga894ed14c11d5435a9a9c7b3fd92c4612" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_OSC<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x80UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="group__st25r3911b__irq__def_ga0c8117ce8d9f3e76fe170e819a40ef30_1ga0c8117ce8d9f3e76fe170e819a40ef30" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_FWL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x40UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="group__st25r3911b__irq__def_gacb49e10ac0092ac53f023009d415b054_1gacb49e10ac0092ac53f023009d415b054" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_RXS<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x20UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="group__st25r3911b__irq__def_gac00faf89dac208b704d1c5582b08847c_1gac00faf89dac208b704d1c5582b08847c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_RXE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x10UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="group__st25r3911b__irq__def_ga01a6c5860a79c153a64c281a102ead81_1ga01a6c5860a79c153a64c281a102ead81" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_TXE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x08UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="group__st25r3911b__irq__def_gaba702304c78d07e754a1e73a7f95fb54_1gaba702304c78d07e754a1e73a7f95fb54" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_COL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x04UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="group__st25r3911b__irq__def_gac4a6a5d0de28ff99c7e7f83ef746efd0_1gac4a6a5d0de28ff99c7e7f83ef746efd0" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_TIM<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x02UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="group__st25r3911b__irq__def_ga8a001dfaf3236ee999e28a41e0566bff_1ga8a001dfaf3236ee999e28a41e0566bff" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_ERR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x01UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="group__st25r3911b__irq__def_ga5aca1535f423aae4b0a1dc7b855f4c20_1ga5aca1535f423aae4b0a1dc7b855f4c20" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_DCT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x8000UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="group__st25r3911b__irq__def_ga89babf704577e708a25664bfaf8e549c_1ga89babf704577e708a25664bfaf8e549c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_NRE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x4000UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="group__st25r3911b__irq__def_ga258ce444ed4b48aa1b957f4142f28b72_1ga258ce444ed4b48aa1b957f4142f28b72" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_GPE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x2000UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="group__st25r3911b__irq__def_ga89503c3b79155d55d61f6c0cf901b890_1ga89503c3b79155d55d61f6c0cf901b890" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_EON<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x1000UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="group__st25r3911b__irq__def_gafcac1a1c748ba93f6f3ddb0cf51d3642_1gafcac1a1c748ba93f6f3ddb0cf51d3642" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_EOF<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x0800UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="group__st25r3911b__irq__def_ga2a8201ea99f3db308f2998fae557e648_1ga2a8201ea99f3db308f2998fae557e648" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_CAC<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x0400UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="group__st25r3911b__irq__def_ga17c24b1d9c09aae0583d6306f08e64b8_1ga17c24b1d9c09aae0583d6306f08e64b8" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_CAT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x0200UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="group__st25r3911b__irq__def_gafb99d149af956359b358eed0ec3b99ee_1gafb99d149af956359b358eed0ec3b99ee" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_NFCT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x0100UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="group__st25r3911b__irq__def_gad0b6c033cd7fb05aeac7ad9f9cbd147d_1gad0b6c033cd7fb05aeac7ad9f9cbd147d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_CRC<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x800000UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="group__st25r3911b__irq__def_ga4d3a181c6f30a1eb1adaef2126d782eb_1ga4d3a181c6f30a1eb1adaef2126d782eb" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_PAR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x400000UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="group__st25r3911b__irq__def_gafcb20d5c9fe62f63291aa684f0647071_1gafcb20d5c9fe62f63291aa684f0647071" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_ERR2<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x200000UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="group__st25r3911b__irq__def_gae02b5fc4697625c5d14293e763e32c47_1gae02b5fc4697625c5d14293e763e32c47" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_ERR1<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x100000UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="group__st25r3911b__irq__def_ga5df2c378611afdb14be9ace049d46171_1ga5df2c378611afdb14be9ace049d46171" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_WT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x080000UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="group__st25r3911b__irq__def_gab8283cf016975990637203e7d8eb3680_1gab8283cf016975990637203e7d8eb3680" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_WAM<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x040000UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="group__st25r3911b__irq__def_gaead70569a7c4191f517edf45e6ca707e_1gaead70569a7c4191f517edf45e6ca707e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_WPH<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x020000UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="group__st25r3911b__irq__def_gac6395ee88a20d4c291d3e7c8b1a47e8b_1gac6395ee88a20d4c291d3e7c8b1a47e8b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_IRQ_MASK_WCAP<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x010000UL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="group__st25r3911b__interrupts_ga1efc786a5aa67dae2e2167984e4c1c32_1ga1efc786a5aa67dae2e2167984e4c1c32" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__interrupts_ga1efc786a5aa67dae2e2167984e4c1c32_1ga1efc786a5aa67dae2e2167984e4c1c32" kindref="member">st25r3911b_irq_init</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>k_sem<sp/>*irq_sem);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="group__st25r3911b__interrupts_gad850f0c2bc6cc240e053cee826581966_1gad850f0c2bc6cc240e053cee826581966" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__interrupts_gad850f0c2bc6cc240e053cee826581966_1gad850f0c2bc6cc240e053cee826581966" kindref="member">st25r3911b_irq_modify</ref>(uint32_t<sp/>clr_mask,<sp/>uint32_t<sp/>set_mask);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105" refid="group__st25r3911b__interrupts_ga05660a3a9b35fe3718269aa24decdd29_1ga05660a3a9b35fe3718269aa24decdd29" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__interrupts_ga05660a3a9b35fe3718269aa24decdd29_1ga05660a3a9b35fe3718269aa24decdd29" kindref="member">st25r3911b_irq_enable</ref>(uint32_t<sp/>mask);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117" refid="group__st25r3911b__interrupts_ga95b756d12d03f54acd1a4e29e5a99ccd_1ga95b756d12d03f54acd1a4e29e5a99ccd" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__interrupts_ga95b756d12d03f54acd1a4e29e5a99ccd_1ga95b756d12d03f54acd1a4e29e5a99ccd" kindref="member">st25r3911b_irq_disable</ref>(uint32_t<sp/>mask);</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127" refid="group__st25r3911b__interrupts_ga62675ef6f9e2a111b16ed3c6d962ca46_1ga62675ef6f9e2a111b16ed3c6d962ca46" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__interrupts_ga62675ef6f9e2a111b16ed3c6d962ca46_1ga62675ef6f9e2a111b16ed3c6d962ca46" kindref="member">st25r39_irq_clear</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140" refid="group__st25r3911b__interrupts_gae18f90d958eeb1ac08145a4f111c3337_1gae18f90d958eeb1ac08145a4f111c3337" refkind="member"><highlight class="normal">uint32_t<sp/><ref refid="group__st25r3911b__interrupts_gae18f90d958eeb1ac08145a4f111c3337_1gae18f90d958eeb1ac08145a4f111c3337" kindref="member">st25r3911b_irq_wait_for_irq</ref>(uint32_t<sp/>mask,<sp/>int32_t<sp/>timeout);</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149" refid="group__st25r3911b__interrupts_ga61609d145f7b5b31a4b0d5774fbba729_1ga61609d145f7b5b31a4b0d5774fbba729" refkind="member"><highlight class="normal">uint32_t<sp/><ref refid="group__st25r3911b__interrupts_ga61609d145f7b5b31a4b0d5774fbba729_1ga61609d145f7b5b31a4b0d5774fbba729" kindref="member">st25r3911b_irq_read</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>ST25R3911B_INTERRUPT_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="lib/st25r3911b/st25r3911b_interrupt.h"/>
+  </compounddef>
+</doxygen>

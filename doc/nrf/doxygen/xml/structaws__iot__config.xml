@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structaws__iot__config" kind="struct" language="C++" prot="public">
+    <compoundname>aws_iot_config</compoundname>
+    <includes refid="aws__iot_8h" local="no">aws_iot.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structaws__iot__config_a7b5fed44388fb409da88a6942b13fad4_1a7b5fed44388fb409da88a6942b13fad4" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int aws_iot_config::socket</definition>
+        <argsstring></argsstring>
+        <name>socket</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Socket for AWS IoT broker connection </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="164" column="5" bodyfile="include/net/aws_iot.h" bodystart="164" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structaws__iot__config_a1b9d1365046fb19cebbaa2333c764a53_1a1b9d1365046fb19cebbaa2333c764a53" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* aws_iot_config::client_id</definition>
+        <argsstring></argsstring>
+        <name>client_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Client id for AWS IoT broker connection, used when <verbatim>embed:rst:inline :kconfig:`CONFIG_AWS_IOT_CLIENT_ID_APP` </verbatim> is set. If not set an internal configurable static client id is used. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="169" column="6" bodyfile="include/net/aws_iot.h" bodystart="169" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structaws__iot__config_a72e978ee309605509b357a01c5f28ca5_1a72e978ee309605509b357a01c5f28ca5" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t aws_iot_config::client_id_len</definition>
+        <argsstring></argsstring>
+        <name>client_id_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of client_id string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="171" column="8" bodyfile="include/net/aws_iot.h" bodystart="171" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Structure for AWS IoT broker connection parameters. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/aws_iot.h" line="162" column="1" bodyfile="include/net/aws_iot.h" bodystart="162" bodyend="172"/>
+    <listofallmembers>
+      <member refid="structaws__iot__config_a1b9d1365046fb19cebbaa2333c764a53_1a1b9d1365046fb19cebbaa2333c764a53" prot="public" virt="non-virtual"><scope>aws_iot_config</scope><name>client_id</name></member>
+      <member refid="structaws__iot__config_a72e978ee309605509b357a01c5f28ca5_1a72e978ee309605509b357a01c5f28ca5" prot="public" virt="non-virtual"><scope>aws_iot_config</scope><name>client_id_len</name></member>
+      <member refid="structaws__iot__config_a7b5fed44388fb409da88a6942b13fad4_1a7b5fed44388fb409da88a6942b13fad4" prot="public" virt="non-virtual"><scope>aws_iot_config</scope><name>socket</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

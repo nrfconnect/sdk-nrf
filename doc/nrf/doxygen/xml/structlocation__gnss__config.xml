@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlocation__gnss__config" kind="struct" language="C++" prot="public">
+    <compoundname>location_gnss_config</compoundname>
+    <includes refid="location_8h" local="no">location.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlocation__gnss__config_a9aa5c24f7c35af7080b5de643f4f034a_1a9aa5c24f7c35af7080b5de643f4f034a" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t location_gnss_config::timeout</definition>
+        <argsstring></argsstring>
+        <name>timeout</name>
+        <briefdescription>
+<para>Timeout (in seconds), meaning how long GNSS is allowed to run when trying to acquire a fix. Zero means that the timer is disabled, meaning that GNSS will continue to search until it gets a fix or the application calls cancel. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Note that this is not real time as experienced by the user. Since GNSS cannot run while LTE is operating, the running time is counted from the instant when GNSS is allowed to start. Library waits until RRC connection is inactive before starting GNSS. If LTE power saving mode (PSM) is enabled and A-GPS is disabled, library waits until modem enters PSM before starting GNSS, thus maximizing uninterrupted operating window and minimizing power consumption. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="146" column="10" bodyfile="include/modem/location.h" bodystart="146" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__gnss__config_a43c2987d4accda47ff0ad2ebf2488a63_1a43c2987d4accda47ff0ad2ebf2488a63" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__location_gaedb56e1b41aaf462ff8f1382a82ee498_1gaedb56e1b41aaf462ff8f1382a82ee498" kindref="member">location_accuracy</ref></type>
+        <definition>enum location_accuracy location_gnss_config::accuracy</definition>
+        <argsstring></argsstring>
+        <name>accuracy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Desired accuracy level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="149" column="23" bodyfile="include/modem/location.h" bodystart="149" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>GNSS configuration. </para>
+    </detaileddescription>
+    <location file="include/modem/location.h" line="133" column="1" bodyfile="include/modem/location.h" bodystart="133" bodyend="150"/>
+    <listofallmembers>
+      <member refid="structlocation__gnss__config_a43c2987d4accda47ff0ad2ebf2488a63_1a43c2987d4accda47ff0ad2ebf2488a63" prot="public" virt="non-virtual"><scope>location_gnss_config</scope><name>accuracy</name></member>
+      <member refid="structlocation__gnss__config_a9aa5c24f7c35af7080b5de643f4f034a_1a9aa5c24f7c35af7080b5de643f4f034a" prot="public" virt="non-virtual"><scope>location_gnss_config</scope><name>timeout</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

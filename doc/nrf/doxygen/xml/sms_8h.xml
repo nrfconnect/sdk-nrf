@@ -1,0 +1,356 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="sms_8h" kind="file" language="C++">
+    <compoundname>sms.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <includes local="no">sys/types.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/modem/sms.h</label>
+        <link refid="sms_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>sys/types.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structsms__time" prot="public">sms_time</innerclass>
+    <innerclass refid="structsms__address" prot="public">sms_address</innerclass>
+    <innerclass refid="structsms__udh__concat" prot="public">sms_udh_concat</innerclass>
+    <innerclass refid="structsms__udh__app__port" prot="public">sms_udh_app_port</innerclass>
+    <innerclass refid="structsms__deliver__header" prot="public">sms_deliver_header</innerclass>
+    <innerclass refid="unionsms__header" prot="public">sms_header</innerclass>
+    <innerclass refid="structsms__data" prot="public">sms_data</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__sms_ga7106f991c6f4d63d30f1fa284e0666f5_1ga7106f991c6f4d63d30f1fa284e0666f5" prot="public" static="no">
+        <name>SMS_MAX_PAYLOAD_LEN_CHARS</name>
+        <initializer>160</initializer>
+        <briefdescription>
+<para>Maximum length of SMS in number of characters as specified in 3GPP TS 23.038 Section 4 and Section 6.1.2.1.1. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="41" column="9" bodyfile="include/modem/sms.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__sms_ga5172dfe6afa4cdafb11dc97cce42172b_1ga5172dfe6afa4cdafb11dc97cce42172b" prot="public" static="no">
+        <name>SMS_MAX_ADDRESS_LEN_CHARS</name>
+        <initializer>20</initializer>
+        <briefdescription>
+<para>Maximum length of SMS address, i.e., phone number, in characters as specified in 3GPP TS 23.040 Section 9.1.2.3. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="47" column="9" bodyfile="include/modem/sms.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__sms_gac3ecefc364f1d37b24489a264fe143bd_1gac3ecefc364f1d37b24489a264fe143bd" prot="public" static="no" strong="no">
+        <type></type>
+        <name>sms_type</name>
+        <enumvalue id="group__sms_gac3ecefc364f1d37b24489a264fe143bd_1ggac3ecefc364f1d37b24489a264fe143bda311717399328582760e62ce31aca40bd" prot="public">
+          <name>SMS_TYPE_DELIVER</name>
+          <briefdescription>
+<para>SMS-DELIVER message type. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__sms_gac3ecefc364f1d37b24489a264fe143bd_1ggac3ecefc364f1d37b24489a264fe143bda7f36a208b246db73b08b0b7625781cec" prot="public">
+          <name>SMS_TYPE_STATUS_REPORT</name>
+          <briefdescription>
+<para>SMS-STATUS-REPORT message type. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>SMS message type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="30" column="1" bodyfile="include/modem/sms.h" bodystart="30" bodyend="35"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__sms_ga4ab5e71cdedbcf4a52647448abe5e4bc_1ga4ab5e71cdedbcf4a52647448abe5e4bc" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* sms_callback_t) (struct sms_data *const data, void *context)</definition>
+        <argsstring>)(struct sms_data *const data, void *context)</argsstring>
+        <name>sms_callback_t</name>
+        <briefdescription>
+<para>SMS listener callback function. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="157" column="9" bodyfile="include/modem/sms.h" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__sms_ga36b4564cfd7c6af16132c4d5aff9b37f_1ga36b4564cfd7c6af16132c4d5aff9b37f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int sms_register_listener</definition>
+        <argsstring>(sms_callback_t listener, void *context)</argsstring>
+        <name>sms_register_listener</name>
+        <param>
+          <type><ref refid="group__sms_ga4ab5e71cdedbcf4a52647448abe5e4bc_1ga4ab5e71cdedbcf4a52647448abe5e4bc" kindref="member">sms_callback_t</ref></type>
+          <declname>listener</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+<para>Register a new listener to SMS library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Also registers to modem&apos;s SMS service if it&apos;s not already subscribed.</para>
+<para>A listener is identified by a unique handle value. This handle should be used to unregister the listener. A listener can be registered multiple times with the same or a different context.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">listener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback function. Cannot be null. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>User context. Can be null if not used.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOSPC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>List of observers is full. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EBUSY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Indicates that one SMS client has already been registered towards the modem and SMS subscriber module is not able to do it. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Out of memory. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Handle identifying the listener, or a negative value if an error occurred. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="179" column="5" declfile="include/modem/sms.h" declline="179" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__sms_ga8197371fb439ad39fa21970e3125d39f_1ga8197371fb439ad39fa21970e3125d39f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sms_unregister_listener</definition>
+        <argsstring>(int handle)</argsstring>
+        <name>sms_unregister_listener</name>
+        <param>
+          <type>int</type>
+          <declname>handle</declname>
+        </param>
+        <briefdescription>
+<para>Unregister a listener. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Also unregisters from modem&apos;s SMS service if there are no listeners registered.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">handle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Handle identifying the listener to unregister. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="189" column="6" declfile="include/modem/sms.h" declline="189" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__sms_gaa814f1ed281e3f8edd0f2505d6d63a64_1gaa814f1ed281e3f8edd0f2505d6d63a64" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int sms_send_text</definition>
+        <argsstring>(const char *number, const char *text)</argsstring>
+        <name>sms_send_text</name>
+        <param>
+          <type>const char *</type>
+          <declname>number</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>text</declname>
+        </param>
+        <briefdescription>
+<para>Send SMS message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Sending is done with GSM 7bit encoding used to encode textual SMS messages. SMS-SUBMIT message is specified in 3GPP TS 23.040 Section 9.2.2.2 and data encoding in 3GPP TS 23.038 Section 4 and Section 6.2. This function doesn&apos;t support sending of 8bit binary data messages or UCS2 encoded text.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">number</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Recipient number. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">text</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Text to be sent.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid parameter. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, otherwise error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="205" column="5" declfile="include/modem/sms.h" declline="205" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>SMS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SMS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="group__sms_gac3ecefc364f1d37b24489a264fe143bd_1gac3ecefc364f1d37b24489a264fe143bd" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__sms_gac3ecefc364f1d37b24489a264fe143bd_1gac3ecefc364f1d37b24489a264fe143bd" kindref="member">sms_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="32" refid="group__sms_gac3ecefc364f1d37b24489a264fe143bd_1ggac3ecefc364f1d37b24489a264fe143bda311717399328582760e62ce31aca40bd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__sms_gac3ecefc364f1d37b24489a264fe143bd_1ggac3ecefc364f1d37b24489a264fe143bda311717399328582760e62ce31aca40bd" kindref="member">SMS_TYPE_DELIVER</ref>,</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__sms_gac3ecefc364f1d37b24489a264fe143bd_1ggac3ecefc364f1d37b24489a264fe143bda7f36a208b246db73b08b0b7625781cec" kindref="member">SMS_TYPE_STATUS_REPORT</ref></highlight></codeline>
+<codeline lineno="35" refid="group__sms_gac3ecefc364f1d37b24489a264fe143bd_1ggac3ecefc364f1d37b24489a264fe143bda7f36a208b246db73b08b0b7625781cec" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="group__sms_ga7106f991c6f4d63d30f1fa284e0666f5_1ga7106f991c6f4d63d30f1fa284e0666f5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SMS_MAX_PAYLOAD_LEN_CHARS<sp/>160</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="group__sms_ga5172dfe6afa4cdafb11dc97cce42172b_1ga5172dfe6afa4cdafb11dc97cce42172b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SMS_MAX_ADDRESS_LEN_CHARS<sp/>20</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="structsms__time" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structsms__time" kindref="compound">sms_time</ref><sp/>{</highlight></codeline>
+<codeline lineno="53" refid="structsms__time_a1a79eaeab1cf4a825dd286a3235e25a0_1a1a79eaeab1cf4a825dd286a3235e25a0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structsms__time_a1a79eaeab1cf4a825dd286a3235e25a0_1a1a79eaeab1cf4a825dd286a3235e25a0" kindref="member">year</ref>;<sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="54" refid="structsms__time_a526f4452857b5cc485ed6df68b10f23a_1a526f4452857b5cc485ed6df68b10f23a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structsms__time_a526f4452857b5cc485ed6df68b10f23a_1a526f4452857b5cc485ed6df68b10f23a" kindref="member">month</ref>;<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="55" refid="structsms__time_a901e070b1b171f1efb837de34a076d41_1a901e070b1b171f1efb837de34a076d41" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structsms__time_a901e070b1b171f1efb837de34a076d41_1a901e070b1b171f1efb837de34a076d41" kindref="member">day</ref>;<sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="56" refid="structsms__time_a22ec6ee13014e8164920649084880310_1a22ec6ee13014e8164920649084880310" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structsms__time_a22ec6ee13014e8164920649084880310_1a22ec6ee13014e8164920649084880310" kindref="member">hour</ref>;<sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="57" refid="structsms__time_ae6fda5a59d05b08db91736332b5c6110_1ae6fda5a59d05b08db91736332b5c6110" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structsms__time_ae6fda5a59d05b08db91736332b5c6110_1ae6fda5a59d05b08db91736332b5c6110" kindref="member">minute</ref>;<sp/><sp/></highlight></codeline>
+<codeline lineno="58" refid="structsms__time_a31f958497e53fdd7ca2c58538bcc4381_1a31f958497e53fdd7ca2c58538bcc4381" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structsms__time_a31f958497e53fdd7ca2c58538bcc4381_1a31f958497e53fdd7ca2c58538bcc4381" kindref="member">second</ref>;<sp/><sp/></highlight></codeline>
+<codeline lineno="59" refid="structsms__time_a8486dda7229afb85f0eb0627f812c852_1a8486dda7229afb85f0eb0627f812c852" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int8_t<sp/><ref refid="structsms__time_a8486dda7229afb85f0eb0627f812c852_1a8486dda7229afb85f0eb0627f812c852" kindref="member">timezone</ref>;<sp/></highlight></codeline>
+<codeline lineno="60"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="structsms__address" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structsms__address" kindref="compound">sms_address</ref><sp/>{</highlight></codeline>
+<codeline lineno="70" refid="structsms__address_ab8d20ee2557e3d68b0fe5c6e76b21dcf_1ab8d20ee2557e3d68b0fe5c6e76b21dcf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structsms__address_ab8d20ee2557e3d68b0fe5c6e76b21dcf_1ab8d20ee2557e3d68b0fe5c6e76b21dcf" kindref="member">address_str</ref>[<ref refid="group__sms_ga5172dfe6afa4cdafb11dc97cce42172b_1ga5172dfe6afa4cdafb11dc97cce42172b" kindref="member">SMS_MAX_ADDRESS_LEN_CHARS</ref><sp/>+<sp/>1];</highlight></codeline>
+<codeline lineno="72" refid="structsms__address_a797f89fc9361ae031e4359785f97e846_1a797f89fc9361ae031e4359785f97e846" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structsms__address_a797f89fc9361ae031e4359785f97e846_1a797f89fc9361ae031e4359785f97e846" kindref="member">length</ref>;</highlight></codeline>
+<codeline lineno="74" refid="structsms__address_a4f4a560887525bc6ac8745712b5e1434_1a4f4a560887525bc6ac8745712b5e1434" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structsms__address_a4f4a560887525bc6ac8745712b5e1434_1a4f4a560887525bc6ac8745712b5e1434" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="structsms__udh__concat" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structsms__udh__concat" kindref="compound">sms_udh_concat</ref><sp/>{</highlight></codeline>
+<codeline lineno="84" refid="structsms__udh__concat_a20015bfd6eeff5eb14e51f9227f1591e_1a20015bfd6eeff5eb14e51f9227f1591e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structsms__udh__concat_a20015bfd6eeff5eb14e51f9227f1591e_1a20015bfd6eeff5eb14e51f9227f1591e" kindref="member">present</ref>;</highlight></codeline>
+<codeline lineno="86" refid="structsms__udh__concat_a7ad83de17f6f5e3c951cd0cc21e27da1_1a7ad83de17f6f5e3c951cd0cc21e27da1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structsms__udh__concat_a7ad83de17f6f5e3c951cd0cc21e27da1_1a7ad83de17f6f5e3c951cd0cc21e27da1" kindref="member">ref_number</ref>;</highlight></codeline>
+<codeline lineno="88" refid="structsms__udh__concat_a49bed9faf1f20dc07192fb11e573df67_1a49bed9faf1f20dc07192fb11e573df67" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structsms__udh__concat_a49bed9faf1f20dc07192fb11e573df67_1a49bed9faf1f20dc07192fb11e573df67" kindref="member">total_msgs</ref>;</highlight></codeline>
+<codeline lineno="90" refid="structsms__udh__concat_a974b5d6b8a8ccbee45ed365c577280ec_1a974b5d6b8a8ccbee45ed365c577280ec" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structsms__udh__concat_a974b5d6b8a8ccbee45ed365c577280ec_1a974b5d6b8a8ccbee45ed365c577280ec" kindref="member">seq_number</ref>;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98" refid="structsms__udh__app__port" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structsms__udh__app__port" kindref="compound">sms_udh_app_port</ref><sp/>{</highlight></codeline>
+<codeline lineno="100" refid="structsms__udh__app__port_a5cadcc19aff59b00384a70240791dcfe_1a5cadcc19aff59b00384a70240791dcfe" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structsms__udh__app__port_a5cadcc19aff59b00384a70240791dcfe_1a5cadcc19aff59b00384a70240791dcfe" kindref="member">present</ref>;</highlight></codeline>
+<codeline lineno="102" refid="structsms__udh__app__port_a595ab37434bf3b5f088fbc5fa3d22d26_1a595ab37434bf3b5f088fbc5fa3d22d26" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structsms__udh__app__port_a595ab37434bf3b5f088fbc5fa3d22d26_1a595ab37434bf3b5f088fbc5fa3d22d26" kindref="member">dest_port</ref>;</highlight></codeline>
+<codeline lineno="104" refid="structsms__udh__app__port_a174f8bfba04bffbc2ef85460a6ae277b_1a174f8bfba04bffbc2ef85460a6ae277b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structsms__udh__app__port_a174f8bfba04bffbc2ef85460a6ae277b_1a174f8bfba04bffbc2ef85460a6ae277b" kindref="member">src_port</ref>;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113" refid="structsms__deliver__header" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structsms__deliver__header" kindref="compound">sms_deliver_header</ref><sp/>{</highlight></codeline>
+<codeline lineno="115" refid="structsms__deliver__header_a5250db6d80f3f495670f892643b0ed06_1a5250db6d80f3f495670f892643b0ed06" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structsms__time" kindref="compound">sms_time</ref><sp/><ref refid="structsms__deliver__header_a5250db6d80f3f495670f892643b0ed06_1a5250db6d80f3f495670f892643b0ed06" kindref="member">time</ref>;</highlight></codeline>
+<codeline lineno="117" refid="structsms__deliver__header_ae9742593413d2111ef5bc157f0929a9b_1ae9742593413d2111ef5bc157f0929a9b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structsms__address" kindref="compound">sms_address</ref><sp/><ref refid="structsms__deliver__header_ae9742593413d2111ef5bc157f0929a9b_1ae9742593413d2111ef5bc157f0929a9b" kindref="member">originating_address</ref>;</highlight></codeline>
+<codeline lineno="119" refid="structsms__deliver__header_ab1c7ed705e46c86a561711b58d0dacdb_1ab1c7ed705e46c86a561711b58d0dacdb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structsms__udh__app__port" kindref="compound">sms_udh_app_port</ref><sp/><ref refid="structsms__deliver__header_ab1c7ed705e46c86a561711b58d0dacdb_1ab1c7ed705e46c86a561711b58d0dacdb" kindref="member">app_port</ref>;</highlight></codeline>
+<codeline lineno="121" refid="structsms__deliver__header_a78bbea3e9cf89ef73aeade299fcb8a78_1a78bbea3e9cf89ef73aeade299fcb8a78" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structsms__udh__concat" kindref="compound">sms_udh_concat</ref><sp/><ref refid="structsms__deliver__header_a78bbea3e9cf89ef73aeade299fcb8a78_1a78bbea3e9cf89ef73aeade299fcb8a78" kindref="member">concatenated</ref>;</highlight></codeline>
+<codeline lineno="122"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129" refid="unionsms__header" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">union<sp/></highlight><highlight class="normal"><ref refid="unionsms__header" kindref="compound">sms_header</ref><sp/>{</highlight></codeline>
+<codeline lineno="130" refid="unionsms__header_a0b6b77a712c3f1a252c727d388eca1ce_1a0b6b77a712c3f1a252c727d388eca1ce" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structsms__deliver__header" kindref="compound">sms_deliver_header</ref><sp/><ref refid="unionsms__header_a0b6b77a712c3f1a252c727d388eca1ce_1a0b6b77a712c3f1a252c727d388eca1ce" kindref="member">deliver</ref>;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134" refid="structsms__data" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structsms__data" kindref="compound">sms_data</ref><sp/>{</highlight></codeline>
+<codeline lineno="136" refid="structsms__data_afd644ebaa14fce49b602b4d22fe9bfe0_1afd644ebaa14fce49b602b4d22fe9bfe0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__sms_gac3ecefc364f1d37b24489a264fe143bd_1gac3ecefc364f1d37b24489a264fe143bd" kindref="member">sms_type</ref><sp/><ref refid="structsms__data_afd644ebaa14fce49b602b4d22fe9bfe0_1afd644ebaa14fce49b602b4d22fe9bfe0" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="138" refid="structsms__data_ae3a5cb2a6dc7d7f302a86c191608ed0b_1ae3a5cb2a6dc7d7f302a86c191608ed0b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">union<sp/></highlight><highlight class="normal"><ref refid="unionsms__header" kindref="compound">sms_header</ref><sp/><ref refid="structsms__data_ae3a5cb2a6dc7d7f302a86c191608ed0b_1ae3a5cb2a6dc7d7f302a86c191608ed0b" kindref="member">header</ref>;</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141" refid="structsms__data_a3c6d7d3ba3b3a586f41e9924896fda56_1a3c6d7d3ba3b3a586f41e9924896fda56" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structsms__data_a3c6d7d3ba3b3a586f41e9924896fda56_1a3c6d7d3ba3b3a586f41e9924896fda56" kindref="member">payload_len</ref>;</highlight></codeline>
+<codeline lineno="153" refid="structsms__data_a5cbea550bad512b2332a578af43670e9_1a5cbea550bad512b2332a578af43670e9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structsms__data_a5cbea550bad512b2332a578af43670e9_1a5cbea550bad512b2332a578af43670e9" kindref="member">payload</ref>[<ref refid="group__sms_ga7106f991c6f4d63d30f1fa284e0666f5_1ga7106f991c6f4d63d30f1fa284e0666f5" kindref="member">SMS_MAX_PAYLOAD_LEN_CHARS</ref><sp/>+<sp/>1];</highlight></codeline>
+<codeline lineno="154"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157" refid="group__sms_ga4ab5e71cdedbcf4a52647448abe5e4bc_1ga4ab5e71cdedbcf4a52647448abe5e4bc" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__sms_ga4ab5e71cdedbcf4a52647448abe5e4bc_1ga4ab5e71cdedbcf4a52647448abe5e4bc" kindref="member">sms_callback_t</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structsms__data" kindref="compound">sms_data</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>data,<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*context);</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179" refid="group__sms_ga36b4564cfd7c6af16132c4d5aff9b37f_1ga36b4564cfd7c6af16132c4d5aff9b37f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__sms_ga36b4564cfd7c6af16132c4d5aff9b37f_1ga36b4564cfd7c6af16132c4d5aff9b37f" kindref="member">sms_register_listener</ref>(<ref refid="group__sms_ga4ab5e71cdedbcf4a52647448abe5e4bc_1ga4ab5e71cdedbcf4a52647448abe5e4bc" kindref="member">sms_callback_t</ref><sp/>listener,<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*context);</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189" refid="group__sms_ga8197371fb439ad39fa21970e3125d39f_1ga8197371fb439ad39fa21970e3125d39f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__sms_ga8197371fb439ad39fa21970e3125d39f_1ga8197371fb439ad39fa21970e3125d39f" kindref="member">sms_unregister_listener</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>handle);</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205" refid="group__sms_gaa814f1ed281e3f8edd0f2505d6d63a64_1gaa814f1ed281e3f8edd0f2505d6d63a64" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__sms_gaa814f1ed281e3f8edd0f2505d6d63a64_1gaa814f1ed281e3f8edd0f2505d6d63a64" kindref="member">sms_send_text</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*number,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*text);</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>SMS_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/modem/sms.h"/>
+  </compounddef>
+</doxygen>

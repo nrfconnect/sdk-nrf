@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__ponoff" kind="group">
+    <compoundname>bt_mesh_ponoff</compoundname>
+    <title>Generic Power OnOff Models</title>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__mesh__ponoff_1gaafb92a05caf33aee2d2b7af52719fcf7" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_on_power_up</name>
+        <enumvalue id="group__bt__mesh__ponoff_gaafb92a05caf33aee2d2b7af52719fcf7_1ggaafb92a05caf33aee2d2b7af52719fcf7a4038cbc537283c305272e267a2ec8d82" prot="public">
+          <name>BT_MESH_ON_POWER_UP_OFF</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>On power up, set state to off. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__ponoff_gaafb92a05caf33aee2d2b7af52719fcf7_1ggaafb92a05caf33aee2d2b7af52719fcf7aad5cd74c807aa691e4cd6070a10c5a10" prot="public">
+          <name>BT_MESH_ON_POWER_UP_ON</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>On power up, set state to on. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__ponoff_gaafb92a05caf33aee2d2b7af52719fcf7_1ggaafb92a05caf33aee2d2b7af52719fcf7a1935b3aae753f274747ee9089ffdddac" prot="public">
+          <name>BT_MESH_ON_POWER_UP_RESTORE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>On power up, Restore the previous state value. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__ponoff_gaafb92a05caf33aee2d2b7af52719fcf7_1ggaafb92a05caf33aee2d2b7af52719fcf7a5faf7474cae72cd8d35ef1ea6b647727" prot="public">
+          <name>BT_MESH_ON_POWER_UP_INVALID</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Invalid power up state. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Generic Power OnOff On Power Up state values. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_ponoff.h" line="23" column="1" bodyfile="include/bluetooth/mesh/gen_ponoff.h" bodystart="23" bodyend="32"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Generic Power OnOff models. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

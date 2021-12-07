@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__rscs__cp__cb" kind="struct" language="C++" prot="public">
+    <compoundname>bt_rscs_cp_cb</compoundname>
+    <includes refid="rscs_8h" local="no">rscs.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__rscs__cp__cb_a3af1667b2d50f693bfcbc7b22a8ccbd0_1a3af1667b2d50f693bfcbc7b22a8ccbd0" prot="public" static="no" mutable="no">
+        <type>int(*</type>
+        <definition>int(* bt_rscs_cp_cb::set_cumulative) (uint32_t total_distance)</definition>
+        <argsstring>)(uint32_t total_distance)</argsstring>
+        <name>set_cumulative</name>
+        <briefdescription>
+<para>Set Cumulative Value Procedure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>total_distance</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New value for total distance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="105" column="1" bodyfile="include/bluetooth/services/rscs.h" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rscs__cp__cb_a22f92117038dfeb0ec2b44d812ed1380_1a22f92117038dfeb0ec2b44d812ed1380" prot="public" static="no" mutable="no">
+        <type>int(*</type>
+        <definition>int(* bt_rscs_cp_cb::calibrarion) (void)</definition>
+        <argsstring>)(void)</argsstring>
+        <name>calibrarion</name>
+        <briefdescription>
+<para>Start Sensor Calibration Procedure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a negative error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="112" column="1" bodyfile="include/bluetooth/services/rscs.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rscs__cp__cb_a0cad73ce18458d821451713cdf50423a_1a0cad73ce18458d821451713cdf50423a" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_rscs_cp_cb::update_loc) (uint8_t location)</definition>
+        <argsstring>)(uint8_t location)</argsstring>
+        <name>update_loc</name>
+        <briefdescription>
+<para>Update Sensor Location Procedure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>location</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New sensor localization value. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="118" column="1" bodyfile="include/bluetooth/services/rscs.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>SC Control Point callback structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/rscs.h" line="98" column="1" bodyfile="include/bluetooth/services/rscs.h" bodystart="98" bodyend="119"/>
+    <listofallmembers>
+      <member refid="structbt__rscs__cp__cb_a22f92117038dfeb0ec2b44d812ed1380_1a22f92117038dfeb0ec2b44d812ed1380" prot="public" virt="non-virtual"><scope>bt_rscs_cp_cb</scope><name>calibrarion</name></member>
+      <member refid="structbt__rscs__cp__cb_a3af1667b2d50f693bfcbc7b22a8ccbd0_1a3af1667b2d50f693bfcbc7b22a8ccbd0" prot="public" virt="non-virtual"><scope>bt_rscs_cp_cb</scope><name>set_cumulative</name></member>
+      <member refid="structbt__rscs__cp__cb_a0cad73ce18458d821451713cdf50423a_1a0cad73ce18458d821451713cdf50423a" prot="public" virt="non-virtual"><scope>bt_rscs_cp_cb</scope><name>update_loc</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

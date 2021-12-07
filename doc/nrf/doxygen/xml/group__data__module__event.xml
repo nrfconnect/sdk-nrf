@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__data__module__event" kind="group">
+    <compoundname>data_module_event</compoundname>
+    <title>Data module event</title>
+    <innerclass refid="structdata__module__data__buffers" prot="public">data_module_data_buffers</innerclass>
+    <innerclass refid="structdata__module__event" prot="public">data_module_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__data__module__event_1gab763b4fd8602cd94e5f97520e209fc82" prot="public" static="no" strong="no">
+        <type></type>
+        <name>data_module_event_type</name>
+        <enumvalue id="group__data__module__event_gab763b4fd8602cd94e5f97520e209fc82_1ggab763b4fd8602cd94e5f97520e209fc82aa9b102a7ce632aa76e9c43808661c53d" prot="public">
+          <name>DATA_EVT_DATA_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__data__module__event_gab763b4fd8602cd94e5f97520e209fc82_1ggab763b4fd8602cd94e5f97520e209fc82afe55000f192b8f122951cb9c470e5729" prot="public">
+          <name>DATA_EVT_DATA_SEND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__data__module__event_gab763b4fd8602cd94e5f97520e209fc82_1ggab763b4fd8602cd94e5f97520e209fc82a81fc8a0f86b816328ee7f7107b9c91b4" prot="public">
+          <name>DATA_EVT_DATA_SEND_BATCH</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__data__module__event_gab763b4fd8602cd94e5f97520e209fc82_1ggab763b4fd8602cd94e5f97520e209fc82ac028b2588c0567939f9b317bf49a2ca9" prot="public">
+          <name>DATA_EVT_UI_DATA_SEND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__data__module__event_gab763b4fd8602cd94e5f97520e209fc82_1ggab763b4fd8602cd94e5f97520e209fc82afa233bf816efceb0dc0b20152262295f" prot="public">
+          <name>DATA_EVT_UI_DATA_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__data__module__event_gab763b4fd8602cd94e5f97520e209fc82_1ggab763b4fd8602cd94e5f97520e209fc82aa278548af24a5ed5f0b7a3cb4f62e4ee" prot="public">
+          <name>DATA_EVT_NEIGHBOR_CELLS_DATA_SEND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__data__module__event_gab763b4fd8602cd94e5f97520e209fc82_1ggab763b4fd8602cd94e5f97520e209fc82ab7e24d7de1ef29888158443701b25041" prot="public">
+          <name>DATA_EVT_AGPS_REQUEST_DATA_SEND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__data__module__event_gab763b4fd8602cd94e5f97520e209fc82_1ggab763b4fd8602cd94e5f97520e209fc82ad26f5a08272893061dd1f012253ac08e" prot="public">
+          <name>DATA_EVT_CONFIG_INIT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__data__module__event_gab763b4fd8602cd94e5f97520e209fc82_1ggab763b4fd8602cd94e5f97520e209fc82af4c7453a576393634c09abc5804e7b15" prot="public">
+          <name>DATA_EVT_CONFIG_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__data__module__event_gab763b4fd8602cd94e5f97520e209fc82_1ggab763b4fd8602cd94e5f97520e209fc82a061bf5a6143a7c0aeadcfdaad58fcd11" prot="public">
+          <name>DATA_EVT_CONFIG_SEND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__data__module__event_gab763b4fd8602cd94e5f97520e209fc82_1ggab763b4fd8602cd94e5f97520e209fc82a4635ff6126cc8fb61752f5a5c4382eba" prot="public">
+          <name>DATA_EVT_CONFIG_GET</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__data__module__event_gab763b4fd8602cd94e5f97520e209fc82_1ggab763b4fd8602cd94e5f97520e209fc82a76e32f1334360e09d15d3927139b449d" prot="public">
+          <name>DATA_EVT_SHUTDOWN_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__data__module__event_gab763b4fd8602cd94e5f97520e209fc82_1ggab763b4fd8602cd94e5f97520e209fc82a4fdcb856a9dad530ba156e07c4cc70f2" prot="public">
+          <name>DATA_EVT_DATE_TIME_OBTAINED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__data__module__event_gab763b4fd8602cd94e5f97520e209fc82_1ggab763b4fd8602cd94e5f97520e209fc82a027fc31008644d96c69f1b5b5cd1fb18" prot="public">
+          <name>DATA_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Data event types submitted by Data module. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/data_module_event.h" line="25" column="1" bodyfile="applications/asset_tracker_v2/src/events/data_module_event.h" bodystart="25" bodyend="40"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Data module event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structcloud__event" kind="struct" language="C++" prot="public">
+    <compoundname>cloud_event</compoundname>
+    <includes refid="cloud_8h" local="no">cloud.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structcloud__event_ad5ea849fdfa16efcade9a2f7fd229f19_1ad5ea849fdfa16efcade9a2f7fd229f19" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1ga83f6f81630a03b2bc02ad2f8eb7f97bf" kindref="member">cloud_event_type</ref></type>
+        <definition>enum cloud_event_type cloud_event::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="143" column="22" bodyfile="include/net/cloud.h" bodystart="143" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__event_a43e54624becfb1967a1fae995fdf7626_1a43e54624becfb1967a1fae995fdf7626" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structcloud__msg" kindref="compound">cloud_msg</ref></type>
+        <definition>struct cloud_msg cloud_event::msg</definition>
+        <argsstring></argsstring>
+        <name>msg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="145" column="16" bodyfile="include/net/cloud.h" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__event_a934e1b85f0e9a24ce26998679ad8c05f_1a934e1b85f0e9a24ce26998679ad8c05f" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int cloud_event::err</definition>
+        <argsstring></argsstring>
+        <name>err</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="146" column="5" bodyfile="include/net/cloud.h" bodystart="146" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__event_a002ecdcbaa1a9f2bcc787d21f24182c1_1a002ecdcbaa1a9f2bcc787d21f24182c1" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int cloud_event::fota_progress</definition>
+        <argsstring></argsstring>
+        <name>fota_progress</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>FOTA progress in percentage. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="148" column="5" bodyfile="include/net/cloud.h" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__event_a65ad368866969b733e82ebf614e08aae_1a65ad368866969b733e82ebf614e08aae" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool cloud_event::persistent_session</definition>
+        <argsstring></argsstring>
+        <name>persistent_session</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="149" column="6" bodyfile="include/net/cloud.h" bodystart="149" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__event_ab05bcb2c783f9003a77aac099fb8a567_1ab05bcb2c783f9003a77aac099fb8a567" prot="public" static="no" mutable="no">
+        <type>union cloud_event::@155</type>
+        <definition>union cloud_event::@155 cloud_event::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="150" column="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Cloud event type. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>cloud_endpoint</label>
+        <link refid="structcloud__endpoint"/>
+      </node>
+      <node id="1">
+        <label>cloud_event</label>
+        <link refid="structcloud__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>msg</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>cloud_msg</label>
+        <link refid="structcloud__msg"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>endpoint</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/net/cloud.h" line="142" column="1" bodyfile="include/net/cloud.h" bodystart="142" bodyend="151"/>
+    <listofallmembers>
+      <member refid="structcloud__event_ab05bcb2c783f9003a77aac099fb8a567_1ab05bcb2c783f9003a77aac099fb8a567" prot="public" virt="non-virtual"><scope>cloud_event</scope><name>data</name></member>
+      <member refid="structcloud__event_a934e1b85f0e9a24ce26998679ad8c05f_1a934e1b85f0e9a24ce26998679ad8c05f" prot="public" virt="non-virtual"><scope>cloud_event</scope><name>err</name></member>
+      <member refid="structcloud__event_a002ecdcbaa1a9f2bcc787d21f24182c1_1a002ecdcbaa1a9f2bcc787d21f24182c1" prot="public" virt="non-virtual"><scope>cloud_event</scope><name>fota_progress</name></member>
+      <member refid="structcloud__event_a43e54624becfb1967a1fae995fdf7626_1a43e54624becfb1967a1fae995fdf7626" prot="public" virt="non-virtual"><scope>cloud_event</scope><name>msg</name></member>
+      <member refid="structcloud__event_a65ad368866969b733e82ebf614e08aae_1a65ad368866969b733e82ebf614e08aae" prot="public" virt="non-virtual"><scope>cloud_event</scope><name>persistent_session</name></member>
+      <member refid="structcloud__event_ad5ea849fdfa16efcade9a2f7fd229f19_1ad5ea849fdfa16efcade9a2f7fd229f19" prot="public" virt="non-virtual"><scope>cloud_event</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

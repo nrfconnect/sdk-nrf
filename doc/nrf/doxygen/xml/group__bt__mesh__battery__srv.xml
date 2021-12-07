@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__battery__srv" kind="group">
+    <compoundname>bt_mesh_battery_srv</compoundname>
+    <title>Generic Battery Server model</title>
+    <innerclass refid="structbt__mesh__battery__srv" prot="public">bt_mesh_battery_srv</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__battery__srv_1ga6bfecdc8ecad04e78f19d0c737b48250" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_battery_srv_pub</definition>
+        <argsstring>(struct bt_mesh_battery_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_battery_status *status)</argsstring>
+        <name>bt_mesh_battery_srv_pub</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__battery__srv" kindref="compound">bt_mesh_battery_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__battery__status" kindref="compound">bt_mesh_battery_status</ref> *</type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+<para>Publish the Generic Battery Server model status. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Asynchronously publishes a Generic Battery status message with the configured publish parameters.</para>
+<para><simplesect kind="note"><para>This API is only used for publishing unprompted status messages. Response messages for get and set messages are handled internally.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server instance to publish on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to send with the default publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current status.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully published a Generic Battery Status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_battery_srv.h" line="99" column="5" declfile="include/bluetooth/mesh/gen_battery_srv.h" declline="99" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__battery__srv_1gadb722cfa9737866d44160f4d561243e4" prot="public" static="no">
+        <name>BT_MESH_BATTERY_SRV_INIT</name>
+        <param><defname>_get_handler</defname></param>
+        <initializer>	{                                                                      \
+		.get = _get_handler,                                           \
+	}</initializer>
+        <briefdescription>
+<para>Init parameters for a <ref refid="group__bt__mesh__battery__srv" kindref="compound">Generic Battery Server model</ref> instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_get_handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Get handler function for the Battery state. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_battery_srv.h" line="32" column="9" bodyfile="include/bluetooth/mesh/gen_battery_srv.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__battery__srv_1gaba08dab0f48bb29e4809b398a4448aa7" prot="public" static="no">
+        <name>BT_MESH_MODEL_BATTERY_SRV</name>
+        <param><defname>_srv</defname></param>
+        <initializer>	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_BATTERY_SRV,                     \
+			 _bt_mesh_battery_srv_op, &amp;(_srv)-&gt;pub,                \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__battery__srv" kindref="compound">bt_mesh_battery_srv</ref>,   \
+						 _srv),                        \
+			 &amp;_bt_mesh_battery_srv_cb)</initializer>
+        <briefdescription>
+<para>Generic Battery Server model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__battery__srv" kindref="compound">Generic Battery Server model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_battery_srv.h" line="43" column="9" bodyfile="include/bluetooth/mesh/gen_battery_srv.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Generic Battery Server model. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

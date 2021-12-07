@@ -1,0 +1,661 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bl__crypto" kind="group">
+    <compoundname>bl_crypto</compoundname>
+    <title>Bootloader crypto functions</title>
+    <innerclass refid="structbl__rot__verify__ext__api" prot="public">bl_rot_verify_ext_api</innerclass>
+    <innerclass refid="structbl__sha256__ext__api" prot="public">bl_sha256_ext_api</innerclass>
+    <innerclass refid="structbl__secp256r1__ext__api" prot="public">bl_secp256r1_ext_api</innerclass>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__bl__crypto_1ga6c877580abdba32fbdc6ca5055375ba6" prot="public" static="no">
+        <type>uint32_t</type>
+        <definition>typedef uint32_t bl_sha256_ctx_t[128/4]</definition>
+        <argsstring>[128/4]</argsstring>
+        <name>bl_sha256_ctx_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="39" column="18" bodyfile="include/bl_crypto.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bl__crypto_1gae834e35f1667645ff403a6ef60c4f987" prot="public" static="no">
+        <type>int(*</type>
+        <definition>typedef int(* bl_root_of_trust_verify_t) (const uint8_t *public_key, const uint8_t *public_key_hash, const uint8_t *signature, const uint8_t *firmware, const uint32_t firmware_len)</definition>
+        <argsstring>)(const uint8_t *public_key, const uint8_t *public_key_hash, const uint8_t *signature, const uint8_t *firmware, const uint32_t firmware_len)</argsstring>
+        <name>bl_root_of_trust_verify_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="80" column="9" bodyfile="include/bl_crypto.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bl__crypto_1gab1342c07a14778b98847daa8a600f67a" prot="public" static="no">
+        <type>int(*</type>
+        <definition>typedef int(* bl_sha256_init_t) (bl_sha256_ctx_t *ctx)</definition>
+        <argsstring>)(bl_sha256_ctx_t *ctx)</argsstring>
+        <name>bl_sha256_init_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="111" column="9" bodyfile="include/bl_crypto.h" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bl__crypto_1ga0fbac294c6f20be7b1594345dee33013" prot="public" static="no">
+        <type>int(*</type>
+        <definition>typedef int(* bl_sha256_update_t) (bl_sha256_ctx_t *ctx, const uint8_t *data, uint32_t data_len)</definition>
+        <argsstring>)(bl_sha256_ctx_t *ctx, const uint8_t *data, uint32_t data_len)</argsstring>
+        <name>bl_sha256_update_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="133" column="9" bodyfile="include/bl_crypto.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bl__crypto_1gad6f8dd85c3e7628376f734430a65287d" prot="public" static="no">
+        <type>int(*</type>
+        <definition>typedef int(* bl_sha256_finalize_t) (bl_sha256_ctx_t *ctx, uint8_t *output)</definition>
+        <argsstring>)(bl_sha256_ctx_t *ctx, uint8_t *output)</argsstring>
+        <name>bl_sha256_finalize_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="150" column="9" bodyfile="include/bl_crypto.h" bodystart="150" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bl__crypto_1ga6cd13b98dca4433e1efbfae8b166cd22" prot="public" static="no">
+        <type>int(*</type>
+        <definition>typedef int(* bl_sha256_verify_t) (const uint8_t *data, uint32_t data_len, const uint8_t *expected)</definition>
+        <argsstring>)(const uint8_t *data, uint32_t data_len, const uint8_t *expected)</argsstring>
+        <name>bl_sha256_verify_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="169" column="9" bodyfile="include/bl_crypto.h" bodystart="169" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bl__crypto_1ga1ecd7e46b7de7eea0f72fdcd3631dd96" prot="public" static="no">
+        <type>int(*</type>
+        <definition>typedef int(* bl_secp256r1_validate_t) (const uint8_t *hash, uint32_t hash_len, const uint8_t *signature, const uint8_t *public_key)</definition>
+        <argsstring>)(const uint8_t *hash, uint32_t hash_len, const uint8_t *signature, const uint8_t *public_key)</argsstring>
+        <name>bl_secp256r1_validate_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="192" column="9" bodyfile="include/bl_crypto.h" bodystart="192" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bl__crypto_1ga0dbe95016ff4106f7a2dce7083b1d561" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bl_crypto_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>bl_crypto_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize bootloader crypto module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>On success. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EFAULT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If crypto module reported an error. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="48" column="5" declfile="include/bl_crypto.h" declline="48" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bl__crypto_1ga31a903b706ec13c0d8f63e889caaa6cd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bl_root_of_trust_verify</definition>
+        <argsstring>(const uint8_t *public_key, const uint8_t *public_key_hash, const uint8_t *signature, const uint8_t *firmware, const uint32_t firmware_len)</argsstring>
+        <name>bl_root_of_trust_verify</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>public_key</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>public_key_hash</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>signature</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>firmware</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+          <declname>firmware_len</declname>
+        </param>
+        <briefdescription>
+<para>Verify a signature using configured signature and SHA-256. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Verifies the public key against the public key hash, then verifies the hash of the signed data against the signature using the public key.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">public_key</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Public key. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">public_key_hash</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Expected hash of the public key. This is the root of trust. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">signature</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Firmware signature. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">firmware</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Firmware. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">firmware_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of firmware.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>On success. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EHASHINV</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If public_key_hash didn&apos;t match public_key. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ESIGINV</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If signature validation failed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Any error code from <ref refid="group__bl__crypto_ga6c9de0639068e3b2e80f1afc597560dc_1ga6c9de0639068e3b2e80f1afc597560dc" kindref="member">bl_sha256_init</ref>, <ref refid="group__bl__crypto_gafe0b1e8b06aeae0345e9e96bb78c5b00_1gafe0b1e8b06aeae0345e9e96bb78c5b00" kindref="member">bl_sha256_update</ref>, <ref refid="group__bl__crypto_gab578bf1e4b469e3353600b66e6d09a35_1gab578bf1e4b469e3353600b66e6d09a35" kindref="member">bl_sha256_finalize</ref>, or <ref refid="group__bl__crypto_ga2f513ec8f1399aa5fdd21556ce70d941_1ga2f513ec8f1399aa5fdd21556ce70d941" kindref="member">bl_secp256r1_validate</ref> if something else went wrong.</para>
+</simplesect>
+<simplesect kind="remark"><para>No parameter can be NULL. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="73" column="5" declfile="include/bl_crypto.h" declline="73" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bl__crypto_1gafb546ece5a1b86f5dc2be7aca2c0427e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bl_root_of_trust_verify_external</definition>
+        <argsstring>(const uint8_t *public_key, const uint8_t *public_key_hash, const uint8_t *signature, const uint8_t *firmware, const uint32_t firmware_len)</argsstring>
+        <name>bl_root_of_trust_verify_external</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>public_key</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>public_key_hash</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>signature</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>firmware</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+          <declname>firmware_len</declname>
+        </param>
+        <briefdescription>
+<para>Implementation of rot_verify that is safe to be called from EXT_API. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>See <ref refid="group__bl__crypto_ga31a903b706ec13c0d8f63e889caaa6cd_1ga31a903b706ec13c0d8f63e889caaa6cd" kindref="member">bl_root_of_trust_verify</ref> for docs. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="93" column="5" declfile="include/bl_crypto.h" declline="93" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bl__crypto_1ga6c9de0639068e3b2e80f1afc597560dc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bl_sha256_init</definition>
+        <argsstring>(bl_sha256_ctx_t *ctx)</argsstring>
+        <name>bl_sha256_init</name>
+        <param>
+          <type><ref refid="group__bl__crypto_ga6c877580abdba32fbdc6ca5055375ba6_1ga6c877580abdba32fbdc6ca5055375ba6" kindref="member">bl_sha256_ctx_t</ref> *</type>
+          <declname>ctx</declname>
+        </param>
+        <briefdescription>
+<para>Initialize a sha256 operation context variable. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context to be initialized.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>On success. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If <computeroutput>ctx</computeroutput> was NULL. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="108" column="5" declfile="include/bl_crypto.h" declline="108" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bl__crypto_1gafe0b1e8b06aeae0345e9e96bb78c5b00" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bl_sha256_update</definition>
+        <argsstring>(bl_sha256_ctx_t *ctx, const uint8_t *data, uint32_t data_len)</argsstring>
+        <name>bl_sha256_update</name>
+        <param>
+          <type><ref refid="group__bl__crypto_ga6c877580abdba32fbdc6ca5055375ba6_1ga6c877580abdba32fbdc6ca5055375ba6" kindref="member">bl_sha256_ctx_t</ref> *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>data_len</declname>
+        </param>
+        <briefdescription>
+<para>Hash a portion of data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para><computeroutput>ctx</computeroutput> must be initialized before being used in this function. An uninitialized <computeroutput>ctx</computeroutput> might not be reported as an error. Also, <computeroutput>ctx</computeroutput> must not be used if it has been finalized, though this might also not be reported as an error.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context variable. Must have been initialized. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to hash. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of <computeroutput>data</computeroutput>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>On success. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If <computeroutput>ctx</computeroutput> was NULL, uninitialized, or corrupted. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOSYS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the context has already been finalized. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="130" column="5" declfile="include/bl_crypto.h" declline="130" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bl__crypto_1gab578bf1e4b469e3353600b66e6d09a35" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bl_sha256_finalize</definition>
+        <argsstring>(bl_sha256_ctx_t *ctx, uint8_t *output)</argsstring>
+        <name>bl_sha256_finalize</name>
+        <param>
+          <type><ref refid="group__bl__crypto_ga6c877580abdba32fbdc6ca5055375ba6_1ga6c877580abdba32fbdc6ca5055375ba6" kindref="member">bl_sha256_ctx_t</ref> *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Finalize a hash result. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context variable. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Where to put the resulting digest. Must be at least 32 bytes long.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>On success. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If <computeroutput>ctx</computeroutput> was NULL or corrupted, or <computeroutput>output</computeroutput> was NULL. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="147" column="5" declfile="include/bl_crypto.h" declline="147" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bl__crypto_1gab4e4bdd0d92fd1f41837b60b069c13ea" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bl_sha256_verify</definition>
+        <argsstring>(const uint8_t *data, uint32_t data_len, const uint8_t *expected)</argsstring>
+        <name>bl_sha256_verify</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>data_len</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>expected</declname>
+        </param>
+        <briefdescription>
+<para>Calculate a digest and verify it directly. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The data to hash. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The length of <computeroutput>data</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">expected</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The expected digest over <computeroutput>data</computeroutput>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the procedure succeeded and the resulting digest is identical to <computeroutput>expected</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EHASHINV</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the procedure succeeded, but the digests don&apos;t match. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Any error code from <ref refid="group__bl__crypto_ga6c9de0639068e3b2e80f1afc597560dc_1ga6c9de0639068e3b2e80f1afc597560dc" kindref="member">bl_sha256_init</ref>, <ref refid="group__bl__crypto_gafe0b1e8b06aeae0345e9e96bb78c5b00_1gafe0b1e8b06aeae0345e9e96bb78c5b00" kindref="member">bl_sha256_update</ref>, or <ref refid="group__bl__crypto_gab578bf1e4b469e3353600b66e6d09a35_1gab578bf1e4b469e3353600b66e6d09a35" kindref="member">bl_sha256_finalize</ref> if something else went wrong. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="166" column="5" declfile="include/bl_crypto.h" declline="166" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bl__crypto_1ga2f513ec8f1399aa5fdd21556ce70d941" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bl_secp256r1_validate</definition>
+        <argsstring>(const uint8_t *hash, uint32_t hash_len, const uint8_t *signature, const uint8_t *public_key)</argsstring>
+        <name>bl_secp256r1_validate</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>hash</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>hash_len</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>signature</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>public_key</declname>
+        </param>
+        <briefdescription>
+<para>Validate a secp256r1 signature. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">hash</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The hash to validate against. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">hash_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The length of the hash. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">signature</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The signature to validate. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">public_key</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The public key to validate with.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The operation succeeded and the signature is valid for the hash. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A parameter was NULL, or the <computeroutput>hash_len</computeroutput> was not 32 bytes. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ESIGINV</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The signature validation failed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="186" column="5" declfile="include/bl_crypto.h" declline="186" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bl__crypto_1gacd5893395511e2e8c580b84b29ef8409" prot="public" static="no">
+        <name>EHASHINV</name>
+        <initializer>101</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="24" column="9" bodyfile="include/bl_crypto.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bl__crypto_1ga40994c60d4f9c4b2326351e2f33368ad" prot="public" static="no">
+        <name>ESIGINV</name>
+        <initializer>102</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="25" column="9" bodyfile="include/bl_crypto.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bl__crypto_1gaae07206ced2981c3f9fb9e7f71d97c7a" prot="public" static="no">
+        <name>SHA256_CTX_SIZE</name>
+        <initializer>128</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bl_crypto.h" line="37" column="11" bodyfile="include/bl_crypto.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

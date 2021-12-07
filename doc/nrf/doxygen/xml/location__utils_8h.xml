@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="location__utils_8h" kind="file" language="C++">
+    <compoundname>location_utils.h</compoundname>
+    <innerclass refid="structlocation__utils__modem__params__info" prot="public">location_utils_modem_params_info</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="location__utils_8h_a01df26f0a7d382ef184c671bb979d093_1a01df26f0a7d382ef184c671bb979d093" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool location_utils_is_default_pdn_active</definition>
+        <argsstring>(void)</argsstring>
+        <name>location_utils_is_default_pdn_active</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Check if default PDN context is active. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If default PDN context is active. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If default PDN context is not active. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_utils.h" line="34" column="6" declfile="lib/location/location_utils.h" declline="34" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="location__utils_8h_a161655650ff29d33873c3afb4ab84e0b_1a161655650ff29d33873c3afb4ab84e0b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int location_utils_modem_params_read</definition>
+        <argsstring>(struct location_utils_modem_params_info *modem_params)</argsstring>
+        <name>location_utils_modem_params_read</name>
+        <param>
+          <type>struct <ref refid="structlocation__utils__modem__params__info" kindref="compound">location_utils_modem_params_info</ref> *</type>
+          <declname>modem_params</declname>
+        </param>
+        <briefdescription>
+<para>Read modem parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">modem_params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context where parameters are filled.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If modem parameters were received successfully. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If modem parameters were not received successfully. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_utils.h" line="44" column="5" declfile="lib/location/location_utils.h" declline="44" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="location__utils_8h_a2b8dea063910fe13d69c7ec88ebfcde7_1a2b8dea063910fe13d69c7ec88ebfcde7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const char *</type>
+        <definition>const char * location_utils_nrf_cloud_jwt_generate</definition>
+        <argsstring>(void)</argsstring>
+        <name>location_utils_nrf_cloud_jwt_generate</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Generate JWT buffer to be used for nRF Cloud REST API use. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Return JWT buffer memory shouldn&apos;t be freed by the caller and it&apos;s valid until the next call to this function.</para>
+<para><simplesect kind="return"><para>JWT buffer if generation was successful. NULL if generation failed. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_utils.h" line="54" column="12" declfile="lib/location/location_utils.h" declline="54" declcolumn="12"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>LOCATION_UTILS_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LOCATION_UTILS_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11" refid="structlocation__utils__modem__params__info" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlocation__utils__modem__params__info" kindref="compound">location_utils_modem_params_info</ref><sp/>{</highlight></codeline>
+<codeline lineno="13" refid="structlocation__utils__modem__params__info_a88b3dd693a7b264c46123bfeadb7b5b5_1a88b3dd693a7b264c46123bfeadb7b5b5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structlocation__utils__modem__params__info_a88b3dd693a7b264c46123bfeadb7b5b5_1a88b3dd693a7b264c46123bfeadb7b5b5" kindref="member">mcc</ref>;</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16" refid="structlocation__utils__modem__params__info_a9cbe92b0aaf92bc887b3b466f25f2352_1a9cbe92b0aaf92bc887b3b466f25f2352" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structlocation__utils__modem__params__info_a9cbe92b0aaf92bc887b3b466f25f2352_1a9cbe92b0aaf92bc887b3b466f25f2352" kindref="member">mnc</ref>;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="structlocation__utils__modem__params__info_aeb71205b7b011f62f2b6e580aeb747d7_1aeb71205b7b011f62f2b6e580aeb747d7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structlocation__utils__modem__params__info_aeb71205b7b011f62f2b6e580aeb747d7_1aeb71205b7b011f62f2b6e580aeb747d7" kindref="member">cell_id</ref>;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22" refid="structlocation__utils__modem__params__info_a49994037a42f0789145169232e4a6c5d_1a49994037a42f0789145169232e4a6c5d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structlocation__utils__modem__params__info_a49994037a42f0789145169232e4a6c5d_1a49994037a42f0789145169232e4a6c5d" kindref="member">tac</ref>;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="structlocation__utils__modem__params__info_ad96b2ae6f5f0c400890792d9c0b81739_1ad96b2ae6f5f0c400890792d9c0b81739" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structlocation__utils__modem__params__info_ad96b2ae6f5f0c400890792d9c0b81739_1ad96b2ae6f5f0c400890792d9c0b81739" kindref="member">phys_cell_id</ref>;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="location__utils_8h_a01df26f0a7d382ef184c671bb979d093_1a01df26f0a7d382ef184c671bb979d093" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="location__utils_8h_a01df26f0a7d382ef184c671bb979d093_1a01df26f0a7d382ef184c671bb979d093" kindref="member">location_utils_is_default_pdn_active</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="location__utils_8h_a161655650ff29d33873c3afb4ab84e0b_1a161655650ff29d33873c3afb4ab84e0b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="location__utils_8h_a161655650ff29d33873c3afb4ab84e0b_1a161655650ff29d33873c3afb4ab84e0b" kindref="member">location_utils_modem_params_read</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlocation__utils__modem__params__info" kindref="compound">location_utils_modem_params_info</ref><sp/>*modem_params);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="location__utils_8h_a2b8dea063910fe13d69c7ec88ebfcde7_1a2b8dea063910fe13d69c7ec88ebfcde7" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="location__utils_8h_a2b8dea063910fe13d69c7ec88ebfcde7_1a2b8dea063910fe13d69c7ec88ebfcde7" kindref="member">location_utils_nrf_cloud_jwt_generate</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>LOCATION_UTILS_H<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="lib/location/location_utils.h"/>
+  </compounddef>
+</doxygen>

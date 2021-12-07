@@ -1,0 +1,188 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__tnep__ch" kind="group">
+    <compoundname>nfc_tnep_ch</compoundname>
+    <title>NFC Connection Handover TNEP service</title>
+    <innerclass refid="structnfc__tnep__ch__record" prot="public">nfc_tnep_ch_record</innerclass>
+    <innerclass refid="structnfc__tnep__ch__request" prot="public">nfc_tnep_ch_request</innerclass>
+    <innerclass refid="structnfc__tnep__ch__cb" prot="public">nfc_tnep_ch_cb</innerclass>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__nfc__tnep__ch_1gad3387b5d654d2f741153cc4ff85c014a" prot="public" static="no" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t nfc_tnep_ch_svc_uri[19]</definition>
+        <argsstring>[19]</argsstring>
+        <name>nfc_tnep_ch_svc_uri</name>
+        <briefdescription>
+<para>NFC Connection Handover service URI. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/ch.h" line="29" column="22" declfile="include/nfc/tnep/ch.h" declline="29" declcolumn="22"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__tnep__ch_1gae98f341fde036d90d8146209bdd4d4fe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_tnep_ch_service_init</definition>
+        <argsstring>(struct nfc_tnep_ch_cb *cb)</argsstring>
+        <name>nfc_tnep_ch_service_init</name>
+        <param>
+          <type>struct <ref refid="structnfc__tnep__ch__cb" kindref="compound">nfc_tnep_ch_cb</ref> *</type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the TNEP Connection Handover service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/ch.h" line="158" column="5" declfile="include/nfc/tnep/ch.h" declline="158" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__tnep__ch_1ga3fb33feb5d0209add173f0ed610a068d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_tnep_ch_carrier_set</definition>
+        <argsstring>(struct nfc_ndef_record_desc *ac_rec, struct nfc_ndef_record_desc *carrier_rec, size_t count)</argsstring>
+        <name>nfc_tnep_ch_carrier_set</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>ac_rec</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>carrier_rec</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>count</declname>
+        </param>
+        <briefdescription>
+<para>Set Connection Handover carriers. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Function for setting the Connection Handover carriers. It should be used in the callback from <ref refid="structnfc__tnep__ch__cb" kindref="compound">nfc_tnep_ch_cb</ref> when the Application should reply to the Connection Handover Message. The type of message is determined automatically based on the received message and the role of the device in the data exchange.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ac_rec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of the Alternative Carrier Records. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">carrier_rec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of the Carrier Records. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Count of the Alternative Carrier Records and the Carrier Records.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/ch.h" line="176" column="5" declfile="include/nfc/tnep/ch.h" declline="176" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__tnep__ch_1gad379a882338ae6e890d2dc75fd111f5b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const struct <ref refid="structnfc__ndef__tnep__rec__svc__param" kindref="compound">nfc_ndef_tnep_rec_svc_param</ref> *</type>
+        <definition>const struct nfc_ndef_tnep_rec_svc_param * nfc_tnep_ch_svc_search</definition>
+        <argsstring>(const struct nfc_ndef_tnep_rec_svc_param *services, size_t cnt)</argsstring>
+        <name>nfc_tnep_ch_svc_search</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__tnep__rec__svc__param" kindref="compound">nfc_ndef_tnep_rec_svc_param</ref> *</type>
+          <declname>services</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>cnt</declname>
+        </param>
+        <briefdescription>
+<para>Helper function for searching the Connection Handover service in the Initial NDEF Message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">services</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of the TNEP services. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cnt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Services count.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Pointer to the Connection Handover service. NULL if service is not found. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/ch.h" line="189" column="40" declfile="include/nfc/tnep/ch.h" declline="189" declcolumn="40"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__tnep__ch_1ga0939837844ec0d8fc0a61b660aa5d0e6" prot="public" static="no">
+        <name>NFC_TNEP_CH_URI_LENGTH</name>
+        <initializer>19</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>NFC Connection Handover service URI name length. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/ch.h" line="26" column="9" bodyfile="include/nfc/tnep/ch.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>NFC Connection Handover TNEP service API. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

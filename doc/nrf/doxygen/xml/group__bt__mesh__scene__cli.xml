@@ -1,0 +1,856 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__scene__cli" kind="group">
+    <compoundname>bt_mesh_scene_cli</compoundname>
+    <title>Scene Client model</title>
+    <innerclass refid="structbt__mesh__scene__register" prot="public">bt_mesh_scene_register</innerclass>
+    <innerclass refid="structbt__mesh__scene__cli" prot="public">bt_mesh_scene_cli</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__scene__cli_1ga9c5a1d560d9141e779b52da2b3c5c69f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_scene_cli_get</definition>
+        <argsstring>(struct bt_mesh_scene_cli *cli, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_scene_state *rsp)</argsstring>
+        <name>bt_mesh_scene_cli_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__state" kindref="compound">bt_mesh_scene_state</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Get the current state of a Scene Server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. The response will always be passed to the <ref refid="structbt__mesh__scene__cli_a0945c74c7ff478669e7295b0b6564eee_1a0945c74c7ff478669e7295b0b6564eee" kindref="member">bt_mesh_scene_cli::status</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene client model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to use the configured publication parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully got the scene state. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="104" column="5" declfile="include/bluetooth/mesh/scene_cli.h" declline="104" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__scene__cli_1ga2dded8265e1d4121cfa38c778ebef3db" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_scene_cli_register_get</definition>
+        <argsstring>(struct bt_mesh_scene_cli *cli, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_scene_register *rsp)</argsstring>
+        <name>bt_mesh_scene_cli_register_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__register" kindref="compound">bt_mesh_scene_register</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Get the full scene register of a Scene Server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. The response will always be passed to the <ref refid="structbt__mesh__scene__cli_aaeee21f6e0f5b5c50a76b44f9e5ddfa2_1aaeee21f6e0f5b5c50a76b44f9e5ddfa2" kindref="member">bt_mesh_scene_cli::scene_register</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene client model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to use the configured publication parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response buffer, or NULL to keep from blocking. If the <computeroutput>rsp.scenes</computeroutput> parameter points to a valid buffer, it will be filled with at most <computeroutput>rsp.count</computeroutput> number of scenes, and <computeroutput>rsp.count</computeroutput> will be changed to reflect the number of retrieved scenes.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully got the scene register. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="129" column="5" declfile="include/bluetooth/mesh/scene_cli.h" declline="129" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__scene__cli_1ga2f090e49a35b5bc405ee7b85aeb50af9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_scene_cli_store</definition>
+        <argsstring>(struct bt_mesh_scene_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t scene, struct bt_mesh_scene_register *rsp)</argsstring>
+        <name>bt_mesh_scene_cli_store</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>scene</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__register" kindref="compound">bt_mesh_scene_register</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Store the current state as a scene. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. The response will always be passed to the <ref refid="structbt__mesh__scene__cli_aaeee21f6e0f5b5c50a76b44f9e5ddfa2_1aaeee21f6e0f5b5c50a76b44f9e5ddfa2" kindref="member">bt_mesh_scene_cli::scene_register</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene client model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to use the configured publication parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">scene</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene number to store. Cannot be <ref refid="group__bt__mesh__scene_gaf68df55bc0247c8e0d90182c34fa35d5_1gaf68df55bc0247c8e0d90182c34fa35d5" kindref="member">BT_MESH_SCENE_NONE</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response buffer, or NULL to keep from blocking. If the <computeroutput>rsp.scenes</computeroutput> parameter points to a valid buffer, it will be filled with at most <computeroutput>rsp.count</computeroutput> number of scenes, and <computeroutput>rsp.count</computeroutput> will be changed to reflect the number of retrieved scenes.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the store message and processed the response. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid scene number. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="156" column="5" declfile="include/bluetooth/mesh/scene_cli.h" declline="156" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__scene__cli_1gabe540db7e449f4bc8b8bb20eedec2747" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_scene_cli_store_unack</definition>
+        <argsstring>(struct bt_mesh_scene_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t scene)</argsstring>
+        <name>bt_mesh_scene_cli_store_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>scene</declname>
+        </param>
+        <briefdescription>
+<para>Store the current state as a scene without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene client model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to use the configured publication parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">scene</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene number to store. Cannot be <ref refid="group__bt__mesh__scene_gaf68df55bc0247c8e0d90182c34fa35d5_1gaf68df55bc0247c8e0d90182c34fa35d5" kindref="member">BT_MESH_SCENE_NONE</ref>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the store message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid scene number. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="173" column="5" declfile="include/bluetooth/mesh/scene_cli.h" declline="173" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__scene__cli_1gada866b3d00baaa267629d26e905f069a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_scene_cli_delete</definition>
+        <argsstring>(struct bt_mesh_scene_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t scene, struct bt_mesh_scene_register *rsp)</argsstring>
+        <name>bt_mesh_scene_cli_delete</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>scene</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__register" kindref="compound">bt_mesh_scene_register</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Delete the given scene. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. The response will always be passed to the <ref refid="structbt__mesh__scene__cli_aaeee21f6e0f5b5c50a76b44f9e5ddfa2_1aaeee21f6e0f5b5c50a76b44f9e5ddfa2" kindref="member">bt_mesh_scene_cli::scene_register</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene client model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to use the configured publication parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">scene</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene to delete. Cannot be <ref refid="group__bt__mesh__scene_gaf68df55bc0247c8e0d90182c34fa35d5_1gaf68df55bc0247c8e0d90182c34fa35d5" kindref="member">BT_MESH_SCENE_NONE</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response buffer, or NULL to keep from blocking. If the <computeroutput>rsp.scenes</computeroutput> parameter points to a valid buffer, it will be filled with at most <computeroutput>rsp.count</computeroutput> number of scenes, and <computeroutput>rsp.count</computeroutput> will be changed to reflect the number of retrieved scenes.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the delete message and processed the response. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid scene number. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="199" column="5" declfile="include/bluetooth/mesh/scene_cli.h" declline="199" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__scene__cli_1ga60e2029ae355f1746e155e0cad844978" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_scene_cli_delete_unack</definition>
+        <argsstring>(struct bt_mesh_scene_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t scene)</argsstring>
+        <name>bt_mesh_scene_cli_delete_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>scene</declname>
+        </param>
+        <briefdescription>
+<para>Delete the given scene without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene client model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to use the configured publication parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">scene</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene to delete. Cannot be <ref refid="group__bt__mesh__scene_gaf68df55bc0247c8e0d90182c34fa35d5_1gaf68df55bc0247c8e0d90182c34fa35d5" kindref="member">BT_MESH_SCENE_NONE</ref>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the delete message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid scene number. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="216" column="5" declfile="include/bluetooth/mesh/scene_cli.h" declline="216" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__scene__cli_1gac4dc2207179d715580d5dd5cb9350269" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_scene_cli_recall</definition>
+        <argsstring>(struct bt_mesh_scene_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t scene, const struct bt_mesh_model_transition *transition, struct bt_mesh_scene_state *rsp)</argsstring>
+        <name>bt_mesh_scene_cli_recall</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>scene</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref> *</type>
+          <declname>transition</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__state" kindref="compound">bt_mesh_scene_state</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Recall the given scene. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>All models that participate in the scene will transition to the stored scene state with the given transition parameters.</para>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. The response will always be passed to the <ref refid="structbt__mesh__scene__cli_a0945c74c7ff478669e7295b0b6564eee_1a0945c74c7ff478669e7295b0b6564eee" kindref="member">bt_mesh_scene_cli::status</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene client model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to use the configured publication parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">scene</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene to recall. Cannot be <ref refid="group__bt__mesh__scene_gaf68df55bc0247c8e0d90182c34fa35d5_1gaf68df55bc0247c8e0d90182c34fa35d5" kindref="member">BT_MESH_SCENE_NONE</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">transition</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters for the scene transition, or NULL to use the target&apos;s default parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the recall message and processed the response. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid scene number or transition parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="243" column="5" declfile="include/bluetooth/mesh/scene_cli.h" declline="243" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__scene__cli_1gac9e84f28ec16c468c805fd29b7d4cdc7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_scene_cli_recall_unack</definition>
+        <argsstring>(struct bt_mesh_scene_cli *cli, struct bt_mesh_msg_ctx *ctx, uint16_t scene, const struct bt_mesh_model_transition *transition)</argsstring>
+        <name>bt_mesh_scene_cli_recall_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>scene</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref> *</type>
+          <declname>transition</declname>
+        </param>
+        <briefdescription>
+<para>Recall the given scene without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>All models that participate in the scene will transition to the stored scene state with the given transition parameters.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene client model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to use the configured publication parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">scene</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene to recall. Cannot be <ref refid="group__bt__mesh__scene_gaf68df55bc0247c8e0d90182c34fa35d5_1gaf68df55bc0247c8e0d90182c34fa35d5" kindref="member">BT_MESH_SCENE_NONE</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">transition</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters for the scene transition, or NULL to use the target&apos;s default parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the recall message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid scene number or transition parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="266" column="5" declfile="include/bluetooth/mesh/scene_cli.h" declline="266" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__scene__cli_1ga01f037a317909cca7b7cef5399a78bac" prot="public" static="no">
+        <name>BT_MESH_MODEL_SCENE_CLI</name>
+        <param><defname>_cli</defname></param>
+        <initializer>	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_SCENE_CLI, _bt_mesh_scene_cli_op,    \
+			 &amp;(_cli)-&gt;pub,                                         \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__scene__cli" kindref="compound">bt_mesh_scene_cli</ref>,     \
+						 _cli),                        \
+			 &amp;_bt_mesh_scene_cli_cb)</initializer>
+        <briefdescription>
+<para>Scene Client model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__scene__cli" kindref="compound">Scene Client model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="31" column="9" bodyfile="include/bluetooth/mesh/scene_cli.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Scene Client model. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

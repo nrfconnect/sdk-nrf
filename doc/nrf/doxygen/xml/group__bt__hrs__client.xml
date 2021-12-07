@@ -1,0 +1,608 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__hrs__client" kind="group">
+    <compoundname>bt_hrs_client</compoundname>
+    <title>Heart Rate Service Client</title>
+    <innerclass refid="structbt__hrs__flags" prot="public">bt_hrs_flags</innerclass>
+    <innerclass refid="structbt__hrs__client__measurement" prot="public">bt_hrs_client_measurement</innerclass>
+    <innerclass refid="structbt__hrs__client__hr__meas" prot="public">bt_hrs_client_hr_meas</innerclass>
+    <innerclass refid="structbt__hrs__client__body__sensor__location" prot="public">bt_hrs_client_body_sensor_location</innerclass>
+    <innerclass refid="structbt__hrs__client__control__point" prot="public">bt_hrs_client_control_point</innerclass>
+    <innerclass refid="structbt__hrs__client" prot="public">bt_hrs_client</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__hrs__client_1ga165d9500ead143cd3f5468aa1a35b217" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_hrs_client_error</name>
+        <enumvalue id="group__bt__hrs__client_ga165d9500ead143cd3f5468aa1a35b217_1gga165d9500ead143cd3f5468aa1a35b217aeabbabcebb17f3341ffde8c6cc7fb67b" prot="public">
+          <name>BT_HRS_CLIENT_ERROR_CP_NOT_SUPPORTED</name>
+          <initializer>= 0x80</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Control Point value not supported. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Heart Rate Service error codes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This service defines the following Attribute Protocol Application error codes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="31" column="1" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="31" bodyend="34"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__hrs__client_1ga8d129c45a884ae37fe1310a444e01be2" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_hrs_client_cp_value</name>
+        <enumvalue id="group__bt__hrs__client_ga8d129c45a884ae37fe1310a444e01be2_1gga8d129c45a884ae37fe1310a444e01be2af45e4977ef70f94412f0b2df0a11442e" prot="public">
+          <name>BT_HRS_CLIENT_CP_VALUE_RESET_EE</name>
+          <initializer>= 0x01</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Resets the value if the Energy Expended field in the Heart Rate Measurement characteristic to 0. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Heart Rate Control Point values. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The values of the Control Point characteristic. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="40" column="1" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="40" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__hrs__client_1ga56b4343372d80f7c3536661593fbee4e" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_hrs_client_sensor_location</name>
+        <enumvalue id="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4ea8730394f2ff1a23de0c242788da338a1" prot="public">
+          <name>BT_HRS_CLIENT_SENSOR_LOCATION_OTHER</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Body Sensor Location: Other. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4eabf448e5b433f010a8ac6f4ed4ac09600" prot="public">
+          <name>BT_HRS_CLIENT_SENSOR_LOCATION_CHEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Body Sensor Location: Chest. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4eaa4575d7d026ac2195311d1194297651f" prot="public">
+          <name>BT_HRS_CLIENT_SENSOR_LOCATION_WRIST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Body Sensor Location: Wrist. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4ea5c440d702318170ecea4217720b5b3a3" prot="public">
+          <name>BT_HRS_CLIENT_SENSOR_LOCATION_FINGER</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Body Sensor Location: Finger. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4ea8e2b992c4419a2e1dc321f83f50d6219" prot="public">
+          <name>BT_HRS_CLIENT_SENSOR_LOCATION_HAND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Body Sensor Location: Hand. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4ead15bf8c6ce2d8134cea39d0b3a0fe3d5" prot="public">
+          <name>BT_HRS_CLIENT_SENSOR_LOCATION_EAR_LOBE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Body Sensor Location: Ear Lobe. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__hrs__client_ga56b4343372d80f7c3536661593fbee4e_1gga56b4343372d80f7c3536661593fbee4ead842a1c89d815b49e397a2397d54bcf5" prot="public">
+          <name>BT_HRS_CLIENT_SENSOR_LOCATION_FOOT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Body Sensor Location: Foot. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Body sensor location values. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="49" column="1" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="49" bodyend="70"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__bt__hrs__client_1gaec515d6f25a509ccd8555ee2a738a75a" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_hrs_client_notify_cb) (struct bt_hrs_client *hrs_c, const struct bt_hrs_client_measurement *meas, int err)</definition>
+        <argsstring>)(struct bt_hrs_client *hrs_c, const struct bt_hrs_client_measurement *meas, int err)</argsstring>
+        <name>bt_hrs_client_notify_cb</name>
+        <briefdescription>
+<para>Heart Rate Measurement notification callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is called every time the client receives a notification with Heart Rate Measuremet data.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">hrs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Heart Rate Service Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">meas</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Heart Rate Measurement received data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>0 if the notification is valid. Otherwise, contains a (negative) error code. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="130" column="9" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bt__hrs__client_1gab4248c568ece617ea55eb142e4f9255f" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_hrs_client_read_sensor_location_cb) (struct bt_hrs_client *hrs_c, enum bt_hrs_client_sensor_location location, int err)</definition>
+        <argsstring>)(struct bt_hrs_client *hrs_c, enum bt_hrs_client_sensor_location location, int err)</argsstring>
+        <name>bt_hrs_client_read_sensor_location_cb</name>
+        <briefdescription>
+<para>Heart Rate Body Sensor Location read callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">hrs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Heart Rate Service Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">location</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Body Sensor Location value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>0 if read operation succeeded and data is valid. Otherwise, contains an error code. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="141" column="9" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bt__hrs__client_1ga02cb8730039dddc547cb0aeb24c18f01" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_hrs_client_write_cb) (struct bt_hrs_client *hrs_c, uint8_t err)</definition>
+        <argsstring>)(struct bt_hrs_client *hrs_c, uint8_t err)</argsstring>
+        <name>bt_hrs_client_write_cb</name>
+        <briefdescription>
+<para>Heart Rate Control Point write callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">hrs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Heart Rate client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>0 if write operation succeeded. Otherwise, contains an error code. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="151" column="9" bodyfile="include/bluetooth/services/hrs_client.h" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__hrs__client_1ga81b724343210e9f8308861ce26099e6f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hrs_client_init</definition>
+        <argsstring>(struct bt_hrs_client *hrs_c)</argsstring>
+        <name>bt_hrs_client_init</name>
+        <param>
+          <type>struct <ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref> *</type>
+          <declname>hrs_c</declname>
+        </param>
+        <briefdescription>
+<para>Function for initializing the Heart Rate Service Client. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">hrs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Heart Rate Service Client instance. This structure must be supplied by the application. It is initialized by this function and will later be used to identify this particular client instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the client was initialized successfully. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="226" column="5" declfile="include/bluetooth/services/hrs_client.h" declline="226" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hrs__client_1ga77829bcc3ad6873784c48257b5910806" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hrs_client_measurement_subscribe</definition>
+        <argsstring>(struct bt_hrs_client *hrs_c, bt_hrs_client_notify_cb notify_cb)</argsstring>
+        <name>bt_hrs_client_measurement_subscribe</name>
+        <param>
+          <type>struct <ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref> *</type>
+          <declname>hrs_c</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__hrs__client_gaec515d6f25a509ccd8555ee2a738a75a_1gaec515d6f25a509ccd8555ee2a738a75a" kindref="member">bt_hrs_client_notify_cb</ref></type>
+          <declname>notify_cb</declname>
+        </param>
+        <briefdescription>
+<para>Subscribe to Heart Rate Measurement notification. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function writes CCC descriptor of the Heart Rate Measurement characteristic to enable notification.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">hrs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Heart Rate Service Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">notify_cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Notification callback.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="239" column="5" declfile="include/bluetooth/services/hrs_client.h" declline="239" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hrs__client_1ga141ab200a0a4d190437404e3de24859b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hrs_client_measurement_unsubscribe</definition>
+        <argsstring>(struct bt_hrs_client *hrs_c)</argsstring>
+        <name>bt_hrs_client_measurement_unsubscribe</name>
+        <param>
+          <type>struct <ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref> *</type>
+          <declname>hrs_c</declname>
+        </param>
+        <briefdescription>
+<para>Remove subscription to the Heart Rate Measurement notification. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function writes CCC descriptor of the Heart Rate Measurement characteristic to disable notification.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">hrs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Heart Rate Service Client instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="252" column="5" declfile="include/bluetooth/services/hrs_client.h" declline="252" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hrs__client_1ga57e06ab9812c029b14dcc37426604ffe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hrs_client_sensor_location_read</definition>
+        <argsstring>(struct bt_hrs_client *hrs_c, bt_hrs_client_read_sensor_location_cb read_cb)</argsstring>
+        <name>bt_hrs_client_sensor_location_read</name>
+        <param>
+          <type>struct <ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref> *</type>
+          <declname>hrs_c</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__hrs__client_gab4248c568ece617ea55eb142e4f9255f_1gab4248c568ece617ea55eb142e4f9255f" kindref="member">bt_hrs_client_read_sensor_location_cb</ref></type>
+          <declname>read_cb</declname>
+        </param>
+        <briefdescription>
+<para>Read Body Sensor Location characteristic. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">hrs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Heart Rate Service Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">read_cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Read complete callback.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="262" column="5" declfile="include/bluetooth/services/hrs_client.h" declline="262" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hrs__client_1ga0e632c61ac69d9a5a7e3405ec75a7099" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool bt_hrs_client_has_sensor_location</definition>
+        <argsstring>(struct bt_hrs_client *hrs_c)</argsstring>
+        <name>bt_hrs_client_has_sensor_location</name>
+        <param>
+          <type>struct <ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref> *</type>
+          <declname>hrs_c</declname>
+        </param>
+        <briefdescription>
+<para>Check if Heart Rate Service has the Body Sensor Location characteristic. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function can be called after <ref refid="group__bt__hrs__client_ga63ae1d9e57447b0fdbe0819376a1151a_1ga63ae1d9e57447b0fdbe0819376a1151a" kindref="member">bt_hrs_client_handles_assign</ref> to check if the Body Sensor Location characteristic was found during service discovery.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the Body Sensor Location is found. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the Body Sensor Location is not found. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="273" column="6" declfile="include/bluetooth/services/hrs_client.h" declline="273" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hrs__client_1gac2239f1d07844a83f4fec8cf74761138" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hrs_client_control_point_write</definition>
+        <argsstring>(struct bt_hrs_client *hrs_c, enum bt_hrs_client_cp_value value, bt_hrs_client_write_cb write_cb)</argsstring>
+        <name>bt_hrs_client_control_point_write</name>
+        <param>
+          <type>struct <ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref> *</type>
+          <declname>hrs_c</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__bt__hrs__client_ga8d129c45a884ae37fe1310a444e01be2_1ga8d129c45a884ae37fe1310a444e01be2" kindref="member">bt_hrs_client_cp_value</ref></type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__hrs__client_ga02cb8730039dddc547cb0aeb24c18f01_1ga02cb8730039dddc547cb0aeb24c18f01" kindref="member">bt_hrs_client_write_cb</ref></type>
+          <declname>write_cb</declname>
+        </param>
+        <briefdescription>
+<para>Write Heart Rate Control Point characteristic. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">hrs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Heart Rate Service Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Control Point value to write. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">write_cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Write complete callback.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="284" column="5" declfile="include/bluetooth/services/hrs_client.h" declline="284" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hrs__client_1gaa65948722d04f56b7a3c8f991686b365" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool bt_hrs_client_has_control_point</definition>
+        <argsstring>(struct bt_hrs_client *hrs_c)</argsstring>
+        <name>bt_hrs_client_has_control_point</name>
+        <param>
+          <type>struct <ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref> *</type>
+          <declname>hrs_c</declname>
+        </param>
+        <briefdescription>
+<para>Check if Heart Rate Service has the Heart Rate Control Point characteristic. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function can be called after <ref refid="group__bt__hrs__client_ga63ae1d9e57447b0fdbe0819376a1151a_1ga63ae1d9e57447b0fdbe0819376a1151a" kindref="member">bt_hrs_client_handles_assign</ref> to check if the Heart Rate Control Pointcharacteristic was found during service discovery.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the Heart Rate Control Point is found. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the Heart Rate Control Point is not found. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="296" column="6" declfile="include/bluetooth/services/hrs_client.h" declline="296" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hrs__client_1ga63ae1d9e57447b0fdbe0819376a1151a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hrs_client_handles_assign</definition>
+        <argsstring>(struct bt_gatt_dm *dm, struct bt_hrs_client *hrs_c)</argsstring>
+        <name>bt_hrs_client_handles_assign</name>
+        <param>
+          <type>struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__hrs__client" kindref="compound">bt_hrs_client</ref> *</type>
+          <declname>hrs_c</declname>
+        </param>
+        <briefdescription>
+<para>Function for assigning handles to Heart Rate Service Client instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Call this function when a link has been established with a peer to associate the link to this instance of the module. This makes it possible to handle several links and associate each link to a particular instance of this module.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">hrs_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Heart Rate Service Client instance for associating the link.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation is successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hrs_client.h" line="311" column="5" declfile="include/bluetooth/services/hrs_client.h" declline="311" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Heart Rate (HR) Service Client API. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

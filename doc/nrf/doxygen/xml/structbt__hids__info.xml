@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__hids__info" kind="struct" language="C++" prot="public">
+    <compoundname>bt_hids_info</compoundname>
+    <includes refid="hids_8h" local="no">hids.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__hids__info_ad77ba606e805f59c48b23b0ea21e0658_1ad77ba606e805f59c48b23b0ea21e0658" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_hids_info::bcd_hid</definition>
+        <argsstring></argsstring>
+        <name>bcd_hid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Version of the base USB HID specification. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="102" column="10" bodyfile="include/bluetooth/services/hids.h" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__info_a39d2822140a756270019e11477d58522_1a39d2822140a756270019e11477d58522" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_info::b_country_code</definition>
+        <argsstring></argsstring>
+        <name>b_country_code</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Country ID code. HID device hardware localization. Most hardware is not localized (value 0x00). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="107" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__info_abaae346a452b86395f75d7c0f66d0a14_1abaae346a452b86395f75d7c0f66d0a14" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_info::flags</definition>
+        <argsstring></argsstring>
+        <name>flags</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Information flags (see <ref refid="group__bt__hids_gafbfb85bbdd2f2c37c44fcca268eb7449_1gafbfb85bbdd2f2c37c44fcca268eb7449" kindref="member">bt_hids_flags</ref>). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="110" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>HID Service information. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/hids.h" line="100" column="1" bodyfile="include/bluetooth/services/hids.h" bodystart="100" bodyend="111"/>
+    <listofallmembers>
+      <member refid="structbt__hids__info_a39d2822140a756270019e11477d58522_1a39d2822140a756270019e11477d58522" prot="public" virt="non-virtual"><scope>bt_hids_info</scope><name>b_country_code</name></member>
+      <member refid="structbt__hids__info_ad77ba606e805f59c48b23b0ea21e0658_1ad77ba606e805f59c48b23b0ea21e0658" prot="public" virt="non-virtual"><scope>bt_hids_info</scope><name>bcd_hid</name></member>
+      <member refid="structbt__hids__info_abaae346a452b86395f75d7c0f66d0a14_1abaae346a452b86395f75d7c0f66d0a14" prot="public" virt="non-virtual"><scope>bt_hids_info</scope><name>flags</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

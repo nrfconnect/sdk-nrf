@@ -1,0 +1,222 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="power__manager__event_8h" kind="file" language="C++">
+    <compoundname>power_manager_event.h</compoundname>
+    <includes refid="event__manager_8h" local="no">event_manager.h</includes>
+    <includes refid="event__manager__profiler_8h" local="no">event_manager_profiler.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/caf/events/power_manager_event.h</label>
+        <link refid="power__manager__event_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>event_manager.h</label>
+        <link refid="event__manager_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>event_manager_profiler.h</label>
+        <link refid="event__manager__profiler_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>profiler.h</label>
+        <link refid="profiler_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>event_manager_priv.h</label>
+      </node>
+      <node id="12">
+        <label>event_manager_profiler_priv.h</label>
+      </node>
+      <node id="7">
+        <label>logging/log_ctrl.h</label>
+      </node>
+      <node id="6">
+        <label>sys/__assert.h</label>
+      </node>
+      <node id="5">
+        <label>sys/reboot.h</label>
+      </node>
+      <node id="10">
+        <label>sys/util.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr.h</label>
+      </node>
+      <node id="4">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structpower__manager__restrict__event" prot="public">power_manager_restrict_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1gacc919dc5eaa5c53a0daf966249c8ac96" prot="public" static="no" strong="no">
+        <type></type>
+        <name>power_manager_level</name>
+        <enumvalue id="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1ggacc919dc5eaa5c53a0daf966249c8ac96a6cf4e645873823cd0d1c46325addb7a0" prot="public">
+          <name>POWER_MANAGER_LEVEL_ALIVE</name>
+          <initializer>= -1</initializer>
+          <briefdescription>
+<para>Stay alive. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1ggacc919dc5eaa5c53a0daf966249c8ac96ad07a0cf46024c9bf253c393ecbd7a619" prot="public">
+          <name>POWER_MANAGER_LEVEL_SUSPENDED</name>
+          <briefdescription>
+<para>Suspend but do not go to power off. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1ggacc919dc5eaa5c53a0daf966249c8ac96a304b28ebb6e4caf42a1764f9357cc84e" prot="public">
+          <name>POWER_MANAGER_LEVEL_OFF</name>
+          <briefdescription>
+<para>Go to full power off. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1ggacc919dc5eaa5c53a0daf966249c8ac96a5a782d247c32ffee8415ea8344f9e607" prot="public">
+          <name>POWER_MANAGER_LEVEL_MAX</name>
+          <briefdescription>
+<para>Number of supported levels. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Available power levels. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The power levels provided by the power manager. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/power_manager_event.h" line="29" column="1" bodyfile="include/caf/events/power_manager_event.h" bodystart="29" bodyend="46"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__caf__power__manager__event_ga4967f0a8ae0ffcba9fac9c8dc8400eaa_1ga4967f0a8ae0ffcba9fac9c8dc8400eaa" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void power_manager_restrict</definition>
+        <argsstring>(size_t module_idx, enum power_manager_level lvl)</argsstring>
+        <name>power_manager_restrict</name>
+        <param>
+          <type>size_t</type>
+          <declname>module_idx</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1gacc919dc5eaa5c53a0daf966249c8ac96" kindref="member">power_manager_level</ref></type>
+          <declname>lvl</declname>
+        </param>
+        <briefdescription>
+<para>Set the deepest power sleep mode allowed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>module_idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the module </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>lvl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximal allowed mode </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/power_manager_event.h" line="79" column="20" bodyfile="include/caf/events/power_manager_event.h" bodystart="79" bodyend="86"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_POWER_MANAGER_EVENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_POWER_MANAGER_EVENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="event__manager_8h" kindref="compound">event_manager.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="event__manager__profiler_8h" kindref="compound">event_manager_profiler.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1gacc919dc5eaa5c53a0daf966249c8ac96" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1gacc919dc5eaa5c53a0daf966249c8ac96" kindref="member">power_manager_level</ref><sp/>{</highlight></codeline>
+<codeline lineno="33" refid="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1ggacc919dc5eaa5c53a0daf966249c8ac96a6cf4e645873823cd0d1c46325addb7a0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1ggacc919dc5eaa5c53a0daf966249c8ac96a6cf4e645873823cd0d1c46325addb7a0" kindref="member">POWER_MANAGER_LEVEL_ALIVE</ref><sp/>=<sp/>-1,</highlight></codeline>
+<codeline lineno="37" refid="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1ggacc919dc5eaa5c53a0daf966249c8ac96ad07a0cf46024c9bf253c393ecbd7a619" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1ggacc919dc5eaa5c53a0daf966249c8ac96ad07a0cf46024c9bf253c393ecbd7a619" kindref="member">POWER_MANAGER_LEVEL_SUSPENDED</ref>,</highlight></codeline>
+<codeline lineno="41" refid="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1ggacc919dc5eaa5c53a0daf966249c8ac96a304b28ebb6e4caf42a1764f9357cc84e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1ggacc919dc5eaa5c53a0daf966249c8ac96a304b28ebb6e4caf42a1764f9357cc84e" kindref="member">POWER_MANAGER_LEVEL_OFF</ref>,</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1ggacc919dc5eaa5c53a0daf966249c8ac96a5a782d247c32ffee8415ea8344f9e607" kindref="member">POWER_MANAGER_LEVEL_MAX</ref></highlight></codeline>
+<codeline lineno="46" refid="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1ggacc919dc5eaa5c53a0daf966249c8ac96a5a782d247c32ffee8415ea8344f9e607" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="structpower__manager__restrict__event" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structpower__manager__restrict__event" kindref="compound">power_manager_restrict_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="57" refid="structpower__manager__restrict__event_ac7c824d77de1e8ad92e36a7840ac4350_1ac7c824d77de1e8ad92e36a7840ac4350" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structevent__header" kindref="compound">event_header</ref><sp/><ref refid="structpower__manager__restrict__event_ac7c824d77de1e8ad92e36a7840ac4350_1ac7c824d77de1e8ad92e36a7840ac4350" kindref="member">header</ref>;</highlight></codeline>
+<codeline lineno="64" refid="structpower__manager__restrict__event_a165a999ce05d8719dd407756198db093_1a165a999ce05d8719dd407756198db093" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structpower__manager__restrict__event_a165a999ce05d8719dd407756198db093_1a165a999ce05d8719dd407756198db093" kindref="member">module_idx</ref>;</highlight></codeline>
+<codeline lineno="68" refid="structpower__manager__restrict__event_a648a06cba524f34aaa1e8727cd659e8c_1a648a06cba524f34aaa1e8727cd659e8c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1gacc919dc5eaa5c53a0daf966249c8ac96" kindref="member">power_manager_level</ref><sp/><ref refid="structpower__manager__restrict__event_a648a06cba524f34aaa1e8727cd659e8c_1a648a06cba524f34aaa1e8727cd659e8c" kindref="member">level</ref>;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><ref refid="group__event__manager_gade0652b21cddf1a6b4d58e668b402caa_1gade0652b21cddf1a6b4d58e668b402caa" kindref="member">EVENT_TYPE_DECLARE</ref>(<ref refid="structpower__manager__restrict__event" kindref="compound">power_manager_restrict_event</ref>);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="group__caf__power__manager__event_ga4967f0a8ae0ffcba9fac9c8dc8400eaa_1ga4967f0a8ae0ffcba9fac9c8dc8400eaa" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__caf__power__manager__event_ga4967f0a8ae0ffcba9fac9c8dc8400eaa_1ga4967f0a8ae0ffcba9fac9c8dc8400eaa" kindref="member">power_manager_restrict</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>module_idx,<sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1gacc919dc5eaa5c53a0daf966249c8ac96" kindref="member">power_manager_level</ref><sp/>lvl)</highlight></codeline>
+<codeline lineno="80"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structpower__manager__restrict__event" kindref="compound">power_manager_restrict_event</ref><sp/>*</highlight><highlight class="keyword">event</highlight><highlight class="normal"><sp/>=<sp/>new_power_manager_restrict_event();</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">event</highlight><highlight class="normal">-&gt;module_idx<sp/>=<sp/><ref refid="structpower__manager__restrict__event_a165a999ce05d8719dd407756198db093_1a165a999ce05d8719dd407756198db093" kindref="member">module_idx</ref>;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">event</highlight><highlight class="normal">-&gt;level<sp/>=<sp/>lvl;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__event__manager_ga5fb4d859ba408c80abc899d18bb626e4_1ga5fb4d859ba408c80abc899d18bb626e4" kindref="member">EVENT_SUBMIT</ref>(event);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_POWER_MANAGER_EVENT_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/caf/events/power_manager_event.h"/>
+  </compounddef>
+</doxygen>

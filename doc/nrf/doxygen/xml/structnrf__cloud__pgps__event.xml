@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnrf__cloud__pgps__event" kind="struct" language="C++" prot="public">
+    <compoundname>nrf_cloud_pgps_event</compoundname>
+    <includes refid="nrf__cloud__pgps_8h" local="no">nrf_cloud_pgps.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnrf__cloud__pgps__event_af60bb18453f1db341779b8d7d73d3f8a_1af60bb18453f1db341779b8d7d73d3f8a" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__nrf__cloud__pgps_ga9067506754060c359049f5fb95be68a2_1ga9067506754060c359049f5fb95be68a2" kindref="member">nrf_cloud_pgps_event_type</ref></type>
+        <definition>enum nrf_cloud_pgps_event_type nrf_cloud_pgps_event::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="135" column="31" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__pgps__event_a370f3f17ef26a10fc7a76eb21f732787_1a370f3f17ef26a10fc7a76eb21f732787" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structnrf__cloud__pgps__prediction" kindref="compound">nrf_cloud_pgps_prediction</ref> *</type>
+        <definition>struct nrf_cloud_pgps_prediction* nrf_cloud_pgps_event::prediction</definition>
+        <argsstring></argsstring>
+        <name>prediction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="137" column="32" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="137" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__pgps__event_ac450092a341c605fc2ecd465790985f1_1ac450092a341c605fc2ecd465790985f1" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structgps__pgps__request" kindref="compound">gps_pgps_request</ref> *</type>
+        <definition>struct gps_pgps_request* nrf_cloud_pgps_event::request</definition>
+        <argsstring></argsstring>
+        <name>request</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="138" column="23" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__pgps__event_ade6951027fb89972eaca47a366882bf8_1ade6951027fb89972eaca47a366882bf8" prot="public" static="no" mutable="no">
+        <type>union nrf_cloud_pgps_event::@162</type>
+        <definition>union nrf_cloud_pgps_event::@162 nrf_cloud_pgps_event::@163</definition>
+        <argsstring></argsstring>
+        <name>@163</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="139" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>gps_pgps_request</label>
+        <link refid="structgps__pgps__request"/>
+      </node>
+      <node id="1">
+        <label>nrf_cloud_pgps_event</label>
+        <link refid="structnrf__cloud__pgps__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>prediction</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>request</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>nrf_cloud_pgps_prediction</label>
+        <link refid="structnrf__cloud__pgps__prediction"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>time</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>nrf_cloud_pgps_system_time</label>
+        <link refid="structnrf__cloud__pgps__system__time"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/net/nrf_cloud_pgps.h" line="134" column="1" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="134" bodyend="140"/>
+    <listofallmembers>
+      <member refid="structnrf__cloud__pgps__event_a370f3f17ef26a10fc7a76eb21f732787_1a370f3f17ef26a10fc7a76eb21f732787" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_event</scope><name>prediction</name></member>
+      <member refid="structnrf__cloud__pgps__event_ac450092a341c605fc2ecd465790985f1_1ac450092a341c605fc2ecd465790985f1" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_event</scope><name>request</name></member>
+      <member refid="structnrf__cloud__pgps__event_af60bb18453f1db341779b8d7d73d3f8a_1af60bb18453f1db341779b8d7d73d3f8a" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_event</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

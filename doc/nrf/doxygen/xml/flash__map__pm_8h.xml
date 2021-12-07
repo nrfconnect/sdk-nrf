@@ -1,0 +1,244 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="flash__map__pm_8h" kind="file" language="C++">
+    <compoundname>flash_map_pm.h</compoundname>
+    <includes local="no">pm_config.h</includes>
+    <includes local="no">sys/util.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/flash_map_pm.h</label>
+        <link refid="flash__map__pm_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>pm_config.h</label>
+      </node>
+      <node id="3">
+        <label>sys/util.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="flash__map__pm_8h_a99be312e7c772acea1b42f7105442b35_1a99be312e7c772acea1b42f7105442b35" prot="public" static="no">
+        <name>image_0</name>
+        <initializer>mcuboot_primary</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/flash_map_pm.h" line="14" column="9" bodyfile="include/flash_map_pm.h" bodystart="14" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="flash__map__pm_8h_af73f2f5685548b960c6d2d2624623736_1af73f2f5685548b960c6d2d2624623736" prot="public" static="no">
+        <name>image_1</name>
+        <initializer>mcuboot_secondary</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/flash_map_pm.h" line="15" column="9" bodyfile="include/flash_map_pm.h" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="flash__map__pm_8h_aa085a7152acce27564338ef35e23caba_1aa085a7152acce27564338ef35e23caba" prot="public" static="no">
+        <name>image_0_nonsecure</name>
+        <initializer>mcuboot_primary</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/flash_map_pm.h" line="16" column="9" bodyfile="include/flash_map_pm.h" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="flash__map__pm_8h_a20f9a2a165dd546e68c7b8eed9f313ae_1a20f9a2a165dd546e68c7b8eed9f313ae" prot="public" static="no">
+        <name>image_1_nonsecure</name>
+        <initializer>mcuboot_secondary</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/flash_map_pm.h" line="17" column="9" bodyfile="include/flash_map_pm.h" bodystart="17" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="flash__map__pm_8h_a9a973c8eaa19a587ac1ee016a0636135_1a9a973c8eaa19a587ac1ee016a0636135" prot="public" static="no">
+        <name>image_2</name>
+        <initializer>mcuboot_primary_1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/flash_map_pm.h" line="18" column="9" bodyfile="include/flash_map_pm.h" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="flash__map__pm_8h_a7bdc9740de45063586653d06302bf0d3_1a7bdc9740de45063586653d06302bf0d3" prot="public" static="no">
+        <name>image_3</name>
+        <initializer>mcuboot_secondary_1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/flash_map_pm.h" line="19" column="9" bodyfile="include/flash_map_pm.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="flash__map__pm_8h_a6fa68bcfb52e7e5a85187639c268d798_1a6fa68bcfb52e7e5a85187639c268d798" prot="public" static="no">
+        <name>image_scratch</name>
+        <initializer>mcuboot_scratch</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/flash_map_pm.h" line="20" column="9" bodyfile="include/flash_map_pm.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="flash__map__pm_8h_a20b6027d878b3042424f7440aaef7131_1a20b6027d878b3042424f7440aaef7131" prot="public" static="no">
+        <name>PM_ID</name>
+        <param><defname>label</defname></param>
+        <initializer>PM_##label##_ID</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/flash_map_pm.h" line="34" column="9" bodyfile="include/flash_map_pm.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="flash__map__pm_8h_a72a94a63397d1f59e164a6fb03b57098_1a72a94a63397d1f59e164a6fb03b57098" prot="public" static="no">
+        <name>PM_IS_ENABLED</name>
+        <param><defname>label</defname></param>
+        <initializer>PM_##label##_IS_ENABLED</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/flash_map_pm.h" line="35" column="9" bodyfile="include/flash_map_pm.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="flash__map__pm_8h_aa50221bd82e6e05764bf6b5a9611c39c_1aa50221bd82e6e05764bf6b5a9611c39c" prot="public" static="no">
+        <name>FLASH_AREA_LABEL_STR</name>
+        <param><defname>label</defname></param>
+        <initializer>#label</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/flash_map_pm.h" line="37" column="9" bodyfile="include/flash_map_pm.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="flash__map__pm_8h_afb4c2750734ad05a7f96a4a4369d7764_1afb4c2750734ad05a7f96a4a4369d7764" prot="public" static="no">
+        <name>FLASH_AREA_ID</name>
+        <param><defname>label</defname></param>
+        <initializer><ref refid="flash__map__pm_8h_a20b6027d878b3042424f7440aaef7131_1a20b6027d878b3042424f7440aaef7131" kindref="member">PM_ID</ref>(label)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/flash_map_pm.h" line="39" column="9" bodyfile="include/flash_map_pm.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="flash__map__pm_8h_ae6f3ea1bc68a0c4cd0ec442fccc733b4_1ae6f3ea1bc68a0c4cd0ec442fccc733b4" prot="public" static="no">
+        <name>FLASH_AREA_OFFSET</name>
+        <param><defname>label</defname></param>
+        <initializer>	UTIL_CAT(PM_, UTIL_CAT(UTIL_CAT(PM_, UTIL_CAT(<ref refid="flash__map__pm_8h_a20b6027d878b3042424f7440aaef7131_1a20b6027d878b3042424f7440aaef7131" kindref="member">PM_ID</ref>(label), _LABEL)), _OFFSET))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/flash_map_pm.h" line="41" column="9" bodyfile="include/flash_map_pm.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="flash__map__pm_8h_af7eea30a79a73de38e84eb903064c7aa_1af7eea30a79a73de38e84eb903064c7aa" prot="public" static="no">
+        <name>FLASH_AREA_SIZE</name>
+        <param><defname>label</defname></param>
+        <initializer>	UTIL_CAT(PM_, UTIL_CAT(UTIL_CAT(PM_, UTIL_CAT(<ref refid="flash__map__pm_8h_a20b6027d878b3042424f7440aaef7131_1a20b6027d878b3042424f7440aaef7131" kindref="member">PM_ID</ref>(label), _LABEL)), _SIZE))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/flash_map_pm.h" line="44" column="9" bodyfile="include/flash_map_pm.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="flash__map__pm_8h_a66482986ac578eee0a4c1bba86699c9a_1a66482986ac578eee0a4c1bba86699c9a" prot="public" static="no">
+        <name>FLASH_AREA_LABEL_EXISTS</name>
+        <param><defname>label</defname></param>
+        <initializer>	IS_ENABLED(<ref refid="flash__map__pm_8h_a72a94a63397d1f59e164a6fb03b57098_1a72a94a63397d1f59e164a6fb03b57098" kindref="member">PM_IS_ENABLED</ref>(label))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/flash_map_pm.h" line="47" column="9" bodyfile="include/flash_map_pm.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>FLASH_MAP_PM_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>FLASH_MAP_PM_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;pm_config.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/util.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Aliases<sp/>for<sp/>zephyr<sp/>-<sp/>mcuboot/ncs<sp/>style<sp/>naming<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14" refid="flash__map__pm_8h_a99be312e7c772acea1b42f7105442b35_1a99be312e7c772acea1b42f7105442b35" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>image_0<sp/>mcuboot_primary</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15" refid="flash__map__pm_8h_af73f2f5685548b960c6d2d2624623736_1af73f2f5685548b960c6d2d2624623736" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>image_1<sp/>mcuboot_secondary</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16" refid="flash__map__pm_8h_aa085a7152acce27564338ef35e23caba_1aa085a7152acce27564338ef35e23caba" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>image_0_nonsecure<sp/>mcuboot_primary</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17" refid="flash__map__pm_8h_a20f9a2a165dd546e68c7b8eed9f313ae_1a20f9a2a165dd546e68c7b8eed9f313ae" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>image_1_nonsecure<sp/>mcuboot_secondary</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="flash__map__pm_8h_a9a973c8eaa19a587ac1ee016a0636135_1a9a973c8eaa19a587ac1ee016a0636135" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>image_2<sp/>mcuboot_primary_1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="flash__map__pm_8h_a7bdc9740de45063586653d06302bf0d3_1a7bdc9740de45063586653d06302bf0d3" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>image_3<sp/>mcuboot_secondary_1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20" refid="flash__map__pm_8h_a6fa68bcfb52e7e5a85187639c268d798_1a6fa68bcfb52e7e5a85187639c268d798" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>image_scratch<sp/>mcuboot_scratch</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>(CONFIG_SETTINGS_FCB<sp/>||<sp/>CONFIG_SETTINGS_NVS<sp/>||<sp/>defined(PM_SETTINGS_STORAGE_ID))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>storage<sp/>settings_storage</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#elif<sp/>CONFIG_FILE_SYSTEM_LITTLEFS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>storage<sp/>littlefs_storage</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#elif<sp/>CONFIG_NVS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>storage<sp/>nvs_storage</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>(CONFIG_SETTINGS_FCB<sp/>||<sp/>CONFIG_SETTINGS_NVS)<sp/>&amp;&amp;<sp/>CONFIG_FILE_SYSTEM_LITTLEFS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#error<sp/>&quot;Not<sp/>supported&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="flash__map__pm_8h_a20b6027d878b3042424f7440aaef7131_1a20b6027d878b3042424f7440aaef7131" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PM_ID(label)<sp/>PM_##label##_ID</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="flash__map__pm_8h_a72a94a63397d1f59e164a6fb03b57098_1a72a94a63397d1f59e164a6fb03b57098" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PM_IS_ENABLED(label)<sp/>PM_##label##_IS_ENABLED</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="flash__map__pm_8h_aa50221bd82e6e05764bf6b5a9611c39c_1aa50221bd82e6e05764bf6b5a9611c39c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>FLASH_AREA_LABEL_STR(label)<sp/>#label</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="flash__map__pm_8h_afb4c2750734ad05a7f96a4a4369d7764_1afb4c2750734ad05a7f96a4a4369d7764" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>FLASH_AREA_ID(label)<sp/>PM_ID(label)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="flash__map__pm_8h_ae6f3ea1bc68a0c4cd0ec442fccc733b4_1ae6f3ea1bc68a0c4cd0ec442fccc733b4" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>FLASH_AREA_OFFSET(label)<sp/>\</highlight></codeline>
+<codeline lineno="42"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UTIL_CAT(PM_,<sp/>UTIL_CAT(UTIL_CAT(PM_,<sp/>UTIL_CAT(PM_ID(label),<sp/>_LABEL)),<sp/>_OFFSET))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="flash__map__pm_8h_af7eea30a79a73de38e84eb903064c7aa_1af7eea30a79a73de38e84eb903064c7aa" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>FLASH_AREA_SIZE(label)<sp/>\</highlight></codeline>
+<codeline lineno="45"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UTIL_CAT(PM_,<sp/>UTIL_CAT(UTIL_CAT(PM_,<sp/>UTIL_CAT(PM_ID(label),<sp/>_LABEL)),<sp/>_SIZE))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="flash__map__pm_8h_a66482986ac578eee0a4c1bba86699c9a_1a66482986ac578eee0a4c1bba86699c9a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>FLASH_AREA_LABEL_EXISTS(label)<sp/>\</highlight></codeline>
+<codeline lineno="48"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>IS_ENABLED(PM_IS_ENABLED(label))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>FLASH_MAP_PM_H_*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/flash_map_pm.h"/>
+  </compounddef>
+</doxygen>

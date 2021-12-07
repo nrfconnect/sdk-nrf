@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__light__xyl" kind="group">
+    <compoundname>bt_mesh_light_xyl</compoundname>
+    <title>Light xyL models</title>
+    <innerclass refid="structbt__mesh__light__xy" prot="public">bt_mesh_light_xy</innerclass>
+    <innerclass refid="structbt__mesh__light__xyl" prot="public">bt_mesh_light_xyl</innerclass>
+    <innerclass refid="structbt__mesh__light__xyl__set__params" prot="public">bt_mesh_light_xyl_set_params</innerclass>
+    <innerclass refid="structbt__mesh__light__xyl__rsp" prot="public">bt_mesh_light_xyl_rsp</innerclass>
+    <innerclass refid="structbt__mesh__light__xyl__status" prot="public">bt_mesh_light_xyl_status</innerclass>
+    <innerclass refid="structbt__mesh__light__xy__range" prot="public">bt_mesh_light_xy_range</innerclass>
+    <innerclass refid="structbt__mesh__light__xyl__range__status" prot="public">bt_mesh_light_xyl_range_status</innerclass>
+    <briefdescription>
+<para>API for the Light xyL models. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

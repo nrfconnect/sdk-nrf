@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__t2t__tlv__block" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_t2t_tlv_block</compoundname>
+    <includes refid="t2t_2tlv__block_8h" local="no">tlv_block.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__t2t__tlv__block_aaaad82d330624013855b3c19ff4060d1_1aaaad82d330624013855b3c19ff4060d1" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_t2t_tlv_block::tag</definition>
+        <argsstring></argsstring>
+        <name>tag</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Type of the TLV block. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/tlv_block.h" line="54" column="9" bodyfile="include/nfc/t2t/tlv_block.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t2t__tlv__block_a70d1c83f6d3df394204889015f1a3e1c_1a70d1c83f6d3df394204889015f1a3e1c" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t nfc_t2t_tlv_block::length</definition>
+        <argsstring></argsstring>
+        <name>length</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of the value field. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/tlv_block.h" line="57" column="10" bodyfile="include/nfc/t2t/tlv_block.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t2t__tlv__block_a9060d2f759dd66ac48207b25fbd6c60b_1a9060d2f759dd66ac48207b25fbd6c60b" prot="public" static="no" mutable="no">
+        <type>const uint8_t *</type>
+        <definition>const uint8_t* nfc_t2t_tlv_block::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the value field (NULL if no value field is present in the block). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/tlv_block.h" line="62" column="15" bodyfile="include/nfc/t2t/tlv_block.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>TLV block descriptor. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/nfc/t2t/tlv_block.h" line="52" column="1" bodyfile="include/nfc/t2t/tlv_block.h" bodystart="52" bodyend="63"/>
+    <listofallmembers>
+      <member refid="structnfc__t2t__tlv__block_a70d1c83f6d3df394204889015f1a3e1c_1a70d1c83f6d3df394204889015f1a3e1c" prot="public" virt="non-virtual"><scope>nfc_t2t_tlv_block</scope><name>length</name></member>
+      <member refid="structnfc__t2t__tlv__block_aaaad82d330624013855b3c19ff4060d1_1aaaad82d330624013855b3c19ff4060d1" prot="public" virt="non-virtual"><scope>nfc_t2t_tlv_block</scope><name>tag</name></member>
+      <member refid="structnfc__t2t__tlv__block_a9060d2f759dd66ac48207b25fbd6c60b_1a9060d2f759dd66ac48207b25fbd6c60b" prot="public" virt="non-virtual"><scope>nfc_t2t_tlv_block</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

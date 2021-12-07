@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__t4t__apdu__comm" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_t4t_apdu_comm</compoundname>
+    <includes refid="apdu_8h" local="no">apdu.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__t4t__apdu__comm_a98a53f87890d0038d252a4f8cae06091_1a98a53f87890d0038d252a4f8cae06091" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_t4t_apdu_comm::class_byte</definition>
+        <argsstring></argsstring>
+        <name>class_byte</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="85" column="9" bodyfile="include/nfc/t4t/apdu.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__apdu__comm_a9c690ca913eff16c228989c232619b37_1a9c690ca913eff16c228989c232619b37" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__nfc__t4t__apdu_ga994247eb772c9326ca42fcf5e52bfba9_1ga994247eb772c9326ca42fcf5e52bfba9" kindref="member">nfc_t4t_apdu_comm_ins</ref></type>
+        <definition>enum nfc_t4t_apdu_comm_ins nfc_t4t_apdu_comm::instruction</definition>
+        <argsstring></argsstring>
+        <name>instruction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The chosen code of instruction. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="88" column="27" bodyfile="include/nfc/t4t/apdu.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__apdu__comm_a2acb74130e5a77b4e9db4059adfb8b2e_1a2acb74130e5a77b4e9db4059adfb8b2e" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t nfc_t4t_apdu_comm::parameter</definition>
+        <argsstring></argsstring>
+        <name>parameter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Parameters associated with the instruction code. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="91" column="10" bodyfile="include/nfc/t4t/apdu.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__apdu__comm_ab1cec98be7199d2fff394796c81b9aab_1ab1cec98be7199d2fff394796c81b9aab" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structnfc__t4t__apdu__data" kindref="compound">nfc_t4t_apdu_data</ref></type>
+        <definition>struct nfc_t4t_apdu_data nfc_t4t_apdu_comm::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Optional data fields (Lc + data bytes). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="94" column="24" bodyfile="include/nfc/t4t/apdu.h" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t4t__apdu__comm_a0e55948862d445451c53fd3696d4dcd1_1a0e55948862d445451c53fd3696d4dcd1" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t nfc_t4t_apdu_comm::resp_len</definition>
+        <argsstring></argsstring>
+        <name>resp_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Optional response length field (Le). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/apdu.h" line="97" column="10" bodyfile="include/nfc/t4t/apdu.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Command Application Protocol Data Unit (C-APDU) descriptor. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>nfc_t4t_apdu_comm</label>
+        <link refid="structnfc__t4t__apdu__comm"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>data</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>nfc_t4t_apdu_data</label>
+        <link refid="structnfc__t4t__apdu__data"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/nfc/t4t/apdu.h" line="83" column="1" bodyfile="include/nfc/t4t/apdu.h" bodystart="83" bodyend="98"/>
+    <listofallmembers>
+      <member refid="structnfc__t4t__apdu__comm_a98a53f87890d0038d252a4f8cae06091_1a98a53f87890d0038d252a4f8cae06091" prot="public" virt="non-virtual"><scope>nfc_t4t_apdu_comm</scope><name>class_byte</name></member>
+      <member refid="structnfc__t4t__apdu__comm_ab1cec98be7199d2fff394796c81b9aab_1ab1cec98be7199d2fff394796c81b9aab" prot="public" virt="non-virtual"><scope>nfc_t4t_apdu_comm</scope><name>data</name></member>
+      <member refid="structnfc__t4t__apdu__comm_a9c690ca913eff16c228989c232619b37_1a9c690ca913eff16c228989c232619b37" prot="public" virt="non-virtual"><scope>nfc_t4t_apdu_comm</scope><name>instruction</name></member>
+      <member refid="structnfc__t4t__apdu__comm_a2acb74130e5a77b4e9db4059adfb8b2e_1a2acb74130e5a77b4e9db4059adfb8b2e" prot="public" virt="non-virtual"><scope>nfc_t4t_apdu_comm</scope><name>parameter</name></member>
+      <member refid="structnfc__t4t__apdu__comm_a0e55948862d445451c53fd3696d4dcd1_1a0e55948862d445451c53fd3696d4dcd1" prot="public" virt="non-virtual"><scope>nfc_t4t_apdu_comm</scope><name>resp_len</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

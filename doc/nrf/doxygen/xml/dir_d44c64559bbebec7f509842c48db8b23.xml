@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_d44c64559bbebec7f509842c48db8b23" kind="dir">
+    <compoundname>include</compoundname>
+    <innerdir refid="dir_9bfa6dacb50e0c9e4877cf880eaabccb">include/bluetooth</innerdir>
+    <innerdir refid="dir_857d0e7c1bb2d7ffb2c2a19e35e86cb4">include/caf</innerdir>
+    <innerdir refid="dir_0ca87e0e155b63d3277a4a8052f2e1d0">include/debug</innerdir>
+    <innerdir refid="dir_7464a6b1b0a3f30b998710e6a7979f20">include/dfu</innerdir>
+    <innerdir refid="dir_4fe5cf12322eb0f9892753dc20f1484c">include/drivers</innerdir>
+    <innerdir refid="dir_e8cb83a13f8863767a97a288db2ed3d3">include/mgmt</innerdir>
+    <innerdir refid="dir_9d6cf69beb307326d3356302361e9585">include/modem</innerdir>
+    <innerdir refid="dir_e936f8a4e1c5cedac7200b7215bca168">include/mpsl</innerdir>
+    <innerdir refid="dir_2fa1ed3146d6c2b96c5cfe4341985326">include/net</innerdir>
+    <innerdir refid="dir_1b436e6e09bca9a49997c64eb38e0fe9">include/nfc</innerdir>
+    <innerdir refid="dir_7b271abf9afd8594ceaf3484d66fcdf7">include/sensor</innerdir>
+    <innerdir refid="dir_f9aae77069966d7440135a96ee266e8f">include/shell</innerdir>
+    <innerdir refid="dir_7672d6dcbc95d95a563b5dfe9aee0baa">include/tfm</innerdir>
+    <innerdir refid="dir_3229dc35f2c18efbeebe9c947d869ea2">include/zigbee</innerdir>
+    <innerfile refid="adp536x_8h">adp536x.h</innerfile>
+    <innerfile refid="bl__crypto_8h">bl_crypto.h</innerfile>
+    <innerfile refid="bl__storage_8h">bl_storage.h</innerfile>
+    <innerfile refid="bl__validation_8h">bl_validation.h</innerfile>
+    <innerfile refid="date__time_8h">date_time.h</innerfile>
+    <innerfile refid="dk__buttons__and__leds_8h">dk_buttons_and_leds.h</innerfile>
+    <innerfile refid="ei__wrapper_8h">ei_wrapper.h</innerfile>
+    <innerfile refid="esb_8h">esb.h</innerfile>
+    <innerfile refid="event__manager_8h">event_manager.h</innerfile>
+    <innerfile refid="event__manager__profiler_8h">event_manager_profiler.h</innerfile>
+    <innerfile refid="flash__map__pm_8h">flash_map_pm.h</innerfile>
+    <innerfile refid="fprotect_8h">fprotect.h</innerfile>
+    <innerfile refid="fw__info_8h">fw_info.h</innerfile>
+    <innerfile refid="gzll__glue_8h">gzll_glue.h</innerfile>
+    <innerfile refid="gzp_8h">gzp.h</innerfile>
+    <innerfile refid="gzp__config_8h">gzp_config.h</innerfile>
+    <innerfile refid="hw__unique__key_8h">hw_unique_key.h</innerfile>
+    <innerfile refid="memfault__ncs_8h">memfault_ncs.h</innerfile>
+    <innerfile refid="profiler_8h">profiler.h</innerfile>
+    <innerfile refid="ram__pwrdn_8h">ram_pwrdn.h</innerfile>
+    <innerfile refid="secure__services_8h">secure_services.h</innerfile>
+    <innerfile refid="spm_8h">spm.h</innerfile>
+    <innerfile refid="st25r3911b__nfca_8h">st25r3911b_nfca.h</innerfile>
+    <innerfile refid="supl__os__client_8h">supl_os_client.h</innerfile>
+    <innerfile refid="wave__gen_8h">wave_gen.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/"/>
+  </compounddef>
+</doxygen>

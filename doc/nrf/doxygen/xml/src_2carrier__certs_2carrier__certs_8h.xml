@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="src_2carrier__certs_2carrier__certs_8h" kind="file" language="C++">
+    <compoundname>carrier_certs.h</compoundname>
+    <includes refid="lwm2m__carrier_8h" local="no">lwm2m_carrier.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/asset_tracker/src/carrier_certs/carrier_certs.h</label>
+        <link refid="src_2carrier__certs_2carrier__certs_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>lwm2m_carrier.h</label>
+        <link refid="lwm2m__carrier_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>stdbool.h</label>
+      </node>
+      <node id="4">
+        <label>stddef.h</label>
+      </node>
+      <node id="3">
+        <label>stdint.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="src_2carrier__certs_2carrier__certs_8h_a84060dbd8583d8ffa4cf0d708796ac54_1a84060dbd8583d8ffa4cf0d708796ac54" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int carrier_cert_provision</definition>
+        <argsstring>(ca_cert_tags_t *const tags)</argsstring>
+        <name>carrier_cert_provision</name>
+        <param>
+          <type><ref refid="structca__cert__tags__t" kindref="compound">ca_cert_tags_t</ref> *const</type>
+          <declname>tags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/carrier_certs/carrier_certs.h" line="12" column="5" declfile="applications/asset_tracker/src/carrier_certs/carrier_certs.h" declline="12" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-BSD-5-Clause-Nordic</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>CARRIER_CERTS_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CARRIER_CERTS_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="lwm2m__carrier_8h" kindref="compound">lwm2m_carrier.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12" refid="src_2carrier__certs_2carrier__certs_8h_a84060dbd8583d8ffa4cf0d708796ac54_1a84060dbd8583d8ffa4cf0d708796ac54" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="src_2carrier__certs_2carrier__certs_8h_a84060dbd8583d8ffa4cf0d708796ac54_1a84060dbd8583d8ffa4cf0d708796ac54" kindref="member">carrier_cert_provision</ref>(<ref refid="structca__cert__tags__t" kindref="compound">ca_cert_tags_t</ref><sp/>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>tags);</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>CARRIER_CERTS_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/asset_tracker/src/carrier_certs/carrier_certs.h"/>
+  </compounddef>
+</doxygen>

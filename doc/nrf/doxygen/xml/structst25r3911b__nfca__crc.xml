@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structst25r3911b__nfca__crc" kind="struct" language="C++" prot="public">
+    <compoundname>st25r3911b_nfca_crc</compoundname>
+    <includes refid="st25r3911b__nfca_8h" local="no">st25r3911b_nfca.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structst25r3911b__nfca__crc_a4e0ef4fb261a90c866c8418154e4cd54_1a4e0ef4fb261a90c866c8418154e4cd54" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t st25r3911b_nfca_crc::crc[2]</definition>
+        <argsstring>[2]</argsstring>
+        <name>crc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>CRC - 16. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="113" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>NFCA_A CRC structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/st25r3911b_nfca.h" line="111" column="1" bodyfile="include/st25r3911b_nfca.h" bodystart="111" bodyend="114"/>
+    <listofallmembers>
+      <member refid="structst25r3911b__nfca__crc_a4e0ef4fb261a90c866c8418154e4cd54_1a4e0ef4fb261a90c866c8418154e4cd54" prot="public" virt="non-virtual"><scope>st25r3911b_nfca_crc</scope><name>crc</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

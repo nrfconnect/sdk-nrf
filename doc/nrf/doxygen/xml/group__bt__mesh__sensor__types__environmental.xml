@@ -1,0 +1,547 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__sensor__types__environmental" kind="group">
+    <compoundname>bt_mesh_sensor_types_environmental</compoundname>
+    <title>Environmental sensor types</title>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__environmental_1ga681b0edd1978b464c582f284d8c12af5" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_present_amb_rel_humidity</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_present_amb_rel_humidity</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present Ambient Relative Humidity</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Present Ambient Relative Humidity<itemizedlist>
+<listitem><para>Unit: Percent</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 0.01 %)</para>
+</listitem><listitem><para>Range: 0 to 100.0 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="303" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="303" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__environmental_1gaf6eff873dbca3ffd2b7c2268652f07bf" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_present_amb_co2_concentration</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_present_amb_co2_concentration</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present Ambient Carbon Dioxide Concentration</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Present Ambient Carbon Dioxide Concentration<itemizedlist>
+<listitem><para>Unit: Parts per million</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1 ppm)</para>
+</listitem><listitem><para>Range: 0 to 65533 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="314" column="1" declfile="include/bluetooth/mesh/sensor_types.h" declline="314" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__environmental_1ga476ea9c5b8d0457bae7990a08710fbc3" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_present_amb_voc_concentration</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_present_amb_voc_concentration</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present Ambient Volatile Organic Compounds Concentration</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Present Ambient Volatile Organic Compounds Concentration<itemizedlist>
+<listitem><para>Unit: Parts per billion</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1 ppb)</para>
+</listitem><listitem><para>Range: 0 to 65533 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="325" column="1" declfile="include/bluetooth/mesh/sensor_types.h" declline="325" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__environmental_1ga05b1e8c13dd068acd5379cc738c283fc" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_present_amb_noise</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_present_amb_noise</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present Ambient Noise</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Present Ambient Noise<itemizedlist>
+<listitem><para>Unit: Decibel</para>
+</listitem><listitem><para>Encoding: 8 bit unsigned scalar (Resolution: 1 dB)</para>
+</listitem><listitem><para>Range: 0 to 253 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="335" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="335" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__environmental_1ga4df27e66686a4cb5f5d8049c56636c12" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_apparent_wind_direction</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_apparent_wind_direction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Apparent Wind Direction</para>
+<para>The apparent wind direction is the relative clockwise direction of the wind in relation to the observer.</para>
+<para>For example, the apparent wind direction aboard a boat is given in degrees relative to the heading of the boat.</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Apparent Wind Direction<itemizedlist>
+<listitem><para>Unit: Degrees</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 0.01 degrees)</para>
+</listitem><listitem><para>Range: 0 to 359.99 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="351" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="351" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__environmental_1ga7b648bd8e662e6498f3fef7b4f310ce1" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_apparent_wind_speed</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_apparent_wind_speed</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Apparent Wind Speed</para>
+<para>Apparent Wind Speed is the relative speed of the wind in relation to the observer.</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Apparent Wind Speed<itemizedlist>
+<listitem><para>Unit: Metres per second</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 0.01 m/s)</para>
+</listitem><listitem><para>Range: 0 to 655.35 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="364" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="364" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__environmental_1ga4ae8e009129f938430abc9a03524a340" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_dew_point</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_dew_point</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Dew Point</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Dew Point<itemizedlist>
+<listitem><para>Unit: Degrees Celsius</para>
+</listitem><listitem><para>Encoding: 8 bit signed scalar (Resolution: 1 C)</para>
+</listitem><listitem><para>Range: -128 to 127 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="374" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="374" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__environmental_1gae6d1f68412bd0fca90395a38a6718ab2" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_gust_factor</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_gust_factor</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Gust Factor</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Gust Factor<itemizedlist>
+<listitem><para>Unit: <emphasis>unitless</emphasis></para>
+</listitem><listitem><para>Encoding: 8 bit unsigned scalar (Resolution: 0.1)</para>
+</listitem><listitem><para>Range: 0 to 25.5 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="384" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="384" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__environmental_1ga86de7671e6ae4a4ff1b2e7a5efc33a02" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_heat_index</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_heat_index</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Heat Index</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Heat Index<itemizedlist>
+<listitem><para>Unit: Degrees Celsius</para>
+</listitem><listitem><para>Encoding: 8 bit signed scalar (Resolution: 1 C)</para>
+</listitem><listitem><para>Range: -128 to 127 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="394" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="394" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__environmental_1ga12061a4d01c7aaef7cf684c156722445" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_present_indoor_relative_humidity</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_present_indoor_relative_humidity</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present Indoor Relative Humidity</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Humidity<itemizedlist>
+<listitem><para>Unit: Percentage</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 0.01 %)</para>
+</listitem><listitem><para>Range: 0 to 100 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="405" column="1" declfile="include/bluetooth/mesh/sensor_types.h" declline="405" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__environmental_1ga1892719338d4f8abebbc3639c5276324" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_present_outdoor_relative_humidity</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_present_outdoor_relative_humidity</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present Outdoor Relative Humidity</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Humidity<itemizedlist>
+<listitem><para>Unit: Percentage</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 0.01 %)</para>
+</listitem><listitem><para>Range: 0 to 100 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="416" column="1" declfile="include/bluetooth/mesh/sensor_types.h" declline="416" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__environmental_1ga46bd32b3afe15523e2d1f6817e682954" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_magnetic_declination</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_magnetic_declination</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Magnetic Declination</para>
+<para>The magnetic declination is the angle on the horizontal plane between the direction of True North (geographic) and the direction of Magnetic North, measured clockwise from True North to Magnetic North.</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Magnetic Declination<itemizedlist>
+<listitem><para>Unit: Degrees</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 0.01 degrees)</para>
+</listitem><listitem><para>Range: 0 to 359.99 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="430" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="430" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__environmental_1ga9df04709e246574ec2728a23c889ad9b" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_magnetic_flux_density_2d</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_magnetic_flux_density_2d</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Magnetic Flux Density - 2D</para>
+<para><simplesect kind="note"><para>The Magnetic Flux Density unit is measured in tesla in the specification. In the API, it is measured in microtesla to accomodate the 6 digit format of the sensor values.</para>
+</simplesect>
+Channels:<itemizedlist>
+<listitem><para>X-axis<itemizedlist>
+<listitem><para>Unit: Microtesla</para>
+</listitem><listitem><para>Encoding: 16 bit signed scalar (Resolution: 0.1 uT)</para>
+</listitem><listitem><para>Range: -6553.6 to 6553.5</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Y-axis<itemizedlist>
+<listitem><para>Unit: Microtesla</para>
+</listitem><listitem><para>Encoding: 16 bit signed scalar (Resolution: 0.1 uT)</para>
+</listitem><listitem><para>Range: -6553.6 to 6553.5 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="448" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="448" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__environmental_1gabf5a3c2ef5ae88d83f0dfc5715506efb" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_magnetic_flux_density_3d</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_magnetic_flux_density_3d</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Magnetic Flux Density - 3D</para>
+<para><simplesect kind="note"><para>The Magnetic Flux Density unit is measured in tesla in the specification. In the API, it is measured in microtesla to accomodate the 6 digit format of the sensor values.</para>
+</simplesect>
+Channels:<itemizedlist>
+<listitem><para>X-axis<itemizedlist>
+<listitem><para>Unit: Microtesla</para>
+</listitem><listitem><para>Encoding: 16 bit signed scalar (Resolution: 0.1 uT)</para>
+</listitem><listitem><para>Range: -6553.6 to 6553.5</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Y-axis<itemizedlist>
+<listitem><para>Unit: Microtesla</para>
+</listitem><listitem><para>Encoding: 16 bit signed scalar (Resolution: 0.1 uT)</para>
+</listitem><listitem><para>Range: -6553.6 to 6553.5</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Z-axis<itemizedlist>
+<listitem><para>Unit: Microtesla</para>
+</listitem><listitem><para>Encoding: 16 bit signed scalar (Resolution: 0.1 uT)</para>
+</listitem><listitem><para>Range: -6553.6 to 6553.5 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="470" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="470" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__environmental_1ga2fade9fe6866686c692e7e8382294be8" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_pollen_concentration</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_pollen_concentration</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pollen Concentration</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Pollen Concentration<itemizedlist>
+<listitem><para>Unit: Concentration</para>
+</listitem><listitem><para>Encoding: 24 bit unsigned scalar (Resolution: 1 per m3)</para>
+</listitem><listitem><para>Range: 0 to 16777215 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="480" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="480" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__environmental_1ga20dcbf0f6145d6750a5908bed46b5fc3" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_air_pressure</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_air_pressure</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Air Pressure</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Pressure<itemizedlist>
+<listitem><para>Unit: Pascal</para>
+</listitem><listitem><para>Encoding: 32 bit unsigned scalar (Resolution: 0.1 Pa)</para>
+</listitem><listitem><para>Range: 0 to 429496729.5 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="490" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="490" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__environmental_1gacc95eafa48c17d6fae0a07cf12ccaecb" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_pressure</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_pressure</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pressure</para>
+<para>A sensor reporting pressure other than air pressure.</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Pressure<itemizedlist>
+<listitem><para>Unit: Pascal</para>
+</listitem><listitem><para>Encoding: 32 bit unsigned scalar (Resolution: 0.1 Pa)</para>
+</listitem><listitem><para>Range: 0 to 429496729.5 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="502" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="502" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__environmental_1gadb637e62b5edbcd8a418c344a5a79450" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_rainfall</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_rainfall</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Rainfall</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Rainfall<itemizedlist>
+<listitem><para>Unit: Meter</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 0.001 m)</para>
+</listitem><listitem><para>Range: 0 to 655.35 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="512" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="512" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__environmental_1ga9de0c548eb9617f9e2a1900db5deb8d9" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_true_wind_direction</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_true_wind_direction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>True Wind Direction</para>
+<para>Wind direction is reported by the direction from which it originates and is an angle measured clockwise relative to Geographic North.</para>
+<para>Channels:<itemizedlist>
+<listitem><para>True Wind Direction<itemizedlist>
+<listitem><para>Unit: Degrees</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 0.01 degrees)</para>
+</listitem><listitem><para>Range: 0 to 359.99 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="525" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="525" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__environmental_1ga7c559e480ece5fcc5432f39d13f0ed6f" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_true_wind_speed</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_true_wind_speed</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>True Wind Speed</para>
+<para>Channels:<itemizedlist>
+<listitem><para>True Wind Speed<itemizedlist>
+<listitem><para>Unit: Metres per second</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 0.01 m/s)</para>
+</listitem><listitem><para>Range: 0 to 655.35 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="535" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="535" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__environmental_1ga329054737ca1c7f336370aac8190c295" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_uv_index</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_uv_index</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>UV Index</para>
+<para>Channels:<itemizedlist>
+<listitem><para>UV Index<itemizedlist>
+<listitem><para>Unit: <emphasis>unitless</emphasis></para>
+</listitem><listitem><para>Encoding: 8 bit unsigned scalar (Resolution: 1)</para>
+</listitem><listitem><para>Range: 0 to 255 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="545" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="545" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__environmental_1ga3d8ed17575e65856bf5d2ea8a74a758d" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_wind_chill</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_wind_chill</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Wind Chill</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Wind Chill<itemizedlist>
+<listitem><para>Unit: Degrees Celsius</para>
+</listitem><listitem><para>Encoding: 8 bit signed scalar (Resolution: 1 C)</para>
+</listitem><listitem><para>Range: -128 to 127 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="555" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="555" declcolumn="39"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

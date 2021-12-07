@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structzigbee__fota__evt" kind="struct" language="C++" prot="public">
+    <compoundname>zigbee_fota_evt</compoundname>
+    <includes refid="zigbee__fota_8h" local="no">zigbee_fota.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structzigbee__fota__evt_af72aa4ab3292c5c9187a178205f29f11_1af72aa4ab3292c5c9187a178205f29f11" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__zigbee__fota_gafd8525bbd00bfa2c4822013981b5fee9_1gafd8525bbd00bfa2c4822013981b5fee9" kindref="member">zigbee_fota_evt_id</ref></type>
+        <definition>enum zigbee_fota_evt_id zigbee_fota_evt::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_fota.h" line="58" column="24" bodyfile="include/zigbee/zigbee_fota.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structzigbee__fota__evt_a46e8259d811d79eb3fb71413d7cd76b2_1a46e8259d811d79eb3fb71413d7cd76b2" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structzigbee__fota__event__dl" kindref="compound">zigbee_fota_event_dl</ref></type>
+        <definition>struct zigbee_fota_event_dl zigbee_fota_evt::dl</definition>
+        <argsstring></argsstring>
+        <name>dl</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_fota.h" line="60" column="27" bodyfile="include/zigbee/zigbee_fota.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structzigbee__fota__evt_a2309b70f923cc98ea80d7c862719170e_1a2309b70f923cc98ea80d7c862719170e" prot="public" static="no" mutable="no">
+        <type>union zigbee_fota_evt::@167</type>
+        <definition>union zigbee_fota_evt::@167 zigbee_fota_evt::@168</definition>
+        <argsstring></argsstring>
+        <name>@168</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_fota.h" line="61" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Zigbee FOTA download event data. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>zigbee_fota_event_dl</label>
+        <link refid="structzigbee__fota__event__dl"/>
+      </node>
+      <node id="1">
+        <label>zigbee_fota_evt</label>
+        <link refid="structzigbee__fota__evt"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>dl</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/zigbee/zigbee_fota.h" line="57" column="1" bodyfile="include/zigbee/zigbee_fota.h" bodystart="57" bodyend="62"/>
+    <listofallmembers>
+      <member refid="structzigbee__fota__evt_a46e8259d811d79eb3fb71413d7cd76b2_1a46e8259d811d79eb3fb71413d7cd76b2" prot="public" virt="non-virtual"><scope>zigbee_fota_evt</scope><name>dl</name></member>
+      <member refid="structzigbee__fota__evt_af72aa4ab3292c5c9187a178205f29f11_1af72aa4ab3292c5c9187a178205f29f11" prot="public" virt="non-virtual"><scope>zigbee_fota_evt</scope><name>id</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

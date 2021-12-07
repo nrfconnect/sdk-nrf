@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_21f1b4580776a51493c75c50170e349a" kind="dir">
+    <compoundname>applications/nrf_desktop/configuration/nrf52840dk_nrf52840</compoundname>
+    <innerfile refid="nrf52840dk__nrf52840_2ble__discovery__def_8h">ble_discovery_def.h</innerfile>
+    <innerfile refid="nrf52840dk__nrf52840_2ble__scan__def_8h">ble_scan_def.h</innerfile>
+    <innerfile refid="nrf__desktop_2configuration_2nrf52840dk__nrf52840_2buttons__def_8h">buttons_def.h</innerfile>
+    <innerfile refid="buttons__sim__def_8h">buttons_sim_def.h</innerfile>
+    <innerfile refid="nrf__desktop_2configuration_2nrf52840dk__nrf52840_2click__detector__def_8h">click_detector_def.h</innerfile>
+    <innerfile refid="nrf52840dk__nrf52840_2hid__keyboard__leds__def_8h">hid_keyboard_leds_def.h</innerfile>
+    <innerfile refid="hid__keyboard__leds__def__keyboard_8h">hid_keyboard_leds_def_keyboard.h</innerfile>
+    <innerfile refid="nrf52840dk__nrf52840_2hid__keymap__def_8h">hid_keymap_def.h</innerfile>
+    <innerfile refid="hid__keymap__def__keyboard_8h">hid_keymap_def_keyboard.h</innerfile>
+    <innerfile refid="nrf__desktop_2configuration_2nrf52840dk__nrf52840_2led__state__def_8h">led_state_def.h</innerfile>
+    <innerfile refid="nrf52840dk__nrf52840_2port__state__def_8h">port_state_def.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/nrf_desktop/configuration/nrf52840dk_nrf52840/"/>
+  </compounddef>
+</doxygen>

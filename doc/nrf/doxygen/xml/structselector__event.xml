@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structselector__event" kind="struct" language="C++" prot="public">
+    <compoundname>selector_event</compoundname>
+    <includes refid="selector__event_8h" local="no">selector_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structselector__event_afc13fb92a4990d8c56a40d5300b9a924_1afc13fb92a4990d8c56a40d5300b9a924" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header selector_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/selector_event.h" line="25" column="19" bodyfile="applications/nrf_desktop/src/events/selector_event.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structselector__event_a067e872c0c28f23c8bf930fbed380f63_1a067e872c0c28f23c8bf930fbed380f63" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t selector_event::selector_id</definition>
+        <argsstring></argsstring>
+        <name>selector_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/selector_event.h" line="27" column="9" bodyfile="applications/nrf_desktop/src/events/selector_event.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structselector__event_ac6dfc5edf53f71e81f8c8f0c11c46fc0_1ac6dfc5edf53f71e81f8c8f0c11c46fc0" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t selector_event::position</definition>
+        <argsstring></argsstring>
+        <name>position</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/selector_event.h" line="28" column="9" bodyfile="applications/nrf_desktop/src/events/selector_event.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>selector_event</label>
+        <link refid="structselector__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/nrf_desktop/src/events/selector_event.h" line="24" column="1" bodyfile="applications/nrf_desktop/src/events/selector_event.h" bodystart="24" bodyend="29"/>
+    <listofallmembers>
+      <member refid="structselector__event_afc13fb92a4990d8c56a40d5300b9a924_1afc13fb92a4990d8c56a40d5300b9a924" prot="public" virt="non-virtual"><scope>selector_event</scope><name>header</name></member>
+      <member refid="structselector__event_ac6dfc5edf53f71e81f8c8f0c11c46fc0_1ac6dfc5edf53f71e81f8c8f0c11c46fc0" prot="public" virt="non-virtual"><scope>selector_event</scope><name>position</name></member>
+      <member refid="structselector__event_a067e872c0c28f23c8bf930fbed380f63_1a067e872c0c28f23c8bf930fbed380f63" prot="public" virt="non-virtual"><scope>selector_event</scope><name>selector_id</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

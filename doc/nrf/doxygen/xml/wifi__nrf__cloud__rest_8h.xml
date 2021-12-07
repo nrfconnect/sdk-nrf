@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="wifi__nrf__cloud__rest_8h" kind="file" language="C++">
+    <compoundname>wifi_nrf_cloud_rest.h</compoundname>
+    <includes refid="wifi__service_8h" local="yes">wifi_service.h</includes>
+    <incdepgraph>
+      <node id="5">
+        <label>modem/location.h</label>
+        <link refid="location_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>lib/location/wifi/wifi_nrf_cloud_rest.h</label>
+        <link refid="wifi__nrf__cloud__rest_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>wifi_service.h</label>
+        <link refid="wifi__service_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>net/wifi.h</label>
+      </node>
+      <node id="6">
+        <label>stdbool.h</label>
+      </node>
+      <node id="7">
+        <label>stddef.h</label>
+      </node>
+      <node id="8">
+        <label>stdint.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="wifi__nrf__cloud__rest_8h_ac096db27124d4b1fc73d9adc430e3ebd_1ac096db27124d4b1fc73d9adc430e3ebd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int wifi_nrf_cloud_rest_pos_get</definition>
+        <argsstring>(char *rcv_buf, size_t rcv_buf_len, const struct rest_wifi_pos_request *request, struct location_data *result)</argsstring>
+        <name>wifi_nrf_cloud_rest_pos_get</name>
+        <param>
+          <type>char *</type>
+          <declname>rcv_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>rcv_buf_len</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structrest__wifi__pos__request" kindref="compound">rest_wifi_pos_request</ref> *</type>
+          <declname>request</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structlocation__data" kindref="compound">location_data</ref> *</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+<para>nRF Cloud Wi-Fi positioning request. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">rcv_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer for storing the REST service response. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">rcv_buf_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the provided buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">request</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to be provided in API call. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">result</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parsed results of API response.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/wifi/wifi_nrf_cloud_rest.h" line="29" column="5" declfile="lib/location/wifi/wifi_nrf_cloud_rest.h" declline="29" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>nRF Cloud REST API for Wi-Fi positioning. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>WIFI_NRF_CLOUD_REST_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>WIFI_NRF_CLOUD_REST_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="wifi__service_8h" kindref="compound">wifi_service.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="wifi__nrf__cloud__rest_8h_ac096db27124d4b1fc73d9adc430e3ebd_1ac096db27124d4b1fc73d9adc430e3ebd" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="wifi__nrf__cloud__rest_8h_ac096db27124d4b1fc73d9adc430e3ebd_1ac096db27124d4b1fc73d9adc430e3ebd" kindref="member">wifi_nrf_cloud_rest_pos_get</ref>(</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*rcv_buf,</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>rcv_buf_len,</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structrest__wifi__pos__request" kindref="compound">rest_wifi_pos_request</ref><sp/>*request,</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlocation__data" kindref="compound">location_data</ref><sp/>*result);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>WIFI_NRF_CLOUD_REST_H<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="lib/location/wifi/wifi_nrf_cloud_rest.h"/>
+  </compounddef>
+</doxygen>

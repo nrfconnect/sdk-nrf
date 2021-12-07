@@ -1,0 +1,156 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="nrf__desktop_2configuration_2nrf52840dongle__nrf52840_2led__state__def_8h" kind="file" language="C++">
+    <compoundname>led_state_def.h</compoundname>
+    <includes local="yes">led_state.h</includes>
+    <includes refid="include_2caf_2led__effect_8h" local="no">caf/led_effect.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/nrf52840dongle_nrf52840/led_state_def.h</label>
+        <link refid="nrf__desktop_2configuration_2nrf52840dongle__nrf52840_2led__state__def_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>caf/led_effect.h</label>
+        <link refid="include_2caf_2led__effect_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>led_state.h</label>
+      </node>
+      <node id="5">
+        <label>sys/util.h</label>
+      </node>
+      <node id="4">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="nrf__desktop_2configuration_2nrf52840dongle__nrf52840_2led__state__def_8h_af61ec80f58a2f4aa9c4ea82858856743_1af61ec80f58a2f4aa9c4ea82858856743" prot="public" static="no" mutable="no">
+        <type>const struct @88</type>
+        <definition>const struct @88 led_state_def_include_once</definition>
+        <argsstring></argsstring>
+        <name>led_state_def_include_once</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840dongle_nrf52840/led_state_def.h" line="17" column="40"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf__desktop_2configuration_2nrf52840dongle__nrf52840_2led__state__def_8h_a33e9e1309676451b6c230f8a52f41d93_1a33e9e1309676451b6c230f8a52f41d93" prot="public" static="yes" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t led_map[LED_ID_COUNT]</definition>
+        <argsstring>[LED_ID_COUNT]</argsstring>
+        <name>led_map</name>
+        <initializer>= {
+	[<ref refid="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa5e7b8915c50a0d7770d8c875e69e8ad4" kindref="member">LED_ID_SYSTEM_STATE</ref>] = 1,
+	[<ref refid="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaab2123c9f2b5f8c768197c2d492b13421" kindref="member">LED_ID_PEER_STATE</ref>] = 0
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840dongle_nrf52840/led_state_def.h" line="21" column="22" bodyfile="applications/nrf_desktop/configuration/nrf52840dongle_nrf52840/led_state_def.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf__desktop_2configuration_2nrf52840dongle__nrf52840_2led__state__def_8h_a41bb36accb70c107b89435ef51d67e4a_1a41bb36accb70c107b89435ef51d67e4a" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structled__effect" kindref="compound">led_effect</ref></type>
+        <definition>const struct led_effect led_system_state_effect[LED_SYSTEM_STATE_COUNT]</definition>
+        <argsstring>[LED_SYSTEM_STATE_COUNT]</argsstring>
+        <name>led_system_state_effect</name>
+        <initializer>= {
+	[<ref refid="group__led__state_ga06c73079be7887a2b71a1a53ed953168_1gga06c73079be7887a2b71a1a53ed953168a9781d816f3b0e57c3bc0bef84cd02f10" kindref="member">LED_SYSTEM_STATE_IDLE</ref>]     = <ref refid="group__led__effect__CAF_ga7fb4ef307bd2b1730f82410432b823c9_1ga7fb4ef307bd2b1730f82410432b823c9" kindref="member">LED_EFFECT_LED_ON</ref>(<ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(200, 200, 200)),
+	[<ref refid="group__led__state_ga06c73079be7887a2b71a1a53ed953168_1gga06c73079be7887a2b71a1a53ed953168a7e91c41d6cca0a46b5870bcf9e39363e" kindref="member">LED_SYSTEM_STATE_CHARGING</ref>] = <ref refid="group__led__effect__CAF_ga7fb4ef307bd2b1730f82410432b823c9_1ga7fb4ef307bd2b1730f82410432b823c9" kindref="member">LED_EFFECT_LED_ON</ref>(<ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(200, 200, 200)),
+	[<ref refid="group__led__state_ga06c73079be7887a2b71a1a53ed953168_1gga06c73079be7887a2b71a1a53ed953168ae2ecc418b2c8072bff10453191763ac4" kindref="member">LED_SYSTEM_STATE_ERROR</ref>]    = <ref refid="group__led__effect__CAF_ga3cbbf6d5748a1dd5c33af7d3e97fe2cf_1ga3cbbf6d5748a1dd5c33af7d3e97fe2cf" kindref="member">LED_EFFECT_LED_BLINK</ref>(200, <ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(200, 200, 200)),
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840dongle_nrf52840/led_state_def.h" line="26" column="30" bodyfile="applications/nrf_desktop/configuration/nrf52840dongle_nrf52840/led_state_def.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf__desktop_2configuration_2nrf52840dongle__nrf52840_2led__state__def_8h_aee71d4080e670559c537fcc601ff3b8c_1aee71d4080e670559c537fcc601ff3b8c" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structled__effect" kindref="compound">led_effect</ref></type>
+        <definition>const struct led_effect led_peer_state_effect[LED_PEER_COUNT][LED_PEER_STATE_COUNT]</definition>
+        <argsstring>[LED_PEER_COUNT][LED_PEER_STATE_COUNT]</argsstring>
+        <name>led_peer_state_effect</name>
+        <initializer>= {
+	{
+		[<ref refid="group__led__state_ga03c50f11898f21966e568b7e933c84ef_1gga03c50f11898f21966e568b7e933c84efa383fabe5a5dd7f1a7bc44a96a5c24922" kindref="member">LED_PEER_STATE_DISCONNECTED</ref>]   = <ref refid="group__led__effect__CAF_ga6eb404e4fd938a846223091c2d5dbb97_1ga6eb404e4fd938a846223091c2d5dbb97" kindref="member">LED_EFFECT_LED_OFF</ref>(),
+		[<ref refid="group__led__state_ga03c50f11898f21966e568b7e933c84ef_1gga03c50f11898f21966e568b7e933c84efa0d07ac7d9d5dfc1ed44d8bd3cdda33b7" kindref="member">LED_PEER_STATE_CONNECTED</ref>]      = <ref refid="group__led__effect__CAF_ga7fb4ef307bd2b1730f82410432b823c9_1ga7fb4ef307bd2b1730f82410432b823c9" kindref="member">LED_EFFECT_LED_ON</ref>(<ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(0, 0, 100)),
+		[<ref refid="group__led__state_ga03c50f11898f21966e568b7e933c84ef_1gga03c50f11898f21966e568b7e933c84efaaf875ea764375b041bdd17574061a45c" kindref="member">LED_PEER_STATE_PEER_SEARCH</ref>]    = <ref refid="group__led__effect__CAF_ga13326b14c6d61fff80085ec4b8ba9f88_1ga13326b14c6d61fff80085ec4b8ba9f88" kindref="member">LED_EFFECT_LED_BREATH</ref>(500, <ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(0, 0, 100)),
+		[<ref refid="group__led__state_ga03c50f11898f21966e568b7e933c84ef_1gga03c50f11898f21966e568b7e933c84efa7a16273df0f4c72324ded0029d6fc990" kindref="member">LED_PEER_STATE_CONFIRM_SELECT</ref>] = <ref refid="group__led__effect__CAF_ga3cbbf6d5748a1dd5c33af7d3e97fe2cf_1ga3cbbf6d5748a1dd5c33af7d3e97fe2cf" kindref="member">LED_EFFECT_LED_BLINK</ref>(50, <ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(0, 0, 100)),
+		[<ref refid="group__led__state_ga03c50f11898f21966e568b7e933c84ef_1gga03c50f11898f21966e568b7e933c84efa0f88fb57d991f7202a902a601b7242fb" kindref="member">LED_PEER_STATE_CONFIRM_ERASE</ref>]  = <ref refid="group__led__effect__CAF_ga3cbbf6d5748a1dd5c33af7d3e97fe2cf_1ga3cbbf6d5748a1dd5c33af7d3e97fe2cf" kindref="member">LED_EFFECT_LED_BLINK</ref>(25, <ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(0, 0, 100)),
+		[<ref refid="group__led__state_ga03c50f11898f21966e568b7e933c84ef_1gga03c50f11898f21966e568b7e933c84efa378790eae706c5a63e4e3bf3317d73c0" kindref="member">LED_PEER_STATE_ERASE_ADV</ref>]	= <ref refid="group__led__effect__CAF_ga13326b14c6d61fff80085ec4b8ba9f88_1ga13326b14c6d61fff80085ec4b8ba9f88" kindref="member">LED_EFFECT_LED_BREATH</ref>(100, <ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(0, 0, 100)),
+	},
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840dongle_nrf52840/led_state_def.h" line="32" column="30" bodyfile="applications/nrf_desktop/configuration/nrf52840dongle_nrf52840/led_state_def.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;led_state.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="include_2caf_2led__effect_8h" kindref="compound">caf/led_effect.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>configuration<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>from<sp/>led_state<sp/>module<sp/>and<sp/>holds</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*<sp/>information<sp/>about<sp/>LED<sp/>effect<sp/>associated<sp/>with<sp/>each<sp/>state.</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>structure<sp/>enforces<sp/>the<sp/>header<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>in<sp/>the<sp/>build.</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*<sp/>Violating<sp/>this<sp/>requirement<sp/>triggers<sp/>a<sp/>multiple<sp/>definition<sp/>error<sp/>at<sp/>link<sp/>time.</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17" refid="nrf__desktop_2configuration_2nrf52840dongle__nrf52840_2led__state__def_8h_af61ec80f58a2f4aa9c4ea82858856743_1af61ec80f58a2f4aa9c4ea82858856743" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{}<sp/><ref refid="asset__tracker__v2_2include_2nrf9160dk__nrf9160__ns_2led__state__def_8h_a8104467fcdd02583e61cbb922808f975_1a8104467fcdd02583e61cbb922808f975" kindref="member">led_state_def_include_once</ref>;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Map<sp/>function<sp/>to<sp/>LED<sp/>ID<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="nrf__desktop_2configuration_2nrf52840dongle__nrf52840_2led__state__def_8h_a33e9e1309676451b6c230f8a52f41d93_1a33e9e1309676451b6c230f8a52f41d93" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/><ref refid="nrf__desktop_2configuration_2nrf52840dongle__nrf52840_2led__state__def_8h_a33e9e1309676451b6c230f8a52f41d93_1a33e9e1309676451b6c230f8a52f41d93" kindref="member">led_map</ref>[<ref refid="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa02b155ecc1a1d4083c058aa46d6c4446" kindref="member">LED_ID_COUNT</ref>]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa5e7b8915c50a0d7770d8c875e69e8ad4" kindref="member">LED_ID_SYSTEM_STATE</ref>]<sp/>=<sp/>1,</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaab2123c9f2b5f8c768197c2d492b13421" kindref="member">LED_ID_PEER_STATE</ref>]<sp/>=<sp/>0</highlight></codeline>
+<codeline lineno="24"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="nrf__desktop_2configuration_2nrf52840dongle__nrf52840_2led__state__def_8h_a41bb36accb70c107b89435ef51d67e4a_1a41bb36accb70c107b89435ef51d67e4a" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structled__effect" kindref="compound">led_effect</ref><sp/><ref refid="nrf__desktop_2configuration_2nrf52840dongle__nrf52840_2led__state__def_8h_a41bb36accb70c107b89435ef51d67e4a_1a41bb36accb70c107b89435ef51d67e4a" kindref="member">led_system_state_effect</ref>[<ref refid="group__led__state_ga06c73079be7887a2b71a1a53ed953168_1gga06c73079be7887a2b71a1a53ed953168acd0d24787c2af6ed8154939d09991164" kindref="member">LED_SYSTEM_STATE_COUNT</ref>]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__led__state_ga06c73079be7887a2b71a1a53ed953168_1gga06c73079be7887a2b71a1a53ed953168a9781d816f3b0e57c3bc0bef84cd02f10" kindref="member">LED_SYSTEM_STATE_IDLE</ref>]<sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="group__led__effect_ga7fb4ef307bd2b1730f82410432b823c9_1ga7fb4ef307bd2b1730f82410432b823c9" kindref="member">LED_EFFECT_LED_ON</ref>(<ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(200,<sp/>200,<sp/>200)),</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__led__state_ga06c73079be7887a2b71a1a53ed953168_1gga06c73079be7887a2b71a1a53ed953168a7e91c41d6cca0a46b5870bcf9e39363e" kindref="member">LED_SYSTEM_STATE_CHARGING</ref>]<sp/>=<sp/><ref refid="group__led__effect_ga7fb4ef307bd2b1730f82410432b823c9_1ga7fb4ef307bd2b1730f82410432b823c9" kindref="member">LED_EFFECT_LED_ON</ref>(<ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(200,<sp/>200,<sp/>200)),</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__led__state_ga06c73079be7887a2b71a1a53ed953168_1gga06c73079be7887a2b71a1a53ed953168ae2ecc418b2c8072bff10453191763ac4" kindref="member">LED_SYSTEM_STATE_ERROR</ref>]<sp/><sp/><sp/><sp/>=<sp/><ref refid="group__led__effect_ga3cbbf6d5748a1dd5c33af7d3e97fe2cf_1ga3cbbf6d5748a1dd5c33af7d3e97fe2cf" kindref="member">LED_EFFECT_LED_BLINK</ref>(200,<sp/><ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(200,<sp/>200,<sp/>200)),</highlight></codeline>
+<codeline lineno="30"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="nrf__desktop_2configuration_2nrf52840dongle__nrf52840_2led__state__def_8h_aee71d4080e670559c537fcc601ff3b8c_1aee71d4080e670559c537fcc601ff3b8c" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structled__effect" kindref="compound">led_effect</ref><sp/><ref refid="nrf__desktop_2configuration_2nrf52840dongle__nrf52840_2led__state__def_8h_aee71d4080e670559c537fcc601ff3b8c_1aee71d4080e670559c537fcc601ff3b8c" kindref="member">led_peer_state_effect</ref>[<ref refid="group__led__state_ga92c4aadfd3f53f9040a7f46a1451ffab_1ga92c4aadfd3f53f9040a7f46a1451ffab" kindref="member">LED_PEER_COUNT</ref>][<ref refid="group__led__state_ga03c50f11898f21966e568b7e933c84ef_1gga03c50f11898f21966e568b7e933c84efae1e7798139b94e846bfcc8a33a318604" kindref="member">LED_PEER_STATE_COUNT</ref>]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__led__state_ga03c50f11898f21966e568b7e933c84ef_1gga03c50f11898f21966e568b7e933c84efa383fabe5a5dd7f1a7bc44a96a5c24922" kindref="member">LED_PEER_STATE_DISCONNECTED</ref>]<sp/><sp/><sp/>=<sp/><ref refid="group__led__effect_ga6eb404e4fd938a846223091c2d5dbb97_1ga6eb404e4fd938a846223091c2d5dbb97" kindref="member">LED_EFFECT_LED_OFF</ref>(),</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__led__state_ga03c50f11898f21966e568b7e933c84ef_1gga03c50f11898f21966e568b7e933c84efa0d07ac7d9d5dfc1ed44d8bd3cdda33b7" kindref="member">LED_PEER_STATE_CONNECTED</ref>]<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="group__led__effect_ga7fb4ef307bd2b1730f82410432b823c9_1ga7fb4ef307bd2b1730f82410432b823c9" kindref="member">LED_EFFECT_LED_ON</ref>(<ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(0,<sp/>0,<sp/>100)),</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__led__state_ga03c50f11898f21966e568b7e933c84ef_1gga03c50f11898f21966e568b7e933c84efaaf875ea764375b041bdd17574061a45c" kindref="member">LED_PEER_STATE_PEER_SEARCH</ref>]<sp/><sp/><sp/><sp/>=<sp/><ref refid="group__led__effect__CAF_ga13326b14c6d61fff80085ec4b8ba9f88_1ga13326b14c6d61fff80085ec4b8ba9f88" kindref="member">LED_EFFECT_LED_BREATH</ref>(500,<sp/><ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(0,<sp/>0,<sp/>100)),</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__led__state_ga03c50f11898f21966e568b7e933c84ef_1gga03c50f11898f21966e568b7e933c84efa7a16273df0f4c72324ded0029d6fc990" kindref="member">LED_PEER_STATE_CONFIRM_SELECT</ref>]<sp/>=<sp/><ref refid="group__led__effect_ga3cbbf6d5748a1dd5c33af7d3e97fe2cf_1ga3cbbf6d5748a1dd5c33af7d3e97fe2cf" kindref="member">LED_EFFECT_LED_BLINK</ref>(50,<sp/><ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(0,<sp/>0,<sp/>100)),</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__led__state_ga03c50f11898f21966e568b7e933c84ef_1gga03c50f11898f21966e568b7e933c84efa0f88fb57d991f7202a902a601b7242fb" kindref="member">LED_PEER_STATE_CONFIRM_ERASE</ref>]<sp/><sp/>=<sp/><ref refid="group__led__effect_ga3cbbf6d5748a1dd5c33af7d3e97fe2cf_1ga3cbbf6d5748a1dd5c33af7d3e97fe2cf" kindref="member">LED_EFFECT_LED_BLINK</ref>(25,<sp/><ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(0,<sp/>0,<sp/>100)),</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__led__state_ga03c50f11898f21966e568b7e933c84ef_1gga03c50f11898f21966e568b7e933c84efa378790eae706c5a63e4e3bf3317d73c0" kindref="member">LED_PEER_STATE_ERASE_ADV</ref>]<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="group__led__effect__CAF_ga13326b14c6d61fff80085ec4b8ba9f88_1ga13326b14c6d61fff80085ec4b8ba9f88" kindref="member">LED_EFFECT_LED_BREATH</ref>(100,<sp/><ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(0,<sp/>0,<sp/>100)),</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>},</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/nrf52840dongle_nrf52840/led_state_def.h"/>
+  </compounddef>
+</doxygen>

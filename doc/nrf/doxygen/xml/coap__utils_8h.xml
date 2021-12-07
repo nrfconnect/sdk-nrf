@@ -1,0 +1,198 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="coap__utils_8h" kind="file" language="C++">
+    <compoundname>coap_utils.h</compoundname>
+    <includes local="no">net/coap.h</includes>
+    <includes local="no">net/net_ip.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/net/coap_utils.h</label>
+        <link refid="coap__utils_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>net/coap.h</label>
+      </node>
+      <node id="3">
+        <label>net/net_ip.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__coap__utils_ga05dde19b35d413e9db04457d6be72fbb_1ga05dde19b35d413e9db04457d6be72fbb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void coap_init</definition>
+        <argsstring>(int ip_family, struct sockaddr *addr)</argsstring>
+        <name>coap_init</name>
+        <param>
+          <type>int</type>
+          <declname>ip_family</declname>
+        </param>
+        <param>
+          <type>struct sockaddr *</type>
+          <declname>addr</declname>
+        </param>
+        <briefdescription>
+<para>Open socket and start the receiving thread. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ip_family</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Network ip protocol family (AF_INET or AF_INET6). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">addr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Local address to bind for receiving data. Pass NULL pointer if no address is provided. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/coap_utils.h" line="24" column="6" declfile="include/net/coap_utils.h" declline="24" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__coap__utils_gac943d453c6dfed64bd2bf32bd0ee6668_1gac943d453c6dfed64bd2bf32bd0ee6668" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int coap_send_request</definition>
+        <argsstring>(enum coap_method method, const struct sockaddr *addr, const char *const *uri_path_options, uint8_t *payload, uint16_t payload_size, coap_reply_t reply_cb)</argsstring>
+        <name>coap_send_request</name>
+        <param>
+          <type>enum coap_method</type>
+          <declname>method</declname>
+        </param>
+        <param>
+          <type>const struct sockaddr *</type>
+          <declname>addr</declname>
+        </param>
+        <param>
+          <type>const char *const *</type>
+          <declname>uri_path_options</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>payload</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>payload_size</declname>
+        </param>
+        <param>
+          <type>coap_reply_t</type>
+          <declname>reply_cb</declname>
+        </param>
+        <briefdescription>
+<para>Send CoAP non-confirmable request. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">method</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>CoAP method type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">addr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>pointer to socket address struct for IPv6. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">uri_path_options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>pointer to CoAP URI schemes option. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">payload</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>pointer to the CoAP message payload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">payload_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>size of the CoAP message payload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">reply_cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>function to call when the response comes.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>&gt;=</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>0 On success. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>&lt;</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>0 On failure. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/coap_utils.h" line="38" column="5" declfile="include/net/coap_utils.h" declline="38" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="9"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>__COAP_UTILS_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>__COAP_UTILS_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;net/coap.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;net/net_ip.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="group__coap__utils_ga05dde19b35d413e9db04457d6be72fbb_1ga05dde19b35d413e9db04457d6be72fbb" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__coap__utils_ga05dde19b35d413e9db04457d6be72fbb_1ga05dde19b35d413e9db04457d6be72fbb" kindref="member">coap_init</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ip_family,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>sockaddr<sp/>*addr);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="group__coap__utils_gac943d453c6dfed64bd2bf32bd0ee6668_1gac943d453c6dfed64bd2bf32bd0ee6668" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__coap__utils_gac943d453c6dfed64bd2bf32bd0ee6668_1gac943d453c6dfed64bd2bf32bd0ee6668" kindref="member">coap_send_request</ref>(</highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/>coap_method<sp/>method,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>sockaddr<sp/>*addr,</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>*uri_path_options,<sp/>uint8_t<sp/>*payload,</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/>payload_size,<sp/>coap_reply_t<sp/>reply_cb);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/net/coap_utils.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structprofiler__info" kind="struct" language="C++" prot="public">
+    <compoundname>profiler_info</compoundname>
+    <includes refid="event__manager__profiler_8h" local="no">event_manager_profiler.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structprofiler__info_a1f27de3f29e6ca83daed4c98538ac372_1a1f27de3f29e6ca83daed4c98538ac372" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* profiler_info::profile_fn) (struct log_event_buf *buf, const struct event_header *eh)</definition>
+        <argsstring>)(struct log_event_buf *buf, const struct event_header *eh)</argsstring>
+        <name>profile_fn</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Function for profiling data related with this event </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager_profiler.h" line="34" column="1" bodyfile="include/event_manager_profiler.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structprofiler__info_a199801e833d536cf9ea03d96956379f9_1a199801e833d536cf9ea03d96956379f9" prot="public" static="no" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t profiler_info::profiler_arg_cnt</definition>
+        <argsstring></argsstring>
+        <name>profiler_arg_cnt</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of profiled data fields. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager_profiler.h" line="37" column="15" bodyfile="include/event_manager_profiler.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structprofiler__info_ae3db3b83bf25f1824959685644f839cd_1ae3db3b83bf25f1824959685644f839cd" prot="public" static="no" mutable="no">
+        <type>const char **</type>
+        <definition>const char** profiler_info::profiler_arg_labels</definition>
+        <argsstring></argsstring>
+        <name>profiler_arg_labels</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Labels of profiled data fields. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager_profiler.h" line="40" column="12" bodyfile="include/event_manager_profiler.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structprofiler__info_a6007b6e69ed0a8c6d611996dee2bf201_1a6007b6e69ed0a8c6d611996dee2bf201" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__profiler_ga89852e0ad202010e105fec68bcf32b0c_1ga89852e0ad202010e105fec68bcf32b0c" kindref="member">profiler_arg</ref> *</type>
+        <definition>enum profiler_arg* profiler_info::profiler_arg_types</definition>
+        <argsstring></argsstring>
+        <name>profiler_arg_types</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Types of profiled data fields. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager_profiler.h" line="43" column="24" bodyfile="include/event_manager_profiler.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structprofiler__info_a91d95c9b7e6fc29c4b64d38fd0802a64_1a91d95c9b7e6fc29c4b64d38fd0802a64" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* profiler_info::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Profiled event name. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager_profiler.h" line="46" column="12" bodyfile="include/event_manager_profiler.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Event description for profiling. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/event_manager_profiler.h" line="32" column="1" bodyfile="include/event_manager_profiler.h" bodystart="32" bodyend="47"/>
+    <listofallmembers>
+      <member refid="structprofiler__info_a91d95c9b7e6fc29c4b64d38fd0802a64_1a91d95c9b7e6fc29c4b64d38fd0802a64" prot="public" virt="non-virtual"><scope>profiler_info</scope><name>name</name></member>
+      <member refid="structprofiler__info_a1f27de3f29e6ca83daed4c98538ac372_1a1f27de3f29e6ca83daed4c98538ac372" prot="public" virt="non-virtual"><scope>profiler_info</scope><name>profile_fn</name></member>
+      <member refid="structprofiler__info_a199801e833d536cf9ea03d96956379f9_1a199801e833d536cf9ea03d96956379f9" prot="public" virt="non-virtual"><scope>profiler_info</scope><name>profiler_arg_cnt</name></member>
+      <member refid="structprofiler__info_ae3db3b83bf25f1824959685644f839cd_1ae3db3b83bf25f1824959685644f839cd" prot="public" virt="non-virtual"><scope>profiler_info</scope><name>profiler_arg_labels</name></member>
+      <member refid="structprofiler__info_a6007b6e69ed0a8c6d611996dee2bf201_1a6007b6e69ed0a8c6d611996dee2bf201" prot="public" virt="non-virtual"><scope>profiler_info</scope><name>profiler_arg_types</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

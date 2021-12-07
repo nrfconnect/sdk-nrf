@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_4f7e0d4bbbf2e8ecac35bbfa9732442f" kind="dir">
+    <compoundname>applications/asset_tracker_v2/src/cloud</compoundname>
+    <innerdir refid="dir_5d173afff8ba5c7e179a90e6840668e3">applications/asset_tracker_v2/src/cloud/cloud_codec</innerdir>
+    <innerfile refid="cloud__wrapper_8h">cloud_wrapper.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/cloud/"/>
+  </compounddef>
+</doxygen>

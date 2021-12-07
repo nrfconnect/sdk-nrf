@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__sensor__column" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_sensor_column</compoundname>
+    <includes refid="sensor_8h" local="no">sensor.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__sensor__column_a5fc3415bc5a480ea9adf7606a42f0ba5_1a5fc3415bc5a480ea9adf7606a42f0ba5" prot="public" static="no" mutable="no">
+        <type>struct sensor_value</type>
+        <definition>struct sensor_value bt_mesh_sensor_column::start</definition>
+        <argsstring></argsstring>
+        <name>start</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Start of the column (inclusive). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="283" column="19" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="283" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__column_abd23e2374e50dfceed3e0079d87f1bcd_1abd23e2374e50dfceed3e0079d87f1bcd" prot="public" static="no" mutable="no">
+        <type>struct sensor_value</type>
+        <definition>struct sensor_value bt_mesh_sensor_column::end</definition>
+        <argsstring></argsstring>
+        <name>end</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>End of the column (exclusive). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="285" column="19" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="285" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Single sensor series data column.</para>
+<para>The series data columns represent a range for specific measurement values, inside which a set of sensor measurements were made. The range is interpreted as a half-open interval (i.e. start &lt;= value &lt; end).</para>
+<para><simplesect kind="note"><para>Contrary to the Bluetooth mesh specification, the column has an end value instead of a width, to match the conventional property format. This reduces implementation complexity for sensor series values that include the start and end (or min and max) of the measurement range, as the value of the column can be copied directly into the corresponding channels. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/sensor.h" line="281" column="1" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="281" bodyend="286"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__sensor__column_abd23e2374e50dfceed3e0079d87f1bcd_1abd23e2374e50dfceed3e0079d87f1bcd" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_column</scope><name>end</name></member>
+      <member refid="structbt__mesh__sensor__column_a5fc3415bc5a480ea9adf7606a42f0ba5_1a5fc3415bc5a480ea9adf7606a42f0ba5" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_column</scope><name>start</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

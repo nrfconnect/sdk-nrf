@@ -1,0 +1,398 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="env__sensors_8h" kind="file" language="C++">
+    <compoundname>env_sensors.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <includedby refid="src_2cloud__codec_2cloud__codec_8h" local="yes">applications/asset_tracker/src/cloud_codec/cloud_codec.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/asset_tracker/src/env_sensors/env_sensors.h</label>
+        <link refid="env__sensors_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>applications/asset_tracker/src/cloud_codec/cloud_codec.h</label>
+        <link refid="src_2cloud__codec_2cloud__codec_8h"/>
+      </node>
+      <node id="1">
+        <label>applications/asset_tracker/src/env_sensors/env_sensors.h</label>
+        <link refid="env__sensors_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structenv__sensor__data__t" prot="public">env_sensor_data_t</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__env__sensors_gacf09322404d127e9cf72fbb4d6de17b0_1gacf09322404d127e9cf72fbb4d6de17b0" prot="public" static="no" strong="no">
+        <type></type>
+        <name>env_sensor_t</name>
+        <enumvalue id="group__env__sensors_gacf09322404d127e9cf72fbb4d6de17b0_1ggacf09322404d127e9cf72fbb4d6de17b0a1ddfe64cd6080d090b65ec9d9641cd85" prot="public">
+          <name>ENV_SENSOR_TEMPERATURE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Temperature sensor. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__env__sensors_gacf09322404d127e9cf72fbb4d6de17b0_1ggacf09322404d127e9cf72fbb4d6de17b0a750f81edb6fd31c5d09cdb8f818b44bd" prot="public">
+          <name>ENV_SENSOR_HUMIDITY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The Humidity sensor. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__env__sensors_gacf09322404d127e9cf72fbb4d6de17b0_1ggacf09322404d127e9cf72fbb4d6de17b0ad9180fbbd075eada41d33f22b0d13b37" prot="public">
+          <name>ENV_SENSOR_AIR_PRESSURE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The Air Pressure sensor. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__env__sensors_gacf09322404d127e9cf72fbb4d6de17b0_1ggacf09322404d127e9cf72fbb4d6de17b0af84a2c15ef1929b38950ffc8eb8a5c52" prot="public">
+          <name>ENV_SENSOR_AIR_QUALITY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The Air Quality sensor. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Environmental sensor types supported. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/env_sensors/env_sensors.h" line="31" column="1" bodyfile="applications/asset_tracker/src/env_sensors/env_sensors.h" bodystart="31" bodyend="40"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__env__sensors_ga7f27e2d73749d75b40f3b4dafa08dc95_1ga7f27e2d73749d75b40f3b4dafa08dc95" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* env_sensors_data_ready_cb) (void)</definition>
+        <argsstring>)(void)</argsstring>
+        <name>env_sensors_data_ready_cb</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/env_sensors/env_sensors.h" line="51" column="9" bodyfile="applications/asset_tracker/src/env_sensors/env_sensors.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__env__sensors_gac6d99c5375e18fdf5082504284bd9700_1gac6d99c5375e18fdf5082504284bd9700" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int env_sensors_get_temperature</definition>
+        <argsstring>(env_sensor_data_t *sensor_data)</argsstring>
+        <name>env_sensors_get_temperature</name>
+        <param>
+          <type><ref refid="structenv__sensor__data__t" kindref="compound">env_sensor_data_t</ref> *</type>
+          <declname>sensor_data</declname>
+        </param>
+        <briefdescription>
+<para>Get latest sampled temperature data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>sensor_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to memory to store latest temperature data.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if the operation was successful, otherwise a (negative) error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/env_sensors/env_sensors.h" line="60" column="5" declfile="applications/asset_tracker/src/env_sensors/env_sensors.h" declline="60" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__env__sensors_ga9092644f81240eee61fe6062e31b74f2_1ga9092644f81240eee61fe6062e31b74f2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int env_sensors_get_humidity</definition>
+        <argsstring>(env_sensor_data_t *sensor_data)</argsstring>
+        <name>env_sensors_get_humidity</name>
+        <param>
+          <type><ref refid="structenv__sensor__data__t" kindref="compound">env_sensor_data_t</ref> *</type>
+          <declname>sensor_data</declname>
+        </param>
+        <briefdescription>
+<para>Get latest sampled humidity data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>sensor_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to memory to store latest humidity data.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if the operation was successful, otherwise a (negative) error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/env_sensors/env_sensors.h" line="69" column="5" declfile="applications/asset_tracker/src/env_sensors/env_sensors.h" declline="69" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__env__sensors_ga4b678f6f7a750c6d3e24266c5854b57a_1ga4b678f6f7a750c6d3e24266c5854b57a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int env_sensors_get_pressure</definition>
+        <argsstring>(env_sensor_data_t *sensor_data)</argsstring>
+        <name>env_sensors_get_pressure</name>
+        <param>
+          <type><ref refid="structenv__sensor__data__t" kindref="compound">env_sensor_data_t</ref> *</type>
+          <declname>sensor_data</declname>
+        </param>
+        <briefdescription>
+<para>Get latest sampled pressure data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>sensor_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to memory to store latest pressure data.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if the operation was successful, otherwise a (negative) error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/env_sensors/env_sensors.h" line="78" column="5" declfile="applications/asset_tracker/src/env_sensors/env_sensors.h" declline="78" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__env__sensors_ga1b47f38c71c753df39620b0e68b39d60_1ga1b47f38c71c753df39620b0e68b39d60" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int env_sensors_get_air_quality</definition>
+        <argsstring>(env_sensor_data_t *sensor_data)</argsstring>
+        <name>env_sensors_get_air_quality</name>
+        <param>
+          <type><ref refid="structenv__sensor__data__t" kindref="compound">env_sensor_data_t</ref> *</type>
+          <declname>sensor_data</declname>
+        </param>
+        <briefdescription>
+<para>Get latest sampled air quality data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>sensor_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to memory to store latest air quality data.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if the operation was successful, otherwise a (negative) error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/env_sensors/env_sensors.h" line="87" column="5" declfile="applications/asset_tracker/src/env_sensors/env_sensors.h" declline="87" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__env__sensors_gac087864d1e4d252ca0029800c747213e_1gac087864d1e4d252ca0029800c747213e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int env_sensors_init_and_start</definition>
+        <argsstring>(struct k_work_q *work_q, const env_sensors_data_ready_cb cb)</argsstring>
+        <name>env_sensors_init_and_start</name>
+        <param>
+          <type>struct k_work_q *</type>
+          <declname>work_q</declname>
+        </param>
+        <param>
+          <type>const <ref refid="group__env__sensors_ga7f27e2d73749d75b40f3b4dafa08dc95_1ga7f27e2d73749d75b40f3b4dafa08dc95" kindref="member">env_sensors_data_ready_cb</ref></type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Initialize and start the environmental sensors. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>0 if the operation was successful, otherwise a (negative) error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/env_sensors/env_sensors.h" line="94" column="5" declfile="applications/asset_tracker/src/env_sensors/env_sensors.h" declline="94" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__env__sensors_gaf71f8379629f27e81bbb3bdcc0c15355_1gaf71f8379629f27e81bbb3bdcc0c15355" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void env_sensors_set_send_interval</definition>
+        <argsstring>(const uint32_t interval_s)</argsstring>
+        <name>env_sensors_set_send_interval</name>
+        <param>
+          <type>const uint32_t</type>
+          <declname>interval_s</declname>
+        </param>
+        <briefdescription>
+<para>Set environmental sensor&apos;s poll/send interval. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>interval_s</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interval, in seconds. 0 to disable. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/env_sensors/env_sensors.h" line="103" column="6" declfile="applications/asset_tracker/src/env_sensors/env_sensors.h" declline="103" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__env__sensors_ga05353ea30a28e4a3c33903a711ef7c75_1ga05353ea30a28e4a3c33903a711ef7c75" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint32_t</type>
+        <definition>uint32_t env_sensors_get_send_interval</definition>
+        <argsstring>(void)</argsstring>
+        <name>env_sensors_get_send_interval</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Get environmental sensor&apos;s poll/send interval. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Interval, in seconds. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/env_sensors/env_sensors.h" line="110" column="10" declfile="applications/asset_tracker/src/env_sensors/env_sensors.h" declline="110" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="group__env__sensors_gaf6d0e2c7ccb598fbc58a8996cecd87b5_1gaf6d0e2c7ccb598fbc58a8996cecd87b5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void env_sensors_set_backoff_enable</definition>
+        <argsstring>(const bool backoff_enable)</argsstring>
+        <name>env_sensors_set_backoff_enable</name>
+        <param>
+          <type>const bool</type>
+          <declname>backoff_enable</declname>
+        </param>
+        <briefdescription>
+<para>Enable or disable back-off delay for sending environmental data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backoff_enable</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True to enable back-off delay, otherwise false. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/env_sensors/env_sensors.h" line="118" column="6" declfile="applications/asset_tracker/src/env_sensors/env_sensors.h" declline="118" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__env__sensors_gadece165f7f6f109aa619db84c790014e_1gadece165f7f6f109aa619db84c790014e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int env_sensors_poll</definition>
+        <argsstring>(void)</argsstring>
+        <name>env_sensors_poll</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Perform an immediate poll of the environmental sensor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>0 if the operation was successful, otherwise a (negative) error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/env_sensors/env_sensors.h" line="125" column="5" declfile="applications/asset_tracker/src/env_sensors/env_sensors.h" declline="125" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>ENV_SENSORS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ENV_SENSORS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="group__env__sensors_gacf09322404d127e9cf72fbb4d6de17b0_1gacf09322404d127e9cf72fbb4d6de17b0" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="33" refid="group__env__sensors_gacf09322404d127e9cf72fbb4d6de17b0_1ggacf09322404d127e9cf72fbb4d6de17b0a1ddfe64cd6080d090b65ec9d9641cd85" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__env__sensors_gacf09322404d127e9cf72fbb4d6de17b0_1ggacf09322404d127e9cf72fbb4d6de17b0a1ddfe64cd6080d090b65ec9d9641cd85" kindref="member">ENV_SENSOR_TEMPERATURE</ref>,</highlight></codeline>
+<codeline lineno="35" refid="group__env__sensors_gacf09322404d127e9cf72fbb4d6de17b0_1ggacf09322404d127e9cf72fbb4d6de17b0a750f81edb6fd31c5d09cdb8f818b44bd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__env__sensors_gacf09322404d127e9cf72fbb4d6de17b0_1ggacf09322404d127e9cf72fbb4d6de17b0a750f81edb6fd31c5d09cdb8f818b44bd" kindref="member">ENV_SENSOR_HUMIDITY</ref>,</highlight></codeline>
+<codeline lineno="37" refid="group__env__sensors_gacf09322404d127e9cf72fbb4d6de17b0_1ggacf09322404d127e9cf72fbb4d6de17b0ad9180fbbd075eada41d33f22b0d13b37" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__env__sensors_gacf09322404d127e9cf72fbb4d6de17b0_1ggacf09322404d127e9cf72fbb4d6de17b0ad9180fbbd075eada41d33f22b0d13b37" kindref="member">ENV_SENSOR_AIR_PRESSURE</ref>,</highlight></codeline>
+<codeline lineno="39" refid="group__env__sensors_gacf09322404d127e9cf72fbb4d6de17b0_1ggacf09322404d127e9cf72fbb4d6de17b0af84a2c15ef1929b38950ffc8eb8a5c52" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__env__sensors_gacf09322404d127e9cf72fbb4d6de17b0_1ggacf09322404d127e9cf72fbb4d6de17b0af84a2c15ef1929b38950ffc8eb8a5c52" kindref="member">ENV_SENSOR_AIR_QUALITY</ref>,</highlight></codeline>
+<codeline lineno="40"><highlight class="normal">}<sp/><ref refid="group__env__sensors_gacf09322404d127e9cf72fbb4d6de17b0_1gacf09322404d127e9cf72fbb4d6de17b0" kindref="member">env_sensor_t</ref>;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="structenv__sensor__data__t" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="44" refid="structenv__sensor__data__t_a6fc61650eb1922cae0a7519b66e3bee9_1a6fc61650eb1922cae0a7519b66e3bee9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__env__sensors_gacf09322404d127e9cf72fbb4d6de17b0_1gacf09322404d127e9cf72fbb4d6de17b0" kindref="member">env_sensor_t</ref><sp/><ref refid="structenv__sensor__data__t_a6fc61650eb1922cae0a7519b66e3bee9_1a6fc61650eb1922cae0a7519b66e3bee9" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="46" refid="structenv__sensor__data__t_a12b67750984ba71d1f12d09152022145_1a12b67750984ba71d1f12d09152022145" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structenv__sensor__data__t_a12b67750984ba71d1f12d09152022145_1a12b67750984ba71d1f12d09152022145" kindref="member">value</ref>;</highlight></codeline>
+<codeline lineno="48" refid="structenv__sensor__data__t_a0494f55dbfb93131fcfe7103a1a875dd_1a0494f55dbfb93131fcfe7103a1a875dd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int64_t<sp/><ref refid="structenv__sensor__data__t_a0494f55dbfb93131fcfe7103a1a875dd_1a0494f55dbfb93131fcfe7103a1a875dd" kindref="member">ts</ref>;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal">}<sp/><ref refid="structenv__sensor__data__t" kindref="compound">env_sensor_data_t</ref>;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="group__env__sensors_ga7f27e2d73749d75b40f3b4dafa08dc95_1ga7f27e2d73749d75b40f3b4dafa08dc95" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__env__sensors_ga7f27e2d73749d75b40f3b4dafa08dc95_1ga7f27e2d73749d75b40f3b4dafa08dc95" kindref="member">env_sensors_data_ready_cb</ref>)(void);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="group__env__sensors_gac6d99c5375e18fdf5082504284bd9700_1gac6d99c5375e18fdf5082504284bd9700" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__env__sensors_gac6d99c5375e18fdf5082504284bd9700_1gac6d99c5375e18fdf5082504284bd9700" kindref="member">env_sensors_get_temperature</ref>(<ref refid="structenv__sensor__data__t" kindref="compound">env_sensor_data_t</ref><sp/>*sensor_data);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="group__env__sensors_ga9092644f81240eee61fe6062e31b74f2_1ga9092644f81240eee61fe6062e31b74f2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__env__sensors_ga9092644f81240eee61fe6062e31b74f2_1ga9092644f81240eee61fe6062e31b74f2" kindref="member">env_sensors_get_humidity</ref>(<ref refid="structenv__sensor__data__t" kindref="compound">env_sensor_data_t</ref><sp/>*sensor_data);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="group__env__sensors_ga4b678f6f7a750c6d3e24266c5854b57a_1ga4b678f6f7a750c6d3e24266c5854b57a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__env__sensors_ga4b678f6f7a750c6d3e24266c5854b57a_1ga4b678f6f7a750c6d3e24266c5854b57a" kindref="member">env_sensors_get_pressure</ref>(<ref refid="structenv__sensor__data__t" kindref="compound">env_sensor_data_t</ref><sp/>*sensor_data);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87" refid="group__env__sensors_ga1b47f38c71c753df39620b0e68b39d60_1ga1b47f38c71c753df39620b0e68b39d60" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__env__sensors_ga1b47f38c71c753df39620b0e68b39d60_1ga1b47f38c71c753df39620b0e68b39d60" kindref="member">env_sensors_get_air_quality</ref>(<ref refid="structenv__sensor__data__t" kindref="compound">env_sensor_data_t</ref><sp/>*sensor_data);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94" refid="group__env__sensors_gac087864d1e4d252ca0029800c747213e_1gac087864d1e4d252ca0029800c747213e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__env__sensors_gac087864d1e4d252ca0029800c747213e_1gac087864d1e4d252ca0029800c747213e" kindref="member">env_sensors_init_and_start</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>k_work_q<sp/>*work_q,</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="group__env__sensors_ga7f27e2d73749d75b40f3b4dafa08dc95_1ga7f27e2d73749d75b40f3b4dafa08dc95" kindref="member">env_sensors_data_ready_cb</ref><sp/>cb);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103" refid="group__env__sensors_gaf71f8379629f27e81bbb3bdcc0c15355_1gaf71f8379629f27e81bbb3bdcc0c15355" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__env__sensors_gaf71f8379629f27e81bbb3bdcc0c15355_1gaf71f8379629f27e81bbb3bdcc0c15355" kindref="member">env_sensors_set_send_interval</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/>interval_s);</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110" refid="group__env__sensors_ga05353ea30a28e4a3c33903a711ef7c75_1ga05353ea30a28e4a3c33903a711ef7c75" refkind="member"><highlight class="normal">uint32_t<sp/><ref refid="group__env__sensors_ga05353ea30a28e4a3c33903a711ef7c75_1ga05353ea30a28e4a3c33903a711ef7c75" kindref="member">env_sensors_get_send_interval</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118" refid="group__env__sensors_gaf6d0e2c7ccb598fbc58a8996cecd87b5_1gaf6d0e2c7ccb598fbc58a8996cecd87b5" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__env__sensors_gaf6d0e2c7ccb598fbc58a8996cecd87b5_1gaf6d0e2c7ccb598fbc58a8996cecd87b5" kindref="member">env_sensors_set_backoff_enable</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>backoff_enable);</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125" refid="group__env__sensors_gadece165f7f6f109aa619db84c790014e_1gadece165f7f6f109aa619db84c790014e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__env__sensors_gadece165f7f6f109aa619db84c790014e_1gadece165f7f6f109aa619db84c790014e" kindref="member">env_sensors_poll</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>ENV_SENSORS_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/asset_tracker/src/env_sensors/env_sensors.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__caf__power__event" kind="group">
+    <compoundname>caf_power_event</compoundname>
+    <title>CAF Power Event</title>
+    <innerclass refid="structpower__down__event" prot="public">power_down_event</innerclass>
+    <innerclass refid="structwake__up__event" prot="public">wake_up_event</innerclass>
+    <briefdescription>
+<para>CAF Power Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

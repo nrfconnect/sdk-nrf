@@ -1,0 +1,192 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structdata__module__event" kind="struct" language="C++" prot="public">
+    <compoundname>data_module_event</compoundname>
+    <includes refid="data__module__event_8h" local="no">data_module_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structdata__module__event_a3ecc99eb4fcd38bc6678764e91803e76_1a3ecc99eb4fcd38bc6678764e91803e76" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header data_module_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/data_module_event.h" line="50" column="19" bodyfile="applications/asset_tracker_v2/src/events/data_module_event.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdata__module__event_a3f2065e0cf1c4afa6396b4561aa02601_1a3f2065e0cf1c4afa6396b4561aa02601" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__data__module__event_gab763b4fd8602cd94e5f97520e209fc82_1gab763b4fd8602cd94e5f97520e209fc82" kindref="member">data_module_event_type</ref></type>
+        <definition>enum data_module_event_type data_module_event::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/data_module_event.h" line="51" column="28" bodyfile="applications/asset_tracker_v2/src/events/data_module_event.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdata__module__event_a5478eeeff561b7f69e64e9f3c45c7eb2_1a5478eeeff561b7f69e64e9f3c45c7eb2" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structdata__module__data__buffers" kindref="compound">data_module_data_buffers</ref></type>
+        <definition>struct data_module_data_buffers data_module_event::buffer</definition>
+        <argsstring></argsstring>
+        <name>buffer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/data_module_event.h" line="54" column="31" bodyfile="applications/asset_tracker_v2/src/events/data_module_event.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdata__module__event_a88befe66e91e3aac5f2f8ddad3cc0dab_1a88befe66e91e3aac5f2f8ddad3cc0dab" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structcloud__data__cfg" kindref="compound">cloud_data_cfg</ref></type>
+        <definition>struct cloud_data_cfg data_module_event::cfg</definition>
+        <argsstring></argsstring>
+        <name>cfg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/data_module_event.h" line="55" column="21" bodyfile="applications/asset_tracker_v2/src/events/data_module_event.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdata__module__event_ae8272aaa2ef1a7a396be54b29b28c250_1ae8272aaa2ef1a7a396be54b29b28c250" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structcloud__data__ui" kindref="compound">cloud_data_ui</ref></type>
+        <definition>struct cloud_data_ui data_module_event::ui</definition>
+        <argsstring></argsstring>
+        <name>ui</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/data_module_event.h" line="56" column="20" bodyfile="applications/asset_tracker_v2/src/events/data_module_event.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdata__module__event_a0db32d02db6b3f22b9a5a62e026d9f17_1a0db32d02db6b3f22b9a5a62e026d9f17" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t data_module_event::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/data_module_event.h" line="58" column="10" bodyfile="applications/asset_tracker_v2/src/events/data_module_event.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdata__module__event_ade9405736e46c8e6f027f699df31fbfb_1ade9405736e46c8e6f027f699df31fbfb" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int data_module_event::err</definition>
+        <argsstring></argsstring>
+        <name>err</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/data_module_event.h" line="59" column="5" bodyfile="applications/asset_tracker_v2/src/events/data_module_event.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdata__module__event_a42bb85fd0921b4fd786df560fecca4b9_1a42bb85fd0921b4fd786df560fecca4b9" prot="public" static="no" mutable="no">
+        <type>union data_module_event::@11</type>
+        <definition>union data_module_event::@11 data_module_event::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/data_module_event.h" line="60" column="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Data event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="7">
+        <label>cloud_data_cfg</label>
+        <link refid="structcloud__data__cfg"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>no_data</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>cloud_data_no_data</label>
+        <link refid="structcloud__data__no__data"/>
+      </node>
+      <node id="9">
+        <label>cloud_data_ui</label>
+        <link refid="structcloud__data__ui"/>
+      </node>
+      <node id="6">
+        <label>data_module_data_buffers</label>
+        <link refid="structdata__module__data__buffers"/>
+      </node>
+      <node id="1">
+        <label>data_module_event</label>
+        <link refid="structdata__module__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>buffer</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>cfg</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>ui</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/asset_tracker_v2/src/events/data_module_event.h" line="49" column="1" bodyfile="applications/asset_tracker_v2/src/events/data_module_event.h" bodystart="49" bodyend="61"/>
+    <listofallmembers>
+      <member refid="structdata__module__event_a5478eeeff561b7f69e64e9f3c45c7eb2_1a5478eeeff561b7f69e64e9f3c45c7eb2" prot="public" virt="non-virtual"><scope>data_module_event</scope><name>buffer</name></member>
+      <member refid="structdata__module__event_a88befe66e91e3aac5f2f8ddad3cc0dab_1a88befe66e91e3aac5f2f8ddad3cc0dab" prot="public" virt="non-virtual"><scope>data_module_event</scope><name>cfg</name></member>
+      <member refid="structdata__module__event_a42bb85fd0921b4fd786df560fecca4b9_1a42bb85fd0921b4fd786df560fecca4b9" prot="public" virt="non-virtual"><scope>data_module_event</scope><name>data</name></member>
+      <member refid="structdata__module__event_ade9405736e46c8e6f027f699df31fbfb_1ade9405736e46c8e6f027f699df31fbfb" prot="public" virt="non-virtual"><scope>data_module_event</scope><name>err</name></member>
+      <member refid="structdata__module__event_a3ecc99eb4fcd38bc6678764e91803e76_1a3ecc99eb4fcd38bc6678764e91803e76" prot="public" virt="non-virtual"><scope>data_module_event</scope><name>header</name></member>
+      <member refid="structdata__module__event_a0db32d02db6b3f22b9a5a62e026d9f17_1a0db32d02db6b3f22b9a5a62e026d9f17" prot="public" virt="non-virtual"><scope>data_module_event</scope><name>id</name></member>
+      <member refid="structdata__module__event_a3f2065e0cf1c4afa6396b4561aa02601_1a3f2065e0cf1c4afa6396b4561aa02601" prot="public" virt="non-virtual"><scope>data_module_event</scope><name>type</name></member>
+      <member refid="structdata__module__event_ae8272aaa2ef1a7a396be54b29b28c250_1ae8272aaa2ef1a7a396be54b29b28c250" prot="public" virt="non-virtual"><scope>data_module_event</scope><name>ui</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

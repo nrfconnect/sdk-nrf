@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__gatt__dm__attr" kind="struct" language="C++" prot="public">
+    <compoundname>bt_gatt_dm_attr</compoundname>
+    <includes refid="gatt__dm_8h" local="no">gatt_dm.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__gatt__dm__attr_aaf1d037692455480abe5b9d088b81e41_1aaf1d037692455480abe5b9d088b81e41" prot="public" static="no" mutable="no">
+        <type>struct bt_uuid *</type>
+        <definition>struct bt_uuid* bt_gatt_dm_attr::uuid</definition>
+        <argsstring></argsstring>
+        <name>uuid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Attribute UUID </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_dm.h" line="39" column="14" bodyfile="include/bluetooth/gatt_dm.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__gatt__dm__attr_a3b58134804aa4c7df1525eef38dae486_1a3b58134804aa4c7df1525eef38dae486" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_gatt_dm_attr::handle</definition>
+        <argsstring></argsstring>
+        <name>handle</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Attribute handle </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_dm.h" line="41" column="9" bodyfile="include/bluetooth/gatt_dm.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__gatt__dm__attr_a0907c16b9f674cca94feb2a8150607b8_1a0907c16b9f674cca94feb2a8150607b8" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_gatt_dm_attr::perm</definition>
+        <argsstring></argsstring>
+        <name>perm</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Attribute permissions </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_dm.h" line="43" column="8" bodyfile="include/bluetooth/gatt_dm.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Discovery Manager GATT attribute. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This structure is used to hold GATT attribute information. The Discovery Manager attribute descriptor is a reduced version of <emphasis>bt_gatt_attr</emphasis>. The new definition is used to save memory that is used by this module. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/gatt_dm.h" line="37" column="1" bodyfile="include/bluetooth/gatt_dm.h" bodystart="37" bodyend="44"/>
+    <listofallmembers>
+      <member refid="structbt__gatt__dm__attr_a3b58134804aa4c7df1525eef38dae486_1a3b58134804aa4c7df1525eef38dae486" prot="public" virt="non-virtual"><scope>bt_gatt_dm_attr</scope><name>handle</name></member>
+      <member refid="structbt__gatt__dm__attr_a0907c16b9f674cca94feb2a8150607b8_1a0907c16b9f674cca94feb2a8150607b8" prot="public" virt="non-virtual"><scope>bt_gatt_dm_attr</scope><name>perm</name></member>
+      <member refid="structbt__gatt__dm__attr_aaf1d037692455480abe5b9d088b81e41_1aaf1d037692455480abe5b9d088b81e41" prot="public" virt="non-virtual"><scope>bt_gatt_dm_attr</scope><name>uuid</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

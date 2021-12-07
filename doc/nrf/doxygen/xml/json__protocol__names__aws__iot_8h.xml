@@ -1,0 +1,919 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="json__protocol__names__aws__iot_8h" kind="file" language="C++">
+    <compoundname>json_protocol_names_aws_iot.h</compoundname>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_adfa0a7fd32e31335e8f3df2c94bd4829_1adfa0a7fd32e31335e8f3df2c94bd4829" prot="public" static="no">
+        <name>MODEM_CURRENT_BAND</name>
+        <initializer>&quot;band&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="7" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="7" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_afedd4504cf82dd4ce9c410d17b0f6a3a_1afedd4504cf82dd4ce9c410d17b0f6a3a" prot="public" static="no">
+        <name>MODEM_NETWORK_MODE</name>
+        <initializer>&quot;nw&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="8" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="8" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a0fe4404525aa063ec16cea42217b98a7_1a0fe4404525aa063ec16cea42217b98a7" prot="public" static="no">
+        <name>MODEM_ICCID</name>
+        <initializer>&quot;iccid&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="9" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="9" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a36a1c0ccb2234123c7bce517181feb5b_1a36a1c0ccb2234123c7bce517181feb5b" prot="public" static="no">
+        <name>MODEM_FIRMWARE_VERSION</name>
+        <initializer>&quot;modV&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="10" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="10" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a7fb5db6d606f61ee3ae3aa91ac88f1a6_1a7fb5db6d606f61ee3ae3aa91ac88f1a6" prot="public" static="no">
+        <name>MODEM_BOARD</name>
+        <initializer>&quot;brdV&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="11" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="11" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a5c301247006d1702a5394ed1e9620990_1a5c301247006d1702a5394ed1e9620990" prot="public" static="no">
+        <name>MODEM_APP_VERSION</name>
+        <initializer>&quot;appV&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="12" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_ac3c3351741f80d2ad3079bde2fc8a0df_1ac3c3351741f80d2ad3079bde2fc8a0df" prot="public" static="no">
+        <name>MODEM_RSRP</name>
+        <initializer>&quot;rsrp&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="13" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="13" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a8ae4dbe0dd51cf7489bd513871999058_1a8ae4dbe0dd51cf7489bd513871999058" prot="public" static="no">
+        <name>MODEM_AREA_CODE</name>
+        <initializer>&quot;area&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="14" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="14" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_af9c2fbf0eeade8d383ee1695904c45dc_1af9c2fbf0eeade8d383ee1695904c45dc" prot="public" static="no">
+        <name>MODEM_MCCMNC</name>
+        <initializer>&quot;mccmnc&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="15" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a4619d4c7d983babee48e0f6d269af1ed_1a4619d4c7d983babee48e0f6d269af1ed" prot="public" static="no">
+        <name>MODEM_CELL_ID</name>
+        <initializer>&quot;cell&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="16" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a105b3fa9be79dbb98e665b7da116b468_1a105b3fa9be79dbb98e665b7da116b468" prot="public" static="no">
+        <name>MODEM_IP_ADDRESS</name>
+        <initializer>&quot;ip&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="17" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="17" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a1ad0cb854dc53bfcc08a6f9d5c927dcf_1a1ad0cb854dc53bfcc08a6f9d5c927dcf" prot="public" static="no">
+        <name>CONFIG_DEVICE_MODE</name>
+        <initializer>&quot;act&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="19" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a45285f256c37cf6026b9351fb890e56c_1a45285f256c37cf6026b9351fb890e56c" prot="public" static="no">
+        <name>CONFIG_ACTIVE_TIMEOUT</name>
+        <initializer>&quot;actwt&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="20" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_aa5973f8939a2afad029b6b4f85fefd10_1aa5973f8939a2afad029b6b4f85fefd10" prot="public" static="no">
+        <name>CONFIG_MOVE_TIMEOUT</name>
+        <initializer>&quot;mvt&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="21" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a504d818350cade51bef595acd0771133_1a504d818350cade51bef595acd0771133" prot="public" static="no">
+        <name>CONFIG_MOVE_RES</name>
+        <initializer>&quot;mvres&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="22" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_acbe3de0354162e5b4e3440ae76bba9b3_1acbe3de0354162e5b4e3440ae76bba9b3" prot="public" static="no">
+        <name>CONFIG_GPS_TIMEOUT</name>
+        <initializer>&quot;gpst&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="23" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a252f9a907297a27ec3f59788ed7d7af8_1a252f9a907297a27ec3f59788ed7d7af8" prot="public" static="no">
+        <name>CONFIG_ACC_THRESHOLD</name>
+        <initializer>&quot;acct&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="24" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a6c3b84d4ad11cc76ae9abfa45434733e_1a6c3b84d4ad11cc76ae9abfa45434733e" prot="public" static="no">
+        <name>CONFIG_NO_DATA_LIST</name>
+        <initializer>&quot;nod&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="25" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_aae7348f9fcd68e9b67829ef95c77c344_1aae7348f9fcd68e9b67829ef95c77c344" prot="public" static="no">
+        <name>CONFIG_NO_DATA_LIST_GNSS</name>
+        <initializer>&quot;gnss&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="26" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_aa25df79c1bb5bee3a10d1cdf9df12755_1aa25df79c1bb5bee3a10d1cdf9df12755" prot="public" static="no">
+        <name>CONFIG_NO_DATA_LIST_NEIGHBOR_CELL</name>
+        <initializer>&quot;ncell&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="27" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a7e5d4bd4685655474d8ab55c22e23041_1a7e5d4bd4685655474d8ab55c22e23041" prot="public" static="no">
+        <name>DATA_VALUE</name>
+        <initializer>&quot;v&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="29" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_ac1c1358710ca3bfaf9283a961dada464_1ac1c1358710ca3bfaf9283a961dada464" prot="public" static="no">
+        <name>DATA_TIMESTAMP</name>
+        <initializer>&quot;ts&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="30" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a19c654c8d75b7a6f00fcf12356ef562c_1a19c654c8d75b7a6f00fcf12356ef562c" prot="public" static="no">
+        <name>DATA_MODEM_DYNAMIC</name>
+        <initializer>&quot;roam&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="32" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_ae3ea43d017f22dff1de6ffb4c8d668af_1ae3ea43d017f22dff1de6ffb4c8d668af" prot="public" static="no">
+        <name>DATA_MODEM_STATIC</name>
+        <initializer>&quot;dev&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="33" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a98416bfb72d1b87be9820004f68b85f2_1a98416bfb72d1b87be9820004f68b85f2" prot="public" static="no">
+        <name>DATA_BATTERY</name>
+        <initializer>&quot;bat&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="34" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a223e339295e5617d7b8be7499ec0b33c_1a223e339295e5617d7b8be7499ec0b33c" prot="public" static="no">
+        <name>DATA_TEMPERATURE</name>
+        <initializer>&quot;temp&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="35" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_ad6abdb1f3f63d2c697d92222d346bd12_1ad6abdb1f3f63d2c697d92222d346bd12" prot="public" static="no">
+        <name>DATA_HUMID</name>
+        <initializer>&quot;hum&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="36" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a64ff2cf60414cde82b7396e1d4915184_1a64ff2cf60414cde82b7396e1d4915184" prot="public" static="no">
+        <name>DATA_ENVIRONMENTALS</name>
+        <initializer>&quot;env&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="37" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_ab1ae4744f7e635591e961b47d399e73a_1ab1ae4744f7e635591e961b47d399e73a" prot="public" static="no">
+        <name>DATA_BUTTON</name>
+        <initializer>&quot;btn&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="38" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_aa6af316ae7399b91be1d948f82f9007e_1aa6af316ae7399b91be1d948f82f9007e" prot="public" static="no">
+        <name>DATA_CONFIG</name>
+        <initializer>&quot;cfg&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="39" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a3905d6db1a8a4e88562f32026fa4005e_1a3905d6db1a8a4e88562f32026fa4005e" prot="public" static="no">
+        <name>DATA_VERSION</name>
+        <initializer>&quot;version&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="40" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a4bfd560b9fa601c125f5aad179967943_1a4bfd560b9fa601c125f5aad179967943" prot="public" static="no">
+        <name>DATA_MOVEMENT</name>
+        <initializer>&quot;acc&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="42" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_adad7086218dfdb87a4a1fde9c8cf0647_1adad7086218dfdb87a4a1fde9c8cf0647" prot="public" static="no">
+        <name>DATA_MOVEMENT_X</name>
+        <initializer>&quot;x&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="43" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a6abe9db4ffc33486e0994c5e5791581c_1a6abe9db4ffc33486e0994c5e5791581c" prot="public" static="no">
+        <name>DATA_MOVEMENT_Y</name>
+        <initializer>&quot;y&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="44" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a729585bfc8d80f13822abb672b9b0108_1a729585bfc8d80f13822abb672b9b0108" prot="public" static="no">
+        <name>DATA_MOVEMENT_Z</name>
+        <initializer>&quot;z&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="45" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a329ef316ebb3718ec38136e3d61f05bc_1a329ef316ebb3718ec38136e3d61f05bc" prot="public" static="no">
+        <name>DATA_GPS</name>
+        <initializer>&quot;gps&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="47" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_ab4edce5d6671302543788f1da90a7b23_1ab4edce5d6671302543788f1da90a7b23" prot="public" static="no">
+        <name>DATA_GPS_LONGITUDE</name>
+        <initializer>&quot;lng&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="48" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_afeceda0ee3fdab3636c39e95c28298dd_1afeceda0ee3fdab3636c39e95c28298dd" prot="public" static="no">
+        <name>DATA_GPS_LATITUDE</name>
+        <initializer>&quot;lat&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="49" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a5e7008444d64d34479cabf4277f53e56_1a5e7008444d64d34479cabf4277f53e56" prot="public" static="no">
+        <name>DATA_GPS_ALTITUDE</name>
+        <initializer>&quot;alt&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="50" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_ac0617795bd5116aa375337472bc1f962_1ac0617795bd5116aa375337472bc1f962" prot="public" static="no">
+        <name>DATA_GPS_SPEED</name>
+        <initializer>&quot;spd&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="51" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_ac3cb75a56c074b806e6d606e6c65819d_1ac3cb75a56c074b806e6d606e6c65819d" prot="public" static="no">
+        <name>DATA_GPS_HEADING</name>
+        <initializer>&quot;hdg&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="52" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_ae0d88d43f63579d594ce0e7bcdbc4bb3_1ae0d88d43f63579d594ce0e7bcdbc4bb3" prot="public" static="no">
+        <name>DATA_GPS_ACCURACY</name>
+        <initializer>&quot;acc&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="53" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a64e33e56422d43cb6f3df57206e0e26c_1a64e33e56422d43cb6f3df57206e0e26c" prot="public" static="no">
+        <name>DATA_GPS_NMEA</name>
+        <initializer>&quot;nmea&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="54" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_aa1cf4125ef24042787d06a062fa216ef_1aa1cf4125ef24042787d06a062fa216ef" prot="public" static="no">
+        <name>DATA_NEIGHBOR_CELLS_MCC</name>
+        <initializer>&quot;mcc&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="56" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a76b6bb6ab6bba7ab6cf24cd2200c6f90_1a76b6bb6ab6bba7ab6cf24cd2200c6f90" prot="public" static="no">
+        <name>DATA_NEIGHBOR_CELLS_MNC</name>
+        <initializer>&quot;mnc&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="57" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_ae29d609dc6c608536264ed17e05c548e_1ae29d609dc6c608536264ed17e05c548e" prot="public" static="no">
+        <name>DATA_NEIGHBOR_CELLS_CID</name>
+        <initializer>&quot;cell&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="58" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_acf402c3261cf42da9478bc7ad61994d9_1acf402c3261cf42da9478bc7ad61994d9" prot="public" static="no">
+        <name>DATA_NEIGHBOR_CELLS_TAC</name>
+        <initializer>&quot;area&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="59" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a79b2a89d834faaa739615e77c8812387_1a79b2a89d834faaa739615e77c8812387" prot="public" static="no">
+        <name>DATA_NEIGHBOR_CELLS_EARFCN</name>
+        <initializer>&quot;earfcn&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="60" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a9f3dddbf0f987be73ff83afe3f7d5248_1a9f3dddbf0f987be73ff83afe3f7d5248" prot="public" static="no">
+        <name>DATA_NEIGHBOR_CELLS_TIMING</name>
+        <initializer>&quot;adv&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="61" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a9806489b7a316fdf5130e7914e32e2f1_1a9806489b7a316fdf5130e7914e32e2f1" prot="public" static="no">
+        <name>DATA_NEIGHBOR_CELLS_RSRP</name>
+        <initializer>&quot;rsrp&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="62" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a2682a1403e387f1a17d90324f8a43ba7_1a2682a1403e387f1a17d90324f8a43ba7" prot="public" static="no">
+        <name>DATA_NEIGHBOR_CELLS_RSRQ</name>
+        <initializer>&quot;rsrq&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="63" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_aa4fa0c6021148a437bb4c59fe5a83515_1aa4fa0c6021148a437bb4c59fe5a83515" prot="public" static="no">
+        <name>DATA_NEIGHBOR_CELLS_NEIGHBOR_MEAS</name>
+        <initializer>&quot;nmr&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="64" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_aca4f3103d2ee3c49f413da9502c6fbfd_1aca4f3103d2ee3c49f413da9502c6fbfd" prot="public" static="no">
+        <name>DATA_NEIGHBOR_CELLS_PCI</name>
+        <initializer>&quot;cell&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="65" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_abe5c4328e7e6d06f383e49c05ef4baa5_1abe5c4328e7e6d06f383e49c05ef4baa5" prot="public" static="no">
+        <name>DATA_AGPS_REQUEST_MCC</name>
+        <initializer>&quot;mcc&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="67" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_af23ebbe322ed7a6939be7e8f14ff709c_1af23ebbe322ed7a6939be7e8f14ff709c" prot="public" static="no">
+        <name>DATA_AGPS_REQUEST_MNC</name>
+        <initializer>&quot;mnc&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="68" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a03ed172042553485779efa6831ee0767_1a03ed172042553485779efa6831ee0767" prot="public" static="no">
+        <name>DATA_AGPS_REQUEST_CID</name>
+        <initializer>&quot;cell&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="69" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a2e360d22057d78fcc5a0ff0a0bade140_1a2e360d22057d78fcc5a0ff0a0bade140" prot="public" static="no">
+        <name>DATA_AGPS_REQUEST_TAC</name>
+        <initializer>&quot;area&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="70" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_aab13b59206f5108826a2a3e6ea2385b1_1aab13b59206f5108826a2a3e6ea2385b1" prot="public" static="no">
+        <name>DATA_AGPS_REQUEST_TYPES</name>
+        <initializer>&quot;types&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="71" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_ababa8bea6c49434e8733e9c015250a53_1ababa8bea6c49434e8733e9c015250a53" prot="public" static="no">
+        <name>DATA_AGPS_REQUEST_TYPE_UTC_PARAMETERS</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="73" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a6d1fb78c7fc6c5a931b813c95b407c5f_1a6d1fb78c7fc6c5a931b813c95b407c5f" prot="public" static="no">
+        <name>DATA_AGPS_REQUEST_TYPE_EPHEMERIDES</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="74" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_af672a900c92c53bcea9b24c84d26cf2f_1af672a900c92c53bcea9b24c84d26cf2f" prot="public" static="no">
+        <name>DATA_AGPS_REQUEST_TYPE_ALMANAC</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="75" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a02197d555ccc08be98b2ca497c2352de_1a02197d555ccc08be98b2ca497c2352de" prot="public" static="no">
+        <name>DATA_AGPS_REQUEST_TYPE_KLOBUCHAR_CORRECTION</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="76" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a1a59d942f022e4765620a5a7b27014f2_1a1a59d942f022e4765620a5a7b27014f2" prot="public" static="no">
+        <name>DATA_AGPS_REQUEST_TYPE_NEQUICK_CORRECTION</name>
+        <initializer>5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="77" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a665abb7a99da5fe4fc98d197ce0c7bab_1a665abb7a99da5fe4fc98d197ce0c7bab" prot="public" static="no">
+        <name>DATA_AGPS_REQUEST_TYPE_GPS_TOWS</name>
+        <initializer>6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="78" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_ac1f2da5da6f15a6e8f5d1efe4014596a_1ac1f2da5da6f15a6e8f5d1efe4014596a" prot="public" static="no">
+        <name>DATA_AGPS_REQUEST_TYPE_GPS_SYSTEM_CLOCK_AND_TOWS</name>
+        <initializer>7</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="79" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_ad4f51728a5da97426d500795698f4906_1ad4f51728a5da97426d500795698f4906" prot="public" static="no">
+        <name>DATA_AGPS_REQUEST_TYPE_LOCATION</name>
+        <initializer>8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="80" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_ae7446994b4d5f204367a41953d778789_1ae7446994b4d5f204367a41953d778789" prot="public" static="no">
+        <name>DATA_AGPS_REQUEST_TYPE_INTEGRITY</name>
+        <initializer>9</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="81" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a21e98451e01edea5d3582286c52176ea_1a21e98451e01edea5d3582286c52176ea" prot="public" static="no">
+        <name>DATA_PGPS_REQUEST_COUNT</name>
+        <initializer>&quot;n&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="83" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_ad4efb80f808b7f930290779b31596c79_1ad4efb80f808b7f930290779b31596c79" prot="public" static="no">
+        <name>DATA_PGPS_REQUEST_INTERVAL</name>
+        <initializer>&quot;int&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="84" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a7cbd45602afa0db5e6253dba5dbd2c3d_1a7cbd45602afa0db5e6253dba5dbd2c3d" prot="public" static="no">
+        <name>DATA_PGPS_REQUEST_DAY</name>
+        <initializer>&quot;day&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="85" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a5cc65040281ee2e339bb0f8364b36ca4_1a5cc65040281ee2e339bb0f8364b36ca4" prot="public" static="no">
+        <name>DATA_PGPS_REQUEST_TIME</name>
+        <initializer>&quot;time&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="86" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a0b18152039720e5ddd05b25707811e34_1a0b18152039720e5ddd05b25707811e34" prot="public" static="no">
+        <name>OBJECT_CONFIG</name>
+        <initializer>&quot;cfg&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="88" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_a689d849cd5c1f82c85d504c860729f11_1a689d849cd5c1f82c85d504c860729f11" prot="public" static="no">
+        <name>OBJECT_REPORTED</name>
+        <initializer>&quot;reported&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="89" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="json__protocol__names__aws__iot_8h_aecf0c3ddeea05dadfe873dfd486da2fc_1aecf0c3ddeea05dadfe873dfd486da2fc" prot="public" static="no">
+        <name>OBJECT_STATE</name>
+        <initializer>&quot;state&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" line="90" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7" refid="json__protocol__names__aws__iot_8h_adfa0a7fd32e31335e8f3df2c94bd4829_1adfa0a7fd32e31335e8f3df2c94bd4829" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_CURRENT_BAND<sp/><sp/><sp/><sp/><sp/>&quot;band&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8" refid="json__protocol__names__aws__iot_8h_afedd4504cf82dd4ce9c410d17b0f6a3a_1afedd4504cf82dd4ce9c410d17b0f6a3a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_NETWORK_MODE<sp/><sp/><sp/><sp/><sp/>&quot;nw&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9" refid="json__protocol__names__aws__iot_8h_a0fe4404525aa063ec16cea42217b98a7_1a0fe4404525aa063ec16cea42217b98a7" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_ICCID<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;iccid&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10" refid="json__protocol__names__aws__iot_8h_a36a1c0ccb2234123c7bce517181feb5b_1a36a1c0ccb2234123c7bce517181feb5b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_FIRMWARE_VERSION<sp/>&quot;modV&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11" refid="json__protocol__names__aws__iot_8h_a7fb5db6d606f61ee3ae3aa91ac88f1a6_1a7fb5db6d606f61ee3ae3aa91ac88f1a6" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_BOARD<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;brdV&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12" refid="json__protocol__names__aws__iot_8h_a5c301247006d1702a5394ed1e9620990_1a5c301247006d1702a5394ed1e9620990" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_APP_VERSION<sp/><sp/><sp/><sp/><sp/><sp/>&quot;appV&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13" refid="json__protocol__names__aws__iot_8h_ac3c3351741f80d2ad3079bde2fc8a0df_1ac3c3351741f80d2ad3079bde2fc8a0df" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_RSRP<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;rsrp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14" refid="json__protocol__names__aws__iot_8h_a8ae4dbe0dd51cf7489bd513871999058_1a8ae4dbe0dd51cf7489bd513871999058" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_AREA_CODE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;area&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15" refid="json__protocol__names__aws__iot_8h_af9c2fbf0eeade8d383ee1695904c45dc_1af9c2fbf0eeade8d383ee1695904c45dc" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_MCCMNC<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;mccmnc&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16" refid="json__protocol__names__aws__iot_8h_a4619d4c7d983babee48e0f6d269af1ed_1a4619d4c7d983babee48e0f6d269af1ed" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_CELL_ID<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;cell&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17" refid="json__protocol__names__aws__iot_8h_a105b3fa9be79dbb98e665b7da116b468_1a105b3fa9be79dbb98e665b7da116b468" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_IP_ADDRESS<sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;ip&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="json__protocol__names__aws__iot_8h_a1ad0cb854dc53bfcc08a6f9d5c927dcf_1a1ad0cb854dc53bfcc08a6f9d5c927dcf" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CONFIG_DEVICE_MODE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;act&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20" refid="json__protocol__names__aws__iot_8h_a45285f256c37cf6026b9351fb890e56c_1a45285f256c37cf6026b9351fb890e56c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CONFIG_ACTIVE_TIMEOUT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;actwt&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="json__protocol__names__aws__iot_8h_aa5973f8939a2afad029b6b4f85fefd10_1aa5973f8939a2afad029b6b4f85fefd10" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CONFIG_MOVE_TIMEOUT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;mvt&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22" refid="json__protocol__names__aws__iot_8h_a504d818350cade51bef595acd0771133_1a504d818350cade51bef595acd0771133" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CONFIG_MOVE_RES<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;mvres&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="json__protocol__names__aws__iot_8h_acbe3de0354162e5b4e3440ae76bba9b3_1acbe3de0354162e5b4e3440ae76bba9b3" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CONFIG_GPS_TIMEOUT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;gpst&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="json__protocol__names__aws__iot_8h_a252f9a907297a27ec3f59788ed7d7af8_1a252f9a907297a27ec3f59788ed7d7af8" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CONFIG_ACC_THRESHOLD<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;acct&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="json__protocol__names__aws__iot_8h_a6c3b84d4ad11cc76ae9abfa45434733e_1a6c3b84d4ad11cc76ae9abfa45434733e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CONFIG_NO_DATA_LIST<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;nod&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="json__protocol__names__aws__iot_8h_aae7348f9fcd68e9b67829ef95c77c344_1aae7348f9fcd68e9b67829ef95c77c344" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CONFIG_NO_DATA_LIST_GNSS<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;gnss&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="json__protocol__names__aws__iot_8h_aa25df79c1bb5bee3a10d1cdf9df12755_1aa25df79c1bb5bee3a10d1cdf9df12755" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CONFIG_NO_DATA_LIST_NEIGHBOR_CELL<sp/>&quot;ncell&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="json__protocol__names__aws__iot_8h_a7e5d4bd4685655474d8ab55c22e23041_1a7e5d4bd4685655474d8ab55c22e23041" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_VALUE<sp/><sp/><sp/><sp/><sp/>&quot;v&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="json__protocol__names__aws__iot_8h_ac1c1358710ca3bfaf9283a961dada464_1ac1c1358710ca3bfaf9283a961dada464" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_TIMESTAMP<sp/>&quot;ts&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="json__protocol__names__aws__iot_8h_a19c654c8d75b7a6f00fcf12356ef562c_1a19c654c8d75b7a6f00fcf12356ef562c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_MODEM_DYNAMIC<sp/><sp/>&quot;roam&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="json__protocol__names__aws__iot_8h_ae3ea43d017f22dff1de6ffb4c8d668af_1ae3ea43d017f22dff1de6ffb4c8d668af" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_MODEM_STATIC<sp/><sp/><sp/>&quot;dev&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="json__protocol__names__aws__iot_8h_a98416bfb72d1b87be9820004f68b85f2_1a98416bfb72d1b87be9820004f68b85f2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_BATTERY<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;bat&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="json__protocol__names__aws__iot_8h_a223e339295e5617d7b8be7499ec0b33c_1a223e339295e5617d7b8be7499ec0b33c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_TEMPERATURE<sp/><sp/><sp/><sp/>&quot;temp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="json__protocol__names__aws__iot_8h_ad6abdb1f3f63d2c697d92222d346bd12_1ad6abdb1f3f63d2c697d92222d346bd12" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_HUMID<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;hum&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="json__protocol__names__aws__iot_8h_a64ff2cf60414cde82b7396e1d4915184_1a64ff2cf60414cde82b7396e1d4915184" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_ENVIRONMENTALS<sp/>&quot;env&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="json__protocol__names__aws__iot_8h_ab1ae4744f7e635591e961b47d399e73a_1ab1ae4744f7e635591e961b47d399e73a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_BUTTON<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;btn&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="json__protocol__names__aws__iot_8h_aa6af316ae7399b91be1d948f82f9007e_1aa6af316ae7399b91be1d948f82f9007e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_CONFIG<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;cfg&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="json__protocol__names__aws__iot_8h_a3905d6db1a8a4e88562f32026fa4005e_1a3905d6db1a8a4e88562f32026fa4005e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_VERSION<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;version&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="json__protocol__names__aws__iot_8h_a4bfd560b9fa601c125f5aad179967943_1a4bfd560b9fa601c125f5aad179967943" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_MOVEMENT<sp/><sp/><sp/>&quot;acc&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="json__protocol__names__aws__iot_8h_adad7086218dfdb87a4a1fde9c8cf0647_1adad7086218dfdb87a4a1fde9c8cf0647" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_MOVEMENT_X<sp/>&quot;x&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="json__protocol__names__aws__iot_8h_a6abe9db4ffc33486e0994c5e5791581c_1a6abe9db4ffc33486e0994c5e5791581c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_MOVEMENT_Y<sp/>&quot;y&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="json__protocol__names__aws__iot_8h_a729585bfc8d80f13822abb672b9b0108_1a729585bfc8d80f13822abb672b9b0108" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_MOVEMENT_Z<sp/>&quot;z&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="json__protocol__names__aws__iot_8h_a329ef316ebb3718ec38136e3d61f05bc_1a329ef316ebb3718ec38136e3d61f05bc" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_GPS<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;gps&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="json__protocol__names__aws__iot_8h_ab4edce5d6671302543788f1da90a7b23_1ab4edce5d6671302543788f1da90a7b23" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_GPS_LONGITUDE<sp/>&quot;lng&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="json__protocol__names__aws__iot_8h_afeceda0ee3fdab3636c39e95c28298dd_1afeceda0ee3fdab3636c39e95c28298dd" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_GPS_LATITUDE<sp/><sp/>&quot;lat&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="json__protocol__names__aws__iot_8h_a5e7008444d64d34479cabf4277f53e56_1a5e7008444d64d34479cabf4277f53e56" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_GPS_ALTITUDE<sp/><sp/>&quot;alt&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="json__protocol__names__aws__iot_8h_ac0617795bd5116aa375337472bc1f962_1ac0617795bd5116aa375337472bc1f962" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_GPS_SPEED<sp/><sp/><sp/><sp/><sp/>&quot;spd&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="json__protocol__names__aws__iot_8h_ac3cb75a56c074b806e6d606e6c65819d_1ac3cb75a56c074b806e6d606e6c65819d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_GPS_HEADING<sp/><sp/><sp/>&quot;hdg&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="json__protocol__names__aws__iot_8h_ae0d88d43f63579d594ce0e7bcdbc4bb3_1ae0d88d43f63579d594ce0e7bcdbc4bb3" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_GPS_ACCURACY<sp/><sp/>&quot;acc&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="json__protocol__names__aws__iot_8h_a64e33e56422d43cb6f3df57206e0e26c_1a64e33e56422d43cb6f3df57206e0e26c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_GPS_NMEA<sp/><sp/><sp/><sp/><sp/><sp/>&quot;nmea&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="json__protocol__names__aws__iot_8h_aa1cf4125ef24042787d06a062fa216ef_1aa1cf4125ef24042787d06a062fa216ef" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_NEIGHBOR_CELLS_MCC<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;mcc&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="json__protocol__names__aws__iot_8h_a76b6bb6ab6bba7ab6cf24cd2200c6f90_1a76b6bb6ab6bba7ab6cf24cd2200c6f90" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_NEIGHBOR_CELLS_MNC<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;mnc&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58" refid="json__protocol__names__aws__iot_8h_ae29d609dc6c608536264ed17e05c548e_1ae29d609dc6c608536264ed17e05c548e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_NEIGHBOR_CELLS_CID<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;cell&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="json__protocol__names__aws__iot_8h_acf402c3261cf42da9478bc7ad61994d9_1acf402c3261cf42da9478bc7ad61994d9" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_NEIGHBOR_CELLS_TAC<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;area&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="json__protocol__names__aws__iot_8h_a79b2a89d834faaa739615e77c8812387_1a79b2a89d834faaa739615e77c8812387" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_NEIGHBOR_CELLS_EARFCN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;earfcn&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="json__protocol__names__aws__iot_8h_a9f3dddbf0f987be73ff83afe3f7d5248_1a9f3dddbf0f987be73ff83afe3f7d5248" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_NEIGHBOR_CELLS_TIMING<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;adv&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="json__protocol__names__aws__iot_8h_a9806489b7a316fdf5130e7914e32e2f1_1a9806489b7a316fdf5130e7914e32e2f1" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_NEIGHBOR_CELLS_RSRP<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;rsrp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63" refid="json__protocol__names__aws__iot_8h_a2682a1403e387f1a17d90324f8a43ba7_1a2682a1403e387f1a17d90324f8a43ba7" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_NEIGHBOR_CELLS_RSRQ<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;rsrq&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="json__protocol__names__aws__iot_8h_aa4fa0c6021148a437bb4c59fe5a83515_1aa4fa0c6021148a437bb4c59fe5a83515" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_NEIGHBOR_CELLS_NEIGHBOR_MEAS<sp/>&quot;nmr&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65" refid="json__protocol__names__aws__iot_8h_aca4f3103d2ee3c49f413da9502c6fbfd_1aca4f3103d2ee3c49f413da9502c6fbfd" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_NEIGHBOR_CELLS_PCI<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;cell&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="json__protocol__names__aws__iot_8h_abe5c4328e7e6d06f383e49c05ef4baa5_1abe5c4328e7e6d06f383e49c05ef4baa5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_AGPS_REQUEST_MCC<sp/><sp/><sp/>&quot;mcc&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="json__protocol__names__aws__iot_8h_af23ebbe322ed7a6939be7e8f14ff709c_1af23ebbe322ed7a6939be7e8f14ff709c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_AGPS_REQUEST_MNC<sp/><sp/><sp/>&quot;mnc&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="json__protocol__names__aws__iot_8h_a03ed172042553485779efa6831ee0767_1a03ed172042553485779efa6831ee0767" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_AGPS_REQUEST_CID<sp/><sp/><sp/>&quot;cell&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="json__protocol__names__aws__iot_8h_a2e360d22057d78fcc5a0ff0a0bade140_1a2e360d22057d78fcc5a0ff0a0bade140" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_AGPS_REQUEST_TAC<sp/><sp/><sp/>&quot;area&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71" refid="json__protocol__names__aws__iot_8h_aab13b59206f5108826a2a3e6ea2385b1_1aab13b59206f5108826a2a3e6ea2385b1" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_AGPS_REQUEST_TYPES<sp/>&quot;types&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="json__protocol__names__aws__iot_8h_ababa8bea6c49434e8733e9c015250a53_1ababa8bea6c49434e8733e9c015250a53" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_AGPS_REQUEST_TYPE_UTC_PARAMETERS<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="json__protocol__names__aws__iot_8h_a6d1fb78c7fc6c5a931b813c95b407c5f_1a6d1fb78c7fc6c5a931b813c95b407c5f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_AGPS_REQUEST_TYPE_EPHEMERIDES<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="json__protocol__names__aws__iot_8h_af672a900c92c53bcea9b24c84d26cf2f_1af672a900c92c53bcea9b24c84d26cf2f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_AGPS_REQUEST_TYPE_ALMANAC<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="json__protocol__names__aws__iot_8h_a02197d555ccc08be98b2ca497c2352de_1a02197d555ccc08be98b2ca497c2352de" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_AGPS_REQUEST_TYPE_KLOBUCHAR_CORRECTION<sp/><sp/><sp/><sp/><sp/><sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77" refid="json__protocol__names__aws__iot_8h_a1a59d942f022e4765620a5a7b27014f2_1a1a59d942f022e4765620a5a7b27014f2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_AGPS_REQUEST_TYPE_NEQUICK_CORRECTION<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="json__protocol__names__aws__iot_8h_a665abb7a99da5fe4fc98d197ce0c7bab_1a665abb7a99da5fe4fc98d197ce0c7bab" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_AGPS_REQUEST_TYPE_GPS_TOWS<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>6</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="json__protocol__names__aws__iot_8h_ac1f2da5da6f15a6e8f5d1efe4014596a_1ac1f2da5da6f15a6e8f5d1efe4014596a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_AGPS_REQUEST_TYPE_GPS_SYSTEM_CLOCK_AND_TOWS<sp/>7</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80" refid="json__protocol__names__aws__iot_8h_ad4f51728a5da97426d500795698f4906_1ad4f51728a5da97426d500795698f4906" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_AGPS_REQUEST_TYPE_LOCATION<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81" refid="json__protocol__names__aws__iot_8h_ae7446994b4d5f204367a41953d778789_1ae7446994b4d5f204367a41953d778789" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_AGPS_REQUEST_TYPE_INTEGRITY<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>9</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83" refid="json__protocol__names__aws__iot_8h_a21e98451e01edea5d3582286c52176ea_1a21e98451e01edea5d3582286c52176ea" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_PGPS_REQUEST_COUNT<sp/><sp/><sp/><sp/>&quot;n&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84" refid="json__protocol__names__aws__iot_8h_ad4efb80f808b7f930290779b31596c79_1ad4efb80f808b7f930290779b31596c79" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_PGPS_REQUEST_INTERVAL<sp/>&quot;int&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="json__protocol__names__aws__iot_8h_a7cbd45602afa0db5e6253dba5dbd2c3d_1a7cbd45602afa0db5e6253dba5dbd2c3d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_PGPS_REQUEST_DAY<sp/><sp/><sp/><sp/><sp/><sp/>&quot;day&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="json__protocol__names__aws__iot_8h_a5cc65040281ee2e339bb0f8364b36ca4_1a5cc65040281ee2e339bb0f8364b36ca4" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DATA_PGPS_REQUEST_TIME<sp/><sp/><sp/><sp/><sp/>&quot;time&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="json__protocol__names__aws__iot_8h_a0b18152039720e5ddd05b25707811e34_1a0b18152039720e5ddd05b25707811e34" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>OBJECT_CONFIG<sp/><sp/><sp/>&quot;cfg&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89" refid="json__protocol__names__aws__iot_8h_a689d849cd5c1f82c85d504c860729f11_1a689d849cd5c1f82c85d504c860729f11" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>OBJECT_REPORTED<sp/>&quot;reported&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="json__protocol__names__aws__iot_8h_aecf0c3ddeea05dadfe873dfd486da2fc_1aecf0c3ddeea05dadfe873dfd486da2fc" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>OBJECT_STATE<sp/><sp/><sp/><sp/>&quot;state&quot;</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/json_protocol_names_aws_iot.h"/>
+  </compounddef>
+</doxygen>

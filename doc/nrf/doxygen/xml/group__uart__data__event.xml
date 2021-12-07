@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__uart__data__event" kind="group">
+    <compoundname>uart_data_event</compoundname>
+    <title>UART Data Event</title>
+    <innerclass refid="structuart__data__event" prot="public">uart_data_event</innerclass>
+    <briefdescription>
+<para>UART Data Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

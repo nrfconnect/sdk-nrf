@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__silvair__enocean__srv" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_silvair_enocean_srv</compoundname>
+    <includes refid="silvair__enocean__srv_8h" local="no">silvair_enocean_srv.h</includes>
+    <innerclass refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button" prot="public">bt_mesh_silvair_enocean_srv::bt_mesh_silvair_enocean_button</innerclass>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__silvair__enocean__srv_adb11fc53535f4d08ffea85d909836e6d_1adb11fc53535f4d08ffea85d909836e6d" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button" kindref="compound">bt_mesh_silvair_enocean_srv::bt_mesh_silvair_enocean_button</ref></type>
+        <definition>struct bt_mesh_silvair_enocean_srv::bt_mesh_silvair_enocean_button bt_mesh_silvair_enocean_srv::buttons[ 2 ]</definition>
+        <argsstring>[2]</argsstring>
+        <name>buttons</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="68" column="14"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__silvair__enocean__srv_afe703559c666e8cd2026f1f7077df31e_1afe703559c666e8cd2026f1f7077df31e" prot="public" static="no" mutable="no">
+        <type>bt_addr_le_t</type>
+        <definition>bt_addr_le_t bt_mesh_silvair_enocean_srv::addr</definition>
+        <argsstring></argsstring>
+        <name>addr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Enocean device address </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="71" column="14" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__silvair__enocean__srv_a44443c98d73ee922597473f7f1a58ff4_1a44443c98d73ee922597473f7f1a58ff4" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model_pub</type>
+        <definition>struct bt_mesh_model_pub bt_mesh_silvair_enocean_srv::pub</definition>
+        <argsstring></argsstring>
+        <name>pub</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Publish parameters </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="73" column="24" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__silvair__enocean__srv_a7351f76a6a774711e37d942641f8da03_1a7351f76a6a774711e37d942641f8da03" prot="public" static="no" mutable="no">
+        <type>struct net_buf_simple</type>
+        <definition>struct net_buf_simple bt_mesh_silvair_enocean_srv::pub_buf</definition>
+        <argsstring></argsstring>
+        <name>pub_buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Publication buffer </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="75" column="21" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__silvair__enocean__srv_a40fae8cdd2ecefaae9156b56c4235a4a_1a40fae8cdd2ecefaae9156b56c4235a4a" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_silvair_enocean_srv::pub_data[BT_MESH_MODEL_BUF_LEN( BT_MESH_SILVAIR_ENOCEAN_PROXY_OP, BT_MESH_SILVAIR_ENOCEAN_PROXY_MSG_MAXLEN)]</definition>
+        <argsstring>[BT_MESH_MODEL_BUF_LEN(BT_MESH_SILVAIR_ENOCEAN_PROXY_OP, BT_MESH_SILVAIR_ENOCEAN_PROXY_MSG_MAXLEN)]</argsstring>
+        <name>pub_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Publication data </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="77" column="9" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__silvair__enocean__srv_a4eea49eddd84b5fea8d6c022c5cf7a3d_1a4eea49eddd84b5fea8d6c022c5cf7a3d" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model *</type>
+        <definition>struct bt_mesh_model* bt_mesh_silvair_enocean_srv::mod</definition>
+        <argsstring></argsstring>
+        <name>mod</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Access model pointer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="81" column="20" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__silvair__enocean__srv_a63c011cf93be13fbc15d5ddc3ba41c50_1a63c011cf93be13fbc15d5ddc3ba41c50" prot="public" static="no" mutable="no">
+        <type>sys_snode_t</type>
+        <definition>sys_snode_t bt_mesh_silvair_enocean_srv::entry</definition>
+        <argsstring></argsstring>
+        <name>entry</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Entry in global list of Enocean Proxy models. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="83" column="13" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Silvair Enocean Proxy Server instance. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>bt_mesh_lvl_cli</label>
+        <link refid="structbt__mesh__lvl__cli"/>
+      </node>
+      <node id="4">
+        <label>bt_mesh_onoff_cli</label>
+        <link refid="structbt__mesh__onoff__cli"/>
+      </node>
+      <node id="1">
+        <label>bt_mesh_silvair_enocean_srv</label>
+        <link refid="structbt__mesh__silvair__enocean__srv"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>buttons</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_mesh_silvair_enocean_srv::bt_mesh_silvair_enocean_button</label>
+        <link refid="structbt__mesh__silvair__enocean__srv_1_1bt__mesh__silvair__enocean__button"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>lvl</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>onoff</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" line="53" column="1" bodyfile="include/bluetooth/mesh/vnd/silvair_enocean_srv.h" bodystart="53" bodyend="84"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__silvair__enocean__srv_afe703559c666e8cd2026f1f7077df31e_1afe703559c666e8cd2026f1f7077df31e" prot="public" virt="non-virtual"><scope>bt_mesh_silvair_enocean_srv</scope><name>addr</name></member>
+      <member refid="structbt__mesh__silvair__enocean__srv_adb11fc53535f4d08ffea85d909836e6d_1adb11fc53535f4d08ffea85d909836e6d" prot="public" virt="non-virtual"><scope>bt_mesh_silvair_enocean_srv</scope><name>buttons</name></member>
+      <member refid="structbt__mesh__silvair__enocean__srv_a63c011cf93be13fbc15d5ddc3ba41c50_1a63c011cf93be13fbc15d5ddc3ba41c50" prot="public" virt="non-virtual"><scope>bt_mesh_silvair_enocean_srv</scope><name>entry</name></member>
+      <member refid="structbt__mesh__silvair__enocean__srv_a4eea49eddd84b5fea8d6c022c5cf7a3d_1a4eea49eddd84b5fea8d6c022c5cf7a3d" prot="public" virt="non-virtual"><scope>bt_mesh_silvair_enocean_srv</scope><name>mod</name></member>
+      <member refid="structbt__mesh__silvair__enocean__srv_a44443c98d73ee922597473f7f1a58ff4_1a44443c98d73ee922597473f7f1a58ff4" prot="public" virt="non-virtual"><scope>bt_mesh_silvair_enocean_srv</scope><name>pub</name></member>
+      <member refid="structbt__mesh__silvair__enocean__srv_a7351f76a6a774711e37d942641f8da03_1a7351f76a6a774711e37d942641f8da03" prot="public" virt="non-virtual"><scope>bt_mesh_silvair_enocean_srv</scope><name>pub_buf</name></member>
+      <member refid="structbt__mesh__silvair__enocean__srv_a40fae8cdd2ecefaae9156b56c4235a4a_1a40fae8cdd2ecefaae9156b56c4235a4a" prot="public" virt="non-virtual"><scope>bt_mesh_silvair_enocean_srv</scope><name>pub_data</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

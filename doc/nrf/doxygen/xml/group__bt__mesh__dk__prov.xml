@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__dk__prov" kind="group">
+    <compoundname>bt_mesh_dk_prov</compoundname>
+    <title>Bluetooth mesh provisioning handler for Nordic DKs</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__dk__prov_1gac20eaff34f1848015f97f785937f4377" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const struct bt_mesh_prov *</type>
+        <definition>const struct bt_mesh_prov * bt_mesh_dk_prov_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>bt_mesh_dk_prov_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize the provisioning handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The provisioning properties to pass to <emphasis>bt_mesh_init()</emphasis>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/dk_prov.h" line="27" column="25" declfile="include/bluetooth/mesh/dk_prov.h" declline="27" declcolumn="25"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

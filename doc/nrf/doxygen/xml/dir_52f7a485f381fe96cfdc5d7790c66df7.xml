@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_52f7a485f381fe96cfdc5d7790c66df7" kind="dir">
+    <compoundname>applications/nrf_desktop/src</compoundname>
+    <innerdir refid="dir_a31fafd9fa67fd4346423000aaebd27a">applications/nrf_desktop/src/events</innerdir>
+    <innerdir refid="dir_4767e129a0ec16522602f8633518fe17">applications/nrf_desktop/src/util</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/nrf_desktop/src/"/>
+  </compounddef>
+</doxygen>

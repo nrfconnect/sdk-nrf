@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__hsl__cli" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_hsl_cli</compoundname>
+    <includes refid="light__hsl__cli_8h" local="no">light_hsl_cli.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__hsl__cli_ae189e9cf887d43fe2138d1eccb14b5bf_1ae189e9cf887d43fe2138d1eccb14b5bf" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__light__hsl__cli__handlers" kindref="compound">bt_mesh_light_hsl_cli_handlers</ref> *</type>
+        <definition>const struct bt_mesh_light_hsl_cli_handlers* bt_mesh_light_hsl_cli::handlers</definition>
+        <argsstring></argsstring>
+        <name>handlers</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler function structure. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl_cli.h" line="111" column="43" bodyfile="include/bluetooth/mesh/light_hsl_cli.h" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__hsl__cli_ad10d1278e80fd37dccb81e617da35220_1ad10d1278e80fd37dccb81e617da35220" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model *</type>
+        <definition>struct bt_mesh_model* bt_mesh_light_hsl_cli::model</definition>
+        <argsstring></argsstring>
+        <name>model</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Model entry. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl_cli.h" line="114" column="20" bodyfile="include/bluetooth/mesh/light_hsl_cli.h" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__hsl__cli_af20a399991988227d43169b5a846e96e_1af20a399991988227d43169b5a846e96e" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model_pub</type>
+        <definition>struct bt_mesh_model_pub bt_mesh_light_hsl_cli::pub</definition>
+        <argsstring></argsstring>
+        <name>pub</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Publish parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl_cli.h" line="116" column="24" bodyfile="include/bluetooth/mesh/light_hsl_cli.h" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__hsl__cli_a9e6decd4e3b014b4aa85fd19c00d3183_1a9e6decd4e3b014b4aa85fd19c00d3183" prot="public" static="no" mutable="no">
+        <type>struct net_buf_simple</type>
+        <definition>struct net_buf_simple bt_mesh_light_hsl_cli::buf</definition>
+        <argsstring></argsstring>
+        <name>buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Publication buffer </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl_cli.h" line="118" column="21" bodyfile="include/bluetooth/mesh/light_hsl_cli.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__hsl__cli_aafc23b9e4bafbf0d1ced84c1a11b50b1_1aafc23b9e4bafbf0d1ced84c1a11b50b1" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_light_hsl_cli::pub_data[BT_MESH_MODEL_BUF_LEN( BT_MESH_LIGHT_HSL_OP_SET, BT_MESH_LIGHT_HSL_MSG_MAXLEN_SET)]</definition>
+        <argsstring>[BT_MESH_MODEL_BUF_LEN(BT_MESH_LIGHT_HSL_OP_SET, BT_MESH_LIGHT_HSL_MSG_MAXLEN_SET)]</argsstring>
+        <name>pub_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Publication buffer data </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl_cli.h" line="120" column="9" bodyfile="include/bluetooth/mesh/light_hsl_cli.h" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__hsl__cli_af4ff20623633154510d069ea06bea389_1af4ff20623633154510d069ea06bea389" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_msg_ack_ctx</type>
+        <definition>struct bt_mesh_msg_ack_ctx bt_mesh_light_hsl_cli::ack_ctx</definition>
+        <argsstring></argsstring>
+        <name>ack_ctx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Acknowledged message tracking. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl_cli.h" line="123" column="26" bodyfile="include/bluetooth/mesh/light_hsl_cli.h" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__hsl__cli_aff76eac2065d43dbdeddd0d4f4a0d29b_1aff76eac2065d43dbdeddd0d4f4a0d29b" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_light_hsl_cli::tid</definition>
+        <argsstring></argsstring>
+        <name>tid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current transaction ID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl_cli.h" line="125" column="9" bodyfile="include/bluetooth/mesh/light_hsl_cli.h" bodystart="125" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Light HSL Client instance. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_mesh_light_hsl_cli</label>
+        <link refid="structbt__mesh__light__hsl__cli"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>handlers</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_mesh_light_hsl_cli_handlers</label>
+        <link refid="structbt__mesh__light__hsl__cli__handlers"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/light_hsl_cli.h" line="109" column="1" bodyfile="include/bluetooth/mesh/light_hsl_cli.h" bodystart="109" bodyend="126"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__hsl__cli_af4ff20623633154510d069ea06bea389_1af4ff20623633154510d069ea06bea389" prot="public" virt="non-virtual"><scope>bt_mesh_light_hsl_cli</scope><name>ack_ctx</name></member>
+      <member refid="structbt__mesh__light__hsl__cli_a9e6decd4e3b014b4aa85fd19c00d3183_1a9e6decd4e3b014b4aa85fd19c00d3183" prot="public" virt="non-virtual"><scope>bt_mesh_light_hsl_cli</scope><name>buf</name></member>
+      <member refid="structbt__mesh__light__hsl__cli_ae189e9cf887d43fe2138d1eccb14b5bf_1ae189e9cf887d43fe2138d1eccb14b5bf" prot="public" virt="non-virtual"><scope>bt_mesh_light_hsl_cli</scope><name>handlers</name></member>
+      <member refid="structbt__mesh__light__hsl__cli_ad10d1278e80fd37dccb81e617da35220_1ad10d1278e80fd37dccb81e617da35220" prot="public" virt="non-virtual"><scope>bt_mesh_light_hsl_cli</scope><name>model</name></member>
+      <member refid="structbt__mesh__light__hsl__cli_af20a399991988227d43169b5a846e96e_1af20a399991988227d43169b5a846e96e" prot="public" virt="non-virtual"><scope>bt_mesh_light_hsl_cli</scope><name>pub</name></member>
+      <member refid="structbt__mesh__light__hsl__cli_aafc23b9e4bafbf0d1ced84c1a11b50b1_1aafc23b9e4bafbf0d1ced84c1a11b50b1" prot="public" virt="non-virtual"><scope>bt_mesh_light_hsl_cli</scope><name>pub_data</name></member>
+      <member refid="structbt__mesh__light__hsl__cli_aff76eac2065d43dbdeddd0d4f4a0d29b_1aff76eac2065d43dbdeddd0d4f4a0d29b" prot="public" virt="non-virtual"><scope>bt_mesh_light_hsl_cli</scope><name>tid</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

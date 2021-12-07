@@ -1,0 +1,1026 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__at__params" kind="group">
+    <compoundname>at_params</compoundname>
+    <title>AT command/response parameters</title>
+    <innerclass refid="unionat__param__value" prot="public">at_param_value</innerclass>
+    <innerclass refid="structat__param" prot="public">at_param</innerclass>
+    <innerclass refid="structat__param__list" prot="public">at_param_list</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__at__params_1gaa0448600e795221ad6b218cf40329c8b" prot="public" static="no" strong="no">
+        <type></type>
+        <name>at_param_type</name>
+        <enumvalue id="group__at__params_gaa0448600e795221ad6b218cf40329c8b_1ggaa0448600e795221ad6b218cf40329c8baff48a3df48b6837ddf0010dbf8a9f37b" prot="public">
+          <name>AT_PARAM_TYPE_INVALID</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Invalid parameter, typically a parameter that does not exist. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__at__params_gaa0448600e795221ad6b218cf40329c8b_1ggaa0448600e795221ad6b218cf40329c8baf9cfeb418156250fd44bbcd88cd9eeee" prot="public">
+          <name>AT_PARAM_TYPE_NUM_INT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Parameter of type integer. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__at__params_gaa0448600e795221ad6b218cf40329c8b_1ggaa0448600e795221ad6b218cf40329c8baca34b10e5cac0c0a86e4d1173c9de36f" prot="public">
+          <name>AT_PARAM_TYPE_STRING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Parameter of type string. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__at__params_gaa0448600e795221ad6b218cf40329c8b_1ggaa0448600e795221ad6b218cf40329c8ba05ba66787bcecf7a2798676beb25dbc6" prot="public">
+          <name>AT_PARAM_TYPE_ARRAY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Parameter of type array. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__at__params_gaa0448600e795221ad6b218cf40329c8b_1ggaa0448600e795221ad6b218cf40329c8bae1964123f7ad89455ef5bd171bdbfc3f" prot="public">
+          <name>AT_PARAM_TYPE_EMPTY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Empty or optional parameter that should be skipped. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Parameter types that can be stored. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="36" column="1" bodyfile="include/modem/at_params.h" bodystart="36" bodyend="47"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__at__params_1ga59721d93a4f190ad4bd2a5fda8580542" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_params_list_init</definition>
+        <argsstring>(struct at_param_list *list, size_t max_params_count)</argsstring>
+        <name>at_params_list_init</name>
+        <param>
+          <type>struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *</type>
+          <declname>list</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>max_params_count</declname>
+        </param>
+        <briefdescription>
+<para>Create a list of parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>An array of <computeroutput>max_params_count</computeroutput> is allocated. Each parameter is initialized to its default value. This function should not be called again before freeing the list.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter list to initialize. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">max_params_count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of element that the list can store.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="91" column="5" declfile="include/modem/at_params.h" declline="91" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__params_1ga350b0fdd85c5df7041c4b0d017b8ffd8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void at_params_list_clear</definition>
+        <argsstring>(struct at_param_list *list)</argsstring>
+        <name>at_params_list_clear</name>
+        <param>
+          <type>struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *</type>
+          <declname>list</declname>
+        </param>
+        <briefdescription>
+<para>Clear/reset all parameter types and values. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>All parameter types and values are reset to default values.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter list to clear. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="100" column="6" declfile="include/modem/at_params.h" declline="100" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__params_1gadd533c2f688c8900ed5bd0eab35c8cb0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void at_params_list_free</definition>
+        <argsstring>(struct at_param_list *list)</argsstring>
+        <name>at_params_list_free</name>
+        <param>
+          <type>struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *</type>
+          <declname>list</declname>
+        </param>
+        <briefdescription>
+<para>Free a list of parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>First the list is cleared. Then the list and its elements are deleted.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter list to free. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="109" column="6" declfile="include/modem/at_params.h" declline="109" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__params_1gabf2b028583284be064187c821e894a79" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_params_int_put</definition>
+        <argsstring>(const struct at_param_list *list, size_t index, int64_t value)</argsstring>
+        <name>at_params_int_put</name>
+        <param>
+          <type>const struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *</type>
+          <declname>list</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type>int64_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Add a parameter in the list at the specified index and assign it an integer value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If a parameter exists at this index, it is replaced.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index in the list where to put the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="124" column="5" declfile="include/modem/at_params.h" declline="124" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__params_1ga62a3743da016b0b3c9930f84abc3d4e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_params_string_put</definition>
+        <argsstring>(const struct at_param_list *list, size_t index, const char *str, size_t str_len)</argsstring>
+        <name>at_params_string_put</name>
+        <param>
+          <type>const struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *</type>
+          <declname>list</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>str</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>str_len</declname>
+        </param>
+        <briefdescription>
+<para>Add a parameter in the list at the specified index and assign it a string value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The parameter string value is copied and added to the list as a null-terminated string. If a parameter exists at this index, it is replaced.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index in the list where to put the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">str</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the string value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">str_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of characters of the string value <computeroutput>str</computeroutput>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="141" column="5" declfile="include/modem/at_params.h" declline="141" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__params_1ga9243824d8e070e1eedbcad886a0cb4a8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_params_array_put</definition>
+        <argsstring>(const struct at_param_list *list, size_t index, const uint32_t *array, size_t array_len)</argsstring>
+        <name>at_params_array_put</name>
+        <param>
+          <type>const struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *</type>
+          <declname>list</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type>const uint32_t *</type>
+          <declname>array</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>array_len</declname>
+        </param>
+        <briefdescription>
+<para>Add a parameter in the list at the specified index and assign it an array type value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The parameter array value is copied and added to the list. If a parameter exists at this index, it is replaced. Only numbers (uint32_t) are currently supported. If the list contain compound values the parser will try to convert the value. Either 0 will be stored or if the value start with a numeric value that value will be converted, the rest of the value will be ignored. Ie. 5-23 will result in 5.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index in the list where to put the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">array</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the array of number values. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">array_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>In bytes (must currently be divisible by 4)</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="163" column="5" declfile="include/modem/at_params.h" declline="163" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__params_1gaa5148b4fabb4731c3ffdb5a8b2d05d92" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_params_empty_put</definition>
+        <argsstring>(const struct at_param_list *list, size_t index)</argsstring>
+        <name>at_params_empty_put</name>
+        <param>
+          <type>const struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *</type>
+          <declname>list</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>Add a parameter in the list at the specified index and assign it a empty status. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This will indicate that an empty parameter was found when parsing the AT string.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index in the list where to put the parameter.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="179" column="5" declfile="include/modem/at_params.h" declline="179" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__params_1gae965f47cd5df125b0308f328983bf985" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_params_size_get</definition>
+        <argsstring>(const struct at_param_list *list, size_t index, size_t *len)</argsstring>
+        <name>at_params_size_get</name>
+        <param>
+          <type>const struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *</type>
+          <declname>list</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type>size_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Get the size of a given parameter (in bytes). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A size of &apos;0&apos; is returned for invalid and empty parameters.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter index in the list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the parameter in bytes.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="193" column="5" declfile="include/modem/at_params.h" declline="193" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__params_1gaf45fa99f9ae40c79e019f08af3835f70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_params_short_get</definition>
+        <argsstring>(const struct at_param_list *list, size_t index, int16_t *value)</argsstring>
+        <name>at_params_short_get</name>
+        <param>
+          <type>const struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *</type>
+          <declname>list</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type>int16_t *</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Get a parameter value as a short number. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter index in the list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="206" column="5" declfile="include/modem/at_params.h" declline="206" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__params_1ga554fb058d132960572c3a1cb2e4275ad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_params_unsigned_short_get</definition>
+        <argsstring>(const struct at_param_list *list, size_t index, uint16_t *value)</argsstring>
+        <name>at_params_unsigned_short_get</name>
+        <param>
+          <type>const struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *</type>
+          <declname>list</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type>uint16_t *</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Get a parameter value as a unsigned short number. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter index in the list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="219" column="5" declfile="include/modem/at_params.h" declline="219" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__params_1gad2a56c67a842b43b8fc620156564368a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_params_int_get</definition>
+        <argsstring>(const struct at_param_list *list, size_t index, int32_t *value)</argsstring>
+        <name>at_params_int_get</name>
+        <param>
+          <type>const struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *</type>
+          <declname>list</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type>int32_t *</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Get a parameter value as an integer number. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter index in the list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="232" column="5" declfile="include/modem/at_params.h" declline="232" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__params_1gabc21e929a71f6e01254b5ced8913fea6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_params_unsigned_int_get</definition>
+        <argsstring>(const struct at_param_list *list, size_t index, uint32_t *value)</argsstring>
+        <name>at_params_unsigned_int_get</name>
+        <param>
+          <type>const struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *</type>
+          <declname>list</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Get a parameter value as an unsigned integer number. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter index in the list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="245" column="5" declfile="include/modem/at_params.h" declline="245" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__params_1ga030861cc7edcf7ba37e85c0cae1e24b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_params_int64_get</definition>
+        <argsstring>(const struct at_param_list *list, size_t index, int64_t *value)</argsstring>
+        <name>at_params_int64_get</name>
+        <param>
+          <type>const struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *</type>
+          <declname>list</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type>int64_t *</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Get a parameter value as an signed 64-bit integer number. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter index in the list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="257" column="5" declfile="include/modem/at_params.h" declline="257" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__params_1gadaac4c6cfef2220d5b92517446d3d70f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_params_string_get</definition>
+        <argsstring>(const struct at_param_list *list, size_t index, char *value, size_t *len)</argsstring>
+        <name>at_params_string_get</name>
+        <param>
+          <type>const struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *</type>
+          <declname>list</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>size_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Get a parameter value as a string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The parameter type must be a string, or an error is returned. The string parameter value is copied to the buffer. <computeroutput>len</computeroutput> must be bigger than the string length, or an error is returned. The copied string is not null-terminated.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter index in the list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer where to copy the value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Available space in <computeroutput>value</computeroutput>, returns actual length copied into string buffer in bytes.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="276" column="5" declfile="include/modem/at_params.h" declline="276" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__params_1ga238c914ff9ad5afe836e149bb2432547" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_params_array_get</definition>
+        <argsstring>(const struct at_param_list *list, size_t index, uint32_t *array, size_t *len)</argsstring>
+        <name>at_params_array_get</name>
+        <param>
+          <type>const struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *</type>
+          <declname>list</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>array</declname>
+        </param>
+        <param>
+          <type>size_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Get a parameter value as a array. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The parameter type must be a array, or an error is returned. The string parameter value is copied to the buffer. <computeroutput>len</computeroutput> must be equal or bigger than the array length, or an error is returned. The copied string is not null-terminated.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter index in the list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">array</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer where to copy the array. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Available space in <computeroutput>value</computeroutput>, returns actual length copied into array buffer in bytes.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="296" column="5" declfile="include/modem/at_params.h" declline="296" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__params_1ga6c3333d4988da16a5e96ac7f6e28c85b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint32_t</type>
+        <definition>uint32_t at_params_valid_count_get</definition>
+        <argsstring>(const struct at_param_list *list)</argsstring>
+        <name>at_params_valid_count_get</name>
+        <param>
+          <type>const struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *</type>
+          <declname>list</declname>
+        </param>
+        <briefdescription>
+<para>Get the number of valid parameters in the list. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter list.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The number of valid parameters until an empty parameter is found. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="306" column="10" declfile="include/modem/at_params.h" declline="306" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__params_1gaed69538987fc74db870c32b0c528fcf8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>enum <ref refid="group__at__params_gaa0448600e795221ad6b218cf40329c8b_1gaa0448600e795221ad6b218cf40329c8b" kindref="member">at_param_type</ref></type>
+        <definition>enum at_param_type at_params_type_get</definition>
+        <argsstring>(const struct at_param_list *list, size_t index)</argsstring>
+        <name>at_params_type_get</name>
+        <param>
+          <type>const struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *</type>
+          <declname>list</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>Get parameter type for parameter at index. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter index in the list.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Return parameter type of <ref refid="group__at__params_gaa0448600e795221ad6b218cf40329c8b_1gaa0448600e795221ad6b218cf40329c8b" kindref="member">at_param_type</ref>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_params.h" line="316" column="19" declfile="include/modem/at_params.h" declline="316" declcolumn="19"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>A parameter list contains an array of parameters defined by a type, a length and a value. Those parameters could be arguments of an AT command, AT response or event, for example. Several parameter types can be stored. They can be arrays or a single numeric or string values. Optional or empty parameters are supported. The same list of parameters can be reused. Each parameter can be updated or cleared. A parameter type or value can be changed at any time. Once the parameter list is created, its size cannot be changed. All parameters values are copied in the list. Parameters should be cleared to free that memory. Getter and setter methods are available to read and write parameter values. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

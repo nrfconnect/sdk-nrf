@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__hsl__status" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_hsl_status</compoundname>
+    <includes refid="light__hsl_8h" local="no">light_hsl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__hsl__status_a2c144c9e1424a6c651e30b07ef63d6bb_1a2c144c9e1424a6c651e30b07ef63d6bb" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__light__hsl" kindref="compound">bt_mesh_light_hsl</ref></type>
+        <definition>struct bt_mesh_light_hsl bt_mesh_light_hsl_status::params</definition>
+        <argsstring></argsstring>
+        <name>params</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Status parameters </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl.h" line="101" column="24" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__hsl__status_af8eb69fcc84855d682410d6b664bcfcb_1af8eb69fcc84855d682410d6b664bcfcb" prot="public" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t bt_mesh_light_hsl_status::remaining_time</definition>
+        <argsstring></argsstring>
+        <name>remaining_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Remaining time for the state change (ms). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl.h" line="103" column="9" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Common Light HSL status message parameters. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_mesh_light_hsl</label>
+        <link refid="structbt__mesh__light__hsl"/>
+      </node>
+      <node id="1">
+        <label>bt_mesh_light_hsl_status</label>
+        <link refid="structbt__mesh__light__hsl__status"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>params</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/light_hsl.h" line="99" column="1" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="99" bodyend="104"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__hsl__status_a2c144c9e1424a6c651e30b07ef63d6bb_1a2c144c9e1424a6c651e30b07ef63d6bb" prot="public" virt="non-virtual"><scope>bt_mesh_light_hsl_status</scope><name>params</name></member>
+      <member refid="structbt__mesh__light__hsl__status_af8eb69fcc84855d682410d6b664bcfcb_1af8eb69fcc84855d682410d6b664bcfcb" prot="public" virt="non-virtual"><scope>bt_mesh_light_hsl_status</scope><name>remaining_time</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

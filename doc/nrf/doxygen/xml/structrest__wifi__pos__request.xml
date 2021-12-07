@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structrest__wifi__pos__request" kind="struct" language="C++" prot="public">
+    <compoundname>rest_wifi_pos_request</compoundname>
+    <includes refid="wifi__service_8h" local="no">wifi_service.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structrest__wifi__pos__request_a9c954d6d9fb650d1db8d7cceab92a8be_1a9c954d6d9fb650d1db8d7cceab92a8be" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structwifi__scanning__result__info" kindref="compound">wifi_scanning_result_info</ref></type>
+        <definition>struct wifi_scanning_result_info rest_wifi_pos_request::scanning_results[CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT]</definition>
+        <argsstring>[CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT]</argsstring>
+        <name>scanning_results</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Scanning results </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/wifi/wifi_service.h" line="35" column="1" bodyfile="lib/location/wifi/wifi_service.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structrest__wifi__pos__request_ad6360f3db7badaf8f8df9543abe4172f_1ad6360f3db7badaf8f8df9543abe4172f" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t rest_wifi_pos_request::wifi_scanning_result_count</definition>
+        <argsstring></argsstring>
+        <name>wifi_scanning_result_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/wifi/wifi_service.h" line="36" column="9" bodyfile="lib/location/wifi/wifi_service.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structrest__wifi__pos__request_a0a1ac02e5cb9147bda09397fcfd866f9_1a0a1ac02e5cb9147bda09397fcfd866f9" prot="public" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t rest_wifi_pos_request::timeout_ms</definition>
+        <argsstring></argsstring>
+        <name>timeout_ms</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/wifi/wifi_service.h" line="37" column="9" bodyfile="lib/location/wifi/wifi_service.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Data used for Wi-Fi positioning request. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>rest_wifi_pos_request</label>
+        <link refid="structrest__wifi__pos__request"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>scanning_results</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>wifi_scanning_result_info</label>
+        <link refid="structwifi__scanning__result__info"/>
+      </node>
+    </collaborationgraph>
+    <location file="lib/location/wifi/wifi_service.h" line="32" column="1" bodyfile="lib/location/wifi/wifi_service.h" bodystart="32" bodyend="38"/>
+    <listofallmembers>
+      <member refid="structrest__wifi__pos__request_a9c954d6d9fb650d1db8d7cceab92a8be_1a9c954d6d9fb650d1db8d7cceab92a8be" prot="public" virt="non-virtual"><scope>rest_wifi_pos_request</scope><name>scanning_results</name></member>
+      <member refid="structrest__wifi__pos__request_a0a1ac02e5cb9147bda09397fcfd866f9_1a0a1ac02e5cb9147bda09397fcfd866f9" prot="public" virt="non-virtual"><scope>rest_wifi_pos_request</scope><name>timeout_ms</name></member>
+      <member refid="structrest__wifi__pos__request_ad6360f3db7badaf8f8df9543abe4172f_1ad6360f3db7badaf8f8df9543abe4172f" prot="public" virt="non-virtual"><scope>rest_wifi_pos_request</scope><name>wifi_scanning_result_count</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

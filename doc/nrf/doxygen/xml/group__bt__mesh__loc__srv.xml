@@ -1,0 +1,238 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__loc__srv" kind="group">
+    <compoundname>bt_mesh_loc_srv</compoundname>
+    <title>Generic Location Server model</title>
+    <innerclass refid="structbt__mesh__loc__srv__handlers" prot="public">bt_mesh_loc_srv_handlers</innerclass>
+    <innerclass refid="structbt__mesh__loc__srv" prot="public">bt_mesh_loc_srv</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__loc__srv_1gae8880a8c5704a48aa659d8904d0ff799" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_loc_srv_global_pub</definition>
+        <argsstring>(struct bt_mesh_loc_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_loc_global *global)</argsstring>
+        <name>bt_mesh_loc_srv_global_pub</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__loc__srv" kindref="compound">bt_mesh_loc_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__loc__global" kindref="compound">bt_mesh_loc_global</ref> *</type>
+          <declname>global</declname>
+        </param>
+        <briefdescription>
+<para>Publish the Global Location state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Asynchronously publishes a Global Location status message with the configured publish parameters.</para>
+<para><simplesect kind="note"><para>This API is only used for publishing unprompted status messages. Response messages for get and set messages are handled internally.</para>
+</simplesect>
+<simplesect kind="note"><para>The server will only publish one state at the time. Calling this function will terminate any publishing of the Local Location state.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server instance to publish on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to send with the default publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">global</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current global location.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully published a Global Location status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc_srv.h" line="161" column="5" declfile="include/bluetooth/mesh/gen_loc_srv.h" declline="161" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__loc__srv_1ga3db808cb6984a0cebb284214b8ef7e7f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_loc_srv_local_pub</definition>
+        <argsstring>(struct bt_mesh_loc_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_loc_local *local)</argsstring>
+        <name>bt_mesh_loc_srv_local_pub</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__loc__srv" kindref="compound">bt_mesh_loc_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__loc__local" kindref="compound">bt_mesh_loc_local</ref> *</type>
+          <declname>local</declname>
+        </param>
+        <briefdescription>
+<para>Publish the Local Location state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Asynchronously publishes a Local Location status message with the configured publish parameters.</para>
+<para><simplesect kind="note"><para>This API is only used for publishing unprompted status messages. Response messages for get and set messages are handled internally.</para>
+</simplesect>
+<simplesect kind="note"><para>The server will only publish one state at the time. Calling this function will terminate any publishing of the Global Location state.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server instance to publish on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to send with the default publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">local</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current local location.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully published a Local Location status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc_srv.h" line="186" column="5" declfile="include/bluetooth/mesh/gen_loc_srv.h" declline="186" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__loc__srv_1gafd00c3ff1b575ac823e9b80a0b1729d7" prot="public" static="no">
+        <name>BT_MESH_LOC_SRV_INIT</name>
+        <param><defname>_handlers</defname></param>
+        <initializer>	{                                                                      \
+		.handlers = _handlers,                                         \
+	}</initializer>
+        <briefdescription>
+<para>Init parameters for a <ref refid="group__bt__mesh__loc__srv" kindref="compound">Generic Location Server model</ref> instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_handlers</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Handler function structure. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc_srv.h" line="33" column="9" bodyfile="include/bluetooth/mesh/gen_loc_srv.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__loc__srv_1ga097057e255cc984c307fa9cc7b088722" prot="public" static="no">
+        <name>BT_MESH_MODEL_LOC_SRV</name>
+        <param><defname>_srv</defname></param>
+        <initializer>	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_LOCATION_SRV,                    \
+			 _bt_mesh_loc_srv_op, &amp;(_srv)-&gt;pub,                    \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__loc__srv" kindref="compound">bt_mesh_loc_srv</ref>,       \
+						 _srv),                        \
+			 &amp;_bt_mesh_loc_srv_cb),                                \
+		BT_MESH_MODEL(BT_MESH_MODEL_ID_GEN_LOCATION_SETUPSRV,          \
+			      _bt_mesh_loc_setup_srv_op, NULL,                 \
+			      BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__loc__srv" kindref="compound">bt_mesh_loc_srv</ref>,  \
+						      _srv))</initializer>
+        <briefdescription>
+<para>Generic Location Server model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__loc__srv" kindref="compound">Generic Location Server model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc_srv.h" line="44" column="9" bodyfile="include/bluetooth/mesh/gen_loc_srv.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Generic Location Server model. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

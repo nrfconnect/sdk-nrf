@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__nus__client__handles" kind="struct" language="C++" prot="public">
+    <compoundname>bt_nus_client_handles</compoundname>
+    <includes refid="nus__client_8h" local="no">nus_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__nus__client__handles_a83dc463604e2b6f77bdda27dd5d70b8c_1a83dc463604e2b6f77bdda27dd5d70b8c" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_nus_client_handles::rx</definition>
+        <argsstring></argsstring>
+        <name>rx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handle of the NUS RX characteristic, as provided by a discovery. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus_client.h" line="33" column="10" bodyfile="include/bluetooth/services/nus_client.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__nus__client__handles_aa80625acdf2bc445822db35c09168f75_1aa80625acdf2bc445822db35c09168f75" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_nus_client_handles::tx</definition>
+        <argsstring></argsstring>
+        <name>tx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handle of the NUS TX characteristic, as provided by a discovery. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus_client.h" line="38" column="10" bodyfile="include/bluetooth/services/nus_client.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__nus__client__handles_a4b7bac6bf0fa2be3d0b3ab159b05485a_1a4b7bac6bf0fa2be3d0b3ab159b05485a" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_nus_client_handles::tx_ccc</definition>
+        <argsstring></argsstring>
+        <name>tx_ccc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handle of the CCC descriptor of the NUS TX characteristic, as provided by a discovery. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus_client.h" line="43" column="10" bodyfile="include/bluetooth/services/nus_client.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Handles on the connected peer device that are needed to interact with the device. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/nus_client.h" line="28" column="1" bodyfile="include/bluetooth/services/nus_client.h" bodystart="28" bodyend="44"/>
+    <listofallmembers>
+      <member refid="structbt__nus__client__handles_a83dc463604e2b6f77bdda27dd5d70b8c_1a83dc463604e2b6f77bdda27dd5d70b8c" prot="public" virt="non-virtual"><scope>bt_nus_client_handles</scope><name>rx</name></member>
+      <member refid="structbt__nus__client__handles_aa80625acdf2bc445822db35c09168f75_1aa80625acdf2bc445822db35c09168f75" prot="public" virt="non-virtual"><scope>bt_nus_client_handles</scope><name>tx</name></member>
+      <member refid="structbt__nus__client__handles_a4b7bac6bf0fa2be3d0b3ab159b05485a_1a4b7bac6bf0fa2be3d0b3ab159b05485a" prot="public" virt="non-virtual"><scope>bt_nus_client_handles</scope><name>tx_ccc</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

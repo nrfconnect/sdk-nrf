@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structdebug__module__event" kind="struct" language="C++" prot="public">
+    <compoundname>debug_module_event</compoundname>
+    <includes refid="debug__module__event_8h" local="no">debug_module_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structdebug__module__event_a72ad0996d270bb61073eb67dc423fd71_1a72ad0996d270bb61073eb67dc423fd71" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header debug_module_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/debug_module_event.h" line="50" column="19" bodyfile="applications/asset_tracker_v2/src/events/debug_module_event.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdebug__module__event_a7e71c3cf16fb7a12160a3ab4cdbbee6d_1a7e71c3cf16fb7a12160a3ab4cdbbee6d" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__debug__module__event_ga00d96ddf87d2eb2b7094133150238799_1ga00d96ddf87d2eb2b7094133150238799" kindref="member">debug_module_event_type</ref></type>
+        <definition>enum debug_module_event_type debug_module_event::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/debug_module_event.h" line="51" column="29" bodyfile="applications/asset_tracker_v2/src/events/debug_module_event.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdebug__module__event_ad6b359ccbe1851684d34474d90bd4e8b_1ad6b359ccbe1851684d34474d90bd4e8b" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structdebug__module__memfault__data" kindref="compound">debug_module_memfault_data</ref></type>
+        <definition>struct debug_module_memfault_data debug_module_event::memfault</definition>
+        <argsstring></argsstring>
+        <name>memfault</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/debug_module_event.h" line="54" column="33" bodyfile="applications/asset_tracker_v2/src/events/debug_module_event.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdebug__module__event_a624f2742bef174bbaf00439cbe5fb372_1a624f2742bef174bbaf00439cbe5fb372" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int debug_module_event::err</definition>
+        <argsstring></argsstring>
+        <name>err</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/debug_module_event.h" line="55" column="5" bodyfile="applications/asset_tracker_v2/src/events/debug_module_event.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdebug__module__event_acab7267de6f968cef6f039f44c2f9ade_1acab7267de6f968cef6f039f44c2f9ade" prot="public" static="no" mutable="no">
+        <type>union debug_module_event::@12</type>
+        <definition>union debug_module_event::@12 debug_module_event::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/debug_module_event.h" line="56" column="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Debug event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>debug_module_event</label>
+        <link refid="structdebug__module__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>memfault</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>debug_module_memfault_data</label>
+        <link refid="structdebug__module__memfault__data"/>
+      </node>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/asset_tracker_v2/src/events/debug_module_event.h" line="49" column="1" bodyfile="applications/asset_tracker_v2/src/events/debug_module_event.h" bodystart="49" bodyend="57"/>
+    <listofallmembers>
+      <member refid="structdebug__module__event_acab7267de6f968cef6f039f44c2f9ade_1acab7267de6f968cef6f039f44c2f9ade" prot="public" virt="non-virtual"><scope>debug_module_event</scope><name>data</name></member>
+      <member refid="structdebug__module__event_a624f2742bef174bbaf00439cbe5fb372_1a624f2742bef174bbaf00439cbe5fb372" prot="public" virt="non-virtual"><scope>debug_module_event</scope><name>err</name></member>
+      <member refid="structdebug__module__event_a72ad0996d270bb61073eb67dc423fd71_1a72ad0996d270bb61073eb67dc423fd71" prot="public" virt="non-virtual"><scope>debug_module_event</scope><name>header</name></member>
+      <member refid="structdebug__module__event_ad6b359ccbe1851684d34474d90bd4e8b_1ad6b359ccbe1851684d34474d90bd4e8b" prot="public" virt="non-virtual"><scope>debug_module_event</scope><name>memfault</name></member>
+      <member refid="structdebug__module__event_a7e71c3cf16fb7a12160a3ab4cdbbee6d_1a7e71c3cf16fb7a12160a3ab4cdbbee6d" prot="public" virt="non-virtual"><scope>debug_module_event</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

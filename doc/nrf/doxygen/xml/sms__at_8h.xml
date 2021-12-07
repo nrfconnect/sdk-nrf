@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="sms__at_8h" kind="file" language="C++">
+    <compoundname>sms_at.h</compoundname>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="sms__at_8h_a463da16eb3c4e5743e98aa9aaeb019b5_1a463da16eb3c4e5743e98aa9aaeb019b5" prot="public" static="no">
+        <name>ENOTSMSAT</name>
+        <initializer>0x0FFFFFFF</initializer>
+        <briefdescription>
+<para>Error code for AT command that is not SMS related. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/sms_at.h" line="11" column="9" bodyfile="lib/sms/sms_at.h" bodystart="11" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="sms__at_8h_a0f560866d10d6780e4ab83b46192f598_1a0f560866d10d6780e4ab83b46192f598" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int sms_at_parse</definition>
+        <argsstring>(const char *at_notif, struct sms_data *sms_data_info, struct at_param_list *temp_resp_list)</argsstring>
+        <name>sms_at_parse</name>
+        <param>
+          <type>const char *</type>
+          <declname>at_notif</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structsms__data" kindref="compound">sms_data</ref> *</type>
+          <declname>sms_data_info</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *</type>
+          <declname>temp_resp_list</declname>
+        </param>
+        <briefdescription>
+<para>Parse AT notifications finding relevant notifications for SMS and dropping the rest. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">at_notif</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>AT notication string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">sms_data_info</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parsed output data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">temp_resp_list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response list used by AT parser library. This is readily initialized by caller and is passed here to avoid using another instance of the list. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Zero on success and negative value in error cases. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/sms_at.h" line="23" column="5" declfile="lib/sms/sms_at.h" declline="23" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_SMS_AT_INCLUDE_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_SMS_AT_INCLUDE_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11" refid="sms__at_8h_a463da16eb3c4e5743e98aa9aaeb019b5_1a463da16eb3c4e5743e98aa9aaeb019b5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ENOTSMSAT<sp/>0x0FFFFFFF</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="sms__at_8h_a0f560866d10d6780e4ab83b46192f598_1a0f560866d10d6780e4ab83b46192f598" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="sms__at_8h_a0f560866d10d6780e4ab83b46192f598_1a0f560866d10d6780e4ab83b46192f598" kindref="member">sms_at_parse</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*at_notif,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structsms__data" kindref="compound">sms_data</ref><sp/>*sms_data_info,</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structat__param__list" kindref="compound">at_param_list</ref><sp/>*temp_resp_list);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="lib/sms/sms_at.h"/>
+  </compounddef>
+</doxygen>

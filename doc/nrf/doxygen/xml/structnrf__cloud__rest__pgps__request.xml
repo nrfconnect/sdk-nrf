@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnrf__cloud__rest__pgps__request" kind="struct" language="C++" prot="public">
+    <compoundname>nrf_cloud_rest_pgps_request</compoundname>
+    <includes refid="nrf__cloud__rest_8h" local="no">nrf_cloud_rest.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnrf__cloud__rest__pgps__request_a85cb707333de29b151dbafa730afe7af_1a85cb707333de29b151dbafa730afe7af" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structgps__pgps__request" kindref="compound">gps_pgps_request</ref> *</type>
+        <definition>const struct gps_pgps_request* nrf_cloud_rest_pgps_request::pgps_req</definition>
+        <argsstring></argsstring>
+        <name>pgps_req</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Data to be included in the P-GPS request. To omit an item use the appropriate define in <ref refid="group__nrf__cloud__rest__pgps__omit" kindref="compound">Omit item from P-GPS request.</ref> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="149" column="29" bodyfile="include/net/nrf_cloud_rest.h" bodystart="149" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Data required for nRF Cloud Predicted GPS (P-GPS) request. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>gps_pgps_request</label>
+        <link refid="structgps__pgps__request"/>
+      </node>
+      <node id="1">
+        <label>nrf_cloud_rest_pgps_request</label>
+        <link refid="structnrf__cloud__rest__pgps__request"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>pgps_req</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/net/nrf_cloud_rest.h" line="145" column="1" bodyfile="include/net/nrf_cloud_rest.h" bodystart="145" bodyend="150"/>
+    <listofallmembers>
+      <member refid="structnrf__cloud__rest__pgps__request_a85cb707333de29b151dbafa730afe7af_1a85cb707333de29b151dbafa730afe7af" prot="public" virt="non-virtual"><scope>nrf_cloud_rest_pgps_request</scope><name>pgps_req</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

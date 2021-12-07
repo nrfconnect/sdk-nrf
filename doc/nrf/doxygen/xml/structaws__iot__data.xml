@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structaws__iot__data" kind="struct" language="C++" prot="public">
+    <compoundname>aws_iot_data</compoundname>
+    <includes refid="aws__iot_8h" local="no">aws_iot.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structaws__iot__data_a017d0f82c0d905025309f54fc01a056b_1a017d0f82c0d905025309f54fc01a056b" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structaws__iot__topic__data" kindref="compound">aws_iot_topic_data</ref></type>
+        <definition>struct aws_iot_topic_data aws_iot_data::topic</definition>
+        <argsstring></argsstring>
+        <name>topic</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Topic data is sent/received on. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="133" column="25" bodyfile="include/net/aws_iot.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structaws__iot__data_adbc575dfd32212450eb9f51a873ee1ad_1adbc575dfd32212450eb9f51a873ee1ad" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* aws_iot_data::ptr</definition>
+        <argsstring></argsstring>
+        <name>ptr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to data sent/received from the AWS IoT broker. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="135" column="6" bodyfile="include/net/aws_iot.h" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structaws__iot__data_ad48ceb68298387ebad1b57913775944f_1ad48ceb68298387ebad1b57913775944f" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t aws_iot_data::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="137" column="8" bodyfile="include/net/aws_iot.h" bodystart="137" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structaws__iot__data_a5e04e1b45ef16ca1b2d111308e4dd442_1a5e04e1b45ef16ca1b2d111308e4dd442" prot="public" static="no" mutable="no">
+        <type>enum mqtt_qos</type>
+        <definition>enum mqtt_qos aws_iot_data::qos</definition>
+        <argsstring></argsstring>
+        <name>qos</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Quality of Service of the message. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_iot.h" line="139" column="14" bodyfile="include/net/aws_iot.h" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>AWS IoT transmission data. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>aws_iot_data</label>
+        <link refid="structaws__iot__data"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>topic</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>aws_iot_topic_data</label>
+        <link refid="structaws__iot__topic__data"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/net/aws_iot.h" line="131" column="1" bodyfile="include/net/aws_iot.h" bodystart="131" bodyend="140"/>
+    <listofallmembers>
+      <member refid="structaws__iot__data_ad48ceb68298387ebad1b57913775944f_1ad48ceb68298387ebad1b57913775944f" prot="public" virt="non-virtual"><scope>aws_iot_data</scope><name>len</name></member>
+      <member refid="structaws__iot__data_adbc575dfd32212450eb9f51a873ee1ad_1adbc575dfd32212450eb9f51a873ee1ad" prot="public" virt="non-virtual"><scope>aws_iot_data</scope><name>ptr</name></member>
+      <member refid="structaws__iot__data_a5e04e1b45ef16ca1b2d111308e4dd442_1a5e04e1b45ef16ca1b2d111308e4dd442" prot="public" virt="non-virtual"><scope>aws_iot_data</scope><name>qos</name></member>
+      <member refid="structaws__iot__data_a017d0f82c0d905025309f54fc01a056b_1a017d0f82c0d905025309f54fc01a056b" prot="public" virt="non-virtual"><scope>aws_iot_data</scope><name>topic</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

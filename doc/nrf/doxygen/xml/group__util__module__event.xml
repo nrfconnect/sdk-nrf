@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__util__module__event" kind="group">
+    <compoundname>util_module_event</compoundname>
+    <title>Util module event</title>
+    <innerclass refid="structutil__module__event" prot="public">util_module_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__util__module__event_1ga5256775ef72e91c285cceb370436b3e6" prot="public" static="no" strong="no">
+        <type></type>
+        <name>util_module_event_type</name>
+        <enumvalue id="group__util__module__event_ga5256775ef72e91c285cceb370436b3e6_1gga5256775ef72e91c285cceb370436b3e6a89bd7a0769cd00a5574e359bfaa57772" prot="public">
+          <name>UTIL_EVT_SHUTDOWN_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/util_module_event.h" line="23" column="1" bodyfile="applications/asset_tracker_v2/src/events/util_module_event.h" bodystart="23" bodyend="25"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__util__module__event_1ga955deab111539ac798be4bdbf61bc297" prot="public" static="no" strong="no">
+        <type></type>
+        <name>shutdown_reason</name>
+        <enumvalue id="group__util__module__event_ga955deab111539ac798be4bdbf61bc297_1gga955deab111539ac798be4bdbf61bc297a1e4856d82f4166adf446c62da74696bd" prot="public">
+          <name>REASON_GENERIC</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__util__module__event_ga955deab111539ac798be4bdbf61bc297_1gga955deab111539ac798be4bdbf61bc297a2ca11a0b66f06d33dad738cd8d883b4c" prot="public">
+          <name>REASON_FOTA_UPDATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/util_module_event.h" line="27" column="1" bodyfile="applications/asset_tracker_v2/src/events/util_module_event.h" bodystart="27" bodyend="30"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Util module event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

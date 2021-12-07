@@ -1,0 +1,195 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="tfm__read__ranges_8h" kind="file" language="C++">
+    <compoundname>tfm_read_ranges.h</compoundname>
+    <includes refid="tfm__ioctl__api_8h" local="no">tfm_ioctl_api.h</includes>
+    <includes local="no">pm_config.h</includes>
+    <includes local="yes">nrf.h</includes>
+    <incdepgraph>
+      <node id="2">
+        <label>tfm_ioctl_api.h</label>
+        <link refid="tfm__ioctl__api_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/tfm/tfm_read_ranges.h</label>
+        <link refid="tfm__read__ranges_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>hal/nrf_gpio.h</label>
+      </node>
+      <node id="3">
+        <label>limits.h</label>
+      </node>
+      <node id="9">
+        <label>nrf.h</label>
+      </node>
+      <node id="8">
+        <label>pm_config.h</label>
+      </node>
+      <node id="4">
+        <label>stdint.h</label>
+      </node>
+      <node id="5">
+        <label>tfm_api.h</label>
+      </node>
+      <node id="6">
+        <label>tfm_platform_api.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="tfm__read__ranges_8h_ac890d004494805934fcb7a1926fbdc2a_1ac890d004494805934fcb7a1926fbdc2a" prot="public" static="no">
+        <name>FICR_BASE</name>
+        <initializer>NRF_FICR_S_BASE</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/tfm/tfm_read_ranges.h" line="15" column="9" bodyfile="include/tfm/tfm_read_ranges.h" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="tfm__read__ranges_8h_a496f0d408128a93e13239b2252bb7012_1a496f0d408128a93e13239b2252bb7012" prot="public" static="no">
+        <name>FICR_INFO_ADDR</name>
+        <initializer>(<ref refid="tfm__read__ranges_8h_ac890d004494805934fcb7a1926fbdc2a_1ac890d004494805934fcb7a1926fbdc2a" kindref="member">FICR_BASE</ref> + offsetof(NRF_FICR_Type, INFO))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/tfm/tfm_read_ranges.h" line="17" column="9" bodyfile="include/tfm/tfm_read_ranges.h" bodystart="17" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="tfm__read__ranges_8h_a6edcf5d1dea5582e87b8bf46e0cbcb62_1a6edcf5d1dea5582e87b8bf46e0cbcb62" prot="public" static="no">
+        <name>FICR_INFO_SIZE</name>
+        <initializer>(sizeof(FICR_INFO_Type))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/tfm/tfm_read_ranges.h" line="18" column="9" bodyfile="include/tfm/tfm_read_ranges.h" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="tfm__read__ranges_8h_abe8e8a8c3be35cd1aaa296f182383c39_1abe8e8a8c3be35cd1aaa296f182383c39" prot="public" static="no">
+        <name>FICR_RESTRICTED_ADDR</name>
+        <initializer>(<ref refid="tfm__read__ranges_8h_ac890d004494805934fcb7a1926fbdc2a_1ac890d004494805934fcb7a1926fbdc2a" kindref="member">FICR_BASE</ref> + 0x130)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/tfm/tfm_read_ranges.h" line="26" column="9" bodyfile="include/tfm/tfm_read_ranges.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="tfm__read__ranges_8h_a1357780adc3af0f664b00114a9314c02_1a1357780adc3af0f664b00114a9314c02" prot="public" static="no">
+        <name>FICR_RESTRICTED_SIZE</name>
+        <initializer>0x8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/tfm/tfm_read_ranges.h" line="27" column="9" bodyfile="include/tfm/tfm_read_ranges.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="tfm__read__ranges_8h_ab50964f6b119af3e5942ebf297e93841_1ab50964f6b119af3e5942ebf297e93841" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structtfm__read__service__range" kindref="compound">tfm_read_service_range</ref></type>
+        <definition>const struct tfm_read_service_range ranges[]</definition>
+        <argsstring>[]</argsstring>
+        <name>ranges</name>
+        <initializer>= {
+
+
+
+
+
+	{.start =  ( NRF_FICR_S_BASE  + offsetof(NRF_FICR_Type, INFO)) ,
+		.size =  (sizeof(FICR_INFO_Type)) },
+
+
+
+
+	{.start =  ( NRF_FICR_S_BASE  + 0x130) ,
+		.size =  0x8 },
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/tfm/tfm_read_ranges.h" line="29" column="42" bodyfile="include/tfm/tfm_read_ranges.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>TFM_READ_RANGES_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>TFM_READ_RANGES_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="tfm__ioctl__api_8h" kindref="compound">tfm_ioctl_api.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;pm_config.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nrf.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15" refid="tfm__read__ranges_8h_ac890d004494805934fcb7a1926fbdc2a_1ac890d004494805934fcb7a1926fbdc2a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>FICR_BASE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NRF_FICR_S_BASE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17" refid="tfm__read__ranges_8h_a496f0d408128a93e13239b2252bb7012_1a496f0d408128a93e13239b2252bb7012" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>FICR_INFO_ADDR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(FICR_BASE<sp/>+<sp/>offsetof(NRF_FICR_Type,<sp/>INFO))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="tfm__read__ranges_8h_a6edcf5d1dea5582e87b8bf46e0cbcb62_1a6edcf5d1dea5582e87b8bf46e0cbcb62" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>FICR_INFO_SIZE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(sizeof(FICR_INFO_Type))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(FICR_NFC_TAGHEADER0_MFGID_Msk)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>FICR_NFC_ADDR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(FICR_BASE<sp/>+<sp/>offsetof(NRF_FICR_Type,<sp/>NFC))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>FICR_NFC_SIZE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(sizeof(FICR_NFC_Type))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Used<sp/>by<sp/>nrf_erratas.h<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="tfm__read__ranges_8h_abe8e8a8c3be35cd1aaa296f182383c39_1abe8e8a8c3be35cd1aaa296f182383c39" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>FICR_RESTRICTED_ADDR<sp/><sp/><sp/><sp/>(FICR_BASE<sp/>+<sp/>0x130)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="tfm__read__ranges_8h_a1357780adc3af0f664b00114a9314c02_1a1357780adc3af0f664b00114a9314c02" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>FICR_RESTRICTED_SIZE<sp/><sp/><sp/><sp/>0x8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="tfm__read__ranges_8h_ab50964f6b119af3e5942ebf297e93841_1ab50964f6b119af3e5942ebf297e93841" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structtfm__read__service__range" kindref="compound">tfm_read_service_range</ref><sp/><ref refid="tfm__read__ranges_8h_ab50964f6b119af3e5942ebf297e93841_1ab50964f6b119af3e5942ebf297e93841" kindref="member">ranges</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>PM_MCUBOOT_ADDRESS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Allow<sp/>reads<sp/>of<sp/>mcuboot<sp/>metadata<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{.<ref refid="structtfm__read__service__range_ac6ac4817c7416669569237edec543e3b_1ac6ac4817c7416669569237edec543e3b" kindref="member">start</ref><sp/>=<sp/>PM_MCUBOOT_PAD_ADDRESS,</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.size<sp/>=<sp/>PM_MCUBOOT_PAD_SIZE},</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{.start<sp/>=<sp/><ref refid="tfm__read__ranges_8h_a496f0d408128a93e13239b2252bb7012_1a496f0d408128a93e13239b2252bb7012" kindref="member">FICR_INFO_ADDR</ref>,</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.size<sp/>=<sp/><ref refid="tfm__read__ranges_8h_a6edcf5d1dea5582e87b8bf46e0cbcb62_1a6edcf5d1dea5582e87b8bf46e0cbcb62" kindref="member">FICR_INFO_SIZE</ref>},</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(FICR_NFC_TAGHEADER0_MFGID_Msk)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{.start<sp/>=<sp/>FICR_NFC_ADDR,</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.size<sp/>=<sp/>FICR_NFC_SIZE},</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{.start<sp/>=<sp/><ref refid="tfm__read__ranges_8h_abe8e8a8c3be35cd1aaa296f182383c39_1abe8e8a8c3be35cd1aaa296f182383c39" kindref="member">FICR_RESTRICTED_ADDR</ref>,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.size<sp/>=<sp/><ref refid="tfm__read__ranges_8h_a1357780adc3af0f664b00114a9314c02_1a1357780adc3af0f664b00114a9314c02" kindref="member">FICR_RESTRICTED_SIZE</ref>},</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>TFM_READ_RANGES_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/tfm/tfm_read_ranges.h"/>
+  </compounddef>
+</doxygen>

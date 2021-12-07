@@ -1,0 +1,195 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structesb__config" kind="struct" language="C++" prot="public">
+    <compoundname>esb_config</compoundname>
+    <includes refid="esb_8h" local="no">esb.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structesb__config_a6267f8b5937dea39e1f83487dcef34dd_1a6267f8b5937dea39e1f83487dcef34dd" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__esb_gae9e0aeeb3f862ea99c5cd947bc0843f8_1gae9e0aeeb3f862ea99c5cd947bc0843f8" kindref="member">esb_protocol</ref></type>
+        <definition>enum esb_protocol esb_config::protocol</definition>
+        <argsstring></argsstring>
+        <name>protocol</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Protocol. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="219" column="18" bodyfile="include/esb.h" bodystart="219" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structesb__config_ade02aecdbbbc694c7bcbf772e1a9dacd_1ade02aecdbbbc694c7bcbf772e1a9dacd" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__esb_ga070ae9b6c3f8e3d3a9f8df0c00ddfc56_1ga070ae9b6c3f8e3d3a9f8df0c00ddfc56" kindref="member">esb_mode</ref></type>
+        <definition>enum esb_mode esb_config::mode</definition>
+        <argsstring></argsstring>
+        <name>mode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="220" column="14" bodyfile="include/esb.h" bodystart="220" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structesb__config_a57be663dfd4144b2b7f9b6f2414ae0a5_1a57be663dfd4144b2b7f9b6f2414ae0a5" prot="public" static="no" mutable="no">
+        <type><ref refid="group__esb_ga80f8a9ac0e0473e0b7bbb3911c1752d6_1ga80f8a9ac0e0473e0b7bbb3911c1752d6" kindref="member">esb_event_handler</ref></type>
+        <definition>esb_event_handler esb_config::event_handler</definition>
+        <argsstring></argsstring>
+        <name>event_handler</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event handler. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="221" column="19" bodyfile="include/esb.h" bodystart="221" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structesb__config_aa0ab15d2e1dd895ad63785d024ada9d9_1aa0ab15d2e1dd895ad63785d024ada9d9" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__esb_ga76b7c73f543bd1a22a4a47ac65ca08ca_1ga76b7c73f543bd1a22a4a47ac65ca08ca" kindref="member">esb_bitrate</ref></type>
+        <definition>enum esb_bitrate esb_config::bitrate</definition>
+        <argsstring></argsstring>
+        <name>bitrate</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Bitrate mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="223" column="17" bodyfile="include/esb.h" bodystart="223" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structesb__config_acf7dfdfce03aaf200c8d7de952906a90_1acf7dfdfce03aaf200c8d7de952906a90" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__esb_ga448149f151eba42eb8995d3affc475dc_1ga448149f151eba42eb8995d3affc475dc" kindref="member">esb_crc</ref></type>
+        <definition>enum esb_crc esb_config::crc</definition>
+        <argsstring></argsstring>
+        <name>crc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>CRC mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="224" column="13" bodyfile="include/esb.h" bodystart="224" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structesb__config_a37d9f4962efc8bae0800c81e4da0e77c_1a37d9f4962efc8bae0800c81e4da0e77c" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__esb_ga8a9f66935228905e38d225c792901701_1ga8a9f66935228905e38d225c792901701" kindref="member">esb_tx_power</ref></type>
+        <definition>enum esb_tx_power esb_config::tx_output_power</definition>
+        <argsstring></argsstring>
+        <name>tx_output_power</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Radio TX power. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="225" column="18" bodyfile="include/esb.h" bodystart="225" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structesb__config_abcfff89c53644ec973cf91a2ca31a738_1abcfff89c53644ec973cf91a2ca31a738" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t esb_config::retransmit_delay</definition>
+        <argsstring></argsstring>
+        <name>retransmit_delay</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The delay between each retransmission of unacknowledged packets. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="227" column="10" bodyfile="include/esb.h" bodystart="227" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structesb__config_ae1369358e3e00b4def6e1ffb02a33af1_1ae1369358e3e00b4def6e1ffb02a33af1" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t esb_config::retransmit_count</definition>
+        <argsstring></argsstring>
+        <name>retransmit_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The number of retransmission attempts before transmission fail. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="230" column="10" bodyfile="include/esb.h" bodystart="230" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structesb__config_afae249c879404b4dcbf1a71d298ff18f_1afae249c879404b4dcbf1a71d298ff18f" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__esb_ga3b230160a9a606617133c4e0a8eb043a_1ga3b230160a9a606617133c4e0a8eb043a" kindref="member">esb_tx_mode</ref></type>
+        <definition>enum esb_tx_mode esb_config::tx_mode</definition>
+        <argsstring></argsstring>
+        <name>tx_mode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transmission mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="235" column="17" bodyfile="include/esb.h" bodystart="235" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structesb__config_a378ed3398c783889226c2a83ac05ad2f_1a378ed3398c783889226c2a83ac05ad2f" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t esb_config::payload_length</definition>
+        <argsstring></argsstring>
+        <name>payload_length</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of the payload (maximum length depends on the platforms that are used on each side). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="237" column="9" bodyfile="include/esb.h" bodystart="237" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structesb__config_a76e386432caeb92db893cebd7e75e8a8_1a76e386432caeb92db893cebd7e75e8a8" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool esb_config::selective_auto_ack</definition>
+        <argsstring></argsstring>
+        <name>selective_auto_ack</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Selective auto acknowledgement. When this feature is disabled, all packets will be acknowledged ignoring the noack field. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/esb.h" line="240" column="6" bodyfile="include/esb.h" bodystart="240" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Main configuration structure for the module. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>esb_config</label>
+        <link refid="structesb__config"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>event_handler</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>esb_evt</label>
+        <link refid="structesb__evt"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/esb.h" line="218" column="1" bodyfile="include/esb.h" bodystart="218" bodyend="245"/>
+    <listofallmembers>
+      <member refid="structesb__config_aa0ab15d2e1dd895ad63785d024ada9d9_1aa0ab15d2e1dd895ad63785d024ada9d9" prot="public" virt="non-virtual"><scope>esb_config</scope><name>bitrate</name></member>
+      <member refid="structesb__config_acf7dfdfce03aaf200c8d7de952906a90_1acf7dfdfce03aaf200c8d7de952906a90" prot="public" virt="non-virtual"><scope>esb_config</scope><name>crc</name></member>
+      <member refid="structesb__config_a57be663dfd4144b2b7f9b6f2414ae0a5_1a57be663dfd4144b2b7f9b6f2414ae0a5" prot="public" virt="non-virtual"><scope>esb_config</scope><name>event_handler</name></member>
+      <member refid="structesb__config_ade02aecdbbbc694c7bcbf772e1a9dacd_1ade02aecdbbbc694c7bcbf772e1a9dacd" prot="public" virt="non-virtual"><scope>esb_config</scope><name>mode</name></member>
+      <member refid="structesb__config_a378ed3398c783889226c2a83ac05ad2f_1a378ed3398c783889226c2a83ac05ad2f" prot="public" virt="non-virtual"><scope>esb_config</scope><name>payload_length</name></member>
+      <member refid="structesb__config_a6267f8b5937dea39e1f83487dcef34dd_1a6267f8b5937dea39e1f83487dcef34dd" prot="public" virt="non-virtual"><scope>esb_config</scope><name>protocol</name></member>
+      <member refid="structesb__config_ae1369358e3e00b4def6e1ffb02a33af1_1ae1369358e3e00b4def6e1ffb02a33af1" prot="public" virt="non-virtual"><scope>esb_config</scope><name>retransmit_count</name></member>
+      <member refid="structesb__config_abcfff89c53644ec973cf91a2ca31a738_1abcfff89c53644ec973cf91a2ca31a738" prot="public" virt="non-virtual"><scope>esb_config</scope><name>retransmit_delay</name></member>
+      <member refid="structesb__config_a76e386432caeb92db893cebd7e75e8a8_1a76e386432caeb92db893cebd7e75e8a8" prot="public" virt="non-virtual"><scope>esb_config</scope><name>selective_auto_ack</name></member>
+      <member refid="structesb__config_afae249c879404b4dcbf1a71d298ff18f_1afae249c879404b4dcbf1a71d298ff18f" prot="public" virt="non-virtual"><scope>esb_config</scope><name>tx_mode</name></member>
+      <member refid="structesb__config_a37d9f4962efc8bae0800c81e4da0e77c_1a37d9f4962efc8bae0800c81e4da0e77c" prot="public" virt="non-virtual"><scope>esb_config</scope><name>tx_output_power</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__bit__rate__reg" kind="group">
+    <compoundname>st25r3911b_bit_rate_reg</compoundname>
+    <title>Bit Rate Definition</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__bit__rate__reg_1gae051713acc689bde7379250b55151aa2" prot="public" static="no">
+        <name>ST25R3911B_REG_BIT_RATE_RX_RATE0</name>
+        <initializer>BIT(0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="202" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="202" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__bit__rate__reg_1ga6ae1246545555c63935b220822975ea6" prot="public" static="no">
+        <name>ST25R3911B_REG_BIT_RATE_RX_RATE1</name>
+        <initializer>BIT(1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="203" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="203" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__bit__rate__reg_1ga70e5ff211cb9eac002c7bca5a71d1795" prot="public" static="no">
+        <name>ST25R3911B_REG_BIT_RATE_RX_RATE2</name>
+        <initializer>BIT(2)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="204" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="204" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__bit__rate__reg_1ga4d8471b82c5a8a55dd68859f63aca05a" prot="public" static="no">
+        <name>ST25R3911B_REG_BIT_RATE_RX_RATE3</name>
+        <initializer>BIT(3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="205" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="205" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__bit__rate__reg_1gad4d5584c35ceeacfa9e97d627f37e334" prot="public" static="no">
+        <name>ST25R3911B_REG_BIT_RATE_TX_RATE0</name>
+        <initializer>BIT(4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="206" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="206" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__bit__rate__reg_1ga6fb6fa94996c1a85d109675c6d1abd92" prot="public" static="no">
+        <name>ST25R3911B_REG_BIT_RATE_TX_RATE1</name>
+        <initializer>BIT(5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="207" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="207" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__bit__rate__reg_1ga6d86885c8159306b08f5d52bf47e0ba6" prot="public" static="no">
+        <name>ST25R3911B_REG_BIT_RATE_TX_RATE2</name>
+        <initializer>BIT(6)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="208" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="208" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__bit__rate__reg_1ga6c9228fb305021aa891f87164fab5f0b" prot="public" static="no">
+        <name>ST25R3911B_REG_BIT_RATE_TX_RATE3</name>
+        <initializer>BIT(7)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="209" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="209" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Register bits </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

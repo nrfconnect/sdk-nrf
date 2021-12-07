@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structconfig__channel__transport" kind="struct" language="C++" prot="public">
+    <compoundname>config_channel_transport</compoundname>
+    <includes refid="config__channel__transport_8h" local="no">config_channel_transport.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structconfig__channel__transport_a294204f699d83325b18b884fcc175539_1a294204f699d83325b18b884fcc175539" prot="public" static="no" mutable="no">
+        <type>struct k_work_delayable</type>
+        <definition>struct k_work_delayable config_channel_transport::timeout</definition>
+        <argsstring></argsstring>
+        <name>timeout</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="56" column="23" bodyfile="applications/nrf_desktop/src/util/config_channel_transport.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structconfig__channel__transport_a34375e0509b2596da3b6c42a217b07fa_1a34375e0509b2596da3b6c42a217b07fa" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t config_channel_transport::data_len</definition>
+        <argsstring></argsstring>
+        <name>data_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="57" column="8" bodyfile="applications/nrf_desktop/src/util/config_channel_transport.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structconfig__channel__transport_a8685c67bfb7e8968e66a742096d11476_1a8685c67bfb7e8968e66a742096d11476" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t config_channel_transport::transport_id</definition>
+        <argsstring></argsstring>
+        <name>transport_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="58" column="10" bodyfile="applications/nrf_desktop/src/util/config_channel_transport.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structconfig__channel__transport_a2d087033c0090332089b866837dd47bb_1a2d087033c0090332089b866837dd47bb" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t config_channel_transport::data[REPORT_SIZE_USER_CONFIG]</definition>
+        <argsstring>[REPORT_SIZE_USER_CONFIG]</argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="59" column="9" bodyfile="applications/nrf_desktop/src/util/config_channel_transport.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structconfig__channel__transport_af7f2521d060cc614c7cca2351b956036_1af7f2521d060cc614c7cca2351b956036" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__config__channel__transport_ga9050bf9076cc5b6f94390c0a0d39c95c_1ga9050bf9076cc5b6f94390c0a0d39c95c" kindref="member">config_channel_transport_state</ref></type>
+        <definition>enum config_channel_transport_state config_channel_transport::state</definition>
+        <argsstring></argsstring>
+        <name>state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="61" column="36" bodyfile="applications/nrf_desktop/src/util/config_channel_transport.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Configuration channel transport. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="55" column="1" bodyfile="applications/nrf_desktop/src/util/config_channel_transport.h" bodystart="55" bodyend="62"/>
+    <listofallmembers>
+      <member refid="structconfig__channel__transport_a2d087033c0090332089b866837dd47bb_1a2d087033c0090332089b866837dd47bb" prot="public" virt="non-virtual"><scope>config_channel_transport</scope><name>data</name></member>
+      <member refid="structconfig__channel__transport_a34375e0509b2596da3b6c42a217b07fa_1a34375e0509b2596da3b6c42a217b07fa" prot="public" virt="non-virtual"><scope>config_channel_transport</scope><name>data_len</name></member>
+      <member refid="structconfig__channel__transport_af7f2521d060cc614c7cca2351b956036_1af7f2521d060cc614c7cca2351b956036" prot="public" virt="non-virtual"><scope>config_channel_transport</scope><name>state</name></member>
+      <member refid="structconfig__channel__transport_a294204f699d83325b18b884fcc175539_1a294204f699d83325b18b884fcc175539" prot="public" virt="non-virtual"><scope>config_channel_transport</scope><name>timeout</name></member>
+      <member refid="structconfig__channel__transport_a8685c67bfb7e8968e66a742096d11476_1a8685c67bfb7e8968e66a742096d11476" prot="public" virt="non-virtual"><scope>config_channel_transport</scope><name>transport_id</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

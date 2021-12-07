@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structevent__header" kind="struct" language="C++" prot="public">
+    <compoundname>event_header</compoundname>
+    <includes refid="event__manager_8h" local="no">event_manager.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structevent__header_ac3961b76a92d2124d1f3ccf1fb0b5f3e_1ac3961b76a92d2124d1f3ccf1fb0b5f3e" prot="public" static="no" mutable="no">
+        <type>sys_snode_t</type>
+        <definition>sys_snode_t event_header::node</definition>
+        <argsstring></argsstring>
+        <name>node</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Linked list node used to chain events. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="64" column="13" bodyfile="include/event_manager.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structevent__header_ad65952165c3b3f89b417c1f90cd61782_1ad65952165c3b3f89b417c1f90cd61782" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structevent__type" kindref="compound">event_type</ref> *</type>
+        <definition>const struct event_type* event_header::type_id</definition>
+        <argsstring></argsstring>
+        <name>type_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the event type object. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/event_manager.h" line="67" column="23" bodyfile="include/event_manager.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Event header. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>When defining an event structure, the event header must be placed as the first field. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="3">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/event_manager.h" line="62" column="1" bodyfile="include/event_manager.h" bodystart="62" bodyend="68"/>
+    <listofallmembers>
+      <member refid="structevent__header_ac3961b76a92d2124d1f3ccf1fb0b5f3e_1ac3961b76a92d2124d1f3ccf1fb0b5f3e" prot="public" virt="non-virtual"><scope>event_header</scope><name>node</name></member>
+      <member refid="structevent__header_ad65952165c3b3f89b417c1f90cd61782_1ad65952165c3b3f89b417c1f90cd61782" prot="public" virt="non-virtual"><scope>event_header</scope><name>type_id</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

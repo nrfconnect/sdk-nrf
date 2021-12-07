@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structport__state" kind="struct" language="C++" prot="public">
+    <compoundname>port_state</compoundname>
+    <includes refid="port__state_8h" local="no">port_state.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structport__state_a7951c56b8ef9a0cd0b924c745033ad73_1a7951c56b8ef9a0cd0b924c745033ad73" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* port_state::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/port_state.h" line="24" column="24" bodyfile="applications/nrf_desktop/configuration/common/port_state.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structport__state_ae04de965ad9676967a4a3d72fd139f92_1ae04de965ad9676967a4a3d72fd139f92" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structpin__state" kindref="compound">pin_state</ref> *</type>
+        <definition>const struct pin_state* port_state::ps</definition>
+        <argsstring></argsstring>
+        <name>ps</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/port_state.h" line="25" column="22" bodyfile="applications/nrf_desktop/configuration/common/port_state.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structport__state_a301d764c7d9281946832433de9ede82d_1a301d764c7d9281946832433de9ede82d" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t port_state::ps_count</definition>
+        <argsstring></argsstring>
+        <name>ps_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/port_state.h" line="26" column="25" bodyfile="applications/nrf_desktop/configuration/common/port_state.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>pin_state</label>
+        <link refid="structpin__state"/>
+      </node>
+      <node id="1">
+        <label>port_state</label>
+        <link refid="structport__state"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>ps</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/nrf_desktop/configuration/common/port_state.h" line="23" column="1" bodyfile="applications/nrf_desktop/configuration/common/port_state.h" bodystart="23" bodyend="27"/>
+    <listofallmembers>
+      <member refid="structport__state_a7951c56b8ef9a0cd0b924c745033ad73_1a7951c56b8ef9a0cd0b924c745033ad73" prot="public" virt="non-virtual"><scope>port_state</scope><name>name</name></member>
+      <member refid="structport__state_ae04de965ad9676967a4a3d72fd139f92_1ae04de965ad9676967a4a3d72fd139f92" prot="public" virt="non-virtual"><scope>port_state</scope><name>ps</name></member>
+      <member refid="structport__state_a301d764c7d9281946832433de9ede82d_1a301d764c7d9281946832433de9ede82d" prot="public" virt="non-virtual"><scope>port_state</scope><name>ps_count</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

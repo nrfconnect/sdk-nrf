@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__tnep__poller__cb" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_tnep_poller_cb</compoundname>
+    <includes refid="poller_8h" local="no">poller.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__tnep__poller__cb_a55c53c3e529b7e29033aa3af8abf9a2f_1a55c53c3e529b7e29033aa3af8abf9a2f" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* nfc_tnep_poller_cb::svc_selected) (const struct nfc_ndef_tnep_rec_svc_param *param, const struct nfc_tnep_poller_msg *msg, bool timeout)</definition>
+        <argsstring>)(const struct nfc_ndef_tnep_rec_svc_param *param, const struct nfc_tnep_poller_msg *msg, bool timeout)</argsstring>
+        <name>svc_selected</name>
+        <briefdescription>
+<para>Function called when TNEP Service was selected. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Service should be deselected in case of received timeout. The <ref refid="group__nfc__tnep__poller_gab2ac537ba966ca89e1e6ed859f40daa8_1gab2ac537ba966ca89e1e6ed859f40daa8" kindref="member">nfc_tnep_poller_svc_deselect</ref> should be used to it.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the selected service parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to TNEP Poller Message structure contains status and received additional NDEF data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">timeout</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Indicates that TNEP Tag Device does not prepare NDEF Message within time. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="105" column="1" bodyfile="include/nfc/tnep/poller.h" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__poller__cb_a929b6e8700a224c9ee8b83ecca39fc00_1a929b6e8700a224c9ee8b83ecca39fc00" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* nfc_tnep_poller_cb::svc_deselected) (void)</definition>
+        <argsstring>)(void)</argsstring>
+        <name>svc_deselected</name>
+        <briefdescription>
+<para>Function called when current active TNEP Service was deselected. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="112" column="1" bodyfile="include/nfc/tnep/poller.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__poller__cb_a595f52e3897487b0b09e8387c10c3f51_1a595f52e3897487b0b09e8387c10c3f51" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* nfc_tnep_poller_cb::svc_received) (const struct nfc_ndef_tnep_rec_svc_param *param, const struct nfc_tnep_poller_msg *msg, bool timeout)</definition>
+        <argsstring>)(const struct nfc_ndef_tnep_rec_svc_param *param, const struct nfc_tnep_poller_msg *msg, bool timeout)</argsstring>
+        <name>svc_received</name>
+        <briefdescription>
+<para>Function called when TNEP Service was read. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Service should be deselected in case of received timeout. The <ref refid="group__nfc__tnep__poller_gab2ac537ba966ca89e1e6ed859f40daa8_1gab2ac537ba966ca89e1e6ed859f40daa8" kindref="member">nfc_tnep_poller_svc_deselect</ref> should be used to it.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the selected service parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to TNEP Poller Message structure contains status and received additional NDEF data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">timeout</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Indicates that TNEP Tag Device does not prepare NDEF Message within time. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="126" column="1" bodyfile="include/nfc/tnep/poller.h" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__poller__cb_aa26ae56cd9a5494be30d5a2dc877ee9c_1aa26ae56cd9a5494be30d5a2dc877ee9c" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* nfc_tnep_poller_cb::svc_sent) (const struct nfc_ndef_tnep_rec_svc_param *param, const struct nfc_tnep_poller_msg *rsp_msg, bool timeout)</definition>
+        <argsstring>)(const struct nfc_ndef_tnep_rec_svc_param *param, const struct nfc_tnep_poller_msg *rsp_msg, bool timeout)</argsstring>
+        <name>svc_sent</name>
+        <briefdescription>
+<para>Function called when TNEP Service was written. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Service should be deselected in case of received timeout. The <ref refid="group__nfc__tnep__poller_gab2ac537ba966ca89e1e6ed859f40daa8_1gab2ac537ba966ca89e1e6ed859f40daa8" kindref="member">nfc_tnep_poller_svc_deselect</ref> should be used to it.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the selected service parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">rsp_msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to TNEP Poller Message structure contains status and received response with additional NDEF data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">timeout</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Indicates that TNEP Tag Device does not prepare NDEF Message within time. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="143" column="1" bodyfile="include/nfc/tnep/poller.h" bodystart="143" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__poller__cb_a0c7fec440e55afca7e2194ce659a3a41_1a0c7fec440e55afca7e2194ce659a3a41" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* nfc_tnep_poller_cb::error) (int err)</definition>
+        <argsstring>)(int err)</argsstring>
+        <name>error</name>
+        <briefdescription>
+<para>Function called when an internal error in TNEP Poller library was detected. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Detected error code. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="152" column="1" bodyfile="include/nfc/tnep/poller.h" bodystart="152" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__poller__cb_a866ee6ea496b3dbc5b0c13f85d729b33_1a866ee6ea496b3dbc5b0c13f85d729b33" prot="public" static="no" mutable="no">
+        <type>sys_snode_t</type>
+        <definition>sys_snode_t nfc_tnep_poller_cb::node</definition>
+        <argsstring></argsstring>
+        <name>node</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="154" column="13" bodyfile="include/nfc/tnep/poller.h" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>TNEP Poller callback structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/nfc/tnep/poller.h" line="92" column="1" bodyfile="include/nfc/tnep/poller.h" bodystart="92" bodyend="155"/>
+    <listofallmembers>
+      <member refid="structnfc__tnep__poller__cb_a0c7fec440e55afca7e2194ce659a3a41_1a0c7fec440e55afca7e2194ce659a3a41" prot="public" virt="non-virtual"><scope>nfc_tnep_poller_cb</scope><name>error</name></member>
+      <member refid="structnfc__tnep__poller__cb_a866ee6ea496b3dbc5b0c13f85d729b33_1a866ee6ea496b3dbc5b0c13f85d729b33" prot="public" virt="non-virtual"><scope>nfc_tnep_poller_cb</scope><name>node</name></member>
+      <member refid="structnfc__tnep__poller__cb_a929b6e8700a224c9ee8b83ecca39fc00_1a929b6e8700a224c9ee8b83ecca39fc00" prot="public" virt="non-virtual"><scope>nfc_tnep_poller_cb</scope><name>svc_deselected</name></member>
+      <member refid="structnfc__tnep__poller__cb_a595f52e3897487b0b09e8387c10c3f51_1a595f52e3897487b0b09e8387c10c3f51" prot="public" virt="non-virtual"><scope>nfc_tnep_poller_cb</scope><name>svc_received</name></member>
+      <member refid="structnfc__tnep__poller__cb_a55c53c3e529b7e29033aa3af8abf9a2f_1a55c53c3e529b7e29033aa3af8abf9a2f" prot="public" virt="non-virtual"><scope>nfc_tnep_poller_cb</scope><name>svc_selected</name></member>
+      <member refid="structnfc__tnep__poller__cb_aa26ae56cd9a5494be30d5a2dc877ee9c_1aa26ae56cd9a5494be30d5a2dc877ee9c" prot="public" virt="non-virtual"><scope>nfc_tnep_poller_cb</scope><name>svc_sent</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

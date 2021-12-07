@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__cts__current__time" kind="struct" language="C++" prot="public">
+    <compoundname>bt_cts_current_time</compoundname>
+    <includes refid="cts__client_8h" local="no">cts_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__cts__current__time_a0a2da9c07edc019c132f0c40e963bfa5_1a0a2da9c07edc019c132f0c40e963bfa5" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__cts__exact__time__256" kindref="compound">bt_cts_exact_time_256</ref></type>
+        <definition>struct bt_cts_exact_time_256 bt_cts_current_time::exact_time_256</definition>
+        <argsstring></argsstring>
+        <name>exact_time_256</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="48" column="28" bodyfile="include/bluetooth/services/cts_client.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__cts__current__time_a0e315bc2045da7b2cdfad92228e1e258_1a0e315bc2045da7b2cdfad92228e1e258" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__cts__adjust__reason" kindref="compound">bt_cts_adjust_reason</ref></type>
+        <definition>struct bt_cts_adjust_reason bt_cts_current_time::adjust_reason</definition>
+        <argsstring></argsstring>
+        <name>adjust_reason</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="49" column="27" bodyfile="include/bluetooth/services/cts_client.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Data structure for the Current Time characteristic. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>bt_cts_adjust_reason</label>
+        <link refid="structbt__cts__adjust__reason"/>
+      </node>
+      <node id="1">
+        <label>bt_cts_current_time</label>
+        <link refid="structbt__cts__current__time"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>exact_time_256</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>adjust_reason</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_cts_exact_time_256</label>
+        <link refid="structbt__cts__exact__time__256"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/cts_client.h" line="47" column="1" bodyfile="include/bluetooth/services/cts_client.h" bodystart="47" bodyend="50"/>
+    <listofallmembers>
+      <member refid="structbt__cts__current__time_a0e315bc2045da7b2cdfad92228e1e258_1a0e315bc2045da7b2cdfad92228e1e258" prot="public" virt="non-virtual"><scope>bt_cts_current_time</scope><name>adjust_reason</name></member>
+      <member refid="structbt__cts__current__time_a0a2da9c07edc019c132f0c40e963bfa5_1a0a2da9c07edc019c132f0c40e963bfa5" prot="public" virt="non-virtual"><scope>bt_cts_current_time</scope><name>exact_time_256</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

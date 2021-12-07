@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__throughput__metrics" kind="struct" language="C++" prot="public">
+    <compoundname>bt_throughput_metrics</compoundname>
+    <includes refid="throughput_8h" local="no">throughput.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__throughput__metrics_a5bdb015ff2ac8f7acf089ed06276262c_1a5bdb015ff2ac8f7acf089ed06276262c" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_throughput_metrics::write_count</definition>
+        <argsstring></argsstring>
+        <name>write_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of GATT writes received. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="29" column="10" bodyfile="include/bluetooth/services/throughput.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__throughput__metrics_af8c7d300bb204748608de3f45718fcc4_1af8c7d300bb204748608de3f45718fcc4" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_throughput_metrics::write_len</definition>
+        <argsstring></argsstring>
+        <name>write_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of bytes received. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="32" column="10" bodyfile="include/bluetooth/services/throughput.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__throughput__metrics_a5f1ecd011264e20b404cbddba21092eb_1a5f1ecd011264e20b404cbddba21092eb" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_throughput_metrics::write_rate</definition>
+        <argsstring></argsstring>
+        <name>write_rate</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transfer speed in bits per second. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="35" column="10" bodyfile="include/bluetooth/services/throughput.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Throughput metrics. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/throughput.h" line="26" column="1" bodyfile="include/bluetooth/services/throughput.h" bodystart="26" bodyend="36"/>
+    <listofallmembers>
+      <member refid="structbt__throughput__metrics_a5bdb015ff2ac8f7acf089ed06276262c_1a5bdb015ff2ac8f7acf089ed06276262c" prot="public" virt="non-virtual"><scope>bt_throughput_metrics</scope><name>write_count</name></member>
+      <member refid="structbt__throughput__metrics_af8c7d300bb204748608de3f45718fcc4_1af8c7d300bb204748608de3f45718fcc4" prot="public" virt="non-virtual"><scope>bt_throughput_metrics</scope><name>write_len</name></member>
+      <member refid="structbt__throughput__metrics_a5f1ecd011264e20b404cbddba21092eb_1a5f1ecd011264e20b404cbddba21092eb" prot="public" virt="non-virtual"><scope>bt_throughput_metrics</scope><name>write_rate</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

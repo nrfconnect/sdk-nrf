@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_febc8640699391dc4ce800f162232ad0" kind="dir">
+    <compoundname>include/nfc/t2t</compoundname>
+    <innerfile refid="include_2nfc_2t2t_2parser_8h">parser.h</innerfile>
+    <innerfile refid="t2t_2tlv__block_8h">tlv_block.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/nfc/t2t/"/>
+  </compounddef>
+</doxygen>

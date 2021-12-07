@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structwatchdog__evt" kind="struct" language="C++" prot="public">
+    <compoundname>watchdog_evt</compoundname>
+    <includes refid="watchdog__app_8h" local="no">watchdog_app.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structwatchdog__evt_a89c0a0ecaa1ca08376db7ad02e9bc57e_1a89c0a0ecaa1ca08376db7ad02e9bc57e" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="watchdog__app_8h_a8d500927d371aad57e8faffaa4e48e13_1a8d500927d371aad57e8faffaa4e48e13" kindref="member">watchdog_evt_type</ref></type>
+        <definition>enum watchdog_evt_type watchdog_evt::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/watchdog/watchdog_app.h" line="28" column="23" bodyfile="applications/asset_tracker_v2/src/watchdog/watchdog_app.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structwatchdog__evt_add85bab9725eabb38b46587f1d3610f7_1add85bab9725eabb38b46587f1d3610f7" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t watchdog_evt::timeout</definition>
+        <argsstring></argsstring>
+        <name>timeout</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/watchdog/watchdog_app.h" line="29" column="10" bodyfile="applications/asset_tracker_v2/src/watchdog/watchdog_app.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/watchdog/watchdog_app.h" line="27" column="1" bodyfile="applications/asset_tracker_v2/src/watchdog/watchdog_app.h" bodystart="27" bodyend="30"/>
+    <listofallmembers>
+      <member refid="structwatchdog__evt_add85bab9725eabb38b46587f1d3610f7_1add85bab9725eabb38b46587f1d3610f7" prot="public" virt="non-virtual"><scope>watchdog_evt</scope><name>timeout</name></member>
+      <member refid="structwatchdog__evt_a89c0a0ecaa1ca08376db7ad02e9bc57e_1a89c0a0ecaa1ca08376db7ad02e9bc57e" prot="public" virt="non-virtual"><scope>watchdog_evt</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

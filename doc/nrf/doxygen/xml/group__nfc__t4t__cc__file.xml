@@ -1,0 +1,290 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__t4t__cc__file" kind="group">
+    <compoundname>nfc_t4t_cc_file</compoundname>
+    <title>CC file parser</title>
+    <innerclass refid="structnfc__t4t__cc__file" prot="public">nfc_t4t_cc_file</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__t4t__cc__file_1ga9665ab4f0ab9f8a4899aff4a47225e00" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_cc_file_parse</definition>
+        <argsstring>(struct nfc_t4t_cc_file *t4t_cc_file, const uint8_t *raw_data, uint16_t len)</argsstring>
+        <name>nfc_t4t_cc_file_parse</name>
+        <param>
+          <type>struct <ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref> *</type>
+          <declname>t4t_cc_file</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>raw_data</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Function for parsing raw data of a CC file, read from a Type 4 Tag. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function parses raw data of a Capability Container file and stores the results in its descriptor.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">t4t_cc_file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the CC file descriptor that will be filled with parsed data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">raw_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer with raw data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer length.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/cc_file.h" line="95" column="5" declfile="include/nfc/t4t/cc_file.h" declline="95" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__cc__file_1gabdbb6e0d40ec3fc0c9a96a7eaf6693c1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct <ref refid="structnfc__t4t__tlv__block" kindref="compound">nfc_t4t_tlv_block</ref> *</type>
+        <definition>struct nfc_t4t_tlv_block * nfc_t4t_cc_file_content_get</definition>
+        <argsstring>(struct nfc_t4t_cc_file *t4t_cc_file, uint16_t file_id)</argsstring>
+        <name>nfc_t4t_cc_file_content_get</name>
+        <param>
+          <type>struct <ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref> *</type>
+          <declname>t4t_cc_file</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>file_id</declname>
+        </param>
+        <briefdescription>
+<para>Function for finding File Control TLV block within the CC file descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function finds File Control TLV block that matches the specified file ID within the CC file descriptor.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">t4t_cc_file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the CC file descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">file_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>File identifier.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>TLV</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the File Control TLV. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>NULL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If TLV with the specified File ID was not found. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/cc_file.h" line="111" column="24" declfile="include/nfc/t4t/cc_file.h" declline="111" declcolumn="24"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__cc__file_1ga26f1a78642ff33fc58b602165b8fecbc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_cc_file_content_set</definition>
+        <argsstring>(struct nfc_t4t_cc_file *t4t_cc_file, const struct nfc_t4t_tlv_block_file *file, uint16_t file_id)</argsstring>
+        <name>nfc_t4t_cc_file_content_set</name>
+        <param>
+          <type>struct <ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref> *</type>
+          <declname>t4t_cc_file</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structnfc__t4t__tlv__block__file" kindref="compound">nfc_t4t_tlv_block_file</ref> *</type>
+          <declname>file</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>file_id</declname>
+        </param>
+        <briefdescription>
+<para>Function for binding a file with its File Control TLV block. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function binds file content with its File Control TLV block, in which maximal file size and access conditions are stored.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">t4t_cc_file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the CC file descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to File descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">file_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>File identifier.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/cc_file.h" line="126" column="5" declfile="include/nfc/t4t/cc_file.h" declline="126" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__cc__file_1ga283dcb818c4d4db988d6cd63804aab2d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_t4t_cc_file_printout</definition>
+        <argsstring>(const struct nfc_t4t_cc_file *t4t_cc_file)</argsstring>
+        <name>nfc_t4t_cc_file_printout</name>
+        <param>
+          <type>const struct <ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref> *</type>
+          <declname>t4t_cc_file</declname>
+        </param>
+        <briefdescription>
+<para>Function for printing the CC file descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function prints the CC file descriptor.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">t4t_cc_file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the CC file. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/cc_file.h" line="136" column="6" declfile="include/nfc/t4t/cc_file.h" declline="136" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__t4t__cc__file_1ga932fe77069e0c1ebcbcb725d1e21723a" prot="public" static="no">
+        <name>NFC_T4T_CC_DESC_DEF</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_max_blocks</defname></param>
+        <initializer>	static struct <ref refid="structnfc__t4t__tlv__block" kindref="compound">nfc_t4t_tlv_block</ref> _name##_tlv_block_array[_max_blocks]; \
+	static struct <ref refid="structnfc__t4t__cc__file" kindref="compound">nfc_t4t_cc_file</ref> _name##_type_4_tag = {                  \
+		.max_tlv_blocks = _max_blocks,                                \
+		.tlv_block_array = _name##_tlv_block_array,                   \
+		.tlv_count = 0                                                \
+	}</initializer>
+        <briefdescription>
+<para>Macro for creating and initializing a Type 4 Tag Capability Container descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates and initializes a static instance of a <ref refid="group__nfc__t4t__cc__file" kindref="compound">CC file parser</ref> structure and an array of <ref refid="group__nfc__t4t__tlv__block" kindref="compound">File Control TLV block parser for Type 4 Tag.</ref> descriptors.</para>
+<para>Use the macro <ref refid="group__nfc__t4t__cc__file_ga30d668ae838e5c33e727183638a1d406_1ga30d668ae838e5c33e727183638a1d406" kindref="member">NFC_T4T_CC_DESC</ref> to access the Type 4 Tag descriptor instance.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the created descriptor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_max_blocks</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of <ref refid="group__nfc__t4t__tlv__block" kindref="compound">File Control TLV block parser for Type 4 Tag.</ref> descriptors that can be stored in the array. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/cc_file.h" line="67" column="9" bodyfile="include/nfc/t4t/cc_file.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t4t__cc__file_1ga30d668ae838e5c33e727183638a1d406" prot="public" static="no">
+        <name>NFC_T4T_CC_DESC</name>
+        <param><defname>_name</defname></param>
+        <initializer>(_name##_type_4_tag)</initializer>
+        <briefdescription>
+<para>Macro for accessing the <ref refid="group__nfc__t4t__cc__file" kindref="compound">CC file parser</ref> instance that was created with <ref refid="group__nfc__t4t__cc__file_ga932fe77069e0c1ebcbcb725d1e21723a_1ga932fe77069e0c1ebcbcb725d1e21723a" kindref="member">NFC_T4T_CC_DESC_DEF</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the created descriptor instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/cc_file.h" line="80" column="9" bodyfile="include/nfc/t4t/cc_file.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Capability Container file parser for Type 4 Tag. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

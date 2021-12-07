@@ -1,0 +1,487 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__prop__srv" kind="group">
+    <compoundname>bt_mesh_prop_srv</compoundname>
+    <title>Generic Property server models</title>
+    <innerclass refid="structbt__mesh__prop__srv" prot="public">bt_mesh_prop_srv</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__mesh__prop__srv_1ga0a073975054874b3da333bebee87050c" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_prop_srv_state</name>
+        <enumvalue id="group__bt__mesh__prop__srv_ga0a073975054874b3da333bebee87050c_1gga0a073975054874b3da333bebee87050ca38372bab60fb6a535edcb9e69ff99812" prot="public">
+          <name>BT_MESH_PROP_SRV_STATE_NONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>No state. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__prop__srv_ga0a073975054874b3da333bebee87050c_1gga0a073975054874b3da333bebee87050ca1dd546ecbbf9d7e8b4ca72cc1a1bdf17" prot="public">
+          <name>BT_MESH_PROP_SRV_STATE_LIST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Property List. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__prop__srv_ga0a073975054874b3da333bebee87050c_1gga0a073975054874b3da333bebee87050ca7dcd58aa28def6658497ab35accb89b5" prot="public">
+          <name>BT_MESH_PROP_SRV_STATE_PROP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Property value. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Enumeration of all property server states. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_srv.h" line="141" column="1" bodyfile="include/bluetooth/mesh/gen_prop_srv.h" bodystart="141" bodyend="145"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__prop__srv_1ga3b982a2814039fe98fa707a51ce63043" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_prop_srv_pub_list</definition>
+        <argsstring>(struct bt_mesh_prop_srv *srv, struct bt_mesh_msg_ctx *ctx)</argsstring>
+        <name>bt_mesh_prop_srv_pub_list</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__prop__srv" kindref="compound">bt_mesh_prop_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <briefdescription>
+<para>Publish a list of all properties on the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server that owns the property. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to publish with, or NULL to publish on the configured publish parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully publish a Generic Level Status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EMSGSIZE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The given property size is not supported. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_srv.h" line="233" column="5" declfile="include/bluetooth/mesh/gen_prop_srv.h" declline="233" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__prop__srv_1ga43c806ed73c7ec92f2f186ee706c5c6e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_prop_srv_pub</definition>
+        <argsstring>(struct bt_mesh_prop_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_prop_val *val)</argsstring>
+        <name>bt_mesh_prop_srv_pub</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__prop__srv" kindref="compound">bt_mesh_prop_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__prop__val" kindref="compound">bt_mesh_prop_val</ref> *</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+<para>Publish a property value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server that owns the property. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to publish with, or NULL to publish on the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value of the property.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully publish a Generic Level Status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The server is a Client Property server, which does not support publishing of property values. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EMSGSIZE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The given property size is not supported. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_srv.h" line="251" column="5" declfile="include/bluetooth/mesh/gen_prop_srv.h" declline="251" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__prop__srv_1gaf67d93e14cf61187afaf6ff4287c215c" prot="public" static="no">
+        <name>BT_MESH_PROP_SRV_INIT</name>
+        <param><defname>_properties</defname></param>
+        <param><defname>_property_count</defname></param>
+        <param><defname>_get</defname></param>
+        <param><defname>_set</defname></param>
+        <initializer>	{                                                                      \
+		.get = _get, .set = _set, .properties = _properties,           \
+		.property_count = _property_count,                             \
+	}</initializer>
+        <briefdescription>
+<para>Initialization parameters for a <ref refid="group__bt__mesh__prop__srv" kindref="compound">Generic Property server models</ref> instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_properties</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of properties supported by the server. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_property_count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of properties supported by the server. Cannot be larger than <verbatim>embed:rst:inline :kconfig:`CONFIG_BT_MESH_PROP_MAXCOUNT` </verbatim>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_get</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Getter handler for property values. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="structbt__mesh__prop__srv_a8dac5103076e9f159fa5dc474979ba86_1a8dac5103076e9f159fa5dc474979ba86" kindref="member">bt_mesh_prop_srv::get</ref>. </para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Setter handler for property values. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="structbt__mesh__prop__srv_a6c02862fb5b18cdd8f6a98fd2948d282_1a6c02862fb5b18cdd8f6a98fd2948d282" kindref="member">bt_mesh_prop_srv::set</ref>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_srv.h" line="39" column="9" bodyfile="include/bluetooth/mesh/gen_prop_srv.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__prop__srv_1ga7b3b0dfdcb975490f582b9f6b862f2d1" prot="public" static="no">
+        <name>BT_MESH_PROP_SRV_USER_INIT</name>
+        <param></param>
+        <initializer>{}</initializer>
+        <briefdescription>
+<para>Initialization parameters for a <ref refid="group__bt__mesh__prop__srv" kindref="compound">Generic Property server models</ref> acting as a Generic User Property Server. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_srv.h" line="50" column="9" bodyfile="include/bluetooth/mesh/gen_prop_srv.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__prop__srv_1gaaee5077a4b1871a7a11f3994095ea550" prot="public" static="no">
+        <name>BT_MESH_PROP_SRV_ADMIN_INIT</name>
+        <param><defname>_properties</defname></param>
+        <param><defname>_get</defname></param>
+        <param><defname>_set</defname></param>
+        <initializer>	<ref refid="group__bt__mesh__prop__srv_gaf67d93e14cf61187afaf6ff4287c215c_1gaf67d93e14cf61187afaf6ff4287c215c" kindref="member">BT_MESH_PROP_SRV_INIT</ref>(_properties, ARRAY_SIZE(_properties), _get, _set)</initializer>
+        <briefdescription>
+<para>Initialization parameters for a <ref refid="group__bt__mesh__prop__srv" kindref="compound">Generic Property server models</ref> acting as a Generic Admin Property Server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_properties</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of properties exposed by the server. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_get</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Getter function for property values. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Setter function for property values. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_srv.h" line="61" column="9" bodyfile="include/bluetooth/mesh/gen_prop_srv.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__prop__srv_1ga1201ec798558f7f13af9eb2067a63489" prot="public" static="no">
+        <name>BT_MESH_PROP_SRV_MFR_INIT</name>
+        <param><defname>_properties</defname></param>
+        <param><defname>_get</defname></param>
+        <initializer>	<ref refid="group__bt__mesh__prop__srv_gaf67d93e14cf61187afaf6ff4287c215c_1gaf67d93e14cf61187afaf6ff4287c215c" kindref="member">BT_MESH_PROP_SRV_INIT</ref>(_properties, ARRAY_SIZE(_properties), _get, NULL)</initializer>
+        <briefdescription>
+<para>Initialization parameters for a <ref refid="group__bt__mesh__prop__srv" kindref="compound">Generic Property server models</ref> acting as a Generic Manufacturer Property Server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_properties</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of properties exposed by the server. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_get</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Getter function for property values. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_srv.h" line="72" column="9" bodyfile="include/bluetooth/mesh/gen_prop_srv.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__prop__srv_1ga1fe244ad0ea3d36167d2736d971b37fd" prot="public" static="no">
+        <name>BT_MESH_PROP_SRV_CLIENT_INIT</name>
+        <param><defname>_properties</defname></param>
+        <initializer>	<ref refid="group__bt__mesh__prop__srv_gaf67d93e14cf61187afaf6ff4287c215c_1gaf67d93e14cf61187afaf6ff4287c215c" kindref="member">BT_MESH_PROP_SRV_INIT</ref>((struct <ref refid="structbt__mesh__prop" kindref="compound">bt_mesh_prop</ref> *)_properties,              \
+			      ARRAY_SIZE(_properties), NULL, NULL)</initializer>
+        <briefdescription>
+<para>Initialization parameters for a <ref refid="group__bt__mesh__prop__srv" kindref="compound">Generic Property server models</ref> acting as a Generic Client Property Server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_properties</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of properties exposed by the server. May be constant. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_srv.h" line="83" column="9" bodyfile="include/bluetooth/mesh/gen_prop_srv.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__prop__srv_1gac9f98423e9fc20d39592498f40aaed21" prot="public" static="no">
+        <name>BT_MESH_MODEL_PROP_SRV_USER</name>
+        <param><defname>_srv</defname></param>
+        <initializer>	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_USER_PROP_SRV,                   \
+			 _bt_mesh_prop_user_srv_op, &amp;(_srv)-&gt;pub,              \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__prop__srv" kindref="compound">bt_mesh_prop_srv</ref>,      \
+						 _srv),                        \
+			 &amp;_bt_mesh_prop_srv_cb)</initializer>
+        <briefdescription>
+<para>Generic User Property Server model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_srv.h" line="91" column="9" bodyfile="include/bluetooth/mesh/gen_prop_srv.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__prop__srv_1ga4b21314b60b57e588dcf2d108d50bf92" prot="public" static="no">
+        <name>BT_MESH_MODEL_PROP_SRV_ADMIN</name>
+        <param><defname>_srv</defname></param>
+        <initializer>	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_ADMIN_PROP_SRV,                  \
+			 _bt_mesh_prop_admin_srv_op, &amp;(_srv)-&gt;pub,             \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__prop__srv" kindref="compound">bt_mesh_prop_srv</ref>,      \
+						 _srv),                        \
+			 &amp;_bt_mesh_prop_srv_cb)</initializer>
+        <briefdescription>
+<para>Generic Admin Property Server model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__prop__srv" kindref="compound">Generic Property server models</ref> instance acting as an Admin Property Server. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_srv.h" line="105" column="9" bodyfile="include/bluetooth/mesh/gen_prop_srv.h" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__prop__srv_1gaa2dd050b74bc9782c4d67d5bcff08057" prot="public" static="no">
+        <name>BT_MESH_MODEL_PROP_SRV_MFR</name>
+        <param><defname>_srv</defname></param>
+        <initializer>	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_MANUFACTURER_PROP_SRV,           \
+			 _bt_mesh_prop_mfr_srv_op, &amp;(_srv)-&gt;pub,               \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__prop__srv" kindref="compound">bt_mesh_prop_srv</ref>,      \
+						 _srv),                        \
+			 &amp;_bt_mesh_prop_srv_cb)</initializer>
+        <briefdescription>
+<para>Generic Manufacturer Property Server model data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__prop__srv" kindref="compound">Generic Property server models</ref> instance acting as a Manufacturer Property Server. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_srv.h" line="119" column="9" bodyfile="include/bluetooth/mesh/gen_prop_srv.h" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__prop__srv_1gade63912f5fa1291fdfb02bdd1b084f96" prot="public" static="no">
+        <name>BT_MESH_MODEL_PROP_SRV_CLIENT</name>
+        <param><defname>_srv</defname></param>
+        <initializer>	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_CLIENT_PROP_SRV,                 \
+			 _bt_mesh_prop_client_srv_op, &amp;(_srv)-&gt;pub,            \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__prop__srv" kindref="compound">bt_mesh_prop_srv</ref>,      \
+						 _srv),                        \
+			 &amp;_bt_mesh_prop_srv_cb)</initializer>
+        <briefdescription>
+<para>Generic Client Property Server model data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__prop__srv" kindref="compound">Generic Property server models</ref> instance acting as a Client Property Server. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_srv.h" line="133" column="9" bodyfile="include/bluetooth/mesh/gen_prop_srv.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Generic Property server models. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

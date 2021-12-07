@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__ancs__evt__notif" kind="struct" language="C++" prot="public">
+    <compoundname>bt_ancs_evt_notif</compoundname>
+    <includes refid="ancs__client_8h" local="no">ancs_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__ancs__evt__notif_acb89602acd3884a3df0ec087352b095e_1acb89602acd3884a3df0ec087352b095e" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_ancs_evt_notif::notif_uid</definition>
+        <argsstring></argsstring>
+        <name>notif_uid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Notification UID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="234" column="10" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="234" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__ancs__evt__notif_a762b9062e2596c36ca92e357a8afa31a_1a762b9062e2596c36ca92e357a8afa31a" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__ancs__client_gac26f4374d0d464984c1b11e13f9b969b_1gac26f4374d0d464984c1b11e13f9b969b" kindref="member">bt_ancs_evt_id_values</ref></type>
+        <definition>enum bt_ancs_evt_id_values bt_ancs_evt_notif::evt_id</definition>
+        <argsstring></argsstring>
+        <name>evt_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Whether the notification was added, removed, or modified. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="236" column="27" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="236" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__ancs__evt__notif_a835f03da8d137d785e07b5cf4414b2b0_1a835f03da8d137d785e07b5cf4414b2b0" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__ancs__notif__flags" kindref="compound">bt_ancs_notif_flags</ref></type>
+        <definition>struct bt_ancs_notif_flags bt_ancs_evt_notif::evt_flags</definition>
+        <argsstring></argsstring>
+        <name>evt_flags</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Bitmask to signal whether a special condition applies to the notification. For example, &quot;Silent&quot; or &quot;Important&quot;. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="240" column="26" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="240" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__ancs__evt__notif_abaa55e70df8cb7cd61e0ec2ad7e12ae6_1abaa55e70df8cb7cd61e0ec2ad7e12ae6" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__ancs__client_ga77a8ed99169c1dc5b9d7896a6302c35f_1ga77a8ed99169c1dc5b9d7896a6302c35f" kindref="member">bt_ancs_category_id_val</ref></type>
+        <definition>enum bt_ancs_category_id_val bt_ancs_evt_notif::category_id</definition>
+        <argsstring></argsstring>
+        <name>category_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Classification of the notification type. For example, email or location. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="244" column="29" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="244" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__ancs__evt__notif_a337e4272eecc3a306fef06ac8b4ad5b1_1a337e4272eecc3a306fef06ac8b4ad5b1" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_ancs_evt_notif::category_count</definition>
+        <argsstring></argsstring>
+        <name>category_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current number of active notifications for this category ID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="246" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="246" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>iOS notification structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_ancs_evt_notif</label>
+        <link refid="structbt__ancs__evt__notif"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>evt_flags</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_ancs_notif_flags</label>
+        <link refid="structbt__ancs__notif__flags"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/ancs_client.h" line="232" column="1" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="232" bodyend="247"/>
+    <listofallmembers>
+      <member refid="structbt__ancs__evt__notif_a337e4272eecc3a306fef06ac8b4ad5b1_1a337e4272eecc3a306fef06ac8b4ad5b1" prot="public" virt="non-virtual"><scope>bt_ancs_evt_notif</scope><name>category_count</name></member>
+      <member refid="structbt__ancs__evt__notif_abaa55e70df8cb7cd61e0ec2ad7e12ae6_1abaa55e70df8cb7cd61e0ec2ad7e12ae6" prot="public" virt="non-virtual"><scope>bt_ancs_evt_notif</scope><name>category_id</name></member>
+      <member refid="structbt__ancs__evt__notif_a835f03da8d137d785e07b5cf4414b2b0_1a835f03da8d137d785e07b5cf4414b2b0" prot="public" virt="non-virtual"><scope>bt_ancs_evt_notif</scope><name>evt_flags</name></member>
+      <member refid="structbt__ancs__evt__notif_a762b9062e2596c36ca92e357a8afa31a_1a762b9062e2596c36ca92e357a8afa31a" prot="public" virt="non-virtual"><scope>bt_ancs_evt_notif</scope><name>evt_id</name></member>
+      <member refid="structbt__ancs__evt__notif_acb89602acd3884a3df0ec087352b095e_1acb89602acd3884a3df0ec087352b095e" prot="public" virt="non-virtual"><scope>bt_ancs_evt_notif</scope><name>notif_uid</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

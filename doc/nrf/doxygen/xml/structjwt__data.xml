@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structjwt__data" kind="struct" language="C++" prot="public">
+    <compoundname>jwt_data</compoundname>
+    <includes refid="modem__jwt_8h" local="no">modem_jwt.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structjwt__data_aeaab9f2d9e3a76b3773bbb1bbea3c4aa_1aeaab9f2d9e3a76b3773bbb1bbea3c4aa" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int jwt_data::sec_tag</definition>
+        <argsstring></argsstring>
+        <name>sec_tag</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Modem sec tag to use for JWT signing </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_jwt.h" line="39" column="5" bodyfile="include/modem/modem_jwt.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structjwt__data_ae0e136655fe72b13b1ae7b8201ef60e9_1ae0e136655fe72b13b1ae7b8201ef60e9" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__modem__jwt_gab3fc100bfe9885bc7d6cd5011d487eeb_1gab3fc100bfe9885bc7d6cd5011d487eeb" kindref="member">jwt_key_type</ref></type>
+        <definition>enum jwt_key_type jwt_data::key</definition>
+        <argsstring></argsstring>
+        <name>key</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Key type in the specified sec tag </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_jwt.h" line="41" column="18" bodyfile="include/modem/modem_jwt.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structjwt__data_ac656dfc92627ab46af1b67c2a5969d39_1ac656dfc92627ab46af1b67c2a5969d39" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__modem__jwt_gacaa7ea0e840121ee3ae0180cda78db0a_1gacaa7ea0e840121ee3ae0180cda78db0a" kindref="member">jwt_alg_type</ref></type>
+        <definition>enum jwt_alg_type jwt_data::alg</definition>
+        <argsstring></argsstring>
+        <name>alg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>JWT signing algorithm </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_jwt.h" line="43" column="18" bodyfile="include/modem/modem_jwt.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structjwt__data_a4cd223d74c13e6e6c73d121894eebcd9_1a4cd223d74c13e6e6c73d121894eebcd9" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t jwt_data::exp_delta_s</definition>
+        <argsstring></argsstring>
+        <name>exp_delta_s</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Defines how long the JWT will be valid; in seconds (from generation). The &apos;iat&apos; and &apos;exp&apos; claims will be populated only if the modem has a valid date and time. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_jwt.h" line="49" column="10" bodyfile="include/modem/modem_jwt.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structjwt__data_a5f2664058b272d1c1044a430548040b6_1a5f2664058b272d1c1044a430548040b6" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* jwt_data::subject</definition>
+        <argsstring></argsstring>
+        <name>subject</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>NULL terminated &apos;sub&apos; claim; the principal that is the subject of the JWT </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_jwt.h" line="52" column="12" bodyfile="include/modem/modem_jwt.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structjwt__data_a9a082f33fbc700d07f0a0634df1f07a4_1a9a082f33fbc700d07f0a0634df1f07a4" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* jwt_data::audience</definition>
+        <argsstring></argsstring>
+        <name>audience</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>NULL terminated &apos;aud&apos; claim; intended recipient of the JWT </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_jwt.h" line="54" column="12" bodyfile="include/modem/modem_jwt.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structjwt__data_a1aab66c0d1580ff5cf144f783286502c_1a1aab66c0d1580ff5cf144f783286502c" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* jwt_data::jwt_buf</definition>
+        <argsstring></argsstring>
+        <name>jwt_buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Buffer to which the NULL terminated JWT will be copied. If a buffer is provided by the user, the size must also be set. If buffer is NULL, memory will be allocated and user must free memory when finished by calling <ref refid="group__modem__jwt_gadfe0c31924fb6b9f35ac772a9771e729_1gadfe0c31924fb6b9f35ac772a9771e729" kindref="member">modem_jwt_free</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_jwt.h" line="61" column="6" bodyfile="include/modem/modem_jwt.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structjwt__data_a0a41a664199f2ec5a3c061189811b7f9_1a0a41a664199f2ec5a3c061189811b7f9" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t jwt_data::jwt_sz</definition>
+        <argsstring></argsstring>
+        <name>jwt_sz</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of the user provided buffer or size of the allocated buffer </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_jwt.h" line="63" column="8" bodyfile="include/modem/modem_jwt.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>JWT parameters required for JWT generation and pointer to generated JWT. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/modem/modem_jwt.h" line="37" column="1" bodyfile="include/modem/modem_jwt.h" bodystart="37" bodyend="64"/>
+    <listofallmembers>
+      <member refid="structjwt__data_ac656dfc92627ab46af1b67c2a5969d39_1ac656dfc92627ab46af1b67c2a5969d39" prot="public" virt="non-virtual"><scope>jwt_data</scope><name>alg</name></member>
+      <member refid="structjwt__data_a9a082f33fbc700d07f0a0634df1f07a4_1a9a082f33fbc700d07f0a0634df1f07a4" prot="public" virt="non-virtual"><scope>jwt_data</scope><name>audience</name></member>
+      <member refid="structjwt__data_a4cd223d74c13e6e6c73d121894eebcd9_1a4cd223d74c13e6e6c73d121894eebcd9" prot="public" virt="non-virtual"><scope>jwt_data</scope><name>exp_delta_s</name></member>
+      <member refid="structjwt__data_a1aab66c0d1580ff5cf144f783286502c_1a1aab66c0d1580ff5cf144f783286502c" prot="public" virt="non-virtual"><scope>jwt_data</scope><name>jwt_buf</name></member>
+      <member refid="structjwt__data_a0a41a664199f2ec5a3c061189811b7f9_1a0a41a664199f2ec5a3c061189811b7f9" prot="public" virt="non-virtual"><scope>jwt_data</scope><name>jwt_sz</name></member>
+      <member refid="structjwt__data_ae0e136655fe72b13b1ae7b8201ef60e9_1ae0e136655fe72b13b1ae7b8201ef60e9" prot="public" virt="non-virtual"><scope>jwt_data</scope><name>key</name></member>
+      <member refid="structjwt__data_aeaab9f2d9e3a76b3773bbb1bbea3c4aa_1aeaab9f2d9e3a76b3773bbb1bbea3c4aa" prot="public" virt="non-virtual"><scope>jwt_data</scope><name>sec_tag</name></member>
+      <member refid="structjwt__data_a5f2664058b272d1c1044a430548040b6_1a5f2664058b272d1c1044a430548040b6" prot="public" virt="non-virtual"><scope>jwt_data</scope><name>subject</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

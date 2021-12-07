@@ -1,0 +1,544 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="download__client_8h" kind="file" language="C++">
+    <compoundname>download_client.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <includes local="no">zephyr/types.h</includes>
+    <includes local="no">net/coap.h</includes>
+    <includedby refid="fota__download_8h" local="no">include/net/fota_download.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/net/download_client.h</label>
+        <link refid="download__client_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>net/coap.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>include/net/download_client.h</label>
+        <link refid="download__client_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/net/fota_download.h</label>
+        <link refid="fota__download_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structdownload__fragment" prot="public">download_fragment</innerclass>
+    <innerclass refid="structdownload__client__evt" prot="public">download_client_evt</innerclass>
+    <innerclass refid="structdownload__client__cfg" prot="public">download_client_cfg</innerclass>
+    <innerclass refid="structdownload__client" prot="public">download_client</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__dl__client_gaabb2b65eab84b7897a777243fbec4cba_1gaabb2b65eab84b7897a777243fbec4cba" prot="public" static="no" strong="no">
+        <type></type>
+        <name>download_client_evt_id</name>
+        <enumvalue id="group__dl__client_gaabb2b65eab84b7897a777243fbec4cba_1ggaabb2b65eab84b7897a777243fbec4cbaa9390918b083ef76c302619ce78109596" prot="public">
+          <name>DOWNLOAD_CLIENT_EVT_FRAGMENT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Event contains a fragment. The application may return any non-zero value to stop the download. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__dl__client_gaabb2b65eab84b7897a777243fbec4cba_1ggaabb2b65eab84b7897a777243fbec4cbaa46f57e634ec999ade6cb1ca425a5a275" prot="public">
+          <name>DOWNLOAD_CLIENT_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>An error has occurred during download and the connection to the server has been lost.</para>
+<para>Error reason may be one of the following:<itemizedlist>
+<listitem><para>ECONNRESET: socket error, peer closed connection</para>
+</listitem><listitem><para>ETIMEDOUT: socket error, connection timed out</para>
+</listitem><listitem><para>EHOSTDOWN: host went down during download</para>
+</listitem><listitem><para>EBADMSG: HTTP response header not as expected</para>
+</listitem><listitem><para>E2BIG: HTTP response header could not fit in buffer</para>
+</listitem></itemizedlist>
+</para>
+<para>In case of errors on the socket during send() or recv() (ECONNRESET), returning zero from the callback will let the library attempt to reconnect to the server and download the last fragment again. Otherwise, the application may return any non-zero value to stop the download.</para>
+<para>In case the download is stopped, the application should manually disconnect (<ref refid="group__dl__client_gad7b57bcb40afbc67eac590a9e4fa7348_1gad7b57bcb40afbc67eac590a9e4fa7348" kindref="member">download_client_disconnect</ref>) to clean up the network socket as necessary before re-attempting the download. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__dl__client_gaabb2b65eab84b7897a777243fbec4cba_1ggaabb2b65eab84b7897a777243fbec4cbaa971c88cd05f88be6990c67e4804bd5f5" prot="public">
+          <name>DOWNLOAD_CLIENT_EVT_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Download complete. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Download client event IDs. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="34" column="1" bodyfile="include/net/download_client.h" bodystart="34" bodyend="64"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__dl__client_gad1970f12cef5b5715577dd5573737b9b_1gad1970f12cef5b5715577dd5573737b9b" prot="public" static="no">
+        <type>int(*</type>
+        <definition>typedef int(* download_client_callback_t) (const struct download_client_evt *event)</definition>
+        <argsstring>)(const struct download_client_evt *event)</argsstring>
+        <name>download_client_callback_t</name>
+        <briefdescription>
+<para>Download client asynchronous event handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Through this callback, the application receives events, such as download of a fragment, download completion, or errors.</para>
+<para>If the callback returns a non-zero value, the download stops. To resume the download, use <ref refid="group__dl__client_ga9c6e4153ef22913ea5f57aa7aed884e7_1ga9c6e4153ef22913ea5f57aa7aed884e7" kindref="member">download_client_start()</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">event</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The event.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Zero to continue the download, non-zero otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="120" column="9" bodyfile="include/net/download_client.h" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__dl__client_ga95e6622d190c00d790a041c8054cc748_1ga95e6622d190c00d790a041c8054cc748" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int download_client_init</definition>
+        <argsstring>(struct download_client *client, download_client_callback_t callback)</argsstring>
+        <name>download_client_init</name>
+        <param>
+          <type>struct <ref refid="structdownload__client" kindref="compound">download_client</ref> *</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type><ref refid="group__dl__client_gad1970f12cef5b5715577dd5573737b9b_1gad1970f12cef5b5715577dd5573737b9b" kindref="member">download_client_callback_t</ref></type>
+          <declname>callback</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the download client. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">callback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback function.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>int</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zero on success, otherwise a negative error code. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="183" column="5" declfile="include/net/download_client.h" declline="183" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dl__client_gaa890ed293e1d2372d36b8c77a6b15537_1gaa890ed293e1d2372d36b8c77a6b15537" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int download_client_connect</definition>
+        <argsstring>(struct download_client *client, const char *host, const struct download_client_cfg *config)</argsstring>
+        <name>download_client_connect</name>
+        <param>
+          <type>struct <ref refid="structdownload__client" kindref="compound">download_client</ref> *</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>host</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structdownload__client__cfg" kindref="compound">download_client_cfg</ref> *</type>
+          <declname>config</declname>
+        </param>
+        <briefdescription>
+<para>Establish a connection to the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">host</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the host to connect to, null-terminated. Can include scheme and port number, defaults to HTTP or HTTPS if no scheme is provided. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">config</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Configuration options.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>int</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zero on success, a negative error code otherwise. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="197" column="5" declfile="include/net/download_client.h" declline="197" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dl__client_ga9c6e4153ef22913ea5f57aa7aed884e7_1ga9c6e4153ef22913ea5f57aa7aed884e7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int download_client_start</definition>
+        <argsstring>(struct download_client *client, const char *file, size_t from)</argsstring>
+        <name>download_client_start</name>
+        <param>
+          <type>struct <ref refid="structdownload__client" kindref="compound">download_client</ref> *</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>file</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>from</declname>
+        </param>
+        <briefdescription>
+<para>Download a file. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The download is carried out in fragments of up to <verbatim>embed:rst:inline :kconfig:`CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE` </verbatim> bytes for HTTP, or <verbatim>embed:rst:inline :kconfig:`CONFIG_DOWNLOAD_CLIENT_COAP_BLOCK_SIZE` </verbatim> bytes for CoAP, which are delivered to the application via <ref refid="group__dl__client_gaabb2b65eab84b7897a777243fbec4cba_1ggaabb2b65eab84b7897a777243fbec4cbaa9390918b083ef76c302619ce78109596" kindref="member">DOWNLOAD_CLIENT_EVT_FRAGMENT</ref> events.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>File to download, null-terminated. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">from</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Offset from where to resume the download, or zero to download from the beginning.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>int</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zero on success, a negative error code otherwise. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="216" column="5" declfile="include/net/download_client.h" declline="216" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dl__client_ga2e306ab9f1bb31c2ecb7c91acc5e12fd_1ga2e306ab9f1bb31c2ecb7c91acc5e12fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void download_client_pause</definition>
+        <argsstring>(struct download_client *client)</argsstring>
+        <name>download_client_pause</name>
+        <param>
+          <type>struct <ref refid="structdownload__client" kindref="compound">download_client</ref> *</type>
+          <declname>client</declname>
+        </param>
+        <briefdescription>
+<para>Pause the download. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="224" column="6" declfile="include/net/download_client.h" declline="224" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dl__client_ga68a5e169d2d9d30c2024a7eba75c1eeb_1ga68a5e169d2d9d30c2024a7eba75c1eeb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void download_client_resume</definition>
+        <argsstring>(struct download_client *client)</argsstring>
+        <name>download_client_resume</name>
+        <param>
+          <type>struct <ref refid="structdownload__client" kindref="compound">download_client</ref> *</type>
+          <declname>client</declname>
+        </param>
+        <briefdescription>
+<para>Resume the download. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="231" column="6" declfile="include/net/download_client.h" declline="231" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dl__client_gadcc82980c5f6c24b358fdf9430c11011_1gadcc82980c5f6c24b358fdf9430c11011" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int download_client_file_size_get</definition>
+        <argsstring>(struct download_client *client, size_t *size)</argsstring>
+        <name>download_client_file_size_get</name>
+        <param>
+          <type>struct <ref refid="structdownload__client" kindref="compound">download_client</ref> *</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type>size_t *</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+<para>Retrieve the size of the file being downloaded, in bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The file size is only available after the download has begun.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>File size.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>int</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zero on success, a negative error code otherwise. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="243" column="5" declfile="include/net/download_client.h" declline="243" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dl__client_gad7b57bcb40afbc67eac590a9e4fa7348_1gad7b57bcb40afbc67eac590a9e4fa7348" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int download_client_disconnect</definition>
+        <argsstring>(struct download_client *client)</argsstring>
+        <name>download_client_disconnect</name>
+        <param>
+          <type>struct <ref refid="structdownload__client" kindref="compound">download_client</ref> *</type>
+          <declname>client</declname>
+        </param>
+        <briefdescription>
+<para>Disconnect from the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Zero on success, a negative error code otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="252" column="5" declfile="include/net/download_client.h" declline="252" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>DOWNLOAD_CLIENT_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DOWNLOAD_CLIENT_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;net/coap.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="group__dl__client_gaabb2b65eab84b7897a777243fbec4cba_1gaabb2b65eab84b7897a777243fbec4cba" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__dl__client_gaabb2b65eab84b7897a777243fbec4cba_1gaabb2b65eab84b7897a777243fbec4cba" kindref="member">download_client_evt_id</ref><sp/>{</highlight></codeline>
+<codeline lineno="39" refid="group__dl__client_gaabb2b65eab84b7897a777243fbec4cba_1ggaabb2b65eab84b7897a777243fbec4cbaa9390918b083ef76c302619ce78109596" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__dl__client_gaabb2b65eab84b7897a777243fbec4cba_1ggaabb2b65eab84b7897a777243fbec4cbaa9390918b083ef76c302619ce78109596" kindref="member">DOWNLOAD_CLIENT_EVT_FRAGMENT</ref>,</highlight></codeline>
+<codeline lineno="61" refid="group__dl__client_gaabb2b65eab84b7897a777243fbec4cba_1ggaabb2b65eab84b7897a777243fbec4cbaa46f57e634ec999ade6cb1ca425a5a275" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__dl__client_gaabb2b65eab84b7897a777243fbec4cba_1ggaabb2b65eab84b7897a777243fbec4cbaa46f57e634ec999ade6cb1ca425a5a275" kindref="member">DOWNLOAD_CLIENT_EVT_ERROR</ref>,</highlight></codeline>
+<codeline lineno="63" refid="group__dl__client_gaabb2b65eab84b7897a777243fbec4cba_1ggaabb2b65eab84b7897a777243fbec4cbaa971c88cd05f88be6990c67e4804bd5f5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__dl__client_gaabb2b65eab84b7897a777243fbec4cba_1ggaabb2b65eab84b7897a777243fbec4cbaa971c88cd05f88be6990c67e4804bd5f5" kindref="member">DOWNLOAD_CLIENT_EVT_DONE</ref>,</highlight></codeline>
+<codeline lineno="64"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="structdownload__fragment" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structdownload__fragment" kindref="compound">download_fragment</ref><sp/>{</highlight></codeline>
+<codeline lineno="67" refid="structdownload__fragment_a809fee973cc3f082a02cb31f06bf8c55_1a809fee973cc3f082a02cb31f06bf8c55" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structdownload__fragment_a809fee973cc3f082a02cb31f06bf8c55_1a809fee973cc3f082a02cb31f06bf8c55" kindref="member">buf</ref>;</highlight></codeline>
+<codeline lineno="68" refid="structdownload__fragment_ae060ba8c28f8f83084f3db22f6087f52_1ae060ba8c28f8f83084f3db22f6087f52" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structdownload__fragment_ae060ba8c28f8f83084f3db22f6087f52_1ae060ba8c28f8f83084f3db22f6087f52" kindref="member">len</ref>;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="structdownload__client__evt" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structdownload__client__evt" kindref="compound">download_client_evt</ref><sp/>{</highlight></codeline>
+<codeline lineno="76" refid="structdownload__client__evt_a8864fa0d31da67e9339acc3e7a44d2c1_1a8864fa0d31da67e9339acc3e7a44d2c1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__dl__client_gaabb2b65eab84b7897a777243fbec4cba_1gaabb2b65eab84b7897a777243fbec4cba" kindref="member">download_client_evt_id</ref><sp/><ref refid="structdownload__client__evt_a8864fa0d31da67e9339acc3e7a44d2c1_1a8864fa0d31da67e9339acc3e7a44d2c1" kindref="member">id</ref>;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">union<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="80" refid="structdownload__client__evt_a16a8312b61de0b3e899c1e9d96d09201_1a16a8312b61de0b3e899c1e9d96d09201" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structdownload__client__evt_a16a8312b61de0b3e899c1e9d96d09201_1a16a8312b61de0b3e899c1e9d96d09201" kindref="member">error</ref>;</highlight></codeline>
+<codeline lineno="82" refid="structdownload__client__evt_ae5da04e5a1509158f05f8d4bb3555a08_1ae5da04e5a1509158f05f8d4bb3555a08" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structdownload__fragment" kindref="compound">download_fragment</ref><sp/><ref refid="structdownload__client__evt_ae5da04e5a1509158f05f8d4bb3555a08_1ae5da04e5a1509158f05f8d4bb3555a08" kindref="member">fragment</ref>;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="84"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89" refid="structdownload__client__cfg" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structdownload__client__cfg" kindref="compound">download_client_cfg</ref><sp/>{</highlight></codeline>
+<codeline lineno="93" refid="structdownload__client__cfg_a576a877c28f895b33a6e1fac7d0107c7_1a576a877c28f895b33a6e1fac7d0107c7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structdownload__client__cfg_a576a877c28f895b33a6e1fac7d0107c7_1a576a877c28f895b33a6e1fac7d0107c7" kindref="member">sec_tag</ref>;</highlight></codeline>
+<codeline lineno="98" refid="structdownload__client__cfg_a30c38fda06999643f58b72f3643fb20f_1a30c38fda06999643f58b72f3643fb20f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structdownload__client__cfg_a30c38fda06999643f58b72f3643fb20f_1a30c38fda06999643f58b72f3643fb20f" kindref="member">pdn_id</ref>;</highlight></codeline>
+<codeline lineno="102" refid="structdownload__client__cfg_a60551f647bf13a15ca1a44fa1dcdb893_1a60551f647bf13a15ca1a44fa1dcdb893" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structdownload__client__cfg_a60551f647bf13a15ca1a44fa1dcdb893_1a60551f647bf13a15ca1a44fa1dcdb893" kindref="member">frag_size_override</ref>;</highlight></codeline>
+<codeline lineno="104" refid="structdownload__client__cfg_ab06f9c3d44ffe1031a43af7752940d24_1ab06f9c3d44ffe1031a43af7752940d24" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structdownload__client__cfg_ab06f9c3d44ffe1031a43af7752940d24_1ab06f9c3d44ffe1031a43af7752940d24" kindref="member">set_tls_hostname</ref>;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120" refid="group__dl__client_gad1970f12cef5b5715577dd5573737b9b_1gad1970f12cef5b5715577dd5573737b9b" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>int<sp/>(*<ref refid="group__dl__client_gad1970f12cef5b5715577dd5573737b9b_1gad1970f12cef5b5715577dd5573737b9b" kindref="member">download_client_callback_t</ref>)(</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structdownload__client__evt" kindref="compound">download_client_evt</ref><sp/>*event);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126" refid="structdownload__client" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structdownload__client" kindref="compound">download_client</ref><sp/>{</highlight></codeline>
+<codeline lineno="128" refid="structdownload__client_ae4f22633c3b6fd502becaa3cfbc4df47_1ae4f22633c3b6fd502becaa3cfbc4df47" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structdownload__client_ae4f22633c3b6fd502becaa3cfbc4df47_1ae4f22633c3b6fd502becaa3cfbc4df47" kindref="member">fd</ref>;</highlight></codeline>
+<codeline lineno="130" refid="structdownload__client_aa5251ba984eeffade62d83fa4a9448ca_1aa5251ba984eeffade62d83fa4a9448ca" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structdownload__client_aa5251ba984eeffade62d83fa4a9448ca_1aa5251ba984eeffade62d83fa4a9448ca" kindref="member">buf</ref>[CONFIG_DOWNLOAD_CLIENT_BUF_SIZE];</highlight></codeline>
+<codeline lineno="132" refid="structdownload__client_a3c7d0441bc84537011f5aaa5f2f81223_1a3c7d0441bc84537011f5aaa5f2f81223" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structdownload__client_a3c7d0441bc84537011f5aaa5f2f81223_1a3c7d0441bc84537011f5aaa5f2f81223" kindref="member">offset</ref>;</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135" refid="structdownload__client_a54c4ea4419be9f6c53ad840a67eb774b_1a54c4ea4419be9f6c53ad840a67eb774b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structdownload__client_a54c4ea4419be9f6c53ad840a67eb774b_1a54c4ea4419be9f6c53ad840a67eb774b" kindref="member">file_size</ref>;</highlight></codeline>
+<codeline lineno="137" refid="structdownload__client_a31e5e7ee0c0707c56aa6443487c88f22_1a31e5e7ee0c0707c56aa6443487c88f22" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structdownload__client_a31e5e7ee0c0707c56aa6443487c88f22_1a31e5e7ee0c0707c56aa6443487c88f22" kindref="member">progress</ref>;</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140" refid="structdownload__client_a1560200310c2276ab5375a0c8bd95ba7_1a1560200310c2276ab5375a0c8bd95ba7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structdownload__client_a1560200310c2276ab5375a0c8bd95ba7_1a1560200310c2276ab5375a0c8bd95ba7" kindref="member">host</ref>;</highlight></codeline>
+<codeline lineno="142" refid="structdownload__client_a8a7d0654331c52e7a422990c71f7e770_1a8a7d0654331c52e7a422990c71f7e770" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structdownload__client_a8a7d0654331c52e7a422990c71f7e770_1a8a7d0654331c52e7a422990c71f7e770" kindref="member">file</ref>;</highlight></codeline>
+<codeline lineno="144" refid="structdownload__client_a5322256e9ba5e0edca321d773246c536_1a5322256e9ba5e0edca321d773246c536" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structdownload__client__cfg" kindref="compound">download_client_cfg</ref><sp/><ref refid="structdownload__client_a5322256e9ba5e0edca321d773246c536_1a5322256e9ba5e0edca321d773246c536" kindref="member">config</ref>;</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147" refid="structdownload__client_a49c7b1033715eac8cc2c47291bfc3862_1a49c7b1033715eac8cc2c47291bfc3862" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structdownload__client_a49c7b1033715eac8cc2c47291bfc3862_1a49c7b1033715eac8cc2c47291bfc3862" kindref="member">proto</ref>;</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="153" refid="structdownload__client_a2cf0f5f46f30435ef48fd7205bff2def_1a2cf0f5f46f30435ef48fd7205bff2def" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structdownload__client_a2cf0f5f46f30435ef48fd7205bff2def_1a2cf0f5f46f30435ef48fd7205bff2def" kindref="member">has_header</ref>;</highlight></codeline>
+<codeline lineno="155" refid="structdownload__client_ab0da11c63bcfb167df0796f5300e1203_1ab0da11c63bcfb167df0796f5300e1203" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structdownload__client_ab0da11c63bcfb167df0796f5300e1203_1ab0da11c63bcfb167df0796f5300e1203" kindref="member">connection_close</ref>;</highlight></codeline>
+<codeline lineno="156" refid="structdownload__client_a9e7494532206765243eaaa87a6383dbf_1a9e7494532206765243eaaa87a6383dbf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/><ref refid="structdownload__client_a9e7494532206765243eaaa87a6383dbf_1a9e7494532206765243eaaa87a6383dbf" kindref="member">http</ref>;</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="160" refid="structdownload__client_af787db061b31a05fb34b442f982e5725_1af787db061b31a05fb34b442f982e5725" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">coap_block_context<sp/><ref refid="structdownload__client_af787db061b31a05fb34b442f982e5725_1af787db061b31a05fb34b442f982e5725" kindref="member">block_ctx</ref>;</highlight></codeline>
+<codeline lineno="161" refid="structdownload__client_a743d692e2e998d61b0f252a2a0adbf31_1a743d692e2e998d61b0f252a2a0adbf31" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/><ref refid="structdownload__client_a743d692e2e998d61b0f252a2a0adbf31_1a743d692e2e998d61b0f252a2a0adbf31" kindref="member">coap</ref>;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="164" refid="structdownload__client_a41816cf86afc761beea4c32823a565e3_1a41816cf86afc761beea4c32823a565e3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>k_tid_t<sp/><ref refid="structdownload__client_a41816cf86afc761beea4c32823a565e3_1a41816cf86afc761beea4c32823a565e3" kindref="member">tid</ref>;</highlight></codeline>
+<codeline lineno="166" refid="structdownload__client_a83a59e766a672fce67fba4c9a2be66d8_1a83a59e766a672fce67fba4c9a2be66d8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">k_thread<sp/><ref refid="structdownload__client_a83a59e766a672fce67fba4c9a2be66d8_1a83a59e766a672fce67fba4c9a2be66d8" kindref="member">thread</ref>;</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Internal<sp/>thread<sp/>stack.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="168" refid="structdownload__client_af9a20455233d13ed33f11c077af9e707_1af9a20455233d13ed33f11c077af9e707" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structdownload__client_af9a20455233d13ed33f11c077af9e707_1af9a20455233d13ed33f11c077af9e707" kindref="member">K_THREAD_STACK_MEMBER</ref>(thread_stack,</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>CONFIG_DOWNLOAD_CLIENT_STACK_SIZE);</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="172" refid="structdownload__client_af71dd0e4a8ab854442c03568b43474fa_1af71dd0e4a8ab854442c03568b43474fa" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__dl__client_gad1970f12cef5b5715577dd5573737b9b_1gad1970f12cef5b5715577dd5573737b9b" kindref="member">download_client_callback_t</ref><sp/><ref refid="structdownload__client_af71dd0e4a8ab854442c03568b43474fa_1af71dd0e4a8ab854442c03568b43474fa" kindref="member">callback</ref>;</highlight></codeline>
+<codeline lineno="173"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="183" refid="group__dl__client_ga95e6622d190c00d790a041c8054cc748_1ga95e6622d190c00d790a041c8054cc748" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dl__client_ga95e6622d190c00d790a041c8054cc748_1ga95e6622d190c00d790a041c8054cc748" kindref="member">download_client_init</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structdownload__client" kindref="compound">download_client</ref><sp/>*client,</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__dl__client_gad1970f12cef5b5715577dd5573737b9b_1gad1970f12cef5b5715577dd5573737b9b" kindref="member">download_client_callback_t</ref><sp/>callback);</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197" refid="group__dl__client_gaa890ed293e1d2372d36b8c77a6b15537_1gaa890ed293e1d2372d36b8c77a6b15537" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dl__client_gaa890ed293e1d2372d36b8c77a6b15537_1gaa890ed293e1d2372d36b8c77a6b15537" kindref="member">download_client_connect</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structdownload__client" kindref="compound">download_client</ref><sp/>*client,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*host,</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structdownload__client__cfg" kindref="compound">download_client_cfg</ref><sp/>*config);</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="216" refid="group__dl__client_ga9c6e4153ef22913ea5f57aa7aed884e7_1ga9c6e4153ef22913ea5f57aa7aed884e7" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dl__client_ga9c6e4153ef22913ea5f57aa7aed884e7_1ga9c6e4153ef22913ea5f57aa7aed884e7" kindref="member">download_client_start</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structdownload__client" kindref="compound">download_client</ref><sp/>*client,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*file,</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>from);</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"></highlight></codeline>
+<codeline lineno="224" refid="group__dl__client_ga2e306ab9f1bb31c2ecb7c91acc5e12fd_1ga2e306ab9f1bb31c2ecb7c91acc5e12fd" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__dl__client_ga2e306ab9f1bb31c2ecb7c91acc5e12fd_1ga2e306ab9f1bb31c2ecb7c91acc5e12fd" kindref="member">download_client_pause</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structdownload__client" kindref="compound">download_client</ref><sp/>*client);</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"></highlight></codeline>
+<codeline lineno="231" refid="group__dl__client_ga68a5e169d2d9d30c2024a7eba75c1eeb_1ga68a5e169d2d9d30c2024a7eba75c1eeb" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__dl__client_ga68a5e169d2d9d30c2024a7eba75c1eeb_1ga68a5e169d2d9d30c2024a7eba75c1eeb" kindref="member">download_client_resume</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structdownload__client" kindref="compound">download_client</ref><sp/>*client);</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight></codeline>
+<codeline lineno="243" refid="group__dl__client_gadcc82980c5f6c24b358fdf9430c11011_1gadcc82980c5f6c24b358fdf9430c11011" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dl__client_gadcc82980c5f6c24b358fdf9430c11011_1gadcc82980c5f6c24b358fdf9430c11011" kindref="member">download_client_file_size_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structdownload__client" kindref="compound">download_client</ref><sp/>*client,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>*size);</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"></highlight></codeline>
+<codeline lineno="252" refid="group__dl__client_gad7b57bcb40afbc67eac590a9e4fa7348_1gad7b57bcb40afbc67eac590a9e4fa7348" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dl__client_gad7b57bcb40afbc67eac590a9e4fa7348_1gad7b57bcb40afbc67eac590a9e4fa7348" kindref="member">download_client_disconnect</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structdownload__client" kindref="compound">download_client</ref><sp/>*client);</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"></highlight></codeline>
+<codeline lineno="254"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="255"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="257"><highlight class="normal"></highlight></codeline>
+<codeline lineno="258"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>DOWNLOAD_CLIENT_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="259"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/net/download_client.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="zigbee__zcl__scenes_8h" kind="file" language="C++">
+    <compoundname>zigbee_zcl_scenes.h</compoundname>
+    <includes local="no">zboss_api.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/zigbee/zigbee_zcl_scenes.h</label>
+        <link refid="zigbee__zcl__scenes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>zboss_api.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__zigbee__scenes_gaeaadfe4f165b6d09541d50337dee2b54_1gaeaadfe4f165b6d09541d50337dee2b54" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void zcl_scenes_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>zcl_scenes_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize the Zigbee ZCL scenes helper library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function initializes the ZCL scene table as well as registers the settings observer for restoring scene table entries. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_zcl_scenes.h" line="27" column="6" declfile="include/zigbee/zigbee_zcl_scenes.h" declline="27" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__scenes_gaf9e893cc30cd660c438722cafe23b701_1gaf9e893cc30cd660c438722cafe23b701" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>zb_bool_t</type>
+        <definition>zb_bool_t zcl_scenes_cb</definition>
+        <argsstring>(zb_bufid_t bufid)</argsstring>
+        <name>zcl_scenes_cb</name>
+        <param>
+          <type>zb_bufid_t</type>
+          <declname>bufid</declname>
+        </param>
+        <briefdescription>
+<para>Function for passing ZCL callback events to the scenes helper library logic. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">bufid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Reference to the Zigbee stack buffer used to pass event.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>ZB_TRUE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the event was handled by the library </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ZB_FALSE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the event was not handled by the library </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_zcl_scenes.h" line="37" column="11" declfile="include/zigbee/zigbee_zcl_scenes.h" declline="37" declcolumn="11"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>ZIGBEE_ZCL_SCENES_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ZIGBEE_ZCL_SCENES_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zboss_api.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="group__zigbee__scenes_gaeaadfe4f165b6d09541d50337dee2b54_1gaeaadfe4f165b6d09541d50337dee2b54" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__zigbee__scenes_gaeaadfe4f165b6d09541d50337dee2b54_1gaeaadfe4f165b6d09541d50337dee2b54" kindref="member">zcl_scenes_init</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="group__zigbee__scenes_gaf9e893cc30cd660c438722cafe23b701_1gaf9e893cc30cd660c438722cafe23b701" refkind="member"><highlight class="normal">zb_bool_t<sp/><ref refid="group__zigbee__scenes_gaf9e893cc30cd660c438722cafe23b701_1gaf9e893cc30cd660c438722cafe23b701" kindref="member">zcl_scenes_cb</ref>(zb_bufid_t<sp/>bufid);</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>ZIGBEE_ZCL_SCENES_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/zigbee/zigbee_zcl_scenes.h"/>
+  </compounddef>
+</doxygen>

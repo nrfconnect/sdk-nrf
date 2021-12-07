@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__peer__conn__event" kind="group">
+    <compoundname>peer_conn_event</compoundname>
+    <title>Peer Connection Event</title>
+    <innerclass refid="structpeer__conn__event" prot="public">peer_conn_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__peer__conn__event_1ga94dc9b7a737f8d6a3d887f3d3274fbd6" prot="public" static="no" strong="no">
+        <type></type>
+        <name>peer_id</name>
+        <enumvalue id="group__peer__conn__event_ga94dc9b7a737f8d6a3d887f3d3274fbd6_1gga94dc9b7a737f8d6a3d887f3d3274fbd6" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(PEER_ID_,  USB )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__peer__conn__event_ga94dc9b7a737f8d6a3d887f3d3274fbd6_1gga94dc9b7a737f8d6a3d887f3d3274fbd6" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(PEER_ID_,  USB )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__peer__conn__event_ga94dc9b7a737f8d6a3d887f3d3274fbd6_1gga94dc9b7a737f8d6a3d887f3d3274fbd6a2e90495e32d6e3f246a6e8c98b983760" prot="public">
+          <name>PEER_ID_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Peer ID list. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/peer_conn_event.h" line="32" column="1" bodyfile="applications/connectivity_bridge/src/events/peer_conn_event.h" bodystart="32" bodyend="38"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__peer__conn__event_1ga33b043d79cb9d6cbd9c0ae1372c984e0" prot="public" static="no" strong="no">
+        <type></type>
+        <name>peer_conn_state</name>
+        <enumvalue id="group__peer__conn__event_ga33b043d79cb9d6cbd9c0ae1372c984e0_1gga33b043d79cb9d6cbd9c0ae1372c984e0ac89a6ebf34e029db43c011d000d166f6" prot="public">
+          <name>PEER_STATE_CONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__peer__conn__event_ga33b043d79cb9d6cbd9c0ae1372c984e0_1gga33b043d79cb9d6cbd9c0ae1372c984e0af77a841c1c7c80bda9c81dc293a213c2" prot="public">
+          <name>PEER_STATE_DISCONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/peer_conn_event.h" line="40" column="1" bodyfile="applications/connectivity_bridge/src/events/peer_conn_event.h" bodystart="40" bodyend="43"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__peer__conn__event_1gae853f8afe5afdcea92d0ba4964add362" prot="public" static="no">
+        <name>PEER_ID_LIST</name>
+        <initializer>	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(USB)		\
+	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(BLE)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Peer type list. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/peer_conn_event.h" line="27" column="9" bodyfile="applications/connectivity_bridge/src/events/peer_conn_event.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Peer Connection Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

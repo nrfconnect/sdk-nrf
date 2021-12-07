@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structat__monitor__entry" kind="struct" language="C++" prot="public">
+    <compoundname>at_monitor_entry</compoundname>
+    <includes refid="at__monitor_8h" local="no">at_monitor.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structat__monitor__entry_a50006aa8b21fe86a0210b43b701dae24_1a50006aa8b21fe86a0210b43b701dae24" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* at_monitor_entry::filter</definition>
+        <argsstring></argsstring>
+        <name>filter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The filter for this monitor. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_monitor.h" line="41" column="12" bodyfile="include/modem/at_monitor.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structat__monitor__entry_a904c3a71e9d3bdb65041847d4b63d74c_1a904c3a71e9d3bdb65041847d4b63d74c" prot="public" static="no" mutable="no">
+        <type>const <ref refid="group__at__monitor_ga170f3e1648f03d53eb7c8bc9eb6091cc_1ga170f3e1648f03d53eb7c8bc9eb6091cc" kindref="member">at_monitor_handler_t</ref></type>
+        <definition>const at_monitor_handler_t at_monitor_entry::handler</definition>
+        <argsstring></argsstring>
+        <name>handler</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Monitor callback. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_monitor.h" line="43" column="28" bodyfile="include/modem/at_monitor.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structat__monitor__entry_ae095571cd03b7f328791912a2aa6e1b9_1ae095571cd03b7f328791912a2aa6e1b9" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool at_monitor_entry::paused</definition>
+        <argsstring></argsstring>
+        <name>paused</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Whether monitor is paused. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_monitor.h" line="45" column="6" bodyfile="include/modem/at_monitor.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>AT monitor entry. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/modem/at_monitor.h" line="39" column="1" bodyfile="include/modem/at_monitor.h" bodystart="39" bodyend="46"/>
+    <listofallmembers>
+      <member refid="structat__monitor__entry_a50006aa8b21fe86a0210b43b701dae24_1a50006aa8b21fe86a0210b43b701dae24" prot="public" virt="non-virtual"><scope>at_monitor_entry</scope><name>filter</name></member>
+      <member refid="structat__monitor__entry_a904c3a71e9d3bdb65041847d4b63d74c_1a904c3a71e9d3bdb65041847d4b63d74c" prot="public" virt="non-virtual"><scope>at_monitor_entry</scope><name>handler</name></member>
+      <member refid="structat__monitor__entry_ae095571cd03b7f328791912a2aa6e1b9_1ae095571cd03b7f328791912a2aa6e1b9" prot="public" virt="non-virtual"><scope>at_monitor_entry</scope><name>paused</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__collision__disp__reg" kind="group">
+    <compoundname>st25r3911b_collision_disp_reg</compoundname>
+    <title>Collision Display</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__collision__disp__reg_1ga4ded76d1fdcaa67eab820762c5a6e3d6" prot="public" static="no">
+        <name>ST25R3911B_REG_COLLISION_DISP_C_PB</name>
+        <initializer>BIT(0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="403" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="403" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__collision__disp__reg_1ga821107935d546ee8c202db5f827af799" prot="public" static="no">
+        <name>ST25R3911B_REG_COLLISION_DISP_C_BIT0</name>
+        <initializer>BIT(1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="404" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="404" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__collision__disp__reg_1gaaf6f414cf4c62bacdb067dc894cb1b6a" prot="public" static="no">
+        <name>ST25R3911B_REG_COLLISION_DISP_C_BIT1</name>
+        <initializer>BIT(2)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="405" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="405" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__collision__disp__reg_1ga55a337c22935957a99244968b80c5d4e" prot="public" static="no">
+        <name>ST25R3911B_REG_COLLISION_DISP_C_BIT2</name>
+        <initializer>BIT(3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="406" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="406" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__collision__disp__reg_1gaa34031ba8a738d97b22bc69b13682bed" prot="public" static="no">
+        <name>ST25R3911B_REG_COLLISION_DISP_C_BYTE0</name>
+        <initializer>BIT(4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="407" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="407" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__collision__disp__reg_1gaa8053471060729363e88dbc406735efb" prot="public" static="no">
+        <name>ST25R3911B_REG_COLLISION_DISP_C_BYTE1</name>
+        <initializer>BIT(5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="408" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="408" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__collision__disp__reg_1ga701714f2e51db8bab0a0657c0a550d23" prot="public" static="no">
+        <name>ST25R3911B_REG_COLLISION_DISP_C_BYTE2</name>
+        <initializer>BIT(6)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="409" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="409" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__collision__disp__reg_1gaa4e4dd64bd5a07fdaaca933e82651d4a" prot="public" static="no">
+        <name>ST25R3911B_REG_COLLISION_DISP_C_BYTE3</name>
+        <initializer>BIT(7)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="410" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="410" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__collision__disp__reg_1ga676f5e348afacfc8cc0a138c4302b89a" prot="public" static="no">
+        <name>ST25R3911B_REG_COLLISION_DISP_C_BIT_MASK</name>
+        <initializer>(0x0D)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="412" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="412" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__collision__disp__reg_1gae99bda3e3f599e8b546c8ff5974ba38d" prot="public" static="no">
+        <name>ST25R3911B_REG_COLLISION_DISP_C_BYTE_MASK</name>
+        <initializer>(0xF0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="413" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="413" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Register bits </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

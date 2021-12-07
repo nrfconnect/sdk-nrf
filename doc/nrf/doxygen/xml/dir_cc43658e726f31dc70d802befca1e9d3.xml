@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_cc43658e726f31dc70d802befca1e9d3" kind="dir">
+    <compoundname>applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot</compoundname>
+    <innerfile refid="json__protocol__names__aws__iot_8h">json_protocol_names_aws_iot.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/aws_iot/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structhid__keymap" kind="struct" language="C++" prot="public">
+    <compoundname>hid_keymap</compoundname>
+    <includes refid="hid__keymap_8h" local="no">hid_keymap.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structhid__keymap_a9401ea8f3ed30c6784bd66ef73ccef30_1a9401ea8f3ed30c6784bd66ef73ccef30" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t hid_keymap::key_id</definition>
+        <argsstring></argsstring>
+        <name>key_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Key HW id. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_keymap.h" line="22" column="10" bodyfile="applications/nrf_desktop/configuration/common/hid_keymap.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structhid__keymap_a0897e0049cb931ba8f837663dfe5d0bf_1a0897e0049cb931ba8f837663dfe5d0bf" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t hid_keymap::usage_id</definition>
+        <argsstring></argsstring>
+        <name>usage_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Assigned usage. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_keymap.h" line="23" column="10" bodyfile="applications/nrf_desktop/configuration/common/hid_keymap.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structhid__keymap_a87644f09d69877c2a01e06cc88bb3518_1a87644f09d69877c2a01e06cc88bb3518" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t hid_keymap::report_id</definition>
+        <argsstring></argsstring>
+        <name>report_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Id of the target report. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_keymap.h" line="24" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_keymap.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>HID map entry. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/nrf_desktop/configuration/common/hid_keymap.h" line="21" column="1" bodyfile="applications/nrf_desktop/configuration/common/hid_keymap.h" bodystart="21" bodyend="25"/>
+    <listofallmembers>
+      <member refid="structhid__keymap_a9401ea8f3ed30c6784bd66ef73ccef30_1a9401ea8f3ed30c6784bd66ef73ccef30" prot="public" virt="non-virtual"><scope>hid_keymap</scope><name>key_id</name></member>
+      <member refid="structhid__keymap_a87644f09d69877c2a01e06cc88bb3518_1a87644f09d69877c2a01e06cc88bb3518" prot="public" virt="non-virtual"><scope>hid_keymap</scope><name>report_id</name></member>
+      <member refid="structhid__keymap_a0897e0049cb931ba8f837663dfe5d0bf_1a0897e0049cb931ba8f837663dfe5d0bf" prot="public" virt="non-virtual"><scope>hid_keymap</scope><name>usage_id</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

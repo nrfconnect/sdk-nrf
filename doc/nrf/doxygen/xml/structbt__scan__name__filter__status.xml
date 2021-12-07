@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__scan__name__filter__status" kind="struct" language="C++" prot="public">
+    <compoundname>bt_scan_name_filter_status</compoundname>
+    <includes refid="scan_8h" local="no">scan.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__scan__name__filter__status_a775ce792e358c1186106a6c8b600ddc3_1a775ce792e358c1186106a6c8b600ddc3" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool bt_scan_name_filter_status::match</definition>
+        <argsstring></argsstring>
+        <name>match</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set to true if this type of filter is matched. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="193" column="6" bodyfile="include/bluetooth/scan.h" bodystart="193" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__scan__name__filter__status_ab6ffc732c781e64154db285dbe56f7db_1ab6ffc732c781e64154db285dbe56f7db" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* bt_scan_name_filter_status::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the matched filter name. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="196" column="12" bodyfile="include/bluetooth/scan.h" bodystart="196" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__scan__name__filter__status_a55b1111033614f680af5ef92ac12416f_1a55b1111033614f680af5ef92ac12416f" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_scan_name_filter_status::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of the matched name. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="199" column="9" bodyfile="include/bluetooth/scan.h" bodystart="199" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Name filter status structure, used to inform the application which name filter is matched. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/scan.h" line="191" column="1" bodyfile="include/bluetooth/scan.h" bodystart="191" bodyend="200"/>
+    <listofallmembers>
+      <member refid="structbt__scan__name__filter__status_a55b1111033614f680af5ef92ac12416f_1a55b1111033614f680af5ef92ac12416f" prot="public" virt="non-virtual"><scope>bt_scan_name_filter_status</scope><name>len</name></member>
+      <member refid="structbt__scan__name__filter__status_a775ce792e358c1186106a6c8b600ddc3_1a775ce792e358c1186106a6c8b600ddc3" prot="public" virt="non-virtual"><scope>bt_scan_name_filter_status</scope><name>match</name></member>
+      <member refid="structbt__scan__name__filter__status_ab6ffc732c781e64154db285dbe56f7db_1ab6ffc732c781e64154db285dbe56f7db" prot="public" virt="non-virtual"><scope>bt_scan_name_filter_status</scope><name>name</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__nfc__reg" kind="group">
+    <compoundname>st25r3911b_nfc_reg</compoundname>
+    <title>ST25R3911B NFC Reader Registers and Commands</title>
+    <innergroup refid="group__st25r3911b__am__mod__depth__ctrl__reg">AM Modulation</innergroup>
+    <innergroup refid="group__st25r3911b__amp__measure__conf__reg">Amplitude Measurement</innergroup>
+    <innergroup refid="group__st25r3911b__antenna__cal__display__reg">Antenna Calibration</innergroup>
+    <innergroup refid="group__st25r3911b__antenna__cal__ctrl__reg">Antenna Calibration</innergroup>
+    <innergroup refid="group__st25r3911b__auxiliary__disp__reg">Auxiliary Display</innergroup>
+    <innergroup refid="group__st25r3911b__auxiliary__reg">Auxiliary Register bits</innergroup>
+    <innergroup refid="group__st25r3911b__bit__rate__reg">Bit Rate Definition</innergroup>
+    <innergroup refid="group__st25r3911b__conf__cm__reg">Capacitance Measurement</innergroup>
+    <innergroup refid="group__st25r3911b__cap__sensor__disp__reg">Capacitive Sensor</innergroup>
+    <innergroup refid="group__st25r3911b__cap__sensor__ctrl__reg">Capacitive Sensor</innergroup>
+    <innergroup refid="group__st25r3911b__collision__disp__reg">Collision Display</innergroup>
+    <innergroup refid="group__st25r3911b__io__conf2__reg">Configuration</innergroup>
+    <innergroup refid="group__st25r3911b__direct__command">Direct command</innergroup>
+    <innergroup refid="group__st25r3911b__field__threshold__reg">External Field</innergroup>
+    <innergroup refid="group__st25r3911b__fifo__status__2__reg">FIFO Status</innergroup>
+    <innergroup refid="group__st25r3911b__gain__reduction__state__reg">Gain Reduction</innergroup>
+    <innergroup refid="group__st25r3911b__tim__ctrl__reg">General Purpose and</innergroup>
+    <innergroup refid="group__st25r3911b__ic__identity__reg">IC Identity</innergroup>
+    <innergroup refid="group__st25r3911b__io__conf1__reg">IO Configuration</innergroup>
+    <innergroup refid="group__st25r3911b__iso14443a__reg">ISO14443A and NFC</innergroup>
+    <innergroup refid="group__st25r3911b__iso14443b__2__reg">ISO14443B and FeliCa</innergroup>
+    <innergroup refid="group__st25r3911b__iso14443b__1__reg">ISO14443B settings</innergroup>
+    <innergroup refid="group__st25r3911b__mode__def__reg">Mode Definition</innergroup>
+    <innergroup refid="group__st25r3911b__nfcip__bit__rate__reg">NFCIP Bit Rate</innergroup>
+    <innergroup refid="group__st25r3911b__num__tx__bytes__reg">Number of Transmitted</innergroup>
+    <innergroup refid="group__st25r3911b__op__ctrl__reg">Operation Control</innergroup>
+    <innergroup refid="group__st25r3911b__conf__pm__reg">Phase Measurement</innergroup>
+    <innergroup refid="group__st25r3911b__rfo__am__lvl__reg">RFO AM Modulated Level</innergroup>
+    <innergroup refid="group__st25r3911b__rssi__disp__reg">RSSI Display Register bits</innergroup>
+    <innergroup refid="group__st25r3911b__rx__conf4__reg">Receiver Configuration</innergroup>
+    <innergroup refid="group__st25r3911b__rx__conf3__reg">Receiver Configuration</innergroup>
+    <innergroup refid="group__st25r3911b__rx__conf2__reg">Receiver Configuration</innergroup>
+    <innergroup refid="group__st25r3911b__rx__conf1__reg">Receiver Configuration</innergroup>
+    <innergroup refid="group__st25r3911b__reg">Registers</innergroup>
+    <innergroup refid="group__st25r3911b__regulator__ctrl__reg">Regulator Voltage</innergroup>
+    <innergroup refid="group__st25r3911b__regulator__tim__displ__reg">Regulator and</innergroup>
+    <innergroup refid="group__st25r3911b__stream__mode__reg">Stream Mode Definition</innergroup>
+    <innergroup refid="group__st25r3911b__wake__up__tim__reg">Wake-Up Timer Control</innergroup>
+    <briefdescription>
+<para>Registers and commands for the ST25R3911B NFC Reader. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

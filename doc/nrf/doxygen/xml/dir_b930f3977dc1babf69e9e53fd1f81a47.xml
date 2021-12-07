@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_b930f3977dc1babf69e9e53fd1f81a47" kind="dir">
+    <compoundname>applications/machine_learning</compoundname>
+    <innerdir refid="dir_16c68876f76b1b179e6894b0c48d2a6a">applications/machine_learning/configuration</innerdir>
+    <innerdir refid="dir_c435947a31ae2653770630967fdef1d8">applications/machine_learning/src</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/machine_learning/"/>
+  </compounddef>
+</doxygen>

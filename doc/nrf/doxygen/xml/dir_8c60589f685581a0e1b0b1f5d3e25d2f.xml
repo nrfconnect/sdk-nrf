@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_8c60589f685581a0e1b0b1f5d3e25d2f" kind="dir">
+    <compoundname>include/bluetooth/mesh</compoundname>
+    <innerdir refid="dir_28243bc92824adaeca54109843205ec3">include/bluetooth/mesh/vnd</innerdir>
+    <innerfile refid="dk__prov_8h">dk_prov.h</innerfile>
+    <innerfile refid="gen__battery_8h">gen_battery.h</innerfile>
+    <innerfile refid="gen__battery__cli_8h">gen_battery_cli.h</innerfile>
+    <innerfile refid="gen__battery__srv_8h">gen_battery_srv.h</innerfile>
+    <innerfile refid="gen__dtt_8h">gen_dtt.h</innerfile>
+    <innerfile refid="gen__dtt__cli_8h">gen_dtt_cli.h</innerfile>
+    <innerfile refid="gen__dtt__srv_8h">gen_dtt_srv.h</innerfile>
+    <innerfile refid="gen__loc_8h">gen_loc.h</innerfile>
+    <innerfile refid="gen__loc__cli_8h">gen_loc_cli.h</innerfile>
+    <innerfile refid="gen__loc__srv_8h">gen_loc_srv.h</innerfile>
+    <innerfile refid="gen__lvl_8h">gen_lvl.h</innerfile>
+    <innerfile refid="gen__lvl__cli_8h">gen_lvl_cli.h</innerfile>
+    <innerfile refid="gen__lvl__srv_8h">gen_lvl_srv.h</innerfile>
+    <innerfile refid="gen__onoff_8h">gen_onoff.h</innerfile>
+    <innerfile refid="gen__onoff__cli_8h">gen_onoff_cli.h</innerfile>
+    <innerfile refid="gen__onoff__srv_8h">gen_onoff_srv.h</innerfile>
+    <innerfile refid="gen__plvl_8h">gen_plvl.h</innerfile>
+    <innerfile refid="gen__plvl__cli_8h">gen_plvl_cli.h</innerfile>
+    <innerfile refid="gen__plvl__srv_8h">gen_plvl_srv.h</innerfile>
+    <innerfile refid="gen__ponoff_8h">gen_ponoff.h</innerfile>
+    <innerfile refid="gen__ponoff__cli_8h">gen_ponoff_cli.h</innerfile>
+    <innerfile refid="gen__ponoff__srv_8h">gen_ponoff_srv.h</innerfile>
+    <innerfile refid="gen__prop_8h">gen_prop.h</innerfile>
+    <innerfile refid="gen__prop__cli_8h">gen_prop_cli.h</innerfile>
+    <innerfile refid="gen__prop__srv_8h">gen_prop_srv.h</innerfile>
+    <innerfile refid="light__ctl_8h">light_ctl.h</innerfile>
+    <innerfile refid="light__ctl__cli_8h">light_ctl_cli.h</innerfile>
+    <innerfile refid="light__ctl__srv_8h">light_ctl_srv.h</innerfile>
+    <innerfile refid="light__ctrl_8h">light_ctrl.h</innerfile>
+    <innerfile refid="light__ctrl__cli_8h">light_ctrl_cli.h</innerfile>
+    <innerfile refid="light__ctrl__srv_8h">light_ctrl_srv.h</innerfile>
+    <innerfile refid="light__hsl_8h">light_hsl.h</innerfile>
+    <innerfile refid="light__hsl__cli_8h">light_hsl_cli.h</innerfile>
+    <innerfile refid="light__hsl__srv_8h">light_hsl_srv.h</innerfile>
+    <innerfile refid="light__hue__srv_8h">light_hue_srv.h</innerfile>
+    <innerfile refid="light__sat__srv_8h">light_sat_srv.h</innerfile>
+    <innerfile refid="light__temp__srv_8h">light_temp_srv.h</innerfile>
+    <innerfile refid="light__xyl_8h">light_xyl.h</innerfile>
+    <innerfile refid="light__xyl__cli_8h">light_xyl_cli.h</innerfile>
+    <innerfile refid="light__xyl__srv_8h">light_xyl_srv.h</innerfile>
+    <innerfile refid="lightness_8h">lightness.h</innerfile>
+    <innerfile refid="lightness__cli_8h">lightness_cli.h</innerfile>
+    <innerfile refid="lightness__srv_8h">lightness_srv.h</innerfile>
+    <innerfile refid="model__types_8h">model_types.h</innerfile>
+    <innerfile refid="models_8h">models.h</innerfile>
+    <innerfile refid="properties_8h">properties.h</innerfile>
+    <innerfile refid="scene_8h">scene.h</innerfile>
+    <innerfile refid="scene__cli_8h">scene_cli.h</innerfile>
+    <innerfile refid="scene__srv_8h">scene_srv.h</innerfile>
+    <innerfile refid="scheduler_8h">scheduler.h</innerfile>
+    <innerfile refid="scheduler__cli_8h">scheduler_cli.h</innerfile>
+    <innerfile refid="scheduler__srv_8h">scheduler_srv.h</innerfile>
+    <innerfile refid="sensor_8h">sensor.h</innerfile>
+    <innerfile refid="sensor__cli_8h">sensor_cli.h</innerfile>
+    <innerfile refid="sensor__srv_8h">sensor_srv.h</innerfile>
+    <innerfile refid="sensor__types_8h">sensor_types.h</innerfile>
+    <innerfile refid="time_8h">time.h</innerfile>
+    <innerfile refid="time__cli_8h">time_cli.h</innerfile>
+    <innerfile refid="time__srv_8h">time_srv.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/"/>
+  </compounddef>
+</doxygen>

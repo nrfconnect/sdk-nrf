@@ -1,0 +1,267 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__ndef__le__oob__rec" kind="group">
+    <compoundname>nfc_ndef_le_oob_rec</compoundname>
+    <title>LE OOB records</title>
+    <innerclass refid="structnfc__ndef__le__oob__rec__payload__desc" prot="public">nfc_ndef_le_oob_rec_payload_desc</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nfc__ndef__le__oob__rec_1ga2c8fcaa52e37a325c318c24029e49f08" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nfc_ndef_le_oob_rec_le_role</name>
+        <enumvalue id="group__nfc__ndef__le__oob__rec_ga2c8fcaa52e37a325c318c24029e49f08_1gga2c8fcaa52e37a325c318c24029e49f08a3c94ccf11d59c166f9a198f611d00346" prot="public">
+          <name>NFC_NDEF_LE_OOB_REC_LE_ROLE_PERIPH_ONLY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Only Peripheral role supported. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__ndef__le__oob__rec_ga2c8fcaa52e37a325c318c24029e49f08_1gga2c8fcaa52e37a325c318c24029e49f08a8912092c9c4b8b29980a4ee856b7312a" prot="public">
+          <name>NFC_NDEF_LE_OOB_REC_LE_ROLE_CENTRAL_ONLY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Only Central role supported. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__ndef__le__oob__rec_ga2c8fcaa52e37a325c318c24029e49f08_1gga2c8fcaa52e37a325c318c24029e49f08a02cf01303a565b3fbb58da83312b7040" prot="public">
+          <name>NFC_NDEF_LE_OOB_REC_LE_ROLE_PERIPH_PREFFERED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Peripheral and Central roles supported. Peripheral role preferred for connection establishment. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__ndef__le__oob__rec_ga2c8fcaa52e37a325c318c24029e49f08_1gga2c8fcaa52e37a325c318c24029e49f08a3ee9f20518b2779270dbec025aa657be" prot="public">
+          <name>NFC_NDEF_LE_OOB_REC_LE_ROLE_CENTRAL_PREFFERED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Peripheral and Central roles supported. Central role preferred for connection establishment. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__ndef__le__oob__rec_ga2c8fcaa52e37a325c318c24029e49f08_1gga2c8fcaa52e37a325c318c24029e49f08a7ed2ca7a706a0a2c6f75229a0f561d1a" prot="public">
+          <name>NFC_NDEF_LE_OOB_REC_LE_ROLE_OPTIONS_NUM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Total number of options. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>LE role options. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/le_oob_rec.h" line="35" column="1" bodyfile="include/nfc/ndef/le_oob_rec.h" bodystart="35" bodyend="52"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__ndef__le__oob__rec_1ga7dcfea3c0cbcfa77a72ac4e32ec0de7d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_le_oob_rec_payload_constructor</definition>
+        <argsstring>(const struct nfc_ndef_le_oob_rec_payload_desc *payload_desc, uint8_t *buff, uint32_t *len)</argsstring>
+        <name>nfc_ndef_le_oob_rec_payload_constructor</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__le__oob__rec__payload__desc" kindref="compound">nfc_ndef_le_oob_rec_payload_desc</ref> *</type>
+          <declname>payload_desc</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buff</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Construct the payload for a Bluetooth Carrier Configuration LE Record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function encodes the record payload according to the payload descriptor. It implements an API compatible with <computeroutput>payload_constructor_t</computeroutput>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>payload_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the description of the payload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buff</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to payload destination. If NULL, function will calculate the expected size of the record payload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of available memory to write as input. Size of generated payload as output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the payload was encoded successfully. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If parameters in the payload descriptor are invalid or missing. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the predicted payload size is bigger than the provided buffer space. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/le_oob_rec.h" line="105" column="5" declfile="include/nfc/ndef/le_oob_rec.h" declline="105" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__ndef__le__oob__rec_1gaa59ad4e9b07f1c36055e19856ddae1c2" prot="public" static="no">
+        <name>NFC_NDEF_LE_OOB_REC_TK_LEN</name>
+        <initializer>16</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Temporary Key length. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/le_oob_rec.h" line="30" column="9" bodyfile="include/nfc/ndef/le_oob_rec.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__le__oob__rec_1ga66110872224927d2a56f6a5cc058a8c1" prot="public" static="no">
+        <name>NFC_NDEF_LE_OOB_REC_APPEARANCE</name>
+        <param><defname>value</defname></param>
+        <initializer>((uint16_t []) {value})</initializer>
+        <briefdescription>
+<para>Macro for including Appearance BLE AD Type to the <ref refid="structnfc__ndef__le__oob__rec__payload__desc" kindref="compound">nfc_ndef_le_oob_rec_payload_desc</ref> descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/le_oob_rec.h" line="58" column="9" bodyfile="include/nfc/ndef/le_oob_rec.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__le__oob__rec_1ga16607db94e290ec5ebd1a619f562ea74" prot="public" static="no">
+        <name>NFC_NDEF_LE_OOB_REC_FLAGS</name>
+        <param><defname>value</defname></param>
+        <initializer>((uint8_t []) {value})</initializer>
+        <briefdescription>
+<para>Macro for including Flags BLE AD Type to the <ref refid="structnfc__ndef__le__oob__rec__payload__desc" kindref="compound">nfc_ndef_le_oob_rec_payload_desc</ref> descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/le_oob_rec.h" line="64" column="9" bodyfile="include/nfc/ndef/le_oob_rec.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__le__oob__rec_1ga08972038c2d44060ab531c12ba3ef8ae" prot="public" static="no">
+        <name>NFC_NDEF_LE_OOB_REC_LE_ROLE</name>
+        <param><defname>value</defname></param>
+        <initializer>	((enum <ref refid="group__nfc__ndef__le__oob__rec_ga2c8fcaa52e37a325c318c24029e49f08_1ga2c8fcaa52e37a325c318c24029e49f08" kindref="member">nfc_ndef_le_oob_rec_le_role</ref> []) {value})</initializer>
+        <briefdescription>
+<para>Macro for including LE Role BLE AD Type to the <ref refid="structnfc__ndef__le__oob__rec__payload__desc" kindref="compound">nfc_ndef_le_oob_rec_payload_desc</ref> descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/le_oob_rec.h" line="70" column="9" bodyfile="include/nfc/ndef/le_oob_rec.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__le__oob__rec_1gaa52ebdeadb6a36dc7bb52c0aa2617dc6" prot="public" static="no">
+        <name>NFC_NDEF_LE_OOB_RECORD_DESC_DEF</name>
+        <param><defname>name</defname></param>
+        <param><defname>payload_id</defname></param>
+        <param><defname>payload_desc</defname></param>
+        <initializer>	const uint8_t name##_nfc_ndef_le_oob_rec_id     = (payload_id); \
+	const uint8_t name##_nfc_ndef_le_oob_rec_id_len =		     \
+				((payload_id) != 0) ? 1 : 0;	     \
+	<ref refid="group__nfc__ndef__record_ga981ac373f5af603b36c7ab2c488785a6_1ga981ac373f5af603b36c7ab2c488785a6" kindref="member">NFC_NDEF_GENERIC_RECORD_DESC_DEF</ref>(name,                       \
+		<ref refid="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1gga2091295307fa8161219648a88df172a8a9d676957a80c77376f83d75a0bf65c9a" kindref="member">TNF_MEDIA_TYPE</ref>,					     \
+		&amp;name##_nfc_ndef_le_oob_rec_id,			     \
+		name##_nfc_ndef_le_oob_rec_id_len,		     \
+		(<ref refid="group__nfc__ndef__payload__type__common_ga6c2146c462cf9d1b3870787526f9e5f2_1ga6c2146c462cf9d1b3870787526f9e5f2" kindref="member">nfc_ndef_le_oob_rec_type_field</ref>),		     \
+		sizeof(<ref refid="group__nfc__ndef__payload__type__common_ga6c2146c462cf9d1b3870787526f9e5f2_1ga6c2146c462cf9d1b3870787526f9e5f2" kindref="member">nfc_ndef_le_oob_rec_type_field</ref>),		     \
+		<ref refid="group__nfc__ndef__le__oob__rec_ga7dcfea3c0cbcfa77a72ac4e32ec0de7d_1ga7dcfea3c0cbcfa77a72ac4e32ec0de7d" kindref="member">nfc_ndef_le_oob_rec_payload_constructor</ref>,	     \
+		(payload_desc))</initializer>
+        <briefdescription>
+<para>Generate a description of an NFC NDEF Bluetooth Carrier Configuration LE Record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro declares and initializes an instance of an NFC NDEF record description for a Bluetooth Carrier Configuration LE record.</para>
+<para><simplesect kind="note"><para>The record descriptor is declared as automatic variable, which implies that the NDEF message encoding must be done in the same variable scope.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name for accessing the record descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>payload_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>NDEF record header Payload ID field (limited to one byte). If 0, no ID is present in the record description. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>payload_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the description of the payload. This data is used to create the record payload. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/le_oob_rec.h" line="126" column="9" bodyfile="include/nfc/ndef/le_oob_rec.h" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__le__oob__rec_1ga3f6e0795e85365f24aa6601fc413521e" prot="public" static="no">
+        <name>NFC_NDEF_LE_OOB_RECORD_DESC</name>
+        <param><defname>NAME</defname></param>
+        <initializer><ref refid="group__nfc__ndef__record_ga854ffeb62045f58c823adedf3f0ed615_1ga854ffeb62045f58c823adedf3f0ed615" kindref="member">NFC_NDEF_GENERIC_RECORD_DESC</ref>(NAME)</initializer>
+        <briefdescription>
+<para>Macro for accessing the NFC NDEF Bluetooth Carrier Configuration LE record descriptor instance that was created with <ref refid="group__nfc__ndef__le__oob__rec_gaa52ebdeadb6a36dc7bb52c0aa2617dc6_1gaa52ebdeadb6a36dc7bb52c0aa2617dc6" kindref="member">NFC_NDEF_LE_OOB_RECORD_DESC_DEF</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/le_oob_rec.h" line="144" column="9" bodyfile="include/nfc/ndef/le_oob_rec.h" bodystart="144" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Generation of NFC NDEF LE OOB records for NDEF messages. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

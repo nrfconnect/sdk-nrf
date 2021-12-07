@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__net__state__event" kind="group">
+    <compoundname>net_state_event</compoundname>
+    <title>NET State Event</title>
+    <innerclass refid="structnet__state__event" prot="public">net_state_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__net__state__event_1gaa0aa10c73d9714b3e1d58b031397b8d7" prot="public" static="no" strong="no">
+        <type></type>
+        <name>net_state</name>
+        <enumvalue id="group__net__state__event_gaa0aa10c73d9714b3e1d58b031397b8d7_1ggaa0aa10c73d9714b3e1d58b031397b8d7ac4713503d6393077250487c7ca8a8243" prot="public">
+          <name>NET_STATE_DISABLED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__net__state__event_gaa0aa10c73d9714b3e1d58b031397b8d7_1ggaa0aa10c73d9714b3e1d58b031397b8d7ac26483c50da200706d4b92e9ad5c7c72" prot="public">
+          <name>NET_STATE_DISCONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__net__state__event_gaa0aa10c73d9714b3e1d58b031397b8d7_1ggaa0aa10c73d9714b3e1d58b031397b8d7a917ad983c79e58a2ed2dd698882fc0d6" prot="public">
+          <name>NET_STATE_CONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__net__state__event_gaa0aa10c73d9714b3e1d58b031397b8d7_1ggaa0aa10c73d9714b3e1d58b031397b8d7a7b299405ebd62d30cea7091b4078a050" prot="public">
+          <name>NET_STATE_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Net states. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/net_state_event.h" line="25" column="1" bodyfile="include/caf/events/net_state_event.h" bodystart="25" bodyend="31"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>NET State Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

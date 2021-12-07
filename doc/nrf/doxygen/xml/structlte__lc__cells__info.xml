@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlte__lc__cells__info" kind="struct" language="C++" prot="public">
+    <compoundname>lte_lc_cells_info</compoundname>
+    <includes refid="lte__lc_8h" local="no">lte_lc.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlte__lc__cells__info_a177caa8ea5c8d90610c8f3839a565d10_1a177caa8ea5c8d90610c8f3839a565d10" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__lc__cell" kindref="compound">lte_lc_cell</ref></type>
+        <definition>struct lte_lc_cell lte_lc_cells_info::current_cell</definition>
+        <argsstring></argsstring>
+        <name>current_cell</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="385" column="18" bodyfile="include/modem/lte_lc.h" bodystart="385" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__cells__info_a1e67f3b6724731a42fe63b806baf7ef8_1a1e67f3b6724731a42fe63b806baf7ef8" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t lte_lc_cells_info::ncells_count</definition>
+        <argsstring></argsstring>
+        <name>ncells_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="386" column="9" bodyfile="include/modem/lte_lc.h" bodystart="386" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__cells__info_a4c8141485c93948f3e22e91899aeb963_1a4c8141485c93948f3e22e91899aeb963" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__lc__ncell" kindref="compound">lte_lc_ncell</ref> *</type>
+        <definition>struct lte_lc_ncell* lte_lc_cells_info::neighbor_cells</definition>
+        <argsstring></argsstring>
+        <name>neighbor_cells</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="387" column="19" bodyfile="include/modem/lte_lc.h" bodystart="387" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Structure containing results of neighbor cell measurements. The current cell information is valid if the current cell ID is not set to LTE_LC_CELL_EUTRAN_ID_INVALID. The ncells_count member indicates whether or not the structure contains valid neighbor cell information. If it is zero, no cells were found, and the information in the rest of structure members do not contain valid data. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>lte_lc_cell</label>
+        <link refid="structlte__lc__cell"/>
+      </node>
+      <node id="1">
+        <label>lte_lc_cells_info</label>
+        <link refid="structlte__lc__cells__info"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>current_cell</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>neighbor_cells</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>lte_lc_ncell</label>
+        <link refid="structlte__lc__ncell"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/modem/lte_lc.h" line="384" column="1" bodyfile="include/modem/lte_lc.h" bodystart="384" bodyend="388"/>
+    <listofallmembers>
+      <member refid="structlte__lc__cells__info_a177caa8ea5c8d90610c8f3839a565d10_1a177caa8ea5c8d90610c8f3839a565d10" prot="public" virt="non-virtual"><scope>lte_lc_cells_info</scope><name>current_cell</name></member>
+      <member refid="structlte__lc__cells__info_a1e67f3b6724731a42fe63b806baf7ef8_1a1e67f3b6724731a42fe63b806baf7ef8" prot="public" virt="non-virtual"><scope>lte_lc_cells_info</scope><name>ncells_count</name></member>
+      <member refid="structlte__lc__cells__info_a4c8141485c93948f3e22e91899aeb963_1a4c8141485c93948f3e22e91899aeb963" prot="public" virt="non-virtual"><scope>lte_lc_cells_info</scope><name>neighbor_cells</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

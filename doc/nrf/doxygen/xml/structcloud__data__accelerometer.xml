@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structcloud__data__accelerometer" kind="struct" language="C++" prot="public">
+    <compoundname>cloud_data_accelerometer</compoundname>
+    <includes refid="v2_2src_2cloud_2cloud__codec_2cloud__codec_8h" local="no">cloud_codec.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structcloud__data__accelerometer_a2547a890b2fe729da916c706c0854bab_1a2547a890b2fe729da916c706c0854bab" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t cloud_data_accelerometer::ts</definition>
+        <argsstring></argsstring>
+        <name>ts</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Accelerometer readings timestamp. UNIX milliseconds. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="116" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__accelerometer_a13705492cd5252124451b89d6ec09910_1a13705492cd5252124451b89d6ec09910" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double cloud_data_accelerometer::values[3]</definition>
+        <argsstring>[3]</argsstring>
+        <name>values</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Accelerometer readings. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="118" column="8" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__accelerometer_a9c91f64fbe50602ad2641923143c9efa_1a9c91f64fbe50602ad2641923143c9efa" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool cloud_data_accelerometer::queued</definition>
+        <argsstring></argsstring>
+        <name>queued</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Flag signifying that the data entry is to be published. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="120" column="6" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="114" column="1" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="114" bodyend="121"/>
+    <listofallmembers>
+      <member refid="structcloud__data__accelerometer_a9c91f64fbe50602ad2641923143c9efa_1a9c91f64fbe50602ad2641923143c9efa" prot="public" virt="non-virtual"><scope>cloud_data_accelerometer</scope><name>queued</name></member>
+      <member refid="structcloud__data__accelerometer_a2547a890b2fe729da916c706c0854bab_1a2547a890b2fe729da916c706c0854bab" prot="public" virt="non-virtual"><scope>cloud_data_accelerometer</scope><name>ts</name></member>
+      <member refid="structcloud__data__accelerometer_a13705492cd5252124451b89d6ec09910_1a13705492cd5252124451b89d6ec09910" prot="public" virt="non-virtual"><scope>cloud_data_accelerometer</scope><name>values</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

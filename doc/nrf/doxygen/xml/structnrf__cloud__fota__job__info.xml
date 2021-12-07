@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnrf__cloud__fota__job__info" kind="struct" language="C++" prot="public">
+    <compoundname>nrf_cloud_fota_job_info</compoundname>
+    <includes refid="nrf__cloud_8h" local="no">nrf_cloud.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnrf__cloud__fota__job__info_ab68dc550c9457e423c30492bba29aba9_1ab68dc550c9457e423c30492bba29aba9" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1ga6b3a7153a10a31b72dbb6c0ba5c12c32" kindref="member">nrf_cloud_fota_type</ref></type>
+        <definition>enum nrf_cloud_fota_type nrf_cloud_fota_job_info::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="205" column="25" bodyfile="include/net/nrf_cloud.h" bodystart="205" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__fota__job__info_a07d51bba8c3769437e9171c01f768592_1a07d51bba8c3769437e9171c01f768592" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* nrf_cloud_fota_job_info::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Null-terminated FOTA job identifier </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="207" column="6" bodyfile="include/net/nrf_cloud.h" bodystart="207" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__fota__job__info_a28eab106e78b73fc684f2c5a503feb63_1a28eab106e78b73fc684f2c5a503feb63" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* nrf_cloud_fota_job_info::host</definition>
+        <argsstring></argsstring>
+        <name>host</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="208" column="6" bodyfile="include/net/nrf_cloud.h" bodystart="208" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__fota__job__info_a266d411a86b0550c96f5d13899508b99_1a266d411a86b0550c96f5d13899508b99" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* nrf_cloud_fota_job_info::path</definition>
+        <argsstring></argsstring>
+        <name>path</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="209" column="6" bodyfile="include/net/nrf_cloud.h" bodystart="209" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__fota__job__info_a30e3089159c3931642c4f5b8ca413134_1a30e3089159c3931642c4f5b8ca413134" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int nrf_cloud_fota_job_info::file_size</definition>
+        <argsstring></argsstring>
+        <name>file_size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="210" column="5" bodyfile="include/net/nrf_cloud.h" bodystart="210" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Common FOTA job info. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/nrf_cloud.h" line="204" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="204" bodyend="211"/>
+    <listofallmembers>
+      <member refid="structnrf__cloud__fota__job__info_a30e3089159c3931642c4f5b8ca413134_1a30e3089159c3931642c4f5b8ca413134" prot="public" virt="non-virtual"><scope>nrf_cloud_fota_job_info</scope><name>file_size</name></member>
+      <member refid="structnrf__cloud__fota__job__info_a28eab106e78b73fc684f2c5a503feb63_1a28eab106e78b73fc684f2c5a503feb63" prot="public" virt="non-virtual"><scope>nrf_cloud_fota_job_info</scope><name>host</name></member>
+      <member refid="structnrf__cloud__fota__job__info_a07d51bba8c3769437e9171c01f768592_1a07d51bba8c3769437e9171c01f768592" prot="public" virt="non-virtual"><scope>nrf_cloud_fota_job_info</scope><name>id</name></member>
+      <member refid="structnrf__cloud__fota__job__info_a266d411a86b0550c96f5d13899508b99_1a266d411a86b0550c96f5d13899508b99" prot="public" virt="non-virtual"><scope>nrf_cloud_fota_job_info</scope><name>path</name></member>
+      <member refid="structnrf__cloud__fota__job__info_ab68dc550c9457e423c30492bba29aba9_1ab68dc550c9457e423c30492bba29aba9" prot="public" virt="non-virtual"><scope>nrf_cloud_fota_job_info</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

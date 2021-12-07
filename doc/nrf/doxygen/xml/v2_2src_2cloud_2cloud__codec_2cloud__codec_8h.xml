@@ -1,0 +1,843 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="v2_2src_2cloud_2cloud__codec_2cloud__codec_8h" kind="file" language="C++">
+    <compoundname>cloud_codec.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <includes local="no">stdbool.h</includes>
+    <includes local="no">stdint.h</includes>
+    <includes local="no">stdio.h</includes>
+    <includes local="no">stdlib.h</includes>
+    <includes local="no">cJSON_os.h</includes>
+    <includes local="no">net/net_ip.h</includes>
+    <includes refid="lte__lc_8h" local="no">modem/lte_lc.h</includes>
+    <includes local="no">nrf_modem_gnss.h</includes>
+    <includedby refid="json__common_8h" local="yes">applications/asset_tracker_v2/src/cloud/cloud_codec/json_common.h</includedby>
+    <includedby refid="cloud__module__event_8h" local="yes">applications/asset_tracker_v2/src/events/cloud_module_event.h</includedby>
+    <includedby refid="data__module__event_8h" local="yes">applications/asset_tracker_v2/src/events/data_module_event.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h</label>
+        <link refid="v2_2src_2cloud_2cloud__codec_2cloud__codec_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>modem/lte_lc.h</label>
+        <link refid="lte__lc_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>cJSON_os.h</label>
+      </node>
+      <node id="8">
+        <label>net/net_ip.h</label>
+      </node>
+      <node id="10">
+        <label>nrf_modem_gnss.h</label>
+      </node>
+      <node id="3">
+        <label>stdbool.h</label>
+      </node>
+      <node id="4">
+        <label>stdint.h</label>
+      </node>
+      <node id="5">
+        <label>stdio.h</label>
+      </node>
+      <node id="6">
+        <label>stdlib.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h</label>
+        <link refid="v2_2src_2cloud_2cloud__codec_2cloud__codec_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>applications/asset_tracker_v2/src/cloud/cloud_codec/json_common.h</label>
+        <link refid="json__common_8h"/>
+      </node>
+      <node id="3">
+        <label>applications/asset_tracker_v2/src/events/cloud_module_event.h</label>
+        <link refid="cloud__module__event_8h"/>
+      </node>
+      <node id="4">
+        <label>applications/asset_tracker_v2/src/events/data_module_event.h</label>
+        <link refid="data__module__event_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structcloud__data__battery" prot="public">cloud_data_battery</innerclass>
+    <innerclass refid="structcloud__data__gps__pvt" prot="public">cloud_data_gps_pvt</innerclass>
+    <innerclass refid="structcloud__data__gps" prot="public">cloud_data_gps</innerclass>
+    <innerclass refid="structcloud__data__no__data" prot="public">cloud_data_no_data</innerclass>
+    <innerclass refid="structcloud__data__cfg" prot="public">cloud_data_cfg</innerclass>
+    <innerclass refid="structcloud__data__accelerometer" prot="public">cloud_data_accelerometer</innerclass>
+    <innerclass refid="structcloud__data__sensors" prot="public">cloud_data_sensors</innerclass>
+    <innerclass refid="structcloud__data__modem__static" prot="public">cloud_data_modem_static</innerclass>
+    <innerclass refid="structcloud__data__modem__dynamic" prot="public">cloud_data_modem_dynamic</innerclass>
+    <innerclass refid="structcloud__data__ui" prot="public">cloud_data_ui</innerclass>
+    <innerclass refid="structcloud__codec__data" prot="public">cloud_codec_data</innerclass>
+    <innerclass refid="structcloud__data__neighbor__cells" prot="public">cloud_data_neighbor_cells</innerclass>
+    <innerclass refid="structcloud__data__agps__request" prot="public">cloud_data_agps_request</innerclass>
+    <innerclass refid="structcloud__data__pgps__request" prot="public">cloud_data_pgps_request</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__cloud__codec_gaa18c19f379a624d574e0db849a86f700_1gaa18c19f379a624d574e0db849a86f700" prot="public" static="no" strong="no">
+        <type></type>
+        <name>cloud_data_gps_format</name>
+        <enumvalue id="group__cloud__codec_gaa18c19f379a624d574e0db849a86f700_1ggaa18c19f379a624d574e0db849a86f700a641b3336aaf9f95a29a4a1505e6c9bd2" prot="public">
+          <name>CLOUD_CODEC_GPS_FORMAT_INVALID</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_gaa18c19f379a624d574e0db849a86f700_1ggaa18c19f379a624d574e0db849a86f700a4dd49954fce5114b310be9ea630de9bf" prot="public">
+          <name>CLOUD_CODEC_GPS_FORMAT_PVT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__codec_gaa18c19f379a624d574e0db849a86f700_1ggaa18c19f379a624d574e0db849a86f700a637f49b9913735c6028d3327512f2354" prot="public">
+          <name>CLOUD_CODEC_GPS_FORMAT_NMEA</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="56" column="1" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="56" bodyend="60"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__cloud__codec_ga23c45fe441fd17be1594d93e23155f49_1ga23c45fe441fd17be1594d93e23155f49" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void cloud_codec_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>cloud_codec_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="231" column="20" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="231" bodyend="234"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_gac96146fc3658ec30b090d1a7b8cf38a1_1gac96146fc3658ec30b090d1a7b8cf38a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_codec_encode_neighbor_cells</definition>
+        <argsstring>(struct cloud_codec_data *output, struct cloud_data_neighbor_cells *neighbor_cells)</argsstring>
+        <name>cloud_codec_encode_neighbor_cells</name>
+        <param>
+          <type>struct <ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__neighbor__cells" kindref="compound">cloud_data_neighbor_cells</ref> *</type>
+          <declname>neighbor_cells</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="236" column="5" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="236" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_gaef6c41b6911cd859dbdb4953dd410e1b_1gaef6c41b6911cd859dbdb4953dd410e1b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_codec_encode_agps_request</definition>
+        <argsstring>(struct cloud_codec_data *output, struct cloud_data_agps_request *agps_request)</argsstring>
+        <name>cloud_codec_encode_agps_request</name>
+        <param>
+          <type>struct <ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__agps__request" kindref="compound">cloud_data_agps_request</ref> *</type>
+          <declname>agps_request</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="239" column="5" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="239" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_ga719c018fc6bf8cb4b7dd5763e0104763_1ga719c018fc6bf8cb4b7dd5763e0104763" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_codec_encode_pgps_request</definition>
+        <argsstring>(struct cloud_codec_data *output, struct cloud_data_pgps_request *pgps_request)</argsstring>
+        <name>cloud_codec_encode_pgps_request</name>
+        <param>
+          <type>struct <ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__pgps__request" kindref="compound">cloud_data_pgps_request</ref> *</type>
+          <declname>pgps_request</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="242" column="5" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="242" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_ga796d3e540e797835d855b6220dbf448b_1ga796d3e540e797835d855b6220dbf448b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_codec_decode_config</definition>
+        <argsstring>(char *input, size_t input_len, struct cloud_data_cfg *cfg)</argsstring>
+        <name>cloud_codec_decode_config</name>
+        <param>
+          <type>char *</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>input_len</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__cfg" kindref="compound">cloud_data_cfg</ref> *</type>
+          <declname>cfg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="245" column="5" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="245" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_ga796c2746862e804d63d3f1f59f8a5d17_1ga796c2746862e804d63d3f1f59f8a5d17" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_codec_encode_config</definition>
+        <argsstring>(struct cloud_codec_data *output, struct cloud_data_cfg *cfg)</argsstring>
+        <name>cloud_codec_encode_config</name>
+        <param>
+          <type>struct <ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__cfg" kindref="compound">cloud_data_cfg</ref> *</type>
+          <declname>cfg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="248" column="5" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="248" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_ga8379aedf3c21ed135bea9daed95ba085_1ga8379aedf3c21ed135bea9daed95ba085" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_codec_encode_data</definition>
+        <argsstring>(struct cloud_codec_data *output, struct cloud_data_gps *gps_buf, struct cloud_data_sensors *sensor_buf, struct cloud_data_modem_static *modem_stat_buf, struct cloud_data_modem_dynamic *modem_dyn_buf, struct cloud_data_ui *ui_buf, struct cloud_data_accelerometer *accel_buf, struct cloud_data_battery *bat_buf)</argsstring>
+        <name>cloud_codec_encode_data</name>
+        <param>
+          <type>struct <ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__gps" kindref="compound">cloud_data_gps</ref> *</type>
+          <declname>gps_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__sensors" kindref="compound">cloud_data_sensors</ref> *</type>
+          <declname>sensor_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__modem__static" kindref="compound">cloud_data_modem_static</ref> *</type>
+          <declname>modem_stat_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__modem__dynamic" kindref="compound">cloud_data_modem_dynamic</ref> *</type>
+          <declname>modem_dyn_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__ui" kindref="compound">cloud_data_ui</ref> *</type>
+          <declname>ui_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__accelerometer" kindref="compound">cloud_data_accelerometer</ref> *</type>
+          <declname>accel_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__battery" kindref="compound">cloud_data_battery</ref> *</type>
+          <declname>bat_buf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="251" column="5" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="251" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_ga45b5ec76d8d4d8aab896e06a0d4ad730_1ga45b5ec76d8d4d8aab896e06a0d4ad730" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_codec_encode_ui_data</definition>
+        <argsstring>(struct cloud_codec_data *output, struct cloud_data_ui *ui_buf)</argsstring>
+        <name>cloud_codec_encode_ui_data</name>
+        <param>
+          <type>struct <ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__ui" kindref="compound">cloud_data_ui</ref> *</type>
+          <declname>ui_buf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="260" column="5" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="260" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_gad12548ddbb161bb882937e7efea69fcc_1gad12548ddbb161bb882937e7efea69fcc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cloud_codec_encode_batch_data</definition>
+        <argsstring>(struct cloud_codec_data *output, struct cloud_data_gps *gps_buf, struct cloud_data_sensors *sensor_buf, struct cloud_data_modem_dynamic *modem_dyn_buf, struct cloud_data_ui *ui_buf, struct cloud_data_accelerometer *accel_buf, struct cloud_data_battery *bat_buf, size_t gps_buf_count, size_t sensor_buf_count, size_t modem_dyn_buf_count, size_t ui_buf_count, size_t accel_buf_count, size_t bat_buf_count)</argsstring>
+        <name>cloud_codec_encode_batch_data</name>
+        <param>
+          <type>struct <ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__gps" kindref="compound">cloud_data_gps</ref> *</type>
+          <declname>gps_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__sensors" kindref="compound">cloud_data_sensors</ref> *</type>
+          <declname>sensor_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__modem__dynamic" kindref="compound">cloud_data_modem_dynamic</ref> *</type>
+          <declname>modem_dyn_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__ui" kindref="compound">cloud_data_ui</ref> *</type>
+          <declname>ui_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__accelerometer" kindref="compound">cloud_data_accelerometer</ref> *</type>
+          <declname>accel_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__battery" kindref="compound">cloud_data_battery</ref> *</type>
+          <declname>bat_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>gps_buf_count</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>sensor_buf_count</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>modem_dyn_buf_count</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>ui_buf_count</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>accel_buf_count</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>bat_buf_count</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="263" column="5" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="263" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_gaecced72fa0c46815e0b2105f14c1fdd6_1gaecced72fa0c46815e0b2105f14c1fdd6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cloud_codec_populate_sensor_buffer</definition>
+        <argsstring>(struct cloud_data_sensors *sensor_buffer, struct cloud_data_sensors *new_sensor_data, int *head_sensor_buf, size_t buffer_count)</argsstring>
+        <name>cloud_codec_populate_sensor_buffer</name>
+        <param>
+          <type>struct <ref refid="structcloud__data__sensors" kindref="compound">cloud_data_sensors</ref> *</type>
+          <declname>sensor_buffer</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__sensors" kindref="compound">cloud_data_sensors</ref> *</type>
+          <declname>new_sensor_data</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>head_sensor_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buffer_count</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="278" column="6" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="278" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_ga65d32adb4aac7e4a1fcda21b108c86be_1ga65d32adb4aac7e4a1fcda21b108c86be" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cloud_codec_populate_ui_buffer</definition>
+        <argsstring>(struct cloud_data_ui *ui_buffer, struct cloud_data_ui *new_ui_data, int *head_ui_buf, size_t buffer_count)</argsstring>
+        <name>cloud_codec_populate_ui_buffer</name>
+        <param>
+          <type>struct <ref refid="structcloud__data__ui" kindref="compound">cloud_data_ui</ref> *</type>
+          <declname>ui_buffer</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__ui" kindref="compound">cloud_data_ui</ref> *</type>
+          <declname>new_ui_data</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>head_ui_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buffer_count</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="284" column="6" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="284" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_ga44ae27821d58225262e2937a292a6d16_1ga44ae27821d58225262e2937a292a6d16" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cloud_codec_populate_accel_buffer</definition>
+        <argsstring>(struct cloud_data_accelerometer *accel_buf, struct cloud_data_accelerometer *new_accel_data, int *head_accel_buf, size_t buffer_count)</argsstring>
+        <name>cloud_codec_populate_accel_buffer</name>
+        <param>
+          <type>struct <ref refid="structcloud__data__accelerometer" kindref="compound">cloud_data_accelerometer</ref> *</type>
+          <declname>accel_buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__accelerometer" kindref="compound">cloud_data_accelerometer</ref> *</type>
+          <declname>new_accel_data</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>head_accel_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buffer_count</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="289" column="6" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="289" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_ga64098a13bb9b28ba9065c4c38dadda2b_1ga64098a13bb9b28ba9065c4c38dadda2b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cloud_codec_populate_bat_buffer</definition>
+        <argsstring>(struct cloud_data_battery *bat_buffer, struct cloud_data_battery *new_bat_data, int *head_bat_buf, size_t buffer_count)</argsstring>
+        <name>cloud_codec_populate_bat_buffer</name>
+        <param>
+          <type>struct <ref refid="structcloud__data__battery" kindref="compound">cloud_data_battery</ref> *</type>
+          <declname>bat_buffer</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__battery" kindref="compound">cloud_data_battery</ref> *</type>
+          <declname>new_bat_data</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>head_bat_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buffer_count</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="295" column="6" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="295" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_ga75ee5eb86bd9a5e555c0f35f154c7d9b_1ga75ee5eb86bd9a5e555c0f35f154c7d9b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cloud_codec_populate_gps_buffer</definition>
+        <argsstring>(struct cloud_data_gps *gps_buffer, struct cloud_data_gps *new_gps_data, int *head_gps_buf, size_t buffer_count)</argsstring>
+        <name>cloud_codec_populate_gps_buffer</name>
+        <param>
+          <type>struct <ref refid="structcloud__data__gps" kindref="compound">cloud_data_gps</ref> *</type>
+          <declname>gps_buffer</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__gps" kindref="compound">cloud_data_gps</ref> *</type>
+          <declname>new_gps_data</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>head_gps_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buffer_count</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="300" column="6" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="300" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_gac04976b461ccc1008151878c6af7e3b1_1gac04976b461ccc1008151878c6af7e3b1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cloud_codec_populate_modem_dynamic_buffer</definition>
+        <argsstring>(struct cloud_data_modem_dynamic *modem_buffer, struct cloud_data_modem_dynamic *new_modem_data, int *head_modem_buf, size_t buffer_count)</argsstring>
+        <name>cloud_codec_populate_modem_dynamic_buffer</name>
+        <param>
+          <type>struct <ref refid="structcloud__data__modem__dynamic" kindref="compound">cloud_data_modem_dynamic</ref> *</type>
+          <declname>modem_buffer</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__data__modem__dynamic" kindref="compound">cloud_data_modem_dynamic</ref> *</type>
+          <declname>new_modem_data</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>head_modem_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buffer_count</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="305" column="6" declfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" declline="305" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__codec_ga1934b6d2c28cc80d059380b671baa2a7_1ga1934b6d2c28cc80d059380b671baa2a7" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void cloud_codec_release_data</definition>
+        <argsstring>(struct cloud_codec_data *output)</argsstring>
+        <name>cloud_codec_release_data</name>
+        <param>
+          <type>struct <ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="311" column="20" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="311" bodyend="314"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>CLOUD_CODEC_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CLOUD_CODEC_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdbool.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdint.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdio.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdlib.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cJSON_os.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;net/net_ip.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="lte__lc_8h" kindref="compound">modem/lte_lc.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;nrf_modem_gnss.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="structcloud__data__battery" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__data__battery" kindref="compound">cloud_data_battery</ref><sp/>{</highlight></codeline>
+<codeline lineno="34" refid="structcloud__data__battery_a01ef81225c2175edb85581d56dc7bfaf_1a01ef81225c2175edb85581d56dc7bfaf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structcloud__data__battery_a01ef81225c2175edb85581d56dc7bfaf_1a01ef81225c2175edb85581d56dc7bfaf" kindref="member">bat</ref>;</highlight></codeline>
+<codeline lineno="36" refid="structcloud__data__battery_ab7d63cb8dfcc0b1a9a1f1c5aac5bc123_1ab7d63cb8dfcc0b1a9a1f1c5aac5bc123" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int64_t<sp/><ref refid="structcloud__data__battery_ab7d63cb8dfcc0b1a9a1f1c5aac5bc123_1ab7d63cb8dfcc0b1a9a1f1c5aac5bc123" kindref="member">bat_ts</ref>;</highlight></codeline>
+<codeline lineno="38" refid="structcloud__data__battery_a448edaf51bf16ac5d81d5390812704c9_1a448edaf51bf16ac5d81d5390812704c9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__battery_a448edaf51bf16ac5d81d5390812704c9_1a448edaf51bf16ac5d81d5390812704c9" kindref="member">queued</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="structcloud__data__gps__pvt" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__data__gps__pvt" kindref="compound">cloud_data_gps_pvt</ref><sp/>{</highlight></codeline>
+<codeline lineno="43" refid="structcloud__data__gps__pvt_a7563c585f3388808a47804702d8a1c2f_1a7563c585f3388808a47804702d8a1c2f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__gps__pvt_a7563c585f3388808a47804702d8a1c2f_1a7563c585f3388808a47804702d8a1c2f" kindref="member">longi</ref>;</highlight></codeline>
+<codeline lineno="45" refid="structcloud__data__gps__pvt_a157cf210ac8015a97d6cfb6c08f8c974_1a157cf210ac8015a97d6cfb6c08f8c974" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__gps__pvt_a157cf210ac8015a97d6cfb6c08f8c974_1a157cf210ac8015a97d6cfb6c08f8c974" kindref="member">lat</ref>;</highlight></codeline>
+<codeline lineno="47" refid="structcloud__data__gps__pvt_a4bf09fa0fd8092eb5de4a92b119b3d5c_1a4bf09fa0fd8092eb5de4a92b119b3d5c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__gps__pvt_a4bf09fa0fd8092eb5de4a92b119b3d5c_1a4bf09fa0fd8092eb5de4a92b119b3d5c" kindref="member">alt</ref>;</highlight></codeline>
+<codeline lineno="49" refid="structcloud__data__gps__pvt_a04496dae5e6123f0834af8da03ee32f2_1a04496dae5e6123f0834af8da03ee32f2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__gps__pvt_a04496dae5e6123f0834af8da03ee32f2_1a04496dae5e6123f0834af8da03ee32f2" kindref="member">acc</ref>;</highlight></codeline>
+<codeline lineno="51" refid="structcloud__data__gps__pvt_a43f2faeba5c8abd9537f693b45c2834f_1a43f2faeba5c8abd9537f693b45c2834f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__gps__pvt_a43f2faeba5c8abd9537f693b45c2834f_1a43f2faeba5c8abd9537f693b45c2834f" kindref="member">spd</ref>;</highlight></codeline>
+<codeline lineno="53" refid="structcloud__data__gps__pvt_a5214d895aa3633b6a81206637ac50172_1a5214d895aa3633b6a81206637ac50172" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__gps__pvt_a5214d895aa3633b6a81206637ac50172_1a5214d895aa3633b6a81206637ac50172" kindref="member">hdg</ref>;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="group__cloud__codec_gaa18c19f379a624d574e0db849a86f700_1gaa18c19f379a624d574e0db849a86f700" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__cloud__codec_gaa18c19f379a624d574e0db849a86f700_1gaa18c19f379a624d574e0db849a86f700" kindref="member">cloud_data_gps_format</ref><sp/>{</highlight></codeline>
+<codeline lineno="57" refid="group__cloud__codec_gaa18c19f379a624d574e0db849a86f700_1ggaa18c19f379a624d574e0db849a86f700a641b3336aaf9f95a29a4a1505e6c9bd2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__codec_gaa18c19f379a624d574e0db849a86f700_1ggaa18c19f379a624d574e0db849a86f700a641b3336aaf9f95a29a4a1505e6c9bd2" kindref="member">CLOUD_CODEC_GPS_FORMAT_INVALID</ref>,</highlight></codeline>
+<codeline lineno="58" refid="group__cloud__codec_gaa18c19f379a624d574e0db849a86f700_1ggaa18c19f379a624d574e0db849a86f700a4dd49954fce5114b310be9ea630de9bf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__codec_gaa18c19f379a624d574e0db849a86f700_1ggaa18c19f379a624d574e0db849a86f700a4dd49954fce5114b310be9ea630de9bf" kindref="member">CLOUD_CODEC_GPS_FORMAT_PVT</ref>,</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__codec_gaa18c19f379a624d574e0db849a86f700_1ggaa18c19f379a624d574e0db849a86f700a637f49b9913735c6028d3327512f2354" kindref="member">CLOUD_CODEC_GPS_FORMAT_NMEA</ref></highlight></codeline>
+<codeline lineno="60" refid="group__cloud__codec_gaa18c19f379a624d574e0db849a86f700_1ggaa18c19f379a624d574e0db849a86f700a637f49b9913735c6028d3327512f2354" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63" refid="structcloud__data__gps" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__data__gps" kindref="compound">cloud_data_gps</ref><sp/>{</highlight></codeline>
+<codeline lineno="65" refid="structcloud__data__gps_a169d5936df5538f707541117db33bfd5_1a169d5936df5538f707541117db33bfd5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int64_t<sp/><ref refid="structcloud__data__gps_a169d5936df5538f707541117db33bfd5_1a169d5936df5538f707541117db33bfd5" kindref="member">gps_ts</ref>;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">union<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="69" refid="structcloud__data__gps_acb7968dc779bf05059830693c7b53056_1acb7968dc779bf05059830693c7b53056" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__data__gps__pvt" kindref="compound">cloud_data_gps_pvt</ref><sp/><ref refid="structcloud__data__gps_acb7968dc779bf05059830693c7b53056_1acb7968dc779bf05059830693c7b53056" kindref="member">pvt</ref>;</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Null<sp/>terminated<sp/>NMEA<sp/>string.<sp/>The<sp/>maximum<sp/>number<sp/>of<sp/>characters<sp/>in<sp/>an</highlight></codeline>
+<codeline lineno="72"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<sp/>NMEA<sp/>string<sp/>is<sp/>83.</highlight></codeline>
+<codeline lineno="73"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="structcloud__data__gps_af352976f27da3d338a37e07b6e3a7f3c_1af352976f27da3d338a37e07b6e3a7f3c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__gps_af352976f27da3d338a37e07b6e3a7f3c_1af352976f27da3d338a37e07b6e3a7f3c" kindref="member">nmea</ref>[83];</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="structcloud__data__gps_a30c4a3345acf4e7c651cef28ec1cf171_1a30c4a3345acf4e7c651cef28ec1cf171" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__cloud__codec_gaa18c19f379a624d574e0db849a86f700_1gaa18c19f379a624d574e0db849a86f700" kindref="member">cloud_data_gps_format</ref><sp/><ref refid="structcloud__data__gps_a30c4a3345acf4e7c651cef28ec1cf171_1a30c4a3345acf4e7c651cef28ec1cf171" kindref="member">format</ref>;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81" refid="structcloud__data__gps_ac2eac244ce05426a25ca092b983cd175_1ac2eac244ce05426a25ca092b983cd175" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__gps_ac2eac244ce05426a25ca092b983cd175_1ac2eac244ce05426a25ca092b983cd175" kindref="member">queued</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="82"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87" refid="structcloud__data__no__data" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__data__no__data" kindref="compound">cloud_data_no_data</ref><sp/>{</highlight></codeline>
+<codeline lineno="89" refid="structcloud__data__no__data_a2f5feb4d147e1b869e98273758ef1c5f_1a2f5feb4d147e1b869e98273758ef1c5f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__no__data_a2f5feb4d147e1b869e98273758ef1c5f_1a2f5feb4d147e1b869e98273758ef1c5f" kindref="member">gnss</ref>;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="structcloud__data__no__data_ac06eb9acddb8b5e035ee02f14b12835f_1ac06eb9acddb8b5e035ee02f14b12835f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__no__data_ac06eb9acddb8b5e035ee02f14b12835f_1ac06eb9acddb8b5e035ee02f14b12835f" kindref="member">neighbor_cell</ref>;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="structcloud__data__cfg" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__data__cfg" kindref="compound">cloud_data_cfg</ref><sp/>{</highlight></codeline>
+<codeline lineno="97" refid="structcloud__data__cfg_a12639181d2fa320be3a0ee730450ebd9_1a12639181d2fa320be3a0ee730450ebd9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__cfg_a12639181d2fa320be3a0ee730450ebd9_1a12639181d2fa320be3a0ee730450ebd9" kindref="member">active_mode</ref>;</highlight></codeline>
+<codeline lineno="99" refid="structcloud__data__cfg_a65eb73845752604f441e81ab126dc084_1a65eb73845752604f441e81ab126dc084" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__cfg_a65eb73845752604f441e81ab126dc084_1a65eb73845752604f441e81ab126dc084" kindref="member">gps_timeout</ref>;</highlight></codeline>
+<codeline lineno="101" refid="structcloud__data__cfg_aba318e358cdd6bafc3356c1e182b9e24_1aba318e358cdd6bafc3356c1e182b9e24" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__cfg_aba318e358cdd6bafc3356c1e182b9e24_1aba318e358cdd6bafc3356c1e182b9e24" kindref="member">active_wait_timeout</ref>;</highlight></codeline>
+<codeline lineno="103" refid="structcloud__data__cfg_a039418e59727ce4d2a651619743f772d_1a039418e59727ce4d2a651619743f772d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__cfg_a039418e59727ce4d2a651619743f772d_1a039418e59727ce4d2a651619743f772d" kindref="member">movement_resolution</ref>;</highlight></codeline>
+<codeline lineno="107" refid="structcloud__data__cfg_af7b0dfaa0aae30d4ec3e02242a8281e5_1af7b0dfaa0aae30d4ec3e02242a8281e5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__cfg_af7b0dfaa0aae30d4ec3e02242a8281e5_1af7b0dfaa0aae30d4ec3e02242a8281e5" kindref="member">movement_timeout</ref>;</highlight></codeline>
+<codeline lineno="109" refid="structcloud__data__cfg_a0f989b2696a9a62c969b41044440031e_1a0f989b2696a9a62c969b41044440031e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__cfg_a0f989b2696a9a62c969b41044440031e_1a0f989b2696a9a62c969b41044440031e" kindref="member">accelerometer_threshold</ref>;</highlight></codeline>
+<codeline lineno="111" refid="structcloud__data__cfg_acfedae06b199896b3f5ab3fd87800d12_1acfedae06b199896b3f5ab3fd87800d12" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__data__no__data" kindref="compound">cloud_data_no_data</ref><sp/><ref refid="structcloud__data__cfg_acfedae06b199896b3f5ab3fd87800d12_1acfedae06b199896b3f5ab3fd87800d12" kindref="member">no_data</ref>;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114" refid="structcloud__data__accelerometer" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__data__accelerometer" kindref="compound">cloud_data_accelerometer</ref><sp/>{</highlight></codeline>
+<codeline lineno="116" refid="structcloud__data__accelerometer_a2547a890b2fe729da916c706c0854bab_1a2547a890b2fe729da916c706c0854bab" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int64_t<sp/><ref refid="structcloud__data__accelerometer_a2547a890b2fe729da916c706c0854bab_1a2547a890b2fe729da916c706c0854bab" kindref="member">ts</ref>;</highlight></codeline>
+<codeline lineno="118" refid="structcloud__data__accelerometer_a13705492cd5252124451b89d6ec09910_1a13705492cd5252124451b89d6ec09910" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__accelerometer_a13705492cd5252124451b89d6ec09910_1a13705492cd5252124451b89d6ec09910" kindref="member">values</ref>[3];</highlight></codeline>
+<codeline lineno="120" refid="structcloud__data__accelerometer_a9c91f64fbe50602ad2641923143c9efa_1a9c91f64fbe50602ad2641923143c9efa" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__accelerometer_a9c91f64fbe50602ad2641923143c9efa_1a9c91f64fbe50602ad2641923143c9efa" kindref="member">queued</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123" refid="structcloud__data__sensors" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__data__sensors" kindref="compound">cloud_data_sensors</ref><sp/>{</highlight></codeline>
+<codeline lineno="125" refid="structcloud__data__sensors_aab33e38cb7e283f370b5cbe9fe9136a9_1aab33e38cb7e283f370b5cbe9fe9136a9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int64_t<sp/><ref refid="structcloud__data__sensors_aab33e38cb7e283f370b5cbe9fe9136a9_1aab33e38cb7e283f370b5cbe9fe9136a9" kindref="member">env_ts</ref>;</highlight></codeline>
+<codeline lineno="127" refid="structcloud__data__sensors_aa227a4710587e0736a2580d6d9209920_1aa227a4710587e0736a2580d6d9209920" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__sensors_aa227a4710587e0736a2580d6d9209920_1aa227a4710587e0736a2580d6d9209920" kindref="member">temp</ref>;</highlight></codeline>
+<codeline lineno="129" refid="structcloud__data__sensors_a490e08570b377cdb1ea8eead1d900817_1a490e08570b377cdb1ea8eead1d900817" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__sensors_a490e08570b377cdb1ea8eead1d900817_1a490e08570b377cdb1ea8eead1d900817" kindref="member">hum</ref>;</highlight></codeline>
+<codeline lineno="131" refid="structcloud__data__sensors_a66b565f1bc981c3de5c343c5e495872a_1a66b565f1bc981c3de5c343c5e495872a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__sensors_a66b565f1bc981c3de5c343c5e495872a_1a66b565f1bc981c3de5c343c5e495872a" kindref="member">queued</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134" refid="structcloud__data__modem__static" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__data__modem__static" kindref="compound">cloud_data_modem_static</ref><sp/>{</highlight></codeline>
+<codeline lineno="136" refid="structcloud__data__modem__static_aa5daf125f934a7c1092a62e152bdd390_1aa5daf125f934a7c1092a62e152bdd390" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int64_t<sp/><ref refid="structcloud__data__modem__static_aa5daf125f934a7c1092a62e152bdd390_1aa5daf125f934a7c1092a62e152bdd390" kindref="member">ts</ref>;</highlight></codeline>
+<codeline lineno="138" refid="structcloud__data__modem__static_accfa480f43839c876c0dca5b5acd27b0_1accfa480f43839c876c0dca5b5acd27b0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structcloud__data__modem__static_accfa480f43839c876c0dca5b5acd27b0_1accfa480f43839c876c0dca5b5acd27b0" kindref="member">bnd</ref>;</highlight></codeline>
+<codeline lineno="140" refid="structcloud__data__modem__static_a7ae50568278784c8b9db763b279ba848_1a7ae50568278784c8b9db763b279ba848" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structcloud__data__modem__static_a7ae50568278784c8b9db763b279ba848_1a7ae50568278784c8b9db763b279ba848" kindref="member">nw_gps</ref>;</highlight></codeline>
+<codeline lineno="142" refid="structcloud__data__modem__static_a1330ea1baf4bb34fc72160785294a9c2_1a1330ea1baf4bb34fc72160785294a9c2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structcloud__data__modem__static_a1330ea1baf4bb34fc72160785294a9c2_1a1330ea1baf4bb34fc72160785294a9c2" kindref="member">nw_lte_m</ref>;</highlight></codeline>
+<codeline lineno="144" refid="structcloud__data__modem__static_ad8c7bb601c5e067fdef1c9fde031cfda_1ad8c7bb601c5e067fdef1c9fde031cfda" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structcloud__data__modem__static_ad8c7bb601c5e067fdef1c9fde031cfda_1ad8c7bb601c5e067fdef1c9fde031cfda" kindref="member">nw_nb_iot</ref>;</highlight></codeline>
+<codeline lineno="146" refid="structcloud__data__modem__static_a84f3216f0240439541294d75672ea33c_1a84f3216f0240439541294d75672ea33c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__modem__static_a84f3216f0240439541294d75672ea33c_1a84f3216f0240439541294d75672ea33c" kindref="member">iccid</ref>[23];</highlight></codeline>
+<codeline lineno="148" refid="structcloud__data__modem__static_a2560a8bae3edbc9573db4e676597a60f_1a2560a8bae3edbc9573db4e676597a60f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__modem__static_a2560a8bae3edbc9573db4e676597a60f_1a2560a8bae3edbc9573db4e676597a60f" kindref="member">appv</ref>[CONFIG_ASSET_TRACKER_V2_APP_VERSION_MAX_LEN];</highlight></codeline>
+<codeline lineno="150" refid="structcloud__data__modem__static_a8acda035babcf2914d71ad7648079a68_1a8acda035babcf2914d71ad7648079a68" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__modem__static_a8acda035babcf2914d71ad7648079a68_1a8acda035babcf2914d71ad7648079a68" kindref="member">brdv</ref>[30];</highlight></codeline>
+<codeline lineno="152" refid="structcloud__data__modem__static_a500dd6706ad4d577c2eb0675dee87628_1a500dd6706ad4d577c2eb0675dee87628" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__modem__static_a500dd6706ad4d577c2eb0675dee87628_1a500dd6706ad4d577c2eb0675dee87628" kindref="member">fw</ref>[40];</highlight></codeline>
+<codeline lineno="154" refid="structcloud__data__modem__static_a1d00b5319be923437f13f86ee448aaf4_1a1d00b5319be923437f13f86ee448aaf4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__modem__static_a1d00b5319be923437f13f86ee448aaf4_1a1d00b5319be923437f13f86ee448aaf4" kindref="member">queued</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="155"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157" refid="structcloud__data__modem__dynamic" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__data__modem__dynamic" kindref="compound">cloud_data_modem_dynamic</ref><sp/>{</highlight></codeline>
+<codeline lineno="159" refid="structcloud__data__modem__dynamic_a5b119b4c6bc678bf453e89c987d8f0d6_1a5b119b4c6bc678bf453e89c987d8f0d6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int64_t<sp/><ref refid="structcloud__data__modem__dynamic_a5b119b4c6bc678bf453e89c987d8f0d6_1a5b119b4c6bc678bf453e89c987d8f0d6" kindref="member">ts</ref>;</highlight></codeline>
+<codeline lineno="161" refid="structcloud__data__modem__dynamic_a5e9455d676dff60af1b393b0e3c82b0e_1a5e9455d676dff60af1b393b0e3c82b0e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structcloud__data__modem__dynamic_a5e9455d676dff60af1b393b0e3c82b0e_1a5e9455d676dff60af1b393b0e3c82b0e" kindref="member">area</ref>;</highlight></codeline>
+<codeline lineno="163" refid="structcloud__data__modem__dynamic_a03929a16179d8a9c982f132902af6383_1a03929a16179d8a9c982f132902af6383" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structcloud__data__modem__dynamic_a03929a16179d8a9c982f132902af6383_1a03929a16179d8a9c982f132902af6383" kindref="member">cell</ref>;</highlight></codeline>
+<codeline lineno="165" refid="structcloud__data__modem__dynamic_a0a9bf20478497acf988e140f7da295d9_1a0a9bf20478497acf988e140f7da295d9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structcloud__data__modem__dynamic_a0a9bf20478497acf988e140f7da295d9_1a0a9bf20478497acf988e140f7da295d9" kindref="member">rsrp</ref>;</highlight></codeline>
+<codeline lineno="167" refid="structcloud__data__modem__dynamic_aec056270452f4c7ee036de39e179fd69_1aec056270452f4c7ee036de39e179fd69" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__modem__dynamic_aec056270452f4c7ee036de39e179fd69_1aec056270452f4c7ee036de39e179fd69" kindref="member">ip</ref>[INET6_ADDRSTRLEN];</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Mobile<sp/>Country<sp/>Code*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="169" refid="structcloud__data__modem__dynamic_a2558e9f2861115f3cfabea6c254dba29_1a2558e9f2861115f3cfabea6c254dba29" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__modem__dynamic_a2558e9f2861115f3cfabea6c254dba29_1a2558e9f2861115f3cfabea6c254dba29" kindref="member">mccmnc</ref>[7];</highlight></codeline>
+<codeline lineno="171" refid="structcloud__data__modem__dynamic_a7654bb448e7ef99bf89465282ef64d08_1a7654bb448e7ef99bf89465282ef64d08" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__modem__dynamic_a7654bb448e7ef99bf89465282ef64d08_1a7654bb448e7ef99bf89465282ef64d08" kindref="member">queued</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="174" refid="structcloud__data__modem__dynamic_a9a891d0e81449897318d1cb66777b4cf_1a9a891d0e81449897318d1cb66777b4cf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__modem__dynamic_a9a891d0e81449897318d1cb66777b4cf_1a9a891d0e81449897318d1cb66777b4cf" kindref="member">area_code_fresh</ref><sp/><sp/><sp/><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="175" refid="structcloud__data__modem__dynamic_ac6d04672884ec2191fcf03e96ce15220_1ac6d04672884ec2191fcf03e96ce15220" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__modem__dynamic_ac6d04672884ec2191fcf03e96ce15220_1ac6d04672884ec2191fcf03e96ce15220" kindref="member">cell_id_fresh</ref><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="176" refid="structcloud__data__modem__dynamic_a086ed716402afb4c076567ff7baceb1f_1a086ed716402afb4c076567ff7baceb1f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__modem__dynamic_a086ed716402afb4c076567ff7baceb1f_1a086ed716402afb4c076567ff7baceb1f" kindref="member">rsrp_fresh</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="177" refid="structcloud__data__modem__dynamic_abe0c100133a56beae53f22d7175dfaa3_1abe0c100133a56beae53f22d7175dfaa3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__modem__dynamic_abe0c100133a56beae53f22d7175dfaa3_1abe0c100133a56beae53f22d7175dfaa3" kindref="member">ip_address_fresh</ref><sp/><sp/><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="178" refid="structcloud__data__modem__dynamic_a64960db7a7a3a392f6e3946cd6ab46d9_1a64960db7a7a3a392f6e3946cd6ab46d9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__modem__dynamic_a64960db7a7a3a392f6e3946cd6ab46d9_1a64960db7a7a3a392f6e3946cd6ab46d9" kindref="member">mccmnc_fresh</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="179"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181" refid="structcloud__data__ui" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__data__ui" kindref="compound">cloud_data_ui</ref><sp/>{</highlight></codeline>
+<codeline lineno="183" refid="structcloud__data__ui_ac35fb04d6c938c2b83d275a8b6d93ebf_1ac35fb04d6c938c2b83d275a8b6d93ebf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__ui_ac35fb04d6c938c2b83d275a8b6d93ebf_1ac35fb04d6c938c2b83d275a8b6d93ebf" kindref="member">btn</ref>;</highlight></codeline>
+<codeline lineno="185" refid="structcloud__data__ui_a7ca7eb4809b0fa92beba23f7435813a0_1a7ca7eb4809b0fa92beba23f7435813a0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int64_t<sp/><ref refid="structcloud__data__ui_a7ca7eb4809b0fa92beba23f7435813a0_1a7ca7eb4809b0fa92beba23f7435813a0" kindref="member">btn_ts</ref>;</highlight></codeline>
+<codeline lineno="187" refid="structcloud__data__ui_a0aaacb931de700535d97d5def2fb79e9_1a0aaacb931de700535d97d5def2fb79e9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__ui_a0aaacb931de700535d97d5def2fb79e9_1a0aaacb931de700535d97d5def2fb79e9" kindref="member">queued</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="188"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="190" refid="structcloud__codec__data" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref><sp/>{</highlight></codeline>
+<codeline lineno="192" refid="structcloud__codec__data_a1a700a697e396a779759f9f73e6bbb42_1a1a700a697e396a779759f9f73e6bbb42" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structcloud__codec__data_a1a700a697e396a779759f9f73e6bbb42_1a1a700a697e396a779759f9f73e6bbb42" kindref="member">buf</ref>;</highlight></codeline>
+<codeline lineno="194" refid="structcloud__codec__data_ae80c1bbbfbc86d13555455f4a4b834e5_1ae80c1bbbfbc86d13555455f4a4b834e5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structcloud__codec__data_ae80c1bbbfbc86d13555455f4a4b834e5_1ae80c1bbbfbc86d13555455f4a4b834e5" kindref="member">len</ref>;</highlight></codeline>
+<codeline lineno="195"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197" refid="structcloud__data__neighbor__cells" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__data__neighbor__cells" kindref="compound">cloud_data_neighbor_cells</ref><sp/>{</highlight></codeline>
+<codeline lineno="198" refid="structcloud__data__neighbor__cells_a5f69815761d037b3227fb366f7422ebc_1a5f69815761d037b3227fb366f7422ebc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__lc__cells__info" kindref="compound">lte_lc_cells_info</ref><sp/><ref refid="structcloud__data__neighbor__cells_a5f69815761d037b3227fb366f7422ebc_1a5f69815761d037b3227fb366f7422ebc" kindref="member">cell_data</ref>;</highlight></codeline>
+<codeline lineno="199" refid="structcloud__data__neighbor__cells_a80325e062b8b6fa184e8f32cdcbe5efa_1a80325e062b8b6fa184e8f32cdcbe5efa" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlte__lc__ncell" kindref="compound">lte_lc_ncell</ref><sp/><ref refid="structcloud__data__neighbor__cells_a80325e062b8b6fa184e8f32cdcbe5efa_1a80325e062b8b6fa184e8f32cdcbe5efa" kindref="member">neighbor_cells</ref>[17];</highlight></codeline>
+<codeline lineno="200" refid="structcloud__data__neighbor__cells_a38ed1648cca1f632083e7eafd3db0883_1a38ed1648cca1f632083e7eafd3db0883" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int64_t<sp/><ref refid="structcloud__data__neighbor__cells_a38ed1648cca1f632083e7eafd3db0883_1a38ed1648cca1f632083e7eafd3db0883" kindref="member">ts</ref>;</highlight></codeline>
+<codeline lineno="201" refid="structcloud__data__neighbor__cells_a074c23bf5ba9d83e8ecd9252a85b2832_1a074c23bf5ba9d83e8ecd9252a85b2832" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__neighbor__cells_a074c23bf5ba9d83e8ecd9252a85b2832_1a074c23bf5ba9d83e8ecd9252a85b2832" kindref="member">queued</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="202"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight></codeline>
+<codeline lineno="204" refid="structcloud__data__agps__request" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__data__agps__request" kindref="compound">cloud_data_agps_request</ref><sp/>{</highlight></codeline>
+<codeline lineno="206" refid="structcloud__data__agps__request_ae82cc3ef743f7dc6397bfcad09b5b4dc_1ae82cc3ef743f7dc6397bfcad09b5b4dc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__agps__request_ae82cc3ef743f7dc6397bfcad09b5b4dc_1ae82cc3ef743f7dc6397bfcad09b5b4dc" kindref="member">mcc</ref>;</highlight></codeline>
+<codeline lineno="208" refid="structcloud__data__agps__request_addbe5b825bd9a1521e29923322a77bcd_1addbe5b825bd9a1521e29923322a77bcd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__agps__request_addbe5b825bd9a1521e29923322a77bcd_1addbe5b825bd9a1521e29923322a77bcd" kindref="member">mnc</ref>;</highlight></codeline>
+<codeline lineno="210" refid="structcloud__data__agps__request_a0ae2ac97b0e0174b9e756cb7ba74f80d_1a0ae2ac97b0e0174b9e756cb7ba74f80d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structcloud__data__agps__request_a0ae2ac97b0e0174b9e756cb7ba74f80d_1a0ae2ac97b0e0174b9e756cb7ba74f80d" kindref="member">cell</ref>;</highlight></codeline>
+<codeline lineno="212" refid="structcloud__data__agps__request_a82104246654cd759d47e18ba70320a9b_1a82104246654cd759d47e18ba70320a9b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structcloud__data__agps__request_a82104246654cd759d47e18ba70320a9b_1a82104246654cd759d47e18ba70320a9b" kindref="member">area</ref>;</highlight></codeline>
+<codeline lineno="214" refid="structcloud__data__agps__request_a9e1e350ae71c8bf548ba94f4d71a1c8d_1a9e1e350ae71c8bf548ba94f4d71a1c8d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">nrf_modem_gnss_agps_data_frame<sp/><ref refid="structcloud__data__agps__request_a9e1e350ae71c8bf548ba94f4d71a1c8d_1a9e1e350ae71c8bf548ba94f4d71a1c8d" kindref="member">request</ref>;</highlight></codeline>
+<codeline lineno="216" refid="structcloud__data__agps__request_a485a229d66e7c88806e2a069e2ff9fda_1a485a229d66e7c88806e2a069e2ff9fda" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__agps__request_a485a229d66e7c88806e2a069e2ff9fda_1a485a229d66e7c88806e2a069e2ff9fda" kindref="member">queued</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="217"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="218" refid="structcloud__data__pgps__request" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__data__pgps__request" kindref="compound">cloud_data_pgps_request</ref><sp/>{</highlight></codeline>
+<codeline lineno="220" refid="structcloud__data__pgps__request_a3208ea259735872b2ab13e91f7c76573_1a3208ea259735872b2ab13e91f7c76573" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structcloud__data__pgps__request_a3208ea259735872b2ab13e91f7c76573_1a3208ea259735872b2ab13e91f7c76573" kindref="member">count</ref>;</highlight></codeline>
+<codeline lineno="222" refid="structcloud__data__pgps__request_a1a4693fdf0c42d4e2eedebe64d5216e8_1a1a4693fdf0c42d4e2eedebe64d5216e8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structcloud__data__pgps__request_a1a4693fdf0c42d4e2eedebe64d5216e8_1a1a4693fdf0c42d4e2eedebe64d5216e8" kindref="member">interval</ref>;</highlight></codeline>
+<codeline lineno="224" refid="structcloud__data__pgps__request_a9b665fe73b00b1155e276dfe15bfa8ea_1a9b665fe73b00b1155e276dfe15bfa8ea" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structcloud__data__pgps__request_a9b665fe73b00b1155e276dfe15bfa8ea_1a9b665fe73b00b1155e276dfe15bfa8ea" kindref="member">day</ref>;</highlight></codeline>
+<codeline lineno="226" refid="structcloud__data__pgps__request_ae325c2983d569f409d12f6671b3847fc_1ae325c2983d569f409d12f6671b3847fc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structcloud__data__pgps__request_ae325c2983d569f409d12f6671b3847fc_1ae325c2983d569f409d12f6671b3847fc" kindref="member">time</ref>;</highlight></codeline>
+<codeline lineno="228" refid="structcloud__data__pgps__request_a77135d4fde4f8cb8413a767c145c89b9_1a77135d4fde4f8cb8413a767c145c89b9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__pgps__request_a77135d4fde4f8cb8413a767c145c89b9_1a77135d4fde4f8cb8413a767c145c89b9" kindref="member">queued</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="229"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight></codeline>
+<codeline lineno="231" refid="group__cloud__codec_ga23c45fe441fd17be1594d93e23155f49_1ga23c45fe441fd17be1594d93e23155f49" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__cloud__codec_ga23c45fe441fd17be1594d93e23155f49_1ga23c45fe441fd17be1594d93e23155f49" kindref="member">cloud_codec_init</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="232"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>cJSON_Init();</highlight></codeline>
+<codeline lineno="234"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"></highlight></codeline>
+<codeline lineno="236" refid="group__cloud__codec_gac96146fc3658ec30b090d1a7b8cf38a1_1gac96146fc3658ec30b090d1a7b8cf38a1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__cloud__codec_gac96146fc3658ec30b090d1a7b8cf38a1_1gac96146fc3658ec30b090d1a7b8cf38a1" kindref="member">cloud_codec_encode_neighbor_cells</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref><sp/>*output,</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__neighbor__cells" kindref="compound">cloud_data_neighbor_cells</ref><sp/>*neighbor_cells);</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight></codeline>
+<codeline lineno="239" refid="group__cloud__codec_gaef6c41b6911cd859dbdb4953dd410e1b_1gaef6c41b6911cd859dbdb4953dd410e1b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__cloud__codec_gaef6c41b6911cd859dbdb4953dd410e1b_1gaef6c41b6911cd859dbdb4953dd410e1b" kindref="member">cloud_codec_encode_agps_request</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref><sp/>*output,</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__agps__request" kindref="compound">cloud_data_agps_request</ref><sp/>*agps_request);</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"></highlight></codeline>
+<codeline lineno="242" refid="group__cloud__codec_ga719c018fc6bf8cb4b7dd5763e0104763_1ga719c018fc6bf8cb4b7dd5763e0104763" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__cloud__codec_ga719c018fc6bf8cb4b7dd5763e0104763_1ga719c018fc6bf8cb4b7dd5763e0104763" kindref="member">cloud_codec_encode_pgps_request</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref><sp/>*output,</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__pgps__request" kindref="compound">cloud_data_pgps_request</ref><sp/>*pgps_request);</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"></highlight></codeline>
+<codeline lineno="245" refid="group__cloud__codec_ga796d3e540e797835d855b6220dbf448b_1ga796d3e540e797835d855b6220dbf448b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__cloud__codec_ga796d3e540e797835d855b6220dbf448b_1ga796d3e540e797835d855b6220dbf448b" kindref="member">cloud_codec_decode_config</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*input,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>input_len,</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__cfg" kindref="compound">cloud_data_cfg</ref><sp/>*cfg);</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"></highlight></codeline>
+<codeline lineno="248" refid="group__cloud__codec_ga796c2746862e804d63d3f1f59f8a5d17_1ga796c2746862e804d63d3f1f59f8a5d17" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__cloud__codec_ga796c2746862e804d63d3f1f59f8a5d17_1ga796c2746862e804d63d3f1f59f8a5d17" kindref="member">cloud_codec_encode_config</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref><sp/>*output,</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__cfg" kindref="compound">cloud_data_cfg</ref><sp/>*cfg);</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"></highlight></codeline>
+<codeline lineno="251" refid="group__cloud__codec_ga8379aedf3c21ed135bea9daed95ba085_1ga8379aedf3c21ed135bea9daed95ba085" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__cloud__codec_ga8379aedf3c21ed135bea9daed95ba085_1ga8379aedf3c21ed135bea9daed95ba085" kindref="member">cloud_codec_encode_data</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref><sp/>*output,</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__gps" kindref="compound">cloud_data_gps</ref><sp/>*gps_buf,</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__sensors" kindref="compound">cloud_data_sensors</ref><sp/>*sensor_buf,</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__modem__static" kindref="compound">cloud_data_modem_static</ref><sp/>*modem_stat_buf,</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__modem__dynamic" kindref="compound">cloud_data_modem_dynamic</ref><sp/>*modem_dyn_buf,</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__ui" kindref="compound">cloud_data_ui</ref><sp/>*ui_buf,</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__accelerometer" kindref="compound">cloud_data_accelerometer</ref><sp/>*accel_buf,</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__battery" kindref="compound">cloud_data_battery</ref><sp/>*bat_buf);</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"></highlight></codeline>
+<codeline lineno="260" refid="group__cloud__codec_ga45b5ec76d8d4d8aab896e06a0d4ad730_1ga45b5ec76d8d4d8aab896e06a0d4ad730" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__cloud__codec_ga45b5ec76d8d4d8aab896e06a0d4ad730_1ga45b5ec76d8d4d8aab896e06a0d4ad730" kindref="member">cloud_codec_encode_ui_data</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref><sp/>*output,</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__ui" kindref="compound">cloud_data_ui</ref><sp/>*ui_buf);</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"></highlight></codeline>
+<codeline lineno="263" refid="group__cloud__codec_gad12548ddbb161bb882937e7efea69fcc_1gad12548ddbb161bb882937e7efea69fcc" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__cloud__codec_gad12548ddbb161bb882937e7efea69fcc_1gad12548ddbb161bb882937e7efea69fcc" kindref="member">cloud_codec_encode_batch_data</ref>(</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref><sp/>*output,</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__gps" kindref="compound">cloud_data_gps</ref><sp/>*gps_buf,</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__sensors" kindref="compound">cloud_data_sensors</ref><sp/>*sensor_buf,</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__modem__dynamic" kindref="compound">cloud_data_modem_dynamic</ref><sp/>*modem_dyn_buf,</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__ui" kindref="compound">cloud_data_ui</ref><sp/>*ui_buf,</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__accelerometer" kindref="compound">cloud_data_accelerometer</ref><sp/>*accel_buf,</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__battery" kindref="compound">cloud_data_battery</ref><sp/>*bat_buf,</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>gps_buf_count,</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>sensor_buf_count,</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>modem_dyn_buf_count,</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>ui_buf_count,</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>accel_buf_count,</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>bat_buf_count);</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"></highlight></codeline>
+<codeline lineno="278" refid="group__cloud__codec_gaecced72fa0c46815e0b2105f14c1fdd6_1gaecced72fa0c46815e0b2105f14c1fdd6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__cloud__codec_gaecced72fa0c46815e0b2105f14c1fdd6_1gaecced72fa0c46815e0b2105f14c1fdd6" kindref="member">cloud_codec_populate_sensor_buffer</ref>(</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__sensors" kindref="compound">cloud_data_sensors</ref><sp/>*sensor_buffer,</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__sensors" kindref="compound">cloud_data_sensors</ref><sp/>*new_sensor_data,</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*head_sensor_buf,</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>buffer_count);</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"></highlight></codeline>
+<codeline lineno="284" refid="group__cloud__codec_ga65d32adb4aac7e4a1fcda21b108c86be_1ga65d32adb4aac7e4a1fcda21b108c86be" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__cloud__codec_ga65d32adb4aac7e4a1fcda21b108c86be_1ga65d32adb4aac7e4a1fcda21b108c86be" kindref="member">cloud_codec_populate_ui_buffer</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__ui" kindref="compound">cloud_data_ui</ref><sp/>*ui_buffer,</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__ui" kindref="compound">cloud_data_ui</ref><sp/>*new_ui_data,</highlight></codeline>
+<codeline lineno="286"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*head_ui_buf,</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>buffer_count);</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"></highlight></codeline>
+<codeline lineno="289" refid="group__cloud__codec_ga44ae27821d58225262e2937a292a6d16_1ga44ae27821d58225262e2937a292a6d16" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__cloud__codec_ga44ae27821d58225262e2937a292a6d16_1ga44ae27821d58225262e2937a292a6d16" kindref="member">cloud_codec_populate_accel_buffer</ref>(</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__accelerometer" kindref="compound">cloud_data_accelerometer</ref><sp/>*accel_buf,</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__accelerometer" kindref="compound">cloud_data_accelerometer</ref><sp/>*new_accel_data,</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*head_accel_buf,</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>buffer_count);</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"></highlight></codeline>
+<codeline lineno="295" refid="group__cloud__codec_ga64098a13bb9b28ba9065c4c38dadda2b_1ga64098a13bb9b28ba9065c4c38dadda2b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__cloud__codec_ga64098a13bb9b28ba9065c4c38dadda2b_1ga64098a13bb9b28ba9065c4c38dadda2b" kindref="member">cloud_codec_populate_bat_buffer</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__battery" kindref="compound">cloud_data_battery</ref><sp/>*bat_buffer,</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__battery" kindref="compound">cloud_data_battery</ref><sp/>*new_bat_data,</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*head_bat_buf,</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>buffer_count);</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"></highlight></codeline>
+<codeline lineno="300" refid="group__cloud__codec_ga75ee5eb86bd9a5e555c0f35f154c7d9b_1ga75ee5eb86bd9a5e555c0f35f154c7d9b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__cloud__codec_ga75ee5eb86bd9a5e555c0f35f154c7d9b_1ga75ee5eb86bd9a5e555c0f35f154c7d9b" kindref="member">cloud_codec_populate_gps_buffer</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__gps" kindref="compound">cloud_data_gps</ref><sp/>*gps_buffer,</highlight></codeline>
+<codeline lineno="301"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__gps" kindref="compound">cloud_data_gps</ref><sp/>*new_gps_data,</highlight></codeline>
+<codeline lineno="302"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*head_gps_buf,</highlight></codeline>
+<codeline lineno="303"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>buffer_count);</highlight></codeline>
+<codeline lineno="304"><highlight class="normal"></highlight></codeline>
+<codeline lineno="305" refid="group__cloud__codec_gac04976b461ccc1008151878c6af7e3b1_1gac04976b461ccc1008151878c6af7e3b1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__cloud__codec_gac04976b461ccc1008151878c6af7e3b1_1gac04976b461ccc1008151878c6af7e3b1" kindref="member">cloud_codec_populate_modem_dynamic_buffer</ref>(</highlight></codeline>
+<codeline lineno="306"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__modem__dynamic" kindref="compound">cloud_data_modem_dynamic</ref><sp/>*modem_buffer,</highlight></codeline>
+<codeline lineno="307"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__data__modem__dynamic" kindref="compound">cloud_data_modem_dynamic</ref><sp/>*new_modem_data,</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*head_modem_buf,</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>buffer_count);</highlight></codeline>
+<codeline lineno="310"><highlight class="normal"></highlight></codeline>
+<codeline lineno="311" refid="group__cloud__codec_ga1934b6d2c28cc80d059380b671baa2a7_1ga1934b6d2c28cc80d059380b671baa2a7" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__cloud__codec_ga1934b6d2c28cc80d059380b671baa2a7_1ga1934b6d2c28cc80d059380b671baa2a7" kindref="member">cloud_codec_release_data</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__codec__data" kindref="compound">cloud_codec_data</ref><sp/>*output)</highlight></codeline>
+<codeline lineno="312"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="313"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>cJSON_FreeString(output-&gt;<ref refid="structcloud__codec__data_a1a700a697e396a779759f9f73e6bbb42_1a1a700a697e396a779759f9f73e6bbb42" kindref="member">buf</ref>);</highlight></codeline>
+<codeline lineno="314"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="315"><highlight class="normal"></highlight></codeline>
+<codeline lineno="319"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="320"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="321"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="322"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h"/>
+  </compounddef>
+</doxygen>

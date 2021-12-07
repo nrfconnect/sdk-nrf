@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__cts__exact__time__256" kind="struct" language="C++" prot="public">
+    <compoundname>bt_cts_exact_time_256</compoundname>
+    <includes refid="cts__client_8h" local="no">cts_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__cts__exact__time__256_a625d235fba92ec6c2aebfbf5961e13ce_1a625d235fba92ec6c2aebfbf5961e13ce" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_cts_exact_time_256::year</definition>
+        <argsstring></argsstring>
+        <name>year</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="28" column="10" bodyfile="include/bluetooth/services/cts_client.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__cts__exact__time__256_a621840e17f1acbdba99262a54cebf6b9_1a621840e17f1acbdba99262a54cebf6b9" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_cts_exact_time_256::month</definition>
+        <argsstring></argsstring>
+        <name>month</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="29" column="9" bodyfile="include/bluetooth/services/cts_client.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__cts__exact__time__256_a2b7bc0af6987c528037d53565bc9ded5_1a2b7bc0af6987c528037d53565bc9ded5" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_cts_exact_time_256::day</definition>
+        <argsstring></argsstring>
+        <name>day</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="30" column="9" bodyfile="include/bluetooth/services/cts_client.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__cts__exact__time__256_a55a8592791354258e723cd782589d1b6_1a55a8592791354258e723cd782589d1b6" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_cts_exact_time_256::hours</definition>
+        <argsstring></argsstring>
+        <name>hours</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="31" column="9" bodyfile="include/bluetooth/services/cts_client.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__cts__exact__time__256_a983158e3c9d1bcd123422b01c2e46bec_1a983158e3c9d1bcd123422b01c2e46bec" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_cts_exact_time_256::minutes</definition>
+        <argsstring></argsstring>
+        <name>minutes</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="32" column="9" bodyfile="include/bluetooth/services/cts_client.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__cts__exact__time__256_a27f2940456fcdffcd9c044d4b362b6c7_1a27f2940456fcdffcd9c044d4b362b6c7" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_cts_exact_time_256::seconds</definition>
+        <argsstring></argsstring>
+        <name>seconds</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="33" column="9" bodyfile="include/bluetooth/services/cts_client.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__cts__exact__time__256_a200f5f95bffa2adab58e09defaf6020d_1a200f5f95bffa2adab58e09defaf6020d" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_cts_exact_time_256::day_of_week</definition>
+        <argsstring></argsstring>
+        <name>day_of_week</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="34" column="9" bodyfile="include/bluetooth/services/cts_client.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__cts__exact__time__256_a14a454b8d7826c29f1c164e7d5e843cc_1a14a454b8d7826c29f1c164e7d5e843cc" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_cts_exact_time_256::fractions256</definition>
+        <argsstring></argsstring>
+        <name>fractions256</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="35" column="9" bodyfile="include/bluetooth/services/cts_client.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>&quot;Exact Time 256&quot; field of the Current Time characteristic. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/cts_client.h" line="27" column="1" bodyfile="include/bluetooth/services/cts_client.h" bodystart="27" bodyend="36"/>
+    <listofallmembers>
+      <member refid="structbt__cts__exact__time__256_a2b7bc0af6987c528037d53565bc9ded5_1a2b7bc0af6987c528037d53565bc9ded5" prot="public" virt="non-virtual"><scope>bt_cts_exact_time_256</scope><name>day</name></member>
+      <member refid="structbt__cts__exact__time__256_a200f5f95bffa2adab58e09defaf6020d_1a200f5f95bffa2adab58e09defaf6020d" prot="public" virt="non-virtual"><scope>bt_cts_exact_time_256</scope><name>day_of_week</name></member>
+      <member refid="structbt__cts__exact__time__256_a14a454b8d7826c29f1c164e7d5e843cc_1a14a454b8d7826c29f1c164e7d5e843cc" prot="public" virt="non-virtual"><scope>bt_cts_exact_time_256</scope><name>fractions256</name></member>
+      <member refid="structbt__cts__exact__time__256_a55a8592791354258e723cd782589d1b6_1a55a8592791354258e723cd782589d1b6" prot="public" virt="non-virtual"><scope>bt_cts_exact_time_256</scope><name>hours</name></member>
+      <member refid="structbt__cts__exact__time__256_a983158e3c9d1bcd123422b01c2e46bec_1a983158e3c9d1bcd123422b01c2e46bec" prot="public" virt="non-virtual"><scope>bt_cts_exact_time_256</scope><name>minutes</name></member>
+      <member refid="structbt__cts__exact__time__256_a621840e17f1acbdba99262a54cebf6b9_1a621840e17f1acbdba99262a54cebf6b9" prot="public" virt="non-virtual"><scope>bt_cts_exact_time_256</scope><name>month</name></member>
+      <member refid="structbt__cts__exact__time__256_a27f2940456fcdffcd9c044d4b362b6c7_1a27f2940456fcdffcd9c044d4b362b6c7" prot="public" virt="non-virtual"><scope>bt_cts_exact_time_256</scope><name>seconds</name></member>
+      <member refid="structbt__cts__exact__time__256_a625d235fba92ec6c2aebfbf5961e13ce_1a625d235fba92ec6c2aebfbf5961e13ce" prot="public" virt="non-virtual"><scope>bt_cts_exact_time_256</scope><name>year</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,355 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__direct__command" kind="group">
+    <compoundname>st25r3911b_direct_command</compoundname>
+    <title>Direct command</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1ga41bd0360dc9c1e534438b66a5d986db2" prot="public" static="no">
+        <name>ST25R3911B_CMD_SET_DEFAULT</name>
+        <initializer>0xC1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="27" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1ga70c13811011908666b975fd6fa4fa459" prot="public" static="no">
+        <name>ST25R3911B_CMD_CLEAR</name>
+        <initializer>0xC2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="28" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1gaa2cb7b0d0145d7470930fe1cdfe44571" prot="public" static="no">
+        <name>ST25R3911B_CMD_TX_WITH_CRC</name>
+        <initializer>0xC4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="29" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1gaa83ef8713adde48a8645ffbfcea5960d" prot="public" static="no">
+        <name>ST25R3911B_CMD_TX_WITHOUT_CRC</name>
+        <initializer>0xC5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="30" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1ga7014d2b5a73e3efe82cc33039c9ab5d3" prot="public" static="no">
+        <name>ST25R3911B_CMD_TX_REQA</name>
+        <initializer>0xC6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="31" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1ga5c77b3cda16c05c50b9ae4a98aaef544" prot="public" static="no">
+        <name>ST25R3911B_CMD_TX_WUPA</name>
+        <initializer>0xC7</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="32" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1ga34fc08335ffaeb64919ada333c4fedc0" prot="public" static="no">
+        <name>ST25R3911B_CMD_NFC_INITIAL_FIELD_ON</name>
+        <initializer>0xC8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="33" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1ga30d833858745cd675a23fa208a9607ce" prot="public" static="no">
+        <name>ST25R3911B_CMD_NFC_RSP_FIELD_ON</name>
+        <initializer>0xC9</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="34" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1ga910b98ef5c0d745ccb29b7448feb9d0f" prot="public" static="no">
+        <name>ST25R3911B_CMD_NFC_RSP_FILED_ON_0</name>
+        <initializer>0xCA</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="35" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1ga55d7bc9a9f2fd00450dddd2c5d8b7767" prot="public" static="no">
+        <name>ST25R3911B_CMD_NORMAL_NFC_MODE</name>
+        <initializer>0xCB</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="36" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1ga9c0dd160d69f41674709a09f723e140a" prot="public" static="no">
+        <name>ST25R3911B_CMD_ANALOG_PRESET</name>
+        <initializer>0xCC</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="37" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1gad38117d920a762aa839f7337516466a5" prot="public" static="no">
+        <name>ST25R3911B_CMD_MASK_RECEIVE_DATA</name>
+        <initializer>0xD0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="38" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1ga95bceb844a8df09d57f1e16b09a23336" prot="public" static="no">
+        <name>ST25R3911B_CMD_UMNASK_RECEIVE_DATA</name>
+        <initializer>0xD1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="39" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1ga6e6512d813eab55d862ecba9423f282c" prot="public" static="no">
+        <name>ST25R3911B_CMD_MEASURE_AMPLITUDE</name>
+        <initializer>0xD3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="40" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1ga880683d08fc2a96c4b6692cec861ba59" prot="public" static="no">
+        <name>ST25R3911B_CMD_SQUELCH</name>
+        <initializer>0xD4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="41" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1ga8e308c38ee4f5933cca1ce7a5f5549dd" prot="public" static="no">
+        <name>ST25R3911B_CMD_RESET_RX_GAIN</name>
+        <initializer>0xD5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="42" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1gab7cf3b3729d30a1d288dc7f731b2bef0" prot="public" static="no">
+        <name>ST25R3911B_CMD_ADJUST_REGULATOR</name>
+        <initializer>0xD6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="43" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1ga9fdf7607c9e82eafd6d779abf24c6ec3" prot="public" static="no">
+        <name>ST25R3911B_CMD_CALIBRATE_MODULATION</name>
+        <initializer>0xD7</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="44" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1ga7a5acc3a1b7879849f1a9af4300dd6ad" prot="public" static="no">
+        <name>ST25R3911B_CMD_CALIBRATE_ANTENNA</name>
+        <initializer>0xD8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="45" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1gacd24b4bb7d17cdf3df998200b76cd1b5" prot="public" static="no">
+        <name>ST25R3911B_CMD_MEASURE_PHASE</name>
+        <initializer>0xD9</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="46" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1ga24a997df41b50a6186e0e8d96664497f" prot="public" static="no">
+        <name>ST25R3911B_CMD_CLEAR_RSSI</name>
+        <initializer>0xDA</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="47" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1gaf50a68e5e46e3f939fac7d25a7c43ff9" prot="public" static="no">
+        <name>ST25R3911B_CMD_TRANSPARENT_MODE</name>
+        <initializer>0xDC</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="48" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1ga79d3bd129f9bc8ba095d960d1222bba9" prot="public" static="no">
+        <name>ST25R3911B_CMD_CALIBRATE_CAP_SENSOR</name>
+        <initializer>0xDD</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="49" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1ga7e2d75c676c931dcae180b84e3fbb734" prot="public" static="no">
+        <name>ST25R3911B_CMD_MEASURE_CAP</name>
+        <initializer>0xDE</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="50" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1ga227a9a1589f6a8451371dac9ee296317" prot="public" static="no">
+        <name>ST25R3911B_CMD_MEASURE_POWER_SUPPLY</name>
+        <initializer>0xDF</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="51" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1ga3b3929ff24c63e8a2b5135504bd63ed8" prot="public" static="no">
+        <name>ST25R3911B_CMD_START_GEN_PURPOSE_TIMER</name>
+        <initializer>0xE0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="52" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1gaeee559da6d87dc45bcea696bbac4dff2" prot="public" static="no">
+        <name>ST25R3911B_CMD_START_WAKE_UP_TIMER</name>
+        <initializer>0xE1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="53" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1gac212dcb699e3435bd0ccbb90c59f4955" prot="public" static="no">
+        <name>ST25R3911B_CMD_START_MASK_RX_TIMER</name>
+        <initializer>0xE2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="54" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1gae3dfb4209f1876cf256d0e5a0f2a2ad6" prot="public" static="no">
+        <name>ST25R3911B_CMD_START_NO_RSP_TIMER</name>
+        <initializer>0xE3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="55" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1gaa2a78a5eba5b4097c17ad6b34ac97e86" prot="public" static="no">
+        <name>ST25R3911B_CMD_CLEAR_TEST_REG</name>
+        <initializer>0xFA</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="56" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__direct__command_1gaef49bbe0349467c78e15d743cf60fe95" prot="public" static="no">
+        <name>ST25R3911B_CMD_TEST_ACCESS</name>
+        <initializer>0xFC</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="57" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>ST25R3911B direct command defined in IC documentation chapter 1.1. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

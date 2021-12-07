@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__ui__module__event" kind="group">
+    <compoundname>ui_module_event</compoundname>
+    <title>UI module event</title>
+    <innerclass refid="structui__module__data" prot="public">ui_module_data</innerclass>
+    <innerclass refid="structui__module__event" prot="public">ui_module_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__ui__module__event_1ga37ceedfa843da2d8951334fec68da004" prot="public" static="no" strong="no">
+        <type></type>
+        <name>ui_module_event_type</name>
+        <enumvalue id="group__ui__module__event_ga37ceedfa843da2d8951334fec68da004_1gga37ceedfa843da2d8951334fec68da004a0c34819b79a364b244d9a95bd9535dc3" prot="public">
+          <name>UI_EVT_BUTTON_DATA_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ui__module__event_ga37ceedfa843da2d8951334fec68da004_1gga37ceedfa843da2d8951334fec68da004a39f363028c884185656f6dc270f54a6c" prot="public">
+          <name>UI_EVT_SHUTDOWN_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ui__module__event_ga37ceedfa843da2d8951334fec68da004_1gga37ceedfa843da2d8951334fec68da004a17da748066a0d39d062898497e61c376" prot="public">
+          <name>UI_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>UI event types submitted by UI module. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/ui_module_event.h" line="24" column="1" bodyfile="applications/asset_tracker_v2/src/events/ui_module_event.h" bodystart="24" bodyend="28"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>UI module event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

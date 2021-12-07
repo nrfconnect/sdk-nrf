@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structled__effect" kind="struct" language="C++" prot="public">
+    <compoundname>led_effect</compoundname>
+    <includes refid="applications_2asset__tracker_2src_2ui_2include_2led__effect_8h" local="no">led_effect.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structled__effect_a4f87aab8e8c0995d6ff7b2f5f8fb5d72_1a4f87aab8e8c0995d6ff7b2f5f8fb5d72" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structled__effect__step" kindref="compound">led_effect_step</ref> *</type>
+        <definition>struct led_effect_step* led_effect::steps</definition>
+        <argsstring></argsstring>
+        <name>steps</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/led_effect.h" line="33" column="22" bodyfile="applications/asset_tracker/src/ui/include/led_effect.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structled__effect_a5ab173d0fc620dc6024e4c4acd42162e_1a5ab173d0fc620dc6024e4c4acd42162e" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t led_effect::step_count</definition>
+        <argsstring></argsstring>
+        <name>step_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of steps for the given effect. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/led_effect.h" line="34" column="10" bodyfile="applications/asset_tracker/src/ui/include/led_effect.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structled__effect_a88cc1312ca0e22c668b85c0b4645bf7a_1a88cc1312ca0e22c668b85c0b4645bf7a" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool led_effect::loop_forever</definition>
+        <argsstring></argsstring>
+        <name>loop_forever</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Flag that indicates if the sequence should start again after it finishes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/led_effect.h" line="35" column="6" bodyfile="applications/asset_tracker/src/ui/include/led_effect.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structled__effect_a614ebf6ee52fb10d5e8bba557300f0a4_1a614ebf6ee52fb10d5e8bba557300f0a4" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structled__effect__step" kindref="compound">led_effect_step</ref> *</type>
+        <definition>const struct led_effect_step* led_effect::steps</definition>
+        <argsstring></argsstring>
+        <name>steps</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sequence of LED color changes. It is defined by subsequent steps. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/led_effect.h" line="53" column="28" bodyfile="include/caf/led_effect.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Single LED effect. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>led_color</label>
+        <link refid="structled__color"/>
+      </node>
+      <node id="1">
+        <label>led_effect</label>
+        <link refid="structled__effect"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>steps</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>led_effect_step</label>
+        <link refid="structled__effect__step"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>color</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/asset_tracker/src/ui/include/led_effect.h" line="32" column="1" bodyfile="applications/asset_tracker/src/ui/include/led_effect.h" bodystart="32" bodyend="36"/>
+    <listofallmembers>
+      <member refid="structled__effect_a88cc1312ca0e22c668b85c0b4645bf7a_1a88cc1312ca0e22c668b85c0b4645bf7a" prot="public" virt="non-virtual"><scope>led_effect</scope><name>loop_forever</name></member>
+      <member refid="structled__effect_a5ab173d0fc620dc6024e4c4acd42162e_1a5ab173d0fc620dc6024e4c4acd42162e" prot="public" virt="non-virtual"><scope>led_effect</scope><name>step_count</name></member>
+      <member refid="structled__effect_a4f87aab8e8c0995d6ff7b2f5f8fb5d72_1a4f87aab8e8c0995d6ff7b2f5f8fb5d72" prot="public" virt="non-virtual"><scope>led_effect</scope><name>steps</name></member>
+      <member refid="structled__effect_a614ebf6ee52fb10d5e8bba557300f0a4_1a614ebf6ee52fb10d5e8bba557300f0a4" prot="public" virt="non-virtual"><scope>led_effect</scope><name>steps</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

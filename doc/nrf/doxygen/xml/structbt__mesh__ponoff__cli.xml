@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__ponoff__cli" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_ponoff_cli</compoundname>
+    <includes refid="gen__ponoff__cli_8h" local="no">gen_ponoff_cli.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__ponoff__cli_a2ab448a8fab88dd3a75a061ae6388536_1a2ab448a8fab88dd3a75a061ae6388536" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model *</type>
+        <definition>struct bt_mesh_model* bt_mesh_ponoff_cli::model</definition>
+        <argsstring></argsstring>
+        <name>model</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Model entry pointer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_ponoff_cli.h" line="56" column="20" bodyfile="include/bluetooth/mesh/gen_ponoff_cli.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__ponoff__cli_a06e1e8f3e7fab5510cfd5e0398be8f2d_1a06e1e8f3e7fab5510cfd5e0398be8f2d" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model_pub</type>
+        <definition>struct bt_mesh_model_pub bt_mesh_ponoff_cli::pub</definition>
+        <argsstring></argsstring>
+        <name>pub</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Publish parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_ponoff_cli.h" line="58" column="24" bodyfile="include/bluetooth/mesh/gen_ponoff_cli.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__ponoff__cli_a04ab880d32e794998cf128b39c81e33e_1a04ab880d32e794998cf128b39c81e33e" prot="public" static="no" mutable="no">
+        <type>struct net_buf_simple</type>
+        <definition>struct net_buf_simple bt_mesh_ponoff_cli::pub_buf</definition>
+        <argsstring></argsstring>
+        <name>pub_buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_ponoff_cli.h" line="60" column="21" bodyfile="include/bluetooth/mesh/gen_ponoff_cli.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__ponoff__cli_ab18423a90b3210a31e18841f3cfc6af2_1ab18423a90b3210a31e18841f3cfc6af2" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_ponoff_cli::pub_data[BT_MESH_MODEL_BUF_LEN(BT_MESH_PONOFF_OP_SET, BT_MESH_PONOFF_MSG_LEN_SET)]</definition>
+        <argsstring>[BT_MESH_MODEL_BUF_LEN(BT_MESH_PONOFF_OP_SET, BT_MESH_PONOFF_MSG_LEN_SET)]</argsstring>
+        <name>pub_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_ponoff_cli.h" line="62" column="9" bodyfile="include/bluetooth/mesh/gen_ponoff_cli.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__ponoff__cli_a2de54b0a9de98a4cd82af4cfb9e07a55_1a2de54b0a9de98a4cd82af4cfb9e07a55" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_msg_ack_ctx</type>
+        <definition>struct bt_mesh_msg_ack_ctx bt_mesh_ponoff_cli::ack_ctx</definition>
+        <argsstring></argsstring>
+        <name>ack_ctx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Response context for tracking acknowledged messages. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_ponoff_cli.h" line="65" column="26" bodyfile="include/bluetooth/mesh/gen_ponoff_cli.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__ponoff__cli_a42d04ffa5469d82be20a953f5312a58a_1a42d04ffa5469d82be20a953f5312a58a" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_ponoff_cli::status_handler) (struct bt_mesh_ponoff_cli *cli, struct bt_mesh_msg_ctx *ctx, enum bt_mesh_on_power_up on_power_up)</definition>
+        <argsstring>)(struct bt_mesh_ponoff_cli *cli, struct bt_mesh_msg_ctx *ctx, enum bt_mesh_on_power_up on_power_up)</argsstring>
+        <name>status_handler</name>
+        <briefdescription>
+<para>OnPowerUp status message handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context the message was received with. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">on_power_up</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The OnPowerUp state presented in the message. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_ponoff_cli.h" line="73" column="1" bodyfile="include/bluetooth/mesh/gen_ponoff_cli.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Generic Power OnOff client instance.</para>
+<para>Should be initialized with <ref refid="group__bt__mesh__ponoff__cli_ga7dac1c27a1d29a69ade06210c287f49f_1ga7dac1c27a1d29a69ade06210c287f49f" kindref="member">BT_MESH_PONOFF_CLI_INIT</ref>. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/gen_ponoff_cli.h" line="54" column="1" bodyfile="include/bluetooth/mesh/gen_ponoff_cli.h" bodystart="54" bodyend="76"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__ponoff__cli_a2de54b0a9de98a4cd82af4cfb9e07a55_1a2de54b0a9de98a4cd82af4cfb9e07a55" prot="public" virt="non-virtual"><scope>bt_mesh_ponoff_cli</scope><name>ack_ctx</name></member>
+      <member refid="structbt__mesh__ponoff__cli_a2ab448a8fab88dd3a75a061ae6388536_1a2ab448a8fab88dd3a75a061ae6388536" prot="public" virt="non-virtual"><scope>bt_mesh_ponoff_cli</scope><name>model</name></member>
+      <member refid="structbt__mesh__ponoff__cli_a06e1e8f3e7fab5510cfd5e0398be8f2d_1a06e1e8f3e7fab5510cfd5e0398be8f2d" prot="public" virt="non-virtual"><scope>bt_mesh_ponoff_cli</scope><name>pub</name></member>
+      <member refid="structbt__mesh__ponoff__cli_a04ab880d32e794998cf128b39c81e33e_1a04ab880d32e794998cf128b39c81e33e" prot="public" virt="non-virtual"><scope>bt_mesh_ponoff_cli</scope><name>pub_buf</name></member>
+      <member refid="structbt__mesh__ponoff__cli_ab18423a90b3210a31e18841f3cfc6af2_1ab18423a90b3210a31e18841f3cfc6af2" prot="public" virt="non-virtual"><scope>bt_mesh_ponoff_cli</scope><name>pub_data</name></member>
+      <member refid="structbt__mesh__ponoff__cli_a42d04ffa5469d82be20a953f5312a58a_1a42d04ffa5469d82be20a953f5312a58a" prot="public" virt="non-virtual"><scope>bt_mesh_ponoff_cli</scope><name>status_handler</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

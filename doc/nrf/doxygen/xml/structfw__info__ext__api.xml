@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structfw__info__ext__api" kind="struct" language="C++" prot="public">
+    <compoundname>fw_info_ext_api</compoundname>
+    <includes refid="fw__info_8h" local="no">fw_info.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structfw__info__ext__api_a742917ff82fc921a8296b5cea325039f_1a742917ff82fc921a8296b5cea325039f" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t fw_info_ext_api::magic[(CONFIG_FW_INFO_MAGIC_LEN/sizeof(uint32_t))]</definition>
+        <argsstring>[(CONFIG_FW_INFO_MAGIC_LEN/sizeof(uint32_t))]</argsstring>
+        <name>magic</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="47" column="10" bodyfile="include/fw_info.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structfw__info__ext__api_ae9e77f2e066162e3caf3eef5746acce9_1ae9e77f2e066162e3caf3eef5746acce9" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t fw_info_ext_api::ext_api_len</definition>
+        <argsstring></argsstring>
+        <name>ext_api_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="52" column="10" bodyfile="include/fw_info.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structfw__info__ext__api_ab07cd84b457995a9fb0bdc913d735c41_1ab07cd84b457995a9fb0bdc913d735c41" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t fw_info_ext_api::ext_api_id</definition>
+        <argsstring></argsstring>
+        <name>ext_api_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="55" column="10" bodyfile="include/fw_info.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structfw__info__ext__api_ab491c14c85504979a561f302f93a6142_1ab491c14c85504979a561f302f93a6142" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t fw_info_ext_api::ext_api_flags</definition>
+        <argsstring></argsstring>
+        <name>ext_api_flags</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="58" column="10" bodyfile="include/fw_info.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structfw__info__ext__api_a58a78841d204655dfc137554f909f65e_1a58a78841d204655dfc137554f909f65e" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t fw_info_ext_api::ext_api_version</definition>
+        <argsstring></argsstring>
+        <name>ext_api_version</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="61" column="10" bodyfile="include/fw_info.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>This struct serves as a header before an EXT_API.</para>
+<para>This header contains basic metadata about the EXT_API: A unique identifier, version and flags to be used for compatibility matching. The payload that comes after this header is completely implementation dependent for each EXT_API.</para>
+<para><simplesect kind="note"><para>How to use the EXT_API, such as the signatures of all the functions in the list must be unambiguous for an ID/version combination. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="include/fw_info.h" line="43" column="1" bodyfile="include/fw_info.h" bodystart="43" bodyend="62"/>
+    <listofallmembers>
+      <member refid="structfw__info__ext__api_ab491c14c85504979a561f302f93a6142_1ab491c14c85504979a561f302f93a6142" prot="public" virt="non-virtual"><scope>fw_info_ext_api</scope><name>ext_api_flags</name></member>
+      <member refid="structfw__info__ext__api_ab07cd84b457995a9fb0bdc913d735c41_1ab07cd84b457995a9fb0bdc913d735c41" prot="public" virt="non-virtual"><scope>fw_info_ext_api</scope><name>ext_api_id</name></member>
+      <member refid="structfw__info__ext__api_ae9e77f2e066162e3caf3eef5746acce9_1ae9e77f2e066162e3caf3eef5746acce9" prot="public" virt="non-virtual"><scope>fw_info_ext_api</scope><name>ext_api_len</name></member>
+      <member refid="structfw__info__ext__api_a58a78841d204655dfc137554f909f65e_1a58a78841d204655dfc137554f909f65e" prot="public" virt="non-virtual"><scope>fw_info_ext_api</scope><name>ext_api_version</name></member>
+      <member refid="structfw__info__ext__api_a742917ff82fc921a8296b5cea325039f_1a742917ff82fc921a8296b5cea325039f" prot="public" virt="non-virtual"><scope>fw_info_ext_api</scope><name>magic</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,169 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="nrf52820dongle__nrf52820_2port__state__def_8h" kind="file" language="C++">
+    <compoundname>port_state_def.h</compoundname>
+    <includes local="no">soc.h</includes>
+    <includes refid="port__state_8h" local="yes">port_state.h</includes>
+    <incdepgraph>
+      <node id="3">
+        <label>port_state.h</label>
+        <link refid="port__state_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/port_state_def.h</label>
+        <link refid="nrf52820dongle__nrf52820_2port__state__def_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>soc.h</label>
+      </node>
+      <node id="4">
+        <label>stddef.h</label>
+      </node>
+      <node id="5">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="nrf52820dongle__nrf52820_2port__state__def_8h_af6add5bc33c3015a739fef31e8471e3b_1af6add5bc33c3015a739fef31e8471e3b" prot="public" static="no" mutable="no">
+        <type>const struct @60</type>
+        <definition>const struct @60 port_state_def_include_once</definition>
+        <argsstring></argsstring>
+        <name>port_state_def_include_once</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/port_state_def.h" line="18" column="41"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf52820dongle__nrf52820_2port__state__def_8h_aeed24526c1850535b2bcd1428f8285ab_1aeed24526c1850535b2bcd1428f8285ab" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structpin__state" kindref="compound">pin_state</ref></type>
+        <definition>const struct pin_state port0_on[]</definition>
+        <argsstring>[]</argsstring>
+        <name>port0_on</name>
+        <initializer>= {
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/port_state_def.h" line="21" column="29" bodyfile="applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/port_state_def.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf52820dongle__nrf52820_2port__state__def_8h_ab06e068c8e0335be117488ae33e14385_1ab06e068c8e0335be117488ae33e14385" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structpin__state" kindref="compound">pin_state</ref></type>
+        <definition>const struct pin_state port0_off[]</definition>
+        <argsstring>[]</argsstring>
+        <name>port0_off</name>
+        <initializer>= {
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/port_state_def.h" line="24" column="29" bodyfile="applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/port_state_def.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf52820dongle__nrf52820_2port__state__def_8h_a665d461cc54ee2374c8526a8388712f5_1a665d461cc54ee2374c8526a8388712f5" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structport__state" kindref="compound">port_state</ref></type>
+        <definition>const struct port_state port_state_on[]</definition>
+        <argsstring>[]</argsstring>
+        <name>port_state_on</name>
+        <initializer>= {
+	{
+		.name     = DT_LABEL(DT_NODELABEL(gpio0)),
+		.ps       = <ref refid="nrf5340dk__nrf5340__cpuapp_2port__state__def_8h_aeed24526c1850535b2bcd1428f8285ab_1aeed24526c1850535b2bcd1428f8285ab" kindref="member">port0_on</ref>,
+		.ps_count = ARRAY_SIZE(<ref refid="nrf5340dk__nrf5340__cpuapp_2port__state__def_8h_aeed24526c1850535b2bcd1428f8285ab_1aeed24526c1850535b2bcd1428f8285ab" kindref="member">port0_on</ref>),
+	}
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/port_state_def.h" line="28" column="30" bodyfile="applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/port_state_def.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf52820dongle__nrf52820_2port__state__def_8h_a13bafe3e94a97aae8b3ff314b7d19d2d_1a13bafe3e94a97aae8b3ff314b7d19d2d" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structport__state" kindref="compound">port_state</ref></type>
+        <definition>const struct port_state port_state_off[]</definition>
+        <argsstring>[]</argsstring>
+        <name>port_state_off</name>
+        <initializer>= {
+	{
+		.name     = DT_LABEL(DT_NODELABEL(gpio0)),
+		.ps       = <ref refid="nrf5340dk__nrf5340__cpuapp_2port__state__def_8h_ab06e068c8e0335be117488ae33e14385_1ab06e068c8e0335be117488ae33e14385" kindref="member">port0_off</ref>,
+		.ps_count = ARRAY_SIZE(<ref refid="nrf5340dk__nrf5340__cpuapp_2port__state__def_8h_ab06e068c8e0335be117488ae33e14385_1ab06e068c8e0335be117488ae33e14385" kindref="member">port0_off</ref>),
+	}
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/port_state_def.h" line="36" column="30" bodyfile="applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/port_state_def.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;soc.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="port__state_8h" kindref="compound">port_state.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>configuration<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>from<sp/>board<sp/>module<sp/>and<sp/>holds</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*<sp/>information<sp/>about<sp/>default<sp/>pin<sp/>states<sp/>set<sp/>while<sp/>board<sp/>is<sp/>on<sp/>and<sp/>off.</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>structure<sp/>enforces<sp/>the<sp/>header<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>in<sp/>the<sp/>build.</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*<sp/>Violating<sp/>this<sp/>requirement<sp/>triggers<sp/>a<sp/>multiple<sp/>definition<sp/>error<sp/>at<sp/>link<sp/>time.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="nrf52820dongle__nrf52820_2port__state__def_8h_af6add5bc33c3015a739fef31e8471e3b_1af6add5bc33c3015a739fef31e8471e3b" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{}<sp/><ref refid="nrf52810dmouse__nrf52810_2port__state__def_8h_a2cd7e664ccceacfad3bb7d1e64e0d3de_1a2cd7e664ccceacfad3bb7d1e64e0d3de" kindref="member">port_state_def_include_once</ref>;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="nrf52820dongle__nrf52820_2port__state__def_8h_aeed24526c1850535b2bcd1428f8285ab_1aeed24526c1850535b2bcd1428f8285ab" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structpin__state" kindref="compound">pin_state</ref><sp/><ref refid="nrf52820dongle__nrf52820_2port__state__def_8h_aeed24526c1850535b2bcd1428f8285ab_1aeed24526c1850535b2bcd1428f8285ab" kindref="member">port0_on</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="nrf52820dongle__nrf52820_2port__state__def_8h_ab06e068c8e0335be117488ae33e14385_1ab06e068c8e0335be117488ae33e14385" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structpin__state" kindref="compound">pin_state</ref><sp/><ref refid="nrf52820dongle__nrf52820_2port__state__def_8h_ab06e068c8e0335be117488ae33e14385_1ab06e068c8e0335be117488ae33e14385" kindref="member">port0_off</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="nrf52820dongle__nrf52820_2port__state__def_8h_a665d461cc54ee2374c8526a8388712f5_1a665d461cc54ee2374c8526a8388712f5" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structport__state" kindref="compound">port_state</ref><sp/><ref refid="nrf52820dongle__nrf52820_2port__state__def_8h_a665d461cc54ee2374c8526a8388712f5_1a665d461cc54ee2374c8526a8388712f5" kindref="member">port_state_on</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.<ref refid="structport__state_a7951c56b8ef9a0cd0b924c745033ad73_1a7951c56b8ef9a0cd0b924c745033ad73" kindref="member">name</ref><sp/><sp/><sp/><sp/><sp/>=<sp/>DT_LABEL(DT_NODELABEL(gpio0)),</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.ps<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="nrf52820dongle__nrf52820_2port__state__def_8h_aeed24526c1850535b2bcd1428f8285ab_1aeed24526c1850535b2bcd1428f8285ab" kindref="member">port0_on</ref>,</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.ps_count<sp/>=<sp/>ARRAY_SIZE(<ref refid="nrf52820dongle__nrf52820_2port__state__def_8h_aeed24526c1850535b2bcd1428f8285ab_1aeed24526c1850535b2bcd1428f8285ab" kindref="member">port0_on</ref>),</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="nrf52820dongle__nrf52820_2port__state__def_8h_a13bafe3e94a97aae8b3ff314b7d19d2d_1a13bafe3e94a97aae8b3ff314b7d19d2d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structport__state" kindref="compound">port_state</ref><sp/><ref refid="nrf52820dongle__nrf52820_2port__state__def_8h_a13bafe3e94a97aae8b3ff314b7d19d2d_1a13bafe3e94a97aae8b3ff314b7d19d2d" kindref="member">port_state_off</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.<ref refid="structport__state_a7951c56b8ef9a0cd0b924c745033ad73_1a7951c56b8ef9a0cd0b924c745033ad73" kindref="member">name</ref><sp/><sp/><sp/><sp/><sp/>=<sp/>DT_LABEL(DT_NODELABEL(gpio0)),</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.ps<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="nrf52820dongle__nrf52820_2port__state__def_8h_ab06e068c8e0335be117488ae33e14385_1ab06e068c8e0335be117488ae33e14385" kindref="member">port0_off</ref>,</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.ps_count<sp/>=<sp/>ARRAY_SIZE(<ref refid="nrf52820dongle__nrf52820_2port__state__def_8h_ab06e068c8e0335be117488ae33e14385_1ab06e068c8e0335be117488ae33e14385" kindref="member">port0_off</ref>),</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/port_state_def.h"/>
+  </compounddef>
+</doxygen>

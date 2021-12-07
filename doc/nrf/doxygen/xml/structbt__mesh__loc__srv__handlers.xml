@@ -1,0 +1,191 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__loc__srv__handlers" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_loc_srv_handlers</compoundname>
+    <includes refid="gen__loc__srv_8h" local="no">gen_loc_srv.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__loc__srv__handlers_a50bd544d338500d0a55bb95dc54f1302_1a50bd544d338500d0a55bb95dc54f1302" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_loc_srv_handlers::global_get) (struct bt_mesh_loc_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_loc_global *rsp)</definition>
+        <argsstring>)(struct bt_mesh_loc_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_loc_global *rsp)</argsstring>
+        <name>global_get</name>
+        <briefdescription>
+<para>Get the Global Location state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server to get the Global Location state of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the get message that triggered the query, or NULL if it was not triggered by a message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Global Location state to fill. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc_srv.h" line="66" column="1" bodyfile="include/bluetooth/mesh/gen_loc_srv.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__loc__srv__handlers_a92632d73dc676bc48c66848646529305_1a92632d73dc676bc48c66848646529305" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_loc_srv_handlers::global_set) (struct bt_mesh_loc_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_loc_global *loc)</definition>
+        <argsstring>)(struct bt_mesh_loc_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_loc_global *loc)</argsstring>
+        <name>global_set</name>
+        <briefdescription>
+<para>Set the Global Location state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Any changes to the new <computeroutput>loc</computeroutput> parameter will be taken into account before a response is sent to the client.</para>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server to set the Global Location state of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the set message that triggered the change, or NULL if it was not triggered by a message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">loc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New Global Location state. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc_srv.h" line="82" column="1" bodyfile="include/bluetooth/mesh/gen_loc_srv.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__loc__srv__handlers_ad3169cf02055d06e98b1d7a0e87ae96a_1ad3169cf02055d06e98b1d7a0e87ae96a" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_loc_srv_handlers::local_get) (struct bt_mesh_loc_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_loc_local *rsp)</definition>
+        <argsstring>)(struct bt_mesh_loc_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_loc_local *rsp)</argsstring>
+        <name>local_get</name>
+        <briefdescription>
+<para>Get the Local Location state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server to get the Local Location state of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the get message that triggered the query, or NULL if it was not triggered by a message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Local Location state to fill. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc_srv.h" line="95" column="1" bodyfile="include/bluetooth/mesh/gen_loc_srv.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__loc__srv__handlers_a9065581ed429081d21d57b6af01e4f43_1a9065581ed429081d21d57b6af01e4f43" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_loc_srv_handlers::local_set) (struct bt_mesh_loc_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_loc_local *loc)</definition>
+        <argsstring>)(struct bt_mesh_loc_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_loc_local *loc)</argsstring>
+        <name>local_set</name>
+        <briefdescription>
+<para>Set the Local Location state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Any changes to the new <computeroutput>loc</computeroutput> parameter will be taken into account before a response is sent to the client.</para>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server to set the Local Location state of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the set message that triggered the change, or NULL if it was not triggered by a message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">loc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New Local Location state. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc_srv.h" line="111" column="1" bodyfile="include/bluetooth/mesh/gen_loc_srv.h" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Location Server handler functions. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/gen_loc_srv.h" line="56" column="1" bodyfile="include/bluetooth/mesh/gen_loc_srv.h" bodystart="56" bodyend="114"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__loc__srv__handlers_a50bd544d338500d0a55bb95dc54f1302_1a50bd544d338500d0a55bb95dc54f1302" prot="public" virt="non-virtual"><scope>bt_mesh_loc_srv_handlers</scope><name>global_get</name></member>
+      <member refid="structbt__mesh__loc__srv__handlers_a92632d73dc676bc48c66848646529305_1a92632d73dc676bc48c66848646529305" prot="public" virt="non-virtual"><scope>bt_mesh_loc_srv_handlers</scope><name>global_set</name></member>
+      <member refid="structbt__mesh__loc__srv__handlers_ad3169cf02055d06e98b1d7a0e87ae96a_1ad3169cf02055d06e98b1d7a0e87ae96a" prot="public" virt="non-virtual"><scope>bt_mesh_loc_srv_handlers</scope><name>local_get</name></member>
+      <member refid="structbt__mesh__loc__srv__handlers_a9065581ed429081d21d57b6af01e4f43_1a9065581ed429081d21d57b6af01e4f43" prot="public" virt="non-virtual"><scope>bt_mesh_loc_srv_handlers</scope><name>local_set</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

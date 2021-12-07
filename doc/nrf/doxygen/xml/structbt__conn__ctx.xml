@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__conn__ctx" kind="struct" language="C++" prot="public">
+    <compoundname>bt_conn_ctx</compoundname>
+    <includes refid="conn__ctx_8h" local="no">conn_ctx.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__conn__ctx_ae182bf4ffe8676108e3704d91ada9182_1ae182bf4ffe8676108e3704d91ada9182" prot="public" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* bt_conn_ctx::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Any kind of data associated with a specific connection. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/conn_ctx.h" line="46" column="6" bodyfile="include/bluetooth/conn_ctx.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__conn__ctx_aba994ef635c1d0cb11208af73eb23936_1aba994ef635c1d0cb11208af73eb23936" prot="public" static="no" mutable="no">
+        <type>struct bt_conn *</type>
+        <definition>struct bt_conn* bt_conn_ctx::conn</definition>
+        <argsstring></argsstring>
+        <name>conn</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The connection that the data is associated with. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/conn_ctx.h" line="49" column="14" bodyfile="include/bluetooth/conn_ctx.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Context data for a connection. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/conn_ctx.h" line="44" column="1" bodyfile="include/bluetooth/conn_ctx.h" bodystart="44" bodyend="50"/>
+    <listofallmembers>
+      <member refid="structbt__conn__ctx_aba994ef635c1d0cb11208af73eb23936_1aba994ef635c1d0cb11208af73eb23936" prot="public" virt="non-virtual"><scope>bt_conn_ctx</scope><name>conn</name></member>
+      <member refid="structbt__conn__ctx_ae182bf4ffe8676108e3704d91ada9182_1ae182bf4ffe8676108e3704d91ada9182" prot="public" virt="non-virtual"><scope>bt_conn_ctx</scope><name>data</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

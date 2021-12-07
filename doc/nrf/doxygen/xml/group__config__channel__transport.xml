@@ -1,0 +1,415 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__config__channel__transport" kind="group">
+    <compoundname>config_channel_transport</compoundname>
+    <title>Configuration channel transport</title>
+    <innerclass refid="structconfig__channel__transport" prot="public">config_channel_transport</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__config__channel__transport_1ga9050bf9076cc5b6f94390c0a0d39c95c" prot="public" static="no" strong="no">
+        <type></type>
+        <name>config_channel_transport_state</name>
+        <enumvalue id="group__config__channel__transport_ga9050bf9076cc5b6f94390c0a0d39c95c_1gga9050bf9076cc5b6f94390c0a0d39c95cac750eb4396b664d68b842f9aa2a06278" prot="public">
+          <name>CONFIG_CHANNEL_TRANSPORT_DISABLED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__config__channel__transport_ga9050bf9076cc5b6f94390c0a0d39c95c_1gga9050bf9076cc5b6f94390c0a0d39c95ca914597e2f1557f8ee5a018ebaf51ad9c" prot="public">
+          <name>CONFIG_CHANNEL_TRANSPORT_IDLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__config__channel__transport_ga9050bf9076cc5b6f94390c0a0d39c95c_1gga9050bf9076cc5b6f94390c0a0d39c95ca21501edfa747e452859f1b8b8f6d51b8" prot="public">
+          <name>CONFIG_CHANNEL_TRANSPORT_WAIT_RSP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__config__channel__transport_ga9050bf9076cc5b6f94390c0a0d39c95c_1gga9050bf9076cc5b6f94390c0a0d39c95cacea543c83f9964eb473de51ff3f0b4a9" prot="public">
+          <name>CONFIG_CHANNEL_TRANSPORT_RSP_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Config channel transport states. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="47" column="1" bodyfile="applications/nrf_desktop/src/util/config_channel_transport.h" bodystart="47" bodyend="52"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__config__channel__transport_1ga89c57f55b78d35634c18f01661184d79" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int config_channel_report_parse</definition>
+        <argsstring>(const uint8_t *buffer, size_t length, struct config_event *event)</argsstring>
+        <name>config_channel_report_parse</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>length</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structconfig__event" kindref="compound">config_event</ref> *</type>
+          <declname>event</declname>
+        </param>
+        <briefdescription>
+<para>Parse the configuration channel report. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the report buffer to be parsed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>event</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the event used to store the parsed values.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of parsed bytes if the operation was successful. Otherwise, a negative error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="29" column="5" declfile="applications/nrf_desktop/src/util/config_channel_transport.h" declline="29" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__config__channel__transport_1ga95318bb6af1353f5f8312648c8cae88a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int config_channel_report_fill</definition>
+        <argsstring>(uint8_t *buffer, const size_t length, const struct config_event *event)</argsstring>
+        <name>config_channel_report_fill</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>length</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structconfig__event" kindref="compound">config_event</ref> *</type>
+          <declname>event</declname>
+        </param>
+        <briefdescription>
+<para>Fill the configuration channel report with values from a provided event. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the report buffer to be filled. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>event</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a event with values to be copied to the buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of written bytes if the operation was successful. Otherwise, a negative error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="43" column="5" declfile="applications/nrf_desktop/src/util/config_channel_transport.h" declline="43" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__config__channel__transport_1ga404b12e238955d37ecf91a89b10e5fd0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void config_channel_transport_init</definition>
+        <argsstring>(struct config_channel_transport *transport)</argsstring>
+        <name>config_channel_transport_init</name>
+        <param>
+          <type>struct <ref refid="structconfig__channel__transport" kindref="compound">config_channel_transport</ref> *</type>
+          <declname>transport</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the configuration channel transport instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>transport</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the configuration channel transport instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="68" column="6" declfile="applications/nrf_desktop/src/util/config_channel_transport.h" declline="68" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__config__channel__transport_1gaa08f360b06141e79501fe60ce277f6f0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int config_channel_transport_get</definition>
+        <argsstring>(struct config_channel_transport *transport, uint8_t *buffer, size_t length)</argsstring>
+        <name>config_channel_transport_get</name>
+        <param>
+          <type>struct <ref refid="structconfig__channel__transport" kindref="compound">config_channel_transport</ref> *</type>
+          <declname>transport</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>length</declname>
+        </param>
+        <briefdescription>
+<para>Handle a get operation on the configuration channel. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>transport</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the configuration channel transport instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer to be filled when handling the get request. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the data to be filled.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="81" column="5" declfile="applications/nrf_desktop/src/util/config_channel_transport.h" declline="81" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__config__channel__transport_1ga876b1471d74f3925092e00cae212811b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int config_channel_transport_set</definition>
+        <argsstring>(struct config_channel_transport *transport, const uint8_t *buffer, size_t length)</argsstring>
+        <name>config_channel_transport_set</name>
+        <param>
+          <type>struct <ref refid="structconfig__channel__transport" kindref="compound">config_channel_transport</ref> *</type>
+          <declname>transport</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>length</declname>
+        </param>
+        <briefdescription>
+<para>Handle a set operation on the configuration channel. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>transport</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the configuration channel transport instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the report buffer to be parsed to handle the set request. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the incoming data.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="95" column="5" declfile="applications/nrf_desktop/src/util/config_channel_transport.h" declline="95" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__config__channel__transport_1ga2c0ab2b64579203812ef5a88d3e99c7e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int config_channel_transport_get_disabled</definition>
+        <argsstring>(uint8_t *buffer, size_t length)</argsstring>
+        <name>config_channel_transport_get_disabled</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>length</declname>
+        </param>
+        <briefdescription>
+<para>Handle a get operation and inform that the transport is disabled. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Fills the buffer with response informing that the transport is disabled and cannot be used to configure device. If a given transport is disabled, set operation should be ignored and get operation should use this function to prepare response for host.</para>
+<para>The disabled transport returns disconnected status.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer to be filled. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the data to be filled.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="112" column="5" declfile="applications/nrf_desktop/src/util/config_channel_transport.h" declline="112" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__config__channel__transport_1gabb9e5f5174e787d72c837ccd2770ab00" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool config_channel_transport_rsp_receive</definition>
+        <argsstring>(struct config_channel_transport *transport, struct config_event *event)</argsstring>
+        <name>config_channel_transport_rsp_receive</name>
+        <param>
+          <type>struct <ref refid="structconfig__channel__transport" kindref="compound">config_channel_transport</ref> *</type>
+          <declname>transport</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structconfig__event" kindref="compound">config_event</ref> *</type>
+          <declname>event</declname>
+        </param>
+        <briefdescription>
+<para>Handle the response received from higher layer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>transport</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the configuration channel transport instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>event</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the event carrying the received response.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if response was designated for this transport. Otherwise returns false. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="123" column="6" declfile="applications/nrf_desktop/src/util/config_channel_transport.h" declline="123" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__config__channel__transport_1gad3b69515199cbf3c197309e76702c3aa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void config_channel_transport_disconnect</definition>
+        <argsstring>(struct config_channel_transport *transport)</argsstring>
+        <name>config_channel_transport_disconnect</name>
+        <param>
+          <type>struct <ref refid="structconfig__channel__transport" kindref="compound">config_channel_transport</ref> *</type>
+          <declname>transport</declname>
+        </param>
+        <briefdescription>
+<para>Handle the configuration channel transport disconnection. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>transport</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the configuration channel transport instance </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="131" column="6" declfile="applications/nrf_desktop/src/util/config_channel_transport.h" declline="131" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the configuration channel transport. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

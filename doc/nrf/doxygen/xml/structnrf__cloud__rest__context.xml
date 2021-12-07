@@ -1,0 +1,186 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnrf__cloud__rest__context" kind="struct" language="C++" prot="public">
+    <compoundname>nrf_cloud_rest_context</compoundname>
+    <includes refid="nrf__cloud__rest_8h" local="no">nrf_cloud_rest.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnrf__cloud__rest__context_a9351ecfa665b4c8131d57841450e4d4c_1a9351ecfa665b4c8131d57841450e4d4c" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int nrf_cloud_rest_context::connect_socket</definition>
+        <argsstring></argsstring>
+        <name>connect_socket</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Connection socket; initialize to -1 and library will make the connection. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="61" column="5" bodyfile="include/net/nrf_cloud_rest.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__rest__context_a41687c736d36d7e82eb609f9dd0d4aab_1a41687c736d36d7e82eb609f9dd0d4aab" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nrf_cloud_rest_context::keep_alive</definition>
+        <argsstring></argsstring>
+        <name>keep_alive</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If the connection should remain after API call. <simplesect kind="note"><para>A failed API call could result in the socket being closed. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="66" column="6" bodyfile="include/net/nrf_cloud_rest.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__rest__context_a98c6b831205a2aec8c6cc9c0ae16553a_1a98c6b831205a2aec8c6cc9c0ae16553a" prot="public" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t nrf_cloud_rest_context::timeout_ms</definition>
+        <argsstring></argsstring>
+        <name>timeout_ms</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Timeout value, in milliseconds, for receiving response data. Minimum timeout value specified by NRF_CLOUD_REST_TIMEOUT_MINIMUM. For no timeout, set to NRF_CLOUD_REST_TIMEOUT_NONE. <simplesect kind="note"><para>This parameter is currently not used; set CONFIG_NRF_CLOUD_REST_RECV_TIMEOUT instead. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="73" column="9" bodyfile="include/net/nrf_cloud_rest.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__rest__context_af2c9b7b5d40289890bcc5dd4b839f86a_1af2c9b7b5d40289890bcc5dd4b839f86a" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* nrf_cloud_rest_context::auth</definition>
+        <argsstring></argsstring>
+        <name>auth</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Authentication string: JWT <ref refid="group__modem__jwt" kindref="compound">JWT generation</ref>. The nRF Cloud device ID must be included in the sub claim. If the device ID is the device&apos;s internal UUID, the sub claim can be omitted for modem generated JWTs; the UUID is included in the iss claim. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="80" column="6" bodyfile="include/net/nrf_cloud_rest.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__rest__context_a763005650fd231440da028aed6543b3d_1a763005650fd231440da028aed6543b3d" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* nrf_cloud_rest_context::rx_buf</definition>
+        <argsstring></argsstring>
+        <name>rx_buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>User allocated buffer for receiving API response, which includes the HTTPS headers, any response data and a terminating NULL. Buffer size should be limited according to the maximum TLS receive size of the modem. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="87" column="6" bodyfile="include/net/nrf_cloud_rest.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__rest__context_aab212d4a7b3558d46db765dc7bc6953a_1aab212d4a7b3558d46db765dc7bc6953a" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t nrf_cloud_rest_context::rx_buf_len</definition>
+        <argsstring></argsstring>
+        <name>rx_buf_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of rx_buf </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="89" column="8" bodyfile="include/net/nrf_cloud_rest.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__rest__context_a9724cff484a7ed60940bbbfae8a2f0e5_1a9724cff484a7ed60940bbbfae8a2f0e5" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t nrf_cloud_rest_context::fragment_size</definition>
+        <argsstring></argsstring>
+        <name>fragment_size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Fragment size for downloads, set to zero to use CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE. The rx_buf must be able to hold the HTTPS headers plus this fragment size. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="95" column="8" bodyfile="include/net/nrf_cloud_rest.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__rest__context_af254608d3260bd9c8efbd3f9400de70f_1af254608d3260bd9c8efbd3f9400de70f" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1gab56e61555902e6af10dec34fb4cd84d3" kindref="member">nrf_cloud_http_status</ref></type>
+        <definition>enum nrf_cloud_http_status nrf_cloud_rest_context::status</definition>
+        <argsstring></argsstring>
+        <name>status</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Results from API call HTTP status of API call </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="99" column="27" bodyfile="include/net/nrf_cloud_rest.h" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__rest__context_a924b44deace6e00a596b83dd6ddfdd67_1a924b44deace6e00a596b83dd6ddfdd67" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* nrf_cloud_rest_context::response</definition>
+        <argsstring></argsstring>
+        <name>response</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Start of response content data in rx_buf </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="101" column="6" bodyfile="include/net/nrf_cloud_rest.h" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__rest__context_a51f7a5ed92afe4fb2c715094775554d2_1a51f7a5ed92afe4fb2c715094775554d2" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t nrf_cloud_rest_context::response_len</definition>
+        <argsstring></argsstring>
+        <name>response_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of response content data </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="103" column="8" bodyfile="include/net/nrf_cloud_rest.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__rest__context_a457a519a7974ecc1a9a8e3dffba776f8_1a457a519a7974ecc1a9a8e3dffba776f8" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t nrf_cloud_rest_context::total_response_len</definition>
+        <argsstring></argsstring>
+        <name>total_response_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of HTTPS headers + response content data </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="105" column="8" bodyfile="include/net/nrf_cloud_rest.h" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Parameters and data for using the nRF Cloud REST API. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/nrf_cloud_rest.h" line="56" column="1" bodyfile="include/net/nrf_cloud_rest.h" bodystart="56" bodyend="106"/>
+    <listofallmembers>
+      <member refid="structnrf__cloud__rest__context_af2c9b7b5d40289890bcc5dd4b839f86a_1af2c9b7b5d40289890bcc5dd4b839f86a" prot="public" virt="non-virtual"><scope>nrf_cloud_rest_context</scope><name>auth</name></member>
+      <member refid="structnrf__cloud__rest__context_a9351ecfa665b4c8131d57841450e4d4c_1a9351ecfa665b4c8131d57841450e4d4c" prot="public" virt="non-virtual"><scope>nrf_cloud_rest_context</scope><name>connect_socket</name></member>
+      <member refid="structnrf__cloud__rest__context_a9724cff484a7ed60940bbbfae8a2f0e5_1a9724cff484a7ed60940bbbfae8a2f0e5" prot="public" virt="non-virtual"><scope>nrf_cloud_rest_context</scope><name>fragment_size</name></member>
+      <member refid="structnrf__cloud__rest__context_a41687c736d36d7e82eb609f9dd0d4aab_1a41687c736d36d7e82eb609f9dd0d4aab" prot="public" virt="non-virtual"><scope>nrf_cloud_rest_context</scope><name>keep_alive</name></member>
+      <member refid="structnrf__cloud__rest__context_a924b44deace6e00a596b83dd6ddfdd67_1a924b44deace6e00a596b83dd6ddfdd67" prot="public" virt="non-virtual"><scope>nrf_cloud_rest_context</scope><name>response</name></member>
+      <member refid="structnrf__cloud__rest__context_a51f7a5ed92afe4fb2c715094775554d2_1a51f7a5ed92afe4fb2c715094775554d2" prot="public" virt="non-virtual"><scope>nrf_cloud_rest_context</scope><name>response_len</name></member>
+      <member refid="structnrf__cloud__rest__context_a763005650fd231440da028aed6543b3d_1a763005650fd231440da028aed6543b3d" prot="public" virt="non-virtual"><scope>nrf_cloud_rest_context</scope><name>rx_buf</name></member>
+      <member refid="structnrf__cloud__rest__context_aab212d4a7b3558d46db765dc7bc6953a_1aab212d4a7b3558d46db765dc7bc6953a" prot="public" virt="non-virtual"><scope>nrf_cloud_rest_context</scope><name>rx_buf_len</name></member>
+      <member refid="structnrf__cloud__rest__context_af254608d3260bd9c8efbd3f9400de70f_1af254608d3260bd9c8efbd3f9400de70f" prot="public" virt="non-virtual"><scope>nrf_cloud_rest_context</scope><name>status</name></member>
+      <member refid="structnrf__cloud__rest__context_a98c6b831205a2aec8c6cc9c0ae16553a_1a98c6b831205a2aec8c6cc9c0ae16553a" prot="public" virt="non-virtual"><scope>nrf_cloud_rest_context</scope><name>timeout_ms</name></member>
+      <member refid="structnrf__cloud__rest__context_a457a519a7974ecc1a9a8e3dffba776f8_1a457a519a7974ecc1a9a8e3dffba776f8" prot="public" virt="non-virtual"><scope>nrf_cloud_rest_context</scope><name>total_response_len</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

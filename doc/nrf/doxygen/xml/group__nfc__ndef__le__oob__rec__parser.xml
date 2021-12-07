@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__ndef__le__oob__rec__parser" kind="group">
+    <compoundname>nfc_ndef_le_oob_rec_parser</compoundname>
+    <title>Parser for NDEF LE OOB Records</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__ndef__le__oob__rec__parser_1gaad4242dc5fb9e51801a47c7d74e5f62a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nfc_ndef_le_oob_rec_check</definition>
+        <argsstring>(const struct nfc_ndef_record_desc *rec_desc)</argsstring>
+        <name>nfc_ndef_le_oob_rec_check</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>rec_desc</declname>
+        </param>
+        <briefdescription>
+<para>Check if an NDEF Record is the LE OOB Record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">rec_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>General NDEF Record descriptor.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the NDEF Record Type is LE OOB </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the NDEF Record Type is different. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/le_oob_rec_parser.h" line="31" column="6" declfile="include/nfc/ndef/le_oob_rec_parser.h" declline="31" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__le__oob__rec__parser_1gae4d219d0fe25eb94482e5bacfc56795d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_le_oob_rec_parse</definition>
+        <argsstring>(const struct nfc_ndef_record_desc *rec_desc, uint8_t *result_buf, uint32_t *result_buf_len)</argsstring>
+        <name>nfc_ndef_le_oob_rec_parse</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>rec_desc</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>result_buf</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>result_buf_len</declname>
+        </param>
+        <briefdescription>
+<para>Parse an NDEF LE OOB Record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function only parses NDEF Record descriptors with LE OOB Record Type. Parsing results are stored in the LE OOB Record descriptor (<ref refid="structnfc__ndef__le__oob__rec__payload__desc" kindref="compound">nfc_ndef_le_oob_rec_payload_desc</ref>).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">rec_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>General NDEF Record descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">result_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The buffer that will be used to hold the LE OOB Record descriptor. After parsing is completed successfully, the first address in the buffer is filled by the NDEF Record descriptor (<ref refid="structnfc__ndef__le__oob__rec__payload__desc" kindref="compound">nfc_ndef_le_oob_rec_payload_desc</ref>), which provides a full description of the parsed NDEF Record. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">result_buf_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>As input: size of the <computeroutput>result_buf</computeroutput> buffer As output: size of the reserved (used) part of the <computeroutput>result_buf</computeroutput> buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/le_oob_rec_parser.h" line="54" column="5" declfile="include/nfc/ndef/le_oob_rec_parser.h" declline="54" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__le__oob__rec__parser_1ga752a6fd7b62a16b0b68050dfe7be77cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_ndef_le_oob_rec_printout</definition>
+        <argsstring>(const struct nfc_ndef_le_oob_rec_payload_desc *le_oob_rec_desc)</argsstring>
+        <name>nfc_ndef_le_oob_rec_printout</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__le__oob__rec__payload__desc" kindref="compound">nfc_ndef_le_oob_rec_payload_desc</ref> *</type>
+          <declname>le_oob_rec_desc</declname>
+        </param>
+        <briefdescription>
+<para>Print the parsed contents of an NDEF LE OOB Record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">le_oob_rec_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Descriptor of the LE OOB Record that should be printed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/le_oob_rec_parser.h" line="62" column="6" declfile="include/nfc/ndef/le_oob_rec_parser.h" declline="62" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Parser for NDEF LE OOB Records. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

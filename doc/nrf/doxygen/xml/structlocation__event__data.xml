@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlocation__event__data" kind="struct" language="C++" prot="public">
+    <compoundname>location_event_data</compoundname>
+    <includes refid="location_8h" local="no">location.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlocation__event__data_ae79b6cc39c056d9601f186610ab33473_1ae79b6cc39c056d9601f186610ab33473" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__location_gaf80a37a2073df0cebf87479799e2e9b2_1gaf80a37a2073df0cebf87479799e2e9b2" kindref="member">location_event_id</ref></type>
+        <definition>enum location_event_id location_event_data::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event ID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="116" column="23" bodyfile="include/modem/location.h" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__event__data_afe6bbab7060513a40a732ff0108e79e9_1afe6bbab7060513a40a732ff0108e79e9" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlocation__data" kindref="compound">location_data</ref></type>
+        <definition>struct location_data location_event_data::location</definition>
+        <argsstring></argsstring>
+        <name>location</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current location, used with event LOCATION_EVT_LOCATION. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="120" column="20" bodyfile="include/modem/location.h" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__event__data_afe560035dbb68d3bc234147b81f1da23_1afe560035dbb68d3bc234147b81f1da23" prot="public" static="no" mutable="no">
+        <type>union location_event_data::@143</type>
+        <definition>union location_event_data::@143 location_event_data::@144</definition>
+        <argsstring></argsstring>
+        <name>@144</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="129" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Location event data. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>location_data</label>
+        <link refid="structlocation__data"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>datetime</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>location_datetime</label>
+        <link refid="structlocation__datetime"/>
+      </node>
+      <node id="1">
+        <label>location_event_data</label>
+        <link refid="structlocation__event__data"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>location</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/modem/location.h" line="114" column="1" bodyfile="include/modem/location.h" bodystart="114" bodyend="130"/>
+    <listofallmembers>
+      <member refid="structlocation__event__data_ae79b6cc39c056d9601f186610ab33473_1ae79b6cc39c056d9601f186610ab33473" prot="public" virt="non-virtual"><scope>location_event_data</scope><name>id</name></member>
+      <member refid="structlocation__event__data_afe6bbab7060513a40a732ff0108e79e9_1afe6bbab7060513a40a732ff0108e79e9" prot="public" virt="non-virtual"><scope>location_event_data</scope><name>location</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

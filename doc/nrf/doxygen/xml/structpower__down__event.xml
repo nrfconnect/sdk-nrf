@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structpower__down__event" kind="struct" language="C++" prot="public">
+    <compoundname>power_down_event</compoundname>
+    <includes refid="applications_2connectivity__bridge_2src_2events_2power__event_8h" local="no">power_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structpower__down__event_a37e86908b12f460dd2cd1e22cab79b3b_1a37e86908b12f460dd2cd1e22cab79b3b" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header power_down_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event header. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/power_event.h" line="24" column="19" bodyfile="applications/connectivity_bridge/src/events/power_event.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structpower__down__event_ada8b42bf8a4b461c0ca8e5fc1c890a37_1ada8b42bf8a4b461c0ca8e5fc1c890a37" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool power_down_event::error</definition>
+        <argsstring></argsstring>
+        <name>error</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Information if the power down was triggered by a fatal error. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/power_event.h" line="25" column="6" bodyfile="applications/connectivity_bridge/src/events/power_event.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Power down event. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The power down event is submitted to inform the application modules that they should be suspended to reduce the power consumption. The power down event can also be submitted to suspend the modules after an application module reports fatal error submitting <ref refid="structmodule__state__event" kindref="compound">module_state_event</ref> with state set to MODULE_STATE_ERROR.</para>
+<para>An application module that handles the power down event should submit <ref refid="structmodule__state__event" kindref="compound">module_state_event</ref> with state set to MODULE_STATE_OFF or MODULE_STATE_STANDBY. The MODULE_STATE_STANDBY should be submitted by a module that is capable of submitting <ref refid="structwake__up__event" kindref="compound">wake_up_event</ref> to wake up the system on external event. Otherwise MODULE_STATE_OFF should be reported. If the module is unable to suspend at the moment, it should consume the received power down events until it&apos;s ready to suspend itself. The module should also delay submitting the <ref refid="structmodule__state__event" kindref="compound">module_state_event</ref> until it&apos;s ready to suspend itself.</para>
+<para>The module may handle the power down event differently if it&apos;s related to fatal error. In general, an application module should suspend itself, but some of the modules may still need to be active after the fatal error. For example, module that controls hardware LEDs may be used to display LED effect related to the fatal error.</para>
+<para>Only the module that controls the power management in the application can submit the power down event. It is also the final subscriber for the power down event. When it receives the power down event, it&apos;s ensured that all other application modules that handle power down event are already suspended. Then it can continue the power down procedure.</para>
+<para><simplesect kind="warning"><para>An application module that handles power down event must also handle <ref refid="structwake__up__event" kindref="compound">wake_up_event</ref>. Otherwise the module will never be woken up after suspending. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>power_down_event</label>
+        <link refid="structpower__down__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/connectivity_bridge/src/events/power_event.h" line="23" column="1" bodyfile="applications/connectivity_bridge/src/events/power_event.h" bodystart="23" bodyend="26"/>
+    <listofallmembers>
+      <member refid="structpower__down__event_ada8b42bf8a4b461c0ca8e5fc1c890a37_1ada8b42bf8a4b461c0ca8e5fc1c890a37" prot="public" virt="non-virtual"><scope>power_down_event</scope><name>error</name></member>
+      <member refid="structpower__down__event_a37e86908b12f460dd2cd1e22cab79b3b_1a37e86908b12f460dd2cd1e22cab79b3b" prot="public" virt="non-virtual"><scope>power_down_event</scope><name>header</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

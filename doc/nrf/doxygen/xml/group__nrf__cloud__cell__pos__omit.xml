@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nrf__cloud__cell__pos__omit" kind="group">
+    <compoundname>nrf_cloud_cell_pos_omit</compoundname>
+    <title>Omit item from cellular positioning request.</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nrf__cloud__cell__pos__omit_1gac25d4f34b5901d96cc51074ba52f2489" prot="public" static="no">
+        <name>NRF_CLOUD_CELL_POS_OMIT_TIME_ADV</name>
+        <initializer><ref refid="group__lte__lc_ga4cef12240755a4f2cd473f3ecc64c1f0_1ga4cef12240755a4f2cd473f3ecc64c1f0" kindref="member">LTE_LC_CELL_TIMING_ADVANCE_INVALID</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_cell_pos.h" line="43" column="9" bodyfile="include/net/nrf_cloud_cell_pos.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__cell__pos__omit_1gac2ef3baa00faace0e3cbb5e7f577a088" prot="public" static="no">
+        <name>NRF_CLOUD_CELL_POS_OMIT_RSRQ</name>
+        <initializer><ref refid="group__lte__lc_ga4d3b89eb0a8d1590bb253eac35c252c4_1ga4d3b89eb0a8d1590bb253eac35c252c4" kindref="member">LTE_LC_CELL_RSRQ_INVALID</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_cell_pos.h" line="44" column="9" bodyfile="include/net/nrf_cloud_cell_pos.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__cell__pos__omit_1gabad5e99f706c94d1d49cc48fc7a18f2e" prot="public" static="no">
+        <name>NRF_CLOUD_CELL_POS_OMIT_RSRP</name>
+        <initializer><ref refid="group__lte__lc_ga5f8bc9c9f2303bb2cbe4036ae5b9b05a_1ga5f8bc9c9f2303bb2cbe4036ae5b9b05a" kindref="member">LTE_LC_CELL_RSRP_INVALID</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_cell_pos.h" line="45" column="9" bodyfile="include/net/nrf_cloud_cell_pos.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__cell__pos__omit_1ga6de630510a56d7374bf7d05f717c3108" prot="public" static="no">
+        <name>NRF_CLOUD_CELL_POS_OMIT_EARFCN</name>
+        <initializer>UINT32_MAX</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_cell_pos.h" line="46" column="9" bodyfile="include/net/nrf_cloud_cell_pos.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

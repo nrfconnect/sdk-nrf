@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structenv__sensor__data__t" kind="struct" language="C++" prot="public">
+    <compoundname>env_sensor_data_t</compoundname>
+    <includes refid="env__sensors_8h" local="no">env_sensors.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structenv__sensor__data__t_a6fc61650eb1922cae0a7519b66e3bee9_1a6fc61650eb1922cae0a7519b66e3bee9" prot="public" static="no" mutable="no">
+        <type><ref refid="group__env__sensors_gacf09322404d127e9cf72fbb4d6de17b0_1gacf09322404d127e9cf72fbb4d6de17b0" kindref="member">env_sensor_t</ref></type>
+        <definition>env_sensor_t env_sensor_data_t::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sensor type. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/env_sensors/env_sensors.h" line="44" column="14" bodyfile="applications/asset_tracker/src/env_sensors/env_sensors.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structenv__sensor__data__t_a12b67750984ba71d1f12d09152022145_1a12b67750984ba71d1f12d09152022145" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double env_sensor_data_t::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sensor sample value. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/env_sensors/env_sensors.h" line="46" column="8" bodyfile="applications/asset_tracker/src/env_sensors/env_sensors.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structenv__sensor__data__t_a0494f55dbfb93131fcfe7103a1a875dd_1a0494f55dbfb93131fcfe7103a1a875dd" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t env_sensor_data_t::ts</definition>
+        <argsstring></argsstring>
+        <name>ts</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sensor sample uptime. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/env_sensors/env_sensors.h" line="48" column="9" bodyfile="applications/asset_tracker/src/env_sensors/env_sensors.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker/src/env_sensors/env_sensors.h" line="42" column="1" bodyfile="applications/asset_tracker/src/env_sensors/env_sensors.h" bodystart="42" bodyend="49"/>
+    <listofallmembers>
+      <member refid="structenv__sensor__data__t_a0494f55dbfb93131fcfe7103a1a875dd_1a0494f55dbfb93131fcfe7103a1a875dd" prot="public" virt="non-virtual"><scope>env_sensor_data_t</scope><name>ts</name></member>
+      <member refid="structenv__sensor__data__t_a6fc61650eb1922cae0a7519b66e3bee9_1a6fc61650eb1922cae0a7519b66e3bee9" prot="public" virt="non-virtual"><scope>env_sensor_data_t</scope><name>type</name></member>
+      <member refid="structenv__sensor__data__t_a12b67750984ba71d1f12d09152022145_1a12b67750984ba71d1f12d09152022145" prot="public" virt="non-virtual"><scope>env_sensor_data_t</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

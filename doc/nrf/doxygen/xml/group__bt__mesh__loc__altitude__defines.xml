@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__loc__altitude__defines" kind="group">
+    <compoundname>bt_mesh_loc_altitude_defines</compoundname>
+    <title>Defines for altitude.</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__loc__altitude__defines_1ga8d80d41b6bb3e81f835ab2fa11e50969" prot="public" static="no">
+        <name>BT_MESH_LOC_ALTITUDE_MAX</name>
+        <initializer>32765</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Highest altitude that can be represented </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="29" column="9" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__loc__altitude__defines_1ga9e4faec23612dc45e72c4ebea2c7e66a" prot="public" static="no">
+        <name>BT_MESH_LOC_ALTITUDE_UNKNOWN</name>
+        <initializer>0x7fff</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Altitude is unknown or not configured. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="31" column="9" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__loc__altitude__defines_1ga44bdd63cdb1af283ddc22040a1652528" prot="public" static="no">
+        <name>BT_MESH_LOC_ALTITUDE_TOO_LARGE</name>
+        <initializer>0x7ffe</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Altitude is out of bounds. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="33" column="9" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Boundaries and special values for the altitude. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

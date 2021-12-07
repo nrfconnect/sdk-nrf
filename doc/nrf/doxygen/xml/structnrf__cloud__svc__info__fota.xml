@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnrf__cloud__svc__info__fota" kind="struct" language="C++" prot="public">
+    <compoundname>nrf_cloud_svc_info_fota</compoundname>
+    <includes refid="nrf__cloud_8h" local="no">nrf_cloud.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnrf__cloud__svc__info__fota_ad43a2b42483e6a6a165726002840fa03_1ad43a2b42483e6a6a165726002840fa03" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nrf_cloud_svc_info_fota::bootloader</definition>
+        <argsstring></argsstring>
+        <name>bootloader</name>
+        <bitfield>1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="298" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="298" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__svc__info__fota_a10517ab509cabf6c236424a303d52842_1a10517ab509cabf6c236424a303d52842" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nrf_cloud_svc_info_fota::modem</definition>
+        <argsstring></argsstring>
+        <name>modem</name>
+        <bitfield>1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="299" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="299" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__svc__info__fota_a83268fc99708d2f4b950024ad0ad03b5_1a83268fc99708d2f4b950024ad0ad03b5" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nrf_cloud_svc_info_fota::application</definition>
+        <argsstring></argsstring>
+        <name>application</name>
+        <bitfield>1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="300" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="300" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Controls which values are added to the FOTA array in the &quot;serviceInfo&quot; shadow section. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/nrf_cloud.h" line="297" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="297" bodyend="303"/>
+    <listofallmembers>
+      <member refid="structnrf__cloud__svc__info__fota_a83268fc99708d2f4b950024ad0ad03b5_1a83268fc99708d2f4b950024ad0ad03b5" prot="public" virt="non-virtual"><scope>nrf_cloud_svc_info_fota</scope><name>application</name></member>
+      <member refid="structnrf__cloud__svc__info__fota_ad43a2b42483e6a6a165726002840fa03_1ad43a2b42483e6a6a165726002840fa03" prot="public" virt="non-virtual"><scope>nrf_cloud_svc_info_fota</scope><name>bootloader</name></member>
+      <member refid="structnrf__cloud__svc__info__fota_a10517ab509cabf6c236424a303d52842_1a10517ab509cabf6c236424a303d52842" prot="public" virt="non-virtual"><scope>nrf_cloud_svc_info_fota</scope><name>modem</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

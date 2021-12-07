@@ -1,0 +1,256 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="modem__jwt_8h" kind="file" language="C++">
+    <compoundname>modem_jwt.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <includes refid="modem__attest__token_8h" local="no">modem/modem_attest_token.h</includes>
+    <incdepgraph>
+      <node id="3">
+        <label>modem/modem_attest_token.h</label>
+        <link refid="modem__attest__token_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/modem/modem_jwt.h</label>
+        <link refid="modem__jwt_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structjwt__data" prot="public">jwt_data</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__modem__jwt_gab3fc100bfe9885bc7d6cd5011d487eeb_1gab3fc100bfe9885bc7d6cd5011d487eeb" prot="public" static="no" strong="no">
+        <type></type>
+        <name>jwt_key_type</name>
+        <enumvalue id="group__modem__jwt_gab3fc100bfe9885bc7d6cd5011d487eeb_1ggab3fc100bfe9885bc7d6cd5011d487eeba96ed1861a4dba83ebe3855440bedb20b" prot="public">
+          <name>JWT_KEY_TYPE_CLIENT_PRIV</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__jwt_gab3fc100bfe9885bc7d6cd5011d487eeb_1ggab3fc100bfe9885bc7d6cd5011d487eeba7c55c6c5501cd87eed290e65c5de3b2c" prot="public">
+          <name>JWT_KEY_TYPE_ENDORSEMENT</name>
+          <initializer>= 8</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>The type of key to be used for signing the JWT. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_jwt.h" line="26" column="1" bodyfile="include/modem/modem_jwt.h" bodystart="26" bodyend="29"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__modem__jwt_gacaa7ea0e840121ee3ae0180cda78db0a_1gacaa7ea0e840121ee3ae0180cda78db0a" prot="public" static="no" strong="no">
+        <type></type>
+        <name>jwt_alg_type</name>
+        <enumvalue id="group__modem__jwt_gacaa7ea0e840121ee3ae0180cda78db0a_1ggacaa7ea0e840121ee3ae0180cda78db0aaba356159c1a90fbcd9d40b63f5bf6c92" prot="public">
+          <name>JWT_ALG_TYPE_ES256</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>JWT signing algorithm. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_jwt.h" line="32" column="1" bodyfile="include/modem/modem_jwt.h" bodystart="32" bodyend="34"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__modem__jwt_ga3acc163ac07c90facc3a135931422a81_1ga3acc163ac07c90facc3a135931422a81" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_jwt_generate</definition>
+        <argsstring>(struct jwt_data *const jwt)</argsstring>
+        <name>modem_jwt_generate</name>
+        <param>
+          <type>struct <ref refid="structjwt__data" kindref="compound">jwt_data</ref> *const</type>
+          <declname>jwt</declname>
+        </param>
+        <briefdescription>
+<para>Generates a JWT using the supplied parameters. If successful, the JWT string will be stored in the supplied struct. This function will allocate memory for the JWT if the user does not provide a buffer. In that case, the user is responsible for freeing the memory by calling <ref refid="group__modem__jwt_gadfe0c31924fb6b9f35ac772a9771e729_1gadfe0c31924fb6b9f35ac772a9771e729" kindref="member">modem_jwt_free</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Subject and audience fields may be NULL in which case those fields are left out from generated JWT token.</para>
+<para>If sec_tag value is given as zero, JWT is signed with Nordic&apos;s own keys that already exist in the modem.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">jwt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to struct containing JWT parameters and result.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_jwt.h" line="84" column="5" declfile="include/modem/modem_jwt.h" declline="84" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__modem__jwt_ga037cdb2b8be6c6900836efacf8c7598e_1ga037cdb2b8be6c6900836efacf8c7598e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_jwt_get_uuids</definition>
+        <argsstring>(struct nrf_device_uuid *dev, struct nrf_modem_fw_uuid *mfw)</argsstring>
+        <name>modem_jwt_get_uuids</name>
+        <param>
+          <type>struct <ref refid="structnrf__device__uuid" kindref="compound">nrf_device_uuid</ref> *</type>
+          <declname>dev</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnrf__modem__fw__uuid" kindref="compound">nrf_modem_fw_uuid</ref> *</type>
+          <declname>mfw</declname>
+        </param>
+        <briefdescription>
+<para>Gets the device and/or modem firmware UUID from the modem and returns it as a NULL terminated string in the supplied struct(s). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Uses internally <ref refid="group__modem__jwt_ga3acc163ac07c90facc3a135931422a81_1ga3acc163ac07c90facc3a135931422a81" kindref="member">modem_jwt_generate</ref> and parses JWT token for &quot;iss&quot; &quot;jti&quot; fields which contains given UUID values.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">dev</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to struct containing device UUID string. Can be NULL if UUID is not wanted. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">mfw</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to struct containing modem fw UUID string. Can be NULL if UUID is not wanted.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_jwt.h" line="101" column="5" declfile="include/modem/modem_jwt.h" declline="101" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__modem__jwt_gadfe0c31924fb6b9f35ac772a9771e729_1gadfe0c31924fb6b9f35ac772a9771e729" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void modem_jwt_free</definition>
+        <argsstring>(char *const jwt_buf)</argsstring>
+        <name>modem_jwt_free</name>
+        <param>
+          <type>char *const</type>
+          <declname>jwt_buf</declname>
+        </param>
+        <briefdescription>
+<para>Frees the JWT buffer allocated by <ref refid="group__modem__jwt_ga3acc163ac07c90facc3a135931422a81_1ga3acc163ac07c90facc3a135931422a81" kindref="member">modem_jwt_generate</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">jwt_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to JWT buffer; see <ref refid="structjwt__data" kindref="compound">jwt_data</ref>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_jwt.h" line="109" column="6" declfile="include/modem/modem_jwt.h" declline="109" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Request a JWT from the modem. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MODEM_JWT_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_JWT_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="modem__attest__token_8h" kindref="compound">modem/modem_attest_token.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="group__modem__jwt_gab3fc100bfe9885bc7d6cd5011d487eeb_1gab3fc100bfe9885bc7d6cd5011d487eeb" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__modem__jwt_gab3fc100bfe9885bc7d6cd5011d487eeb_1gab3fc100bfe9885bc7d6cd5011d487eeb" kindref="member">jwt_key_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="27" refid="group__modem__jwt_gab3fc100bfe9885bc7d6cd5011d487eeb_1ggab3fc100bfe9885bc7d6cd5011d487eeba96ed1861a4dba83ebe3855440bedb20b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__jwt_gab3fc100bfe9885bc7d6cd5011d487eeb_1ggab3fc100bfe9885bc7d6cd5011d487eeba96ed1861a4dba83ebe3855440bedb20b" kindref="member">JWT_KEY_TYPE_CLIENT_PRIV</ref><sp/>=<sp/>2,</highlight></codeline>
+<codeline lineno="28" refid="group__modem__jwt_gab3fc100bfe9885bc7d6cd5011d487eeb_1ggab3fc100bfe9885bc7d6cd5011d487eeba7c55c6c5501cd87eed290e65c5de3b2c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__jwt_gab3fc100bfe9885bc7d6cd5011d487eeb_1ggab3fc100bfe9885bc7d6cd5011d487eeba7c55c6c5501cd87eed290e65c5de3b2c" kindref="member">JWT_KEY_TYPE_ENDORSEMENT</ref><sp/>=<sp/>8,</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="group__modem__jwt_gacaa7ea0e840121ee3ae0180cda78db0a_1gacaa7ea0e840121ee3ae0180cda78db0a" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__modem__jwt_gacaa7ea0e840121ee3ae0180cda78db0a_1gacaa7ea0e840121ee3ae0180cda78db0a" kindref="member">jwt_alg_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="33" refid="group__modem__jwt_gacaa7ea0e840121ee3ae0180cda78db0a_1ggacaa7ea0e840121ee3ae0180cda78db0aaba356159c1a90fbcd9d40b63f5bf6c92" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__jwt_gacaa7ea0e840121ee3ae0180cda78db0a_1ggacaa7ea0e840121ee3ae0180cda78db0aaba356159c1a90fbcd9d40b63f5bf6c92" kindref="member">JWT_ALG_TYPE_ES256</ref><sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="structjwt__data" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structjwt__data" kindref="compound">jwt_data</ref><sp/>{</highlight></codeline>
+<codeline lineno="39" refid="structjwt__data_aeaab9f2d9e3a76b3773bbb1bbea3c4aa_1aeaab9f2d9e3a76b3773bbb1bbea3c4aa" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structjwt__data_aeaab9f2d9e3a76b3773bbb1bbea3c4aa_1aeaab9f2d9e3a76b3773bbb1bbea3c4aa" kindref="member">sec_tag</ref>;</highlight></codeline>
+<codeline lineno="41" refid="structjwt__data_ae0e136655fe72b13b1ae7b8201ef60e9_1ae0e136655fe72b13b1ae7b8201ef60e9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__modem__jwt_gab3fc100bfe9885bc7d6cd5011d487eeb_1gab3fc100bfe9885bc7d6cd5011d487eeb" kindref="member">jwt_key_type</ref><sp/><ref refid="structjwt__data_ae0e136655fe72b13b1ae7b8201ef60e9_1ae0e136655fe72b13b1ae7b8201ef60e9" kindref="member">key</ref>;</highlight></codeline>
+<codeline lineno="43" refid="structjwt__data_ac656dfc92627ab46af1b67c2a5969d39_1ac656dfc92627ab46af1b67c2a5969d39" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__modem__jwt_gacaa7ea0e840121ee3ae0180cda78db0a_1gacaa7ea0e840121ee3ae0180cda78db0a" kindref="member">jwt_alg_type</ref><sp/><ref refid="structjwt__data_ac656dfc92627ab46af1b67c2a5969d39_1ac656dfc92627ab46af1b67c2a5969d39" kindref="member">alg</ref>;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="structjwt__data_a4cd223d74c13e6e6c73d121894eebcd9_1a4cd223d74c13e6e6c73d121894eebcd9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structjwt__data_a4cd223d74c13e6e6c73d121894eebcd9_1a4cd223d74c13e6e6c73d121894eebcd9" kindref="member">exp_delta_s</ref>;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="structjwt__data_a5f2664058b272d1c1044a430548040b6_1a5f2664058b272d1c1044a430548040b6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structjwt__data_a5f2664058b272d1c1044a430548040b6_1a5f2664058b272d1c1044a430548040b6" kindref="member">subject</ref>;</highlight></codeline>
+<codeline lineno="54" refid="structjwt__data_a9a082f33fbc700d07f0a0634df1f07a4_1a9a082f33fbc700d07f0a0634df1f07a4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structjwt__data_a9a082f33fbc700d07f0a0634df1f07a4_1a9a082f33fbc700d07f0a0634df1f07a4" kindref="member">audience</ref>;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="structjwt__data_a1aab66c0d1580ff5cf144f783286502c_1a1aab66c0d1580ff5cf144f783286502c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structjwt__data_a1aab66c0d1580ff5cf144f783286502c_1a1aab66c0d1580ff5cf144f783286502c" kindref="member">jwt_buf</ref>;</highlight></codeline>
+<codeline lineno="63" refid="structjwt__data_a0a41a664199f2ec5a3c061189811b7f9_1a0a41a664199f2ec5a3c061189811b7f9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structjwt__data_a0a41a664199f2ec5a3c061189811b7f9_1a0a41a664199f2ec5a3c061189811b7f9" kindref="member">jwt_sz</ref>;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84" refid="group__modem__jwt_ga3acc163ac07c90facc3a135931422a81_1ga3acc163ac07c90facc3a135931422a81" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__modem__jwt_ga3acc163ac07c90facc3a135931422a81_1ga3acc163ac07c90facc3a135931422a81" kindref="member">modem_jwt_generate</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structjwt__data" kindref="compound">jwt_data</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>jwt);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101" refid="group__modem__jwt_ga037cdb2b8be6c6900836efacf8c7598e_1ga037cdb2b8be6c6900836efacf8c7598e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__modem__jwt_ga037cdb2b8be6c6900836efacf8c7598e_1ga037cdb2b8be6c6900836efacf8c7598e" kindref="member">modem_jwt_get_uuids</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__device__uuid" kindref="compound">nrf_device_uuid</ref><sp/>*dev,</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__modem__fw__uuid" kindref="compound">nrf_modem_fw_uuid</ref><sp/>*mfw);</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109" refid="group__modem__jwt_gadfe0c31924fb6b9f35ac772a9771e729_1gadfe0c31924fb6b9f35ac772a9771e729" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__modem__jwt_gadfe0c31924fb6b9f35ac772a9771e729_1gadfe0c31924fb6b9f35ac772a9771e729" kindref="member">modem_jwt_free</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>jwt_buf);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>MODEM_JWT_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/modem/modem_jwt.h"/>
+  </compounddef>
+</doxygen>

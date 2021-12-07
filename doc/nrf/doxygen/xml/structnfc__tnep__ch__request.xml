@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__tnep__ch__request" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_tnep_ch_request</compoundname>
+    <includes refid="tnep_2ch_8h" local="no">ch.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__tnep__ch__request_a9bcef8aa68fff847c5238f76b548d7ef_1a9bcef8aa68fff847c5238f76b548d7ef" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structnfc__ndef__ch__cr__rec" kindref="compound">nfc_ndef_ch_cr_rec</ref> *</type>
+        <definition>const struct nfc_ndef_ch_cr_rec* nfc_tnep_ch_request::cr</definition>
+        <argsstring></argsstring>
+        <name>cr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the Collision Resolution Record data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/ch.h" line="52" column="31" bodyfile="include/nfc/tnep/ch.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__ch__request_affe83f0361aa11c8471ec55b88de09a3_1affe83f0361aa11c8471ec55b88de09a3" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structnfc__tnep__ch__record" kindref="compound">nfc_tnep_ch_record</ref></type>
+        <definition>struct nfc_tnep_ch_record nfc_tnep_ch_request::ch_record</definition>
+        <argsstring></argsstring>
+        <name>ch_record</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Connection Handover Record data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/ch.h" line="55" column="25" bodyfile="include/nfc/tnep/ch.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Connection Handover Request Record strucure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>nfc_ndef_ch_ac_rec</label>
+        <link refid="structnfc__ndef__ch__ac__rec"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>aux_data_ref</edgelabel>
+          <edgelabel>carrier_data_ref</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>nfc_ndef_ch_ac_rec_ref</label>
+        <link refid="structnfc__ndef__ch__ac__rec__ref"/>
+      </node>
+      <node id="2">
+        <label>nfc_ndef_ch_cr_rec</label>
+        <link refid="structnfc__ndef__ch__cr__rec"/>
+      </node>
+      <node id="6">
+        <label>nfc_ndef_record_desc</label>
+        <link refid="structnfc__ndef__record__desc"/>
+      </node>
+      <node id="3">
+        <label>nfc_tnep_ch_record</label>
+        <link refid="structnfc__tnep__ch__record"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>ac</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>carrier</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>nfc_tnep_ch_request</label>
+        <link refid="structnfc__tnep__ch__request"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>cr</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>ch_record</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/nfc/tnep/ch.h" line="50" column="1" bodyfile="include/nfc/tnep/ch.h" bodystart="50" bodyend="56"/>
+    <listofallmembers>
+      <member refid="structnfc__tnep__ch__request_affe83f0361aa11c8471ec55b88de09a3_1affe83f0361aa11c8471ec55b88de09a3" prot="public" virt="non-virtual"><scope>nfc_tnep_ch_request</scope><name>ch_record</name></member>
+      <member refid="structnfc__tnep__ch__request_a9bcef8aa68fff847c5238f76b548d7ef_1a9bcef8aa68fff847c5238f76b548d7ef" prot="public" virt="non-virtual"><scope>nfc_tnep_ch_request</scope><name>cr</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

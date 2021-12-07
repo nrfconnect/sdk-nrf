@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structshell__bt__nus" kind="struct" language="C++" prot="public">
+    <compoundname>shell_bt_nus</compoundname>
+    <includes refid="shell__bt__nus_8h" local="no">shell_bt_nus.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structshell__bt__nus_a3b08289fda73b76f6787fa32c50e3263_1a3b08289fda73b76f6787fa32c50e3263" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structshell__bt__nus__ctrl__blk" kindref="compound">shell_bt_nus_ctrl_blk</ref> *</type>
+        <definition>struct shell_bt_nus_ctrl_blk* shell_bt_nus::ctrl_blk</definition>
+        <argsstring></argsstring>
+        <name>ctrl_blk</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/shell/shell_bt_nus.h" line="38" column="28" bodyfile="include/shell/shell_bt_nus.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structshell__bt__nus_a7f67b67ac3682d8328fdab1ec9a96626_1a7f67b67ac3682d8328fdab1ec9a96626" prot="public" static="no" mutable="no">
+        <type>struct ring_buf *</type>
+        <definition>struct ring_buf* shell_bt_nus::tx_ringbuf</definition>
+        <argsstring></argsstring>
+        <name>tx_ringbuf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/shell/shell_bt_nus.h" line="39" column="15" bodyfile="include/shell/shell_bt_nus.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structshell__bt__nus_a35e5cdc43e920e93e831258359f48530_1a35e5cdc43e920e93e831258359f48530" prot="public" static="no" mutable="no">
+        <type>struct ring_buf *</type>
+        <definition>struct ring_buf* shell_bt_nus::rx_ringbuf</definition>
+        <argsstring></argsstring>
+        <name>rx_ringbuf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/shell/shell_bt_nus.h" line="40" column="15" bodyfile="include/shell/shell_bt_nus.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Instance structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>shell_bt_nus</label>
+        <link refid="structshell__bt__nus"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>ctrl_blk</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>shell_bt_nus_ctrl_blk</label>
+        <link refid="structshell__bt__nus__ctrl__blk"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/shell/shell_bt_nus.h" line="37" column="1" bodyfile="include/shell/shell_bt_nus.h" bodystart="37" bodyend="41"/>
+    <listofallmembers>
+      <member refid="structshell__bt__nus_a3b08289fda73b76f6787fa32c50e3263_1a3b08289fda73b76f6787fa32c50e3263" prot="public" virt="non-virtual"><scope>shell_bt_nus</scope><name>ctrl_blk</name></member>
+      <member refid="structshell__bt__nus_a35e5cdc43e920e93e831258359f48530_1a35e5cdc43e920e93e831258359f48530" prot="public" virt="non-virtual"><scope>shell_bt_nus</scope><name>rx_ringbuf</name></member>
+      <member refid="structshell__bt__nus_a7f67b67ac3682d8328fdab1ec9a96626_1a7f67b67ac3682d8328fdab1ec9a96626" prot="public" virt="non-virtual"><scope>shell_bt_nus</scope><name>tx_ringbuf</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

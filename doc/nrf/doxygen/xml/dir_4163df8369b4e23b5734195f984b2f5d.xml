@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_4163df8369b4e23b5734195f984b2f5d" kind="dir">
+    <compoundname>lib/multicell_location/services</compoundname>
+    <innerfile refid="here__integration_8h">here_integration.h</innerfile>
+    <innerfile refid="location__service_8h">location_service.h</innerfile>
+    <innerfile refid="nrf__cloud__integration_8h">nrf_cloud_integration.h</innerfile>
+    <innerfile refid="polte__integration_8h">polte_integration.h</innerfile>
+    <innerfile refid="skyhook__integration_8h">skyhook_integration.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/multicell_location/services/"/>
+  </compounddef>
+</doxygen>

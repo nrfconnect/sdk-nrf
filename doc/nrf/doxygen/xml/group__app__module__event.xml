@@ -1,0 +1,175 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__app__module__event" kind="group">
+    <compoundname>app_module_event</compoundname>
+    <title>Application module event</title>
+    <innerclass refid="structapp__module__event" prot="public">app_module_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__app__module__event_1ga826859b7de896e4cb94a4bd90ca5577c" prot="public" static="no" strong="no">
+        <type></type>
+        <name>app_module_event_type</name>
+        <enumvalue id="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577cac509bb5b7c727663a7244425cc59d7d9" prot="public">
+          <name>APP_EVT_START</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Signal that the application has done necessary setup, and now started. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577cab9e26d1eabd5f51a706822cb1376641d" prot="public">
+          <name>APP_EVT_LTE_CONNECT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Connect to LTE network. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca721bac86809f101ab67dbf3a6c635336" prot="public">
+          <name>APP_EVT_LTE_DISCONNECT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Disconnect from LTE network. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca6cfcf232d3994aed3286862e9839c330" prot="public">
+          <name>APP_EVT_DATA_GET</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Signal other modules to start sampling and report the data when it&apos;s ready. The event must also contain a list with requested data types, <ref refid="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1gad84e82af763a7e80908bd0ba0fdd5e00" kindref="member">app_module_data_type</ref>. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca865282a71defbc7f22f724b37d3d447e" prot="public">
+          <name>APP_EVT_DATA_GET_ALL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Create a list with all available sensor types in the system and distribute it as a APP_EVT_DATA_GET event. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca77c8906fa7720abacccb9592326f6e6a" prot="public">
+          <name>APP_EVT_CONFIG_GET</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Request latest configuration from the cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca7985e035a53faecfcb50adab4d27ff4e" prot="public">
+          <name>APP_EVT_ACTIVITY_DETECTION_ENABLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Application module is waiting for movement to trigger the next sample request. This event is used to signal the sensor module to enable activity detection. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca86cbcf98ca323072f3c9accd2903dc53" prot="public">
+          <name>APP_EVT_ACTIVITY_DETECTION_DISABLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Application module does not depend on activity detection. This event is used to signal the sensor module to disable activity detection. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577cac7273f5602011e98abcaaf3bb407035c" prot="public">
+          <name>APP_EVT_SHUTDOWN_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The application module has performed all procedures to prepare for a shutdown of the system. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1gga826859b7de896e4cb94a4bd90ca5577ca1381bee4bf59bd3097c597f4878fce01" prot="public">
+          <name>APP_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>An error has occurred in the application module. Error details are attached in the event structure. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Application event types submitted by Application module. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/app_module_event.h" line="24" column="1" bodyfile="applications/asset_tracker_v2/src/events/app_module_event.h" bodystart="24" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__app__module__event_1gad84e82af763a7e80908bd0ba0fdd5e00" prot="public" static="no" strong="no">
+        <type></type>
+        <name>app_module_data_type</name>
+        <enumvalue id="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00a737108ceec1f7ed1013580f44045ae3c" prot="public">
+          <name>APP_DATA_ENVIRONMENTAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00a46fe23855634447edefd65ad7c1091fd" prot="public">
+          <name>APP_DATA_MOVEMENT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00ab06611fde432a30f1613327b47e1404e" prot="public">
+          <name>APP_DATA_MODEM_STATIC</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00aa791728ffdea5593d80e7ef0c3fe036f" prot="public">
+          <name>APP_DATA_MODEM_DYNAMIC</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00a37b1f36905614637ad4920a2cc50468f" prot="public">
+          <name>APP_DATA_BATTERY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00af95c74c931c8ac4860dc8355ea888f0b" prot="public">
+          <name>APP_DATA_GNSS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00acb100d693c071e21c9ee2c290ba680b1" prot="public">
+          <name>APP_DATA_NEIGHBOR_CELLS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__app__module__event_gad84e82af763a7e80908bd0ba0fdd5e00_1ggad84e82af763a7e80908bd0ba0fdd5e00a892e009baad32f7251476661b22b8c9b" prot="public">
+          <name>APP_DATA_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Data types that the application module requests samples for in <ref refid="group__app__module__event_ga826859b7de896e4cb94a4bd90ca5577c_1ga826859b7de896e4cb94a4bd90ca5577c" kindref="member">app_module_event_type</ref> APP_EVT_DATA_GET. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/app_module_event.h" line="75" column="1" bodyfile="applications/asset_tracker_v2/src/events/app_module_event.h" bodystart="75" bodyend="85"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Application module event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

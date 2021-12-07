@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_fd88f35d7935fdb768d3e708e4d85c5c" kind="dir">
+    <compoundname>applications/asset_tracker_v2/configuration</compoundname>
+    <innerdir refid="dir_7ef321492d1b4f128a19ee4ea37a9d3a">applications/asset_tracker_v2/configuration/memfault</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/configuration/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_7672d6dcbc95d95a563b5dfe9aee0baa" kind="dir">
+    <compoundname>include/tfm</compoundname>
+    <innerfile refid="tfm__ioctl__api_8h">tfm_ioctl_api.h</innerfile>
+    <innerfile refid="tfm__read__ranges_8h">tfm_read_ranges.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/tfm/"/>
+  </compounddef>
+</doxygen>

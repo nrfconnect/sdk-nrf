@@ -1,0 +1,736 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nrf__cloud__rest" kind="group">
+    <compoundname>nrf_cloud_rest</compoundname>
+    <title>nRF Cloud REST API</title>
+    <innerclass refid="structnrf__cloud__rest__context" prot="public">nrf_cloud_rest_context</innerclass>
+    <innerclass refid="structnrf__cloud__rest__cell__pos__request" prot="public">nrf_cloud_rest_cell_pos_request</innerclass>
+    <innerclass refid="structnrf__cloud__rest__agps__request" prot="public">nrf_cloud_rest_agps_request</innerclass>
+    <innerclass refid="structnrf__cloud__rest__agps__result" prot="public">nrf_cloud_rest_agps_result</innerclass>
+    <innerclass refid="structnrf__cloud__rest__pgps__request" prot="public">nrf_cloud_rest_pgps_request</innerclass>
+    <innergroup refid="group__nrf__cloud__rest__pgps__omit">Omit item from P-GPS request.</innergroup>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nrf__cloud__rest_1gab56e61555902e6af10dec34fb4cd84d3" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_http_status</name>
+        <enumvalue id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a741e56ecf683ba639f69c1602434fbcf" prot="public">
+          <name>NRF_CLOUD_HTTP_STATUS_UNHANDLED</name>
+          <initializer>= -1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a6be89d775839e005d3a57583a979129f" prot="public">
+          <name>NRF_CLOUD_HTTP_STATUS_NONE</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3af7ab2047103db3adb4afcdb39b3e1cb6" prot="public">
+          <name>NRF_CLOUD_HTTP_STATUS_OK</name>
+          <initializer>= 200</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3aeb941ecde83bca07b030c1acae81c0ca" prot="public">
+          <name>NRF_CLOUD_HTTP_STATUS_ACCEPTED</name>
+          <initializer>= 202</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3ab30f1f52798f842f098cf3981366fc04" prot="public">
+          <name>NRF_CLOUD_HTTP_STATUS_PARTIAL</name>
+          <initializer>= 206</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a48502900d1915528165b4fcbdfb7895f" prot="public">
+          <name>NRF_CLOUD_HTTP_STATUS_BAD_REQ</name>
+          <initializer>= 400</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3ab6b07ce8469ea9831fe50a329d002243" prot="public">
+          <name>NRF_CLOUD_HTTP_STATUS_UNAUTH</name>
+          <initializer>= 401</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3ab8fbae4fd4ecc3d405164bdbbd990548" prot="public">
+          <name>NRF_CLOUD_HTTP_STATUS_FORBIDDEN</name>
+          <initializer>= 403</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a1bbf1a485cf8785dbf48d5b55715dfa6" prot="public">
+          <name>NRF_CLOUD_HTTP_STATUS_NOT_FOUND</name>
+          <initializer>= 404</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a6c12b39fb25d0ced6c9c9ff7a5db4e42" prot="public">
+          <name>NRF_CLOUD_HTTP_STATUS_BAD_RANGE</name>
+          <initializer>= 416</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gab56e61555902e6af10dec34fb4cd84d3_1ggab56e61555902e6af10dec34fb4cd84d3a70870b71df849a433ef7f311362d3ee8" prot="public">
+          <name>NRF_CLOUD_HTTP_STATUS_UNPROC_ENTITY</name>
+          <initializer>= 422</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>HTTP status codes returned from nRF Cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="30" column="1" bodyfile="include/net/nrf_cloud_rest.h" bodystart="30" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__nrf__cloud__rest_1gae86b26f442c457eb58a896bfde29525d" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_rest_agps_req_type</name>
+        <enumvalue id="group__nrf__cloud__rest_gae86b26f442c457eb58a896bfde29525d_1ggae86b26f442c457eb58a896bfde29525da71b17eabbf312dbb6b398254468fc52b" prot="public">
+          <name>NRF_CLOUD_REST_AGPS_REQ_ASSISTANCE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gae86b26f442c457eb58a896bfde29525d_1ggae86b26f442c457eb58a896bfde29525daed21779a7d9b160b66619300f5cbc268" prot="public">
+          <name>NRF_CLOUD_REST_AGPS_REQ_LOCATION</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gae86b26f442c457eb58a896bfde29525d_1ggae86b26f442c457eb58a896bfde29525da3a2e6d197d8251d39ed06f907843778e" prot="public">
+          <name>NRF_CLOUD_REST_AGPS_REQ_CUSTOM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__rest_gae86b26f442c457eb58a896bfde29525d_1ggae86b26f442c457eb58a896bfde29525dad64949cc2b67e5cc7e9bb6a35ce7a8e9" prot="public">
+          <name>NRF_CLOUD_REST_AGPS_REQ_UNSPECIFIED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>nRF Cloud AGPS REST request types </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="45" column="1" bodyfile="include/net/nrf_cloud_rest.h" bodystart="45" bodyend="50"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nrf__cloud__rest_1ga420b5296e2ae43769a9d84b59ab4506b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_rest_cell_pos_get</definition>
+        <argsstring>(struct nrf_cloud_rest_context *const rest_ctx, struct nrf_cloud_rest_cell_pos_request const *const request, struct nrf_cloud_cell_pos_result *const result)</argsstring>
+        <name>nrf_cloud_rest_cell_pos_get</name>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref> *const</type>
+          <declname>rest_ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__cell__pos__request" kindref="compound">nrf_cloud_rest_cell_pos_request</ref> const *const</type>
+          <declname>request</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__cell__pos__result" kindref="compound">nrf_cloud_cell_pos_result</ref> *const</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+<para>nRF Cloud location request. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">rest_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for communicating with nRF Cloud&apos;s REST API. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">request</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to be provided in API call. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">result</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional; parsed results of API response. If NULL, user should inspect the response buffer of <ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="164" column="5" declfile="include/net/nrf_cloud_rest.h" declline="164" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__rest_1gab8b1fbcffb31d7c921e421c59e195036" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_rest_agps_data_get</definition>
+        <argsstring>(struct nrf_cloud_rest_context *const rest_ctx, struct nrf_cloud_rest_agps_request const *const request, struct nrf_cloud_rest_agps_result *const result)</argsstring>
+        <name>nrf_cloud_rest_agps_data_get</name>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref> *const</type>
+          <declname>rest_ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__agps__request" kindref="compound">nrf_cloud_rest_agps_request</ref> const *const</type>
+          <declname>request</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__agps__result" kindref="compound">nrf_cloud_rest_agps_result</ref> *const</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+<para>nRF Cloud Assisted GPS (A-GPS) data request. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">rest_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for communicating with nRF Cloud&apos;s REST API. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">request</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to be provided in API call. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">result</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional; Additional buffer for A-GPS data. This is necessary when the A-GPS data from the cloud is larger than the fragment size specified by rest_ctx-&gt;fragment_size.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. If result is NULL and the A-GPS data is larger than the fragment size specified by rest_ctx-&gt;fragment_size, a positive value is returned, which indicates the size (in bytes) of the necessary result buffer. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="185" column="5" declfile="include/net/nrf_cloud_rest.h" declline="185" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__rest_1gaeb169e79dac93c396a7795a83be6083f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_rest_pgps_data_get</definition>
+        <argsstring>(struct nrf_cloud_rest_context *const rest_ctx, struct nrf_cloud_rest_pgps_request const *const request)</argsstring>
+        <name>nrf_cloud_rest_pgps_data_get</name>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref> *const</type>
+          <declname>rest_ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__pgps__request" kindref="compound">nrf_cloud_rest_pgps_request</ref> const *const</type>
+          <declname>request</declname>
+        </param>
+        <briefdescription>
+<para>nRF Cloud Predicted GPS (P-GPS) data request. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">rest_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for communicating with nRF Cloud&apos;s REST API. If successful, rest_ctx-&gt;result will point to the P-GPS data; which, along with rest_ctx-&gt;response_len, can be passed into <ref refid="group__nrf__cloud__pgps_gae5554df8baf4bb437a59a4d0a4d86b56_1gae5554df8baf4bb437a59a4d0a4d86b56" kindref="member">nrf_cloud_pgps_process</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">request</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to be provided in API call.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="201" column="5" declfile="include/net/nrf_cloud_rest.h" declline="201" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__rest_1ga5f5d935edf5976c41a663f7f36a301de" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_rest_fota_job_get</definition>
+        <argsstring>(struct nrf_cloud_rest_context *const rest_ctx, const char *const device_id, struct nrf_cloud_fota_job_info *const job)</argsstring>
+        <name>nrf_cloud_rest_fota_job_get</name>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref> *const</type>
+          <declname>rest_ctx</declname>
+        </param>
+        <param>
+          <type>const char *const</type>
+          <declname>device_id</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__fota__job__info" kindref="compound">nrf_cloud_fota_job_info</ref> *const</type>
+          <declname>job</declname>
+        </param>
+        <briefdescription>
+<para>Requests nRF Cloud FOTA job info for the specified device. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">rest_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for communicating with nRF Cloud&apos;s REST API. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">device_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated, unique device ID registered with nRF Cloud. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">job</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional; parsed job info. If no job exists, type will be set to invalid. If a job exists, user must call <ref refid="group__nrf__cloud__rest_ga79bd2cac2bd63307c0a60d240014ed1a_1ga79bd2cac2bd63307c0a60d240014ed1a" kindref="member">nrf_cloud_rest_fota_job_free</ref> to free the memory allocated by this function. If NULL, user should inspect the response buffer of <ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="220" column="5" declfile="include/net/nrf_cloud_rest.h" declline="220" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__rest_1ga79bd2cac2bd63307c0a60d240014ed1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nrf_cloud_rest_fota_job_free</definition>
+        <argsstring>(struct nrf_cloud_fota_job_info *const job)</argsstring>
+        <name>nrf_cloud_rest_fota_job_free</name>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__fota__job__info" kindref="compound">nrf_cloud_fota_job_info</ref> *const</type>
+          <declname>job</declname>
+        </param>
+        <briefdescription>
+<para>Frees memory allocated by <ref refid="group__nrf__cloud__rest_ga5f5d935edf5976c41a663f7f36a301de_1ga5f5d935edf5976c41a663f7f36a301de" kindref="member">nrf_cloud_rest_fota_job_get</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">job</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Job info to be freed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="229" column="6" declfile="include/net/nrf_cloud_rest.h" declline="229" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__rest_1gad2e2ca1af04e95d35ac00d81d4ff8e4d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_rest_fota_job_update</definition>
+        <argsstring>(struct nrf_cloud_rest_context *const rest_ctx, const char *const device_id, const char *const job_id, const enum nrf_cloud_fota_status status, const char *const details)</argsstring>
+        <name>nrf_cloud_rest_fota_job_update</name>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref> *const</type>
+          <declname>rest_ctx</declname>
+        </param>
+        <param>
+          <type>const char *const</type>
+          <declname>device_id</declname>
+        </param>
+        <param>
+          <type>const char *const</type>
+          <declname>job_id</declname>
+        </param>
+        <param>
+          <type>const enum <ref refid="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1ga1359b0c3333f11b0d06aa46f99e3668d" kindref="member">nrf_cloud_fota_status</ref></type>
+          <declname>status</declname>
+        </param>
+        <param>
+          <type>const char *const</type>
+          <declname>details</declname>
+        </param>
+        <briefdescription>
+<para>Updates the status of the specified nRF Cloud FOTA job. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">rest_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for communicating with nRF Cloud&apos;s REST API. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">device_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated, unique device ID registered with nRF Cloud. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">job_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated FOTA job identifier. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Status of the FOTA job. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">details</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated string containing details of the job, such as an error description.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="245" column="5" declfile="include/net/nrf_cloud_rest.h" declline="245" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__rest_1gad575f3df8503223bff51af61d6e80ca6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_rest_shadow_state_update</definition>
+        <argsstring>(struct nrf_cloud_rest_context *const rest_ctx, const char *const device_id, const char *const shadow_json)</argsstring>
+        <name>nrf_cloud_rest_shadow_state_update</name>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref> *const</type>
+          <declname>rest_ctx</declname>
+        </param>
+        <param>
+          <type>const char *const</type>
+          <declname>device_id</declname>
+        </param>
+        <param>
+          <type>const char *const</type>
+          <declname>shadow_json</declname>
+        </param>
+        <briefdescription>
+<para>Updates the device&apos;s &quot;state&quot; in the shadow via the UpdateDeviceState endpoint. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">rest_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for communicating with nRF Cloud&apos;s REST API. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">device_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated, unique device ID registered with nRF Cloud. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">shadow_json</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated JSON string to be written to the device&apos;s shadow.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="259" column="5" declfile="include/net/nrf_cloud_rest.h" declline="259" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__rest_1gab0a0f687ff6c44dcce68a8be5f996d08" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_rest_shadow_service_info_update</definition>
+        <argsstring>(struct nrf_cloud_rest_context *const rest_ctx, const char *const device_id, const struct nrf_cloud_svc_info *const svc_inf)</argsstring>
+        <name>nrf_cloud_rest_shadow_service_info_update</name>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref> *const</type>
+          <declname>rest_ctx</declname>
+        </param>
+        <param>
+          <type>const char *const</type>
+          <declname>device_id</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structnrf__cloud__svc__info" kindref="compound">nrf_cloud_svc_info</ref> *const</type>
+          <declname>svc_inf</declname>
+        </param>
+        <briefdescription>
+<para>Updates the device&apos;s &quot;ServiceInfo&quot; in the shadow. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">rest_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for communicating with nRF Cloud&apos;s REST API. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">device_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated, unique device ID registered with nRF Cloud. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">svc_inf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Service info items to be updated in the shadow.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="272" column="5" declfile="include/net/nrf_cloud_rest.h" declline="272" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__rest_1ga4e2db47098a71a3f197ae5a40cba488c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_rest_disconnect</definition>
+        <argsstring>(struct nrf_cloud_rest_context *const rest_ctx)</argsstring>
+        <name>nrf_cloud_rest_disconnect</name>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__rest__context" kindref="compound">nrf_cloud_rest_context</ref> *const</type>
+          <declname>rest_ctx</declname>
+        </param>
+        <briefdescription>
+<para>Closes the connection to the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">rest_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context for communicating with nRF Cloud&apos;s REST API.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="283" column="5" declfile="include/net/nrf_cloud_rest.h" declline="283" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__rest_1ga9bb4886ebcbc44acdb56f4644862b365" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_rest_jitp</definition>
+        <argsstring>(const sec_tag_t nrf_cloud_sec_tag)</argsstring>
+        <name>nrf_cloud_rest_jitp</name>
+        <param>
+          <type>const sec_tag_t</type>
+          <declname>nrf_cloud_sec_tag</declname>
+        </param>
+        <briefdescription>
+<para>Performs just-in-time provisioning (JITP) with nRF Cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>After a device has been provisioned with nRF Cloud, it must be associated with an nRF Cloud account before using any other functions in this library.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">nrf_cloud_sec_tag</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Modem sec_tag containing nRF Cloud JITP credentials</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful; wait 30s before associating device with nRF Cloud account. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>1</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Device is already provisioned. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="298" column="5" declfile="include/net/nrf_cloud_rest.h" declline="298" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nrf__cloud__rest_1ga2f82e95f212467869352d33721d6568b" prot="public" static="no">
+        <name>NRF_CLOUD_REST_TIMEOUT_MINIMUM</name>
+        <initializer>(5000)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="52" column="9" bodyfile="include/net/nrf_cloud_rest.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__rest_1gaf1194544cf52decf230bdb7e0298724a" prot="public" static="no">
+        <name>NRF_CLOUD_REST_TIMEOUT_NONE</name>
+        <initializer>(SYS_FOREVER_MS)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="53" column="9" bodyfile="include/net/nrf_cloud_rest.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

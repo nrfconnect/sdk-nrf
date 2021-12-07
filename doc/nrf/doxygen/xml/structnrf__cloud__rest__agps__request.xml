@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnrf__cloud__rest__agps__request" kind="struct" language="C++" prot="public">
+    <compoundname>nrf_cloud_rest_agps_request</compoundname>
+    <includes refid="nrf__cloud__rest_8h" local="no">nrf_cloud_rest.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnrf__cloud__rest__agps__request_a981b495457bd72eb589d264b67419dd3_1a981b495457bd72eb589d264b67419dd3" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__nrf__cloud__rest_gae86b26f442c457eb58a896bfde29525d_1gae86b26f442c457eb58a896bfde29525d" kindref="member">nrf_cloud_rest_agps_req_type</ref></type>
+        <definition>enum nrf_cloud_rest_agps_req_type nrf_cloud_rest_agps_request::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="116" column="34" bodyfile="include/net/nrf_cloud_rest.h" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__rest__agps__request_ad43eb9113e98e5e209bacbadb33c0253_1ad43eb9113e98e5e209bacbadb33c0253" prot="public" static="no" mutable="no">
+        <type>struct nrf_modem_gnss_agps_data_frame *</type>
+        <definition>struct nrf_modem_gnss_agps_data_frame* nrf_cloud_rest_agps_request::agps_req</definition>
+        <argsstring></argsstring>
+        <name>agps_req</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Required for custom request type </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="118" column="37" bodyfile="include/net/nrf_cloud_rest.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__rest__agps__request_a5ac24501b246207334a4fc6193bb3edb_1a5ac24501b246207334a4fc6193bb3edb" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__lc__cells__info" kindref="compound">lte_lc_cells_info</ref> *</type>
+        <definition>struct lte_lc_cells_info* nrf_cloud_rest_agps_request::net_info</definition>
+        <argsstring></argsstring>
+        <name>net_info</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Optional; provide network info or set to NULL. The cloud cannot provide location assistance data if network info is NULL. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_rest.h" line="122" column="24" bodyfile="include/net/nrf_cloud_rest.h" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Data required for nRF Cloud Assisted GPS (A-GPS) request. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>lte_lc_cell</label>
+        <link refid="structlte__lc__cell"/>
+      </node>
+      <node id="2">
+        <label>lte_lc_cells_info</label>
+        <link refid="structlte__lc__cells__info"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>current_cell</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>neighbor_cells</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>lte_lc_ncell</label>
+        <link refid="structlte__lc__ncell"/>
+      </node>
+      <node id="1">
+        <label>nrf_cloud_rest_agps_request</label>
+        <link refid="structnrf__cloud__rest__agps__request"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>net_info</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/net/nrf_cloud_rest.h" line="115" column="1" bodyfile="include/net/nrf_cloud_rest.h" bodystart="115" bodyend="123"/>
+    <listofallmembers>
+      <member refid="structnrf__cloud__rest__agps__request_ad43eb9113e98e5e209bacbadb33c0253_1ad43eb9113e98e5e209bacbadb33c0253" prot="public" virt="non-virtual"><scope>nrf_cloud_rest_agps_request</scope><name>agps_req</name></member>
+      <member refid="structnrf__cloud__rest__agps__request_a5ac24501b246207334a4fc6193bb3edb_1a5ac24501b246207334a4fc6193bb3edb" prot="public" virt="non-virtual"><scope>nrf_cloud_rest_agps_request</scope><name>net_info</name></member>
+      <member refid="structnrf__cloud__rest__agps__request_a981b495457bd72eb589d264b67419dd3_1a981b495457bd72eb589d264b67419dd3" prot="public" virt="non-virtual"><scope>nrf_cloud_rest_agps_request</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

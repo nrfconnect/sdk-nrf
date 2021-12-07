@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__enocean__callbacks" kind="struct" language="C++" prot="public">
+    <compoundname>bt_enocean_callbacks</compoundname>
+    <includes refid="enocean_8h" local="no">enocean.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__enocean__callbacks_a385a0421750d773936928a4b5bd9ec60_1a385a0421750d773936928a4b5bd9ec60" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_enocean_callbacks::button) (struct bt_enocean_device *device, enum bt_enocean_button_action action, uint8_t changed, const uint8_t *opt_data, size_t opt_data_len)</definition>
+        <argsstring>)(struct bt_enocean_device *device, enum bt_enocean_button_action action, uint8_t changed, const uint8_t *opt_data, size_t opt_data_len)</argsstring>
+        <name>button</name>
+        <briefdescription>
+<para>Callback for EnOcean Switch button presses. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This callback is called for every new button message from a commissioned EnOcean Switch. The set of changed button states on the switch is represented as a bitfield, with 4 bits representing the individual buttons.</para>
+<para>See the <computeroutput>BT_ENOCEAN_SWITCH_*</computeroutput> defines for button mapping. Note that the single rocker switches only engages the third and fourth buttons.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>device</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>EnOcean device generating the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>action</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Button action type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>changed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bitfield of buttons affected by the action. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>opt_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional data array from the message, or NULL. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>opt_data_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the optional data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="79" column="1" bodyfile="include/bluetooth/enocean.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__enocean__callbacks_ad99acd814abaf0c09246c680ae77377a_1ad99acd814abaf0c09246c680ae77377a" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_enocean_callbacks::sensor) (struct bt_enocean_device *device, const struct bt_enocean_sensor_data *data, const uint8_t *opt_data, size_t opt_data_len)</definition>
+        <argsstring>)(struct bt_enocean_device *device, const struct bt_enocean_sensor_data *data, const uint8_t *opt_data, size_t opt_data_len)</argsstring>
+        <name>sensor</name>
+        <briefdescription>
+<para>Callback for EnOcean Sensor reports. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This callback is called for every new sensor message from a commissioned EnOcean Switch.</para>
+<para>The <computeroutput>data</computeroutput> parameter contains a set of optional fields, represented as pointers. Unknown fields are NULL pointers, and must be ignored.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>device</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>EnOcean device generating the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>opt_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional data array from the message, or NULL. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>opt_data_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the optional data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="96" column="1" bodyfile="include/bluetooth/enocean.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__enocean__callbacks_a4825cd9dc0c82d7b07ed405a4296dd81_1a4825cd9dc0c82d7b07ed405a4296dd81" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_enocean_callbacks::commissioned) (struct bt_enocean_device *device)</definition>
+        <argsstring>)(struct bt_enocean_device *device)</argsstring>
+        <name>commissioned</name>
+        <briefdescription>
+<para>Callback for EnOcean commissioning. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This callback is called for every new EnOcean device being commissioned.</para>
+<para>All devices must be commissioned before they can be observed. See the EnOcean device&apos;s user guide for details.</para>
+<para>A device can be rejected inside the callback by calling <ref refid="group__bt__enocean_ga512be4829717d9a3bd06b8cbf22988fd_1ga512be4829717d9a3bd06b8cbf22988fd" kindref="member">bt_enocean_decommission</ref> with the <computeroutput>device&apos;s</computeroutput> address.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>device</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Device that got commissioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="113" column="1" bodyfile="include/bluetooth/enocean.h" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__enocean__callbacks_a26ced49456a1642317d48d7d2edff2ab_1a26ced49456a1642317d48d7d2edff2ab" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_enocean_callbacks::loaded) (struct bt_enocean_device *device)</definition>
+        <argsstring>)(struct bt_enocean_device *device)</argsstring>
+        <name>loaded</name>
+        <briefdescription>
+<para>Callback for EnOcean devices being loaded from persistent storage. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This callback is called for every commissioned EnOcean device recovered from persistent storage.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>device</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Device that was loaded. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="123" column="1" bodyfile="include/bluetooth/enocean.h" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>EnOcean callback functions. All callbacks are optional. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/enocean.h" line="61" column="1" bodyfile="include/bluetooth/enocean.h" bodystart="61" bodyend="124"/>
+    <listofallmembers>
+      <member refid="structbt__enocean__callbacks_a385a0421750d773936928a4b5bd9ec60_1a385a0421750d773936928a4b5bd9ec60" prot="public" virt="non-virtual"><scope>bt_enocean_callbacks</scope><name>button</name></member>
+      <member refid="structbt__enocean__callbacks_a4825cd9dc0c82d7b07ed405a4296dd81_1a4825cd9dc0c82d7b07ed405a4296dd81" prot="public" virt="non-virtual"><scope>bt_enocean_callbacks</scope><name>commissioned</name></member>
+      <member refid="structbt__enocean__callbacks_a26ced49456a1642317d48d7d2edff2ab_1a26ced49456a1642317d48d7d2edff2ab" prot="public" virt="non-virtual"><scope>bt_enocean_callbacks</scope><name>loaded</name></member>
+      <member refid="structbt__enocean__callbacks_ad99acd814abaf0c09246c680ae77377a_1ad99acd814abaf0c09246c680ae77377a" prot="public" virt="non-virtual"><scope>bt_enocean_callbacks</scope><name>sensor</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

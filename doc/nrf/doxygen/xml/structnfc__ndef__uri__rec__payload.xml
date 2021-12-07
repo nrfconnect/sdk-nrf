@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__ndef__uri__rec__payload" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_ndef_uri_rec_payload</compoundname>
+    <includes refid="uri__rec_8h" local="no">uri_rec.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__ndef__uri__rec__payload_a7a9a94ea65f31968be22d68a13128059_1a7a9a94ea65f31968be22d68a13128059" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__nfc__uri__rec_gaf49d5f61e9463ac4e64651658a499595_1gaf49d5f61e9463ac4e64651658a499595" kindref="member">nfc_ndef_uri_rec_id</ref></type>
+        <definition>enum nfc_ndef_uri_rec_id nfc_ndef_uri_rec_payload::uri_id_code</definition>
+        <argsstring></argsstring>
+        <name>uri_id_code</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>URI identifier code. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/uri_rec.h" line="79" column="25" bodyfile="include/nfc/ndef/uri_rec.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__uri__rec__payload_a45736201dc3d802345c2abdfb5046a09_1a45736201dc3d802345c2abdfb5046a09" prot="public" static="no" mutable="no">
+        <type>uint8_t const  *</type>
+        <definition>uint8_t const* nfc_ndef_uri_rec_payload::uri_data</definition>
+        <argsstring></argsstring>
+        <name>uri_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to a URI string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/uri_rec.h" line="81" column="15" bodyfile="include/nfc/ndef/uri_rec.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__uri__rec__payload_a1b6db4ca26cf72b4a46fe4c6b254c0c2_1a1b6db4ca26cf72b4a46fe4c6b254c0c2" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t nfc_ndef_uri_rec_payload::uri_data_len</definition>
+        <argsstring></argsstring>
+        <name>uri_data_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of the URI string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/uri_rec.h" line="83" column="10" bodyfile="include/nfc/ndef/uri_rec.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Type of description of the payload of a URI record. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/nfc/ndef/uri_rec.h" line="77" column="1" bodyfile="include/nfc/ndef/uri_rec.h" bodystart="77" bodyend="84"/>
+    <listofallmembers>
+      <member refid="structnfc__ndef__uri__rec__payload_a45736201dc3d802345c2abdfb5046a09_1a45736201dc3d802345c2abdfb5046a09" prot="public" virt="non-virtual"><scope>nfc_ndef_uri_rec_payload</scope><name>uri_data</name></member>
+      <member refid="structnfc__ndef__uri__rec__payload_a1b6db4ca26cf72b4a46fe4c6b254c0c2_1a1b6db4ca26cf72b4a46fe4c6b254c0c2" prot="public" virt="non-virtual"><scope>nfc_ndef_uri_rec_payload</scope><name>uri_data_len</name></member>
+      <member refid="structnfc__ndef__uri__rec__payload_a7a9a94ea65f31968be22d68a13128059_1a7a9a94ea65f31968be22d68a13128059" prot="public" virt="non-virtual"><scope>nfc_ndef_uri_rec_payload</scope><name>uri_id_code</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

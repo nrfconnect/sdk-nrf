@@ -1,0 +1,270 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__icalendar__parser" kind="group">
+    <compoundname>icalendar_parser</compoundname>
+    <title>API for parsing iCalendar</title>
+    <innerclass refid="structical__component" prot="public">ical_component</innerclass>
+    <innerclass refid="structical__parser__evt" prot="public">ical_parser_evt</innerclass>
+    <innerclass refid="structicalendar__parser" prot="public">icalendar_parser</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__icalendar__parser_1ga640f2a121fe99d2b283f7edbe19313dc" prot="public" static="no" strong="no">
+        <type></type>
+        <name>ical_parser_evt_id</name>
+        <enumvalue id="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1gga640f2a121fe99d2b283f7edbe19313dca35c2ca9048e3f6b90c28a911cdb30e51" prot="public">
+          <name>ICAL_EVT_VEVENT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Event Component parsed </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1gga640f2a121fe99d2b283f7edbe19313dca0aaa978c0184487868bcaaac1b847976" prot="public">
+          <name>ICAL_EVT_VTODO</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Todo Component parsed </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1gga640f2a121fe99d2b283f7edbe19313dca379bbf47886e1d605ac5ab0511319b81" prot="public">
+          <name>ICAL_EVT_VJOURNAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Journal Component parsed </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1gga640f2a121fe99d2b283f7edbe19313dca75b21ab78493e59f1acfd7a720568a94" prot="public">
+          <name>ICAL_EVT_VTIMEZONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Timezone Component parsed </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1gga640f2a121fe99d2b283f7edbe19313dca16733e650122028a28f02d9efc17c095" prot="public">
+          <name>ICAL_EVT_VFREEBUSY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FreeBusy Component parsed </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>iCalendar parser event IDs. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/icalendar_parser.h" line="28" column="1" bodyfile="include/net/icalendar_parser.h" bodystart="28" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__icalendar__parser_1gafafd0a950e7a24b211ad2bc7b7827d89" prot="public" static="no" strong="no">
+        <type></type>
+        <name>ical_parser_error_id</name>
+        <enumvalue id="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89a8c365fe7c436773a0862dd7875bd9a3f" prot="public">
+          <name>ICAL_ERROR_NONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>No error </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89ae12106e2287f30b05709e1ebedcfa756" prot="public">
+          <name>ICAL_ERROR_SUMMARY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>SUMMARY property error </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89a78e8637c545a3fc816f40fe9f7363f5b" prot="public">
+          <name>ICAL_ERROR_LOCATION</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>LOCATION property error </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89a426bcd9555b24ae4ce626d0382ec9942" prot="public">
+          <name>ICAL_ERROR_DESCRIPTION</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>DESCRIPTION property error </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89acb33e011d7e966964465da07e69f2cb2" prot="public">
+          <name>ICAL_ERROR_DTSTART</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>DTSTART property error </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89a445fb1b5099c0d766c7951a7698cb330" prot="public">
+          <name>ICAL_ERROR_DTEND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>DTEND property error </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89a0ea11c7cf5ed60566f5b747dd7860d39" prot="public">
+          <name>ICAL_ERROR_COM_NOT_SUPPORTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Component not supported error </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>iCalendar parser error IDs. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/icalendar_parser.h" line="44" column="1" bodyfile="include/net/icalendar_parser.h" bodystart="44" bodyend="59"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__icalendar__parser_1ga79124cd74402eeb40042355fb220dca2" prot="public" static="no">
+        <type>int(*</type>
+        <definition>typedef int(* icalendar_parser_callback_t) (const struct ical_parser_evt *event)</definition>
+        <argsstring>)(const struct ical_parser_evt *event)</argsstring>
+        <name>icalendar_parser_callback_t</name>
+        <briefdescription>
+<para>iCalendar parser asynchronous event handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Through this callback, the application receives events, such as parsed component with errors code.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">event</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The iCalendar event.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Zero to continue the parsing, non-zero otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/icalendar_parser.h" line="100" column="9" bodyfile="include/net/icalendar_parser.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__icalendar__parser_1ga3b1406ef9e0b9edfd4473d66ae00cdbe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ical_parser_init</definition>
+        <argsstring>(struct icalendar_parser *ical, icalendar_parser_callback_t callback)</argsstring>
+        <name>ical_parser_init</name>
+        <param>
+          <type>struct <ref refid="structicalendar__parser" kindref="compound">icalendar_parser</ref> *</type>
+          <declname>ical</declname>
+        </param>
+        <param>
+          <type><ref refid="group__icalendar__parser_ga79124cd74402eeb40042355fb220dca2_1ga79124cd74402eeb40042355fb220dca2" kindref="member">icalendar_parser_callback_t</ref></type>
+          <declname>callback</declname>
+        </param>
+        <briefdescription>
+<para>Initialize iCalendar parser. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">ical</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>iCalendar parser instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">callback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback for sending calendar parsing event.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If successful, or an error code on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/icalendar_parser.h" line="125" column="5" declfile="include/net/icalendar_parser.h" declline="125" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__icalendar__parser_1ga19b1fdbc5e50abd5d979f7413bfb4913" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t ical_parser_parse</definition>
+        <argsstring>(struct icalendar_parser *ical, const char *data, size_t len)</argsstring>
+        <name>ical_parser_parse</name>
+        <param>
+          <type>struct <ref refid="structicalendar__parser" kindref="compound">icalendar_parser</ref> *</type>
+          <declname>ical</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Parse the iCalendar data stream. Return the parsed bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">ical</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>iCalendar parser instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data to be parsed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of input data stream.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>size_t</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parsed bytes. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/icalendar_parser.h" line="137" column="8" declfile="include/net/icalendar_parser.h" declline="137" declcolumn="8"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

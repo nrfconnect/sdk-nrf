@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__selector__event" kind="group">
+    <compoundname>selector_event</compoundname>
+    <title>Selector Event</title>
+    <innerclass refid="structselector__event" prot="public">selector_event</innerclass>
+    <briefdescription>
+<para>Selector Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

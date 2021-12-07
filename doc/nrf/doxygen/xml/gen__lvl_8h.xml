@@ -1,0 +1,243 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="gen__lvl_8h" kind="file" language="C++">
+    <compoundname>gen_lvl.h</compoundname>
+    <includes local="no">bluetooth/mesh.h</includes>
+    <includes refid="model__types_8h" local="no">bluetooth/mesh/model_types.h</includes>
+    <includedby refid="gen__lvl__cli_8h" local="no">include/bluetooth/mesh/gen_lvl_cli.h</includedby>
+    <includedby refid="gen__lvl__srv_8h" local="no">include/bluetooth/mesh/gen_lvl_srv.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/bluetooth/mesh/gen_lvl.h</label>
+        <link refid="gen__lvl_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/mesh/model_types.h</label>
+        <link refid="model__types_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bluetooth/mesh.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>include/bluetooth/mesh/gen_lvl.h</label>
+        <link refid="gen__lvl_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/bluetooth/mesh/gen_lvl_cli.h</label>
+        <link refid="gen__lvl__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>include/bluetooth/mesh/gen_lvl_srv.h</label>
+        <link refid="gen__lvl__srv_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>include/bluetooth/mesh/gen_plvl_srv.h</label>
+        <link refid="gen__plvl__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>include/bluetooth/mesh/light_ctl_srv.h</label>
+        <link refid="light__ctl__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>include/bluetooth/mesh/light_ctrl_srv.h</label>
+        <link refid="light__ctrl__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>include/bluetooth/mesh/light_hsl_srv.h</label>
+        <link refid="light__hsl__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>include/bluetooth/mesh/light_hue_srv.h</label>
+        <link refid="light__hue__srv_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>include/bluetooth/mesh/light_sat_srv.h</label>
+        <link refid="light__sat__srv_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>include/bluetooth/mesh/light_temp_srv.h</label>
+        <link refid="light__temp__srv_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>include/bluetooth/mesh/light_xyl_srv.h</label>
+        <link refid="light__xyl__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>include/bluetooth/mesh/lightness_srv.h</label>
+        <link refid="lightness__srv_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>include/bluetooth/mesh/models.h</label>
+        <link refid="models_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>include/bluetooth/mesh/vnd/silvair_enocean_srv.h</label>
+        <link refid="silvair__enocean__srv_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structbt__mesh__lvl__set" prot="public">bt_mesh_lvl_set</innerclass>
+    <innerclass refid="structbt__mesh__lvl__delta__set" prot="public">bt_mesh_lvl_delta_set</innerclass>
+    <innerclass refid="structbt__mesh__lvl__move__set" prot="public">bt_mesh_lvl_move_set</innerclass>
+    <innerclass refid="structbt__mesh__lvl__status" prot="public">bt_mesh_lvl_status</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__lvl_ga80faf45ebedb469969a9d3d5001f247d_1ga80faf45ebedb469969a9d3d5001f247d" prot="public" static="no">
+        <name>BT_MESH_LVL_MIN</name>
+        <initializer>INT16_MIN</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Generic Level minimum value. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl.h" line="24" column="9" bodyfile="include/bluetooth/mesh/gen_lvl.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__lvl_ga87e011f7c72e0fb3b52072c17cc98e81_1ga87e011f7c72e0fb3b52072c17cc98e81" prot="public" static="no">
+        <name>BT_MESH_LVL_MAX</name>
+        <initializer>INT16_MAX</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Generic Level maximum value. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl.h" line="26" column="9" bodyfile="include/bluetooth/mesh/gen_lvl.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_MESH_GEN_LVL_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_GEN_LVL_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/mesh.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="model__types_8h" kindref="compound">bluetooth/mesh/model_types.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="group__bt__mesh__lvl_ga80faf45ebedb469969a9d3d5001f247d_1ga80faf45ebedb469969a9d3d5001f247d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LVL_MIN<sp/>INT16_MIN</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="group__bt__mesh__lvl_ga87e011f7c72e0fb3b52072c17cc98e81_1ga87e011f7c72e0fb3b52072c17cc98e81" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LVL_MAX<sp/>INT16_MAX</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="structbt__mesh__lvl__set" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__lvl__set" kindref="compound">bt_mesh_lvl_set</ref><sp/>{</highlight></codeline>
+<codeline lineno="31" refid="structbt__mesh__lvl__set_a99fdba68b7e74178593586dfb0ef0fe7_1a99fdba68b7e74178593586dfb0ef0fe7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structbt__mesh__lvl__set_a99fdba68b7e74178593586dfb0ef0fe7_1a99fdba68b7e74178593586dfb0ef0fe7" kindref="member">lvl</ref>;</highlight></codeline>
+<codeline lineno="33" refid="structbt__mesh__lvl__set_a1849a2141451abbd6a69a29522bf4829_1a1849a2141451abbd6a69a29522bf4829" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__lvl__set_a1849a2141451abbd6a69a29522bf4829_1a1849a2141451abbd6a69a29522bf4829" kindref="member">new_transaction</ref>;</highlight></codeline>
+<codeline lineno="41" refid="structbt__mesh__lvl__set_ab42454ebf72a5d0f841ea9884bc0aad4_1ab42454ebf72a5d0f841ea9884bc0aad4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref><sp/>*<ref refid="structbt__mesh__lvl__set_ab42454ebf72a5d0f841ea9884bc0aad4_1ab42454ebf72a5d0f841ea9884bc0aad4" kindref="member">transition</ref>;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="structbt__mesh__lvl__delta__set" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__lvl__delta__set" kindref="compound">bt_mesh_lvl_delta_set</ref><sp/>{</highlight></codeline>
+<codeline lineno="47" refid="structbt__mesh__lvl__delta__set_a3b616dc589301428d6784d20c5886a10_1a3b616dc589301428d6784d20c5886a10" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int32_t<sp/><ref refid="structbt__mesh__lvl__delta__set_a3b616dc589301428d6784d20c5886a10_1a3b616dc589301428d6784d20c5886a10" kindref="member">delta</ref>;</highlight></codeline>
+<codeline lineno="53" refid="structbt__mesh__lvl__delta__set_aea4812bcda6a8bf44c6ee64d0d5d60b0_1aea4812bcda6a8bf44c6ee64d0d5d60b0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__lvl__delta__set_aea4812bcda6a8bf44c6ee64d0d5d60b0_1aea4812bcda6a8bf44c6ee64d0d5d60b0" kindref="member">new_transaction</ref>;</highlight></codeline>
+<codeline lineno="61" refid="structbt__mesh__lvl__delta__set_a12135ce9c3da99fe75ad521c041d9c56_1a12135ce9c3da99fe75ad521c041d9c56" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref><sp/>*<ref refid="structbt__mesh__lvl__delta__set_a12135ce9c3da99fe75ad521c041d9c56_1a12135ce9c3da99fe75ad521c041d9c56" kindref="member">transition</ref>;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65" refid="structbt__mesh__lvl__move__set" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__lvl__move__set" kindref="compound">bt_mesh_lvl_move_set</ref><sp/>{</highlight></codeline>
+<codeline lineno="67" refid="structbt__mesh__lvl__move__set_a5303dff783d8d3234d94391519231712_1a5303dff783d8d3234d94391519231712" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structbt__mesh__lvl__move__set_a5303dff783d8d3234d94391519231712_1a5303dff783d8d3234d94391519231712" kindref="member">delta</ref>;</highlight></codeline>
+<codeline lineno="69" refid="structbt__mesh__lvl__move__set_a7009606f9cff6a4cc0d84a558fcc174d_1a7009606f9cff6a4cc0d84a558fcc174d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__lvl__move__set_a7009606f9cff6a4cc0d84a558fcc174d_1a7009606f9cff6a4cc0d84a558fcc174d" kindref="member">new_transaction</ref>;</highlight></codeline>
+<codeline lineno="79" refid="structbt__mesh__lvl__move__set_af3a88c2a0989a1f5a502365600929e6b_1af3a88c2a0989a1f5a502365600929e6b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref><sp/>*<ref refid="structbt__mesh__lvl__move__set_af3a88c2a0989a1f5a502365600929e6b_1af3a88c2a0989a1f5a502365600929e6b" kindref="member">transition</ref>;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83" refid="structbt__mesh__lvl__status" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__lvl__status" kindref="compound">bt_mesh_lvl_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="85" refid="structbt__mesh__lvl__status_a517593dfae3d78daa64890601522bf6e_1a517593dfae3d78daa64890601522bf6e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structbt__mesh__lvl__status_a517593dfae3d78daa64890601522bf6e_1a517593dfae3d78daa64890601522bf6e" kindref="member">current</ref>;</highlight></codeline>
+<codeline lineno="90" refid="structbt__mesh__lvl__status_adfdf47bd7a778e0d2d1a45f8a01b7d06_1adfdf47bd7a778e0d2d1a45f8a01b7d06" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int16_t<sp/><ref refid="structbt__mesh__lvl__status_adfdf47bd7a778e0d2d1a45f8a01b7d06_1adfdf47bd7a778e0d2d1a45f8a01b7d06" kindref="member">target</ref>;</highlight></codeline>
+<codeline lineno="96" refid="structbt__mesh__lvl__status_aca715a696f81b8d84d03e2b045e6ff6d_1aca715a696f81b8d84d03e2b045e6ff6d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int32_t<sp/><ref refid="structbt__mesh__lvl__status_aca715a696f81b8d84d03e2b045e6ff6d_1aca715a696f81b8d84d03e2b045e6ff6d" kindref="member">remaining_time</ref>;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LVL_OP_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x05)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LVL_OP_SET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x06)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LVL_OP_SET_UNACK<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x07)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LVL_OP_STATUS<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x08)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LVL_OP_DELTA_SET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x09)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LVL_OP_DELTA_SET_UNACK<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x0A)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LVL_OP_MOVE_SET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x0B)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LVL_OP_MOVE_SET_UNACK<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x0C)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LVL_MSG_LEN_GET<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LVL_MSG_MINLEN_SET<sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LVL_MSG_MAXLEN_SET<sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LVL_MSG_MINLEN_STATUS<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LVL_MSG_MAXLEN_STATUS<sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LVL_MSG_MINLEN_DELTA_SET<sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LVL_MSG_MAXLEN_DELTA_SET<sp/>7</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LVL_MSG_MINLEN_MOVE_SET<sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_LVL_MSG_MAXLEN_MOVE_SET<sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_MESH_GEN_LVL_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/mesh/gen_lvl.h"/>
+  </compounddef>
+</doxygen>

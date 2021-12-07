@@ -1,0 +1,575 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__azure__iot__hub" kind="group">
+    <compoundname>azure_iot_hub</compoundname>
+    <title>Azure IoT Hub library</title>
+    <innerclass refid="structazure__iot__hub__prop__bag" prot="public">azure_iot_hub_prop_bag</innerclass>
+    <innerclass refid="structazure__iot__hub__topic__data" prot="public">azure_iot_hub_topic_data</innerclass>
+    <innerclass refid="structazure__iot__hub__data" prot="public">azure_iot_hub_data</innerclass>
+    <innerclass refid="structazure__iot__hub__method" prot="public">azure_iot_hub_method</innerclass>
+    <innerclass refid="structazure__iot__hub__result" prot="public">azure_iot_hub_result</innerclass>
+    <innerclass refid="structazure__iot__hub__evt" prot="public">azure_iot_hub_evt</innerclass>
+    <innerclass refid="structazure__iot__hub__config" prot="public">azure_iot_hub_config</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__azure__iot__hub_1ga740d54c5c5f5eb2adeb662501127c6a7" prot="public" static="no" strong="no">
+        <type></type>
+        <name>azure_iot_hub_evt_type</name>
+        <enumvalue id="group__azure__iot__hub_ga740d54c5c5f5eb2adeb662501127c6a7_1gga740d54c5c5f5eb2adeb662501127c6a7a0b9a8ae41eda3bc678775c5ed54643c2" prot="public">
+          <name>AZURE_IOT_HUB_EVT_CONNECTING</name>
+          <initializer>= 0x1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Connecting to Azure IoT Hub. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_ga740d54c5c5f5eb2adeb662501127c6a7_1gga740d54c5c5f5eb2adeb662501127c6a7a207765676a45eef151ed20cc9f551780" prot="public">
+          <name>AZURE_IOT_HUB_EVT_CONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Connected to Azure IoT Hub. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_ga740d54c5c5f5eb2adeb662501127c6a7_1gga740d54c5c5f5eb2adeb662501127c6a7a7fe8834fd1fee34c3bda2f8099d0def4" prot="public">
+          <name>AZURE_IOT_HUB_EVT_CONNECTION_FAILED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Connection attempt failed. The reported error code from the IoT Hub is available in the data.err member in the event structure. The error codes correspond to return codes in MQTT CONNACK messages. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_ga740d54c5c5f5eb2adeb662501127c6a7_1gga740d54c5c5f5eb2adeb662501127c6a7a8fe2babab301f6daa4a81fc602bbe9a6" prot="public">
+          <name>AZURE_IOT_HUB_EVT_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Azure IoT Hub connection established and ready. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_ga740d54c5c5f5eb2adeb662501127c6a7_1gga740d54c5c5f5eb2adeb662501127c6a7a51f54d5574551f5ef0e078d36a502a0d" prot="public">
+          <name>AZURE_IOT_HUB_EVT_DISCONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Disconnected from Azure IoT Hub. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_ga740d54c5c5f5eb2adeb662501127c6a7_1gga740d54c5c5f5eb2adeb662501127c6a7a40a443e9c40cfa50732c974749cb59d1" prot="public">
+          <name>AZURE_IOT_HUB_EVT_DATA_RECEIVED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Device-bound data received from Azure IoT Hub. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_ga740d54c5c5f5eb2adeb662501127c6a7_1gga740d54c5c5f5eb2adeb662501127c6a7a7975bc201fbabc3b7a947c75f46bdaf9" prot="public">
+          <name>AZURE_IOT_HUB_EVT_PUBACK</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Acknowledgment for data sent to Azure IoT Hub. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_ga740d54c5c5f5eb2adeb662501127c6a7_1gga740d54c5c5f5eb2adeb662501127c6a7ab9cb7fcc00b4ae00fc7f697f9b9a405f" prot="public">
+          <name>AZURE_IOT_HUB_EVT_TWIN_RECEIVED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Device twin has been received. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_ga740d54c5c5f5eb2adeb662501127c6a7_1gga740d54c5c5f5eb2adeb662501127c6a7ac2d2d0b0f19c7e3f9ae82a43807b7665" prot="public">
+          <name>AZURE_IOT_HUB_EVT_TWIN_DESIRED_RECEIVED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Device twin has received a desired property update. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_ga740d54c5c5f5eb2adeb662501127c6a7_1gga740d54c5c5f5eb2adeb662501127c6a7a490098d79e3b93acebe9255bf894cd1d" prot="public">
+          <name>AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Device twin update successful. The request ID and status are contained in the data.result member of the event structure. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_ga740d54c5c5f5eb2adeb662501127c6a7_1gga740d54c5c5f5eb2adeb662501127c6a7a1252457f62ef48cafe6eace1a45f7c85" prot="public">
+          <name>AZURE_IOT_HUB_EVT_TWIN_RESULT_FAIL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Device twin update failed. The request ID and status are contained in the data.result member of the event structure. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_ga740d54c5c5f5eb2adeb662501127c6a7_1gga740d54c5c5f5eb2adeb662501127c6a7aec3e3c8accdb7b480e3575acc2069586" prot="public">
+          <name>AZURE_IOT_HUB_EVT_DPS_CONNECTING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Connecting to Device Provisioning Service. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_ga740d54c5c5f5eb2adeb662501127c6a7_1gga740d54c5c5f5eb2adeb662501127c6a7ac4ac05861edaf54b21c2d05ea8415815" prot="public">
+          <name>AZURE_IOT_HUB_EVT_DPS_REGISTERING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Device Provisioning Service registration has started. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_ga740d54c5c5f5eb2adeb662501127c6a7_1gga740d54c5c5f5eb2adeb662501127c6a7a288a81be01329e807263e85e29cd37b9" prot="public">
+          <name>AZURE_IOT_HUB_EVT_DPS_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Device Provisioning Service is done, and Azure IoT Hub information obtained. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_ga740d54c5c5f5eb2adeb662501127c6a7_1gga740d54c5c5f5eb2adeb662501127c6a7aeb68bf2f109ac3964c9015274be2e0f1" prot="public">
+          <name>AZURE_IOT_HUB_EVT_DPS_FAILED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Device Provisioning Service failed to retrieve information to connect to Azure IoT Hub. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_ga740d54c5c5f5eb2adeb662501127c6a7_1gga740d54c5c5f5eb2adeb662501127c6a7a3ba3231fcf61b86f0a6675d3efc670c5" prot="public">
+          <name>AZURE_IOT_HUB_EVT_DIRECT_METHOD</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Direct method invoked from the cloud side. <simplesect kind="note"><para>After a direct method has been executed, <emphasis>azure_iot_hub_method_respond</emphasis> must be called to report back the result of the method invocation. </para>
+</simplesect>
+</para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_ga740d54c5c5f5eb2adeb662501127c6a7_1gga740d54c5c5f5eb2adeb662501127c6a7a5481ac4b7a5ad3863d66d201f3808a42" prot="public">
+          <name>AZURE_IOT_HUB_EVT_FOTA_START</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA download starting. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_ga740d54c5c5f5eb2adeb662501127c6a7_1gga740d54c5c5f5eb2adeb662501127c6a7a479408acbdf96ac80746be77d8487678" prot="public">
+          <name>AZURE_IOT_HUB_EVT_FOTA_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA update done, reboot required to apply update. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_ga740d54c5c5f5eb2adeb662501127c6a7_1gga740d54c5c5f5eb2adeb662501127c6a7a459389eccfd1797ae8fa0574c43ddcf1" prot="public">
+          <name>AZURE_IOT_HUB_EVT_FOTA_ERASE_PENDING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA erase pending. On nRF9160-based devices this is typically caused by an active LTE connection preventing erase operation. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_ga740d54c5c5f5eb2adeb662501127c6a7_1gga740d54c5c5f5eb2adeb662501127c6a7ac4a68d2bb8b8fe7d84660dac56b9748d" prot="public">
+          <name>AZURE_IOT_HUB_EVT_FOTA_ERASE_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA erase done. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_ga740d54c5c5f5eb2adeb662501127c6a7_1gga740d54c5c5f5eb2adeb662501127c6a7a59ffe2413aeba288e6c050a2a6a16f0c" prot="public">
+          <name>AZURE_IOT_HUB_EVT_FOTA_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA failed </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_ga740d54c5c5f5eb2adeb662501127c6a7_1gga740d54c5c5f5eb2adeb662501127c6a7a2fa0b40322c49a0a67e08003f3cce88e" prot="public">
+          <name>AZURE_IOT_HUB_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Internal library error </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Azure IoT Hub notification events used to notify the user. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="28" column="1" bodyfile="include/net/azure_iot_hub.h" bodystart="28" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__azure__iot__hub_1gaa776eff16c91b0ad21020f812c07d2e5" prot="public" static="no" strong="no">
+        <type></type>
+        <name>azure_iot_hub_topic_type</name>
+        <enumvalue id="group__azure__iot__hub_gaa776eff16c91b0ad21020f812c07d2e5_1ggaa776eff16c91b0ad21020f812c07d2e5a1b31ccbcf1a7b0f4478b82c843e3d74e" prot="public">
+          <name>AZURE_IOT_HUB_TOPIC_DEVICEBOUND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Data received on the devicebound topic. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_gaa776eff16c91b0ad21020f812c07d2e5_1ggaa776eff16c91b0ad21020f812c07d2e5a34fc4a3d5180d7cf976a10995d6a92de" prot="public">
+          <name>AZURE_IOT_HUB_TOPIC_EVENT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Event topic used to send event data to Azure IoT Hub. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_gaa776eff16c91b0ad21020f812c07d2e5_1ggaa776eff16c91b0ad21020f812c07d2e5aab074cfe2a465bb1f50390daf531dd97" prot="public">
+          <name>AZURE_IOT_HUB_TOPIC_TWIN_DESIRED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Received &quot;desired&quot; properties from the device twin. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_gaa776eff16c91b0ad21020f812c07d2e5_1ggaa776eff16c91b0ad21020f812c07d2e5afe0a500ea6ff06f34d5de6e47dd0630c" prot="public">
+          <name>AZURE_IOT_HUB_TOPIC_TWIN_REPORTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Send updates to the &quot;reported&quot; properties in the device twin. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__iot__hub_gaa776eff16c91b0ad21020f812c07d2e5_1ggaa776eff16c91b0ad21020f812c07d2e5a43e98788876be0946a4c11e3611aa062" prot="public">
+          <name>AZURE_IOT_HUB_TOPIC_TWIN_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Topic to request to receive the device twin. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Azure IoT Hub topic type, used to route messages to the correct destination. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="96" column="1" bodyfile="include/net/azure_iot_hub.h" bodystart="96" bodyend="107"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__azure__iot__hub_1ga0f853455330a075ffbc70f2a81ecebf9" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* azure_iot_hub_evt_handler_t) (struct azure_iot_hub_evt *evt)</definition>
+        <argsstring>)(struct azure_iot_hub_evt *evt)</argsstring>
+        <name>azure_iot_hub_evt_handler_t</name>
+        <briefdescription>
+<para>Azure IoT Hub library event handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to event structure. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="211" column="9" bodyfile="include/net/azure_iot_hub.h" bodystart="211" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__azure__iot__hub_1ga19051f940101ffce788c3a9279e356bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int azure_iot_hub_init</definition>
+        <argsstring>(const struct azure_iot_hub_config *config, azure_iot_hub_evt_handler_t event_handler)</argsstring>
+        <name>azure_iot_hub_init</name>
+        <param>
+          <type>const struct <ref refid="structazure__iot__hub__config" kindref="compound">azure_iot_hub_config</ref> *</type>
+          <declname>config</declname>
+        </param>
+        <param>
+          <type><ref refid="group__azure__iot__hub_ga0f853455330a075ffbc70f2a81ecebf9_1ga0f853455330a075ffbc70f2a81ecebf9" kindref="member">azure_iot_hub_evt_handler_t</ref></type>
+          <declname>event_handler</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>This API must be called exactly once, and it must return successfully for subsequent calls to this library to succeed.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">config</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to struct containing connection parameters. Can be NULL if <verbatim>embed:rst:inline :kconfig:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` </verbatim> is set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">event_handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to event handler function.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="238" column="5" declfile="include/net/azure_iot_hub.h" declline="238" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__azure__iot__hub_1ga920fe2140ccf888a9abaa6802111930b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int azure_iot_hub_connect</definition>
+        <argsstring>(void)</argsstring>
+        <name>azure_iot_hub_connect</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Establish connection to Azure IoT Hub. The function blocks until a connection to the hub is established on the transport level. Subsequent calls to other library function should await AZURE_IOT_HUB_EVT_CONNECTED and AZURE_IOT_HUB_EVT_READY events. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="249" column="5" declfile="include/net/azure_iot_hub.h" declline="249" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__azure__iot__hub_1ga9fca5b5a8c15aa3c238e2e151cd00b5f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int azure_iot_hub_disconnect</definition>
+        <argsstring>(void)</argsstring>
+        <name>azure_iot_hub_disconnect</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Disconnect from Azure IoT Hub. Calling this function initiates the disconnection procedure, and the event AZURE_IOT_HUB_EVT_DISCONNECTED is received when it is completed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="258" column="5" declfile="include/net/azure_iot_hub.h" declline="258" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__azure__iot__hub_1gad3c5fa8c36e5bdf8d3b281c99b62a75e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int azure_iot_hub_send</definition>
+        <argsstring>(const struct azure_iot_hub_data *const tx_data)</argsstring>
+        <name>azure_iot_hub_send</name>
+        <param>
+          <type>const struct <ref refid="structazure__iot__hub__data" kindref="compound">azure_iot_hub_data</ref> *const</type>
+          <declname>tx_data</declname>
+        </param>
+        <briefdescription>
+<para>Send data to Azure IoT Hub. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">tx_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to struct containing data to be transmitted to Azure IoT Hub.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="268" column="5" declfile="include/net/azure_iot_hub.h" declline="268" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__azure__iot__hub_1gaeb66bd3c2c485c0274b4350db9d854c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int azure_iot_hub_input</definition>
+        <argsstring>(void)</argsstring>
+        <name>azure_iot_hub_input</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Receive incoming data from Azure IoT Hub. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Implicitly this function calls a non-blocking recv() on the socket with IoT hub connection. It can be polled periodically, but by default this functionality is handled internally in the library.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="280" column="5" declfile="include/net/azure_iot_hub.h" declline="280" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__azure__iot__hub_1ga2d143b1e53e5ad9b29412202b40af7bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int azure_iot_hub_ping</definition>
+        <argsstring>(void)</argsstring>
+        <name>azure_iot_hub_ping</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Ping Azure IoT Hub. Must be called periodically to keep connection alive. By default ping is handled internally in the library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="288" column="5" declfile="include/net/azure_iot_hub.h" declline="288" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__azure__iot__hub_1gaf3a23b377404f740ca512e1397c711c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int azure_iot_hub_method_respond</definition>
+        <argsstring>(struct azure_iot_hub_result *result)</argsstring>
+        <name>azure_iot_hub_method_respond</name>
+        <param>
+          <type>struct <ref refid="structazure__iot__hub__result" kindref="compound">azure_iot_hub_result</ref> *</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+<para>Send response to a direct method invoked from the cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">result</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Structure containing result data from the direct method execution.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="298" column="5" declfile="include/net/azure_iot_hub.h" declline="298" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__azure__iot__hub_1gaa50edcb3eb3fd8ae0e088c03cea09461" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int azure_iot_hub_keepalive_time_left</definition>
+        <argsstring>(void)</argsstring>
+        <name>azure_iot_hub_keepalive_time_left</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Helper function to determine when next ping should be sent in order to keep the connection alive. By default, ping is sent in time automatically by the library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Time in milliseconds until next keepalive ping will be sent. </para>
+</simplesect>
+<simplesect kind="return"><para>-1 if keepalive messages are not enabled. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="307" column="5" declfile="include/net/azure_iot_hub.h" declline="307" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__azure__iot__hub_1ga8ac47939e75d2dfe2f46339b62da5d61" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int azure_iot_hub_dps_reset</definition>
+        <argsstring>(void)</argsstring>
+        <name>azure_iot_hub_dps_reset</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Reset the stored Azure IoT Hub device provisioning data. This can be used to trigger a new provisioning of the device upon next time the device initiates connection to an IoT Hub. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="316" column="5" declfile="include/net/azure_iot_hub.h" declline="316" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Library to connect a device to Azure IoT Hub. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

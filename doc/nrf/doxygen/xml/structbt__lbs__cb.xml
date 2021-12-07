@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__lbs__cb" kind="struct" language="C++" prot="public">
+    <compoundname>bt_lbs_cb</compoundname>
+    <includes refid="lbs_8h" local="no">lbs.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__lbs__cb_acbdc8a609f1cb50d97ae626bde777a55_1acbdc8a609f1cb50d97ae626bde777a55" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__lbs_ga985260ae276b47a123c131e8fb8b4b9c_1ga985260ae276b47a123c131e8fb8b4b9c" kindref="member">led_cb_t</ref></type>
+        <definition>led_cb_t bt_lbs_cb::led_cb</definition>
+        <argsstring></argsstring>
+        <name>led_cb</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>LED state change callback. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/lbs.h" line="48" column="13" bodyfile="include/bluetooth/services/lbs.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__lbs__cb_a1c7cb5f0226dc1bd7cecbb2b5c3b4275_1a1c7cb5f0226dc1bd7cecbb2b5c3b4275" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__lbs_ga2e599292d9bbc0b8e303e5e6cafd767d_1ga2e599292d9bbc0b8e303e5e6cafd767d" kindref="member">button_cb_t</ref></type>
+        <definition>button_cb_t bt_lbs_cb::button_cb</definition>
+        <argsstring></argsstring>
+        <name>button_cb</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Button read callback. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/lbs.h" line="50" column="13" bodyfile="include/bluetooth/services/lbs.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Callback struct used by the LBS Service. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/lbs.h" line="46" column="1" bodyfile="include/bluetooth/services/lbs.h" bodystart="46" bodyend="51"/>
+    <listofallmembers>
+      <member refid="structbt__lbs__cb_a1c7cb5f0226dc1bd7cecbb2b5c3b4275_1a1c7cb5f0226dc1bd7cecbb2b5c3b4275" prot="public" virt="non-virtual"><scope>bt_lbs_cb</scope><name>button_cb</name></member>
+      <member refid="structbt__lbs__cb_acbdc8a609f1cb50d97ae626bde777a55_1acbdc8a609f1cb50d97ae626bde777a55" prot="public" virt="non-virtual"><scope>bt_lbs_cb</scope><name>led_cb</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

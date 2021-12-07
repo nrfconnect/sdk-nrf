@@ -1,0 +1,253 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="machine__learning_2configuration_2thingy53__nrf5340__cpuapp__ns_2led__state__def_8h" kind="file" language="C++">
+    <compoundname>led_state_def.h</compoundname>
+    <includes refid="include_2caf_2led__effect_8h" local="no">caf/led_effect.h</includes>
+    <includes local="yes">led_state.h</includes>
+    <includes refid="ei__data__forwarder__event_8h" local="yes">ei_data_forwarder_event.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/machine_learning/configuration/thingy53_nrf5340_cpuapp_ns/led_state_def.h</label>
+        <link refid="machine__learning_2configuration_2thingy53__nrf5340__cpuapp__ns_2led__state__def_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>ei_data_forwarder_event.h</label>
+        <link refid="ei__data__forwarder__event_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>caf/led_effect.h</label>
+        <link refid="include_2caf_2led__effect_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>event_manager.h</label>
+        <link refid="event__manager_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>event_manager_profiler.h</label>
+        <link refid="event__manager__profiler_8h"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>profiler.h</label>
+        <link refid="profiler_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>event_manager_priv.h</label>
+      </node>
+      <node id="15">
+        <label>event_manager_profiler_priv.h</label>
+      </node>
+      <node id="5">
+        <label>led_state.h</label>
+      </node>
+      <node id="11">
+        <label>logging/log_ctrl.h</label>
+      </node>
+      <node id="10">
+        <label>sys/__assert.h</label>
+      </node>
+      <node id="9">
+        <label>sys/reboot.h</label>
+      </node>
+      <node id="4">
+        <label>sys/util.h</label>
+      </node>
+      <node id="8">
+        <label>zephyr.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="machine__learning_2configuration_2thingy53__nrf5340__cpuapp__ns_2led__state__def_8h_a1eb357dc6e94eebb9d81b0a5f953c9e2_1a1eb357dc6e94eebb9d81b0a5f953c9e2" prot="public" static="no" mutable="no">
+        <type>const struct @43</type>
+        <definition>const struct @43 led_state_def_include_once</definition>
+        <argsstring></argsstring>
+        <name>led_state_def_include_once</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/machine_learning/configuration/thingy53_nrf5340_cpuapp_ns/led_state_def.h" line="19" column="40"/>
+      </memberdef>
+      <memberdef kind="variable" id="machine__learning_2configuration_2thingy53__nrf5340__cpuapp__ns_2led__state__def_8h_a67510cf5ec0493540e4c836f681b30c5_1a67510cf5ec0493540e4c836f681b30c5" prot="public" static="yes" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t led_map[]</definition>
+        <argsstring>[]</argsstring>
+        <name>led_map</name>
+        <initializer>= {
+	[<ref refid="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaaa19d31747d4684387c87bac64aa61fc7" kindref="member">LED_ID_ML_STATE</ref>] = 0,
+	[<ref refid="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa1046499c4127379d00588563f8b39df3" kindref="member">LED_ID_SENSOR_SIM</ref>] = <ref refid="group__led__state_gadc8c409756ef96aeb3ef4db80c3f7e71_1gadc8c409756ef96aeb3ef4db80c3f7e71" kindref="member">LED_UNAVAILABLE</ref>,
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/machine_learning/configuration/thingy53_nrf5340_cpuapp_ns/led_state_def.h" line="23" column="22" bodyfile="applications/machine_learning/configuration/thingy53_nrf5340_cpuapp_ns/led_state_def.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="machine__learning_2configuration_2thingy53__nrf5340__cpuapp__ns_2led__state__def_8h_a5872d7a41610825280acbd1f51ad6ac2_1a5872d7a41610825280acbd1f51ad6ac2" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structled__effect" kindref="compound">led_effect</ref></type>
+        <definition>const struct led_effect ei_data_forwarder_led_effects[]</definition>
+        <argsstring>[]</argsstring>
+        <name>ei_data_forwarder_led_effects</name>
+        <initializer>= {
+	[<ref refid="group__ei__data__forwarder__event_gad2753de99db4c77e1f02f0f60f48c274_1ggad2753de99db4c77e1f02f0f60f48c274a0c84fa8e12ce7306f2d67fc6f249c734" kindref="member">EI_DATA_FORWARDER_STATE_DISCONNECTED</ref>]	=
+		<ref refid="group__led__effect__CAF_ga3cbbf6d5748a1dd5c33af7d3e97fe2cf_1ga3cbbf6d5748a1dd5c33af7d3e97fe2cf" kindref="member">LED_EFFECT_LED_BLINK</ref>(2000, <ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(100, 0, 0)),
+	[<ref refid="group__ei__data__forwarder__event_gad2753de99db4c77e1f02f0f60f48c274_1ggad2753de99db4c77e1f02f0f60f48c274af719f8b13dfb1401cb9fdd7f59495dde" kindref="member">EI_DATA_FORWARDER_STATE_CONNECTED</ref>]	=
+		<ref refid="group__led__effect__CAF_ga3cbbf6d5748a1dd5c33af7d3e97fe2cf_1ga3cbbf6d5748a1dd5c33af7d3e97fe2cf" kindref="member">LED_EFFECT_LED_BLINK</ref>(500, <ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(100, 0, 0)),
+	[<ref refid="group__ei__data__forwarder__event_gad2753de99db4c77e1f02f0f60f48c274_1ggad2753de99db4c77e1f02f0f60f48c274a44ca1f6efb8eb8c09688b5228f8e8b55" kindref="member">EI_DATA_FORWARDER_STATE_TRANSMITTING</ref>]	=
+		<ref refid="group__led__effect__CAF_ga3cbbf6d5748a1dd5c33af7d3e97fe2cf_1ga3cbbf6d5748a1dd5c33af7d3e97fe2cf" kindref="member">LED_EFFECT_LED_BLINK</ref>(50, <ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(100, 0, 0)),
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/machine_learning/configuration/thingy53_nrf5340_cpuapp_ns/led_state_def.h" line="28" column="30" bodyfile="applications/machine_learning/configuration/thingy53_nrf5340_cpuapp_ns/led_state_def.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="machine__learning_2configuration_2thingy53__nrf5340__cpuapp__ns_2led__state__def_8h_abcc91f121f70caf744eb2a9d3c3854f2_1abcc91f121f70caf744eb2a9d3c3854f2" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structml__result__led__effect" kindref="compound">ml_result_led_effect</ref></type>
+        <definition>const struct ml_result_led_effect ml_result_led_effects[]</definition>
+        <argsstring>[]</argsstring>
+        <name>ml_result_led_effects</name>
+        <initializer>= {
+	{
+		.label = NULL,
+		.effect = <ref refid="group__led__effect__CAF_ga3cbbf6d5748a1dd5c33af7d3e97fe2cf_1ga3cbbf6d5748a1dd5c33af7d3e97fe2cf" kindref="member">LED_EFFECT_LED_BLINK</ref>(200, <ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(100, 100, 100)),
+	},
+	{
+		.label = <ref refid="machine__learning_2configuration_2common_2led__state_8h_a85de286b4fdbeabd28ab207f4828b8a3_1a85de286b4fdbeabd28ab207f4828b8a3" kindref="member">ANOMALY_LABEL</ref>,
+		.effect = <ref refid="group__led__effect__CAF_ga7fb4ef307bd2b1730f82410432b823c9_1ga7fb4ef307bd2b1730f82410432b823c9" kindref="member">LED_EFFECT_LED_ON</ref>(<ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(100, 0, 100)),
+	},
+	{
+		.label = &quot;updown&quot;,
+		.effect = <ref refid="group__led__effect__CAF_ga7fb4ef307bd2b1730f82410432b823c9_1ga7fb4ef307bd2b1730f82410432b823c9" kindref="member">LED_EFFECT_LED_ON</ref>(<ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(0, 100, 0)),
+	},
+	{
+		.label = &quot;rotate&quot;,
+		.effect = <ref refid="group__led__effect__CAF_ga7fb4ef307bd2b1730f82410432b823c9_1ga7fb4ef307bd2b1730f82410432b823c9" kindref="member">LED_EFFECT_LED_ON</ref>(<ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(100, 0, 0)),
+	},
+	{
+		.label = &quot;tap&quot;,
+		.effect = <ref refid="group__led__effect__CAF_ga7fb4ef307bd2b1730f82410432b823c9_1ga7fb4ef307bd2b1730f82410432b823c9" kindref="member">LED_EFFECT_LED_ON</ref>(<ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(0, 0, 100)),
+	},
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/machine_learning/configuration/thingy53_nrf5340_cpuapp_ns/led_state_def.h" line="37" column="40" bodyfile="applications/machine_learning/configuration/thingy53_nrf5340_cpuapp_ns/led_state_def.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="include_2caf_2led__effect_8h" kindref="compound">caf/led_effect.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;led_state.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ei__data__forwarder__event_8h" kindref="compound">ei_data_forwarder_event.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>configuration<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>from<sp/>led_state<sp/>module<sp/>and<sp/>holds</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*<sp/>information<sp/>about<sp/>LED<sp/>effects<sp/>associated<sp/>with<sp/>data<sp/>forwarder<sp/>states<sp/>and<sp/>machine</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*<sp/>learning<sp/>results.</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>structure<sp/>enforces<sp/>the<sp/>header<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>in<sp/>the<sp/>build.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*<sp/>Violating<sp/>this<sp/>requirement<sp/>triggers<sp/>a<sp/>multiple<sp/>definition<sp/>error<sp/>at<sp/>link<sp/>time.</highlight></codeline>
+<codeline lineno="18"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="machine__learning_2configuration_2thingy53__nrf5340__cpuapp__ns_2led__state__def_8h_a1eb357dc6e94eebb9d81b0a5f953c9e2_1a1eb357dc6e94eebb9d81b0a5f953c9e2" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{}<sp/><ref refid="asset__tracker__v2_2include_2nrf9160dk__nrf9160__ns_2led__state__def_8h_a8104467fcdd02583e61cbb922808f975_1a8104467fcdd02583e61cbb922808f975" kindref="member">led_state_def_include_once</ref>;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Map<sp/>function<sp/>to<sp/>LED<sp/>ID<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="machine__learning_2configuration_2thingy53__nrf5340__cpuapp__ns_2led__state__def_8h_a67510cf5ec0493540e4c836f681b30c5_1a67510cf5ec0493540e4c836f681b30c5" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/><ref refid="machine__learning_2configuration_2thingy53__nrf5340__cpuapp__ns_2led__state__def_8h_a67510cf5ec0493540e4c836f681b30c5_1a67510cf5ec0493540e4c836f681b30c5" kindref="member">led_map</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaaa19d31747d4684387c87bac64aa61fc7" kindref="member">LED_ID_ML_STATE</ref>]<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa1046499c4127379d00588563f8b39df3" kindref="member">LED_ID_SENSOR_SIM</ref>]<sp/>=<sp/><ref refid="machine__learning_2configuration_2common_2led__state_8h_adc8c409756ef96aeb3ef4db80c3f7e71_1adc8c409756ef96aeb3ef4db80c3f7e71" kindref="member">LED_UNAVAILABLE</ref>,</highlight></codeline>
+<codeline lineno="26"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="machine__learning_2configuration_2thingy53__nrf5340__cpuapp__ns_2led__state__def_8h_a5872d7a41610825280acbd1f51ad6ac2_1a5872d7a41610825280acbd1f51ad6ac2" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structled__effect" kindref="compound">led_effect</ref><sp/><ref refid="machine__learning_2configuration_2thingy53__nrf5340__cpuapp__ns_2led__state__def_8h_a5872d7a41610825280acbd1f51ad6ac2_1a5872d7a41610825280acbd1f51ad6ac2" kindref="member">ei_data_forwarder_led_effects</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__ei__data__forwarder__event_gad2753de99db4c77e1f02f0f60f48c274_1ggad2753de99db4c77e1f02f0f60f48c274a0c84fa8e12ce7306f2d67fc6f249c734" kindref="member">EI_DATA_FORWARDER_STATE_DISCONNECTED</ref>]<sp/><sp/>=</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__led__effect_ga3cbbf6d5748a1dd5c33af7d3e97fe2cf_1ga3cbbf6d5748a1dd5c33af7d3e97fe2cf" kindref="member">LED_EFFECT_LED_BLINK</ref>(2000,<sp/><ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(100,<sp/>0,<sp/>0)),</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__ei__data__forwarder__event_gad2753de99db4c77e1f02f0f60f48c274_1ggad2753de99db4c77e1f02f0f60f48c274af719f8b13dfb1401cb9fdd7f59495dde" kindref="member">EI_DATA_FORWARDER_STATE_CONNECTED</ref>]<sp/><sp/><sp/><sp/><sp/>=</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__led__effect_ga3cbbf6d5748a1dd5c33af7d3e97fe2cf_1ga3cbbf6d5748a1dd5c33af7d3e97fe2cf" kindref="member">LED_EFFECT_LED_BLINK</ref>(500,<sp/><ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(100,<sp/>0,<sp/>0)),</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="group__ei__data__forwarder__event_gad2753de99db4c77e1f02f0f60f48c274_1ggad2753de99db4c77e1f02f0f60f48c274a44ca1f6efb8eb8c09688b5228f8e8b55" kindref="member">EI_DATA_FORWARDER_STATE_TRANSMITTING</ref>]<sp/><sp/>=</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__led__effect_ga3cbbf6d5748a1dd5c33af7d3e97fe2cf_1ga3cbbf6d5748a1dd5c33af7d3e97fe2cf" kindref="member">LED_EFFECT_LED_BLINK</ref>(50,<sp/><ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(100,<sp/>0,<sp/>0)),</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="machine__learning_2configuration_2thingy53__nrf5340__cpuapp__ns_2led__state__def_8h_abcc91f121f70caf744eb2a9d3c3854f2_1abcc91f121f70caf744eb2a9d3c3854f2" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structml__result__led__effect" kindref="compound">ml_result_led_effect</ref><sp/><ref refid="machine__learning_2configuration_2thingy53__nrf5340__cpuapp__ns_2led__state__def_8h_abcc91f121f70caf744eb2a9d3c3854f2_1abcc91f121f70caf744eb2a9d3c3854f2" kindref="member">ml_result_led_effects</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.<ref refid="structml__result__led__effect_ac9d0457e52f3193676946ef1a1bb3a16_1ac9d0457e52f3193676946ef1a1bb3a16" kindref="member">label</ref><sp/>=<sp/>NULL,</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.effect<sp/>=<sp/><ref refid="group__led__effect_ga3cbbf6d5748a1dd5c33af7d3e97fe2cf_1ga3cbbf6d5748a1dd5c33af7d3e97fe2cf" kindref="member">LED_EFFECT_LED_BLINK</ref>(200,<sp/><ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(100,<sp/>100,<sp/>100)),</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>},</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.label<sp/>=<sp/><ref refid="machine__learning_2configuration_2common_2led__state_8h_a85de286b4fdbeabd28ab207f4828b8a3_1a85de286b4fdbeabd28ab207f4828b8a3" kindref="member">ANOMALY_LABEL</ref>,</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.effect<sp/>=<sp/><ref refid="group__led__effect_ga7fb4ef307bd2b1730f82410432b823c9_1ga7fb4ef307bd2b1730f82410432b823c9" kindref="member">LED_EFFECT_LED_ON</ref>(<ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(100,<sp/>0,<sp/>100)),</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>},</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.label<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;updown&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.effect<sp/>=<sp/><ref refid="group__led__effect_ga7fb4ef307bd2b1730f82410432b823c9_1ga7fb4ef307bd2b1730f82410432b823c9" kindref="member">LED_EFFECT_LED_ON</ref>(<ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(0,<sp/>100,<sp/>0)),</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>},</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.label<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;rotate&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.effect<sp/>=<sp/><ref refid="group__led__effect_ga7fb4ef307bd2b1730f82410432b823c9_1ga7fb4ef307bd2b1730f82410432b823c9" kindref="member">LED_EFFECT_LED_ON</ref>(<ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(100,<sp/>0,<sp/>0)),</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>},</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.label<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;tap&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.effect<sp/>=<sp/><ref refid="group__led__effect_ga7fb4ef307bd2b1730f82410432b823c9_1ga7fb4ef307bd2b1730f82410432b823c9" kindref="member">LED_EFFECT_LED_ON</ref>(<ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(0,<sp/>0,<sp/>100)),</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>},</highlight></codeline>
+<codeline lineno="58"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="applications/machine_learning/configuration/thingy53_nrf5340_cpuapp_ns/led_state_def.h"/>
+  </compounddef>
+</doxygen>

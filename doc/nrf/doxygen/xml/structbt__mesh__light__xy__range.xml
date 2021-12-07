@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__xy__range" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_xy_range</compoundname>
+    <includes refid="light__xyl_8h" local="no">light_xyl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__xy__range_acc1dfb048eb1642acbbf68f6f05843ae_1acc1dfb048eb1642acbbf68f6f05843ae" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__light__xy" kindref="compound">bt_mesh_light_xy</ref></type>
+        <definition>struct bt_mesh_light_xy bt_mesh_light_xy_range::min</definition>
+        <argsstring></argsstring>
+        <name>min</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximal xy range </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl.h" line="74" column="23" bodyfile="include/bluetooth/mesh/light_xyl.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__xy__range_a019feb568c692d6d4c66405a2cfe9758_1a019feb568c692d6d4c66405a2cfe9758" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__light__xy" kindref="compound">bt_mesh_light_xy</ref></type>
+        <definition>struct bt_mesh_light_xy bt_mesh_light_xy_range::max</definition>
+        <argsstring></argsstring>
+        <name>max</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximal xy range </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl.h" line="76" column="23" bodyfile="include/bluetooth/mesh/light_xyl.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Light xy range parameters. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_mesh_light_xy</label>
+        <link refid="structbt__mesh__light__xy"/>
+      </node>
+      <node id="1">
+        <label>bt_mesh_light_xy_range</label>
+        <link refid="structbt__mesh__light__xy__range"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>max</edgelabel>
+          <edgelabel>min</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/light_xyl.h" line="72" column="1" bodyfile="include/bluetooth/mesh/light_xyl.h" bodystart="72" bodyend="77"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__xy__range_a019feb568c692d6d4c66405a2cfe9758_1a019feb568c692d6d4c66405a2cfe9758" prot="public" virt="non-virtual"><scope>bt_mesh_light_xy_range</scope><name>max</name></member>
+      <member refid="structbt__mesh__light__xy__range_acc1dfb048eb1642acbbf68f6f05843ae_1acc1dfb048eb1642acbbf68f6f05843ae" prot="public" virt="non-virtual"><scope>bt_mesh_light_xy_range</scope><name>min</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

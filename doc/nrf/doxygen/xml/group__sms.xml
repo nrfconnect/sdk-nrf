@@ -1,0 +1,251 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__sms" kind="group">
+    <compoundname>sms</compoundname>
+    <title>SMS subscriber manager</title>
+    <innerclass refid="structsms__time" prot="public">sms_time</innerclass>
+    <innerclass refid="structsms__address" prot="public">sms_address</innerclass>
+    <innerclass refid="structsms__udh__concat" prot="public">sms_udh_concat</innerclass>
+    <innerclass refid="structsms__udh__app__port" prot="public">sms_udh_app_port</innerclass>
+    <innerclass refid="structsms__deliver__header" prot="public">sms_deliver_header</innerclass>
+    <innerclass refid="unionsms__header" prot="public">sms_header</innerclass>
+    <innerclass refid="structsms__data" prot="public">sms_data</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__sms_1gac3ecefc364f1d37b24489a264fe143bd" prot="public" static="no" strong="no">
+        <type></type>
+        <name>sms_type</name>
+        <enumvalue id="group__sms_gac3ecefc364f1d37b24489a264fe143bd_1ggac3ecefc364f1d37b24489a264fe143bda311717399328582760e62ce31aca40bd" prot="public">
+          <name>SMS_TYPE_DELIVER</name>
+          <briefdescription>
+<para>SMS-DELIVER message type. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__sms_gac3ecefc364f1d37b24489a264fe143bd_1ggac3ecefc364f1d37b24489a264fe143bda7f36a208b246db73b08b0b7625781cec" prot="public">
+          <name>SMS_TYPE_STATUS_REPORT</name>
+          <briefdescription>
+<para>SMS-STATUS-REPORT message type. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>SMS message type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="30" column="1" bodyfile="include/modem/sms.h" bodystart="30" bodyend="35"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__sms_1ga4ab5e71cdedbcf4a52647448abe5e4bc" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* sms_callback_t) (struct sms_data *const data, void *context)</definition>
+        <argsstring>)(struct sms_data *const data, void *context)</argsstring>
+        <name>sms_callback_t</name>
+        <briefdescription>
+<para>SMS listener callback function. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="157" column="9" bodyfile="include/modem/sms.h" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__sms_1ga36b4564cfd7c6af16132c4d5aff9b37f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int sms_register_listener</definition>
+        <argsstring>(sms_callback_t listener, void *context)</argsstring>
+        <name>sms_register_listener</name>
+        <param>
+          <type><ref refid="group__sms_ga4ab5e71cdedbcf4a52647448abe5e4bc_1ga4ab5e71cdedbcf4a52647448abe5e4bc" kindref="member">sms_callback_t</ref></type>
+          <declname>listener</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+<para>Register a new listener to SMS library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Also registers to modem&apos;s SMS service if it&apos;s not already subscribed.</para>
+<para>A listener is identified by a unique handle value. This handle should be used to unregister the listener. A listener can be registered multiple times with the same or a different context.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">listener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback function. Cannot be null. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>User context. Can be null if not used.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOSPC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>List of observers is full. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EBUSY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Indicates that one SMS client has already been registered towards the modem and SMS subscriber module is not able to do it. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Out of memory. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Handle identifying the listener, or a negative value if an error occurred. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="179" column="5" declfile="include/modem/sms.h" declline="179" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__sms_1ga8197371fb439ad39fa21970e3125d39f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sms_unregister_listener</definition>
+        <argsstring>(int handle)</argsstring>
+        <name>sms_unregister_listener</name>
+        <param>
+          <type>int</type>
+          <declname>handle</declname>
+        </param>
+        <briefdescription>
+<para>Unregister a listener. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Also unregisters from modem&apos;s SMS service if there are no listeners registered.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">handle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Handle identifying the listener to unregister. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="189" column="6" declfile="include/modem/sms.h" declline="189" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__sms_1gaa814f1ed281e3f8edd0f2505d6d63a64" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int sms_send_text</definition>
+        <argsstring>(const char *number, const char *text)</argsstring>
+        <name>sms_send_text</name>
+        <param>
+          <type>const char *</type>
+          <declname>number</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>text</declname>
+        </param>
+        <briefdescription>
+<para>Send SMS message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Sending is done with GSM 7bit encoding used to encode textual SMS messages. SMS-SUBMIT message is specified in 3GPP TS 23.040 Section 9.2.2.2 and data encoding in 3GPP TS 23.038 Section 4 and Section 6.2. This function doesn&apos;t support sending of 8bit binary data messages or UCS2 encoded text.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">number</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Recipient number. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">text</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Text to be sent.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid parameter. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, otherwise error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="205" column="5" declfile="include/modem/sms.h" declline="205" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__sms_1ga7106f991c6f4d63d30f1fa284e0666f5" prot="public" static="no">
+        <name>SMS_MAX_PAYLOAD_LEN_CHARS</name>
+        <initializer>160</initializer>
+        <briefdescription>
+<para>Maximum length of SMS in number of characters as specified in 3GPP TS 23.038 Section 4 and Section 6.1.2.1.1. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="41" column="9" bodyfile="include/modem/sms.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__sms_1ga5172dfe6afa4cdafb11dc97cce42172b" prot="public" static="no">
+        <name>SMS_MAX_ADDRESS_LEN_CHARS</name>
+        <initializer>20</initializer>
+        <briefdescription>
+<para>Maximum length of SMS address, i.e., phone number, in characters as specified in 3GPP TS 23.040 Section 9.1.2.3. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="47" column="9" bodyfile="include/modem/sms.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Public APIs of the SMS subscriber manager module. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

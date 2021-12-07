@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structgps__module__pvt" kind="struct" language="C++" prot="public">
+    <compoundname>gps_module_pvt</compoundname>
+    <includes refid="gps__module__event_8h" local="no">gps_module_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structgps__module__pvt_af27bff9e996e32375990d4ab112dea40_1af27bff9e996e32375990d4ab112dea40" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double gps_module_pvt::longitude</definition>
+        <argsstring></argsstring>
+        <name>longitude</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/gps_module_event.h" line="39" column="8" bodyfile="applications/asset_tracker_v2/src/events/gps_module_event.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__module__pvt_ab289d70bfc9ca8aa8d707d9899a1ece0_1ab289d70bfc9ca8aa8d707d9899a1ece0" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double gps_module_pvt::latitude</definition>
+        <argsstring></argsstring>
+        <name>latitude</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/gps_module_event.h" line="40" column="8" bodyfile="applications/asset_tracker_v2/src/events/gps_module_event.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__module__pvt_aa9d44f7f82a48c4ee004f28b804a64f7_1aa9d44f7f82a48c4ee004f28b804a64f7" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float gps_module_pvt::altitude</definition>
+        <argsstring></argsstring>
+        <name>altitude</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/gps_module_event.h" line="41" column="7" bodyfile="applications/asset_tracker_v2/src/events/gps_module_event.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__module__pvt_aec06ad616545727a20f255cd29d923b1_1aec06ad616545727a20f255cd29d923b1" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float gps_module_pvt::accuracy</definition>
+        <argsstring></argsstring>
+        <name>accuracy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/gps_module_event.h" line="42" column="7" bodyfile="applications/asset_tracker_v2/src/events/gps_module_event.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__module__pvt_ada3380d5a96105f5af73c0294c4e58f0_1ada3380d5a96105f5af73c0294c4e58f0" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float gps_module_pvt::speed</definition>
+        <argsstring></argsstring>
+        <name>speed</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/gps_module_event.h" line="43" column="7" bodyfile="applications/asset_tracker_v2/src/events/gps_module_event.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__module__pvt_aa26bb0331d04ea3252a267bba43e4863_1aa26bb0331d04ea3252a267bba43e4863" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float gps_module_pvt::heading</definition>
+        <argsstring></argsstring>
+        <name>heading</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/gps_module_event.h" line="44" column="7" bodyfile="applications/asset_tracker_v2/src/events/gps_module_event.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/events/gps_module_event.h" line="38" column="1" bodyfile="applications/asset_tracker_v2/src/events/gps_module_event.h" bodystart="38" bodyend="45"/>
+    <listofallmembers>
+      <member refid="structgps__module__pvt_aec06ad616545727a20f255cd29d923b1_1aec06ad616545727a20f255cd29d923b1" prot="public" virt="non-virtual"><scope>gps_module_pvt</scope><name>accuracy</name></member>
+      <member refid="structgps__module__pvt_aa9d44f7f82a48c4ee004f28b804a64f7_1aa9d44f7f82a48c4ee004f28b804a64f7" prot="public" virt="non-virtual"><scope>gps_module_pvt</scope><name>altitude</name></member>
+      <member refid="structgps__module__pvt_aa26bb0331d04ea3252a267bba43e4863_1aa26bb0331d04ea3252a267bba43e4863" prot="public" virt="non-virtual"><scope>gps_module_pvt</scope><name>heading</name></member>
+      <member refid="structgps__module__pvt_ab289d70bfc9ca8aa8d707d9899a1ece0_1ab289d70bfc9ca8aa8d707d9899a1ece0" prot="public" virt="non-virtual"><scope>gps_module_pvt</scope><name>latitude</name></member>
+      <member refid="structgps__module__pvt_af27bff9e996e32375990d4ab112dea40_1af27bff9e996e32375990d4ab112dea40" prot="public" virt="non-virtual"><scope>gps_module_pvt</scope><name>longitude</name></member>
+      <member refid="structgps__module__pvt_ada3380d5a96105f5af73c0294c4e58f0_1ada3380d5a96105f5af73c0294c4e58f0" prot="public" virt="non-virtual"><scope>gps_module_pvt</scope><name>speed</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,289 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__plvl__srv" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_plvl_srv</compoundname>
+    <includes refid="gen__plvl__srv_8h" local="no">gen_plvl_srv.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__plvl__srv_ad7409ff6c77a7337a0d531e67f22353e_1ad7409ff6c77a7337a0d531e67f22353e" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__lvl__srv" kindref="compound">bt_mesh_lvl_srv</ref></type>
+        <definition>struct bt_mesh_lvl_srv bt_mesh_plvl_srv::lvl</definition>
+        <argsstring></argsstring>
+        <name>lvl</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Generic Level Server instance. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl_srv.h" line="143" column="22" bodyfile="include/bluetooth/mesh/gen_plvl_srv.h" bodystart="143" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__srv_a56631feb204a725980cf8e75e0b24ee9_1a56631feb204a725980cf8e75e0b24ee9" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__ponoff__srv" kindref="compound">bt_mesh_ponoff_srv</ref></type>
+        <definition>struct bt_mesh_ponoff_srv bt_mesh_plvl_srv::ponoff</definition>
+        <argsstring></argsstring>
+        <name>ponoff</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Generic Power OnOff server instance. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl_srv.h" line="145" column="25" bodyfile="include/bluetooth/mesh/gen_plvl_srv.h" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__srv_a6982078d1a876178985fc695dab70299_1a6982078d1a876178985fc695dab70299" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model *</type>
+        <definition>struct bt_mesh_model* bt_mesh_plvl_srv::plvl_model</definition>
+        <argsstring></argsstring>
+        <name>plvl_model</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the model entry in the composition data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl_srv.h" line="147" column="20" bodyfile="include/bluetooth/mesh/gen_plvl_srv.h" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__srv_ac87d175601d0b3795d9bc6bd6df75018_1ac87d175601d0b3795d9bc6bd6df75018" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model *</type>
+        <definition>struct bt_mesh_model* bt_mesh_plvl_srv::plvl_setup_model</definition>
+        <argsstring></argsstring>
+        <name>plvl_setup_model</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the model entry of the Setup Server. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl_srv.h" line="149" column="20" bodyfile="include/bluetooth/mesh/gen_plvl_srv.h" bodystart="149" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__srv_a01e331483b008c9ee34fb2c14a682ec1_1a01e331483b008c9ee34fb2c14a682ec1" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model_pub</type>
+        <definition>struct bt_mesh_model_pub bt_mesh_plvl_srv::pub</definition>
+        <argsstring></argsstring>
+        <name>pub</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Model publication parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl_srv.h" line="151" column="24" bodyfile="include/bluetooth/mesh/gen_plvl_srv.h" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__srv_a0389964782183303062426933d8faff8_1a0389964782183303062426933d8faff8" prot="public" static="no" mutable="no">
+        <type>struct net_buf_simple</type>
+        <definition>struct net_buf_simple bt_mesh_plvl_srv::pub_buf</definition>
+        <argsstring></argsstring>
+        <name>pub_buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl_srv.h" line="153" column="21" bodyfile="include/bluetooth/mesh/gen_plvl_srv.h" bodystart="153" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__srv_a0c1c886bf5efa5b42166e61bb3cb5daf_1a0c1c886bf5efa5b42166e61bb3cb5daf" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_plvl_srv::pub_data[BT_MESH_MODEL_BUF_LEN( BT_MESH_PLVL_OP_LEVEL_STATUS, BT_MESH_PLVL_MSG_MAXLEN_LEVEL_STATUS)]</definition>
+        <argsstring>[BT_MESH_MODEL_BUF_LEN(BT_MESH_PLVL_OP_LEVEL_STATUS, BT_MESH_PLVL_MSG_MAXLEN_LEVEL_STATUS)]</argsstring>
+        <name>pub_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl_srv.h" line="155" column="9" bodyfile="include/bluetooth/mesh/gen_plvl_srv.h" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__srv_a2df3364e4867befe8d07bfa196bb3563_1a2df3364e4867befe8d07bfa196bb3563" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__tid__ctx" kindref="compound">bt_mesh_tid_ctx</ref></type>
+        <definition>struct bt_mesh_tid_ctx bt_mesh_plvl_srv::tid</definition>
+        <argsstring></argsstring>
+        <name>tid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transaction ID tracker for the set messages. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl_srv.h" line="159" column="22" bodyfile="include/bluetooth/mesh/gen_plvl_srv.h" bodystart="159" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__srv_a664b72a15f7dc9ce284d049cc450f807_1a664b72a15f7dc9ce284d049cc450f807" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__plvl__srv__handlers" kindref="compound">bt_mesh_plvl_srv_handlers</ref> *const</type>
+        <definition>const struct bt_mesh_plvl_srv_handlers* const bt_mesh_plvl_srv::handlers</definition>
+        <argsstring></argsstring>
+        <name>handlers</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>User handler functions. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl_srv.h" line="161" column="44" bodyfile="include/bluetooth/mesh/gen_plvl_srv.h" bodystart="161" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__srv_a06978815d93251e4dab1344f8e3d1dcb_1a06978815d93251e4dab1344f8e3d1dcb" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__plvl__range" kindref="compound">bt_mesh_plvl_range</ref></type>
+        <definition>struct bt_mesh_plvl_range bt_mesh_plvl_srv::range</definition>
+        <argsstring></argsstring>
+        <name>range</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current Power Range. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl_srv.h" line="168" column="25" bodyfile="include/bluetooth/mesh/gen_plvl_srv.h" bodystart="168" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__srv_a925afaae314c48c91dca408db657e50a_1a925afaae314c48c91dca408db657e50a" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_plvl_srv::default_power</definition>
+        <argsstring></argsstring>
+        <name>default_power</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current Default Power. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl_srv.h" line="170" column="10" bodyfile="include/bluetooth/mesh/gen_plvl_srv.h" bodystart="170" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__srv_a04faa77646633be206c4b70eebfbcaa5_1a04faa77646633be206c4b70eebfbcaa5" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_plvl_srv::last</definition>
+        <argsstring></argsstring>
+        <name>last</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The last known Power Level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl_srv.h" line="172" column="10" bodyfile="include/bluetooth/mesh/gen_plvl_srv.h" bodystart="172" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__srv_ad27bdbdd172a46e341f79313983a0a2c_1ad27bdbdd172a46e341f79313983a0a2c" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool bt_mesh_plvl_srv::is_on</definition>
+        <argsstring></argsstring>
+        <name>is_on</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Whether the Power is on. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl_srv.h" line="174" column="6" bodyfile="include/bluetooth/mesh/gen_plvl_srv.h" bodystart="174" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Generic Power Level Server instance.</para>
+<para>Should be initialized with <ref refid="group__bt__mesh__plvl__srv_gaa03cdf713a4970ba77dbbe791a72d4bb_1gaa03cdf713a4970ba77dbbe791a72d4bb" kindref="member">BT_MESH_PLVL_SRV_INIT</ref>. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="8">
+        <label>bt_mesh_dtt_srv</label>
+        <link refid="structbt__mesh__dtt__srv"/>
+      </node>
+      <node id="2">
+        <label>bt_mesh_lvl_srv</label>
+        <link refid="structbt__mesh__lvl__srv"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>handlers</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>tid</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bt_mesh_lvl_srv_handlers</label>
+        <link refid="structbt__mesh__lvl__srv__handlers"/>
+      </node>
+      <node id="6">
+        <label>bt_mesh_onoff_srv</label>
+        <link refid="structbt__mesh__onoff__srv"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>prev_transaction</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>handlers</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>bt_mesh_onoff_srv_handlers</label>
+        <link refid="structbt__mesh__onoff__srv__handlers"/>
+      </node>
+      <node id="10">
+        <label>bt_mesh_plvl_range</label>
+        <link refid="structbt__mesh__plvl__range"/>
+      </node>
+      <node id="1">
+        <label>bt_mesh_plvl_srv</label>
+        <link refid="structbt__mesh__plvl__srv"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>lvl</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>ponoff</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>tid</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>handlers</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>range</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>bt_mesh_plvl_srv_handlers</label>
+        <link refid="structbt__mesh__plvl__srv__handlers"/>
+      </node>
+      <node id="5">
+        <label>bt_mesh_ponoff_srv</label>
+        <link refid="structbt__mesh__ponoff__srv"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>onoff</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>dtt</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>onoff_handlers</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bt_mesh_tid_ctx</label>
+        <link refid="structbt__mesh__tid__ctx"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/gen_plvl_srv.h" line="141" column="1" bodyfile="include/bluetooth/mesh/gen_plvl_srv.h" bodystart="141" bodyend="175"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__plvl__srv_a925afaae314c48c91dca408db657e50a_1a925afaae314c48c91dca408db657e50a" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_srv</scope><name>default_power</name></member>
+      <member refid="structbt__mesh__plvl__srv_a664b72a15f7dc9ce284d049cc450f807_1a664b72a15f7dc9ce284d049cc450f807" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_srv</scope><name>handlers</name></member>
+      <member refid="structbt__mesh__plvl__srv_ad27bdbdd172a46e341f79313983a0a2c_1ad27bdbdd172a46e341f79313983a0a2c" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_srv</scope><name>is_on</name></member>
+      <member refid="structbt__mesh__plvl__srv_a04faa77646633be206c4b70eebfbcaa5_1a04faa77646633be206c4b70eebfbcaa5" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_srv</scope><name>last</name></member>
+      <member refid="structbt__mesh__plvl__srv_ad7409ff6c77a7337a0d531e67f22353e_1ad7409ff6c77a7337a0d531e67f22353e" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_srv</scope><name>lvl</name></member>
+      <member refid="structbt__mesh__plvl__srv_a6982078d1a876178985fc695dab70299_1a6982078d1a876178985fc695dab70299" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_srv</scope><name>plvl_model</name></member>
+      <member refid="structbt__mesh__plvl__srv_ac87d175601d0b3795d9bc6bd6df75018_1ac87d175601d0b3795d9bc6bd6df75018" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_srv</scope><name>plvl_setup_model</name></member>
+      <member refid="structbt__mesh__plvl__srv_a56631feb204a725980cf8e75e0b24ee9_1a56631feb204a725980cf8e75e0b24ee9" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_srv</scope><name>ponoff</name></member>
+      <member refid="structbt__mesh__plvl__srv_a01e331483b008c9ee34fb2c14a682ec1_1a01e331483b008c9ee34fb2c14a682ec1" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_srv</scope><name>pub</name></member>
+      <member refid="structbt__mesh__plvl__srv_a0389964782183303062426933d8faff8_1a0389964782183303062426933d8faff8" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_srv</scope><name>pub_buf</name></member>
+      <member refid="structbt__mesh__plvl__srv_a0c1c886bf5efa5b42166e61bb3cb5daf_1a0c1c886bf5efa5b42166e61bb3cb5daf" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_srv</scope><name>pub_data</name></member>
+      <member refid="structbt__mesh__plvl__srv_a06978815d93251e4dab1344f8e3d1dcb_1a06978815d93251e4dab1344f8e3d1dcb" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_srv</scope><name>range</name></member>
+      <member refid="structbt__mesh__plvl__srv_a2df3364e4867befe8d07bfa196bb3563_1a2df3364e4867befe8d07bfa196bb3563" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_srv</scope><name>tid</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

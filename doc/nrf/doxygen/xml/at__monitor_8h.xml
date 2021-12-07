@@ -1,0 +1,294 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="at__monitor_8h" kind="file" language="C++">
+    <compoundname>at_monitor.h</compoundname>
+    <includes local="no">stddef.h</includes>
+    <includes local="no">kernel.h</includes>
+    <includes local="no">sys/util_macro.h</includes>
+    <includes local="no">toolchain/common.h</includes>
+    <includedby refid="slm__at__host_8h" local="no">applications/serial_lte_modem/src/slm_at_host.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/modem/at_monitor.h</label>
+        <link refid="at__monitor_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>kernel.h</label>
+      </node>
+      <node id="2">
+        <label>stddef.h</label>
+      </node>
+      <node id="4">
+        <label>sys/util_macro.h</label>
+      </node>
+      <node id="5">
+        <label>toolchain/common.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>applications/serial_lte_modem/src/slm_at_host.h</label>
+        <link refid="slm__at__host_8h"/>
+      </node>
+      <node id="1">
+        <label>include/modem/at_monitor.h</label>
+        <link refid="at__monitor_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structat__monitor__entry" prot="public">at_monitor_entry</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__at__monitor_ga756cb5435a9a4479ee2066ab9da0dbae_1ga756cb5435a9a4479ee2066ab9da0dbae" prot="public" static="no">
+        <name>ANY</name>
+        <initializer>NULL</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Wildcard. Match any notifications. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_monitor.h" line="54" column="9" bodyfile="include/modem/at_monitor.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__monitor_ga734b46dfd78fbf6fc938a6f9115f2cc7_1ga734b46dfd78fbf6fc938a6f9115f2cc7" prot="public" static="no">
+        <name>PAUSED</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Monitor is paused. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_monitor.h" line="56" column="9" bodyfile="include/modem/at_monitor.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__monitor_ga3a6d3cd70078e6046471ec528a09cd19_1ga3a6d3cd70078e6046471ec528a09cd19" prot="public" static="no">
+        <name>ACTIVE</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Monitor is active, default </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_monitor.h" line="58" column="9" bodyfile="include/modem/at_monitor.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__monitor_ga67e4b241cac410639d33722b4ec512ed_1ga67e4b241cac410639d33722b4ec512ed" prot="public" static="no">
+        <name>AT_MONITOR</name>
+        <param><defname>name</defname></param>
+        <param><defname>_filter</defname></param>
+        <param><defname>_handler</defname></param>
+        <param><defname>...</defname></param>
+        <initializer>	static void _handler(const char *);                                    \
+	STRUCT_SECTION_ITERABLE(<ref refid="structat__monitor__entry" kindref="compound">at_monitor_entry</ref>, at_monitor_##name) = {       \
+		.filter = _filter,                                             \
+		.handler = _handler,                                           \
+		COND_CODE_1(__VA_ARGS__, (.paused = __VA_ARGS__,), ())         \
+	}</initializer>
+        <briefdescription>
+<para>Define an AT monitor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The monitor name. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_filter</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The filter for AT notification the monitor should receive, or <computeroutput>ANY</computeroutput> to receive all notifications. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The monitor callback. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional monitor initial state (<computeroutput>PAUSED</computeroutput> or <computeroutput>ACTIVE</computeroutput>). The default initial state of a monitor is active. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_monitor.h" line="70" column="9" bodyfile="include/modem/at_monitor.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__monitor_ga7930b44e1db4fae8e6f0cc33b8014a2f_1ga7930b44e1db4fae8e6f0cc33b8014a2f" prot="public" static="no">
+        <name>at_monitor_pause</name>
+        <param><defname>mon</defname></param>
+        <initializer>	at_monitor_##mon.paused = 1</initializer>
+        <briefdescription>
+<para>Pause monitor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Pause monitor <computeroutput>mon</computeroutput> from receiving notifications.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>mon</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The monitor to pause. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_monitor.h" line="85" column="9" bodyfile="include/modem/at_monitor.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__monitor_ga7d32e8771ee0e08f1835d194abe84480_1ga7d32e8771ee0e08f1835d194abe84480" prot="public" static="no">
+        <name>at_monitor_resume</name>
+        <param><defname>mon</defname></param>
+        <initializer>	at_monitor_##mon.paused = 0</initializer>
+        <briefdescription>
+<para>Resume monitor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Resume forwarding notifications to monitor <computeroutput>mon</computeroutput>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>mon</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The monitor to resume. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_monitor.h" line="95" column="9" bodyfile="include/modem/at_monitor.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__at__monitor_ga170f3e1648f03d53eb7c8bc9eb6091cc_1ga170f3e1648f03d53eb7c8bc9eb6091cc" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* at_monitor_handler_t) (const char *notif)</definition>
+        <argsstring>)(const char *notif)</argsstring>
+        <name>at_monitor_handler_t</name>
+        <briefdescription>
+<para>AT monitor callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>notif</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The AT notification. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_monitor.h" line="34" column="9" bodyfile="include/modem/at_monitor.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__at__monitor_ga83bf29bcba359308bb28f834f9921450_1ga83bf29bcba359308bb28f834f9921450" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void at_monitor_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>at_monitor_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Ready to dispatch notifications to monitors. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_monitor.h" line="51" column="6" declfile="include/modem/at_monitor.h" declline="51" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>AT_MONITOR_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_MONITOR_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stddef.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;kernel.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/util_macro.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;toolchain/common.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="group__at__monitor_ga170f3e1648f03d53eb7c8bc9eb6091cc_1ga170f3e1648f03d53eb7c8bc9eb6091cc" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__at__monitor_ga170f3e1648f03d53eb7c8bc9eb6091cc_1ga170f3e1648f03d53eb7c8bc9eb6091cc" kindref="member">at_monitor_handler_t</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*notif);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="structat__monitor__entry" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structat__monitor__entry" kindref="compound">at_monitor_entry</ref><sp/>{</highlight></codeline>
+<codeline lineno="41" refid="structat__monitor__entry_a50006aa8b21fe86a0210b43b701dae24_1a50006aa8b21fe86a0210b43b701dae24" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structat__monitor__entry_a50006aa8b21fe86a0210b43b701dae24_1a50006aa8b21fe86a0210b43b701dae24" kindref="member">filter</ref>;</highlight></codeline>
+<codeline lineno="43" refid="structat__monitor__entry_a904c3a71e9d3bdb65041847d4b63d74c_1a904c3a71e9d3bdb65041847d4b63d74c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="group__at__monitor_ga170f3e1648f03d53eb7c8bc9eb6091cc_1ga170f3e1648f03d53eb7c8bc9eb6091cc" kindref="member">at_monitor_handler_t</ref><sp/><ref refid="structat__monitor__entry_a904c3a71e9d3bdb65041847d4b63d74c_1a904c3a71e9d3bdb65041847d4b63d74c" kindref="member">handler</ref>;</highlight></codeline>
+<codeline lineno="45" refid="structat__monitor__entry_ae095571cd03b7f328791912a2aa6e1b9_1ae095571cd03b7f328791912a2aa6e1b9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structat__monitor__entry_ae095571cd03b7f328791912a2aa6e1b9_1ae095571cd03b7f328791912a2aa6e1b9" kindref="member">paused</ref>;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="group__at__monitor_ga83bf29bcba359308bb28f834f9921450_1ga83bf29bcba359308bb28f834f9921450" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__at__monitor_ga83bf29bcba359308bb28f834f9921450_1ga83bf29bcba359308bb28f834f9921450" kindref="member">at_monitor_init</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="group__at__monitor_ga756cb5435a9a4479ee2066ab9da0dbae_1ga756cb5435a9a4479ee2066ab9da0dbae" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ANY<sp/>NULL</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="group__at__monitor_ga734b46dfd78fbf6fc938a6f9115f2cc7_1ga734b46dfd78fbf6fc938a6f9115f2cc7" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PAUSED<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58" refid="group__at__monitor_ga3a6d3cd70078e6046471ec528a09cd19_1ga3a6d3cd70078e6046471ec528a09cd19" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ACTIVE<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="group__at__monitor_ga67e4b241cac410639d33722b4ec512ed_1ga67e4b241cac410639d33722b4ec512ed" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_MONITOR(name,<sp/>_filter,<sp/>_handler,<sp/>...)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="71"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>static<sp/>void<sp/>_handler(const<sp/>char<sp/>*);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="72"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>STRUCT_SECTION_ITERABLE(at_monitor_entry,<sp/>at_monitor_##name)<sp/>=<sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="73"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.filter<sp/>=<sp/>_filter,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="74"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.handler<sp/>=<sp/>_handler,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="75"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>COND_CODE_1(__VA_ARGS__,<sp/>(.paused<sp/>=<sp/>__VA_ARGS__,),<sp/>())<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="76"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="group__at__monitor_ga7930b44e1db4fae8e6f0cc33b8014a2f_1ga7930b44e1db4fae8e6f0cc33b8014a2f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>at_monitor_pause(mon)<sp/>\</highlight></codeline>
+<codeline lineno="86"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>at_monitor_##mon.paused<sp/>=<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="group__at__monitor_ga7d32e8771ee0e08f1835d194abe84480_1ga7d32e8771ee0e08f1835d194abe84480" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>at_monitor_resume(mon)<sp/>\</highlight></codeline>
+<codeline lineno="96"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>at_monitor_##mon.paused<sp/>=<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>AT_MONITOR_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/modem/at_monitor.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,1633 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__sensor__cli" kind="group">
+    <compoundname>bt_mesh_sensor_cli</compoundname>
+    <title>Sensor Client model</title>
+    <innerclass refid="structbt__mesh__sensor__cli" prot="public">bt_mesh_sensor_cli</innerclass>
+    <innerclass refid="structbt__mesh__sensor__cadence__status" prot="public">bt_mesh_sensor_cadence_status</innerclass>
+    <innerclass refid="structbt__mesh__sensor__setting__status" prot="public">bt_mesh_sensor_setting_status</innerclass>
+    <innerclass refid="structbt__mesh__sensor__series__entry" prot="public">bt_mesh_sensor_series_entry</innerclass>
+    <innerclass refid="structbt__mesh__sensor__info" prot="public">bt_mesh_sensor_info</innerclass>
+    <innerclass refid="structbt__mesh__sensor__data" prot="public">bt_mesh_sensor_data</innerclass>
+    <innerclass refid="structbt__mesh__sensor__cli__handlers" prot="public">bt_mesh_sensor_cli_handlers</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__sensor__cli_1ga8e1ac94a6dc9e8b97ba5fb0c7a309141" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_sensor_cli_desc_all_get</definition>
+        <argsstring>(struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_sensor_info *sensors, uint32_t *count)</argsstring>
+        <name>bt_mesh_sensor_cli_desc_all_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__cli" kindref="compound">bt_mesh_sensor_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__info" kindref="compound">bt_mesh_sensor_info</ref> *</type>
+          <declname>sensors</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>count</declname>
+        </param>
+        <briefdescription>
+<para>Retrieve all sensor descriptors in a sensor server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>sensors</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__sensor__cli__handlers_aba336e51b11830f7b2d331c3eeae3165_1aba336e51b11830f7b2d331c3eeae3165" kindref="member">bt_mesh_sensor_cli_handlers::sensor</ref> callback as a list of sensor descriptors.</para>
+<para>If a <computeroutput>sensors</computeroutput> array is provided and the client received a response, the array will be filled with as many of the response sensors as it can fit, even if the buffer isn&apos;t big enough. If the call fails in a way that results in no response, <computeroutput>count</computeroutput> is set to 0.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context parameters, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">sensors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of sensors to fill with the response, or NULL to keep from blocking. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of elements in the <computeroutput>sensors</computeroutput> array. Will be changed to reflect the resulting number of sensors.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully received the full list of sensors. The <computeroutput>sensors</computeroutput> array and <computeroutput>count</computeroutput> has been changed to reflect the response contents. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-E2BIG</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The list of sensors in the response was too big to fit in the <computeroutput>sensors</computeroutput> array. The <computeroutput>sensors</computeroutput> array has been filled up to the original <computeroutput>count</computeroutput>, and <computeroutput>count</computeroutput> has been changed to the number of sensors in the response. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="295" column="5" declfile="include/bluetooth/mesh/sensor_cli.h" declline="295" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__sensor__cli_1ga939275d0189af0a6e00c4f6a754582e1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_sensor_cli_desc_get</definition>
+        <argsstring>(struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_type *sensor, struct bt_mesh_sensor_descriptor *rsp)</argsstring>
+        <name>bt_mesh_sensor_cli_desc_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__cli" kindref="compound">bt_mesh_sensor_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref> *</type>
+          <declname>sensor</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__descriptor" kindref="compound">bt_mesh_sensor_descriptor</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Get the descriptor for the given sensor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__sensor__cli__handlers_aba336e51b11830f7b2d331c3eeae3165_1aba336e51b11830f7b2d331c3eeae3165" kindref="member">bt_mesh_sensor_cli_handlers::sensor</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context parameters, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor instance present on the targeted sensor server. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor descriptor response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully received the descriptor. The <computeroutput>rsp</computeroutput> buffer has been filled. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENODEV</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The sensor server doesn&apos;t have the given sensor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="322" column="5" declfile="include/bluetooth/mesh/sensor_cli.h" declline="322" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__sensor__cli_1ga2a6f449dbe1205f2d748f0a940e0149e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_sensor_cli_cadence_get</definition>
+        <argsstring>(struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_type *sensor, struct bt_mesh_sensor_cadence_status *rsp)</argsstring>
+        <name>bt_mesh_sensor_cli_cadence_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__cli" kindref="compound">bt_mesh_sensor_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref> *</type>
+          <declname>sensor</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__cadence__status" kindref="compound">bt_mesh_sensor_cadence_status</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Get the cadence state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__sensor__cli__handlers_a86f03299427d7e4ac054ca114ef7257a_1a86f03299427d7e4ac054ca114ef7257a" kindref="member">bt_mesh_sensor_cli_handlers::cadence</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context parameters, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor to get the cadence of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor cadence response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully received the cadence. The <computeroutput>rsp</computeroutput> buffer has been filled. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOTSUP</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The sensor doesn&apos;t support cadence settings. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="349" column="5" declfile="include/bluetooth/mesh/sensor_cli.h" declline="349" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__sensor__cli_1ga0efe93f4da2462773e5328cdfb3a2abd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_sensor_cli_cadence_set</definition>
+        <argsstring>(struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_type *sensor, const struct bt_mesh_sensor_cadence_status *cadence, struct bt_mesh_sensor_cadence_status *rsp)</argsstring>
+        <name>bt_mesh_sensor_cli_cadence_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__cli" kindref="compound">bt_mesh_sensor_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref> *</type>
+          <declname>sensor</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__sensor__cadence__status" kindref="compound">bt_mesh_sensor_cadence_status</ref> *</type>
+          <declname>cadence</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__cadence__status" kindref="compound">bt_mesh_sensor_cadence_status</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Set the cadence state for the given sensor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__sensor__cli__handlers_a86f03299427d7e4ac054ca114ef7257a_1a86f03299427d7e4ac054ca114ef7257a" kindref="member">bt_mesh_sensor_cli_handlers::cadence</ref> callback.</para>
+<para><simplesect kind="note"><para>Only single-channel sensors support cadence.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context parameters, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor instance present on the targeted sensor server. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cadence</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New sensor cadence for the sensor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor cadence response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully received the cadence. The <computeroutput>rsp</computeroutput> buffer has been filled. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOTSUP</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The sensor doesn&apos;t support cadence settings. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="379" column="5" declfile="include/bluetooth/mesh/sensor_cli.h" declline="379" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__sensor__cli_1gac32184b3d1d819dc97166ca663dd940d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_sensor_cli_cadence_set_unack</definition>
+        <argsstring>(struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_type *sensor, const struct bt_mesh_sensor_cadence_status *cadence)</argsstring>
+        <name>bt_mesh_sensor_cli_cadence_set_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__cli" kindref="compound">bt_mesh_sensor_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref> *</type>
+          <declname>sensor</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__sensor__cadence__status" kindref="compound">bt_mesh_sensor_cadence_status</ref> *</type>
+          <declname>cadence</declname>
+        </param>
+        <briefdescription>
+<para>Set the cadence state for the given sensor without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Only single-channel sensors support cadence.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context parameters, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor instance present on the targeted sensor server. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cadence</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New sensor cadence for the sensor.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully received the cadence. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="401" column="5" declfile="include/bluetooth/mesh/sensor_cli.h" declline="401" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__sensor__cli_1ga29cc60fc836d01369ecf788a4ad5b0f8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_sensor_cli_settings_get</definition>
+        <argsstring>(struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_type *sensor, uint16_t *ids, uint32_t *count)</argsstring>
+        <name>bt_mesh_sensor_cli_settings_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__cli" kindref="compound">bt_mesh_sensor_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref> *</type>
+          <declname>sensor</declname>
+        </param>
+        <param>
+          <type>uint16_t *</type>
+          <declname>ids</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>count</declname>
+        </param>
+        <briefdescription>
+<para>Get the list of settings for the given sensor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>ids</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__sensor__cli__handlers_a92da6ea4d18b088549796c7484e343a4_1a92da6ea4d18b088549796c7484e343a4" kindref="member">bt_mesh_sensor_cli_handlers::settings</ref> callback.</para>
+<para>If an <computeroutput>ids</computeroutput> array is provided and the client received a response, the array will be filled with as many of the response ids as it can fit, even if the buffer isn&apos;t big enough. If the call fails in a way that results in no response, <computeroutput>count</computeroutput> is set to 0.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context parameters, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor instance present on the targeted sensor server. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">ids</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of sensor setting IDs to fill with the response, or NULL to keep from blocking. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of elements in the <computeroutput>ids</computeroutput> array. Will be changed to reflect the resulting number of IDs.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully received the full list of sensor setting IDs. The <computeroutput>ids</computeroutput> array and <computeroutput>count</computeroutput> has been changed to reflect the response contents. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENODEV</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The sensor server doesn&apos;t have the given sensor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-E2BIG</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The list of IDs in the response was too big to fit in the <computeroutput>ids</computeroutput> array. The <computeroutput>ids</computeroutput> array has been filled up to the original <computeroutput>count</computeroutput>, and <computeroutput>count</computeroutput> has been changed to the number of IDs in the response. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="440" column="5" declfile="include/bluetooth/mesh/sensor_cli.h" declline="440" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__sensor__cli_1ga139e6168d9de6078b57d1f2b0a8ad570" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_sensor_cli_setting_get</definition>
+        <argsstring>(struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_type *sensor, const struct bt_mesh_sensor_type *setting, struct bt_mesh_sensor_setting_status *rsp)</argsstring>
+        <name>bt_mesh_sensor_cli_setting_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__cli" kindref="compound">bt_mesh_sensor_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref> *</type>
+          <declname>sensor</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref> *</type>
+          <declname>setting</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__setting__status" kindref="compound">bt_mesh_sensor_setting_status</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Get a setting value for a sensor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__sensor__cli__handlers_ab796b7f3ad7a0c051ae16457039e0c94_1ab796b7f3ad7a0c051ae16457039e0c94" kindref="member">bt_mesh_sensor_cli_handlers::setting_status</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context parameters, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor instance present on the targeted sensor server. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">setting</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Setting to read. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor setting value response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully received the setting value. The <computeroutput>rsp</computeroutput> buffer has been filled. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOENT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The sensor doesn&apos;t have the given setting. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="468" column="5" declfile="include/bluetooth/mesh/sensor_cli.h" declline="468" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__sensor__cli_1ga0ed746e75c0038fa6cf6f86e54c2cc5e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_sensor_cli_setting_set</definition>
+        <argsstring>(struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_type *sensor, const struct bt_mesh_sensor_type *setting, const struct sensor_value *value, struct bt_mesh_sensor_setting_status *rsp)</argsstring>
+        <name>bt_mesh_sensor_cli_setting_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__cli" kindref="compound">bt_mesh_sensor_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref> *</type>
+          <declname>sensor</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref> *</type>
+          <declname>setting</declname>
+        </param>
+        <param>
+          <type>const struct sensor_value *</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__setting__status" kindref="compound">bt_mesh_sensor_setting_status</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Set a setting value for a sensor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__sensor__cli__handlers_ab796b7f3ad7a0c051ae16457039e0c94_1ab796b7f3ad7a0c051ae16457039e0c94" kindref="member">bt_mesh_sensor_cli_handlers::setting_status</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context parameters, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor instance present on the targeted sensor server. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">setting</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Setting to change. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New setting value. Must contain values for all channels described by <computeroutput>setting</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor setting value response buffer, or NULL to keep from blocking.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully changed the setting. The <computeroutput>rsp</computeroutput> buffer has been filled. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOENT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The sensor doesn&apos;t have the given setting. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EACCES</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The setting can&apos;t be written to. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A blocking request is already in progress. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="500" column="5" declfile="include/bluetooth/mesh/sensor_cli.h" declline="500" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__sensor__cli_1gac6e4a1c0210b765a44fab88414f3ccc3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_sensor_cli_setting_set_unack</definition>
+        <argsstring>(struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_type *sensor, const struct bt_mesh_sensor_type *setting, const struct sensor_value *value)</argsstring>
+        <name>bt_mesh_sensor_cli_setting_set_unack</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__cli" kindref="compound">bt_mesh_sensor_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref> *</type>
+          <declname>sensor</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref> *</type>
+          <declname>setting</declname>
+        </param>
+        <param>
+          <type>const struct sensor_value *</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Set a setting value for a sensor without requesting a response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context parameters, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor instance present on the targeted sensor server. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">setting</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Setting to change. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New setting value. Must contain values for all channels described by <computeroutput>setting</computeroutput>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully changed the setting. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="522" column="5" declfile="include/bluetooth/mesh/sensor_cli.h" declline="522" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__sensor__cli_1gaa0f440dca1aa31c01323d692eeea4e29" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_sensor_cli_all_get</definition>
+        <argsstring>(struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_sensor_data *sensors, uint32_t *count)</argsstring>
+        <name>bt_mesh_sensor_cli_all_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__cli" kindref="compound">bt_mesh_sensor_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__data" kindref="compound">bt_mesh_sensor_data</ref> *</type>
+          <declname>sensors</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>count</declname>
+        </param>
+        <briefdescription>
+<para>Read sensor data from all sensors on a server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>sensors</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__sensor__cli__handlers_a88febee8085ee8e84fc757b2bd0f5fe1_1a88febee8085ee8e84fc757b2bd0f5fe1" kindref="member">bt_mesh_sensor_cli_handlers::data</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context parameters, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">sensors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of the sensors data to fill with the response, or NULL to keep from blocking. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of elements in the <computeroutput>sensors</computeroutput> array. Will be changed to reflect the resulting number of elements in a list.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully received the sensor data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENODEV</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The sensor server doesn&apos;t have the given sensor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="550" column="5" declfile="include/bluetooth/mesh/sensor_cli.h" declline="550" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__sensor__cli_1gabd71ee58fea78e865d79a634776bf89e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_sensor_cli_get</definition>
+        <argsstring>(struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_type *sensor, struct sensor_value *rsp)</argsstring>
+        <name>bt_mesh_sensor_cli_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__cli" kindref="compound">bt_mesh_sensor_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref> *</type>
+          <declname>sensor</declname>
+        </param>
+        <param>
+          <type>struct sensor_value *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Read sensor data from a sensor instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__sensor__cli__handlers_a88febee8085ee8e84fc757b2bd0f5fe1_1a88febee8085ee8e84fc757b2bd0f5fe1" kindref="member">bt_mesh_sensor_cli_handlers::data</ref> callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context parameters, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor instance present on the targeted sensor server. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response value buffer, or NULL to keep from blocking. Must be able to fit all channels described by the sensor type.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully received the sensor data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENODEV</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The sensor server doesn&apos;t have the given sensor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="576" column="5" declfile="include/bluetooth/mesh/sensor_cli.h" declline="576" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__sensor__cli_1ga7e4fe3e5fae30a09aab00c7424db5b0a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_sensor_cli_series_entry_get</definition>
+        <argsstring>(struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_type *sensor, const struct bt_mesh_sensor_column *column, struct bt_mesh_sensor_series_entry *rsp)</argsstring>
+        <name>bt_mesh_sensor_cli_series_entry_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__cli" kindref="compound">bt_mesh_sensor_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref> *</type>
+          <declname>sensor</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__sensor__column" kindref="compound">bt_mesh_sensor_column</ref> *</type>
+          <declname>column</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__series__entry" kindref="compound">bt_mesh_sensor_series_entry</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <briefdescription>
+<para>Read a single sensor series data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__sensor__cli__handlers_a72602f372fc9569176dd9d38fa1e7fef_1a72602f372fc9569176dd9d38fa1e7fef" kindref="member">bt_mesh_sensor_cli_handlers::series_entry</ref> callback as a list of sensor descriptors.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context parameters, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor instance present on the targeted sensor server. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">column</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Column to read. The start value must match the start value of a series column on the sensor. The end value is ignored. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response value buffer, or NULL to keep from blocking. Must be able to fit all channels described by the sensor type.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully received the sensor data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENODEV</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The sensor server doesn&apos;t have the given sensor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOENT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The sensor doesn&apos;t have the given column. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="607" column="5" declfile="include/bluetooth/mesh/sensor_cli.h" declline="607" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__sensor__cli_1gaf567ff00b05362c5656e9f7c33fb4ccc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_sensor_cli_series_entries_get</definition>
+        <argsstring>(struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_sensor_type *sensor, const struct bt_mesh_sensor_column *range, struct bt_mesh_sensor_series_entry *rsp, uint32_t *count)</argsstring>
+        <name>bt_mesh_sensor_cli_series_entries_get</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__cli" kindref="compound">bt_mesh_sensor_cli</ref> *</type>
+          <declname>cli</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref> *</type>
+          <declname>sensor</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__sensor__column" kindref="compound">bt_mesh_sensor_column</ref> *</type>
+          <declname>range</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__sensor__series__entry" kindref="compound">bt_mesh_sensor_series_entry</ref> *</type>
+          <declname>rsp</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>count</declname>
+        </param>
+        <briefdescription>
+<para>Get multiple sensor series data entries. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Retrieves all data series columns starting within the given range (inclusive), or all data series entries if <computeroutput>range</computeroutput> is NULL. For instance, requesting range [1, 5] from a sensor with columns [0, 2], [1, 4], [4, 5] and [5, 8] will return all columns except [0, 2].</para>
+<para>If a <computeroutput>rsp</computeroutput> array is provided and the client received a response, the array will be filled with as many of the response columns as it can fit, even if the buffer isn&apos;t big enough. If the call fails in a way that results in no response, <computeroutput>count</computeroutput> is set to 0.</para>
+<para>This call is blocking if the <computeroutput>rsp</computeroutput> buffer is non-NULL. Otherwise, this function will return, and the response will be passed to the <ref refid="structbt__mesh__sensor__cli__handlers_a72602f372fc9569176dd9d38fa1e7fef_1a72602f372fc9569176dd9d38fa1e7fef" kindref="member">bt_mesh_sensor_cli_handlers::series_entry</ref> callback as a list of sensor descriptors.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context parameters, or NULL to use the configured publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor instance present on the targeted sensor server. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Range of columns to get, or NULL to get all columns. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of entries to copy the response into, or NULL to keep from blocking. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of entries in <computeroutput>rsp</computeroutput>. Is changed to reflect the number of entries in the response.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully received the full list of sensor series columns. The <computeroutput>rsp</computeroutput> array and <computeroutput>count</computeroutput> has been changed to reflect the response contents. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENODEV</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The sensor server doesn&apos;t have the given sensor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-E2BIG</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The list of sensor columns in the response was too big to fit in the <computeroutput>rsp</computeroutput> array. The <computeroutput>rsp</computeroutput> array has been filled up to the original <computeroutput>count</computeroutput>, and <computeroutput>count</computeroutput> has been changed to the number of columns in the response. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOTSUP</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The sensor doesn&apos;t support series data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIMEDOUT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request timed out without a response. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="655" column="5" declfile="include/bluetooth/mesh/sensor_cli.h" declline="655" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__sensor__cli_1ga0dae592ad4da538566de3c4540a76ea4" prot="public" static="no">
+        <name>BT_MESH_SENSOR_CLI_INIT</name>
+        <param><defname>_handlers</defname></param>
+        <initializer>	{                                                                      \
+		.cb = _handlers,                                               \
+	}</initializer>
+        <briefdescription>
+<para>Initialization parameters for <ref refid="group__bt__mesh__sensor__cli" kindref="compound">Sensor Client model</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="structbt__mesh__sensor__cli__handlers" kindref="compound">bt_mesh_sensor_cli_handlers</ref></para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_handlers</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional message handler structure. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="33" column="9" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__sensor__cli_1gaf715d42e47480fe23897c9f7630cafba" prot="public" static="no">
+        <name>BT_MESH_MODEL_SENSOR_CLI</name>
+        <param><defname>_cli</defname></param>
+        <initializer>	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_SENSOR_CLI, _bt_mesh_sensor_cli_op,  \
+			 &amp;(_cli)-&gt;pub,                                         \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__sensor__cli" kindref="compound">bt_mesh_sensor_cli</ref>,    \
+						 _cli),                        \
+			 &amp;_bt_mesh_sensor_cli_cb)</initializer>
+        <briefdescription>
+<para>Sensor Client model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__sensor__cli" kindref="compound">Sensor Client model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_cli.h" line="44" column="9" bodyfile="include/bluetooth/mesh/sensor_cli.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Sensor Client. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

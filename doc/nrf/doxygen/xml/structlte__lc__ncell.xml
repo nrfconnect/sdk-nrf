@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlte__lc__ncell" kind="struct" language="C++" prot="public">
+    <compoundname>lte_lc_ncell</compoundname>
+    <includes refid="lte__lc_8h" local="no">lte_lc.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlte__lc__ncell_ad81d7fcc61b33cf231d93cd8afa53d5c_1ad81d7fcc61b33cf231d93cd8afa53d5c" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t lte_lc_ncell::earfcn</definition>
+        <argsstring></argsstring>
+        <name>earfcn</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>EARFCN of the neighbour cell, per 3GPP TS 36.101. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="356" column="10" bodyfile="include/modem/lte_lc.h" bodystart="356" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__ncell_aa119dc42c75096a778b8fa44dfce10f2_1aa119dc42c75096a778b8fa44dfce10f2" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int lte_lc_ncell::time_diff</definition>
+        <argsstring></argsstring>
+        <name>time_diff</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Difference in milliseconds of serving cell and neighbor cell measurement, in the range -99999 ms &lt; time_diff &lt; 99999 ms. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="361" column="5" bodyfile="include/modem/lte_lc.h" bodystart="361" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__ncell_a3112cb2ca2dc1eb07255be7600333cef_1a3112cb2ca2dc1eb07255be7600333cef" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t lte_lc_ncell::phys_cell_id</definition>
+        <argsstring></argsstring>
+        <name>phys_cell_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Physical cell ID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="364" column="10" bodyfile="include/modem/lte_lc.h" bodystart="364" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__ncell_a911d88233f4b6b3855749b519e0fa66d_1a911d88233f4b6b3855749b519e0fa66d" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t lte_lc_ncell::rsrp</definition>
+        <argsstring></argsstring>
+        <name>rsrp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>RSRP of the neighbor cell. Format is the same as for RSRP member of struct <ref refid="structlte__lc__cell" kindref="compound">lte_lc_cell</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="369" column="9" bodyfile="include/modem/lte_lc.h" bodystart="369" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__ncell_ae7c88b917ce959ec1987a589fb07cc31_1ae7c88b917ce959ec1987a589fb07cc31" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t lte_lc_ncell::rsrq</definition>
+        <argsstring></argsstring>
+        <name>rsrq</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>RSRQ of the neighbor cell. Format is the same as for RSRQ member of struct <ref refid="structlte__lc__cell" kindref="compound">lte_lc_cell</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="374" column="9" bodyfile="include/modem/lte_lc.h" bodystart="374" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/modem/lte_lc.h" line="354" column="1" bodyfile="include/modem/lte_lc.h" bodystart="354" bodyend="375"/>
+    <listofallmembers>
+      <member refid="structlte__lc__ncell_ad81d7fcc61b33cf231d93cd8afa53d5c_1ad81d7fcc61b33cf231d93cd8afa53d5c" prot="public" virt="non-virtual"><scope>lte_lc_ncell</scope><name>earfcn</name></member>
+      <member refid="structlte__lc__ncell_a3112cb2ca2dc1eb07255be7600333cef_1a3112cb2ca2dc1eb07255be7600333cef" prot="public" virt="non-virtual"><scope>lte_lc_ncell</scope><name>phys_cell_id</name></member>
+      <member refid="structlte__lc__ncell_a911d88233f4b6b3855749b519e0fa66d_1a911d88233f4b6b3855749b519e0fa66d" prot="public" virt="non-virtual"><scope>lte_lc_ncell</scope><name>rsrp</name></member>
+      <member refid="structlte__lc__ncell_ae7c88b917ce959ec1987a589fb07cc31_1ae7c88b917ce959ec1987a589fb07cc31" prot="public" virt="non-virtual"><scope>lte_lc_ncell</scope><name>rsrq</name></member>
+      <member refid="structlte__lc__ncell_aa119dc42c75096a778b8fa44dfce10f2_1aa119dc42c75096a778b8fa44dfce10f2" prot="public" virt="non-virtual"><scope>lte_lc_ncell</scope><name>time_diff</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

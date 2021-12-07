@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__ancs__attr__response" kind="struct" language="C++" prot="public">
+    <compoundname>bt_ancs_attr_response</compoundname>
+    <includes refid="ancs__client_8h" local="no">ancs_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__ancs__attr__response_a83af091fe0719fde482b361b8f20a3d0_1a83af091fe0719fde482b361b8f20a3d0" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__ancs__client_gaea2b08813c4cebb99af5460c8dc66bd2_1gaea2b08813c4cebb99af5460c8dc66bd2" kindref="member">bt_ancs_cmd_id_val</ref></type>
+        <definition>enum bt_ancs_cmd_id_val bt_ancs_attr_response::command_id</definition>
+        <argsstring></argsstring>
+        <name>command_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Command ID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="285" column="24" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="285" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__ancs__attr__response_a15c7c13b893050a47d1bc4bb20f95a3e_1a15c7c13b893050a47d1bc4bb20f95a3e" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__ancs__attr" kindref="compound">bt_ancs_attr</ref></type>
+        <definition>struct bt_ancs_attr bt_ancs_attr_response::attr</definition>
+        <argsstring></argsstring>
+        <name>attr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>iOS notification attribute or app attribute, depending on the Command ID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="289" column="19" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="289" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__ancs__attr__response_a59aa45d93a1db35806853ce804cb84eb_1a59aa45d93a1db35806853ce804cb84eb" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_ancs_attr_response::notif_uid</definition>
+        <argsstring></argsstring>
+        <name>notif_uid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Notification UID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="291" column="10" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="291" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__ancs__attr__response_ae8dea3dd54739ea4e45928c6cbbdb948_1ae8dea3dd54739ea4e45928c6cbbdb948" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_ancs_attr_response::app_id[32]</definition>
+        <argsstring>[32]</argsstring>
+        <name>app_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>App identifier. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="293" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="293" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Attribute response structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_ancs_attr</label>
+        <link refid="structbt__ancs__attr"/>
+      </node>
+      <node id="1">
+        <label>bt_ancs_attr_response</label>
+        <link refid="structbt__ancs__attr__response"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>attr</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/ancs_client.h" line="283" column="1" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="283" bodyend="294"/>
+    <listofallmembers>
+      <member refid="structbt__ancs__attr__response_ae8dea3dd54739ea4e45928c6cbbdb948_1ae8dea3dd54739ea4e45928c6cbbdb948" prot="public" virt="non-virtual"><scope>bt_ancs_attr_response</scope><name>app_id</name></member>
+      <member refid="structbt__ancs__attr__response_a15c7c13b893050a47d1bc4bb20f95a3e_1a15c7c13b893050a47d1bc4bb20f95a3e" prot="public" virt="non-virtual"><scope>bt_ancs_attr_response</scope><name>attr</name></member>
+      <member refid="structbt__ancs__attr__response_a83af091fe0719fde482b361b8f20a3d0_1a83af091fe0719fde482b361b8f20a3d0" prot="public" virt="non-virtual"><scope>bt_ancs_attr_response</scope><name>command_id</name></member>
+      <member refid="structbt__ancs__attr__response_a59aa45d93a1db35806853ce804cb84eb_1a59aa45d93a1db35806853ce804cb84eb" prot="public" virt="non-virtual"><scope>bt_ancs_attr_response</scope><name>notif_uid</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structclick__detector__config" kind="struct" language="C++" prot="public">
+    <compoundname>click_detector_config</compoundname>
+    <includes refid="click__detector_8h" local="no">click_detector.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structclick__detector__config_acda68b6ba20f12693c4b7f6c08636dda_1acda68b6ba20f12693c4b7f6c08636dda" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t click_detector_config::key_id</definition>
+        <argsstring></argsstring>
+        <name>key_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/click_detector.h" line="15" column="10" bodyfile="include/caf/click_detector.h" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclick__detector__config_a32538a9ea900b16c6d4b87e8db24fc8c_1a32538a9ea900b16c6d4b87e8db24fc8c" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool click_detector_config::consume_button_event</definition>
+        <argsstring></argsstring>
+        <name>consume_button_event</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/click_detector.h" line="16" column="6" bodyfile="include/caf/click_detector.h" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/caf/click_detector.h" line="14" column="1" bodyfile="include/caf/click_detector.h" bodystart="14" bodyend="17"/>
+    <listofallmembers>
+      <member refid="structclick__detector__config_a32538a9ea900b16c6d4b87e8db24fc8c_1a32538a9ea900b16c6d4b87e8db24fc8c" prot="public" virt="non-virtual"><scope>click_detector_config</scope><name>consume_button_event</name></member>
+      <member refid="structclick__detector__config_acda68b6ba20f12693c4b7f6c08636dda_1acda68b6ba20f12693c4b7f6c08636dda" prot="public" virt="non-virtual"><scope>click_detector_config</scope><name>key_id</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

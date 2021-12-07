@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__scan__filter__info" kind="struct" language="C++" prot="public">
+    <compoundname>bt_scan_filter_info</compoundname>
+    <includes refid="scan_8h" local="no">scan.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__scan__filter__info_a7b189f0cb8aa9c0e3aa27a7e7705fa85_1a7b189f0cb8aa9c0e3aa27a7e7705fa85" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool bt_scan_filter_info::enabled</definition>
+        <argsstring></argsstring>
+        <name>enabled</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Filter enabled. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="105" column="6" bodyfile="include/bluetooth/scan.h" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__scan__filter__info_aad4b85487ff462c9d01964b546405c99_1aad4b85487ff462c9d01964b546405c99" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_scan_filter_info::cnt</definition>
+        <argsstring></argsstring>
+        <name>cnt</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Filter count. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="108" column="9" bodyfile="include/bluetooth/scan.h" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Filter information structure. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>It contains information about the number of filters of a given type and whether they are enabled </para>
+    </detaileddescription>
+    <location file="include/bluetooth/scan.h" line="103" column="1" bodyfile="include/bluetooth/scan.h" bodystart="103" bodyend="109"/>
+    <listofallmembers>
+      <member refid="structbt__scan__filter__info_aad4b85487ff462c9d01964b546405c99_1aad4b85487ff462c9d01964b546405c99" prot="public" virt="non-virtual"><scope>bt_scan_filter_info</scope><name>cnt</name></member>
+      <member refid="structbt__scan__filter__info_a7b189f0cb8aa9c0e3aa27a7e7705fa85_1a7b189f0cb8aa9c0e3aa27a7e7705fa85" prot="public" virt="non-virtual"><scope>bt_scan_filter_info</scope><name>enabled</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

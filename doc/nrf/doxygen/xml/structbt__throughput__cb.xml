@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__throughput__cb" kind="struct" language="C++" prot="public">
+    <compoundname>bt_throughput_cb</compoundname>
+    <includes refid="throughput_8h" local="no">throughput.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__throughput__cb_a9aab0083011cbc85210d6ceefbfb8550_1a9aab0083011cbc85210d6ceefbfb8550" prot="public" static="no" mutable="no">
+        <type>uint8_t(*</type>
+        <definition>uint8_t(* bt_throughput_cb::data_read) (const struct bt_throughput_metrics *met)</definition>
+        <argsstring>)(const struct bt_throughput_metrics *met)</argsstring>
+        <name>data_read</name>
+        <briefdescription>
+<para>Data read callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is called when data has been read from the Throughput Characteristic.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">met</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Throughput metrics.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>BT_GATT_ITER_CONTINUE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>To keep notifications enabled. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>BT_GATT_ITER_STOP</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>To disable notifications. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="50" column="1" bodyfile="include/bluetooth/services/throughput.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__throughput__cb_af27a095ef360eb3850be34a870077cd1_1af27a095ef360eb3850be34a870077cd1" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_throughput_cb::data_received) (const struct bt_throughput_metrics *met)</definition>
+        <argsstring>)(const struct bt_throughput_metrics *met)</argsstring>
+        <name>data_received</name>
+        <briefdescription>
+<para>Data received callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is called when data has been received by the Throughput Characteristic.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">met</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Throughput metrics. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="59" column="1" bodyfile="include/bluetooth/services/throughput.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__throughput__cb_a9eca40b47d1e32b1b15f1c0dcda8963c_1a9eca40b47d1e32b1b15f1c0dcda8963c" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_throughput_cb::data_send) (const struct bt_throughput_metrics *met)</definition>
+        <argsstring>)(const struct bt_throughput_metrics *met)</argsstring>
+        <name>data_send</name>
+        <briefdescription>
+<para>Data send callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is called when data has been sent to the Throughput Characteristic.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">met</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Throughput metrics. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/throughput.h" line="68" column="1" bodyfile="include/bluetooth/services/throughput.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Throughput callback structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/throughput.h" line="39" column="1" bodyfile="include/bluetooth/services/throughput.h" bodystart="39" bodyend="69"/>
+    <listofallmembers>
+      <member refid="structbt__throughput__cb_a9aab0083011cbc85210d6ceefbfb8550_1a9aab0083011cbc85210d6ceefbfb8550" prot="public" virt="non-virtual"><scope>bt_throughput_cb</scope><name>data_read</name></member>
+      <member refid="structbt__throughput__cb_af27a095ef360eb3850be34a870077cd1_1af27a095ef360eb3850be34a870077cd1" prot="public" virt="non-virtual"><scope>bt_throughput_cb</scope><name>data_received</name></member>
+      <member refid="structbt__throughput__cb_a9eca40b47d1e32b1b15f1c0dcda8963c_1a9eca40b47d1e32b1b15f1c0dcda8963c" prot="public" virt="non-virtual"><scope>bt_throughput_cb</scope><name>data_send</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

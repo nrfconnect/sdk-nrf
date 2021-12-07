@@ -1,0 +1,210 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__sat__srv__handlers" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_sat_srv_handlers</compoundname>
+    <includes refid="light__sat__srv_8h" local="no">light_sat_srv.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__sat__srv__handlers_a5c01ef45421ccdc65500aaf3dbd004c2_1a5c01ef45421ccdc65500aaf3dbd004c2" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_light_sat_srv_handlers::set) (struct bt_mesh_light_sat_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_sat *set, struct bt_mesh_light_sat_status *rsp)</definition>
+        <argsstring>)(struct bt_mesh_light_sat_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_sat *set, struct bt_mesh_light_sat_status *rsp)</argsstring>
+        <name>set</name>
+        <briefdescription>
+<para>Set the Saturation state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When a set message is received, the model publishes a status message, with the response set to <computeroutput>rsp</computeroutput>. When an acknowledged set message is received, the model also sends a response back to a client. If a state change is non-instantaneous, for example when <ref refid="group__bt__mesh__model__types_gaa845685eb265d1294b17bb80fbde4996_1gaa845685eb265d1294b17bb80fbde4996" kindref="member">bt_mesh_model_transition_time</ref> returns a nonzero value, the application is responsible for publishing a value of the Saturation state at the end of the transition.</para>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Saturation server. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL if the callback was not triggered by a mesh message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters of the state change. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response structure to be filled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_sat_srv.h" line="74" column="1" bodyfile="include/bluetooth/mesh/light_sat_srv.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__sat__srv__handlers_abe1e4fa583c641f67ca287376b300f84_1abe1e4fa583c641f67ca287376b300f84" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_light_sat_srv_handlers::get) (struct bt_mesh_light_sat_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_light_sat_status *rsp)</definition>
+        <argsstring>)(struct bt_mesh_light_sat_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_light_sat_status *rsp)</argsstring>
+        <name>get</name>
+        <briefdescription>
+<para>Get the Saturation state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Saturation server. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL if the callback was not triggered by a mesh message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response structure to be filled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_sat_srv.h" line="88" column="1" bodyfile="include/bluetooth/mesh/light_sat_srv.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__sat__srv__handlers_afee2c069f2e71f21f5802d1bd6ed72e2_1afee2c069f2e71f21f5802d1bd6ed72e2" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_light_sat_srv_handlers::default_update) (struct bt_mesh_light_sat_srv *srv, struct bt_mesh_msg_ctx *ctx, uint16_t old_default, uint16_t new_default)</definition>
+        <argsstring>)(struct bt_mesh_light_sat_srv *srv, struct bt_mesh_msg_ctx *ctx, uint16_t old_default, uint16_t new_default)</argsstring>
+        <name>default_update</name>
+        <briefdescription>
+<para>The default saturation value has been updated. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Saturation server. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL if the callback was not triggered by a mesh message </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">old_default</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Default value before the update. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">new_default</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Default value after the update. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_sat_srv.h" line="100" column="1" bodyfile="include/bluetooth/mesh/light_sat_srv.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__sat__srv__handlers_abb6d7a952b15c07cdd7622cac900a58b_1abb6d7a952b15c07cdd7622cac900a58b" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_light_sat_srv_handlers::range_update) (struct bt_mesh_light_sat_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_hsl_range *old_range, const struct bt_mesh_light_hsl_range *new_range)</definition>
+        <argsstring>)(struct bt_mesh_light_sat_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_hsl_range *old_range, const struct bt_mesh_light_hsl_range *new_range)</argsstring>
+        <name>range_update</name>
+        <briefdescription>
+<para>The valid saturation range has been updated. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Saturation server. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL if the callback was not triggered by a mesh message </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">old_range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Range before the update. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">new_range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Range after the update. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_sat_srv.h" line="113" column="1" bodyfile="include/bluetooth/mesh/light_sat_srv.h" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>HSL Saturation Server state access handlers. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/light_sat_srv.h" line="57" column="1" bodyfile="include/bluetooth/mesh/light_sat_srv.h" bodystart="57" bodyend="118"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__sat__srv__handlers_afee2c069f2e71f21f5802d1bd6ed72e2_1afee2c069f2e71f21f5802d1bd6ed72e2" prot="public" virt="non-virtual"><scope>bt_mesh_light_sat_srv_handlers</scope><name>default_update</name></member>
+      <member refid="structbt__mesh__light__sat__srv__handlers_abe1e4fa583c641f67ca287376b300f84_1abe1e4fa583c641f67ca287376b300f84" prot="public" virt="non-virtual"><scope>bt_mesh_light_sat_srv_handlers</scope><name>get</name></member>
+      <member refid="structbt__mesh__light__sat__srv__handlers_abb6d7a952b15c07cdd7622cac900a58b_1abb6d7a952b15c07cdd7622cac900a58b" prot="public" virt="non-virtual"><scope>bt_mesh_light_sat_srv_handlers</scope><name>range_update</name></member>
+      <member refid="structbt__mesh__light__sat__srv__handlers_a5c01ef45421ccdc65500aaf3dbd004c2_1a5c01ef45421ccdc65500aaf3dbd004c2" prot="public" virt="non-virtual"><scope>bt_mesh_light_sat_srv_handlers</scope><name>set</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

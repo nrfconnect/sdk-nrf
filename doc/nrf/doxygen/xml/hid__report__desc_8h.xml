@@ -1,0 +1,392 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="hid__report__desc_8h" kind="file" language="C++">
+    <compoundname>hid_report_desc.h</compoundname>
+    <includes local="no">stddef.h</includes>
+    <includes local="no">zephyr/types.h</includes>
+    <includes local="no">toolchain/common.h</includes>
+    <includes local="no">sys/util.h</includes>
+    <includes refid="hid__report__mouse_8h" local="yes">hid_report_mouse.h</includes>
+    <includes refid="hid__report__keyboard_8h" local="yes">hid_report_keyboard.h</includes>
+    <includes refid="hid__report__system__ctrl_8h" local="yes">hid_report_system_ctrl.h</includes>
+    <includes refid="hid__report__consumer__ctrl_8h" local="yes">hid_report_consumer_ctrl.h</includes>
+    <includes refid="hid__report__user__config_8h" local="yes">hid_report_user_config.h</includes>
+    <includedby refid="hid__keymap_8h" local="yes">applications/nrf_desktop/configuration/common/hid_keymap.h</includedby>
+    <includedby refid="config__event_8h" local="yes">applications/nrf_desktop/src/events/config_event.h</includedby>
+    <includedby refid="hid__event_8h" local="yes">applications/nrf_desktop/src/events/hid_event.h</includedby>
+    <includedby refid="hids__event_8h" local="yes">applications/nrf_desktop/src/events/hids_event.h</includedby>
+    <incdepgraph>
+      <node id="9">
+        <label>hid_report_consumer_ctrl.h</label>
+        <link refid="hid__report__consumer__ctrl_8h"/>
+      </node>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/common/hid_report_desc.h</label>
+        <link refid="hid__report__desc_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>hid_report_keyboard.h</label>
+        <link refid="hid__report__keyboard_8h"/>
+      </node>
+      <node id="6">
+        <label>hid_report_mouse.h</label>
+        <link refid="hid__report__mouse_8h"/>
+      </node>
+      <node id="8">
+        <label>hid_report_system_ctrl.h</label>
+        <link refid="hid__report__system__ctrl_8h"/>
+      </node>
+      <node id="10">
+        <label>hid_report_user_config.h</label>
+        <link refid="hid__report__user__config_8h"/>
+      </node>
+      <node id="2">
+        <label>stddef.h</label>
+      </node>
+      <node id="5">
+        <label>sys/util.h</label>
+      </node>
+      <node id="4">
+        <label>toolchain/common.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>applications/nrf_desktop/configuration/common/hid_keymap.h</label>
+        <link refid="hid__keymap_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/common/hid_report_desc.h</label>
+        <link refid="hid__report__desc_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/hid_keymap_def.h</label>
+        <link refid="nrf52810dmouse__nrf52810_2hid__keymap__def_8h"/>
+      </node>
+      <node id="4">
+        <label>applications/nrf_desktop/configuration/nrf52840dk_nrf52840/hid_keymap_def.h</label>
+        <link refid="nrf52840dk__nrf52840_2hid__keymap__def_8h"/>
+      </node>
+      <node id="5">
+        <label>applications/nrf_desktop/configuration/nrf52840dk_nrf52840/hid_keymap_def_keyboard.h</label>
+        <link refid="hid__keymap__def__keyboard_8h"/>
+      </node>
+      <node id="6">
+        <label>applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/hid_keymap_def.h</label>
+        <link refid="nrf52840gmouse__nrf52840_2hid__keymap__def_8h"/>
+      </node>
+      <node id="7">
+        <label>applications/nrf_desktop/configuration/nrf52dmouse_nrf52832/hid_keymap_def.h</label>
+        <link refid="nrf52dmouse__nrf52832_2hid__keymap__def_8h"/>
+      </node>
+      <node id="8">
+        <label>applications/nrf_desktop/configuration/nrf52kbd_nrf52832/hid_keymap_def.h</label>
+        <link refid="nrf52kbd__nrf52832_2hid__keymap__def_8h"/>
+      </node>
+      <node id="9">
+        <label>applications/nrf_desktop/src/events/config_event.h</label>
+        <link refid="config__event_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>applications/nrf_desktop/src/events/hid_event.h</label>
+        <link refid="hid__event_8h"/>
+      </node>
+      <node id="12">
+        <label>applications/nrf_desktop/src/events/hids_event.h</label>
+        <link refid="hids__event_8h"/>
+      </node>
+      <node id="10">
+        <label>applications/nrf_desktop/src/util/config_channel_transport.h</label>
+        <link refid="config__channel__transport_8h"/>
+      </node>
+    </invincdepgraph>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958" prot="public" static="no" strong="no">
+        <type></type>
+        <name>report_id</name>
+        <enumvalue id="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958ae1a523f564791ecdcd0e742c8a521481" prot="public">
+          <name>REPORT_ID_RESERVED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a408044af17ec0bd59c8df983e108eb53" prot="public">
+          <name>REPORT_ID_MOUSE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" prot="public">
+          <name>REPORT_ID_KEYBOARD_KEYS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958afac33b5a76f78a3a22d915e5574d3ac3" prot="public">
+          <name>REPORT_ID_SYSTEM_CTRL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a530325570034877a7e5bf94696e25203" prot="public">
+          <name>REPORT_ID_CONSUMER_CTRL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a924d007d26e76cc1cf4be188d26f9d25" prot="public">
+          <name>REPORT_ID_KEYBOARD_LEDS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958ac5f8ce246f560a3bd7451cac832e00a4" prot="public">
+          <name>REPORT_ID_USER_CONFIG</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a5ec75d8703eb943a8fe663cb6a69eedd" prot="public">
+          <name>REPORT_ID_USER_CONFIG_OUT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958afadceac5625a39fabe5a94d1500b7791" prot="public">
+          <name>REPORT_ID_VENDOR_IN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958acdc306af3caa3a0f6456343f74fdd19d" prot="public">
+          <name>REPORT_ID_VENDOR_OUT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a7c9e848eb6fb67de467c28738470c204" prot="public">
+          <name>REPORT_ID_BOOT_MOUSE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a89eec7a863a96af8dfba3709a3d2c791" prot="public">
+          <name>REPORT_ID_BOOT_KEYBOARD</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a2b419b42adfedc4d177fdf4b5ea85cc4" prot="public">
+          <name>REPORT_ID_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_desc.h" line="26" column="1" bodyfile="applications/nrf_desktop/configuration/common/hid_report_desc.h" bodystart="26" bodyend="46"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="hid__report__desc_8h_a908535514c5fbfae556c09e492014dbd_1a908535514c5fbfae556c09e492014dbd" prot="public" static="yes" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t input_reports[]</definition>
+        <argsstring>[]</argsstring>
+        <name>input_reports</name>
+        <initializer>= {
+	<ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a408044af17ec0bd59c8df983e108eb53" kindref="member">REPORT_ID_MOUSE</ref>,
+	<ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref>,
+	<ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958afac33b5a76f78a3a22d915e5574d3ac3" kindref="member">REPORT_ID_SYSTEM_CTRL</ref>,
+	<ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a530325570034877a7e5bf94696e25203" kindref="member">REPORT_ID_CONSUMER_CTRL</ref>,
+	<ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a7c9e848eb6fb67de467c28738470c204" kindref="member">REPORT_ID_BOOT_MOUSE</ref>,
+	<ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a89eec7a863a96af8dfba3709a3d2c791" kindref="member">REPORT_ID_BOOT_KEYBOARD</ref>,
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_desc.h" line="48" column="22" bodyfile="applications/nrf_desktop/configuration/common/hid_report_desc.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="hid__report__desc_8h_a263a8987a7043d0f68c468c1c3933642_1a263a8987a7043d0f68c468c1c3933642" prot="public" static="yes" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t output_reports[]</definition>
+        <argsstring>[]</argsstring>
+        <name>output_reports</name>
+        <initializer>= {
+	<ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a924d007d26e76cc1cf4be188d26f9d25" kindref="member">REPORT_ID_KEYBOARD_LEDS</ref>,
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_desc.h" line="57" column="22" bodyfile="applications/nrf_desktop/configuration/common/hid_report_desc.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="hid__report__desc_8h_a11849b0f12b3bd244a0fddbd50b647c6_1a11849b0f12b3bd244a0fddbd50b647c6" prot="public" static="no" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t hid_report_desc[]</definition>
+        <argsstring>[]</argsstring>
+        <name>hid_report_desc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_desc.h" line="62" column="22" declfile="applications/nrf_desktop/configuration/common/hid_report_desc.h" declline="62" declcolumn="22"/>
+      </memberdef>
+      <memberdef kind="variable" id="hid__report__desc_8h_ab249b06a288f70c12375ffdca176c2ec_1ab249b06a288f70c12375ffdca176c2ec" prot="public" static="no" mutable="no">
+        <type>const size_t</type>
+        <definition>const size_t hid_report_desc_size</definition>
+        <argsstring></argsstring>
+        <name>hid_report_desc_size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_desc.h" line="63" column="21" declfile="applications/nrf_desktop/configuration/common/hid_report_desc.h" declline="63" declcolumn="21"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2018<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_HID_REPORT_DESC_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_HID_REPORT_DESC_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stddef.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;toolchain/common.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/util.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="hid__report__mouse_8h" kindref="compound">hid_report_mouse.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="hid__report__keyboard_8h" kindref="compound">hid_report_keyboard.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="hid__report__system__ctrl_8h" kindref="compound">hid_report_system_ctrl.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="hid__report__consumer__ctrl_8h" kindref="compound">hid_report_consumer_ctrl.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="hid__report__user__config_8h" kindref="compound">hid_report_user_config.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958" kindref="member">report_id</ref><sp/>{</highlight></codeline>
+<codeline lineno="27" refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958ae1a523f564791ecdcd0e742c8a521481" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958ae1a523f564791ecdcd0e742c8a521481" kindref="member">REPORT_ID_RESERVED</ref>,</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a408044af17ec0bd59c8df983e108eb53" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a408044af17ec0bd59c8df983e108eb53" kindref="member">REPORT_ID_MOUSE</ref>,</highlight></codeline>
+<codeline lineno="30" refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref>,</highlight></codeline>
+<codeline lineno="31" refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958afac33b5a76f78a3a22d915e5574d3ac3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958afac33b5a76f78a3a22d915e5574d3ac3" kindref="member">REPORT_ID_SYSTEM_CTRL</ref>,</highlight></codeline>
+<codeline lineno="32" refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a530325570034877a7e5bf94696e25203" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a530325570034877a7e5bf94696e25203" kindref="member">REPORT_ID_CONSUMER_CTRL</ref>,</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a924d007d26e76cc1cf4be188d26f9d25" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a924d007d26e76cc1cf4be188d26f9d25" kindref="member">REPORT_ID_KEYBOARD_LEDS</ref>,</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958ac5f8ce246f560a3bd7451cac832e00a4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958ac5f8ce246f560a3bd7451cac832e00a4" kindref="member">REPORT_ID_USER_CONFIG</ref>,</highlight></codeline>
+<codeline lineno="37" refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a5ec75d8703eb943a8fe663cb6a69eedd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a5ec75d8703eb943a8fe663cb6a69eedd" kindref="member">REPORT_ID_USER_CONFIG_OUT</ref>,</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958afadceac5625a39fabe5a94d1500b7791" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958afadceac5625a39fabe5a94d1500b7791" kindref="member">REPORT_ID_VENDOR_IN</ref>,</highlight></codeline>
+<codeline lineno="40" refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958acdc306af3caa3a0f6456343f74fdd19d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958acdc306af3caa3a0f6456343f74fdd19d" kindref="member">REPORT_ID_VENDOR_OUT</ref>,</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a7c9e848eb6fb67de467c28738470c204" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a7c9e848eb6fb67de467c28738470c204" kindref="member">REPORT_ID_BOOT_MOUSE</ref>,</highlight></codeline>
+<codeline lineno="43" refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a89eec7a863a96af8dfba3709a3d2c791" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a89eec7a863a96af8dfba3709a3d2c791" kindref="member">REPORT_ID_BOOT_KEYBOARD</ref>,</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a2b419b42adfedc4d177fdf4b5ea85cc4" kindref="member">REPORT_ID_COUNT</ref></highlight></codeline>
+<codeline lineno="46" refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a2b419b42adfedc4d177fdf4b5ea85cc4" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="hid__report__desc_8h_a908535514c5fbfae556c09e492014dbd_1a908535514c5fbfae556c09e492014dbd" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/><ref refid="hid__report__desc_8h_a908535514c5fbfae556c09e492014dbd_1a908535514c5fbfae556c09e492014dbd" kindref="member">input_reports</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a408044af17ec0bd59c8df983e108eb53" kindref="member">REPORT_ID_MOUSE</ref>,</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958adbb71794cd5460dc96c278521b8c5f70" kindref="member">REPORT_ID_KEYBOARD_KEYS</ref>,</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958afac33b5a76f78a3a22d915e5574d3ac3" kindref="member">REPORT_ID_SYSTEM_CTRL</ref>,</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a530325570034877a7e5bf94696e25203" kindref="member">REPORT_ID_CONSUMER_CTRL</ref>,</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a7c9e848eb6fb67de467c28738470c204" kindref="member">REPORT_ID_BOOT_MOUSE</ref>,</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a89eec7a863a96af8dfba3709a3d2c791" kindref="member">REPORT_ID_BOOT_KEYBOARD</ref>,</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="hid__report__desc_8h_a263a8987a7043d0f68c468c1c3933642_1a263a8987a7043d0f68c468c1c3933642" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/><ref refid="hid__report__desc_8h_a263a8987a7043d0f68c468c1c3933642_1a263a8987a7043d0f68c468c1c3933642" kindref="member">output_reports</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958a924d007d26e76cc1cf4be188d26f9d25" kindref="member">REPORT_ID_KEYBOARD_LEDS</ref>,</highlight></codeline>
+<codeline lineno="59"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/><ref refid="hid__report__desc_8h_a11849b0f12b3bd244a0fddbd50b647c6_1a11849b0f12b3bd244a0fddbd50b647c6" kindref="member">hid_report_desc</ref>[];</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="hid__report__desc_8h_ab249b06a288f70c12375ffdca176c2ec_1ab249b06a288f70c12375ffdca176c2ec" kindref="member">hid_report_desc_size</ref>;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_HID_REPORT_DESC_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/common/hid_report_desc.h"/>
+  </compounddef>
+</doxygen>

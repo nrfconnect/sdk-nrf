@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structml__result__led__effect" kind="struct" language="C++" prot="public">
+    <compoundname>ml_result_led_effect</compoundname>
+    <includes refid="machine__learning_2configuration_2common_2led__state_8h" local="no">led_state.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structml__result__led__effect_ac9d0457e52f3193676946ef1a1bb3a16_1ac9d0457e52f3193676946ef1a1bb3a16" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* ml_result_led_effect::label</definition>
+        <argsstring></argsstring>
+        <name>label</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/machine_learning/configuration/common/led_state.h" line="20" column="12" bodyfile="applications/machine_learning/configuration/common/led_state.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structml__result__led__effect_a41832c3faf020db06e149540f0fd33d0_1a41832c3faf020db06e149540f0fd33d0" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structled__effect" kindref="compound">led_effect</ref></type>
+        <definition>struct led_effect ml_result_led_effect::effect</definition>
+        <argsstring></argsstring>
+        <name>effect</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/machine_learning/configuration/common/led_state.h" line="21" column="17" bodyfile="applications/machine_learning/configuration/common/led_state.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>led_color</label>
+        <link refid="structled__color"/>
+      </node>
+      <node id="2">
+        <label>led_effect</label>
+        <link refid="structled__effect"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>steps</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>led_effect_step</label>
+        <link refid="structled__effect__step"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>color</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ml_result_led_effect</label>
+        <link refid="structml__result__led__effect"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>effect</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/machine_learning/configuration/common/led_state.h" line="19" column="1" bodyfile="applications/machine_learning/configuration/common/led_state.h" bodystart="19" bodyend="22"/>
+    <listofallmembers>
+      <member refid="structml__result__led__effect_a41832c3faf020db06e149540f0fd33d0_1a41832c3faf020db06e149540f0fd33d0" prot="public" virt="non-virtual"><scope>ml_result_led_effect</scope><name>effect</name></member>
+      <member refid="structml__result__led__effect_ac9d0457e52f3193676946ef1a1bb3a16_1ac9d0457e52f3193676946ef1a1bb3a16" prot="public" virt="non-virtual"><scope>ml_result_led_effect</scope><name>label</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,1396 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="cloud_8h" kind="file" language="C++">
+    <compoundname>cloud.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <includedby refid="src_2cloud__codec_2cloud__codec_8h" local="no">applications/asset_tracker/src/cloud_codec/cloud_codec.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/net/cloud.h</label>
+        <link refid="cloud_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>applications/asset_tracker/src/cloud_codec/cloud_codec.h</label>
+        <link refid="src_2cloud__codec_2cloud__codec_8h"/>
+      </node>
+      <node id="1">
+        <label>include/net/cloud.h</label>
+        <link refid="cloud_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structcloud__endpoint" prot="public">cloud_endpoint</innerclass>
+    <innerclass refid="structcloud__msg" prot="public">cloud_msg</innerclass>
+    <innerclass refid="structcloud__event" prot="public">cloud_event</innerclass>
+    <innerclass refid="structcloud__api" prot="public">cloud_api</innerclass>
+    <innerclass refid="structcloud__backend__config" prot="public">cloud_backend_config</innerclass>
+    <innerclass refid="structcloud__backend" prot="public">cloud_backend</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__cloud__api_ga7f0285fb1cf452b338b284655da892ef_1ga7f0285fb1cf452b338b284655da892ef" prot="public" static="no">
+        <name>CLOUD_BACKEND_DEFINE</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_api</defname></param>
+        <initializer>									       \
+	static struct <ref refid="structcloud__backend__config" kindref="compound">cloud_backend_config</ref> UTIL_CAT(_name, _config) =	       \
+	{								       \
+		.name = STRINGIFY(_name)				       \
+	};								       \
+									       \
+	static const struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> _name				       \
+	__attribute__ ((section(&quot;.cloud_backends&quot;))) __attribute__((used)) =   \
+	{								       \
+		.api = &amp;_api,						       \
+		.config = &amp;UTIL_CAT(_name, _config)			       \
+	};</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="469" column="9" bodyfile="include/net/cloud.h" bodystart="469" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1ga83f6f81630a03b2bc02ad2f8eb7f97bf" prot="public" static="no" strong="no">
+        <type></type>
+        <name>cloud_event_type</name>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa327335bba4b9dd730ad17bf2a94eddf0" prot="public">
+          <name>CLOUD_EVT_CONNECTING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The cloud backend is connecting to the configured cloud vendor. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa30bd0a019f29f6dbba94f47e59d459d3" prot="public">
+          <name>CLOUD_EVT_CONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The cloud backend is connected to the cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa7f4f61ab1c2141f8c4c5354d914c6473" prot="public">
+          <name>CLOUD_EVT_DISCONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The cloud backend got disconnected from the cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa7652003e2b728032462debf3d58f1f7a" prot="public">
+          <name>CLOUD_EVT_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The cloud backend has established the appropriate resources for the connection. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa8d49eb658f77345c2b65ced6d58fed38" prot="public">
+          <name>CLOUD_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>An error has occurred in the cloud backend. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa4951ec1da730aeb92befd1332c0d7d8a" prot="public">
+          <name>CLOUD_EVT_DATA_SENT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Data has been sent to the cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa2ee24ec295da769675bfa6cb28ec0931" prot="public">
+          <name>CLOUD_EVT_DATA_RECEIVED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Data has been received from the cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfaf25a6b2e70dd9b61546c8ffe1cba0e29" prot="public">
+          <name>CLOUD_EVT_PAIR_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The device is not yet associated with the user. Pairing requested. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa4a0e77965d3612a262975dd2995d8acc" prot="public">
+          <name>CLOUD_EVT_PAIR_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Pairing with the user has been carried out. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfabae9672c0c9fafb18b9e1e61670487a7" prot="public">
+          <name>CLOUD_EVT_FOTA_START</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA has started. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfab341959d608eb475f3b6799c40d8d84f" prot="public">
+          <name>CLOUD_EVT_FOTA_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA has finished. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfad5d86a1acce82139e004a1891e6943d8" prot="public">
+          <name>CLOUD_EVT_FOTA_ERASE_PENDING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The underlying FOTA process has a pending image erase. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfacc7a1c9502fb85bc1f62e446c425f0d1" prot="public">
+          <name>CLOUD_EVT_FOTA_ERASE_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The FOTA image erase has finished. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfab3e1ee8df6955e4a1091b3710073d978" prot="public">
+          <name>CLOUD_EVT_FOTA_DL_PROGRESS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA download progress event. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfaee8e202a1797be01281c0096dbcfc555" prot="public">
+          <name>CLOUD_EVT_FOTA_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA error. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfac91bec487631ff2aedb268ed6b45f0a2" prot="public">
+          <name>CLOUD_EVT_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Cloud events that can be notified asynchronously by the backend. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="19" column="1" bodyfile="include/net/cloud.h" bodystart="19" bodyend="55"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1ga58647e0b8eaee7a2be5f2bdfb96f4ef1" prot="public" static="no" strong="no">
+        <type></type>
+        <name>cloud_disconnect_reason</name>
+        <enumvalue id="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1gga58647e0b8eaee7a2be5f2bdfb96f4ef1a3222f12cb9fbc5c93ef2c112e7be9fa5" prot="public">
+          <name>CLOUD_DISCONNECT_USER_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1gga58647e0b8eaee7a2be5f2bdfb96f4ef1a95f544192be492a88316781b957c43e0" prot="public">
+          <name>CLOUD_DISCONNECT_CLOSED_BY_REMOTE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The connection was closed by the cloud </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1gga58647e0b8eaee7a2be5f2bdfb96f4ef1a4862ed7ce58a453ad8f3fb5d03de2d82" prot="public">
+          <name>CLOUD_DISCONNECT_INVALID_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The connection is no longer valid </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1gga58647e0b8eaee7a2be5f2bdfb96f4ef1a1d13e5d201f9fadb21d468eb1cf6d926" prot="public">
+          <name>CLOUD_DISCONNECT_MISC</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Miscellaneous error </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1gga58647e0b8eaee7a2be5f2bdfb96f4ef1a1c92e6d7b52ddcd13b746f6cf4b3e507" prot="public">
+          <name>CLOUD_DISCONNECT_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="57" column="1" bodyfile="include/net/cloud.h" bodystart="57" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__cloud__api_gac89f68ad5ef44eba1320e0c97d264b96_1gac89f68ad5ef44eba1320e0c97d264b96" prot="public" static="no" strong="no">
+        <type></type>
+        <name>cloud_qos</name>
+        <enumvalue id="group__cloud__api_gac89f68ad5ef44eba1320e0c97d264b96_1ggac89f68ad5ef44eba1320e0c97d264b96a5ba99b5d58e65d97564f6bf582db4597" prot="public">
+          <name>CLOUD_QOS_AT_MOST_ONCE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_gac89f68ad5ef44eba1320e0c97d264b96_1ggac89f68ad5ef44eba1320e0c97d264b96a6f6bd985272713c3e8c769756224f733" prot="public">
+          <name>CLOUD_QOS_AT_LEAST_ONCE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_gac89f68ad5ef44eba1320e0c97d264b96_1ggac89f68ad5ef44eba1320e0c97d264b96a76ecaecef79f3f3087a27640b8bf89b8" prot="public">
+          <name>CLOUD_QOS_EXACTLY_ONCE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_gac89f68ad5ef44eba1320e0c97d264b96_1ggac89f68ad5ef44eba1320e0c97d264b96aa326feb1c162cf9aa4fae6c7028ff84e" prot="public">
+          <name>CLOUD_QOS_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Quality of Service for message sent by a cloud backend. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="70" column="1" bodyfile="include/net/cloud.h" bodystart="70" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1gafdfebe6e28634145da5dbc14d11d29c4" prot="public" static="no" strong="no">
+        <type></type>
+        <name>cloud_endpoint_type</name>
+        <enumvalue id="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4afe1c65561efa7d78d09ca917f8a1a2d9" prot="public">
+          <name>CLOUD_EP_MSG</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Endpoint used to send messages to cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4aa1a15f330e1bc9c93e62e5f729c4808d" prot="public">
+          <name>CLOUD_EP_STATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Endpoint used to update the cloud-side device state. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4abc28d135c0d67b5d8bfc5331fc76517a" prot="public">
+          <name>CLOUD_EP_STATE_DELETE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Endpoint used to delete the cloud-side device state. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4a4a799f391127a70b574e29a527658208" prot="public">
+          <name>CLOUD_EP_STATE_GET</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Enpoint used to request the cloud-side device state. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4a93c32993e74f138e696169d67e7461f7" prot="public">
+          <name>CLOUD_EP_PAIR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Endpoint used to pair the device with a user. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4a8fdcd93ca0064e622c3baaa3bd0eefb0" prot="public">
+          <name>CLOUD_EP_COMMON_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4abccf2a3d54c4256ee805ec69672360c6" prot="public">
+          <name>CLOUD_EP_PRIV_START</name>
+          <initializer>= CLOUD_EP_COMMON_COUNT</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4aacb0ea3725cfa771204b634540397813" prot="public">
+          <name>CLOUD_EP_PRIV_END</name>
+          <initializer>= INT16_MAX</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Cloud endpoint type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="79" column="1" bodyfile="include/net/cloud.h" bodystart="79" bodyend="94"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1ga2bc0fd6d66de372926e927b113679c60" prot="public" static="no" strong="no">
+        <type></type>
+        <name>cloud_connect_result</name>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a452baa6ebfd471971ba6d775aa1ca3c9" prot="public">
+          <name>CLOUD_CONNECT_RES_SUCCESS</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a79ecb99a28aeadc50b522ef4f5c4ebd7" prot="public">
+          <name>CLOUD_CONNECT_RES_ERR_NOT_INITD</name>
+          <initializer>= -1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Cloud backend is not initialized. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60ac5a2bdbb595850b4449f7c4b53aa5a48" prot="public">
+          <name>CLOUD_CONNECT_RES_ERR_INVALID_PARAM</name>
+          <initializer>= -2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Invalid parameters in cloud connection request. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60abe1ca0cbfd0828e36da1b7c8a19f71f9" prot="public">
+          <name>CLOUD_CONNECT_RES_ERR_NETWORK</name>
+          <initializer>= -3</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Host cannot be found with the available network interfaces. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a9c4a8ac57de7b4e66c460fe746150c25" prot="public">
+          <name>CLOUD_CONNECT_RES_ERR_BACKEND</name>
+          <initializer>= -4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>A backend-specific error. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a5d18e02bf92b1ce43e149bcb1757fffa" prot="public">
+          <name>CLOUD_CONNECT_RES_ERR_MISC</name>
+          <initializer>= -5</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Error cause cannot be determined. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a450388f03192fda4596140267d230a39" prot="public">
+          <name>CLOUD_CONNECT_RES_ERR_NO_MEM</name>
+          <initializer>= -6</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>MQTT RX/TX buffers were not initialized. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60af1e8c1d0c6f4597f4310f7f67a3ba648" prot="public">
+          <name>CLOUD_CONNECT_RES_ERR_PRV_KEY</name>
+          <initializer>= -7</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Invalid private key </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a4b50746614b4fde6713fec9b80233b1d" prot="public">
+          <name>CLOUD_CONNECT_RES_ERR_CERT</name>
+          <initializer>= -8</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Invalid CA or client certificate </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60aeefc3baac196c36e931414c6f57079f7" prot="public">
+          <name>CLOUD_CONNECT_RES_ERR_CERT_MISC</name>
+          <initializer>= -9</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Miscellaneous certificate error </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a25917fe242c42b6d6810a879d675c769" prot="public">
+          <name>CLOUD_CONNECT_RES_ERR_TIMEOUT_NO_DATA</name>
+          <initializer>= -10</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Timeout; typically occurs when the inserted SIM card has no data </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a8155c9c24ad6ea6a62f920d55194da30" prot="public">
+          <name>CLOUD_CONNECT_RES_ERR_ALREADY_CONNECTED</name>
+          <initializer>= -11</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Connection process has already been started. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Cloud connect results. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="97" column="1" bodyfile="include/net/cloud.h" bodystart="97" bodyend="121"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__cloud__api_ga3257fcdffa6d48cea667361250191cfa_1ga3257fcdffa6d48cea667361250191cfa" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* cloud_evt_handler_t) (const struct cloud_backend *const backend, const struct cloud_event *const evt, void *user_data)</definition>
+        <argsstring>)(const struct cloud_backend *const backend, const struct cloud_event *const evt, void *user_data)</argsstring>
+        <name>cloud_evt_handler_t</name>
+        <briefdescription>
+<para>Cloud event handler function type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud backend. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud event. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>user_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to user defined data that will be passed on as argument to cloud event handler. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="161" column="9" bodyfile="include/net/cloud.h" bodystart="161" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__cloud__api_ga2e61dcbcce601b76ff3120a21e83d4e4_1ga2e61dcbcce601b76ff3120a21e83d4e4" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_init</definition>
+        <argsstring>(struct cloud_backend *const backend, cloud_evt_handler_t handler)</argsstring>
+        <name>cloud_init</name>
+        <param>
+          <type>struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <param>
+          <type><ref refid="group__cloud__api_ga3257fcdffa6d48cea667361250191cfa_1ga3257fcdffa6d48cea667361250191cfa" kindref="member">cloud_evt_handler_t</ref></type>
+          <declname>handler</declname>
+        </param>
+        <briefdescription>
+<para>Initialize a cloud backend. Performs all necessary configuration of the backend required to connect its online counterpart. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud backend structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Handler to receive events from the backend. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="217" column="19" bodyfile="include/net/cloud.h" bodystart="217" bodyend="230"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_gae2d267d6c8de4a2431441078fedfab03_1gae2d267d6c8de4a2431441078fedfab03" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_uninit</definition>
+        <argsstring>(const struct cloud_backend *const backend)</argsstring>
+        <name>cloud_uninit</name>
+        <param>
+          <type>const struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <briefdescription>
+<para>Uninitialize a cloud backend. Gracefully disconnects remote endpoint and releases memory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud backend structure. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="237" column="19" bodyfile="include/net/cloud.h" bodystart="237" bodyend="245"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_gae91c2eb0563f05ad5180e42b268ad66b_1gae91c2eb0563f05ad5180e42b268ad66b" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_connect</definition>
+        <argsstring>(const struct cloud_backend *const backend)</argsstring>
+        <name>cloud_connect</name>
+        <param>
+          <type>const struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <briefdescription>
+<para>Request connection to a cloud backend. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The backend is required to expose the socket in use when this function returns. The socket should then be available through backend-&gt;config-&gt;socket and the application may start listening for events on it.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a cloud backend structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>connect result defined by enum cloud_connect_result. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="258" column="19" bodyfile="include/net/cloud.h" bodystart="258" bodyend="266"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_gad6804d9cfc9a06d6a6260f4ca0aa5363_1gad6804d9cfc9a06d6a6260f4ca0aa5363" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_disconnect</definition>
+        <argsstring>(const struct cloud_backend *const backend)</argsstring>
+        <name>cloud_disconnect</name>
+        <param>
+          <type>const struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <briefdescription>
+<para>Disconnect from a cloud backend. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a cloud backend structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 or a negative error code indicating reason of failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="274" column="19" bodyfile="include/net/cloud.h" bodystart="274" bodyend="282"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_ga6db3fead1a7216b0d2d5fec203b2983c_1ga6db3fead1a7216b0d2d5fec203b2983c" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_send</definition>
+        <argsstring>(const struct cloud_backend *const backend, struct cloud_msg *msg)</argsstring>
+        <name>cloud_send</name>
+        <param>
+          <type>const struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__msg" kindref="compound">cloud_msg</ref> *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+<para>Send data to a cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a cloud backend structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud message structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 or a negative error code indicating reason of failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="291" column="19" bodyfile="include/net/cloud.h" bodystart="291" bodyend="300"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_gafd387ddce9aeba5c025acd243195f0a3_1gafd387ddce9aeba5c025acd243195f0a3" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_ping</definition>
+        <argsstring>(const struct cloud_backend *const backend)</argsstring>
+        <name>cloud_ping</name>
+        <param>
+          <type>const struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <briefdescription>
+<para>Optional API to ping the cloud&apos;s remote endpoint periodically. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud backend.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 or a negative error code indicating reason of failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="309" column="19" bodyfile="include/net/cloud.h" bodystart="309" bodyend="321"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_gacf5033c0fd6813f9e27a5bbda75896c6_1gacf5033c0fd6813f9e27a5bbda75896c6" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_keepalive_time_left</definition>
+        <argsstring>(const struct cloud_backend *const backend)</argsstring>
+        <name>cloud_keepalive_time_left</name>
+        <param>
+          <type>const struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <briefdescription>
+<para>Helper function to determine when next keep alive message should be sent. Can be used for instance as a source for <computeroutput>poll</computeroutput> timeout. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud backend.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Time in milliseconds until next keep alive message is expected to be sent. </para>
+</simplesect>
+<simplesect kind="return"><para>-1 if keep alive messages are not enabled. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="333" column="19" bodyfile="include/net/cloud.h" bodystart="333" bodyend="342"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_ga82c59c34e70738ff31b136c0d7db21b6_1ga82c59c34e70738ff31b136c0d7db21b6" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_input</definition>
+        <argsstring>(const struct cloud_backend *const backend)</argsstring>
+        <name>cloud_input</name>
+        <param>
+          <type>const struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <briefdescription>
+<para>Process incoming data to backend. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This is a non-blocking call.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud backend.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 or a negative error code indicating reason of failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="353" column="19" bodyfile="include/net/cloud.h" bodystart="353" bodyend="361"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_ga0f3ccb36621b55882445b8c136bbbac8_1ga0f3ccb36621b55882445b8c136bbbac8" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_ep_subscriptions_add</definition>
+        <argsstring>(const struct cloud_backend *const backend, const struct cloud_endpoint *list, size_t list_count)</argsstring>
+        <name>cloud_ep_subscriptions_add</name>
+        <param>
+          <type>const struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structcloud__endpoint" kindref="compound">cloud_endpoint</ref> *</type>
+          <declname>list</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>list_count</declname>
+        </param>
+        <briefdescription>
+<para>Add Cloud endpoint subscriptions. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud backend structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a list of endpoint subscriptions. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>list_count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of entries in the endpoint subscription list. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="369" column="19" bodyfile="include/net/cloud.h" bodystart="369" bodyend="379"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_ga6c226527a95ba86358c26cfe4c1e808b_1ga6c226527a95ba86358c26cfe4c1e808b" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_ep_subscriptions_remove</definition>
+        <argsstring>(const struct cloud_backend *const backend, const struct cloud_endpoint *list, size_t list_count)</argsstring>
+        <name>cloud_ep_subscriptions_remove</name>
+        <param>
+          <type>const struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structcloud__endpoint" kindref="compound">cloud_endpoint</ref> *</type>
+          <declname>list</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>list_count</declname>
+        </param>
+        <briefdescription>
+<para>Remove Cloud endpoint subscriptions. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud backend structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a list of endpoint subscriptions. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>list_count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of entries in the endpoint subscriptions list. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="387" column="19" bodyfile="include/net/cloud.h" bodystart="387" bodyend="397"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_gac9047e76248be44d3f54aa469f0cec3c_1gac9047e76248be44d3f54aa469f0cec3c" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_user_data_set</definition>
+        <argsstring>(struct cloud_backend *const backend, void *user_data)</argsstring>
+        <name>cloud_user_data_set</name>
+        <param>
+          <type>struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>user_data</declname>
+        </param>
+        <briefdescription>
+<para>Set the user-defined data that is passed as an argument to cloud event handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud backend structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>user_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to user defined data that will be passed on as argument to cloud event handler. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="406" column="19" bodyfile="include/net/cloud.h" bodystart="406" bodyend="419"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_ga3ef414608a17afc180b80ec640858bbc_1ga3ef414608a17afc180b80ec640858bbc" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_get_id</definition>
+        <argsstring>(const struct cloud_backend *const backend, char *id, size_t id_len)</argsstring>
+        <name>cloud_get_id</name>
+        <param>
+          <type>const struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>id</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>id_len</declname>
+        </param>
+        <briefdescription>
+<para>Get the id string for the current device. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud backend structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to buffer to receive ID. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>id_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success otherwise error number. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="428" column="19" bodyfile="include/net/cloud.h" bodystart="428" bodyend="441"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_ga8200644d153b615934f48d66e6a48a4f_1ga8200644d153b615934f48d66e6a48a4f" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void cloud_notify_event</definition>
+        <argsstring>(struct cloud_backend *backend, struct cloud_event *evt, void *user_data)</argsstring>
+        <name>cloud_notify_event</name>
+        <param>
+          <type>struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *</type>
+          <declname>backend</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__event" kindref="compound">cloud_event</ref> *</type>
+          <declname>evt</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>user_data</declname>
+        </param>
+        <briefdescription>
+<para>Calls the user-provided event handler with event data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud backend. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to event data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>user_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to user-defined data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="450" column="20" bodyfile="include/net/cloud.h" bodystart="450" bodyend="457"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_ga4b9c7fd192df8927529970cd406696f9_1ga4b9c7fd192df8927529970cd406696f9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *</type>
+        <definition>struct cloud_backend * cloud_get_binding</definition>
+        <argsstring>(const char *name)</argsstring>
+        <name>cloud_get_binding</name>
+        <param>
+          <type>const char *</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+<para>Get binding (pointer) to cloud backend if a registered backend matches the provided name. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>String with the name of the cloud backend.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Pointer to the cloud backend structure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="467" column="20" declfile="include/net/cloud.h" declline="467" declcolumn="20"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>ZEPHYR_INCLUDE_CLOUD_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ZEPHYR_INCLUDE_CLOUD_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1ga83f6f81630a03b2bc02ad2f8eb7f97bf" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1ga83f6f81630a03b2bc02ad2f8eb7f97bf" kindref="member">cloud_event_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="21" refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa327335bba4b9dd730ad17bf2a94eddf0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa327335bba4b9dd730ad17bf2a94eddf0" kindref="member">CLOUD_EVT_CONNECTING</ref>,</highlight></codeline>
+<codeline lineno="23" refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa30bd0a019f29f6dbba94f47e59d459d3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa30bd0a019f29f6dbba94f47e59d459d3" kindref="member">CLOUD_EVT_CONNECTED</ref>,</highlight></codeline>
+<codeline lineno="25" refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa7f4f61ab1c2141f8c4c5354d914c6473" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa7f4f61ab1c2141f8c4c5354d914c6473" kindref="member">CLOUD_EVT_DISCONNECTED</ref>,</highlight></codeline>
+<codeline lineno="29" refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa7652003e2b728032462debf3d58f1f7a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa7652003e2b728032462debf3d58f1f7a" kindref="member">CLOUD_EVT_READY</ref>,</highlight></codeline>
+<codeline lineno="31" refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa8d49eb658f77345c2b65ced6d58fed38" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa8d49eb658f77345c2b65ced6d58fed38" kindref="member">CLOUD_EVT_ERROR</ref>,</highlight></codeline>
+<codeline lineno="33" refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa4951ec1da730aeb92befd1332c0d7d8a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa4951ec1da730aeb92befd1332c0d7d8a" kindref="member">CLOUD_EVT_DATA_SENT</ref>,</highlight></codeline>
+<codeline lineno="35" refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa2ee24ec295da769675bfa6cb28ec0931" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa2ee24ec295da769675bfa6cb28ec0931" kindref="member">CLOUD_EVT_DATA_RECEIVED</ref>,</highlight></codeline>
+<codeline lineno="38" refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfaf25a6b2e70dd9b61546c8ffe1cba0e29" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfaf25a6b2e70dd9b61546c8ffe1cba0e29" kindref="member">CLOUD_EVT_PAIR_REQUEST</ref>,</highlight></codeline>
+<codeline lineno="40" refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa4a0e77965d3612a262975dd2995d8acc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa4a0e77965d3612a262975dd2995d8acc" kindref="member">CLOUD_EVT_PAIR_DONE</ref>,</highlight></codeline>
+<codeline lineno="42" refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfabae9672c0c9fafb18b9e1e61670487a7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfabae9672c0c9fafb18b9e1e61670487a7" kindref="member">CLOUD_EVT_FOTA_START</ref>,</highlight></codeline>
+<codeline lineno="44" refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfab341959d608eb475f3b6799c40d8d84f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfab341959d608eb475f3b6799c40d8d84f" kindref="member">CLOUD_EVT_FOTA_DONE</ref>,</highlight></codeline>
+<codeline lineno="46" refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfad5d86a1acce82139e004a1891e6943d8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfad5d86a1acce82139e004a1891e6943d8" kindref="member">CLOUD_EVT_FOTA_ERASE_PENDING</ref>,</highlight></codeline>
+<codeline lineno="48" refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfacc7a1c9502fb85bc1f62e446c425f0d1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfacc7a1c9502fb85bc1f62e446c425f0d1" kindref="member">CLOUD_EVT_FOTA_ERASE_DONE</ref>,</highlight></codeline>
+<codeline lineno="50" refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfab3e1ee8df6955e4a1091b3710073d978" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfab3e1ee8df6955e4a1091b3710073d978" kindref="member">CLOUD_EVT_FOTA_DL_PROGRESS</ref>,</highlight></codeline>
+<codeline lineno="52" refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfaee8e202a1797be01281c0096dbcfc555" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfaee8e202a1797be01281c0096dbcfc555" kindref="member">CLOUD_EVT_FOTA_ERROR</ref>,</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfac91bec487631ff2aedb268ed6b45f0a2" kindref="member">CLOUD_EVT_COUNT</ref></highlight></codeline>
+<codeline lineno="55" refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfac91bec487631ff2aedb268ed6b45f0a2" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1ga58647e0b8eaee7a2be5f2bdfb96f4ef1" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1ga58647e0b8eaee7a2be5f2bdfb96f4ef1" kindref="member">cloud_disconnect_reason</ref><sp/>{</highlight></codeline>
+<codeline lineno="58" refid="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1gga58647e0b8eaee7a2be5f2bdfb96f4ef1a3222f12cb9fbc5c93ef2c112e7be9fa5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1gga58647e0b8eaee7a2be5f2bdfb96f4ef1a3222f12cb9fbc5c93ef2c112e7be9fa5" kindref="member">CLOUD_DISCONNECT_USER_REQUEST</ref>,</highlight></codeline>
+<codeline lineno="60" refid="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1gga58647e0b8eaee7a2be5f2bdfb96f4ef1a95f544192be492a88316781b957c43e0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1gga58647e0b8eaee7a2be5f2bdfb96f4ef1a95f544192be492a88316781b957c43e0" kindref="member">CLOUD_DISCONNECT_CLOSED_BY_REMOTE</ref>,</highlight></codeline>
+<codeline lineno="62" refid="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1gga58647e0b8eaee7a2be5f2bdfb96f4ef1a4862ed7ce58a453ad8f3fb5d03de2d82" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1gga58647e0b8eaee7a2be5f2bdfb96f4ef1a4862ed7ce58a453ad8f3fb5d03de2d82" kindref="member">CLOUD_DISCONNECT_INVALID_REQUEST</ref>,</highlight></codeline>
+<codeline lineno="64" refid="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1gga58647e0b8eaee7a2be5f2bdfb96f4ef1a1d13e5d201f9fadb21d468eb1cf6d926" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1gga58647e0b8eaee7a2be5f2bdfb96f4ef1a1d13e5d201f9fadb21d468eb1cf6d926" kindref="member">CLOUD_DISCONNECT_MISC</ref>,</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1gga58647e0b8eaee7a2be5f2bdfb96f4ef1a1c92e6d7b52ddcd13b746f6cf4b3e507" kindref="member">CLOUD_DISCONNECT_COUNT</ref></highlight></codeline>
+<codeline lineno="67" refid="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1gga58647e0b8eaee7a2be5f2bdfb96f4ef1a1c92e6d7b52ddcd13b746f6cf4b3e507" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="group__cloud__api_gac89f68ad5ef44eba1320e0c97d264b96_1gac89f68ad5ef44eba1320e0c97d264b96" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__cloud__api_gac89f68ad5ef44eba1320e0c97d264b96_1gac89f68ad5ef44eba1320e0c97d264b96" kindref="member">cloud_qos</ref><sp/>{</highlight></codeline>
+<codeline lineno="71" refid="group__cloud__api_gac89f68ad5ef44eba1320e0c97d264b96_1ggac89f68ad5ef44eba1320e0c97d264b96a5ba99b5d58e65d97564f6bf582db4597" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_gac89f68ad5ef44eba1320e0c97d264b96_1ggac89f68ad5ef44eba1320e0c97d264b96a5ba99b5d58e65d97564f6bf582db4597" kindref="member">CLOUD_QOS_AT_MOST_ONCE</ref>,</highlight></codeline>
+<codeline lineno="72" refid="group__cloud__api_gac89f68ad5ef44eba1320e0c97d264b96_1ggac89f68ad5ef44eba1320e0c97d264b96a6f6bd985272713c3e8c769756224f733" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_gac89f68ad5ef44eba1320e0c97d264b96_1ggac89f68ad5ef44eba1320e0c97d264b96a6f6bd985272713c3e8c769756224f733" kindref="member">CLOUD_QOS_AT_LEAST_ONCE</ref>,</highlight></codeline>
+<codeline lineno="73" refid="group__cloud__api_gac89f68ad5ef44eba1320e0c97d264b96_1ggac89f68ad5ef44eba1320e0c97d264b96a76ecaecef79f3f3087a27640b8bf89b8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_gac89f68ad5ef44eba1320e0c97d264b96_1ggac89f68ad5ef44eba1320e0c97d264b96a76ecaecef79f3f3087a27640b8bf89b8" kindref="member">CLOUD_QOS_EXACTLY_ONCE</ref>,</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_gac89f68ad5ef44eba1320e0c97d264b96_1ggac89f68ad5ef44eba1320e0c97d264b96aa326feb1c162cf9aa4fae6c7028ff84e" kindref="member">CLOUD_QOS_COUNT</ref></highlight></codeline>
+<codeline lineno="76" refid="group__cloud__api_gac89f68ad5ef44eba1320e0c97d264b96_1ggac89f68ad5ef44eba1320e0c97d264b96aa326feb1c162cf9aa4fae6c7028ff84e" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1gafdfebe6e28634145da5dbc14d11d29c4" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1gafdfebe6e28634145da5dbc14d11d29c4" kindref="member">cloud_endpoint_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="81" refid="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4afe1c65561efa7d78d09ca917f8a1a2d9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4afe1c65561efa7d78d09ca917f8a1a2d9" kindref="member">CLOUD_EP_MSG</ref>,</highlight></codeline>
+<codeline lineno="83" refid="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4aa1a15f330e1bc9c93e62e5f729c4808d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4aa1a15f330e1bc9c93e62e5f729c4808d" kindref="member">CLOUD_EP_STATE</ref>,</highlight></codeline>
+<codeline lineno="85" refid="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4abc28d135c0d67b5d8bfc5331fc76517a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4abc28d135c0d67b5d8bfc5331fc76517a" kindref="member">CLOUD_EP_STATE_DELETE</ref>,</highlight></codeline>
+<codeline lineno="87" refid="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4a4a799f391127a70b574e29a527658208" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4a4a799f391127a70b574e29a527658208" kindref="member">CLOUD_EP_STATE_GET</ref>,</highlight></codeline>
+<codeline lineno="89" refid="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4a93c32993e74f138e696169d67e7461f7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4a93c32993e74f138e696169d67e7461f7" kindref="member">CLOUD_EP_PAIR</ref>,</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91" refid="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4a8fdcd93ca0064e622c3baaa3bd0eefb0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4a8fdcd93ca0064e622c3baaa3bd0eefb0" kindref="member">CLOUD_EP_COMMON_COUNT</ref>,</highlight></codeline>
+<codeline lineno="92" refid="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4abccf2a3d54c4256ee805ec69672360c6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4abccf2a3d54c4256ee805ec69672360c6" kindref="member">CLOUD_EP_PRIV_START</ref><sp/>=<sp/><ref refid="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4a8fdcd93ca0064e622c3baaa3bd0eefb0" kindref="member">CLOUD_EP_COMMON_COUNT</ref>,</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4aacb0ea3725cfa771204b634540397813" kindref="member">CLOUD_EP_PRIV_END</ref><sp/>=<sp/>INT16_MAX</highlight></codeline>
+<codeline lineno="94" refid="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4aacb0ea3725cfa771204b634540397813" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97" refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1ga2bc0fd6d66de372926e927b113679c60" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1ga2bc0fd6d66de372926e927b113679c60" kindref="member">cloud_connect_result</ref><sp/>{</highlight></codeline>
+<codeline lineno="98" refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a452baa6ebfd471971ba6d775aa1ca3c9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a452baa6ebfd471971ba6d775aa1ca3c9" kindref="member">CLOUD_CONNECT_RES_SUCCESS</ref><sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="100" refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a79ecb99a28aeadc50b522ef4f5c4ebd7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a79ecb99a28aeadc50b522ef4f5c4ebd7" kindref="member">CLOUD_CONNECT_RES_ERR_NOT_INITD</ref><sp/>=<sp/>-1,</highlight></codeline>
+<codeline lineno="102" refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60ac5a2bdbb595850b4449f7c4b53aa5a48" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60ac5a2bdbb595850b4449f7c4b53aa5a48" kindref="member">CLOUD_CONNECT_RES_ERR_INVALID_PARAM</ref><sp/>=<sp/>-2,</highlight></codeline>
+<codeline lineno="104" refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60abe1ca0cbfd0828e36da1b7c8a19f71f9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60abe1ca0cbfd0828e36da1b7c8a19f71f9" kindref="member">CLOUD_CONNECT_RES_ERR_NETWORK</ref><sp/>=<sp/>-3,</highlight></codeline>
+<codeline lineno="106" refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a9c4a8ac57de7b4e66c460fe746150c25" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a9c4a8ac57de7b4e66c460fe746150c25" kindref="member">CLOUD_CONNECT_RES_ERR_BACKEND</ref><sp/>=<sp/>-4,</highlight></codeline>
+<codeline lineno="108" refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a5d18e02bf92b1ce43e149bcb1757fffa" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a5d18e02bf92b1ce43e149bcb1757fffa" kindref="member">CLOUD_CONNECT_RES_ERR_MISC</ref><sp/>=<sp/>-5,</highlight></codeline>
+<codeline lineno="110" refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a450388f03192fda4596140267d230a39" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a450388f03192fda4596140267d230a39" kindref="member">CLOUD_CONNECT_RES_ERR_NO_MEM</ref><sp/>=<sp/>-6,</highlight></codeline>
+<codeline lineno="112" refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60af1e8c1d0c6f4597f4310f7f67a3ba648" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60af1e8c1d0c6f4597f4310f7f67a3ba648" kindref="member">CLOUD_CONNECT_RES_ERR_PRV_KEY</ref><sp/>=<sp/>-7,</highlight></codeline>
+<codeline lineno="114" refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a4b50746614b4fde6713fec9b80233b1d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a4b50746614b4fde6713fec9b80233b1d" kindref="member">CLOUD_CONNECT_RES_ERR_CERT</ref><sp/>=<sp/>-8,</highlight></codeline>
+<codeline lineno="116" refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60aeefc3baac196c36e931414c6f57079f7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60aeefc3baac196c36e931414c6f57079f7" kindref="member">CLOUD_CONNECT_RES_ERR_CERT_MISC</ref><sp/>=<sp/>-9,</highlight></codeline>
+<codeline lineno="118" refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a25917fe242c42b6d6810a879d675c769" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a25917fe242c42b6d6810a879d675c769" kindref="member">CLOUD_CONNECT_RES_ERR_TIMEOUT_NO_DATA</ref><sp/>=<sp/>-10,</highlight></codeline>
+<codeline lineno="120" refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a8155c9c24ad6ea6a62f920d55194da30" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a8155c9c24ad6ea6a62f920d55194da30" kindref="member">CLOUD_CONNECT_RES_ERR_ALREADY_CONNECTED</ref><sp/>=<sp/>-11,</highlight></codeline>
+<codeline lineno="121"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref>;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127" refid="structcloud__endpoint" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__endpoint" kindref="compound">cloud_endpoint</ref><sp/>{</highlight></codeline>
+<codeline lineno="128" refid="structcloud__endpoint_aeca1bbf208b768b6ac1b3add859e9599_1aeca1bbf208b768b6ac1b3add859e9599" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1gafdfebe6e28634145da5dbc14d11d29c4" kindref="member">cloud_endpoint_type</ref><sp/><ref refid="structcloud__endpoint_aeca1bbf208b768b6ac1b3add859e9599_1aeca1bbf208b768b6ac1b3add859e9599" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="129" refid="structcloud__endpoint_a443a42f1c583815482a90b0ff15db680_1a443a42f1c583815482a90b0ff15db680" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structcloud__endpoint_a443a42f1c583815482a90b0ff15db680_1a443a42f1c583815482a90b0ff15db680" kindref="member">str</ref>;</highlight></codeline>
+<codeline lineno="130" refid="structcloud__endpoint_a9b67288fc83e23b9d4e3bfb786ac59b8_1a9b67288fc83e23b9d4e3bfb786ac59b8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structcloud__endpoint_a9b67288fc83e23b9d4e3bfb786ac59b8_1a9b67288fc83e23b9d4e3bfb786ac59b8" kindref="member">len</ref>;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134" refid="structcloud__msg" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__msg" kindref="compound">cloud_msg</ref><sp/>{</highlight></codeline>
+<codeline lineno="135" refid="structcloud__msg_ab207b45a3552941c836bf810216e7abd_1ab207b45a3552941c836bf810216e7abd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structcloud__msg_ab207b45a3552941c836bf810216e7abd_1ab207b45a3552941c836bf810216e7abd" kindref="member">buf</ref>;</highlight></codeline>
+<codeline lineno="136" refid="structcloud__msg_a84fa066705f03a9de2f0d704af3f86bf_1a84fa066705f03a9de2f0d704af3f86bf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structcloud__msg_a84fa066705f03a9de2f0d704af3f86bf_1a84fa066705f03a9de2f0d704af3f86bf" kindref="member">len</ref>;</highlight></codeline>
+<codeline lineno="137" refid="structcloud__msg_ad4d96894c890065d1cd3c066af4d9a36_1ad4d96894c890065d1cd3c066af4d9a36" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__cloud__api_gac89f68ad5ef44eba1320e0c97d264b96_1gac89f68ad5ef44eba1320e0c97d264b96" kindref="member">cloud_qos</ref><sp/><ref refid="structcloud__msg_ad4d96894c890065d1cd3c066af4d9a36_1ad4d96894c890065d1cd3c066af4d9a36" kindref="member">qos</ref>;</highlight></codeline>
+<codeline lineno="138" refid="structcloud__msg_a5b1a3c1917388a66e24f708ad06b9b1e_1a5b1a3c1917388a66e24f708ad06b9b1e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__endpoint" kindref="compound">cloud_endpoint</ref><sp/><ref refid="structcloud__msg_a5b1a3c1917388a66e24f708ad06b9b1e_1a5b1a3c1917388a66e24f708ad06b9b1e" kindref="member">endpoint</ref>;</highlight></codeline>
+<codeline lineno="139"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142" refid="structcloud__event" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__event" kindref="compound">cloud_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="143" refid="structcloud__event_ad5ea849fdfa16efcade9a2f7fd229f19_1ad5ea849fdfa16efcade9a2f7fd229f19" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1ga83f6f81630a03b2bc02ad2f8eb7f97bf" kindref="member">cloud_event_type</ref><sp/><ref refid="structcloud__event_ad5ea849fdfa16efcade9a2f7fd229f19_1ad5ea849fdfa16efcade9a2f7fd229f19" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">union<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="145" refid="structcloud__event_a43e54624becfb1967a1fae995fdf7626_1a43e54624becfb1967a1fae995fdf7626" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__msg" kindref="compound">cloud_msg</ref><sp/><ref refid="structcloud__event_a43e54624becfb1967a1fae995fdf7626_1a43e54624becfb1967a1fae995fdf7626" kindref="member">msg</ref>;</highlight></codeline>
+<codeline lineno="146" refid="structcloud__event_a934e1b85f0e9a24ce26998679ad8c05f_1a934e1b85f0e9a24ce26998679ad8c05f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structcloud__event_a934e1b85f0e9a24ce26998679ad8c05f_1a934e1b85f0e9a24ce26998679ad8c05f" kindref="member">err</ref>;</highlight></codeline>
+<codeline lineno="148" refid="structcloud__event_a002ecdcbaa1a9f2bcc787d21f24182c1_1a002ecdcbaa1a9f2bcc787d21f24182c1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structcloud__event_a002ecdcbaa1a9f2bcc787d21f24182c1_1a002ecdcbaa1a9f2bcc787d21f24182c1" kindref="member">fota_progress</ref>;</highlight></codeline>
+<codeline lineno="149" refid="structcloud__event_a65ad368866969b733e82ebf614e08aae_1a65ad368866969b733e82ebf614e08aae" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structcloud__event_a65ad368866969b733e82ebf614e08aae_1a65ad368866969b733e82ebf614e08aae" kindref="member">persistent_session</ref>;</highlight></codeline>
+<codeline lineno="150" refid="structcloud__event_ab05bcb2c783f9003a77aac099fb8a567_1ab05bcb2c783f9003a77aac099fb8a567" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/><ref refid="structcloud__event_ab05bcb2c783f9003a77aac099fb8a567_1ab05bcb2c783f9003a77aac099fb8a567" kindref="member">data</ref>;</highlight></codeline>
+<codeline lineno="151"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161" refid="group__cloud__api_ga3257fcdffa6d48cea667361250191cfa_1ga3257fcdffa6d48cea667361250191cfa" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__cloud__api_ga3257fcdffa6d48cea667361250191cfa_1ga3257fcdffa6d48cea667361250191cfa" kindref="member">cloud_evt_handler_t</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend,</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__event" kindref="compound">cloud_event</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>evt,</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*user_data);</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170" refid="structcloud__api" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__api" kindref="compound">cloud_api</ref><sp/>{</highlight></codeline>
+<codeline lineno="171" refid="structcloud__api_a05154423eca69922bf188a27393120bc_1a05154423eca69922bf188a27393120bc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>(*<ref refid="structcloud__api_a05154423eca69922bf188a27393120bc_1a05154423eca69922bf188a27393120bc" kindref="member">init</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend,</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga3257fcdffa6d48cea667361250191cfa_1ga3257fcdffa6d48cea667361250191cfa" kindref="member">cloud_evt_handler_t</ref><sp/>handler);</highlight></codeline>
+<codeline lineno="173" refid="structcloud__api_a9a18ea67cda829bc6fe4ba0605755cc6_1a9a18ea67cda829bc6fe4ba0605755cc6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>(*<ref refid="structcloud__api_a9a18ea67cda829bc6fe4ba0605755cc6_1a9a18ea67cda829bc6fe4ba0605755cc6" kindref="member">uninit</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend);</highlight></codeline>
+<codeline lineno="174" refid="structcloud__api_acf95c719d3ad61c52d7265f66a4ba349_1acf95c719d3ad61c52d7265f66a4ba349" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>(*<ref refid="structcloud__api_acf95c719d3ad61c52d7265f66a4ba349_1acf95c719d3ad61c52d7265f66a4ba349" kindref="member">connect</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend);</highlight></codeline>
+<codeline lineno="175" refid="structcloud__api_ae72801984ce2e66981367f9d96342b37_1ae72801984ce2e66981367f9d96342b37" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>(*<ref refid="structcloud__api_ae72801984ce2e66981367f9d96342b37_1ae72801984ce2e66981367f9d96342b37" kindref="member">disconnect</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend);</highlight></codeline>
+<codeline lineno="176" refid="structcloud__api_a2a658c3d14561d325007fa90bd54f526_1a2a658c3d14561d325007fa90bd54f526" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>(*<ref refid="structcloud__api_a2a658c3d14561d325007fa90bd54f526_1a2a658c3d14561d325007fa90bd54f526" kindref="member">send</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend,</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__msg" kindref="compound">cloud_msg</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>msg);</highlight></codeline>
+<codeline lineno="178" refid="structcloud__api_a203332fb2054786e726b98319483fcd7_1a203332fb2054786e726b98319483fcd7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>(*<ref refid="structcloud__api_a203332fb2054786e726b98319483fcd7_1a203332fb2054786e726b98319483fcd7" kindref="member">ping</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend);</highlight></codeline>
+<codeline lineno="179" refid="structcloud__api_aa781f688aa6d7c530f244d8d807321dc_1aa781f688aa6d7c530f244d8d807321dc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>(*<ref refid="structcloud__api_aa781f688aa6d7c530f244d8d807321dc_1aa781f688aa6d7c530f244d8d807321dc" kindref="member">keepalive_time_left</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend);</highlight></codeline>
+<codeline lineno="180" refid="structcloud__api_acfd84a341b56272df6244819eb42dacc_1acfd84a341b56272df6244819eb42dacc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>(*<ref refid="structcloud__api_acfd84a341b56272df6244819eb42dacc_1acfd84a341b56272df6244819eb42dacc" kindref="member">input</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend);</highlight></codeline>
+<codeline lineno="181" refid="structcloud__api_a6d69e8b638d6334b9499455eefe7cc26_1a6d69e8b638d6334b9499455eefe7cc26" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>(*<ref refid="structcloud__api_a6d69e8b638d6334b9499455eefe7cc26_1a6d69e8b638d6334b9499455eefe7cc26" kindref="member">ep_subscriptions_add</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend,</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__endpoint" kindref="compound">cloud_endpoint</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>list,</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>list_count);</highlight></codeline>
+<codeline lineno="184" refid="structcloud__api_a9e6d78b13b2dfaeb40d8b8ef4f7bf2e4_1a9e6d78b13b2dfaeb40d8b8ef4f7bf2e4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>(*<ref refid="structcloud__api_a9e6d78b13b2dfaeb40d8b8ef4f7bf2e4_1a9e6d78b13b2dfaeb40d8b8ef4f7bf2e4" kindref="member">ep_subscriptions_remove</ref>)(</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend,</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__endpoint" kindref="compound">cloud_endpoint</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>list,</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>list_count);</highlight></codeline>
+<codeline lineno="188" refid="structcloud__api_a407a788f1577e48415fc982a19b0386e_1a407a788f1577e48415fc982a19b0386e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>(*<ref refid="structcloud__api_a407a788f1577e48415fc982a19b0386e_1a407a788f1577e48415fc982a19b0386e" kindref="member">user_data_set</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend,</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*user_data);</highlight></codeline>
+<codeline lineno="190" refid="structcloud__api_a30a3c339668226a3f162089106b8cd97_1a30a3c339668226a3f162089106b8cd97" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>(*<ref refid="structcloud__api_a30a3c339668226a3f162089106b8cd97_1a30a3c339668226a3f162089106b8cd97" kindref="member">id_get</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend,</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*id,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>id_len);</highlight></codeline>
+<codeline lineno="192"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight></codeline>
+<codeline lineno="195" refid="structcloud__backend__config" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__backend__config" kindref="compound">cloud_backend_config</ref><sp/>{</highlight></codeline>
+<codeline lineno="196" refid="structcloud__backend__config_a586e80eca5fe09fe681af7e1f12026c5_1a586e80eca5fe09fe681af7e1f12026c5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structcloud__backend__config_a586e80eca5fe09fe681af7e1f12026c5_1a586e80eca5fe09fe681af7e1f12026c5" kindref="member">name</ref>;</highlight></codeline>
+<codeline lineno="197" refid="structcloud__backend__config_a314c7287e4d3fe7c43fd3fc9553e3703_1a314c7287e4d3fe7c43fd3fc9553e3703" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga3257fcdffa6d48cea667361250191cfa_1ga3257fcdffa6d48cea667361250191cfa" kindref="member">cloud_evt_handler_t</ref><sp/><ref refid="structcloud__backend__config_a314c7287e4d3fe7c43fd3fc9553e3703_1a314c7287e4d3fe7c43fd3fc9553e3703" kindref="member">handler</ref>;</highlight></codeline>
+<codeline lineno="198" refid="structcloud__backend__config_a115d08868139859a7e4b01041814cb50_1a115d08868139859a7e4b01041814cb50" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structcloud__backend__config_a115d08868139859a7e4b01041814cb50_1a115d08868139859a7e4b01041814cb50" kindref="member">socket</ref>;</highlight></codeline>
+<codeline lineno="199" refid="structcloud__backend__config_a323f6462a5e69dc16388a206f5bcf32b_1a323f6462a5e69dc16388a206f5bcf32b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structcloud__backend__config_a323f6462a5e69dc16388a206f5bcf32b_1a323f6462a5e69dc16388a206f5bcf32b" kindref="member">user_data</ref>;</highlight></codeline>
+<codeline lineno="200" refid="structcloud__backend__config_a2db54bdf1de45b70dc9aefb0b551e2b2_1a2db54bdf1de45b70dc9aefb0b551e2b2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structcloud__backend__config_a2db54bdf1de45b70dc9aefb0b551e2b2_1a2db54bdf1de45b70dc9aefb0b551e2b2" kindref="member">id</ref>;</highlight></codeline>
+<codeline lineno="201" refid="structcloud__backend__config_ac63a49c0c26381112222741d7c97a7fe_1ac63a49c0c26381112222741d7c97a7fe" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structcloud__backend__config_ac63a49c0c26381112222741d7c97a7fe_1ac63a49c0c26381112222741d7c97a7fe" kindref="member">id_len</ref>;</highlight></codeline>
+<codeline lineno="202"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205" refid="structcloud__backend" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>{</highlight></codeline>
+<codeline lineno="206" refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__api" kindref="compound">cloud_api</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>;</highlight></codeline>
+<codeline lineno="207" refid="structcloud__backend_a31c8126e59484178c913c3544f459ec9_1a31c8126e59484178c913c3544f459ec9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__backend__config" kindref="compound">cloud_backend_config</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structcloud__backend_a31c8126e59484178c913c3544f459ec9_1a31c8126e59484178c913c3544f459ec9" kindref="member">config</ref>;</highlight></codeline>
+<codeline lineno="208"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
+<codeline lineno="217" refid="group__cloud__api_ga2e61dcbcce601b76ff3120a21e83d4e4_1ga2e61dcbcce601b76ff3120a21e83d4e4" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__cloud__api_ga2e61dcbcce601b76ff3120a21e83d4e4_1ga2e61dcbcce601b76ff3120a21e83d4e4" kindref="member">cloud_init</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend,</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__cloud__api_ga3257fcdffa6d48cea667361250191cfa_1ga3257fcdffa6d48cea667361250191cfa" kindref="member">cloud_evt_handler_t</ref><sp/><ref refid="structcloud__backend__config_a314c7287e4d3fe7c43fd3fc9553e3703_1a314c7287e4d3fe7c43fd3fc9553e3703" kindref="member">handler</ref>)</highlight></codeline>
+<codeline lineno="219"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(backend<sp/>==<sp/>NULL<sp/>||<sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref><sp/>==<sp/>NULL<sp/>||</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_a05154423eca69922bf188a27393120bc_1a05154423eca69922bf188a27393120bc" kindref="member">init</ref><sp/>==<sp/>NULL)<sp/>{</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-ENOTSUP;</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"></highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="structcloud__backend__config_a314c7287e4d3fe7c43fd3fc9553e3703_1a314c7287e4d3fe7c43fd3fc9553e3703" kindref="member">handler</ref><sp/>==<sp/>NULL)<sp/>{</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-EINVAL;</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_a05154423eca69922bf188a27393120bc_1a05154423eca69922bf188a27393120bc" kindref="member">init</ref>(backend,<sp/><ref refid="structcloud__backend__config_a314c7287e4d3fe7c43fd3fc9553e3703_1a314c7287e4d3fe7c43fd3fc9553e3703" kindref="member">handler</ref>);</highlight></codeline>
+<codeline lineno="230"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"></highlight></codeline>
+<codeline lineno="237" refid="group__cloud__api_gae2d267d6c8de4a2431441078fedfab03_1gae2d267d6c8de4a2431441078fedfab03" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__cloud__api_gae2d267d6c8de4a2431441078fedfab03_1gae2d267d6c8de4a2431441078fedfab03" kindref="member">cloud_uninit</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend)</highlight></codeline>
+<codeline lineno="238"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(backend<sp/>==<sp/>NULL<sp/>||<sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref><sp/>==<sp/>NULL<sp/>||</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_a9a18ea67cda829bc6fe4ba0605755cc6_1a9a18ea67cda829bc6fe4ba0605755cc6" kindref="member">uninit</ref><sp/>==<sp/>NULL)<sp/>{</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-ENOTSUP;</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"></highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_a9a18ea67cda829bc6fe4ba0605755cc6_1a9a18ea67cda829bc6fe4ba0605755cc6" kindref="member">uninit</ref>(backend);</highlight></codeline>
+<codeline lineno="245"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"></highlight></codeline>
+<codeline lineno="258" refid="group__cloud__api_gae91c2eb0563f05ad5180e42b268ad66b_1gae91c2eb0563f05ad5180e42b268ad66b" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__cloud__api_gae91c2eb0563f05ad5180e42b268ad66b_1gae91c2eb0563f05ad5180e42b268ad66b" kindref="member">cloud_connect</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend)</highlight></codeline>
+<codeline lineno="259"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(backend<sp/>==<sp/>NULL<sp/>||<sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref><sp/>==<sp/>NULL<sp/>||</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_acf95c719d3ad61c52d7265f66a4ba349_1acf95c719d3ad61c52d7265f66a4ba349" kindref="member">connect</ref><sp/>==<sp/>NULL)<sp/>{</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60ac5a2bdbb595850b4449f7c4b53aa5a48" kindref="member">CLOUD_CONNECT_RES_ERR_INVALID_PARAM</ref>;</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"></highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_acf95c719d3ad61c52d7265f66a4ba349_1acf95c719d3ad61c52d7265f66a4ba349" kindref="member">connect</ref>(backend);</highlight></codeline>
+<codeline lineno="266"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"></highlight></codeline>
+<codeline lineno="274" refid="group__cloud__api_gad6804d9cfc9a06d6a6260f4ca0aa5363_1gad6804d9cfc9a06d6a6260f4ca0aa5363" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__cloud__api_gad6804d9cfc9a06d6a6260f4ca0aa5363_1gad6804d9cfc9a06d6a6260f4ca0aa5363" kindref="member">cloud_disconnect</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend)</highlight></codeline>
+<codeline lineno="275"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(backend<sp/>==<sp/>NULL<sp/>||<sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref><sp/>==<sp/>NULL<sp/>||</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_ae72801984ce2e66981367f9d96342b37_1ae72801984ce2e66981367f9d96342b37" kindref="member">disconnect</ref><sp/>==<sp/>NULL)<sp/>{</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-ENOTSUP;</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"></highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_ae72801984ce2e66981367f9d96342b37_1ae72801984ce2e66981367f9d96342b37" kindref="member">disconnect</ref>(backend);</highlight></codeline>
+<codeline lineno="282"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"></highlight></codeline>
+<codeline lineno="291" refid="group__cloud__api_ga6db3fead1a7216b0d2d5fec203b2983c_1ga6db3fead1a7216b0d2d5fec203b2983c" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__cloud__api_ga6db3fead1a7216b0d2d5fec203b2983c_1ga6db3fead1a7216b0d2d5fec203b2983c" kindref="member">cloud_send</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend,</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__msg" kindref="compound">cloud_msg</ref><sp/>*msg)</highlight></codeline>
+<codeline lineno="293"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(backend<sp/>==<sp/>NULL<sp/>||<sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref><sp/>==<sp/>NULL<sp/>||</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_a2a658c3d14561d325007fa90bd54f526_1a2a658c3d14561d325007fa90bd54f526" kindref="member">send</ref><sp/>==<sp/>NULL)<sp/>{</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-ENOTSUP;</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"></highlight></codeline>
+<codeline lineno="299"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_a2a658c3d14561d325007fa90bd54f526_1a2a658c3d14561d325007fa90bd54f526" kindref="member">send</ref>(backend,<sp/>msg);</highlight></codeline>
+<codeline lineno="300"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="301"><highlight class="normal"></highlight></codeline>
+<codeline lineno="309" refid="group__cloud__api_gafd387ddce9aeba5c025acd243195f0a3_1gafd387ddce9aeba5c025acd243195f0a3" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__cloud__api_gafd387ddce9aeba5c025acd243195f0a3_1gafd387ddce9aeba5c025acd243195f0a3" kindref="member">cloud_ping</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend)</highlight></codeline>
+<codeline lineno="310"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(backend<sp/>==<sp/>NULL<sp/>||<sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref><sp/>==<sp/>NULL)<sp/>{</highlight></codeline>
+<codeline lineno="312"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-ENOTSUP;</highlight></codeline>
+<codeline lineno="313"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="314"><highlight class="normal"></highlight></codeline>
+<codeline lineno="315"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Ping<sp/>will<sp/>only<sp/>be<sp/>sent<sp/>if<sp/>the<sp/>backend<sp/>has<sp/>implemented<sp/>it.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="316"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_a203332fb2054786e726b98319483fcd7_1a203332fb2054786e726b98319483fcd7" kindref="member">ping</ref><sp/>!=<sp/>NULL)<sp/>{</highlight></codeline>
+<codeline lineno="317"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_a203332fb2054786e726b98319483fcd7_1a203332fb2054786e726b98319483fcd7" kindref="member">ping</ref>(backend);</highlight></codeline>
+<codeline lineno="318"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="319"><highlight class="normal"></highlight></codeline>
+<codeline lineno="320"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline lineno="321"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="322"><highlight class="normal"></highlight></codeline>
+<codeline lineno="333" refid="group__cloud__api_gacf5033c0fd6813f9e27a5bbda75896c6_1gacf5033c0fd6813f9e27a5bbda75896c6" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__cloud__api_gacf5033c0fd6813f9e27a5bbda75896c6_1gacf5033c0fd6813f9e27a5bbda75896c6" kindref="member">cloud_keepalive_time_left</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend)</highlight></codeline>
+<codeline lineno="334"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="335"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(backend<sp/>==<sp/>NULL<sp/>||<sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref><sp/>==<sp/>NULL<sp/>||</highlight></codeline>
+<codeline lineno="336"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_aa781f688aa6d7c530f244d8d807321dc_1aa781f688aa6d7c530f244d8d807321dc" kindref="member">keepalive_time_left</ref><sp/>==<sp/>NULL)<sp/>{</highlight></codeline>
+<codeline lineno="337"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__ASSERT(0,<sp/></highlight><highlight class="stringliteral">&quot;Missing<sp/>cloud<sp/>backend<sp/>functionality&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="338"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>SYS_FOREVER_MS;</highlight></codeline>
+<codeline lineno="339"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="340"><highlight class="normal"></highlight></codeline>
+<codeline lineno="341"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_aa781f688aa6d7c530f244d8d807321dc_1aa781f688aa6d7c530f244d8d807321dc" kindref="member">keepalive_time_left</ref>(backend);</highlight></codeline>
+<codeline lineno="342"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="343"><highlight class="normal"></highlight></codeline>
+<codeline lineno="353" refid="group__cloud__api_ga82c59c34e70738ff31b136c0d7db21b6_1ga82c59c34e70738ff31b136c0d7db21b6" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__cloud__api_ga82c59c34e70738ff31b136c0d7db21b6_1ga82c59c34e70738ff31b136c0d7db21b6" kindref="member">cloud_input</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend)</highlight></codeline>
+<codeline lineno="354"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="355"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(backend<sp/>==<sp/>NULL<sp/>||<sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref><sp/>==<sp/>NULL<sp/>||</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_acfd84a341b56272df6244819eb42dacc_1acfd84a341b56272df6244819eb42dacc" kindref="member">input</ref><sp/>==<sp/>NULL)<sp/>{</highlight></codeline>
+<codeline lineno="357"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-ENOTSUP;</highlight></codeline>
+<codeline lineno="358"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="359"><highlight class="normal"></highlight></codeline>
+<codeline lineno="360"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_acfd84a341b56272df6244819eb42dacc_1acfd84a341b56272df6244819eb42dacc" kindref="member">input</ref>(backend);</highlight></codeline>
+<codeline lineno="361"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="362"><highlight class="normal"></highlight></codeline>
+<codeline lineno="369" refid="group__cloud__api_ga0f3ccb36621b55882445b8c136bbbac8_1ga0f3ccb36621b55882445b8c136bbbac8" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__cloud__api_ga0f3ccb36621b55882445b8c136bbbac8_1ga0f3ccb36621b55882445b8c136bbbac8" kindref="member">cloud_ep_subscriptions_add</ref>(</highlight></codeline>
+<codeline lineno="370"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend,</highlight></codeline>
+<codeline lineno="371"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__endpoint" kindref="compound">cloud_endpoint</ref><sp/>*list,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>list_count)</highlight></codeline>
+<codeline lineno="372"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="373"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(backend<sp/>==<sp/>NULL<sp/>||<sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref><sp/>==<sp/>NULL<sp/>||</highlight></codeline>
+<codeline lineno="374"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_a6d69e8b638d6334b9499455eefe7cc26_1a6d69e8b638d6334b9499455eefe7cc26" kindref="member">ep_subscriptions_add</ref><sp/>==<sp/>NULL)<sp/>{</highlight></codeline>
+<codeline lineno="375"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-ENOTSUP;</highlight></codeline>
+<codeline lineno="376"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="377"><highlight class="normal"></highlight></codeline>
+<codeline lineno="378"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_a6d69e8b638d6334b9499455eefe7cc26_1a6d69e8b638d6334b9499455eefe7cc26" kindref="member">ep_subscriptions_add</ref>(backend,<sp/>list,<sp/>list_count);</highlight></codeline>
+<codeline lineno="379"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="380"><highlight class="normal"></highlight></codeline>
+<codeline lineno="387" refid="group__cloud__api_ga6c226527a95ba86358c26cfe4c1e808b_1ga6c226527a95ba86358c26cfe4c1e808b" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__cloud__api_ga6c226527a95ba86358c26cfe4c1e808b_1ga6c226527a95ba86358c26cfe4c1e808b" kindref="member">cloud_ep_subscriptions_remove</ref>(</highlight></codeline>
+<codeline lineno="388"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend,</highlight></codeline>
+<codeline lineno="389"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__endpoint" kindref="compound">cloud_endpoint</ref><sp/>*list,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>list_count)</highlight></codeline>
+<codeline lineno="390"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="391"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(backend<sp/>==<sp/>NULL<sp/>||<sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref><sp/>==<sp/>NULL<sp/>||</highlight></codeline>
+<codeline lineno="392"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_a9e6d78b13b2dfaeb40d8b8ef4f7bf2e4_1a9e6d78b13b2dfaeb40d8b8ef4f7bf2e4" kindref="member">ep_subscriptions_remove</ref><sp/>==<sp/>NULL)<sp/>{</highlight></codeline>
+<codeline lineno="393"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-ENOTSUP;</highlight></codeline>
+<codeline lineno="394"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="395"><highlight class="normal"></highlight></codeline>
+<codeline lineno="396"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_a9e6d78b13b2dfaeb40d8b8ef4f7bf2e4_1a9e6d78b13b2dfaeb40d8b8ef4f7bf2e4" kindref="member">ep_subscriptions_remove</ref>(backend,<sp/>list,<sp/>list_count);</highlight></codeline>
+<codeline lineno="397"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="398"><highlight class="normal"></highlight></codeline>
+<codeline lineno="406" refid="group__cloud__api_gac9047e76248be44d3f54aa469f0cec3c_1gac9047e76248be44d3f54aa469f0cec3c" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__cloud__api_gac9047e76248be44d3f54aa469f0cec3c_1gac9047e76248be44d3f54aa469f0cec3c" kindref="member">cloud_user_data_set</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend,</highlight></codeline>
+<codeline lineno="407"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structcloud__backend__config_a323f6462a5e69dc16388a206f5bcf32b_1a323f6462a5e69dc16388a206f5bcf32b" kindref="member">user_data</ref>)</highlight></codeline>
+<codeline lineno="408"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="409"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(backend<sp/>==<sp/>NULL<sp/>||<sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref><sp/>==<sp/>NULL<sp/>||</highlight></codeline>
+<codeline lineno="410"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_a407a788f1577e48415fc982a19b0386e_1a407a788f1577e48415fc982a19b0386e" kindref="member">user_data_set</ref><sp/>==<sp/>NULL)<sp/>{</highlight></codeline>
+<codeline lineno="411"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-ENOTSUP;</highlight></codeline>
+<codeline lineno="412"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="413"><highlight class="normal"></highlight></codeline>
+<codeline lineno="414"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="structcloud__backend__config_a323f6462a5e69dc16388a206f5bcf32b_1a323f6462a5e69dc16388a206f5bcf32b" kindref="member">user_data</ref><sp/>==<sp/>NULL)<sp/>{</highlight></codeline>
+<codeline lineno="415"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-EINVAL;</highlight></codeline>
+<codeline lineno="416"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="417"><highlight class="normal"></highlight></codeline>
+<codeline lineno="418"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_a407a788f1577e48415fc982a19b0386e_1a407a788f1577e48415fc982a19b0386e" kindref="member">user_data_set</ref>(backend,<sp/><ref refid="structcloud__backend__config_a323f6462a5e69dc16388a206f5bcf32b_1a323f6462a5e69dc16388a206f5bcf32b" kindref="member">user_data</ref>);</highlight></codeline>
+<codeline lineno="419"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="420"><highlight class="normal"></highlight></codeline>
+<codeline lineno="428" refid="group__cloud__api_ga3ef414608a17afc180b80ec640858bbc_1ga3ef414608a17afc180b80ec640858bbc" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__cloud__api_ga3ef414608a17afc180b80ec640858bbc_1ga3ef414608a17afc180b80ec640858bbc" kindref="member">cloud_get_id</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>backend,</highlight></codeline>
+<codeline lineno="429"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keywordtype">id</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structcloud__backend__config_ac63a49c0c26381112222741d7c97a7fe_1ac63a49c0c26381112222741d7c97a7fe" kindref="member">id_len</ref>)</highlight></codeline>
+<codeline lineno="430"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="431"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(backend<sp/>==<sp/>NULL<sp/>||<sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref><sp/>==<sp/>NULL<sp/>||</highlight></codeline>
+<codeline lineno="432"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_a30a3c339668226a3f162089106b8cd97_1a30a3c339668226a3f162089106b8cd97" kindref="member">id_get</ref><sp/>==<sp/>NULL)<sp/>{</highlight></codeline>
+<codeline lineno="433"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-ENOTSUP;</highlight></codeline>
+<codeline lineno="434"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="435"><highlight class="normal"></highlight></codeline>
+<codeline lineno="436"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">id</highlight><highlight class="normal"><sp/>==<sp/>NULL<sp/>||<sp/><ref refid="structcloud__backend__config_ac63a49c0c26381112222741d7c97a7fe_1ac63a49c0c26381112222741d7c97a7fe" kindref="member">id_len</ref><sp/>==<sp/>0)<sp/>{</highlight></codeline>
+<codeline lineno="437"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-EINVAL;</highlight></codeline>
+<codeline lineno="438"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="439"><highlight class="normal"></highlight></codeline>
+<codeline lineno="440"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>backend-&gt;<ref refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" kindref="member">api</ref>-&gt;<ref refid="structcloud__api_a30a3c339668226a3f162089106b8cd97_1a30a3c339668226a3f162089106b8cd97" kindref="member">id_get</ref>(backend,<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">,<sp/><ref refid="structcloud__backend__config_ac63a49c0c26381112222741d7c97a7fe_1ac63a49c0c26381112222741d7c97a7fe" kindref="member">id_len</ref>);</highlight></codeline>
+<codeline lineno="441"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="442"><highlight class="normal"></highlight></codeline>
+<codeline lineno="450" refid="group__cloud__api_ga8200644d153b615934f48d66e6a48a4f_1ga8200644d153b615934f48d66e6a48a4f" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__cloud__api_ga8200644d153b615934f48d66e6a48a4f_1ga8200644d153b615934f48d66e6a48a4f" kindref="member">cloud_notify_event</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*backend,</highlight></codeline>
+<codeline lineno="451"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structcloud__event" kindref="compound">cloud_event</ref><sp/>*evt,</highlight></codeline>
+<codeline lineno="452"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structcloud__backend__config_a323f6462a5e69dc16388a206f5bcf32b_1a323f6462a5e69dc16388a206f5bcf32b" kindref="member">user_data</ref>)</highlight></codeline>
+<codeline lineno="453"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="454"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(backend-&gt;<ref refid="structcloud__backend_a31c8126e59484178c913c3544f459ec9_1a31c8126e59484178c913c3544f459ec9" kindref="member">config</ref>-&gt;<ref refid="structcloud__backend__config_a314c7287e4d3fe7c43fd3fc9553e3703_1a314c7287e4d3fe7c43fd3fc9553e3703" kindref="member">handler</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="455"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>backend-&gt;<ref refid="structcloud__backend_a31c8126e59484178c913c3544f459ec9_1a31c8126e59484178c913c3544f459ec9" kindref="member">config</ref>-&gt;<ref refid="structcloud__backend__config_a314c7287e4d3fe7c43fd3fc9553e3703_1a314c7287e4d3fe7c43fd3fc9553e3703" kindref="member">handler</ref>(backend,<sp/>evt,<sp/><ref refid="structcloud__backend__config_a323f6462a5e69dc16388a206f5bcf32b_1a323f6462a5e69dc16388a206f5bcf32b" kindref="member">user_data</ref>);</highlight></codeline>
+<codeline lineno="456"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="457"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="458"><highlight class="normal"></highlight></codeline>
+<codeline lineno="467" refid="group__cloud__api_ga4b9c7fd192df8927529970cd406696f9_1ga4b9c7fd192df8927529970cd406696f9" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structcloud__backend" kindref="compound">cloud_backend</ref><sp/>*<ref refid="group__cloud__api_ga4b9c7fd192df8927529970cd406696f9_1ga4b9c7fd192df8927529970cd406696f9" kindref="member">cloud_get_binding</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*name);</highlight></codeline>
+<codeline lineno="468"><highlight class="normal"></highlight></codeline>
+<codeline lineno="469" refid="group__cloud__api_ga7f0285fb1cf452b338b284655da892ef_1ga7f0285fb1cf452b338b284655da892ef" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CLOUD_BACKEND_DEFINE(_name,<sp/>_api)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="470"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="471"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>static<sp/>struct<sp/>cloud_backend_config<sp/>UTIL_CAT(_name,<sp/>_config)<sp/>=<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="472"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="473"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.name<sp/>=<sp/>STRINGIFY(_name)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="474"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="475"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="476"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>static<sp/>const<sp/>struct<sp/>cloud_backend<sp/>_name<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="477"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__attribute__<sp/>((section(&quot;.cloud_backends&quot;</highlight><highlight class="normal">)))<sp/>__attribute__((used))<sp/>=<sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="478"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="479"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.api<sp/>=<sp/>&amp;_api,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="480"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.config<sp/>=<sp/>&amp;UTIL_CAT(_name,<sp/>_config)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="481"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="482"><highlight class="normal"></highlight></codeline>
+<codeline lineno="487"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>ZEPHYR_INCLUDE_CLOUD_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/net/cloud.h"/>
+  </compounddef>
+</doxygen>

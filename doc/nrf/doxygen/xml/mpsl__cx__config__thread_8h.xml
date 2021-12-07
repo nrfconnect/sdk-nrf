@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="mpsl__cx__config__thread_8h" kind="file" language="C++">
+    <compoundname>mpsl_cx_config_thread.h</compoundname>
+    <includes local="no">stdbool.h</includes>
+    <includes local="no">stdint.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/mpsl/mpsl_cx_config_thread.h</label>
+        <link refid="mpsl__cx__config__thread_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stdbool.h</label>
+      </node>
+      <node id="3">
+        <label>stdint.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structmpsl__cx__thread__interface__config" prot="public">mpsl_cx_thread_interface_config</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__mpsl__cx__thread_ga634697680f574716f0b13867f9ae75dc_1ga634697680f574716f0b13867f9ae75dc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>int32_t mpsl_cx_thread_interface_config_set</definition>
+        <argsstring>(struct mpsl_cx_thread_interface_config const *const config)</argsstring>
+        <name>mpsl_cx_thread_interface_config_set</name>
+        <param>
+          <type>struct <ref refid="structmpsl__cx__thread__interface__config" kindref="compound">mpsl_cx_thread_interface_config</ref> const *const</type>
+          <declname>config</declname>
+        </param>
+        <briefdescription>
+<para>Configures the Thread Radio Coexistence interface. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function sets device interface parameters for the Coexistence module. The module is used to control PTA interface through the given pins and resources.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">config</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the interface parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Coexistence interface successfully configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-NRF_EPERM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Coexistence interface is not available. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/mpsl/mpsl_cx_config_thread.h" line="43" column="9" declfile="include/mpsl/mpsl_cx_config_thread.h" declline="43" declcolumn="9"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MPSL_CX_CONFIG_THREAD_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MPSL_CX_CONFIG_THREAD_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdbool.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdint.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="structmpsl__cx__thread__interface__config" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmpsl__cx__thread__interface__config" kindref="compound">mpsl_cx_thread_interface_config</ref><sp/>{</highlight></codeline>
+<codeline lineno="25" refid="structmpsl__cx__thread__interface__config_ac9400c4bf85c14e133a771f23294a87d_1ac9400c4bf85c14e133a771f23294a87d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structmpsl__cx__thread__interface__config_ac9400c4bf85c14e133a771f23294a87d_1ac9400c4bf85c14e133a771f23294a87d" kindref="member">request_pin</ref>;</highlight></codeline>
+<codeline lineno="27" refid="structmpsl__cx__thread__interface__config_afd0a4c6556c2b990198392f4246a5853_1afd0a4c6556c2b990198392f4246a5853" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structmpsl__cx__thread__interface__config_afd0a4c6556c2b990198392f4246a5853_1afd0a4c6556c2b990198392f4246a5853" kindref="member">priority_pin</ref>;</highlight></codeline>
+<codeline lineno="29" refid="structmpsl__cx__thread__interface__config_ad635e8693b3605d9743de32881180305_1ad635e8693b3605d9743de32881180305" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structmpsl__cx__thread__interface__config_ad635e8693b3605d9743de32881180305_1ad635e8693b3605d9743de32881180305" kindref="member">granted_pin</ref>;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="group__mpsl__cx__thread_ga634697680f574716f0b13867f9ae75dc_1ga634697680f574716f0b13867f9ae75dc" refkind="member"><highlight class="normal">int32_t<sp/><ref refid="group__mpsl__cx__thread_ga634697680f574716f0b13867f9ae75dc_1ga634697680f574716f0b13867f9ae75dc" kindref="member">mpsl_cx_thread_interface_config_set</ref>(</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structmpsl__cx__thread__interface__config" kindref="compound">mpsl_cx_thread_interface_config</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>config);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>MPSL_CX_CONFIG_THREAD_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/mpsl/mpsl_cx_config_thread.h"/>
+  </compounddef>
+</doxygen>

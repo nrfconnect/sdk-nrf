@@ -1,0 +1,174 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nrf__cloud__cell__pos" kind="group">
+    <compoundname>nrf_cloud_cell_pos</compoundname>
+    <title>nRF Cloud cellular positioning</title>
+    <innerclass refid="structnrf__cloud__cell__pos__result" prot="public">nrf_cloud_cell_pos_result</innerclass>
+    <innergroup refid="group__nrf__cloud__cell__pos__omit">Omit item from cellular positioning request.</innergroup>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nrf__cloud__cell__pos_1ga1a10f4b2178d3e44a94fa079642ae847" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_cell_pos_type</name>
+        <enumvalue id="group__nrf__cloud__cell__pos_ga1a10f4b2178d3e44a94fa079642ae847_1gga1a10f4b2178d3e44a94fa079642ae847ae5d7ab4fef5920cfcde2cb5bd480c03b" prot="public">
+          <name>CELL_POS_TYPE_SINGLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud__cell__pos_ga1a10f4b2178d3e44a94fa079642ae847_1gga1a10f4b2178d3e44a94fa079642ae847a80d776602378012eb9afdd978dc89c60" prot="public">
+          <name>CELL_POS_TYPE_MULTI</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Cellular positioning request type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_cell_pos.h" line="27" column="1" bodyfile="include/net/nrf_cloud_cell_pos.h" bodystart="27" bodyend="30"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nrf__cloud__cell__pos_1gadb4277fc37358b74729a1feb3553d72f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_cell_pos_request_json_get</definition>
+        <argsstring>(const struct lte_lc_cells_info *const cells_inf, const bool request_loc, cJSON **req_obj_out)</argsstring>
+        <name>nrf_cloud_cell_pos_request_json_get</name>
+        <param>
+          <type>const struct <ref refid="structlte__lc__cells__info" kindref="compound">lte_lc_cells_info</ref> *const</type>
+          <declname>cells_inf</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>request_loc</declname>
+        </param>
+        <param>
+          <type>cJSON **</type>
+          <declname>req_obj_out</declname>
+        </param>
+        <briefdescription>
+<para>Get the reference to a cJSON object containing a cell position request. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cells_inf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cell info. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>request_loc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, cloud will send location to the device. If false, cloud will not send location to the device. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>req_obj_out</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer used to get the reference to the generated cJSON object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_cell_pos.h" line="94" column="5" declfile="include/net/nrf_cloud_cell_pos.h" declline="94" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud__cell__pos_1ga16d13425d2dfb00b0753a70b2b3c96c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_cell_pos_process</definition>
+        <argsstring>(const char *buf, struct nrf_cloud_cell_pos_result *result)</argsstring>
+        <name>nrf_cloud_cell_pos_process</name>
+        <param>
+          <type>const char *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnrf__cloud__cell__pos__result" kindref="compound">nrf_cloud_cell_pos_result</ref> *</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+<para>Processes cellular positioning data received from nRF Cloud via MQTT or REST. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to data received from nRF Cloud. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>result</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to buffer for parsing result.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If processed successfully and cell-based location found. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>1</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If processed successfully but no cell-based location found. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_cell_pos.h" line="106" column="5" declfile="include/net/nrf_cloud_cell_pos.h" declline="106" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nrf__cloud__cell__pos_1gab31e9c9f7665e443110cdfb83c99c709" prot="public" static="no">
+        <name>NRF_CLOUD_CELL_POS_TIME_ADV_MAX</name>
+        <initializer><ref refid="group__lte__lc_gaaf135bb70fdf0c29469f7ddf768eec03_1gaaf135bb70fdf0c29469f7ddf768eec03" kindref="member">LTE_LC_CELL_TIMING_ADVANCE_MAX</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_cell_pos.h" line="49" column="9" bodyfile="include/net/nrf_cloud_cell_pos.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

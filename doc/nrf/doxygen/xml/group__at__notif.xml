@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__at__notif" kind="group">
+    <compoundname>at_notif</compoundname>
+    <title>AT command notification manager</title>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__at__notif_1ga3655d8124610f2beca81783eda6bf348" prot="public" static="no">
+        <type>void(*</type>
+        <definition>at_notif_handler_t</definition>
+        <argsstring>)(void *context, const char *response)</argsstring>
+        <name>at_notif_handler_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Because this driver let multiple threads share the same socket, it must make sure that the correct thread gets the correct data returned from the AT interface. Notifications will be dispatched to handlers registered using the <ref refid="group__at__notif_ga3fd422f9a2428f1d3ea45a23adae3986_1ga3fd422f9a2428f1d3ea45a23adae3986" kindref="member">at_notif_register_handler()</ref> function. Handlers can be de-registered using the <ref refid="group__at__notif_ga88648eb5a8229caeca7056ac0d72815a_1ga88648eb5a8229caeca7056ac0d72815a" kindref="member">at_notif_deregister_handler()</ref> function.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to context provided by the module which has registered the handler. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>response</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null terminated string containing the modem message </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_notif.h" line="40" column="9" bodyfile="include/modem/at_notif.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__at__notif_1ga8695b40bd52b72a04af04159caf003b3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_notif_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>at_notif_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize AT command notification manager. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Zero on success, non-zero otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_notif.h" line="46" column="5" declfile="include/modem/at_notif.h" declline="46" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__notif_1ga3fd422f9a2428f1d3ea45a23adae3986" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_notif_register_handler</definition>
+        <argsstring>(void *context, at_notif_handler_t handler)</argsstring>
+        <name>at_notif_register_handler</name>
+        <param>
+          <type>void *</type>
+          <declname>context</declname>
+        </param>
+        <param>
+          <type><ref refid="group__at__notif_ga3655d8124610f2beca81783eda6bf348_1ga3655d8124610f2beca81783eda6bf348" kindref="member">at_notif_handler_t</ref></type>
+          <declname>handler</declname>
+        </param>
+        <briefdescription>
+<para>Function to register AT command notification handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>If the same combination of context and handler exists in the memory, then the request will be ignored and command execution will be regarded as finished successfully.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to context provided by the module which has registered the handler. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a received notification handler function of type <ref refid="group__at__notif_ga3655d8124610f2beca81783eda6bf348_1ga3655d8124610f2beca81783eda6bf348" kindref="member">at_notif_handler_t</ref>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If command execution was successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOBUFS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If memory cannot be allocated. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If handler is a NULL pointer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_notif.h" line="64" column="5" declfile="include/modem/at_notif.h" declline="64" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__notif_1ga88648eb5a8229caeca7056ac0d72815a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int at_notif_deregister_handler</definition>
+        <argsstring>(void *context, at_notif_handler_t handler)</argsstring>
+        <name>at_notif_deregister_handler</name>
+        <param>
+          <type>void *</type>
+          <declname>context</declname>
+        </param>
+        <param>
+          <type><ref refid="group__at__notif_ga3655d8124610f2beca81783eda6bf348_1ga3655d8124610f2beca81783eda6bf348" kindref="member">at_notif_handler_t</ref></type>
+          <declname>handler</declname>
+        </param>
+        <briefdescription>
+<para>Function to de-register AT command notification handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to context provided by the module which has registered the handler. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a received notification handler function of type <ref refid="group__at__notif_ga3655d8124610f2beca81783eda6bf348_1ga3655d8124610f2beca81783eda6bf348" kindref="member">at_notif_handler_t</ref>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If command execution was successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENXIO</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the combination of context and handler cannot be found. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If handler is a NULL pointer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/at_notif.h" line="79" column="5" declfile="include/modem/at_notif.h" declline="79" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Public APIs for the AT command notification manager. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

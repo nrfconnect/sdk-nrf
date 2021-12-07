@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__gzll__glue" kind="group">
+    <compoundname>gzll_glue</compoundname>
+    <title>Gazell Link Layer glue</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__gzll__glue_1gaad04e90d8849dc8adccd30ac6bca77d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool gzll_glue_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>gzll_glue_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Gazell Link Layer glue initialization. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if initialization is successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if initialization is unsuccessful. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/gzll_glue.h" line="37" column="6" declfile="include/gzll_glue.h" declline="37" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>File defines a set of functions and variables called by Gazell Link Layer. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

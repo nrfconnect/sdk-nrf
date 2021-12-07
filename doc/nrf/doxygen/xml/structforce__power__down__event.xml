@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structforce__power__down__event" kind="struct" language="C++" prot="public">
+    <compoundname>force_power_down_event</compoundname>
+    <includes refid="force__power__down__event_8h" local="no">force_power_down_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structforce__power__down__event_a4c995bc9ef378049fbae0741fa0aa338_1a4c995bc9ef378049fbae0741fa0aa338" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header force_power_down_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event header. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/force_power_down_event.h" line="34" column="19" bodyfile="include/caf/events/force_power_down_event.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Simple event to force a quick power down. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The event is called when the device has to power down quickly, without waiting. The device would power down if no wakeup event is generated in short period of time. The keep_alive event would be ignored. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>force_power_down_event</label>
+        <link refid="structforce__power__down__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/caf/events/force_power_down_event.h" line="32" column="1" bodyfile="include/caf/events/force_power_down_event.h" bodystart="32" bodyend="35"/>
+    <listofallmembers>
+      <member refid="structforce__power__down__event_a4c995bc9ef378049fbae0741fa0aa338_1a4c995bc9ef378049fbae0741fa0aa338" prot="public" virt="non-virtual"><scope>force_power_down_event</scope><name>header</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

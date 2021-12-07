@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structcloud__data__ui" kind="struct" language="C++" prot="public">
+    <compoundname>cloud_data_ui</compoundname>
+    <includes refid="v2_2src_2cloud_2cloud__codec_2cloud__codec_8h" local="no">cloud_codec.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structcloud__data__ui_ac35fb04d6c938c2b83d275a8b6d93ebf_1ac35fb04d6c938c2b83d275a8b6d93ebf" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int cloud_data_ui::btn</definition>
+        <argsstring></argsstring>
+        <name>btn</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Button number. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="183" column="5" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="183" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__ui_a7ca7eb4809b0fa92beba23f7435813a0_1a7ca7eb4809b0fa92beba23f7435813a0" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t cloud_data_ui::btn_ts</definition>
+        <argsstring></argsstring>
+        <name>btn_ts</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Button data timestamp. UNIX milliseconds. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="185" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="185" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__ui_a0aaacb931de700535d97d5def2fb79e9_1a0aaacb931de700535d97d5def2fb79e9" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool cloud_data_ui::queued</definition>
+        <argsstring></argsstring>
+        <name>queued</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Flag signifying that the data entry is to be encoded. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="187" column="6" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="187" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="181" column="1" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="181" bodyend="188"/>
+    <listofallmembers>
+      <member refid="structcloud__data__ui_ac35fb04d6c938c2b83d275a8b6d93ebf_1ac35fb04d6c938c2b83d275a8b6d93ebf" prot="public" virt="non-virtual"><scope>cloud_data_ui</scope><name>btn</name></member>
+      <member refid="structcloud__data__ui_a7ca7eb4809b0fa92beba23f7435813a0_1a7ca7eb4809b0fa92beba23f7435813a0" prot="public" virt="non-virtual"><scope>cloud_data_ui</scope><name>btn_ts</name></member>
+      <member refid="structcloud__data__ui_a0aaacb931de700535d97d5def2fb79e9_1a0aaacb931de700535d97d5def2fb79e9" prot="public" virt="non-virtual"><scope>cloud_data_ui</scope><name>queued</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

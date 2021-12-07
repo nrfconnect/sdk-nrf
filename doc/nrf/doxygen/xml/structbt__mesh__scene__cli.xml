@@ -1,0 +1,183 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__scene__cli" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_scene_cli</compoundname>
+    <includes refid="scene__cli_8h" local="no">scene_cli.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__scene__cli_a0945c74c7ff478669e7295b0b6564eee_1a0945c74c7ff478669e7295b0b6564eee" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_mesh_scene_cli::status) (struct bt_mesh_scene_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_scene_state *state)</definition>
+        <argsstring>)(struct bt_mesh_scene_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_scene_state *state)</argsstring>
+        <name>status</name>
+        <briefdescription>
+<para>Status message callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene client model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">state</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Received scene state. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="58" column="1" bodyfile="include/bluetooth/mesh/scene_cli.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scene__cli_aaeee21f6e0f5b5c50a76b44f9e5ddfa2_1aaeee21f6e0f5b5c50a76b44f9e5ddfa2" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_mesh_scene_cli::scene_register) (struct bt_mesh_scene_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_scene_register *reg)</definition>
+        <argsstring>)(struct bt_mesh_scene_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_scene_register *reg)</argsstring>
+        <name>scene_register</name>
+        <briefdescription>
+<para>Scene register message callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene client model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">reg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Received scene register. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="68" column="1" bodyfile="include/bluetooth/mesh/scene_cli.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scene__cli_a5ed82b1b7c0b404b601a842923da6e23_1a5ed82b1b7c0b404b601a842923da6e23" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model *</type>
+        <definition>struct bt_mesh_model* bt_mesh_scene_cli::model</definition>
+        <argsstring></argsstring>
+        <name>model</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="73" column="20" bodyfile="include/bluetooth/mesh/scene_cli.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scene__cli_a41dcbbab655125d30393202124e7c218_1a41dcbbab655125d30393202124e7c218" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model_pub</type>
+        <definition>struct bt_mesh_model_pub bt_mesh_scene_cli::pub</definition>
+        <argsstring></argsstring>
+        <name>pub</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="75" column="24" bodyfile="include/bluetooth/mesh/scene_cli.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scene__cli_ab3ea8a49b9e4139b132d44274502fbf5_1ab3ea8a49b9e4139b132d44274502fbf5" prot="public" static="no" mutable="no">
+        <type>struct net_buf_simple</type>
+        <definition>struct net_buf_simple bt_mesh_scene_cli::pub_msg</definition>
+        <argsstring></argsstring>
+        <name>pub_msg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="77" column="21" bodyfile="include/bluetooth/mesh/scene_cli.h" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scene__cli_a877e2d0cc8b09ae035e440601cec68df_1a877e2d0cc8b09ae035e440601cec68df" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_scene_cli::buf[BT_MESH_MODEL_BUF_LEN(BT_MESH_SCENE_OP_RECALL, BT_MESH_SCENE_MSG_MAXLEN_RECALL)]</definition>
+        <argsstring>[BT_MESH_MODEL_BUF_LEN(BT_MESH_SCENE_OP_RECALL, BT_MESH_SCENE_MSG_MAXLEN_RECALL)]</argsstring>
+        <name>buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="79" column="9" bodyfile="include/bluetooth/mesh/scene_cli.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scene__cli_a7c21e7d3b8448979b936e17d300f2cc8_1a7c21e7d3b8448979b936e17d300f2cc8" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_msg_ack_ctx</type>
+        <definition>struct bt_mesh_msg_ack_ctx bt_mesh_scene_cli::ack_ctx</definition>
+        <argsstring></argsstring>
+        <name>ack_ctx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="82" column="26" bodyfile="include/bluetooth/mesh/scene_cli.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scene__cli_ac641f581e81083c6ebebcf8b11e0eea2_1ac641f581e81083c6ebebcf8b11e0eea2" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_scene_cli::tid</definition>
+        <argsstring></argsstring>
+        <name>tid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="84" column="9" bodyfile="include/bluetooth/mesh/scene_cli.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Scene client model instance. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/scene_cli.h" line="51" column="1" bodyfile="include/bluetooth/mesh/scene_cli.h" bodystart="51" bodyend="85"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__scene__cli_a7c21e7d3b8448979b936e17d300f2cc8_1a7c21e7d3b8448979b936e17d300f2cc8" prot="public" virt="non-virtual"><scope>bt_mesh_scene_cli</scope><name>ack_ctx</name></member>
+      <member refid="structbt__mesh__scene__cli_a877e2d0cc8b09ae035e440601cec68df_1a877e2d0cc8b09ae035e440601cec68df" prot="public" virt="non-virtual"><scope>bt_mesh_scene_cli</scope><name>buf</name></member>
+      <member refid="structbt__mesh__scene__cli_a5ed82b1b7c0b404b601a842923da6e23_1a5ed82b1b7c0b404b601a842923da6e23" prot="public" virt="non-virtual"><scope>bt_mesh_scene_cli</scope><name>model</name></member>
+      <member refid="structbt__mesh__scene__cli_a41dcbbab655125d30393202124e7c218_1a41dcbbab655125d30393202124e7c218" prot="public" virt="non-virtual"><scope>bt_mesh_scene_cli</scope><name>pub</name></member>
+      <member refid="structbt__mesh__scene__cli_ab3ea8a49b9e4139b132d44274502fbf5_1ab3ea8a49b9e4139b132d44274502fbf5" prot="public" virt="non-virtual"><scope>bt_mesh_scene_cli</scope><name>pub_msg</name></member>
+      <member refid="structbt__mesh__scene__cli_aaeee21f6e0f5b5c50a76b44f9e5ddfa2_1aaeee21f6e0f5b5c50a76b44f9e5ddfa2" prot="public" virt="non-virtual"><scope>bt_mesh_scene_cli</scope><name>scene_register</name></member>
+      <member refid="structbt__mesh__scene__cli_a0945c74c7ff478669e7295b0b6564eee_1a0945c74c7ff478669e7295b0b6564eee" prot="public" virt="non-virtual"><scope>bt_mesh_scene_cli</scope><name>status</name></member>
+      <member refid="structbt__mesh__scene__cli_ac641f581e81083c6ebebcf8b11e0eea2_1ac641f581e81083c6ebebcf8b11e0eea2" prot="public" virt="non-virtual"><scope>bt_mesh_scene_cli</scope><name>tid</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

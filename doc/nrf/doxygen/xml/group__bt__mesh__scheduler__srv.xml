@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__scheduler__srv" kind="group">
+    <compoundname>bt_mesh_scheduler_srv</compoundname>
+    <title>Scheduler Server model</title>
+    <innerclass refid="structbt__mesh__scheduler__srv" prot="public">bt_mesh_scheduler_srv</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__scheduler__srv_1gacff2b7b1f5e022154e11185480c75f52" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_scheduler_srv_time_update</definition>
+        <argsstring>(struct bt_mesh_scheduler_srv *srv)</argsstring>
+        <name>bt_mesh_scheduler_srv_time_update</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scheduler__srv" kindref="compound">bt_mesh_scheduler_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <briefdescription>
+<para>Update time of the scheduled action. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This API is required to update time if referenced time server updated Time Zone <ref refid="group__bt__mesh__time__srv_gade0ce76afb492f00de0f118ad38d8a5b_1ggade0ce76afb492f00de0f118ad38d8a5baa6eda533aa9b02af67726a3e9cb6408f" kindref="member">BT_MESH_TIME_SRV_ZONE_UPDATE</ref> or UTC <ref refid="group__bt__mesh__time__srv_gade0ce76afb492f00de0f118ad38d8a5b_1ggade0ce76afb492f00de0f118ad38d8a5bae92c707ae44482990a44253ec4f23030" kindref="member">BT_MESH_TIME_SRV_UTC_UPDATE</ref>.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scheduler server model.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully updated time of the ongoing action. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid parameters. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler_srv.h" line="128" column="5" declfile="include/bluetooth/mesh/scheduler_srv.h" declline="128" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__scheduler__srv_1ga3a9c85fabca3e925897a98c9f793fe5f" prot="public" static="no">
+        <name>BT_MESH_SCHEDULER_SRV_INIT</name>
+        <param><defname>_action_set_cb</defname></param>
+        <param><defname>_time_srv</defname></param>
+        <initializer>	{                                                                      \
+		.action_set_cb = _action_set_cb, .time_srv = _time_srv,        \
+	}</initializer>
+        <briefdescription>
+<para>Initialization parameters for <ref refid="group__bt__mesh__scheduler__srv" kindref="compound">Scheduler Server model</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_action_set_cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Action Set callback. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_time_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Timer server that is used for action scheduling. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler_srv.h" line="35" column="9" bodyfile="include/bluetooth/mesh/scheduler_srv.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__scheduler__srv_1ga7e357ee07da7bc0eb045db6077101c9e" prot="public" static="no">
+        <name>BT_MESH_MODEL_SCHEDULER_SRV</name>
+        <param><defname>_srv</defname></param>
+        <initializer>	<ref refid="group__bt__mesh__scene__srv_gaafb98fd13ba00ab41fc90def2fb1f550_1gaafb98fd13ba00ab41fc90def2fb1f550" kindref="member">BT_MESH_MODEL_SCENE_SRV</ref>(&amp;(_srv)-&gt;scene_srv),                           \
+	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_SCHEDULER_SRV,                       \
+			_bt_mesh_scheduler_srv_op,                             \
+			&amp;(_srv)-&gt;pub,                                          \
+			BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__scheduler__srv" kindref="compound">bt_mesh_scheduler_srv</ref>,  \
+						_srv),                         \
+			&amp;_bt_mesh_scheduler_srv_cb),                           \
+	BT_MESH_MODEL(BT_MESH_MODEL_ID_SCHEDULER_SETUP_SRV,                    \
+			_bt_mesh_scheduler_setup_srv_op,                       \
+			NULL,                                                  \
+			BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__scheduler__srv" kindref="compound">bt_mesh_scheduler_srv</ref>,  \
+						_srv))</initializer>
+        <briefdescription>
+<para>Scheduler Server model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>If the Scheduler model is registered on the element then the Scene model shouldn&apos;t. The Scheduler model includes already the Scene model.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__scheduler__srv" kindref="compound">Scheduler Server model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler_srv.h" line="50" column="9" bodyfile="include/bluetooth/mesh/scheduler_srv.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Scheduler Server model. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

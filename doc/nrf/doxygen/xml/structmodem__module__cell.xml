@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structmodem__module__cell" kind="struct" language="C++" prot="public">
+    <compoundname>modem_module_cell</compoundname>
+    <includes refid="modem__module__event_8h" local="no">modem_module_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmodem__module__cell_a9f84187af9c5f5becd877e88c3b5a40a_1a9f84187af9c5f5becd877e88c3b5a40a" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t modem_module_cell::cell_id</definition>
+        <argsstring></argsstring>
+        <name>cell_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>E-UTRAN cell ID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="71" column="10" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__cell_a79bcee3c878400b6af1a1ed1219202d5_1a79bcee3c878400b6af1a1ed1219202d5" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t modem_module_cell::tac</definition>
+        <argsstring></argsstring>
+        <name>tac</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Tracking area code. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="73" column="10" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>LTE cell information. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="69" column="1" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="69" bodyend="74"/>
+    <listofallmembers>
+      <member refid="structmodem__module__cell_a9f84187af9c5f5becd877e88c3b5a40a_1a9f84187af9c5f5becd877e88c3b5a40a" prot="public" virt="non-virtual"><scope>modem_module_cell</scope><name>cell_id</name></member>
+      <member refid="structmodem__module__cell_a79bcee3c878400b6af1a1ed1219202d5_1a79bcee3c878400b6af1a1ed1219202d5" prot="public" virt="non-virtual"><scope>modem_module_cell</scope><name>tac</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

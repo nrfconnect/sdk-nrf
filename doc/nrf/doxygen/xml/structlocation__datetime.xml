@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlocation__datetime" kind="struct" language="C++" prot="public">
+    <compoundname>location_datetime</compoundname>
+    <includes refid="location_8h" local="no">location.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlocation__datetime_aa125d2ddf67f7bd0c8a99b92dbc50c84_1aa125d2ddf67f7bd0c8a99b92dbc50c84" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool location_datetime::valid</definition>
+        <argsstring></argsstring>
+        <name>valid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>True if date and time are valid, false if not. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="82" column="6" bodyfile="include/modem/location.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__datetime_ad3c9beb7686511631aeddf2fc865bbf9_1ad3c9beb7686511631aeddf2fc865bbf9" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t location_datetime::year</definition>
+        <argsstring></argsstring>
+        <name>year</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>4-digit representation (Gregorian calendar). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="84" column="10" bodyfile="include/modem/location.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__datetime_af5ea25d0d24a74c87e7377a5f25b19d8_1af5ea25d0d24a74c87e7377a5f25b19d8" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t location_datetime::month</definition>
+        <argsstring></argsstring>
+        <name>month</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>1...12 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="86" column="9" bodyfile="include/modem/location.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__datetime_a078da19bfdc91c3bbb25ec36e58c0d18_1a078da19bfdc91c3bbb25ec36e58c0d18" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t location_datetime::day</definition>
+        <argsstring></argsstring>
+        <name>day</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>1...31 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="88" column="9" bodyfile="include/modem/location.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__datetime_acf066c55ed0c225defb18912110b2b4e_1acf066c55ed0c225defb18912110b2b4e" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t location_datetime::hour</definition>
+        <argsstring></argsstring>
+        <name>hour</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>0...23 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="90" column="9" bodyfile="include/modem/location.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__datetime_aab3ffaa02bc6fbcfe9bb62c099df3551_1aab3ffaa02bc6fbcfe9bb62c099df3551" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t location_datetime::minute</definition>
+        <argsstring></argsstring>
+        <name>minute</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>0...59 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="92" column="9" bodyfile="include/modem/location.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__datetime_a0ac984f75db1b2b8dea62671f4ce0fca_1a0ac984f75db1b2b8dea62671f4ce0fca" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t location_datetime::second</definition>
+        <argsstring></argsstring>
+        <name>second</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>0...59 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="94" column="9" bodyfile="include/modem/location.h" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__datetime_a9098ac7d7f97182a364a43246bfbcd7c_1a9098ac7d7f97182a364a43246bfbcd7c" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t location_datetime::ms</definition>
+        <argsstring></argsstring>
+        <name>ms</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>0...999 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="96" column="10" bodyfile="include/modem/location.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Date and time (UTC). </para>
+    </detaileddescription>
+    <location file="include/modem/location.h" line="80" column="1" bodyfile="include/modem/location.h" bodystart="80" bodyend="97"/>
+    <listofallmembers>
+      <member refid="structlocation__datetime_a078da19bfdc91c3bbb25ec36e58c0d18_1a078da19bfdc91c3bbb25ec36e58c0d18" prot="public" virt="non-virtual"><scope>location_datetime</scope><name>day</name></member>
+      <member refid="structlocation__datetime_acf066c55ed0c225defb18912110b2b4e_1acf066c55ed0c225defb18912110b2b4e" prot="public" virt="non-virtual"><scope>location_datetime</scope><name>hour</name></member>
+      <member refid="structlocation__datetime_aab3ffaa02bc6fbcfe9bb62c099df3551_1aab3ffaa02bc6fbcfe9bb62c099df3551" prot="public" virt="non-virtual"><scope>location_datetime</scope><name>minute</name></member>
+      <member refid="structlocation__datetime_af5ea25d0d24a74c87e7377a5f25b19d8_1af5ea25d0d24a74c87e7377a5f25b19d8" prot="public" virt="non-virtual"><scope>location_datetime</scope><name>month</name></member>
+      <member refid="structlocation__datetime_a9098ac7d7f97182a364a43246bfbcd7c_1a9098ac7d7f97182a364a43246bfbcd7c" prot="public" virt="non-virtual"><scope>location_datetime</scope><name>ms</name></member>
+      <member refid="structlocation__datetime_a0ac984f75db1b2b8dea62671f4ce0fca_1a0ac984f75db1b2b8dea62671f4ce0fca" prot="public" virt="non-virtual"><scope>location_datetime</scope><name>second</name></member>
+      <member refid="structlocation__datetime_aa125d2ddf67f7bd0c8a99b92dbc50c84_1aa125d2ddf67f7bd0c8a99b92dbc50c84" prot="public" virt="non-virtual"><scope>location_datetime</scope><name>valid</name></member>
+      <member refid="structlocation__datetime_ad3c9beb7686511631aeddf2fc865bbf9_1ad3c9beb7686511631aeddf2fc865bbf9" prot="public" virt="non-virtual"><scope>location_datetime</scope><name>year</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

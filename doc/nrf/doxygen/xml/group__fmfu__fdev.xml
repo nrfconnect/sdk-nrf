@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__fmfu__fdev" kind="group">
+    <compoundname>fmfu_fdev</compoundname>
+    <title>Full Modem Firmware Update from flash device</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__fmfu__fdev_1gae857651d03f98ede5397d02736fceaec" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int fmfu_fdev_load</definition>
+        <argsstring>(uint8_t *buf, size_t buf_len, const struct device *fdev, size_t offset)</argsstring>
+        <name>fmfu_fdev_load</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buf_len</declname>
+        </param>
+        <param>
+          <type>const struct device *</type>
+          <declname>fdev</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>offset</declname>
+        </param>
+        <briefdescription>
+<para>Load the modem firmware update from the specified flash device to the modem. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The modem library must be initialized in DFU mode before calling this function.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to buffer used to read data from external flash. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">buf_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of provided buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">fdev</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Flash device to read modem firmware from. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">offset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Offset within configured flash device to first byte of modem update data.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>non-negative on success, negative error code on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/fmfu_fdev.h" line="39" column="5" declfile="include/dfu/fmfu_fdev.h" declline="39" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Functions for applying a full modem firmware update from flash device. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

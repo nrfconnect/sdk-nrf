@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structml__result__signin__event" kind="struct" language="C++" prot="public">
+    <compoundname>ml_result_signin_event</compoundname>
+    <includes refid="ml__result__event_8h" local="no">ml_result_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structml__result__signin__event_a5f2a29009ed126745ca64ef4a390b867_1a5f2a29009ed126745ca64ef4a390b867" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header ml_result_signin_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event header. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/machine_learning/src/events/ml_result_event.h" line="40" column="19" bodyfile="applications/machine_learning/src/events/ml_result_event.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structml__result__signin__event_a71b380e0efc6ecf40074328e69e05636_1a71b380e0efc6ecf40074328e69e05636" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t ml_result_signin_event::module_idx</definition>
+        <argsstring></argsstring>
+        <name>module_idx</name>
+        <briefdescription>
+<para>The index of the module. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/machine_learning/src/events/ml_result_event.h" line="42" column="8" bodyfile="applications/machine_learning/src/events/ml_result_event.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structml__result__signin__event_a33f5894715a941f3ea44939f95ae5b67_1a33f5894715a941f3ea44939f95ae5b67" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool ml_result_signin_event::state</definition>
+        <argsstring></argsstring>
+        <name>state</name>
+        <briefdescription>
+<para>Requested state: true to sign in, false to sign off. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/machine_learning/src/events/ml_result_event.h" line="43" column="6" bodyfile="applications/machine_learning/src/events/ml_result_event.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Sign in event. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The event that is called by modules to mark that the module actively listens for the result event. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ml_result_signin_event</label>
+        <link refid="structml__result__signin__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/machine_learning/src/events/ml_result_event.h" line="39" column="1" bodyfile="applications/machine_learning/src/events/ml_result_event.h" bodystart="39" bodyend="44"/>
+    <listofallmembers>
+      <member refid="structml__result__signin__event_a5f2a29009ed126745ca64ef4a390b867_1a5f2a29009ed126745ca64ef4a390b867" prot="public" virt="non-virtual"><scope>ml_result_signin_event</scope><name>header</name></member>
+      <member refid="structml__result__signin__event_a71b380e0efc6ecf40074328e69e05636_1a71b380e0efc6ecf40074328e69e05636" prot="public" virt="non-virtual"><scope>ml_result_signin_event</scope><name>module_idx</name></member>
+      <member refid="structml__result__signin__event_a33f5894715a941f3ea44939f95ae5b67_1a33f5894715a941f3ea44939f95ae5b67" prot="public" virt="non-virtual"><scope>ml_result_signin_event</scope><name>state</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

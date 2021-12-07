@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__dev__descr" kind="group">
+    <compoundname>dev_descr</compoundname>
+    <title>Device description</title>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__dev__descr_1gac4641260dc956b40f8cfa8fb6116e00e" prot="public" static="no" mutable="no">
+        <type>const struct @46</type>
+        <definition>const struct @46 dev_descr_include_once</definition>
+        <argsstring></argsstring>
+        <name>dev_descr_include_once</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/dev_descr.h" line="22" column="36"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__dev__descr_1gabc303480f7187772d6edca53b2cb0ce5" prot="public" static="yes" mutable="no">
+        <type>struct bt_uuid_128</type>
+        <definition>struct bt_uuid_128 custom_desc_uuid</definition>
+        <argsstring></argsstring>
+        <name>custom_desc_uuid</name>
+        <initializer>= BT_UUID_INIT_128(
+	BT_UUID_128_ENCODE(0x00000001, 0x7544, 0x13ac, 0x9846, 0x2e781c091d25))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/dev_descr.h" line="29" column="25" bodyfile="applications/nrf_desktop/configuration/common/dev_descr.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__dev__descr_1ga225c741aee1d96148e374d4f4e7e1a64" prot="public" static="yes" mutable="no">
+        <type>const struct bt_uuid_128</type>
+        <definition>const struct bt_uuid_128 custom_desc_chrc_uuid</definition>
+        <argsstring></argsstring>
+        <name>custom_desc_chrc_uuid</name>
+        <initializer>= BT_UUID_INIT_128(
+	BT_UUID_128_ENCODE(0x00000002, 0x7544, 0x13ac, 0x9846, 0x2e781c091d25))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/dev_descr.h" line="32" column="31" bodyfile="applications/nrf_desktop/configuration/common/dev_descr.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__dev__descr_1ga137e1acdafb135fc967e24cf0142a802" prot="public" static="yes" mutable="no">
+        <type>const struct bt_uuid_128</type>
+        <definition>const struct bt_uuid_128 hwid_chrc_uuid</definition>
+        <argsstring></argsstring>
+        <name>hwid_chrc_uuid</name>
+        <initializer>= BT_UUID_INIT_128(
+	BT_UUID_128_ENCODE(0x00000003, 0x7544, 0x13ac, 0x9846, 0x2e781c091d25))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/dev_descr.h" line="35" column="31" bodyfile="applications/nrf_desktop/configuration/common/dev_descr.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__dev__descr_1ga24907ea4740cf7b9404a66d9f59763eb" prot="public" static="no">
+        <name>DEV_DESCR_LLPM_SUPPORT_POS</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/dev_descr.h" line="24" column="9" bodyfile="applications/nrf_desktop/configuration/common/dev_descr.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__dev__descr_1ga4229bb6fb932898e9ec31e095a4f3fdf" prot="public" static="no">
+        <name>DEV_DESCR_LLPM_SUPPORT_SIZE</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/dev_descr.h" line="25" column="9" bodyfile="applications/nrf_desktop/configuration/common/dev_descr.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__dev__descr_1gab7e334b0d473aca9604a2522c0702e78" prot="public" static="no">
+        <name>DEV_DESCR_LEN</name>
+        <initializer>					(<ref refid="group__dev__descr_ga24907ea4740cf7b9404a66d9f59763eb_1ga24907ea4740cf7b9404a66d9f59763eb" kindref="member">DEV_DESCR_LLPM_SUPPORT_POS</ref> + \
+					<ref refid="group__dev__descr_ga4229bb6fb932898e9ec31e095a4f3fdf_1ga4229bb6fb932898e9ec31e095a4f3fdf" kindref="member">DEV_DESCR_LLPM_SUPPORT_SIZE</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/dev_descr.h" line="26" column="9" bodyfile="applications/nrf_desktop/configuration/common/dev_descr.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Custom GATT Service containing device description. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

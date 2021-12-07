@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__loc__global" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_loc_global</compoundname>
+    <includes refid="gen__loc_8h" local="no">gen_loc.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__loc__global_a8a65aee98d24d940d03601b9902c041f_1a8a65aee98d24d940d03601b9902c041f" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double bt_mesh_loc_global::latitude</definition>
+        <argsstring></argsstring>
+        <name>latitude</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Global WGS84 North coordinate in degrees. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="56" column="8" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__loc__global_a350d5d2fa66f6deb3b63a2e3b5ecfc16_1a350d5d2fa66f6deb3b63a2e3b5ecfc16" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double bt_mesh_loc_global::longitude</definition>
+        <argsstring></argsstring>
+        <name>longitude</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Global WGS84 East coordinate in degrees. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="58" column="8" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__loc__global_a7da79fee65bd7b9180ca0c9dc3fce727_1a7da79fee65bd7b9180ca0c9dc3fce727" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t bt_mesh_loc_global::altitude</definition>
+        <argsstring></argsstring>
+        <name>altitude</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Global altitude above the WGS84 datum in meters. <simplesect kind="see"><para><ref refid="group__bt__mesh__loc__altitude__defines" kindref="compound">Defines for altitude.</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="63" column="9" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Global location parameters. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/gen_loc.h" line="54" column="1" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="54" bodyend="64"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__loc__global_a7da79fee65bd7b9180ca0c9dc3fce727_1a7da79fee65bd7b9180ca0c9dc3fce727" prot="public" virt="non-virtual"><scope>bt_mesh_loc_global</scope><name>altitude</name></member>
+      <member refid="structbt__mesh__loc__global_a8a65aee98d24d940d03601b9902c041f_1a8a65aee98d24d940d03601b9902c041f" prot="public" virt="non-virtual"><scope>bt_mesh_loc_global</scope><name>latitude</name></member>
+      <member refid="structbt__mesh__loc__global_a350d5d2fa66f6deb3b63a2e3b5ecfc16_1a350d5d2fa66f6deb3b63a2e3b5ecfc16" prot="public" virt="non-virtual"><scope>bt_mesh_loc_global</scope><name>longitude</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

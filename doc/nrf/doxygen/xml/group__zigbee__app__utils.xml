@@ -1,0 +1,682 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__zigbee__app__utils" kind="group">
+    <compoundname>zigbee_app_utils</compoundname>
+    <title>Zigbee application utilities library.</title>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__zigbee__app__utils_1ga55f6f814c532d979ba36d6eeb317cb33" prot="public" static="no" strong="no">
+        <type></type>
+        <name>addr_type_t</name>
+        <enumvalue id="group__zigbee__app__utils_ga55f6f814c532d979ba36d6eeb317cb33_1gga55f6f814c532d979ba36d6eeb317cb33a156537bd0faf441a451c955e4691af70" prot="public">
+          <name>ADDR_INVALID</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__zigbee__app__utils_ga55f6f814c532d979ba36d6eeb317cb33_1gga55f6f814c532d979ba36d6eeb317cb33ac423e63d5d3b7dc9a51412d8be371c54" prot="public">
+          <name>ADDR_ANY</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__zigbee__app__utils_ga55f6f814c532d979ba36d6eeb317cb33_1gga55f6f814c532d979ba36d6eeb317cb33a9e7eac96bf8cd155a02f121db090534a" prot="public">
+          <name>ADDR_SHORT</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__zigbee__app__utils_ga55f6f814c532d979ba36d6eeb317cb33_1gga55f6f814c532d979ba36d6eeb317cb33ab43bad30a7bc12908f16176e14c5660b" prot="public">
+          <name>ADDR_LONG</name>
+          <initializer>= 3</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Address type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><ref refid="group__zigbee__app__utils_ga55f6f814c532d979ba36d6eeb317cb33_1gga55f6f814c532d979ba36d6eeb317cb33a9e7eac96bf8cd155a02f121db090534a" kindref="member">ADDR_SHORT</ref> and <ref refid="group__zigbee__app__utils_ga55f6f814c532d979ba36d6eeb317cb33_1gga55f6f814c532d979ba36d6eeb317cb33ab43bad30a7bc12908f16176e14c5660b" kindref="member">ADDR_LONG</ref> correspond to APS addressing mode constants and must not be changed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_app_utils.h" line="132" column="1" bodyfile="include/zigbee/zigbee_app_utils.h" bodystart="132" bodyend="137"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__zigbee__app__utils_1gaa0b3a11c2d445d872290cae3474318c7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void zigbee_erase_persistent_storage</definition>
+        <argsstring>(zb_bool_t erase)</argsstring>
+        <name>zigbee_erase_persistent_storage</name>
+        <param>
+          <type>zb_bool_t</type>
+          <declname>erase</declname>
+        </param>
+        <briefdescription>
+<para>Function for setting the Erase persistent storage, depending on the erase pin. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If the erase pin (1.39 by default, defined in zigbee_app_utils.c) is shortened to the ground, then the persistent storage is erased. Otherwise, whether the storage is erased is decided upon the input parameter &apos;erase&apos;. This behaviour is only valid if PCA10056 is used.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">erase</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether to erase the persistent storage in case the erase pin is not shortened to the ground. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_app_utils.h" line="41" column="6" declfile="include/zigbee/zigbee_app_utils.h" declline="41" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__app__utils_1ga535284bd74bd75f63399efdb6ed70b58" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int to_hex_str</definition>
+        <argsstring>(char *out, uint16_t out_size, const uint8_t *in, uint8_t in_size, bool reverse)</argsstring>
+        <name>to_hex_str</name>
+        <param>
+          <type>char *</type>
+          <declname>out</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>out_size</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>in</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>in_size</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>reverse</declname>
+        </param>
+        <briefdescription>
+<para>Function for converting an input buffer to a hex string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">out</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the output buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">out_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the output buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">in</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the input buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">in_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the input buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">reverse</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, data output happens in the reverse order.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>snprintf-compatible value. Less than zero means encoding error. Non-negative value is the number of characters that would have been written if the supplied buffer had been large enough. Value greater than or equal to buf_len means that the supplied buffer was too small.</para>
+</simplesect>
+<simplesect kind="note"><para>Null terminator is written if buf_len is large enough, but does not count for the return value. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_app_utils.h" line="60" column="5" declfile="include/zigbee/zigbee_app_utils.h" declline="60" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__app__utils_1gacd92aca94f70fea1f58fd7a2f9d8593e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool parse_hex_str</definition>
+        <argsstring>(char const *in_str, uint8_t in_str_len, uint8_t *out_buff, uint8_t out_buff_size, bool reverse)</argsstring>
+        <name>parse_hex_str</name>
+        <param>
+          <type>char const *</type>
+          <declname>in_str</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>in_str_len</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>out_buff</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>out_buff_size</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>reverse</declname>
+        </param>
+        <briefdescription>
+<para>Read array of uint8_t from hex string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>in_str</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the input hex string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>in_str_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length, in characters, of the input string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>out_buff</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the output uint8_t array. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>out_buff_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size, in bytes, of the output uint8_t array. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>reverse</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true then parse from end to start.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the conversion succeed </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the conversion failed </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_app_utils.h" line="74" column="6" declfile="include/zigbee/zigbee_app_utils.h" declline="74" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__app__utils_1ga934917ffccb750fdb95daa37fe92f4c2" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool parse_hex_u8</definition>
+        <argsstring>(char const *s, uint8_t *value)</argsstring>
+        <name>parse_hex_u8</name>
+        <param>
+          <type>char const *</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Parse a hex string to uint8_t. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The function verifies if input is valid, i.e., if all input characters are valid hex digits. If an invalid character is found then function fails.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>s</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to input string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to output value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the conversion succeed </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the conversion failed </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_app_utils.h" line="88" column="20" bodyfile="include/zigbee/zigbee_app_utils.h" bodystart="88" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__app__utils_1ga14995ab1967f630a5561e72e0035be54" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool parse_hex_u16</definition>
+        <argsstring>(char const *s, uint16_t *value)</argsstring>
+        <name>parse_hex_u16</name>
+        <param>
+          <type>char const *</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type>uint16_t *</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Parse a hex string to uint16_t. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The function verifies if input is valid, i.e., if all input characters are valid hex digits. If an invalid character is found then function fails.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>s</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to input string. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to output value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the conversion succeed </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the conversion failed </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_app_utils.h" line="104" column="20" bodyfile="include/zigbee/zigbee_app_utils.h" bodystart="104" bodyend="107"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__app__utils_1ga1f8c5a9cc9be9b181873c3d9b73d1bbf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ieee_addr_to_str</definition>
+        <argsstring>(char *str_buf, uint16_t buf_len, const zb_ieee_addr_t in)</argsstring>
+        <name>ieee_addr_to_str</name>
+        <param>
+          <type>char *</type>
+          <declname>str_buf</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>buf_len</declname>
+        </param>
+        <param>
+          <type>const zb_ieee_addr_t</type>
+          <declname>in</declname>
+        </param>
+        <briefdescription>
+<para>Function for converting 64-bit address to hex string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">str_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to output buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">buf_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the buffer pointed by str_buf. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">in</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zigbee IEEE address to be converted to string.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>snprintf-compatible value. Less than zero means encoding error. Non-negative value is the number of characters that would have been written if the supplied buffer had been large enough. Value greater than or equal to buf_len means that the supplied buffer was too small.</para>
+</simplesect>
+<simplesect kind="note"><para>Null terminator is written if buf_len is large enough, but does not count for the return value. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_app_utils.h" line="124" column="5" declfile="include/zigbee/zigbee_app_utils.h" declline="124" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__app__utils_1ga3a627ae5f69cd16fb7cbd5b5dc9be340" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="group__zigbee__app__utils_ga55f6f814c532d979ba36d6eeb317cb33_1ga55f6f814c532d979ba36d6eeb317cb33" kindref="member">addr_type_t</ref></type>
+        <definition>addr_type_t parse_address</definition>
+        <argsstring>(const char *input, zb_addr_u *output, addr_type_t addr_type)</argsstring>
+        <name>parse_address</name>
+        <param>
+          <type>const char *</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>zb_addr_u *</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type><ref refid="group__zigbee__app__utils_ga55f6f814c532d979ba36d6eeb317cb33_1ga55f6f814c532d979ba36d6eeb317cb33" kindref="member">addr_type_t</ref></type>
+          <declname>addr_type</declname>
+        </param>
+        <briefdescription>
+<para>Function for parsing a null-terminated string of hex characters into 64-bit or 16-bit address. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The function will skip 0x suffix from input if present.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the input string string representing the address in big endian. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the resulting zb_addr_u variable. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>addr_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Expected address type.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Conversion result. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_app_utils.h" line="151" column="13" declfile="include/zigbee/zigbee_app_utils.h" declline="151" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__app__utils_1ga341730477e171d7a31da23608548204d" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool parse_long_address</definition>
+        <argsstring>(const char *input, zb_ieee_addr_t addr)</argsstring>
+        <name>parse_long_address</name>
+        <param>
+          <type>const char *</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>zb_ieee_addr_t</type>
+          <declname>addr</declname>
+        </param>
+        <briefdescription>
+<para>Function for parsing a null-terminated string of hex characters into a 64-bit address. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The function will skip 0x suffix from input if present.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the input string representing the address in big endian. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>addr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable where the address will be placed.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the conversion succeed </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the conversion failed </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_app_utils.h" line="166" column="20" bodyfile="include/zigbee/zigbee_app_utils.h" bodystart="166" bodyend="170"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__app__utils_1gac262ebd4749b548a2df14d5f03c7fbbb" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool parse_short_address</definition>
+        <argsstring>(const char *input, zb_uint16_t *addr)</argsstring>
+        <name>parse_short_address</name>
+        <param>
+          <type>const char *</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>zb_uint16_t *</type>
+          <declname>addr</declname>
+        </param>
+        <briefdescription>
+<para>Function for parsing a null-terminated string of hex characters into 16-bit address. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The function will skip 0x suffix from input if present.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the input string representing the address in big endian. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>addr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the a variable where address will be placed.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the conversion succeed </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the conversion failed </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_app_utils.h" line="184" column="20" bodyfile="include/zigbee/zigbee_app_utils.h" bodystart="184" bodyend="188"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__app__utils_1ga6b6634d6f953a82cfa481f79215e7932" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>zb_ret_t</type>
+        <definition>zb_ret_t zigbee_default_signal_handler</definition>
+        <argsstring>(zb_bufid_t bufid)</argsstring>
+        <name>zigbee_default_signal_handler</name>
+        <param>
+          <type>zb_bufid_t</type>
+          <declname>bufid</declname>
+        </param>
+        <briefdescription>
+<para>Function for passing signals to the default Zigbee stack event handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This function does not free the Zigbee buffer.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">bufid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Reference to the Zigbee stack buffer used to pass signal.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>RET_OK on success or error code on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_app_utils.h" line="199" column="10" declfile="include/zigbee/zigbee_app_utils.h" declline="199" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="group__zigbee__app__utils_1ga063837270adbbde280ae0de7397b8a7a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void zigbee_led_status_update</definition>
+        <argsstring>(zb_bufid_t bufid, uint32_t led_idx)</argsstring>
+        <name>zigbee_led_status_update</name>
+        <param>
+          <type>zb_bufid_t</type>
+          <declname>bufid</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>led_idx</declname>
+        </param>
+        <briefdescription>
+<para>Function for indicating the Zigbee network connection status on LED. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If the device is successfully commissioned, the LED is turned on. If the device is not commissioned or has left the network, the LED is turned off.</para>
+<para><simplesect kind="note"><para>This function does not free the Zigbee buffer.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">bufid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Reference to the Zigbee stack buffer used to pass signal. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">led_idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>LED index, as defined in the board-specific BSP header. The index starts from 0. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_app_utils.h" line="215" column="6" declfile="include/zigbee/zigbee_app_utils.h" declline="215" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Library with helper functions and routines. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Provides Zigbee default handler, helper functions for parsing and converting Zigbee data, indicating status of the device at a network using onboard LEDs. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structazure__fota__event" kind="struct" language="C++" prot="public">
+    <compoundname>azure_fota_event</compoundname>
+    <includes refid="azure__fota_8h" local="no">azure_fota.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structazure__fota__event_ab6c256de25e12b25da20553f690c0c2b_1ab6c256de25e12b25da20553f690c0c2b" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__azure__fota_gad2d2a2354ae00f180851b7561379a822_1gad2d2a2354ae00f180851b7561379a822" kindref="member">azure_fota_evt_type</ref></type>
+        <definition>enum azure_fota_evt_type azure_fota_event::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event type, <ref refid="group__azure__fota_gad2d2a2354ae00f180851b7561379a822_1gad2d2a2354ae00f180851b7561379a822" kindref="member">azure_fota_evt_type</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_fota.h" line="43" column="25" bodyfile="include/net/azure_fota.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structazure__fota__event_ad6a604b24c7b3b3ea33501f18412be9e_1ad6a604b24c7b3b3ea33501f18412be9e" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* azure_fota_event::report</definition>
+        <argsstring></argsstring>
+        <name>report</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the report associated with the event. A report is a JSON string with information of the state of the FOTA process intended to be sent to Azure IoT Hub device twin&apos;s reported property. A valid report is provided if the pointer is not NULL. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_fota.h" line="49" column="6" bodyfile="include/net/azure_fota.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structazure__fota__event_a0d6555a059caaf13aeffe7858faefaed_1a0d6555a059caaf13aeffe7858faefaed" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* azure_fota_event::version</definition>
+        <argsstring></argsstring>
+        <name>version</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_fota.h" line="51" column="6" bodyfile="include/net/azure_fota.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Azure FOTA event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/azure_fota.h" line="41" column="1" bodyfile="include/net/azure_fota.h" bodystart="41" bodyend="52"/>
+    <listofallmembers>
+      <member refid="structazure__fota__event_ad6a604b24c7b3b3ea33501f18412be9e_1ad6a604b24c7b3b3ea33501f18412be9e" prot="public" virt="non-virtual"><scope>azure_fota_event</scope><name>report</name></member>
+      <member refid="structazure__fota__event_ab6c256de25e12b25da20553f690c0c2b_1ab6c256de25e12b25da20553f690c0c2b" prot="public" virt="non-virtual"><scope>azure_fota_event</scope><name>type</name></member>
+      <member refid="structazure__fota__event_a0d6555a059caaf13aeffe7858faefaed_1a0d6555a059caaf13aeffe7858faefaed" prot="public" virt="non-virtual"><scope>azure_fota_event</scope><name>version</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

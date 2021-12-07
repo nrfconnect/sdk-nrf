@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__BT__SCAN__FILTER__MODE" kind="group">
+    <compoundname>BT_SCAN_FILTER_MODE</compoundname>
+    <title>Filter modes</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__BT__SCAN__FILTER__MODE_1gaf7f4b11364a5281c30408bf7a2bcc06f" prot="public" static="no">
+        <name>BT_SCAN_NAME_FILTER</name>
+        <initializer>0x01</initializer>
+        <briefdescription>
+<para>Filters the device name. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="44" column="9" bodyfile="include/bluetooth/scan.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__BT__SCAN__FILTER__MODE_1ga6cd8f8629d400bd59b8c214e9fe82d34" prot="public" static="no">
+        <name>BT_SCAN_ADDR_FILTER</name>
+        <initializer>0x02</initializer>
+        <briefdescription>
+<para>Filters the device address. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="47" column="9" bodyfile="include/bluetooth/scan.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__BT__SCAN__FILTER__MODE_1gaf96c04e5993f212eff90553022ab3281" prot="public" static="no">
+        <name>BT_SCAN_UUID_FILTER</name>
+        <initializer>0x04</initializer>
+        <briefdescription>
+<para>Filters the UUID. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="50" column="9" bodyfile="include/bluetooth/scan.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__BT__SCAN__FILTER__MODE_1ga03ecee69067f2835d2f55120e8a4d693" prot="public" static="no">
+        <name>BT_SCAN_APPEARANCE_FILTER</name>
+        <initializer>0x08</initializer>
+        <briefdescription>
+<para>Filters the appearance. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="53" column="9" bodyfile="include/bluetooth/scan.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__BT__SCAN__FILTER__MODE_1ga34057c658ca53aff5150a375d83e2b59" prot="public" static="no">
+        <name>BT_SCAN_SHORT_NAME_FILTER</name>
+        <initializer>0x10</initializer>
+        <briefdescription>
+<para>Filters the device short name. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="56" column="9" bodyfile="include/bluetooth/scan.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__BT__SCAN__FILTER__MODE_1ga13e6bfc11ab4633bc5e157c2c35716b0" prot="public" static="no">
+        <name>BT_SCAN_MANUFACTURER_DATA_FILTER</name>
+        <initializer>0x20</initializer>
+        <briefdescription>
+<para>Filters the manufacturer data. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="59" column="9" bodyfile="include/bluetooth/scan.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__BT__SCAN__FILTER__MODE_1ga6ab379ca716bc2eee99113ad0b40fb49" prot="public" static="no">
+        <name>BT_SCAN_ALL_FILTER</name>
+        <initializer>0x3F</initializer>
+        <briefdescription>
+<para>Uses the combination of all filters. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="62" column="9" bodyfile="include/bluetooth/scan.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

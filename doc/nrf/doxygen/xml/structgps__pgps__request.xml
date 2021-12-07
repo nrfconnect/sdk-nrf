@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structgps__pgps__request" kind="struct" language="C++" prot="public">
+    <compoundname>gps_pgps_request</compoundname>
+    <includes refid="nrf__cloud__pgps_8h" local="no">nrf_cloud_pgps.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structgps__pgps__request_a3344f862cf91dbc79811a6257d81eca8_1a3344f862cf91dbc79811a6257d81eca8" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t gps_pgps_request::prediction_count</definition>
+        <argsstring></argsstring>
+        <name>prediction_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of predictions desired. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="72" column="10" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__pgps__request_af14790d7451092de15dce82cb11c6962_1af14790d7451092de15dce82cb11c6962" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t gps_pgps_request::prediction_period_min</definition>
+        <argsstring></argsstring>
+        <name>prediction_period_min</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Validity time per prediction, in minutes. Valid range 120 to 480. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="74" column="10" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__pgps__request_a75e6ee4b7f044cc1810640b4c998daa6_1a75e6ee4b7f044cc1810640b4c998daa6" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t gps_pgps_request::gps_day</definition>
+        <argsstring></argsstring>
+        <name>gps_day</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of days since GPS time began on 6 Jan 1980 for the center of the first prediction desired. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="78" column="10" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__pgps__request_a5df595eeaf24585f79bc6f1925ea7acb_1a5df595eeaf24585f79bc6f1925ea7acb" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t gps_pgps_request::gps_time_of_day</definition>
+        <argsstring></argsstring>
+        <name>gps_time_of_day</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of seconds since the start of this GPS day for the center of the first prediction desired. Valid range 0 to 86399. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="82" column="10" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>P-GPS request type. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/nrf_cloud_pgps.h" line="70" column="1" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="70" bodyend="83"/>
+    <listofallmembers>
+      <member refid="structgps__pgps__request_a75e6ee4b7f044cc1810640b4c998daa6_1a75e6ee4b7f044cc1810640b4c998daa6" prot="public" virt="non-virtual"><scope>gps_pgps_request</scope><name>gps_day</name></member>
+      <member refid="structgps__pgps__request_a5df595eeaf24585f79bc6f1925ea7acb_1a5df595eeaf24585f79bc6f1925ea7acb" prot="public" virt="non-virtual"><scope>gps_pgps_request</scope><name>gps_time_of_day</name></member>
+      <member refid="structgps__pgps__request_a3344f862cf91dbc79811a6257d81eca8_1a3344f862cf91dbc79811a6257d81eca8" prot="public" virt="non-virtual"><scope>gps_pgps_request</scope><name>prediction_count</name></member>
+      <member refid="structgps__pgps__request_af14790d7451092de15dce82cb11c6962_1af14790d7451092de15dce82cb11c6962" prot="public" virt="non-virtual"><scope>gps_pgps_request</scope><name>prediction_period_min</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

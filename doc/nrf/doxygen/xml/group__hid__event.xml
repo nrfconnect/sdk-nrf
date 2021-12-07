@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__hid__event" kind="group">
+    <compoundname>hid_event</compoundname>
+    <title>HID Events</title>
+    <innerclass refid="structhid__report__event" prot="public">hid_report_event</innerclass>
+    <innerclass refid="structhid__report__subscriber__event" prot="public">hid_report_subscriber_event</innerclass>
+    <innerclass refid="structhid__report__sent__event" prot="public">hid_report_sent_event</innerclass>
+    <innerclass refid="structhid__report__subscription__event" prot="public">hid_report_subscription_event</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__hid__event_1gaa09fcafe85ba0f1d8a6ba5888ea10ada" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>EVENT_TYPE_DYNDATA_DECLARE</definition>
+        <argsstring>(hid_report_event)</argsstring>
+        <name>EVENT_TYPE_DYNDATA_DECLARE</name>
+        <param>
+          <type><ref refid="structhid__report__event" kindref="compound">hid_report_event</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/hid_event.h" line="40" column="1" declfile="applications/nrf_desktop/src/events/hid_event.h" declline="40" declcolumn="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>HID Events. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>File defines a set of events used to transmit the HID report data between application modules. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

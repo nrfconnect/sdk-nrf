@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__lwm2m__os__download__evt__id" kind="group">
+    <compoundname>lwm2m_os_download_evt_id</compoundname>
+    <title>LwM2M OS download events</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__lwm2m__os__download__evt__id_1gad1e334a9ae446b40801f07444357140b" prot="public" static="no">
+        <name>LWM2M_OS_DOWNLOAD_EVT_FRAGMENT</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="118" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__os__download__evt__id_1ga3453d087b5fed79fabb5a1332cfa1087" prot="public" static="no">
+        <name>LWM2M_OS_DOWNLOAD_EVT_ERROR</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="119" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__lwm2m__os__download__evt__id_1gac0fd78b88e3d0f3dd23bec9b118121bc" prot="public" static="no">
+        <name>LWM2M_OS_DOWNLOAD_EVT_DONE</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="120" column="9" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

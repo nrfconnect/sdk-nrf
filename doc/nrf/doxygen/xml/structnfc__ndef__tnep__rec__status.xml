@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__ndef__tnep__rec__status" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_ndef_tnep_rec_status</compoundname>
+    <includes refid="tnep__rec_8h" local="no">tnep_rec.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__ndef__tnep__rec__status_adb5ba47b6488547fe05ccfd4d967d033_1adb5ba47b6488547fe05ccfd4d967d033" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_ndef_tnep_rec_status::status</definition>
+        <argsstring></argsstring>
+        <name>status</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Status type for TNEP Status Message </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/tnep_rec.h" line="38" column="9" bodyfile="include/nfc/ndef/tnep_rec.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>TNEP Status. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/nfc/ndef/tnep_rec.h" line="36" column="1" bodyfile="include/nfc/ndef/tnep_rec.h" bodystart="36" bodyend="39"/>
+    <listofallmembers>
+      <member refid="structnfc__ndef__tnep__rec__status_adb5ba47b6488547fe05ccfd4d967d033_1adb5ba47b6488547fe05ccfd4d967d033" prot="public" virt="non-virtual"><scope>nfc_ndef_tnep_rec_status</scope><name>status</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

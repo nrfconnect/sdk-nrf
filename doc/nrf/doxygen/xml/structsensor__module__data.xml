@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structsensor__module__data" kind="struct" language="C++" prot="public">
+    <compoundname>sensor_module_data</compoundname>
+    <includes refid="sensor__module__event_8h" local="no">sensor_module_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structsensor__module__data_af783fcdba59ee75e65c307d1b94c15e6_1af783fcdba59ee75e65c307d1b94c15e6" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t sensor_module_data::timestamp</definition>
+        <argsstring></argsstring>
+        <name>timestamp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/sensor_module_event.h" line="35" column="9" bodyfile="applications/asset_tracker_v2/src/events/sensor_module_event.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsensor__module__data_afd10da02490e87881842f3ce3ba7e12a_1afd10da02490e87881842f3ce3ba7e12a" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double sensor_module_data::temperature</definition>
+        <argsstring></argsstring>
+        <name>temperature</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/sensor_module_event.h" line="36" column="8" bodyfile="applications/asset_tracker_v2/src/events/sensor_module_event.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsensor__module__data_a27c3f2b6c30916567bb01d2753a55435_1a27c3f2b6c30916567bb01d2753a55435" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double sensor_module_data::humidity</definition>
+        <argsstring></argsstring>
+        <name>humidity</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/sensor_module_event.h" line="37" column="8" bodyfile="applications/asset_tracker_v2/src/events/sensor_module_event.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/events/sensor_module_event.h" line="34" column="1" bodyfile="applications/asset_tracker_v2/src/events/sensor_module_event.h" bodystart="34" bodyend="38"/>
+    <listofallmembers>
+      <member refid="structsensor__module__data_a27c3f2b6c30916567bb01d2753a55435_1a27c3f2b6c30916567bb01d2753a55435" prot="public" virt="non-virtual"><scope>sensor_module_data</scope><name>humidity</name></member>
+      <member refid="structsensor__module__data_afd10da02490e87881842f3ce3ba7e12a_1afd10da02490e87881842f3ce3ba7e12a" prot="public" virt="non-virtual"><scope>sensor_module_data</scope><name>temperature</name></member>
+      <member refid="structsensor__module__data_af783fcdba59ee75e65c307d1b94c15e6_1af783fcdba59ee75e65c307d1b94c15e6" prot="public" virt="non-virtual"><scope>sensor_module_data</scope><name>timestamp</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

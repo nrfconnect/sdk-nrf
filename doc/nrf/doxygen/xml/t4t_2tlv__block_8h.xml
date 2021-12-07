@@ -1,0 +1,305 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="t4t_2tlv__block_8h" kind="file" language="C++">
+    <compoundname>tlv_block.h</compoundname>
+    <includes local="no">stdint.h</includes>
+    <includes local="no">zephyr/types.h</includes>
+    <includedby refid="cc__file_8h" local="no">include/nfc/t4t/cc_file.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/nfc/t4t/tlv_block.h</label>
+        <link refid="t4t_2tlv__block_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stdint.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>include/nfc/t4t/cc_file.h</label>
+        <link refid="cc__file_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>include/nfc/t4t/hl_procedure.h</label>
+        <link refid="hl__procedure_8h"/>
+      </node>
+      <node id="1">
+        <label>include/nfc/t4t/tlv_block.h</label>
+        <link refid="t4t_2tlv__block_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structnfc__t4t__tlv__block__file" prot="public">nfc_t4t_tlv_block_file</innerclass>
+    <innerclass refid="structnfc__t4t__tlv__block__file__control__val" prot="public">nfc_t4t_tlv_block_file_control_val</innerclass>
+    <innerclass refid="structnfc__t4t__tlv__block" prot="public">nfc_t4t_tlv_block</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__t4t__tlv__block__file__access_gabeb091aaf2a1f71d06119abe2de3f639_1gabeb091aaf2a1f71d06119abe2de3f639" prot="public" static="no">
+        <name>NFC_T4T_TLV_BLOCK_CONTROL_FILE_READ_ACCESS_GRANTED</name>
+        <initializer>0x00</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Read access granted without any security. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/tlv_block.h" line="30" column="9" bodyfile="include/nfc/t4t/tlv_block.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t4t__tlv__block__file__access_gafe9c818816a240f53d4fb640fcd66f78_1gafe9c818816a240f53d4fb640fcd66f78" prot="public" static="no">
+        <name>NFC_T4T_TLV_BLOCK_CONTROL_FILE_WRITE_ACCESS_GRANTED</name>
+        <initializer>0x00</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Write access granted without any security. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/tlv_block.h" line="33" column="9" bodyfile="include/nfc/t4t/tlv_block.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t4t__tlv__block__file__access_gab4e05e3da4811a7eb47bfea619523188_1gab4e05e3da4811a7eb47bfea619523188" prot="public" static="no">
+        <name>NFC_T4T_TLV_BLOCK_CONTROL_FILE_WRITE_ACCESS_DISABLED</name>
+        <initializer>0xFF</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>No write access granted without any security (read-only). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/tlv_block.h" line="36" column="9" bodyfile="include/nfc/t4t/tlv_block.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nfc__t4t__tlv__block_ga3fc67c751a2b5ee4603c6d15fc3a73d1_1ga3fc67c751a2b5ee4603c6d15fc3a73d1" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nfc_t4t_tlv_block_type</name>
+        <enumvalue id="group__nfc__t4t__tlv__block_ga3fc67c751a2b5ee4603c6d15fc3a73d1_1gga3fc67c751a2b5ee4603c6d15fc3a73d1aafa77582ae4b4bd7e56a6bb30aac23d6" prot="public">
+          <name>NFC_T4T_TLV_BLOCK_TYPE_NDEF_FILE_CONTROL_TLV</name>
+          <initializer>= 0x04</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Control information concerning the EF file with short NDEF message. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__tlv__block_ga3fc67c751a2b5ee4603c6d15fc3a73d1_1gga3fc67c751a2b5ee4603c6d15fc3a73d1ae25bd03b51882e634e888b64d4d27e39" prot="public">
+          <name>NFC_T4T_TLV_BLOCK_TYPE_PROPRIETARY_FILE_CONTROL_TLV</name>
+          <initializer>= 0x05</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Control information concerning the Proprietary file with proprietary data. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__t4t__tlv__block_ga3fc67c751a2b5ee4603c6d15fc3a73d1_1gga3fc67c751a2b5ee4603c6d15fc3a73d1a7b3465cc1c9563c6b89c31094f775c41" prot="public">
+          <name>NFC_T4T_TLV_BLOCK_TYPE_EXTENDED_NDEF_FILE_CONTROL_TLV</name>
+          <initializer>= 0x06</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Control information concerning the EF file with long NDEF message. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Possible types of File Control TLV for Type 4 Tag. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/tlv_block.h" line="44" column="1" bodyfile="include/nfc/t4t/tlv_block.h" bodystart="44" bodyend="53"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__t4t__tlv__block_gaa119f8ef1b12880646030603172e9bc7_1gaa119f8ef1b12880646030603172e9bc7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t4t_tlv_block_parse</definition>
+        <argsstring>(struct nfc_t4t_tlv_block *file_control_tlv, const uint8_t *raw_data, uint16_t *len)</argsstring>
+        <name>nfc_t4t_tlv_block_parse</name>
+        <param>
+          <type>struct <ref refid="structnfc__t4t__tlv__block" kindref="compound">nfc_t4t_tlv_block</ref> *</type>
+          <declname>file_control_tlv</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>raw_data</declname>
+        </param>
+        <param>
+          <type>uint16_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Function for parsing raw data of File Control TLV, read from a Type 4 Tag. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function parses raw data of File Control TLV and stores the results in its descriptor.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">file_control_tlv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the File Control TLV that will be filled with parsed data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">raw_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer with raw TLV data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>In: Buffer length with TLV blocks. Out: Total length of first identified TLV within the buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/tlv_block.h" line="114" column="5" declfile="include/nfc/t4t/tlv_block.h" declline="114" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t4t__tlv__block_gad1a6e45a742ce7e690838c9733aac442_1gad1a6e45a742ce7e690838c9733aac442" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_t4t_tlv_block_printout</definition>
+        <argsstring>(uint8_t num, const struct nfc_t4t_tlv_block *t4t_tlv_block)</argsstring>
+        <name>nfc_t4t_tlv_block_printout</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>num</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structnfc__t4t__tlv__block" kindref="compound">nfc_t4t_tlv_block</ref> *</type>
+          <declname>t4t_tlv_block</declname>
+        </param>
+        <briefdescription>
+<para>Function for printing TLV block descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function prints TLV block descriptor.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">num</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>TLV block number. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">t4t_tlv_block</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the TLV block descriptor. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/tlv_block.h" line="125" column="6" declfile="include/nfc/t4t/tlv_block.h" declline="125" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NFC_T4T_TLV_BLOCK_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T4T_TLV_BLOCK_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdint.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="group__nfc__t4t__tlv__block__file__access_gabeb091aaf2a1f71d06119abe2de3f639_1gabeb091aaf2a1f71d06119abe2de3f639" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T4T_TLV_BLOCK_CONTROL_FILE_READ_ACCESS_GRANTED<sp/>0x00</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="group__nfc__t4t__tlv__block__file__access_gafe9c818816a240f53d4fb640fcd66f78_1gafe9c818816a240f53d4fb640fcd66f78" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T4T_TLV_BLOCK_CONTROL_FILE_WRITE_ACCESS_GRANTED<sp/><sp/>0x00</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="group__nfc__t4t__tlv__block__file__access_gab4e05e3da4811a7eb47bfea619523188_1gab4e05e3da4811a7eb47bfea619523188" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_T4T_TLV_BLOCK_CONTROL_FILE_WRITE_ACCESS_DISABLED<sp/>0xFF</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="group__nfc__t4t__tlv__block_ga3fc67c751a2b5ee4603c6d15fc3a73d1_1ga3fc67c751a2b5ee4603c6d15fc3a73d1" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__tlv__block_ga3fc67c751a2b5ee4603c6d15fc3a73d1_1ga3fc67c751a2b5ee4603c6d15fc3a73d1" kindref="member">nfc_t4t_tlv_block_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="46" refid="group__nfc__t4t__tlv__block_ga3fc67c751a2b5ee4603c6d15fc3a73d1_1gga3fc67c751a2b5ee4603c6d15fc3a73d1aafa77582ae4b4bd7e56a6bb30aac23d6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__t4t__tlv__block_ga3fc67c751a2b5ee4603c6d15fc3a73d1_1gga3fc67c751a2b5ee4603c6d15fc3a73d1aafa77582ae4b4bd7e56a6bb30aac23d6" kindref="member">NFC_T4T_TLV_BLOCK_TYPE_NDEF_FILE_CONTROL_TLV</ref><sp/>=<sp/>0x04,</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="group__nfc__t4t__tlv__block_ga3fc67c751a2b5ee4603c6d15fc3a73d1_1gga3fc67c751a2b5ee4603c6d15fc3a73d1ae25bd03b51882e634e888b64d4d27e39" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__t4t__tlv__block_ga3fc67c751a2b5ee4603c6d15fc3a73d1_1gga3fc67c751a2b5ee4603c6d15fc3a73d1ae25bd03b51882e634e888b64d4d27e39" kindref="member">NFC_T4T_TLV_BLOCK_TYPE_PROPRIETARY_FILE_CONTROL_TLV</ref><sp/>=<sp/>0x05,</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nfc__t4t__tlv__block_ga3fc67c751a2b5ee4603c6d15fc3a73d1_1gga3fc67c751a2b5ee4603c6d15fc3a73d1a7b3465cc1c9563c6b89c31094f775c41" kindref="member">NFC_T4T_TLV_BLOCK_TYPE_EXTENDED_NDEF_FILE_CONTROL_TLV</ref><sp/>=<sp/>0x06</highlight></codeline>
+<codeline lineno="53" refid="group__nfc__t4t__tlv__block_ga3fc67c751a2b5ee4603c6d15fc3a73d1_1gga3fc67c751a2b5ee4603c6d15fc3a73d1a7b3465cc1c9563c6b89c31094f775c41" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="structnfc__t4t__tlv__block__file" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t4t__tlv__block__file" kindref="compound">nfc_t4t_tlv_block_file</ref><sp/>{</highlight></codeline>
+<codeline lineno="59" refid="structnfc__t4t__tlv__block__file_a5f407033e2f78146194f5f61d57223f1_1a5f407033e2f78146194f5f61d57223f1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*<ref refid="structnfc__t4t__tlv__block__file_a5f407033e2f78146194f5f61d57223f1_1a5f407033e2f78146194f5f61d57223f1" kindref="member">content</ref>;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="structnfc__t4t__tlv__block__file_ad4aa757190b1b6394637e24ae5e751b0_1ad4aa757190b1b6394637e24ae5e751b0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnfc__t4t__tlv__block__file_ad4aa757190b1b6394637e24ae5e751b0_1ad4aa757190b1b6394637e24ae5e751b0" kindref="member">len</ref>;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="structnfc__t4t__tlv__block__file__control__val" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t4t__tlv__block__file__control__val" kindref="compound">nfc_t4t_tlv_block_file_control_val</ref><sp/>{</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="structnfc__t4t__tlv__block__file__control__val_af2a5e3bb1ef0941373bb329b51038f7a_1af2a5e3bb1ef0941373bb329b51038f7a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t4t__tlv__block__file" kindref="compound">nfc_t4t_tlv_block_file</ref><sp/><ref refid="structnfc__t4t__tlv__block__file__control__val_af2a5e3bb1ef0941373bb329b51038f7a_1af2a5e3bb1ef0941373bb329b51038f7a" kindref="member">file</ref>;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="structnfc__t4t__tlv__block__file__control__val_ab57f58b02d5b257262c4bdb72c2d7581_1ab57f58b02d5b257262c4bdb72c2d7581" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structnfc__t4t__tlv__block__file__control__val_ab57f58b02d5b257262c4bdb72c2d7581_1ab57f58b02d5b257262c4bdb72c2d7581" kindref="member">max_file_size</ref>;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="structnfc__t4t__tlv__block__file__control__val_aac4fea8900894e0575327fb16d552cf2_1aac4fea8900894e0575327fb16d552cf2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnfc__t4t__tlv__block__file__control__val_aac4fea8900894e0575327fb16d552cf2_1aac4fea8900894e0575327fb16d552cf2" kindref="member">file_id</ref>;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="structnfc__t4t__tlv__block__file__control__val_ace902f3aae1b2a6835f9877b06316c2a_1ace902f3aae1b2a6835f9877b06316c2a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnfc__t4t__tlv__block__file__control__val_ace902f3aae1b2a6835f9877b06316c2a_1ace902f3aae1b2a6835f9877b06316c2a" kindref="member">read_access</ref>;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="structnfc__t4t__tlv__block__file__control__val_a1f9ff5e6438c492ede15745dc9084245_1a1f9ff5e6438c492ede15745dc9084245" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnfc__t4t__tlv__block__file__control__val_a1f9ff5e6438c492ede15745dc9084245_1a1f9ff5e6438c492ede15745dc9084245" kindref="member">write_access</ref>;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87" refid="structnfc__t4t__tlv__block" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t4t__tlv__block" kindref="compound">nfc_t4t_tlv_block</ref><sp/>{</highlight></codeline>
+<codeline lineno="89" refid="structnfc__t4t__tlv__block_a5be51f20a60e562d89eecd08bde23c5e_1a5be51f20a60e562d89eecd08bde23c5e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__t4t__tlv__block__file__control__val" kindref="compound">nfc_t4t_tlv_block_file_control_val</ref><sp/><ref refid="structnfc__t4t__tlv__block_a5be51f20a60e562d89eecd08bde23c5e_1a5be51f20a60e562d89eecd08bde23c5e" kindref="member">value</ref>;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="structnfc__t4t__tlv__block_a50d149268dd39c2efe19cf8b3d41ede3_1a50d149268dd39c2efe19cf8b3d41ede3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnfc__t4t__tlv__block_a50d149268dd39c2efe19cf8b3d41ede3_1a50d149268dd39c2efe19cf8b3d41ede3" kindref="member">length</ref>;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="structnfc__t4t__tlv__block_ad500c80a85391983181e3ae75d19e777_1ad500c80a85391983181e3ae75d19e777" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnfc__t4t__tlv__block_ad500c80a85391983181e3ae75d19e777_1ad500c80a85391983181e3ae75d19e777" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="96"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114" refid="group__nfc__t4t__tlv__block_gaa119f8ef1b12880646030603172e9bc7_1gaa119f8ef1b12880646030603172e9bc7" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__tlv__block_gaa119f8ef1b12880646030603172e9bc7_1gaa119f8ef1b12880646030603172e9bc7" kindref="member">nfc_t4t_tlv_block_parse</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__tlv__block" kindref="compound">nfc_t4t_tlv_block</ref><sp/>*file_control_tlv,</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*raw_data,</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/>*len);</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125" refid="group__nfc__t4t__tlv__block_gad1a6e45a742ce7e690838c9733aac442_1gad1a6e45a742ce7e690838c9733aac442" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nfc__t4t__tlv__block_gad1a6e45a742ce7e690838c9733aac442_1gad1a6e45a742ce7e690838c9733aac442" kindref="member">nfc_t4t_tlv_block_printout</ref>(uint8_t<sp/>num,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__t4t__tlv__block" kindref="compound">nfc_t4t_tlv_block</ref><sp/>*t4t_tlv_block);</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>NFC_T4T_TLV_BLOCK_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/nfc/t4t/tlv_block.h"/>
+  </compounddef>
+</doxygen>

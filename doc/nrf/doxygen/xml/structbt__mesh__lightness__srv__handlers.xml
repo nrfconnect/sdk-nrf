@@ -1,0 +1,212 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__lightness__srv__handlers" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_lightness_srv_handlers</compoundname>
+    <includes refid="lightness__srv_8h" local="no">lightness_srv.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__lightness__srv__handlers_a899fadb2a8d757554d4d1fd65a27ea02_1a899fadb2a8d757554d4d1fd65a27ea02" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_lightness_srv_handlers::light_set) (struct bt_mesh_lightness_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_lightness_set *set, struct bt_mesh_lightness_status *rsp)</definition>
+        <argsstring>)(struct bt_mesh_lightness_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_lightness_set *set, struct bt_mesh_lightness_status *rsp)</argsstring>
+        <name>light_set</name>
+        <briefdescription>
+<para>Set the Light state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When a set message is received, the model publishes a status message, with the response set to <computeroutput>rsp</computeroutput>. When an acknowledged set message is received, the model also sends a response back to a client. If a state change is non-instantaneous, for example when <ref refid="group__bt__mesh__model__types_gaa845685eb265d1294b17bb80fbde4996_1gaa845685eb265d1294b17bb80fbde4996" kindref="member">bt_mesh_model_transition_time</ref> returns a nonzero value, the application is responsible for publishing a value of the Light state at the end of the transition.</para>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server to set the Light state of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL if the state change was not a result of a message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters of the state change. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response structure to be filled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness_srv.h" line="83" column="1" bodyfile="include/bluetooth/mesh/lightness_srv.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__srv__handlers_adb1afab78df3a233c1a708ea3ea487d5_1adb1afab78df3a233c1a708ea3ea487d5" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_lightness_srv_handlers::light_get) (struct bt_mesh_lightness_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_lightness_status *rsp)</definition>
+        <argsstring>)(struct bt_mesh_lightness_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_lightness_status *rsp)</argsstring>
+        <name>light_get</name>
+        <briefdescription>
+<para>Get the current Light state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server to get the Light state of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the get message that triggered the query, or NULL if it was not triggered by a message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response structure to be filled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness_srv.h" line="97" column="1" bodyfile="include/bluetooth/mesh/lightness_srv.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__srv__handlers_a93e3ce19a8bcbb1c52b93ae3c1b31ffb_1a93e3ce19a8bcbb1c52b93ae3c1b31ffb" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_lightness_srv_handlers::default_update) (struct bt_mesh_lightness_srv *srv, struct bt_mesh_msg_ctx *ctx, uint16_t old_default, uint16_t new_default)</definition>
+        <argsstring>)(struct bt_mesh_lightness_srv *srv, struct bt_mesh_msg_ctx *ctx, uint16_t old_default, uint16_t new_default)</argsstring>
+        <name>default_update</name>
+        <briefdescription>
+<para>The Default Light state has changed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The user may implement this handler to subscribe to changes to the Default Light state.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server the Default Light state was changed on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the set message that triggered the update, or NULL if it was not triggered by a message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">old_default</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Default Light before the change. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">new_default</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Default Light after the change. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness_srv.h" line="112" column="1" bodyfile="include/bluetooth/mesh/lightness_srv.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__srv__handlers_a6883e1ed505cb52bd8e52266d4c56fbc_1a6883e1ed505cb52bd8e52266d4c56fbc" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_lightness_srv_handlers::range_update) (struct bt_mesh_lightness_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_lightness_range *old_range, const struct bt_mesh_lightness_range *new_range)</definition>
+        <argsstring>)(struct bt_mesh_lightness_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_lightness_range *old_range, const struct bt_mesh_lightness_range *new_range)</argsstring>
+        <name>range_update</name>
+        <briefdescription>
+<para>The Light Range state has changed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The user may implement this handler to subscribe to change to the Light Range state. If the change in range causes the current Light state to be out of range, the Light state should be changed to the nearest value inside the range. It&apos;s recommended to call <ref refid="group__bt__mesh__lightness__srv_ga103c0a55ee61e46019c85a98293e0412_1ga103c0a55ee61e46019c85a98293e0412" kindref="member">bt_mesh_lightness_srv_pub</ref> to notify the mesh if the Light state changes.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server the Light Range state was changed on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the set message that triggered the update, or NULL if it was not triggered by a message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">old_range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Light Range before the change. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">new_range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Light Range after the change. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness_srv.h" line="131" column="1" bodyfile="include/bluetooth/mesh/lightness_srv.h" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Collection of handler callbacks for the Light Lightness Server. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/lightness_srv.h" line="66" column="1" bodyfile="include/bluetooth/mesh/lightness_srv.h" bodystart="66" bodyend="135"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__lightness__srv__handlers_a93e3ce19a8bcbb1c52b93ae3c1b31ffb_1a93e3ce19a8bcbb1c52b93ae3c1b31ffb" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_srv_handlers</scope><name>default_update</name></member>
+      <member refid="structbt__mesh__lightness__srv__handlers_adb1afab78df3a233c1a708ea3ea487d5_1adb1afab78df3a233c1a708ea3ea487d5" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_srv_handlers</scope><name>light_get</name></member>
+      <member refid="structbt__mesh__lightness__srv__handlers_a899fadb2a8d757554d4d1fd65a27ea02_1a899fadb2a8d757554d4d1fd65a27ea02" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_srv_handlers</scope><name>light_set</name></member>
+      <member refid="structbt__mesh__lightness__srv__handlers_a6883e1ed505cb52bd8e52266d4c56fbc_1a6883e1ed505cb52bd8e52266d4c56fbc" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_srv_handlers</scope><name>range_update</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

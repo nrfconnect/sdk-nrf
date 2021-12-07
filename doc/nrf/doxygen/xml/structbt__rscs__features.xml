@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__rscs__features" kind="struct" language="C++" prot="public">
+    <compoundname>bt_rscs_features</compoundname>
+    <includes refid="rscs_8h" local="no">rscs.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__rscs__features_a19b179f39499e63143ab355796d6b873_1a19b179f39499e63143ab355796d6b873" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_rscs_features::inst_stride_len</definition>
+        <argsstring></argsstring>
+        <name>inst_stride_len</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Instantaneous Stride Length Measurement Supported bit. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="70" column="9" bodyfile="include/bluetooth/services/rscs.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rscs__features_aa80053dec139a41f4c134d7c7ef76581_1aa80053dec139a41f4c134d7c7ef76581" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_rscs_features::total_distance</definition>
+        <argsstring></argsstring>
+        <name>total_distance</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Total Distance Measurement Supported bit. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="73" column="9" bodyfile="include/bluetooth/services/rscs.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rscs__features_aba250abfb79dbc8a5018103f5294a573_1aba250abfb79dbc8a5018103f5294a573" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_rscs_features::walking_or_running</definition>
+        <argsstring></argsstring>
+        <name>walking_or_running</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Walking or Running Status Supported bit. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="76" column="9" bodyfile="include/bluetooth/services/rscs.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rscs__features_ad966fc36e3cb4026d749506d7b04c6a0_1ad966fc36e3cb4026d749506d7b04c6a0" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_rscs_features::sensor_calib_proc</definition>
+        <argsstring></argsstring>
+        <name>sensor_calib_proc</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Calibration Procedure Supported bit. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="79" column="9" bodyfile="include/bluetooth/services/rscs.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rscs__features_abe73749bdaf57f83794bb801081a9848_1abe73749bdaf57f83794bb801081a9848" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_rscs_features::multi_sensor_loc</definition>
+        <argsstring></argsstring>
+        <name>multi_sensor_loc</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Multiple Sensor Locations Supported bit. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="82" column="9" bodyfile="include/bluetooth/services/rscs.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Bitmask set of supported features. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/rscs.h" line="68" column="1" bodyfile="include/bluetooth/services/rscs.h" bodystart="68" bodyend="83"/>
+    <listofallmembers>
+      <member refid="structbt__rscs__features_a19b179f39499e63143ab355796d6b873_1a19b179f39499e63143ab355796d6b873" prot="public" virt="non-virtual"><scope>bt_rscs_features</scope><name>inst_stride_len</name></member>
+      <member refid="structbt__rscs__features_abe73749bdaf57f83794bb801081a9848_1abe73749bdaf57f83794bb801081a9848" prot="public" virt="non-virtual"><scope>bt_rscs_features</scope><name>multi_sensor_loc</name></member>
+      <member refid="structbt__rscs__features_ad966fc36e3cb4026d749506d7b04c6a0_1ad966fc36e3cb4026d749506d7b04c6a0" prot="public" virt="non-virtual"><scope>bt_rscs_features</scope><name>sensor_calib_proc</name></member>
+      <member refid="structbt__rscs__features_aa80053dec139a41f4c134d7c7ef76581_1aa80053dec139a41f4c134d7c7ef76581" prot="public" virt="non-virtual"><scope>bt_rscs_features</scope><name>total_distance</name></member>
+      <member refid="structbt__rscs__features_aba250abfb79dbc8a5018103f5294a573_1aba250abfb79dbc8a5018103f5294a573" prot="public" virt="non-virtual"><scope>bt_rscs_features</scope><name>walking_or_running</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__gadgets__cb" kind="struct" language="C++" prot="public">
+    <compoundname>bt_gadgets_cb</compoundname>
+    <includes refid="gadgets_8h" local="no">gadgets.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__gadgets__cb_a68df3873cff8b0dabda77c266d4d7d07_1a68df3873cff8b0dabda77c266d4d7d07" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__gadgets_ga971083d8dd96deae6ae01c7ade506477_1ga971083d8dd96deae6ae01c7ade506477" kindref="member">bt_gadgets_stream_cb_t</ref></type>
+        <definition>bt_gadgets_stream_cb_t bt_gadgets_cb::control_stream_cb</definition>
+        <argsstring></argsstring>
+        <name>control_stream_cb</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Callback for incoming control streams. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets.h" line="96" column="24" bodyfile="include/bluetooth/services/gadgets.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__gadgets__cb_abe0f1b2e0c335c66abebb0489cb5330d_1abe0f1b2e0c335c66abebb0489cb5330d" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__gadgets_ga971083d8dd96deae6ae01c7ade506477_1ga971083d8dd96deae6ae01c7ade506477" kindref="member">bt_gadgets_stream_cb_t</ref></type>
+        <definition>bt_gadgets_stream_cb_t bt_gadgets_cb::alexa_stream_cb</definition>
+        <argsstring></argsstring>
+        <name>alexa_stream_cb</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Callback for incoming Alexa streams. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets.h" line="99" column="24" bodyfile="include/bluetooth/services/gadgets.h" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__gadgets__cb_ac24c729b0bcde1db6f873b41cb964b89_1ac24c729b0bcde1db6f873b41cb964b89" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__gadgets_ga7bd9f50d9e62f3cd0122c59174f09a82_1ga7bd9f50d9e62f3cd0122c59174f09a82" kindref="member">bt_gadgets_sent_cb_t</ref></type>
+        <definition>bt_gadgets_sent_cb_t bt_gadgets_cb::sent_cb</definition>
+        <argsstring></argsstring>
+        <name>sent_cb</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Callback for stream and non-stream data sent. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets.h" line="102" column="22" bodyfile="include/bluetooth/services/gadgets.h" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__gadgets__cb_a5c33b6f26fdc02afe667445207d91ddb_1a5c33b6f26fdc02afe667445207d91ddb" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__gadgets_gaf985eb476aad558ab6feebdcdd3aaa96_1gaf985eb476aad558ab6feebdcdd3aaa96" kindref="member">bt_gadgets_ccc_update_cb_t</ref></type>
+        <definition>bt_gadgets_ccc_update_cb_t bt_gadgets_cb::ccc_cb</definition>
+        <argsstring></argsstring>
+        <name>ccc_cb</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Callback for CCC descriptor updated. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets.h" line="105" column="28" bodyfile="include/bluetooth/services/gadgets.h" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Pointers to the callback functions for service events. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/gadgets.h" line="93" column="1" bodyfile="include/bluetooth/services/gadgets.h" bodystart="93" bodyend="106"/>
+    <listofallmembers>
+      <member refid="structbt__gadgets__cb_abe0f1b2e0c335c66abebb0489cb5330d_1abe0f1b2e0c335c66abebb0489cb5330d" prot="public" virt="non-virtual"><scope>bt_gadgets_cb</scope><name>alexa_stream_cb</name></member>
+      <member refid="structbt__gadgets__cb_a5c33b6f26fdc02afe667445207d91ddb_1a5c33b6f26fdc02afe667445207d91ddb" prot="public" virt="non-virtual"><scope>bt_gadgets_cb</scope><name>ccc_cb</name></member>
+      <member refid="structbt__gadgets__cb_a68df3873cff8b0dabda77c266d4d7d07_1a68df3873cff8b0dabda77c266d4d7d07" prot="public" virt="non-virtual"><scope>bt_gadgets_cb</scope><name>control_stream_cb</name></member>
+      <member refid="structbt__gadgets__cb_ac24c729b0bcde1db6f873b41cb964b89_1ac24c729b0bcde1db6f873b41cb964b89" prot="public" virt="non-virtual"><scope>bt_gadgets_cb</scope><name>sent_cb</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

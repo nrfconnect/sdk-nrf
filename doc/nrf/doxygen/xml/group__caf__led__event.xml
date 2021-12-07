@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__caf__led__event" kind="group">
+    <compoundname>caf_led_event</compoundname>
+    <title>CAF LED Event</title>
+    <innerclass refid="structled__event" prot="public">led_event</innerclass>
+    <innerclass refid="structled__ready__event" prot="public">led_ready_event</innerclass>
+    <briefdescription>
+<para>CAF LED Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

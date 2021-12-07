@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_857d0e7c1bb2d7ffb2c2a19e35e86cb4" kind="dir">
+    <compoundname>include/caf</compoundname>
+    <innerdir refid="dir_82fc1c48c5d550a5bbf5666ae8bf5e76">include/caf/events</innerdir>
+    <innerfile refid="click__detector_8h">click_detector.h</innerfile>
+    <innerfile refid="gpio__pins_8h">gpio_pins.h</innerfile>
+    <innerfile refid="key__id_8h">key_id.h</innerfile>
+    <innerfile refid="include_2caf_2led__effect_8h">led_effect.h</innerfile>
+    <innerfile refid="sensor__manager_8h">sensor_manager.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/caf/"/>
+  </compounddef>
+</doxygen>

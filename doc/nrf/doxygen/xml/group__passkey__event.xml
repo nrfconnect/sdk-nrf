@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__passkey__event" kind="group">
+    <compoundname>passkey_event</compoundname>
+    <title>Passkey Event</title>
+    <innerclass refid="structpasskey__input__event" prot="public">passkey_input_event</innerclass>
+    <innerclass refid="structpasskey__req__event" prot="public">passkey_req_event</innerclass>
+    <briefdescription>
+<para>Passkey Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

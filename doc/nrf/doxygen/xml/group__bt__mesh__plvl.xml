@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__plvl" kind="group">
+    <compoundname>bt_mesh_plvl</compoundname>
+    <title>Generic Power Level Models</title>
+    <innerclass refid="structbt__mesh__plvl__set" prot="public">bt_mesh_plvl_set</innerclass>
+    <innerclass refid="structbt__mesh__plvl__status" prot="public">bt_mesh_plvl_status</innerclass>
+    <innerclass refid="structbt__mesh__plvl__range" prot="public">bt_mesh_plvl_range</innerclass>
+    <innerclass refid="structbt__mesh__plvl__range__status" prot="public">bt_mesh_plvl_range_status</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__plvl_1ga1cd75fbe461fc843781303170e68f207" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>uint8_t</type>
+        <definition>static uint8_t bt_mesh_plvl_to_percent</definition>
+        <argsstring>(uint16_t plvl)</argsstring>
+        <name>bt_mesh_plvl_to_percent</name>
+        <param>
+          <type>uint16_t</type>
+          <declname>plvl</declname>
+        </param>
+        <briefdescription>
+<para>Convert Power Level to a percent. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">plvl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Raw Power Level.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The Power Level in percent. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl.h" line="72" column="23" bodyfile="include/bluetooth/mesh/gen_plvl.h" bodystart="72" bodyend="75"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__plvl_1gad8ddae1590beb1ceb0f58fd0e155395a" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>uint16_t</type>
+        <definition>static uint16_t bt_mesh_plvl_from_percent</definition>
+        <argsstring>(uint8_t plvl_percent)</argsstring>
+        <name>bt_mesh_plvl_from_percent</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>plvl_percent</declname>
+        </param>
+        <briefdescription>
+<para>Convert percent to raw Power Level. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">plvl_percent</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Power Level in percent.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The raw Power Level. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl.h" line="84" column="24" bodyfile="include/bluetooth/mesh/gen_plvl.h" bodystart="84" bodyend="87"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Generic Power Level models. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

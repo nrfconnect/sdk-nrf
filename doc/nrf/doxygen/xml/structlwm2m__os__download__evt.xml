@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlwm2m__os__download__evt" kind="struct" language="C++" prot="public">
+    <compoundname>lwm2m_os_download_evt</compoundname>
+    <includes refid="lwm2m__os_8h" local="no">lwm2m_os.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlwm2m__os__download__evt_a032f8fafadeb31835e4a4eec588b1fae_1a032f8fafadeb31835e4a4eec588b1fae" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int lwm2m_os_download_evt::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event ID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="128" column="5" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlwm2m__os__download__evt_a5f594f7c733a3e1a34af6cd46d254f1e_1a5f594f7c733a3e1a34af6cd46d254f1e" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int lwm2m_os_download_evt::error</definition>
+        <argsstring></argsstring>
+        <name>error</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Error cause. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="131" column="5" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlwm2m__os__download__evt_ac5bcc2b62e3a0dc1da83258186963d86_1ac5bcc2b62e3a0dc1da83258186963d86" prot="public" static="no" mutable="no">
+        <type>const void *</type>
+        <definition>const void* lwm2m_os_download_evt::buf</definition>
+        <argsstring></argsstring>
+        <name>buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="134" column="12" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlwm2m__os__download__evt_ac9df448fab0f448f0a517db5d48ffd58_1ac9df448fab0f448f0a517db5d48ffd58" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t lwm2m_os_download_evt::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="135" column="8" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlwm2m__os__download__evt_a95fbae7ceaa41f39c847c9c04647ccdb_1a95fbae7ceaa41f39c847c9c04647ccdb" prot="public" static="no" mutable="no">
+        <type>struct lwm2m_os_download_evt::@169::lwm2m_os_fragment</type>
+        <definition>struct lwm2m_os_download_evt::@169::lwm2m_os_fragment lwm2m_os_download_evt::fragment</definition>
+        <argsstring></argsstring>
+        <name>fragment</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="136" column="10"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlwm2m__os__download__evt_a6ec80c1ff00b7223f184c1d2758f340c_1a6ec80c1ff00b7223f184c1d2758f340c" prot="public" static="no" mutable="no">
+        <type>union lwm2m_os_download_evt::@169</type>
+        <definition>union lwm2m_os_download_evt::@169 lwm2m_os_download_evt::@170</definition>
+        <argsstring></argsstring>
+        <name>@170</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="137" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Download client event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/bin/lwm2m_carrier/include/lwm2m_os.h" line="126" column="1" bodyfile="lib/bin/lwm2m_carrier/include/lwm2m_os.h" bodystart="126" bodyend="138"/>
+    <listofallmembers>
+      <member refid="structlwm2m__os__download__evt_ac5bcc2b62e3a0dc1da83258186963d86_1ac5bcc2b62e3a0dc1da83258186963d86" prot="public" virt="non-virtual"><scope>lwm2m_os_download_evt</scope><name>buf</name></member>
+      <member refid="structlwm2m__os__download__evt_a5f594f7c733a3e1a34af6cd46d254f1e_1a5f594f7c733a3e1a34af6cd46d254f1e" prot="public" virt="non-virtual"><scope>lwm2m_os_download_evt</scope><name>error</name></member>
+      <member refid="structlwm2m__os__download__evt_a95fbae7ceaa41f39c847c9c04647ccdb_1a95fbae7ceaa41f39c847c9c04647ccdb" prot="public" virt="non-virtual"><scope>lwm2m_os_download_evt</scope><name>fragment</name></member>
+      <member refid="structlwm2m__os__download__evt_a032f8fafadeb31835e4a4eec588b1fae_1a032f8fafadeb31835e4a4eec588b1fae" prot="public" virt="non-virtual"><scope>lwm2m_os_download_evt</scope><name>id</name></member>
+      <member refid="structlwm2m__os__download__evt_ac9df448fab0f448f0a517db5d48ffd58_1ac9df448fab0f448f0a517db5d48ffd58" prot="public" virt="non-virtual"><scope>lwm2m_os_download_evt</scope><name>len</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

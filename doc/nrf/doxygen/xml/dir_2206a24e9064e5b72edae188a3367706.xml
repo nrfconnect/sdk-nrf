@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_2206a24e9064e5b72edae188a3367706" kind="dir">
+    <compoundname>applications/pelion_client/src/events</compoundname>
+    <innerfile refid="pelion__event_8h">pelion_event.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/pelion_client/src/events/"/>
+  </compounddef>
+</doxygen>

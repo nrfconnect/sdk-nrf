@@ -1,0 +1,234 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlte__lc__evt" kind="struct" language="C++" prot="public">
+    <compoundname>lte_lc_evt</compoundname>
+    <includes refid="lte__lc_8h" local="no">lte_lc.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlte__lc__evt_ac2f55aa75ca7780f242f6425121161bc_1ac2f55aa75ca7780f242f6425121161bc" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__lte__lc_ga543eb533d9afb355cb868c192586eccd_1ga543eb533d9afb355cb868c192586eccd" kindref="member">lte_lc_evt_type</ref></type>
+        <definition>enum lte_lc_evt_type lte_lc_evt::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="753" column="21" bodyfile="include/modem/lte_lc.h" bodystart="753" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__evt_adf2f95655585d841c84ed5c430596079_1adf2f95655585d841c84ed5c430596079" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__lte__lc_gae2e22418dff8974965840a21f1c49063_1gae2e22418dff8974965840a21f1c49063" kindref="member">lte_lc_nw_reg_status</ref></type>
+        <definition>enum lte_lc_nw_reg_status lte_lc_evt::nw_reg_status</definition>
+        <argsstring></argsstring>
+        <name>nw_reg_status</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="755" column="26" bodyfile="include/modem/lte_lc.h" bodystart="755" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__evt_a6bb8a1ca2b9d71d50ba804e2f303491e_1a6bb8a1ca2b9d71d50ba804e2f303491e" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__lte__lc_ga91261e353062129cf610715b32e5cd05_1ga91261e353062129cf610715b32e5cd05" kindref="member">lte_lc_rrc_mode</ref></type>
+        <definition>enum lte_lc_rrc_mode lte_lc_evt::rrc_mode</definition>
+        <argsstring></argsstring>
+        <name>rrc_mode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="756" column="21" bodyfile="include/modem/lte_lc.h" bodystart="756" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__evt_ad27081c9a1da14c162a9604dc0e55e88_1ad27081c9a1da14c162a9604dc0e55e88" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__lc__psm__cfg" kindref="compound">lte_lc_psm_cfg</ref></type>
+        <definition>struct lte_lc_psm_cfg lte_lc_evt::psm_cfg</definition>
+        <argsstring></argsstring>
+        <name>psm_cfg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="757" column="21" bodyfile="include/modem/lte_lc.h" bodystart="757" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__evt_a54de6e83e41dd1127d29ff2e4a377f39_1a54de6e83e41dd1127d29ff2e4a377f39" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__lc__edrx__cfg" kindref="compound">lte_lc_edrx_cfg</ref></type>
+        <definition>struct lte_lc_edrx_cfg lte_lc_evt::edrx_cfg</definition>
+        <argsstring></argsstring>
+        <name>edrx_cfg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="758" column="22" bodyfile="include/modem/lte_lc.h" bodystart="758" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__evt_a77d159750da0d111c89b4357dfb442cf_1a77d159750da0d111c89b4357dfb442cf" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__lc__cell" kindref="compound">lte_lc_cell</ref></type>
+        <definition>struct lte_lc_cell lte_lc_evt::cell</definition>
+        <argsstring></argsstring>
+        <name>cell</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="759" column="18" bodyfile="include/modem/lte_lc.h" bodystart="759" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__evt_a92926da1f21aefefe07743b288951578_1a92926da1f21aefefe07743b288951578" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__lte__lc_ga85a1606ed90f717b1c0607ecb0ad88d2_1ga85a1606ed90f717b1c0607ecb0ad88d2" kindref="member">lte_lc_lte_mode</ref></type>
+        <definition>enum lte_lc_lte_mode lte_lc_evt::lte_mode</definition>
+        <argsstring></argsstring>
+        <name>lte_mode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="760" column="21" bodyfile="include/modem/lte_lc.h" bodystart="760" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__evt_a508b86c01e56689bb7994f4d14204085_1a508b86c01e56689bb7994f4d14204085" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__lc__modem__sleep" kindref="compound">lte_lc_modem_sleep</ref></type>
+        <definition>struct lte_lc_modem_sleep lte_lc_evt::modem_sleep</definition>
+        <argsstring></argsstring>
+        <name>modem_sleep</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="761" column="25" bodyfile="include/modem/lte_lc.h" bodystart="761" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__evt_a7039443af0d6e6d2b39a9f4bc884c8db_1a7039443af0d6e6d2b39a9f4bc884c8db" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__lte__lc_ga881d51b5950df07508e70d7d4fa1d031_1ga881d51b5950df07508e70d7d4fa1d031" kindref="member">lte_lc_modem_evt</ref></type>
+        <definition>enum lte_lc_modem_evt lte_lc_evt::modem_evt</definition>
+        <argsstring></argsstring>
+        <name>modem_evt</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="762" column="22" bodyfile="include/modem/lte_lc.h" bodystart="762" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__evt_a46461bb0b4973b2396715938fa93c460_1a46461bb0b4973b2396715938fa93c460" prot="public" static="no" mutable="no">
+        <type>uint64_t</type>
+        <definition>uint64_t lte_lc_evt::time</definition>
+        <argsstring></argsstring>
+        <name>time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="765" column="10" bodyfile="include/modem/lte_lc.h" bodystart="765" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__evt_a0358027dd48486ebd8ca92b42256d327_1a0358027dd48486ebd8ca92b42256d327" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__lc__cells__info" kindref="compound">lte_lc_cells_info</ref></type>
+        <definition>struct lte_lc_cells_info lte_lc_evt::cells_info</definition>
+        <argsstring></argsstring>
+        <name>cells_info</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="767" column="24" bodyfile="include/modem/lte_lc.h" bodystart="767" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__evt_a2131e33b3b89d00eb63d373d7935c81d_1a2131e33b3b89d00eb63d373d7935c81d" prot="public" static="no" mutable="no">
+        <type>union lte_lc_evt::@149</type>
+        <definition>union lte_lc_evt::@149 lte_lc_evt::@150</definition>
+        <argsstring></argsstring>
+        <name>@150</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="768" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>lte_lc_cell</label>
+        <link refid="structlte__lc__cell"/>
+      </node>
+      <node id="6">
+        <label>lte_lc_cells_info</label>
+        <link refid="structlte__lc__cells__info"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>current_cell</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>neighbor_cells</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>lte_lc_edrx_cfg</label>
+        <link refid="structlte__lc__edrx__cfg"/>
+      </node>
+      <node id="1">
+        <label>lte_lc_evt</label>
+        <link refid="structlte__lc__evt"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>psm_cfg</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>edrx_cfg</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>cell</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>modem_sleep</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>cells_info</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>lte_lc_modem_sleep</label>
+        <link refid="structlte__lc__modem__sleep"/>
+      </node>
+      <node id="7">
+        <label>lte_lc_ncell</label>
+        <link refid="structlte__lc__ncell"/>
+      </node>
+      <node id="2">
+        <label>lte_lc_psm_cfg</label>
+        <link refid="structlte__lc__psm__cfg"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/modem/lte_lc.h" line="752" column="1" bodyfile="include/modem/lte_lc.h" bodystart="752" bodyend="769"/>
+    <listofallmembers>
+      <member refid="structlte__lc__evt_a77d159750da0d111c89b4357dfb442cf_1a77d159750da0d111c89b4357dfb442cf" prot="public" virt="non-virtual"><scope>lte_lc_evt</scope><name>cell</name></member>
+      <member refid="structlte__lc__evt_a0358027dd48486ebd8ca92b42256d327_1a0358027dd48486ebd8ca92b42256d327" prot="public" virt="non-virtual"><scope>lte_lc_evt</scope><name>cells_info</name></member>
+      <member refid="structlte__lc__evt_a54de6e83e41dd1127d29ff2e4a377f39_1a54de6e83e41dd1127d29ff2e4a377f39" prot="public" virt="non-virtual"><scope>lte_lc_evt</scope><name>edrx_cfg</name></member>
+      <member refid="structlte__lc__evt_a92926da1f21aefefe07743b288951578_1a92926da1f21aefefe07743b288951578" prot="public" virt="non-virtual"><scope>lte_lc_evt</scope><name>lte_mode</name></member>
+      <member refid="structlte__lc__evt_a7039443af0d6e6d2b39a9f4bc884c8db_1a7039443af0d6e6d2b39a9f4bc884c8db" prot="public" virt="non-virtual"><scope>lte_lc_evt</scope><name>modem_evt</name></member>
+      <member refid="structlte__lc__evt_a508b86c01e56689bb7994f4d14204085_1a508b86c01e56689bb7994f4d14204085" prot="public" virt="non-virtual"><scope>lte_lc_evt</scope><name>modem_sleep</name></member>
+      <member refid="structlte__lc__evt_adf2f95655585d841c84ed5c430596079_1adf2f95655585d841c84ed5c430596079" prot="public" virt="non-virtual"><scope>lte_lc_evt</scope><name>nw_reg_status</name></member>
+      <member refid="structlte__lc__evt_ad27081c9a1da14c162a9604dc0e55e88_1ad27081c9a1da14c162a9604dc0e55e88" prot="public" virt="non-virtual"><scope>lte_lc_evt</scope><name>psm_cfg</name></member>
+      <member refid="structlte__lc__evt_a6bb8a1ca2b9d71d50ba804e2f303491e_1a6bb8a1ca2b9d71d50ba804e2f303491e" prot="public" virt="non-virtual"><scope>lte_lc_evt</scope><name>rrc_mode</name></member>
+      <member refid="structlte__lc__evt_a46461bb0b4973b2396715938fa93c460_1a46461bb0b4973b2396715938fa93c460" prot="public" virt="non-virtual"><scope>lte_lc_evt</scope><name>time</name></member>
+      <member refid="structlte__lc__evt_ac2f55aa75ca7780f242f6425121161bc_1ac2f55aa75ca7780f242f6425121161bc" prot="public" virt="non-virtual"><scope>lte_lc_evt</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

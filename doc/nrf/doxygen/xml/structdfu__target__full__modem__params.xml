@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structdfu__target__full__modem__params" kind="struct" language="C++" prot="public">
+    <compoundname>dfu_target_full_modem_params</compoundname>
+    <includes refid="dfu__target__full__modem_8h" local="no">dfu_target_full_modem.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structdfu__target__full__modem__params_a2f5cb2361b06199d9374939b57d2de33_1a2f5cb2361b06199d9374939b57d2de33" prot="public" static="no" mutable="no">
+        <type>uint8_t *</type>
+        <definition>uint8_t* dfu_target_full_modem_params::buf</definition>
+        <argsstring></argsstring>
+        <name>buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_full_modem.h" line="42" column="9" bodyfile="include/dfu/dfu_target_full_modem.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdfu__target__full__modem__params_ad145ecaf89f7f7bbeb00d69de43fdd9f_1ad145ecaf89f7f7bbeb00d69de43fdd9f" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t dfu_target_full_modem_params::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_full_modem.h" line="45" column="8" bodyfile="include/dfu/dfu_target_full_modem.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdfu__target__full__modem__params_aabdb9c9a851baec29dd1b05ec162412b_1aabdb9c9a851baec29dd1b05ec162412b" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structdfu__target__fmfu__fdev" kindref="compound">dfu_target_fmfu_fdev</ref> *</type>
+        <definition>struct dfu_target_fmfu_fdev* dfu_target_full_modem_params::dev</definition>
+        <argsstring></argsstring>
+        <name>dev</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_full_modem.h" line="48" column="27" bodyfile="include/dfu/dfu_target_full_modem.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>dfu_target_fmfu_fdev</label>
+        <link refid="structdfu__target__fmfu__fdev"/>
+      </node>
+      <node id="1">
+        <label>dfu_target_full_modem_params</label>
+        <link refid="structdfu__target__full__modem__params"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>dev</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/dfu/dfu_target_full_modem.h" line="40" column="1" bodyfile="include/dfu/dfu_target_full_modem.h" bodystart="40" bodyend="49"/>
+    <listofallmembers>
+      <member refid="structdfu__target__full__modem__params_a2f5cb2361b06199d9374939b57d2de33_1a2f5cb2361b06199d9374939b57d2de33" prot="public" virt="non-virtual"><scope>dfu_target_full_modem_params</scope><name>buf</name></member>
+      <member refid="structdfu__target__full__modem__params_aabdb9c9a851baec29dd1b05ec162412b_1aabdb9c9a851baec29dd1b05ec162412b" prot="public" virt="non-virtual"><scope>dfu_target_full_modem_params</scope><name>dev</name></member>
+      <member refid="structdfu__target__full__modem__params_ad145ecaf89f7f7bbeb00d69de43fdd9f_1ad145ecaf89f7f7bbeb00d69de43fdd9f" prot="public" virt="non-virtual"><scope>dfu_target_full_modem_params</scope><name>len</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

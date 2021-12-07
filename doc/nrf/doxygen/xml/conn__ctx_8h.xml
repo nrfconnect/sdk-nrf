@@ -1,0 +1,499 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="conn__ctx_8h" kind="file" language="C++">
+    <compoundname>conn_ctx.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <includes local="no">sys/__assert.h</includes>
+    <includes local="no">bluetooth/conn.h</includes>
+    <includedby refid="hids_8h" local="no">include/bluetooth/services/hids.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/bluetooth/conn_ctx.h</label>
+        <link refid="conn__ctx_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bluetooth/conn.h</label>
+      </node>
+      <node id="3">
+        <label>sys/__assert.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="3">
+        <label>applications/nrf_desktop/src/events/hids_event.h</label>
+        <link refid="hids__event_8h"/>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/conn_ctx.h</label>
+        <link refid="conn__ctx_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/bluetooth/services/hids.h</label>
+        <link refid="hids_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>include/bluetooth/services/hogp.h</label>
+        <link refid="hogp_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structbt__conn__ctx" prot="public">bt_conn_ctx</innerclass>
+    <innerclass refid="structbt__conn__ctx__lib" prot="public">bt_conn_ctx_lib</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__conn__ctx_ga57125acafeeaffd4f853ca58eb7513af_1ga57125acafeeaffd4f853ca58eb7513af" prot="public" static="no">
+        <name>BT_CONN_CTX_DEF</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_max_clients</defname></param>
+        <param><defname>_ctx_sz</defname></param>
+        <initializer>	K_MEM_SLAB_DEFINE(_name##_mem_slab,                                    \
+			  ROUND_UP(_ctx_sz, CONFIG_BT_CONN_CTX_MEM_BUF_ALIGN), \
+			  (_max_clients),                                      \
+			  CONFIG_BT_CONN_CTX_MEM_BUF_ALIGN);                   \
+	K_MUTEX_DEFINE(_name##_mutex);                                         \
+	static struct <ref refid="structbt__conn__ctx__lib" kindref="compound">bt_conn_ctx_lib</ref> CONCAT(_name, _ctx_lib) =                \
+	{                                                                      \
+		.mem_slab = &amp;CONCAT(_name, _mem_slab),                         \
+		.mutex = &amp;_name##_mutex                                        \
+	}</initializer>
+        <briefdescription>
+<para>Macro for defining a Bluetooth connection context library instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_max_clients</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of clients connected at a time. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_ctx_sz</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context size in bytes for a single connection. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/conn_ctx.h" line="31" column="9" bodyfile="include/bluetooth/conn_ctx.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__conn__ctx_ga293ec160f970cf2429395194fce3304d_1ga293ec160f970cf2429395194fce3304d" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>static size_t bt_conn_ctx_block_size_get</definition>
+        <argsstring>(struct bt_conn_ctx_lib *ctx_lib)</argsstring>
+        <name>bt_conn_ctx_block_size_get</name>
+        <param>
+          <type>struct <ref refid="structbt__conn__ctx__lib" kindref="compound">bt_conn_ctx_lib</ref> *</type>
+          <declname>ctx_lib</declname>
+        </param>
+        <briefdescription>
+<para>Get the block size. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ctx_lib</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bluetooth connection context library instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Block size in bytes. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/conn_ctx.h" line="72" column="22" bodyfile="include/bluetooth/conn_ctx.h" bodystart="72" bodyend="75"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__conn__ctx_gab0288933c0bbd698c105957ecc587789_1gab0288933c0bbd698c105957ecc587789" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>static size_t bt_conn_ctx_count</definition>
+        <argsstring>(struct bt_conn_ctx_lib *ctx_lib)</argsstring>
+        <name>bt_conn_ctx_count</name>
+        <param>
+          <type>struct <ref refid="structbt__conn__ctx__lib" kindref="compound">bt_conn_ctx_lib</ref> *</type>
+          <declname>ctx_lib</declname>
+        </param>
+        <briefdescription>
+<para>Get the number of connection contexts that are managed by the library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ctx_lib</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bluetooth connection context library instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of connection contexts that are managed by the library. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/conn_ctx.h" line="84" column="22" bodyfile="include/bluetooth/conn_ctx.h" bodystart="84" bodyend="87"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__conn__ctx_ga2c3c1af7b865d6443409843ff66f3222_1ga2c3c1af7b865d6443409843ff66f3222" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void * bt_conn_ctx_alloc</definition>
+        <argsstring>(struct bt_conn_ctx_lib *ctx_lib, struct bt_conn *conn)</argsstring>
+        <name>bt_conn_ctx_alloc</name>
+        <param>
+          <type>struct <ref refid="structbt__conn__ctx__lib" kindref="compound">bt_conn_ctx_lib</ref> *</type>
+          <declname>ctx_lib</declname>
+        </param>
+        <param>
+          <type>struct bt_conn *</type>
+          <declname>conn</declname>
+        </param>
+        <briefdescription>
+<para>Allocate memory for the connection context data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function can set the pointer to the allocated memory.</para>
+<para>This function should be used in conjunction with <ref refid="group__bt__conn__ctx_ga5b279a272cfd4441147c579ac2e4e6a2_1ga5b279a272cfd4441147c579ac2e4e6a2" kindref="member">bt_conn_ctx_release</ref> to ensure proper operation.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ctx_lib</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bluetooth connection context library instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bluetooth connection.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Pointer to the connection context data if the operation was successful. Otherwise NULL. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/conn_ctx.h" line="103" column="6" declfile="include/bluetooth/conn_ctx.h" declline="103" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__conn__ctx_gac5c54faaea49025cc338245dc9ba9588_1gac5c54faaea49025cc338245dc9ba9588" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_conn_ctx_free</definition>
+        <argsstring>(struct bt_conn_ctx_lib *ctx_lib, struct bt_conn *conn)</argsstring>
+        <name>bt_conn_ctx_free</name>
+        <param>
+          <type>struct <ref refid="structbt__conn__ctx__lib" kindref="compound">bt_conn_ctx_lib</ref> *</type>
+          <declname>ctx_lib</declname>
+        </param>
+        <param>
+          <type>struct bt_conn *</type>
+          <declname>conn</declname>
+        </param>
+        <briefdescription>
+<para>Free the allocated memory for a connection. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ctx_lib</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bluetooth connection context library instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bluetooth connection.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/conn_ctx.h" line="114" column="5" declfile="include/bluetooth/conn_ctx.h" declline="114" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__conn__ctx_gab3f6abfe7f674228d07d0547dc2edae1_1gab3f6abfe7f674228d07d0547dc2edae1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_conn_ctx_free_all</definition>
+        <argsstring>(struct bt_conn_ctx_lib *ctx_lib)</argsstring>
+        <name>bt_conn_ctx_free_all</name>
+        <param>
+          <type>struct <ref refid="structbt__conn__ctx__lib" kindref="compound">bt_conn_ctx_lib</ref> *</type>
+          <declname>ctx_lib</declname>
+        </param>
+        <briefdescription>
+<para>Free all allocated context data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ctx_lib</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bluetooth connection context library instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/conn_ctx.h" line="121" column="6" declfile="include/bluetooth/conn_ctx.h" declline="121" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__conn__ctx_ga705c8134d2c5b60bd547e29c2cbb4aa1_1ga705c8134d2c5b60bd547e29c2cbb4aa1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void * bt_conn_ctx_get</definition>
+        <argsstring>(struct bt_conn_ctx_lib *ctx_lib, struct bt_conn *conn)</argsstring>
+        <name>bt_conn_ctx_get</name>
+        <param>
+          <type>struct <ref refid="structbt__conn__ctx__lib" kindref="compound">bt_conn_ctx_lib</ref> *</type>
+          <declname>ctx_lib</declname>
+        </param>
+        <param>
+          <type>struct bt_conn *</type>
+          <declname>conn</declname>
+        </param>
+        <briefdescription>
+<para>Get the context data of a connection from the memory pool. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function finds a connection&apos;s context data in the memory pool. The link to find is identified by the connection object.</para>
+<para>This function should be used in conjunction with <ref refid="group__bt__conn__ctx_ga5b279a272cfd4441147c579ac2e4e6a2_1ga5b279a272cfd4441147c579ac2e4e6a2" kindref="member">bt_conn_ctx_release</ref> to ensure proper operation.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ctx_lib</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bluetooth connection context library instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bluetooth connection.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Pointer to the connection context data if the operation was successful. Otherwise NULL. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/conn_ctx.h" line="138" column="6" declfile="include/bluetooth/conn_ctx.h" declline="138" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__conn__ctx_ga29cce50dc861324e4b60dd534dbf825b_1ga29cce50dc861324e4b60dd534dbf825b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const struct <ref refid="structbt__conn__ctx" kindref="compound">bt_conn_ctx</ref> *</type>
+        <definition>const struct bt_conn_ctx * bt_conn_ctx_get_by_id</definition>
+        <argsstring>(struct bt_conn_ctx_lib *ctx_lib, uint8_t id)</argsstring>
+        <name>bt_conn_ctx_get_by_id</name>
+        <param>
+          <type>struct <ref refid="structbt__conn__ctx__lib" kindref="compound">bt_conn_ctx_lib</ref> *</type>
+          <declname>ctx_lib</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>id</declname>
+        </param>
+        <briefdescription>
+<para>Get a specific connection context from the memory pool. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function finds the connection context and the associated connection object in the memory pool. The link to find is identified by its index in the connection context array.</para>
+<para>This function should be used in conjunction with <ref refid="group__bt__conn__ctx_ga5b279a272cfd4441147c579ac2e4e6a2_1ga5b279a272cfd4441147c579ac2e4e6a2" kindref="member">bt_conn_ctx_release</ref> to ensure proper operation.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ctx_lib</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bluetooth connection context library instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connection context index.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Pointer to the <ref refid="group__bt__conn__ctx" kindref="compound">Bluetooth connection context library API</ref> struct if the operation was successful. Otherwise NULL. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/conn_ctx.h" line="156" column="24" declfile="include/bluetooth/conn_ctx.h" declline="156" declcolumn="24"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__conn__ctx_ga5b279a272cfd4441147c579ac2e4e6a2_1ga5b279a272cfd4441147c579ac2e4e6a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_conn_ctx_release</definition>
+        <argsstring>(struct bt_conn_ctx_lib *ctx_lib, void *data)</argsstring>
+        <name>bt_conn_ctx_release</name>
+        <param>
+          <type>struct <ref refid="structbt__conn__ctx__lib" kindref="compound">bt_conn_ctx_lib</ref> *</type>
+          <declname>ctx_lib</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Release a connection context from the memory pool. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function finds and releases a connection context in the memory pool. The link to find is identified by its context data.</para>
+<para>This function should be used in conjunction with <ref refid="group__bt__conn__ctx_ga2c3c1af7b865d6443409843ff66f3222_1ga2c3c1af7b865d6443409843ff66f3222" kindref="member">bt_conn_ctx_alloc</ref>, <ref refid="group__bt__conn__ctx_ga705c8134d2c5b60bd547e29c2cbb4aa1_1ga705c8134d2c5b60bd547e29c2cbb4aa1" kindref="member">bt_conn_ctx_get</ref>, or <ref refid="group__bt__conn__ctx_ga29cce50dc861324e4b60dd534dbf825b_1ga29cce50dc861324e4b60dd534dbf825b" kindref="member">bt_conn_ctx_get_by_id</ref> to ensure proper operation.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ctx_lib</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bluetooth connection context library instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context data for the connection. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/conn_ctx.h" line="171" column="6" declfile="include/bluetooth/conn_ctx.h" declline="171" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2018<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_CONN_CTX_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_CONN_CTX_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/__assert.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/conn.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="group__bt__conn__ctx_ga57125acafeeaffd4f853ca58eb7513af_1ga57125acafeeaffd4f853ca58eb7513af" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_CONN_CTX_DEF(_name,<sp/>_max_clients,<sp/>_ctx_sz)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="32"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>K_MEM_SLAB_DEFINE(_name##_mem_slab,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="33"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ROUND_UP(_ctx_sz,<sp/>CONFIG_BT_CONN_CTX_MEM_BUF_ALIGN),<sp/>\</highlight></codeline>
+<codeline lineno="34"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(_max_clients),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="35"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>CONFIG_BT_CONN_CTX_MEM_BUF_ALIGN);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="36"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>K_MUTEX_DEFINE(_name##_mutex);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="37"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>static<sp/>struct<sp/>bt_conn_ctx_lib<sp/>CONCAT(_name,<sp/>_ctx_lib)<sp/>=<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="38"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="39"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.mem_slab<sp/>=<sp/>&amp;CONCAT(_name,<sp/>_mem_slab),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="40"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.mutex<sp/>=<sp/>&amp;_name##_mutex<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="41"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="structbt__conn__ctx" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__conn__ctx" kindref="compound">bt_conn_ctx</ref><sp/>{</highlight></codeline>
+<codeline lineno="46" refid="structbt__conn__ctx_ae182bf4ffe8676108e3704d91ada9182_1ae182bf4ffe8676108e3704d91ada9182" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structbt__conn__ctx_ae182bf4ffe8676108e3704d91ada9182_1ae182bf4ffe8676108e3704d91ada9182" kindref="member">data</ref>;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="structbt__conn__ctx_aba994ef635c1d0cb11208af73eb23936_1aba994ef635c1d0cb11208af73eb23936" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_conn<sp/>*<ref refid="structbt__conn__ctx_aba994ef635c1d0cb11208af73eb23936_1aba994ef635c1d0cb11208af73eb23936" kindref="member">conn</ref>;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="structbt__conn__ctx__lib" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__conn__ctx__lib" kindref="compound">bt_conn_ctx_lib</ref><sp/>{</highlight></codeline>
+<codeline lineno="55" refid="structbt__conn__ctx__lib_a3648b415f815381b2aea8355f406ad59_1a3648b415f815381b2aea8355f406ad59" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__conn__ctx" kindref="compound">bt_conn_ctx</ref><sp/><ref refid="structbt__conn__ctx__lib_a3648b415f815381b2aea8355f406ad59_1a3648b415f815381b2aea8355f406ad59" kindref="member">ctx</ref>[CONFIG_BT_MAX_CONN];</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="structbt__conn__ctx__lib_a7aa81f1b5f501d6e47464f5213a8965b_1a7aa81f1b5f501d6e47464f5213a8965b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">k_mutex<sp/>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structbt__conn__ctx__lib_a7aa81f1b5f501d6e47464f5213a8965b_1a7aa81f1b5f501d6e47464f5213a8965b" kindref="member">mutex</ref>;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="structbt__conn__ctx__lib_a6b58b530501b9d597c77efe001ccfe0e_1a6b58b530501b9d597c77efe001ccfe0e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">k_mem_slab<sp/>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structbt__conn__ctx__lib_a6b58b530501b9d597c77efe001ccfe0e_1a6b58b530501b9d597c77efe001ccfe0e" kindref="member">mem_slab</ref>;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="group__bt__conn__ctx_ga293ec160f970cf2429395194fce3304d_1ga293ec160f970cf2429395194fce3304d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="group__bt__conn__ctx_ga293ec160f970cf2429395194fce3304d_1ga293ec160f970cf2429395194fce3304d" kindref="member">bt_conn_ctx_block_size_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__conn__ctx__lib" kindref="compound">bt_conn_ctx_lib</ref><sp/>*ctx_lib)</highlight></codeline>
+<codeline lineno="73"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>ctx_lib-&gt;<ref refid="structbt__conn__ctx__lib_a6b58b530501b9d597c77efe001ccfe0e_1a6b58b530501b9d597c77efe001ccfe0e" kindref="member">mem_slab</ref>-&gt;block_size;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84" refid="group__bt__conn__ctx_gab0288933c0bbd698c105957ecc587789_1gab0288933c0bbd698c105957ecc587789" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="group__bt__conn__ctx_gab0288933c0bbd698c105957ecc587789_1gab0288933c0bbd698c105957ecc587789" kindref="member">bt_conn_ctx_count</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__conn__ctx__lib" kindref="compound">bt_conn_ctx_lib</ref><sp/>*ctx_lib)</highlight></codeline>
+<codeline lineno="85"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>ARRAY_SIZE(ctx_lib-&gt;<ref refid="structbt__conn__ctx__lib_a3648b415f815381b2aea8355f406ad59_1a3648b415f815381b2aea8355f406ad59" kindref="member">ctx</ref>);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103" refid="group__bt__conn__ctx_ga2c3c1af7b865d6443409843ff66f3222_1ga2c3c1af7b865d6443409843ff66f3222" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="group__bt__conn__ctx_ga2c3c1af7b865d6443409843ff66f3222_1ga2c3c1af7b865d6443409843ff66f3222" kindref="member">bt_conn_ctx_alloc</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__conn__ctx__lib" kindref="compound">bt_conn_ctx_lib</ref><sp/>*ctx_lib,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_conn<sp/>*conn);</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114" refid="group__bt__conn__ctx_gac5c54faaea49025cc338245dc9ba9588_1gac5c54faaea49025cc338245dc9ba9588" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__conn__ctx_gac5c54faaea49025cc338245dc9ba9588_1gac5c54faaea49025cc338245dc9ba9588" kindref="member">bt_conn_ctx_free</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__conn__ctx__lib" kindref="compound">bt_conn_ctx_lib</ref><sp/>*ctx_lib,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_conn<sp/>*conn);</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121" refid="group__bt__conn__ctx_gab3f6abfe7f674228d07d0547dc2edae1_1gab3f6abfe7f674228d07d0547dc2edae1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__bt__conn__ctx_gab3f6abfe7f674228d07d0547dc2edae1_1gab3f6abfe7f674228d07d0547dc2edae1" kindref="member">bt_conn_ctx_free_all</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__conn__ctx__lib" kindref="compound">bt_conn_ctx_lib</ref><sp/>*ctx_lib);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138" refid="group__bt__conn__ctx_ga705c8134d2c5b60bd547e29c2cbb4aa1_1ga705c8134d2c5b60bd547e29c2cbb4aa1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="group__bt__conn__ctx_ga705c8134d2c5b60bd547e29c2cbb4aa1_1ga705c8134d2c5b60bd547e29c2cbb4aa1" kindref="member">bt_conn_ctx_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__conn__ctx__lib" kindref="compound">bt_conn_ctx_lib</ref><sp/>*ctx_lib,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_conn<sp/>*conn);</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156" refid="group__bt__conn__ctx_ga29cce50dc861324e4b60dd534dbf825b_1ga29cce50dc861324e4b60dd534dbf825b" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__conn__ctx" kindref="compound">bt_conn_ctx</ref><sp/>*<ref refid="group__bt__conn__ctx_ga29cce50dc861324e4b60dd534dbf825b_1ga29cce50dc861324e4b60dd534dbf825b" kindref="member">bt_conn_ctx_get_by_id</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__conn__ctx__lib" kindref="compound">bt_conn_ctx_lib</ref><sp/>*ctx_lib,<sp/>uint8_t<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171" refid="group__bt__conn__ctx_ga5b279a272cfd4441147c579ac2e4e6a2_1ga5b279a272cfd4441147c579ac2e4e6a2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__bt__conn__ctx_ga5b279a272cfd4441147c579ac2e4e6a2_1ga5b279a272cfd4441147c579ac2e4e6a2" kindref="member">bt_conn_ctx_release</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__conn__ctx__lib" kindref="compound">bt_conn_ctx_lib</ref><sp/>*ctx_lib,<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structbt__conn__ctx_ae182bf4ffe8676108e3704d91ada9182_1ae182bf4ffe8676108e3704d91ada9182" kindref="member">data</ref>);</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_CONN_CTX_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/conn_ctx.h"/>
+  </compounddef>
+</doxygen>

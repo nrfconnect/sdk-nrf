@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structcloud__channel__data" kind="struct" language="C++" prot="public">
+    <compoundname>cloud_channel_data</compoundname>
+    <includes refid="src_2cloud__codec_2cloud__codec_8h" local="no">cloud_codec.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structcloud__channel__data_a59c40ac239f82292bd34da53bc33ec73_1a59c40ac239f82292bd34da53bc33ec73" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__cloud__codec_ga13364d4b7e9466e1db8c9b123cf70cdc_1ga13364d4b7e9466e1db8c9b123cf70cdc" kindref="member">cloud_channel</ref></type>
+        <definition>enum cloud_channel cloud_channel_data::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The sensor that is the source of the data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="100" column="19" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__channel__data_a4ede81157e7ab5ce91e92152432959c3_1a4ede81157e7ab5ce91e92152432959c3" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structcloud__data" kindref="compound">cloud_data</ref></type>
+        <definition>struct cloud_data cloud_channel_data::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sensor data to be transmitted. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="102" column="17" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__channel__data_aee2652047d911b2c7875e735e279d10a_1aee2652047d911b2c7875e735e279d10a" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t cloud_channel_data::tag</definition>
+        <argsstring></argsstring>
+        <name>tag</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Unique tag to identify the sent data. Useful for matching the acknowledgment. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="106" column="10" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__channel__data_ae78eeaa3655ffe13e25403b6ca4762e0_1ae78eeaa3655ffe13e25403b6ca4762e0" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t cloud_channel_data::ts</definition>
+        <argsstring></argsstring>
+        <name>ts</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Uptime of the sensor data to be transmitted. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="108" column="9" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Sensor data parameters. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>cloud_channel_data</label>
+        <link refid="structcloud__channel__data"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>data</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>cloud_data</label>
+        <link refid="structcloud__data"/>
+      </node>
+    </collaborationgraph>
+    <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="98" column="1" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="98" bodyend="109"/>
+    <listofallmembers>
+      <member refid="structcloud__channel__data_a4ede81157e7ab5ce91e92152432959c3_1a4ede81157e7ab5ce91e92152432959c3" prot="public" virt="non-virtual"><scope>cloud_channel_data</scope><name>data</name></member>
+      <member refid="structcloud__channel__data_aee2652047d911b2c7875e735e279d10a_1aee2652047d911b2c7875e735e279d10a" prot="public" virt="non-virtual"><scope>cloud_channel_data</scope><name>tag</name></member>
+      <member refid="structcloud__channel__data_ae78eeaa3655ffe13e25403b6ca4762e0_1ae78eeaa3655ffe13e25403b6ca4762e0" prot="public" virt="non-virtual"><scope>cloud_channel_data</scope><name>ts</name></member>
+      <member refid="structcloud__channel__data_a59c40ac239f82292bd34da53bc33ec73_1a59c40ac239f82292bd34da53bc33ec73" prot="public" virt="non-virtual"><scope>cloud_channel_data</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

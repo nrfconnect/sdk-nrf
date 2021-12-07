@@ -1,0 +1,208 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__tnep__ch__cb" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_tnep_ch_cb</compoundname>
+    <includes refid="tnep_2ch_8h" local="no">ch.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__tnep__ch__cb_a360e51b3b8323c292e57015badc758a4_1a360e51b3b8323c292e57015badc758a4" prot="public" static="no" mutable="no">
+        <type>int(*</type>
+        <definition>int(* nfc_tnep_ch_cb::request_msg_prepare) (void)</definition>
+        <argsstring>)(void)</argsstring>
+        <name>request_msg_prepare</name>
+        <briefdescription>
+<para>The Connection Handover Request Message prepare callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This callback is called every time when the NFC Forum Device takes the Connection Handover Requester role and the Connection Handover Message must be sent to the other NFC Forum Device.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/ch.h" line="70" column="1" bodyfile="include/nfc/tnep/ch.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__ch__cb_a7b7acc418909aa13d107abf2a5c28e08_1a7b7acc418909aa13d107abf2a5c28e08" prot="public" static="no" mutable="no">
+        <type>int(*</type>
+        <definition>int(* nfc_tnep_ch_cb::request_msg_recv) (const struct nfc_tnep_ch_request *ch_req)</definition>
+        <argsstring>)(const struct nfc_tnep_ch_request *ch_req)</argsstring>
+        <name>request_msg_recv</name>
+        <briefdescription>
+<para>The Connection Handover Request Message received callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This callback is called always when NFC Forum Device which supports TNEP received the Connection Handover Request Message. After receiving this message, application shall respond with the Handover Select Message by calling <ref refid="group__nfc__tnep__ch_ga3fb33feb5d0209add173f0ed610a068d_1ga3fb33feb5d0209add173f0ed610a068d" kindref="member">nfc_tnep_ch_carrier_set</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ch_req</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Connection Handover Request structure which contains the parsed Connection Handover Request Message.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/ch.h" line="86" column="1" bodyfile="include/nfc/tnep/ch.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__ch__cb_a5469796ebf454f080e815fe5883a81d9_1a5469796ebf454f080e815fe5883a81d9" prot="public" static="no" mutable="no">
+        <type>int(*</type>
+        <definition>int(* nfc_tnep_ch_cb::select_msg_recv) (const struct nfc_tnep_ch_record *ch_select, bool inactive)</definition>
+        <argsstring>)(const struct nfc_tnep_ch_record *ch_select, bool inactive)</argsstring>
+        <name>select_msg_recv</name>
+        <briefdescription>
+<para>The Connection Handover Select Message received callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This callback is called always when the NFC Device receive the Connection Select Message in response to the Connection Handover Request message.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ch_select</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to Connection Handover structure which contains the parsed Connection Handover Select Message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">inactive</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Indicates that all Alternative Carriers are inactive. The Handover Request Message should be sent again with only one Alternative Carrier using <ref refid="group__nfc__tnep__ch_ga3fb33feb5d0209add173f0ed610a068d_1ga3fb33feb5d0209add173f0ed610a068d" kindref="member">nfc_tnep_ch_carrier_set</ref>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/ch.h" line="105" column="1" bodyfile="include/nfc/tnep/ch.h" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__ch__cb_a436024c4e40f72a6cf15d4afb45ddc51_1a436024c4e40f72a6cf15d4afb45ddc51" prot="public" static="no" mutable="no">
+        <type>int(*</type>
+        <definition>int(* nfc_tnep_ch_cb::mediation_req_recv) (void)</definition>
+        <argsstring>)(void)</argsstring>
+        <name>mediation_req_recv</name>
+        <briefdescription>
+<para>The Connection Handover Mediation Request Message received callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This callback is called when an NFC Forum Tag Device that supports TNEP receives a Connection Handover Request Message that contains, in a Handover Carrier Record, the information for a single alternative carrier of NFC Forum Well Known type “Hm”. After receiving this message, the application shall respond with the Handover Mediation Message by calling <ref refid="group__nfc__tnep__ch_ga3fb33feb5d0209add173f0ed610a068d_1ga3fb33feb5d0209add173f0ed610a068d" kindref="member">nfc_tnep_ch_carrier_set</ref>.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/ch.h" line="123" column="1" bodyfile="include/nfc/tnep/ch.h" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__ch__cb_aaeb44a26eb00fd2e4bcb0ea2b1f825e5_1aaeb44a26eb00fd2e4bcb0ea2b1f825e5" prot="public" static="no" mutable="no">
+        <type>int(*</type>
+        <definition>int(* nfc_tnep_ch_cb::initial_msg_recv) (const struct nfc_tnep_ch_record *ch_initial)</definition>
+        <argsstring>)(const struct nfc_tnep_ch_record *ch_initial)</argsstring>
+        <name>initial_msg_recv</name>
+        <briefdescription>
+<para>The Connection Handover Initial Message received callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This callback is called always when NFC Forum Tag Device which supports TNEP receives the Connection Handover Initial Message. After receiving this message, application shall respond also with the Handover Initial Message by calling <ref refid="group__nfc__tnep__ch_ga3fb33feb5d0209add173f0ed610a068d_1ga3fb33feb5d0209add173f0ed610a068d" kindref="member">nfc_tnep_ch_carrier_set</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ch_initial</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to Connection Handover structure which contains the parsed Connection Handover Initial Message.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/ch.h" line="139" column="1" bodyfile="include/nfc/tnep/ch.h" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__ch__cb_ab3e2ebd6bd4f3d96b96168600122f0ef_1ab3e2ebd6bd4f3d96b96168600122f0ef" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* nfc_tnep_ch_cb::error) (int err)</definition>
+        <argsstring>)(int err)</argsstring>
+        <name>error</name>
+        <briefdescription>
+<para>Error callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Called always when internal error was detected.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Detected error code. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/ch.h" line="148" column="1" bodyfile="include/nfc/tnep/ch.h" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Connection Handover service callback structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/nfc/tnep/ch.h" line="59" column="1" bodyfile="include/nfc/tnep/ch.h" bodystart="59" bodyend="149"/>
+    <listofallmembers>
+      <member refid="structnfc__tnep__ch__cb_ab3e2ebd6bd4f3d96b96168600122f0ef_1ab3e2ebd6bd4f3d96b96168600122f0ef" prot="public" virt="non-virtual"><scope>nfc_tnep_ch_cb</scope><name>error</name></member>
+      <member refid="structnfc__tnep__ch__cb_aaeb44a26eb00fd2e4bcb0ea2b1f825e5_1aaeb44a26eb00fd2e4bcb0ea2b1f825e5" prot="public" virt="non-virtual"><scope>nfc_tnep_ch_cb</scope><name>initial_msg_recv</name></member>
+      <member refid="structnfc__tnep__ch__cb_a436024c4e40f72a6cf15d4afb45ddc51_1a436024c4e40f72a6cf15d4afb45ddc51" prot="public" virt="non-virtual"><scope>nfc_tnep_ch_cb</scope><name>mediation_req_recv</name></member>
+      <member refid="structnfc__tnep__ch__cb_a360e51b3b8323c292e57015badc758a4_1a360e51b3b8323c292e57015badc758a4" prot="public" virt="non-virtual"><scope>nfc_tnep_ch_cb</scope><name>request_msg_prepare</name></member>
+      <member refid="structnfc__tnep__ch__cb_a7b7acc418909aa13d107abf2a5c28e08_1a7b7acc418909aa13d107abf2a5c28e08" prot="public" virt="non-virtual"><scope>nfc_tnep_ch_cb</scope><name>request_msg_recv</name></member>
+      <member refid="structnfc__tnep__ch__cb_a5469796ebf454f080e815fe5883a81d9_1a5469796ebf454f080e815fe5883a81d9" prot="public" virt="non-virtual"><scope>nfc_tnep_ch_cb</scope><name>select_msg_recv</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

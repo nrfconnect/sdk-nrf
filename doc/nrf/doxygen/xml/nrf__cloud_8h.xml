@@ -1,0 +1,2120 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="nrf__cloud_8h" kind="file" language="C++">
+    <compoundname>nrf_cloud.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <includes local="no">zephyr/types.h</includes>
+    <includes local="no">net/mqtt.h</includes>
+    <includes local="no">cJSON.h</includes>
+    <includedby refid="nrf__cloud__agps_8h" local="no">include/net/nrf_cloud_agps.h</includedby>
+    <includedby refid="nrf__cloud__rest_8h" local="no">include/net/nrf_cloud_rest.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/net/nrf_cloud.h</label>
+        <link refid="nrf__cloud_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>cJSON.h</label>
+      </node>
+      <node id="4">
+        <label>net/mqtt.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>include/net/nrf_cloud.h</label>
+        <link refid="nrf__cloud_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/net/nrf_cloud_agps.h</label>
+        <link refid="nrf__cloud__agps_8h"/>
+      </node>
+      <node id="3">
+        <label>include/net/nrf_cloud_rest.h</label>
+        <link refid="nrf__cloud__rest_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structnrf__cloud__fota__job__info" prot="public">nrf_cloud_fota_job_info</innerclass>
+    <innerclass refid="structnrf__cloud__settings__fota__job" prot="public">nrf_cloud_settings_fota_job</innerclass>
+    <innerclass refid="structnrf__cloud__data" prot="public">nrf_cloud_data</innerclass>
+    <innerclass refid="structnrf__cloud__topic" prot="public">nrf_cloud_topic</innerclass>
+    <innerclass refid="structnrf__cloud__sensor__list" prot="public">nrf_cloud_sensor_list</innerclass>
+    <innerclass refid="structnrf__cloud__connect__param" prot="public">nrf_cloud_connect_param</innerclass>
+    <innerclass refid="structnrf__cloud__sensor__data" prot="public">nrf_cloud_sensor_data</innerclass>
+    <innerclass refid="structnrf__cloud__evt" prot="public">nrf_cloud_evt</innerclass>
+    <innerclass refid="structnrf__cloud__tx__data" prot="public">nrf_cloud_tx_data</innerclass>
+    <innerclass refid="structnrf__cloud__svc__info__fota" prot="public">nrf_cloud_svc_info_fota</innerclass>
+    <innerclass refid="structnrf__cloud__svc__info__ui" prot="public">nrf_cloud_svc_info_ui</innerclass>
+    <innerclass refid="structnrf__cloud__modem__info" prot="public">nrf_cloud_modem_info</innerclass>
+    <innerclass refid="structnrf__cloud__svc__info" prot="public">nrf_cloud_svc_info</innerclass>
+    <innerclass refid="structnrf__cloud__device__status" prot="public">nrf_cloud_device_status</innerclass>
+    <innerclass refid="structnrf__cloud__init__param" prot="public">nrf_cloud_init_param</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_ga4af6b3bbc22ecee33cd8e2e88d7d30d1_1ga4af6b3bbc22ecee33cd8e2e88d7d30d1" prot="public" static="no">
+        <name>NCT_MSG_ID_USE_NEXT_INCREMENT</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="29" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_ga60bfa46b87b05f9e50bb85e9cda58dfb_1ga60bfa46b87b05f9e50bb85e9cda58dfb" prot="public" static="no">
+        <name>NCT_MSG_ID_CC_SUB</name>
+        <initializer>100</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="30" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_ga7469f827de6e03450be6aaecb9500f3b_1ga7469f827de6e03450be6aaecb9500f3b" prot="public" static="no">
+        <name>NCT_MSG_ID_DC_SUB</name>
+        <initializer>101</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="31" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_gaf20c67874ae9762480a0cb1d0d4e1ba6_1gaf20c67874ae9762480a0cb1d0d4e1ba6" prot="public" static="no">
+        <name>NCT_MSG_ID_CG_SUB</name>
+        <initializer>102</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="32" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_ga7529a72638e30d2e4d94d2ae53db5a95_1ga7529a72638e30d2e4d94d2ae53db5a95" prot="public" static="no">
+        <name>NCT_MSG_ID_FOTA_SUB</name>
+        <initializer>103</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="33" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_gab6b0af9ab2b709014b7550691f62367c_1gab6b0af9ab2b709014b7550691f62367c" prot="public" static="no">
+        <name>NCT_MSG_ID_CC_UNSUB</name>
+        <initializer>150</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="34" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_ga1632120f0c7a4a98ca8b21b2cc0ad019_1ga1632120f0c7a4a98ca8b21b2cc0ad019" prot="public" static="no">
+        <name>NCT_MSG_ID_DC_UNSUB</name>
+        <initializer>151</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="35" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_ga3345209076894642ff9c6b8cbed3a079_1ga3345209076894642ff9c6b8cbed3a079" prot="public" static="no">
+        <name>NCT_MSG_ID_CG_UNSUB</name>
+        <initializer>152</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="36" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_gae3f20f97eaf5e7a7f1dc761a4d3ffc7e_1gae3f20f97eaf5e7a7f1dc761a4d3ffc7e" prot="public" static="no">
+        <name>NCT_MSG_ID_FOTA_UNSUB</name>
+        <initializer>153</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="37" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_ga0d8f71af30667c6a234fdfa3713c16d9_1ga0d8f71af30667c6a234fdfa3713c16d9" prot="public" static="no">
+        <name>NCT_MSG_ID_STATE_REQUEST</name>
+        <initializer>200</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="38" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_gae85321cb971e1264dbcfa525b3879fde_1gae85321cb971e1264dbcfa525b3879fde" prot="public" static="no">
+        <name>NCT_MSG_ID_FOTA_REQUEST</name>
+        <initializer>201</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="39" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_ga7c14ed995cb2aa93201f07199523f838_1ga7c14ed995cb2aa93201f07199523f838" prot="public" static="no">
+        <name>NCT_MSG_ID_FOTA_BLE_REQUEST</name>
+        <initializer>202</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="40" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_gaaf66e7e6f6fbedae765a8417dc077d29_1gaaf66e7e6f6fbedae765a8417dc077d29" prot="public" static="no">
+        <name>NCT_MSG_ID_STATE_REPORT</name>
+        <initializer>300</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="41" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_gab6f39cf139077521a9f48982cd1d98cd_1gab6f39cf139077521a9f48982cd1d98cd" prot="public" static="no">
+        <name>NCT_MSG_ID_PAIR_STATUS_REPORT</name>
+        <initializer>301</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="42" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_gaef138583c1736dc350521d7d88920a30_1gaef138583c1736dc350521d7d88920a30" prot="public" static="no">
+        <name>NCT_MSG_ID_FOTA_REPORT</name>
+        <initializer>302</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="43" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_ga6666e7983cbdcc2fd8cd4dc7222808a2_1ga6666e7983cbdcc2fd8cd4dc7222808a2" prot="public" static="no">
+        <name>NCT_MSG_ID_FOTA_BLE_REPORT</name>
+        <initializer>303</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="44" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_gafc494e60aa8445a065cc84c87ca9f72d_1gafc494e60aa8445a065cc84c87ca9f72d" prot="public" static="no">
+        <name>NCT_MSG_ID_INCREMENT_BEGIN</name>
+        <initializer>1000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="45" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_ga3ef52df4e0d90ed2e2f4aa204736571b_1ga3ef52df4e0d90ed2e2f4aa204736571b" prot="public" static="no">
+        <name>NCT_MSG_ID_INCREMENT_END</name>
+        <initializer>9999</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="46" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_ga9f8b89e76e25136540d92b5b08960d08_1ga9f8b89e76e25136540d92b5b08960d08" prot="public" static="no">
+        <name>NCT_MSG_ID_USER_TAG_BEGIN</name>
+        <initializer>(<ref refid="group__nrf__cloud__mqtt__msg__ids_ga3ef52df4e0d90ed2e2f4aa204736571b_1ga3ef52df4e0d90ed2e2f4aa204736571b" kindref="member">NCT_MSG_ID_INCREMENT_END</ref> + 1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="47" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud__mqtt__msg__ids_gabedf9d074c7a9ec8f9ef5ed82aff7b51_1gabedf9d074c7a9ec8f9ef5ed82aff7b51" prot="public" static="no">
+        <name>NCT_MSG_ID_USER_TAG_END</name>
+        <initializer>0xFFFF /* MQTT message IDs are uint16_t */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="48" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_gaf1fb84dac37607ed1d5f0a7891483384_1gaf1fb84dac37607ed1d5f0a7891483384" prot="public" static="no">
+        <name>IS_VALID_USER_TAG</name>
+        <param><defname>tag</defname></param>
+        <initializer>				((tag &gt;= <ref refid="group__nrf__cloud__mqtt__msg__ids_ga9f8b89e76e25136540d92b5b08960d08_1ga9f8b89e76e25136540d92b5b08960d08" kindref="member">NCT_MSG_ID_USER_TAG_BEGIN</ref>) &amp;&amp; \
+				(tag &lt;= <ref refid="group__nrf__cloud__mqtt__msg__ids_gabedf9d074c7a9ec8f9ef5ed82aff7b51_1gabedf9d074c7a9ec8f9ef5ed82aff7b51" kindref="member">NCT_MSG_ID_USER_TAG_END</ref>))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Determines if an MQTT message ID is a user specified tag to be used for ACK matching </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="52" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_ga957252baf3606e7e08b4df2ed9a99a16_1ga957252baf3606e7e08b4df2ed9a99a16" prot="public" static="no">
+        <name>NRF_CLOUD_SETTINGS_NAME</name>
+        <initializer>&quot;nrf_cloud&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>nRF Cloud&apos;s string identifier for persistent settings </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="55" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_gaca4bb4ecd80d3d6b2e69573d2ae23a7d_1gaca4bb4ecd80d3d6b2e69573d2ae23a7d" prot="public" static="no">
+        <name>NRF_CLOUD_SETTINGS_FOTA_KEY</name>
+        <initializer>&quot;fota&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="56" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_gaefa27dc00597b3396c26b0d1e43f5179_1gaefa27dc00597b3396c26b0d1e43f5179" prot="public" static="no">
+        <name>NRF_CLOUD_SETTINGS_FOTA_JOB</name>
+        <initializer>&quot;job&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="57" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_gae53c676ae8ae4dfe181099deb494480b_1gae53c676ae8ae4dfe181099deb494480b" prot="public" static="no">
+        <name>NRF_CLOUD_SETTINGS_FULL_FOTA</name>
+        <initializer>						<ref refid="group__nrf__cloud_ga957252baf3606e7e08b4df2ed9a99a16_1ga957252baf3606e7e08b4df2ed9a99a16" kindref="member">NRF_CLOUD_SETTINGS_NAME</ref> \
+						&quot;/&quot; \
+						<ref refid="group__nrf__cloud_gaca4bb4ecd80d3d6b2e69573d2ae23a7d_1gaca4bb4ecd80d3d6b2e69573d2ae23a7d" kindref="member">NRF_CLOUD_SETTINGS_FOTA_KEY</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>String used when defining a settings handler for FOTA </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="59" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_gaf28d7d05f55c6acf1dedb67f3e0a14f1_1gaf28d7d05f55c6acf1dedb67f3e0a14f1" prot="public" static="no">
+        <name>NRF_CLOUD_SETTINGS_FULL_FOTA_JOB</name>
+        <initializer>						<ref refid="group__nrf__cloud_gae53c676ae8ae4dfe181099deb494480b_1gae53c676ae8ae4dfe181099deb494480b" kindref="member">NRF_CLOUD_SETTINGS_FULL_FOTA</ref> \
+						&quot;/&quot; \
+						<ref refid="group__nrf__cloud_gaefa27dc00597b3396c26b0d1e43f5179_1gaefa27dc00597b3396c26b0d1e43f5179" kindref="member">NRF_CLOUD_SETTINGS_FOTA_JOB</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>String used when saving FOTA job info to settings </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="63" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_gac82efc4777da62991cc0a14b0202c51d_1gac82efc4777da62991cc0a14b0202c51d" prot="public" static="no">
+        <name>NRF_CLOUD_FOTA_VER</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current FOTA version number </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="68" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_gac2e8b1e48c840d1e5643953ae0fa81e3_1gac2e8b1e48c840d1e5643953ae0fa81e3" prot="public" static="no">
+        <name>NRF_CLOUD_FOTA_VER_STR</name>
+        <initializer>&quot;fota_v&quot; STRINGIFY(<ref refid="group__nrf__cloud_gac82efc4777da62991cc0a14b0202c51d_1gac82efc4777da62991cc0a14b0202c51d" kindref="member">NRF_CLOUD_FOTA_VER</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current FOTA version string used in device shadow </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="70" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_ga2d605911fd901b0d69820adf7ed82d6d_1ga2d605911fd901b0d69820adf7ed82d6d" prot="public" static="no">
+        <name>NRF_CLOUD_STAGE_ID_MAX_LEN</name>
+        <initializer>8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Max length of nRF Cloud&apos;s stage/environment name </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="72" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_ga914ce87ff2d4900a6fe149449c549247_1ga914ce87ff2d4900a6fe149449c549247" prot="public" static="no">
+        <name>NRF_CLOUD_TENANT_ID_MAX_LEN</name>
+        <initializer>64</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Max length of a tenant ID on nRF Cloud </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="74" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_ga06e4361cf1bfbc65f9efbbdd2a0b78c3_1ga06e4361cf1bfbc65f9efbbdd2a0b78c3" prot="public" static="no">
+        <name>NRF_CLOUD_CLIENT_ID_MAX_LEN</name>
+        <initializer>64</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Max length of a device&apos;s MQTT client ID (device ID) on nRF Cloud </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="76" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_ga8fbdd5dbb1224d27751a14c55ebead68_1ga8fbdd5dbb1224d27751a14c55ebead68" prot="public" static="no">
+        <name>NRF_CLOUD_JWT_VALID_TIME_S_MAX</name>
+        <initializer>(7 * 24 * 60 * 60)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum valid duration for JWTs generated by <ref refid="group__nrf__cloud_gaa10af80579a93b73db9cefb83eac81fd_1gaa10af80579a93b73db9cefb83eac81fd" kindref="member">nrf_cloud_jwt_generate</ref> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="78" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_ga82cda44e72db92a4049b9b36b7ef77f5_1ga82cda44e72db92a4049b9b36b7ef77f5" prot="public" static="no">
+        <name>NRF_CLOUD_JWT_VALID_TIME_S_DEF</name>
+        <initializer>(10 * 60)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Default valid duration for JWTs generated by <ref refid="group__nrf__cloud_gaa10af80579a93b73db9cefb83eac81fd_1gaa10af80579a93b73db9cefb83eac81fd" kindref="member">nrf_cloud_jwt_generate</ref> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="80" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nrf__cloud_ga448090d9b3948302259cc798ff381806_1ga448090d9b3948302259cc798ff381806" prot="public" static="no">
+        <name>NRF_CLOUD_FOTA_JOB_ID_SIZE</name>
+        <initializer>(32 + 4 + 1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of nRF Cloud FOTA job ID; version 4 UUID: 32 bytes, 4 hyphens, NULL </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="201" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="201" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1gabfa69ba752561f778c2f055e1ef7c46f" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_evt_type</name>
+        <enumvalue id="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46facb33822983411b22dd18f41c1d74045e" prot="public">
+          <name>NRF_CLOUD_EVT_TRANSPORT_CONNECTED</name>
+          <initializer>= 0x1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The transport to the nRF Cloud is established. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa3c915fb24bae33e0412b4bf578010962" prot="public">
+          <name>NRF_CLOUD_EVT_TRANSPORT_CONNECTING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>In the process of connecting to nRF Cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46faed7a13bf4296a959baf2384307429bf4" prot="public">
+          <name>NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>There was a request from nRF Cloud to associate the device with a user on the nRF Cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa94964b5607b056a4d781ee5de7355c32" prot="public">
+          <name>NRF_CLOUD_EVT_USER_ASSOCIATED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The device is successfully associated with a user. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46faefde723fbee891cc13ce5d016f9eeac2" prot="public">
+          <name>NRF_CLOUD_EVT_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The device can now start sending sensor data to the cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa18c9aca64aa204f172c0fa7f5a031e2f" prot="public">
+          <name>NRF_CLOUD_EVT_RX_DATA</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The device received data from the cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa4688afbefc81db7663e9eafe1cea5a2f" prot="public">
+          <name>NRF_CLOUD_EVT_SENSOR_DATA_ACK</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The data sent to the cloud was acknowledged. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa0fab1bb66c3b4cde300a5893712d2b95" prot="public">
+          <name>NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The transport was disconnected. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa85ef1eb9717bf75a065e7bc2754eb9b2" prot="public">
+          <name>NRF_CLOUD_EVT_FOTA_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The device should be restarted to apply a firmware upgrade </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa0af1e2654a60982a1e033cea0af42956" prot="public">
+          <name>NRF_CLOUD_EVT_ERROR</name>
+          <initializer>= 0xFF</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>There was an error communicating with the cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Asynchronous nRF Cloud events notified by the module. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="83" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="83" bodyend="106"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1gae0b5f5ab1c4955313ccf23d16ef92379" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_disconnect_status</name>
+        <enumvalue id="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1ggae0b5f5ab1c4955313ccf23d16ef92379a126a8c45d9236189f984e0c319efdbb1" prot="public">
+          <name>NRF_CLOUD_DISCONNECT_USER_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1ggae0b5f5ab1c4955313ccf23d16ef92379a7f77ee26b6edc3dc9f4aa1086f1dcc57" prot="public">
+          <name>NRF_CLOUD_DISCONNECT_CLOSED_BY_REMOTE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1ggae0b5f5ab1c4955313ccf23d16ef92379ab560114d19cb4b5e3d552972c91cdae5" prot="public">
+          <name>NRF_CLOUD_DISCONNECT_INVALID_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1ggae0b5f5ab1c4955313ccf23d16ef92379af2cdc53e269ee61341ebd713dee10453" prot="public">
+          <name>NRF_CLOUD_DISCONNECT_MISC</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1ggae0b5f5ab1c4955313ccf23d16ef92379a851911ecd225e943a87bb590be92e382" prot="public">
+          <name>NRF_CLOUD_DISCONNECT_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>@ nRF Cloud disconnect status. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="109" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="109" bodyend="115"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1ga450958e31d88872e957ee628744e7b84" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_connect_result</name>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a50d3971e2fcd198040935cf906333cc6" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_SUCCESS</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a65e547a85d3938ccda0987610625db37" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_ERR_NOT_INITD</name>
+          <initializer>= -1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84ad38217bd3901bcf0ed1f8fb54e4531d0" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_ERR_INVALID_PARAM</name>
+          <initializer>= -2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84ad0ad3ed9df9f871c6b41b21f9a788d9a" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_ERR_NETWORK</name>
+          <initializer>= -3</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a62ec689ab48f60c7b254c6092946e123" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_ERR_BACKEND</name>
+          <initializer>= -4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a1e7bae15ec6df7f5470911c47611b09e" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_ERR_MISC</name>
+          <initializer>= -5</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a23f281f5652a565f7d0c436c3053accd" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_ERR_NO_MEM</name>
+          <initializer>= -6</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84af1c442c50d9df13a73b9539e13e7e0a6" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_ERR_PRV_KEY</name>
+          <initializer>= -7</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Invalid private key </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a2168a1f7989ebb7088f00f276cd072a3" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_ERR_CERT</name>
+          <initializer>= -8</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Invalid CA or client cert </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a3cb716a3e70ec5cc1c60f04380a99932" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_ERR_CERT_MISC</name>
+          <initializer>= -9</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Other cert issue </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a2759a72e69ee806990fe5df7016b959d" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_ERR_TIMEOUT_NO_DATA</name>
+          <initializer>= -10</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Timeout, SIM card may be out of data </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a0e21122e3c19f7961a956bde31ebf311" prot="public">
+          <name>NRF_CLOUD_CONNECT_RES_ERR_ALREADY_CONNECTED</name>
+          <initializer>= -11</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>@ nRF Cloud connect result. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="118" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="118" bodyend="135"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1ga4bc09b90a1841097cf01260cb14e27dc" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_sensor</name>
+        <enumvalue id="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dcaa0c0842e74c188a8ba7547499c8374eb" prot="public">
+          <name>NRF_CLOUD_SENSOR_GPS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The GPS sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca0fb464ae63c2c49d45035135a984c0b3" prot="public">
+          <name>NRF_CLOUD_SENSOR_FLIP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The FLIP movement sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca14c0a0279e788dd87556276df3bb8aa6" prot="public">
+          <name>NRF_CLOUD_SENSOR_BUTTON</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The Button press sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca3b3ec8d33e0ed4ec3981e5e32e21b1f5" prot="public">
+          <name>NRF_CLOUD_SENSOR_TEMP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The TEMP sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca6f0d3ce5e24a229bc0094dd7297c3429" prot="public">
+          <name>NRF_CLOUD_SENSOR_HUMID</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The Humidity sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca7b4d5a2fe68b8da490b19282eb991c6a" prot="public">
+          <name>NRF_CLOUD_SENSOR_AIR_PRESS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The Air Pressure sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca5c3f99f01f27dad06c540756862b8b06" prot="public">
+          <name>NRF_CLOUD_SENSOR_AIR_QUAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The Air Quality sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca6d252076baa386af557a2d5f7b4c813c" prot="public">
+          <name>NRF_CLOUD_LTE_LINK_RSRP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The RSPR data obtained from the modem. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dcad0f68a96b97fa176ec9e69440e2555e1" prot="public">
+          <name>NRF_CLOUD_DEVICE_INFO</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The descriptive DEVICE data indicating its status. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dcaf6ccb5984b908fcd81b7bfe07560304d" prot="public">
+          <name>NRF_CLOUD_SENSOR_LIGHT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The light sensor on the device. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Sensor types supported by the nRF Cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="138" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="138" bodyend="159"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__nrf__cloud_ga9e1550556f82615f1a1b92290fa35743_1ga9e1550556f82615f1a1b92290fa35743" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_topic_type</name>
+        <enumvalue id="group__nrf__cloud_ga9e1550556f82615f1a1b92290fa35743_1gga9e1550556f82615f1a1b92290fa35743a429d84513773e9abd7fafa012a138fc0" prot="public">
+          <name>NRF_CLOUD_TOPIC_STATE</name>
+          <initializer>= 0x1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Endpoint used to update the cloud-side device shadow state . </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga9e1550556f82615f1a1b92290fa35743_1gga9e1550556f82615f1a1b92290fa35743aa1dd32014a9e2d6f5ecf7c3e91c615ea" prot="public">
+          <name>NRF_CLOUD_TOPIC_MESSAGE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Endpoint used to directly message the nRF Cloud Web UI. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga9e1550556f82615f1a1b92290fa35743_1gga9e1550556f82615f1a1b92290fa35743a6b2ed93d98ec1ba7b6a7a5e8db86260e" prot="public">
+          <name>NRF_CLOUD_TOPIC_BULK</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Endpoint used to publish bulk messages to nRF Cloud. Bulk messages combine multiple messages into a single message that will be unwrapped and re-published to the message topic in the nRF Cloud backend. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Topic types supported by nRF Cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="162" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="162" bodyend="172"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1ga1359b0c3333f11b0d06aa46f99e3668d" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_fota_status</name>
+        <enumvalue id="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da7089f40402e2be5976a2fd9510525c01" prot="public">
+          <name>NRF_CLOUD_FOTA_QUEUED</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da0bd02e5a9bba46681d0c99cc8bdaf3a6" prot="public">
+          <name>NRF_CLOUD_FOTA_IN_PROGRESS</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da0ccba35720713a7b590ce96bc9016bd4" prot="public">
+          <name>NRF_CLOUD_FOTA_FAILED</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da9204d44f2610cbd44048fdf773830e18" prot="public">
+          <name>NRF_CLOUD_FOTA_SUCCEEDED</name>
+          <initializer>= 3</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da4815e53b116abc60a184b7b4044829e8" prot="public">
+          <name>NRF_CLOUD_FOTA_TIMED_OUT</name>
+          <initializer>= 4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da113218cb3d4a95f542bbc15afccb6d49" prot="public">
+          <name>NRF_CLOUD_FOTA_CANCELED</name>
+          <initializer>= 5</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da8d8eb86de405a73396ed7cd3b4c7e718" prot="public">
+          <name>NRF_CLOUD_FOTA_REJECTED</name>
+          <initializer>= 6</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da9da91b253b5d07b289424c3ab4e6ea25" prot="public">
+          <name>NRF_CLOUD_FOTA_DOWNLOADING</name>
+          <initializer>= 7</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>FOTA status reported to nRF Cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="175" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="175" bodyend="184"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1ga6b3a7153a10a31b72dbb6c0ba5c12c32" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_fota_type</name>
+        <enumvalue id="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1gga6b3a7153a10a31b72dbb6c0ba5c12c32a241b27c5b3dbbcab41ddc400b512b484" prot="public">
+          <name>NRF_CLOUD_FOTA_TYPE__FIRST</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1gga6b3a7153a10a31b72dbb6c0ba5c12c32a239b4785e4cbead13f0fe5597c11c73d" prot="public">
+          <name>NRF_CLOUD_FOTA_APPLICATION</name>
+          <initializer>= NRF_CLOUD_FOTA_TYPE__FIRST</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Application update. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1gga6b3a7153a10a31b72dbb6c0ba5c12c32ae1adb793c1c920711603ebbded787ca1" prot="public">
+          <name>NRF_CLOUD_FOTA_MODEM</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Modem update. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1gga6b3a7153a10a31b72dbb6c0ba5c12c32ab39a1f015d21e65f17e864158a77e1e3" prot="public">
+          <name>NRF_CLOUD_FOTA_BOOTLOADER</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Bootloader update. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1gga6b3a7153a10a31b72dbb6c0ba5c12c32a847260b1404cefda80afd1da815a5104" prot="public">
+          <name>NRF_CLOUD_FOTA_TYPE__INVALID</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>FOTA update type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="187" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="187" bodyend="198"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1ga5ed03bbd4bf5aa1c0117a948324c5730" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_fota_validate_status</name>
+        <enumvalue id="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730add28e1dea9874728e034b149d56d3f03" prot="public">
+          <name>NRF_CLOUD_FOTA_VALIDATE_NONE</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730aed0bfe9d621309ea631b2cbbe1294e5e" prot="public">
+          <name>NRF_CLOUD_FOTA_VALIDATE_PENDING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730a0cad29a0c1c69ca632ca865eb0b16cf3" prot="public">
+          <name>NRF_CLOUD_FOTA_VALIDATE_PASS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730a1441df440e0f95097115c2ef605134fb" prot="public">
+          <name>NRF_CLOUD_FOTA_VALIDATE_FAIL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730aa5b14cb5c4007a03b29df8c14c830bb3" prot="public">
+          <name>NRF_CLOUD_FOTA_VALIDATE_UNKNOWN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730a836871a9320912b7dc5791a2d9c78c85" prot="public">
+          <name>NRF_CLOUD_FOTA_VALIDATE_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Validity of an in-progress/installed FOTA update </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="214" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="214" bodyend="221"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__nrf__cloud_gaf64999062e1a8b99a963570664862acf_1gaf64999062e1a8b99a963570664862acf" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nrf_cloud_shadow_info</name>
+        <enumvalue id="group__nrf__cloud_gaf64999062e1a8b99a963570664862acf_1ggaf64999062e1a8b99a963570664862acfa06ae7163bdc8d0ca2c1ab6148f32a10e" prot="public">
+          <name>NRF_CLOUD_INFO_NO_CHANGE</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Data will not be modified </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gaf64999062e1a8b99a963570664862acf_1ggaf64999062e1a8b99a963570664862acfae386122f659e10581f16995cc456c9ae" prot="public">
+          <name>NRF_CLOUD_INFO_SET</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Data will be set/updated </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nrf__cloud_gaf64999062e1a8b99a963570664862acf_1ggaf64999062e1a8b99a963570664862acfa6c2011cb99f0a362b5e33b42ef6729c3" prot="public">
+          <name>NRF_CLOUD_INFO_CLEAR</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Data section will be cleared </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>How the info sections are handled when encoding shadow data. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="324" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="324" bodyend="331"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__nrf__cloud_gaba76a1d354a998fcc241531440b28770_1gaba76a1d354a998fcc241531440b28770" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* nrf_cloud_event_handler_t) (const struct nrf_cloud_evt *evt)</definition>
+        <argsstring>)(const struct nrf_cloud_evt *evt)</argsstring>
+        <name>nrf_cloud_event_handler_t</name>
+        <briefdescription>
+<para>Event handler registered with the module to handle asynchronous events from the module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The event and any associated parameters. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="378" column="9" bodyfile="include/net/nrf_cloud.h" bodystart="378" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nrf__cloud_ga1d7e9e66df5c45750c6479c0439f49fd_1ga1d7e9e66df5c45750c6479c0439f49fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_init</definition>
+        <argsstring>(const struct nrf_cloud_init_param *param)</argsstring>
+        <name>nrf_cloud_init</name>
+        <param>
+          <type>const struct <ref refid="structnrf__cloud__init__param" kindref="compound">nrf_cloud_init_param</ref> *</type>
+          <declname>param</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>This API must be called prior to using nRF Cloud and it must return successfully.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Initialization parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EACCES</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Already initialized or <ref refid="group__nrf__cloud_gaadc1db382c8b1ab5537d74f85d23505d_1gaadc1db382c8b1ab5537d74f85d23505d" kindref="member">nrf_cloud_uninit</ref> is in progress. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="404" column="5" declfile="include/net/nrf_cloud.h" declline="404" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_gaadc1db382c8b1ab5537d74f85d23505d_1gaadc1db382c8b1ab5537d74f85d23505d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_uninit</definition>
+        <argsstring>(void)</argsstring>
+        <name>nrf_cloud_uninit</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Uninitialize nRF Cloud; disconnects cloud connection and cleans up allocated memory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>If nRF Cloud FOTA is enabled and a FOTA job is active uninit will not be performed.</para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EBUSY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If a FOTA job is in progress. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="417" column="5" declfile="include/net/nrf_cloud.h" declline="417" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_ga7c240d996183a476685ef5cd4e2267f1_1ga7c240d996183a476685ef5cd4e2267f1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_connect</definition>
+        <argsstring>(const struct nrf_cloud_connect_param *param)</argsstring>
+        <name>nrf_cloud_connect</name>
+        <param>
+          <type>const struct <ref refid="structnrf__cloud__connect__param" kindref="compound">nrf_cloud_connect_param</ref> *</type>
+          <declname>param</declname>
+        </param>
+        <briefdescription>
+<para>Connect to the cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>In any stage of connecting to the cloud, an <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa0af1e2654a60982a1e033cea0af42956" kindref="member">NRF_CLOUD_EVT_ERROR</ref> might be received. If it is received before <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46facb33822983411b22dd18f41c1d74045e" kindref="member">NRF_CLOUD_EVT_TRANSPORT_CONNECTED</ref>, the application may repeat the call to <ref refid="group__nrf__cloud_ga7c240d996183a476685ef5cd4e2267f1_1ga7c240d996183a476685ef5cd4e2267f1" kindref="member">nrf_cloud_connect</ref> to try again.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters to be used for the connection.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>Connect</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>result defined by enum nrf_cloud_connect_result. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="431" column="5" declfile="include/net/nrf_cloud.h" declline="431" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_ga1dc3c251c2ed661d50acd5257e30daae_1ga1dc3c251c2ed661d50acd5257e30daae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_sensor_data_send</definition>
+        <argsstring>(const struct nrf_cloud_sensor_data *param)</argsstring>
+        <name>nrf_cloud_sensor_data_send</name>
+        <param>
+          <type>const struct <ref refid="structnrf__cloud__sensor__data" kindref="compound">nrf_cloud_sensor_data</ref> *</type>
+          <declname>param</declname>
+        </param>
+        <briefdescription>
+<para>Send sensor data reliably. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This API should only be called after receiving an <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46faefde723fbee891cc13ce5d016f9eeac2" kindref="member">NRF_CLOUD_EVT_READY</ref> event. If the API succeeds, you can expect the <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa4688afbefc81db7663e9eafe1cea5a2f" kindref="member">NRF_CLOUD_EVT_SENSOR_DATA_ACK</ref> event for data sent with a valid tag value.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor data; the data pointed to by param-&gt;data.ptr must be a string.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EACCES</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Cloud connection is not established; wait for <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46faefde723fbee891cc13ce5d016f9eeac2" kindref="member">NRF_CLOUD_EVT_READY</ref>. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="449" column="5" declfile="include/net/nrf_cloud.h" declline="449" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_ga3005fcfbe5d564e7dedd63d5966ee997_1ga3005fcfbe5d564e7dedd63d5966ee997" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_shadow_update</definition>
+        <argsstring>(const struct nrf_cloud_sensor_data *param)</argsstring>
+        <name>nrf_cloud_shadow_update</name>
+        <param>
+          <type>const struct <ref refid="structnrf__cloud__sensor__data" kindref="compound">nrf_cloud_sensor_data</ref> *</type>
+          <declname>param</declname>
+        </param>
+        <briefdescription>
+<para>Update the device shadow with sensor data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor data; the data pointed to by param-&gt;data.ptr must be a valid JSON string.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EACCES</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Cloud connection is not established; wait for <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46faefde723fbee891cc13ce5d016f9eeac2" kindref="member">NRF_CLOUD_EVT_READY</ref>. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="461" column="5" declfile="include/net/nrf_cloud.h" declline="461" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_gaa516af4650d8d4a82760474e9c66c6df_1gaa516af4650d8d4a82760474e9c66c6df" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_shadow_device_status_update</definition>
+        <argsstring>(const struct nrf_cloud_device_status *const dev_status)</argsstring>
+        <name>nrf_cloud_shadow_device_status_update</name>
+        <param>
+          <type>const struct <ref refid="structnrf__cloud__device__status" kindref="compound">nrf_cloud_device_status</ref> *const</type>
+          <declname>dev_status</declname>
+        </param>
+        <briefdescription>
+<para>Update the device status in the shadow. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dev_status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Device status to be encoded.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EACCES</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Cloud connection is not established; wait for <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46faefde723fbee891cc13ce5d016f9eeac2" kindref="member">NRF_CLOUD_EVT_READY</ref>. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="472" column="5" declfile="include/net/nrf_cloud.h" declline="472" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_gab8d2abab8fbb5457992f80e4a417bb17_1gab8d2abab8fbb5457992f80e4a417bb17" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_sensor_data_stream</definition>
+        <argsstring>(const struct nrf_cloud_sensor_data *param)</argsstring>
+        <name>nrf_cloud_sensor_data_stream</name>
+        <param>
+          <type>const struct <ref refid="structnrf__cloud__sensor__data" kindref="compound">nrf_cloud_sensor_data</ref> *</type>
+          <declname>param</declname>
+        </param>
+        <briefdescription>
+<para>Stream sensor data. Uses lowest QoS; no acknowledgment,. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This API should only be called after receiving an <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46faefde723fbee891cc13ce5d016f9eeac2" kindref="member">NRF_CLOUD_EVT_READY</ref> event.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor data; tag value is ignored.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EACCES</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Cloud connection is not established; wait for <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46faefde723fbee891cc13ce5d016f9eeac2" kindref="member">NRF_CLOUD_EVT_READY</ref>. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="486" column="5" declfile="include/net/nrf_cloud.h" declline="486" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_ga61d5a537212bdfce72502630593cd4f1_1ga61d5a537212bdfce72502630593cd4f1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_send</definition>
+        <argsstring>(const struct nrf_cloud_tx_data *msg)</argsstring>
+        <name>nrf_cloud_send</name>
+        <param>
+          <type>const struct <ref refid="structnrf__cloud__tx__data" kindref="compound">nrf_cloud_tx_data</ref> *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+<para>Send data to nRF Cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This API is used to send pre-encoded data to nRF Cloud.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a structure containting data and topic information.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EACCES</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Cloud connection is not established; wait for <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46faefde723fbee891cc13ce5d016f9eeac2" kindref="member">NRF_CLOUD_EVT_READY</ref>. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="500" column="5" declfile="include/net/nrf_cloud.h" declline="500" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_gad30bcdc3634113f6442b690d85405765_1gad30bcdc3634113f6442b690d85405765" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_disconnect</definition>
+        <argsstring>(void)</argsstring>
+        <name>nrf_cloud_disconnect</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Disconnect from the cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This API may be called any time after receiving the <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46facb33822983411b22dd18f41c1d74045e" kindref="member">NRF_CLOUD_EVT_TRANSPORT_CONNECTED</ref> event. If the API succeeds, you can expect the <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa0fab1bb66c3b4cde300a5893712d2b95" kindref="member">NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED</ref> event.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EACCES</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Cloud connection is not established; wait for <ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46facb33822983411b22dd18f41c1d74045e" kindref="member">NRF_CLOUD_EVT_TRANSPORT_CONNECTED</ref>. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="515" column="5" declfile="include/net/nrf_cloud.h" declline="515" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_ga2823e93063091c70c3010a37a5edfdb6_1ga2823e93063091c70c3010a37a5edfdb6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nrf_cloud_process</definition>
+        <argsstring>(void)</argsstring>
+        <name>nrf_cloud_process</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Function that must be called periodically to keep the module functional. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="521" column="6" declfile="include/net/nrf_cloud.h" declline="521" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_ga633ff97ccfe1c6df476177994c3b7633_1ga633ff97ccfe1c6df476177994c3b7633" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_modem_fota_completed</definition>
+        <argsstring>(const bool fota_success)</argsstring>
+        <name>nrf_cloud_modem_fota_completed</name>
+        <param>
+          <type>const bool</type>
+          <declname>fota_success</declname>
+        </param>
+        <briefdescription>
+<para>The application has handled re-init after a modem FOTA update and the LTE link has been re-established. This function must be called in order to complete the modem update. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">fota_success</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>true if modem update was successful, false otherwise.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="533" column="5" declfile="include/net/nrf_cloud.h" declline="533" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_ga443200bdf749275976df40a3ac3412a7_1ga443200bdf749275976df40a3ac3412a7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_service_info_json_encode</definition>
+        <argsstring>(const struct nrf_cloud_svc_info *const svc_inf, cJSON *const svc_inf_obj)</argsstring>
+        <name>nrf_cloud_service_info_json_encode</name>
+        <param>
+          <type>const struct <ref refid="structnrf__cloud__svc__info" kindref="compound">nrf_cloud_svc_info</ref> *const</type>
+          <declname>svc_inf</declname>
+        </param>
+        <param>
+          <type>cJSON *const</type>
+          <declname>svc_inf_obj</declname>
+        </param>
+        <briefdescription>
+<para>Add service info into the provided cJSON object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">svc_inf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Service info to add. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">svc_inf_obj</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>cJSON object to which service info will be added.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="544" column="5" declfile="include/net/nrf_cloud.h" declline="544" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_ga81f02b50e17f91219a67f36591398c2f_1ga81f02b50e17f91219a67f36591398c2f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_modem_info_json_encode</definition>
+        <argsstring>(const struct nrf_cloud_modem_info *const mod_inf, cJSON *const mod_inf_obj)</argsstring>
+        <name>nrf_cloud_modem_info_json_encode</name>
+        <param>
+          <type>const struct <ref refid="structnrf__cloud__modem__info" kindref="compound">nrf_cloud_modem_info</ref> *const</type>
+          <declname>mod_inf</declname>
+        </param>
+        <param>
+          <type>cJSON *const</type>
+          <declname>mod_inf_obj</declname>
+        </param>
+        <briefdescription>
+<para>Add modem info into the provided cJSON object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>To add modem info, CONFIG_MODEM_INFO must be enabled.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">mod_inf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Modem info to add. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">mod_inf_obj</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>cJSON object to which modem info will be added.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="558" column="5" declfile="include/net/nrf_cloud.h" declline="558" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_ga5f04a8cec21e334048883dfd6056a760_1ga5f04a8cec21e334048883dfd6056a760" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_client_id_get</definition>
+        <argsstring>(char *id_buf, size_t id_len)</argsstring>
+        <name>nrf_cloud_client_id_get</name>
+        <param>
+          <type>char *</type>
+          <declname>id_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>id_len</declname>
+        </param>
+        <briefdescription>
+<para>Function to retrieve the current device ID. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">id_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to receive the device ID. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">id_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of buffer (NRF_CLOUD_CLIENT_ID_MAX_LEN).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="570" column="5" declfile="include/net/nrf_cloud.h" declline="570" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_ga44795de56ebd34e465c6deb094c0eb21_1ga44795de56ebd34e465c6deb094c0eb21" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_tenant_id_get</definition>
+        <argsstring>(char *id_buf, size_t id_len)</argsstring>
+        <name>nrf_cloud_tenant_id_get</name>
+        <param>
+          <type>char *</type>
+          <declname>id_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>id_len</declname>
+        </param>
+        <briefdescription>
+<para>Function to retrieve the current customer tenant ID. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">id_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to receive the tenant ID. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">id_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of buffer (NRF_CLOUD_TENANT_ID_MAX_LEN).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="581" column="5" declfile="include/net/nrf_cloud.h" declline="581" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nrf__cloud_gaa10af80579a93b73db9cefb83eac81fd_1gaa10af80579a93b73db9cefb83eac81fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nrf_cloud_jwt_generate</definition>
+        <argsstring>(uint32_t time_valid_s, char *const jwt_buf, size_t jwt_buf_sz)</argsstring>
+        <name>nrf_cloud_jwt_generate</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>time_valid_s</declname>
+        </param>
+        <param>
+          <type>char *const</type>
+          <declname>jwt_buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>jwt_buf_sz</declname>
+        </param>
+        <briefdescription>
+<para>Function to generate a JWT to be used with nRF Cloud&apos;s REST API. This library&apos;s configured values for client id and sec tag (NRF_CLOUD_SEC_TAG) will be used for generating the JWT. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">time_valid_s</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>How long (seconds) the JWT will be valid. Maximum duration specified by <ref refid="group__nrf__cloud_ga8fbdd5dbb1224d27751a14c55ebead68_1ga8fbdd5dbb1224d27751a14c55ebead68" kindref="member">NRF_CLOUD_JWT_VALID_TIME_S_MAX</ref>. If zero, NRF_CLOUD_JWT_VALID_TIME_S_DEF will be used. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">jwt_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to hold the JWT. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">jwt_buf_sz</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the buffer (recommended size &gt;= 600 bytes).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>JWT generated successfully. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ETIME</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Modem does not have valid date/time, JWT not generated. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A negative value indicates an error. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="598" column="5" declfile="include/net/nrf_cloud.h" declline="598" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2018<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NRF_CLOUD_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;net/mqtt.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(CONFIG_MODEM_INFO)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="modem__info_8h" kindref="compound">modem/modem_info.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cJSON.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="group__nrf__cloud__mqtt__msg__ids_ga4af6b3bbc22ecee33cd8e2e88d7d30d1_1ga4af6b3bbc22ecee33cd8e2e88d7d30d1" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NCT_MSG_ID_USE_NEXT_INCREMENT<sp/><sp/><sp/><sp/><sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="group__nrf__cloud__mqtt__msg__ids_ga60bfa46b87b05f9e50bb85e9cda58dfb_1ga60bfa46b87b05f9e50bb85e9cda58dfb" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NCT_MSG_ID_CC_SUB<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>100</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="group__nrf__cloud__mqtt__msg__ids_ga7469f827de6e03450be6aaecb9500f3b_1ga7469f827de6e03450be6aaecb9500f3b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NCT_MSG_ID_DC_SUB<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>101</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="group__nrf__cloud__mqtt__msg__ids_gaf20c67874ae9762480a0cb1d0d4e1ba6_1gaf20c67874ae9762480a0cb1d0d4e1ba6" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NCT_MSG_ID_CG_SUB<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>102</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="group__nrf__cloud__mqtt__msg__ids_ga7529a72638e30d2e4d94d2ae53db5a95_1ga7529a72638e30d2e4d94d2ae53db5a95" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NCT_MSG_ID_FOTA_SUB<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>103</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="group__nrf__cloud__mqtt__msg__ids_gab6b0af9ab2b709014b7550691f62367c_1gab6b0af9ab2b709014b7550691f62367c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NCT_MSG_ID_CC_UNSUB<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>150</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="group__nrf__cloud__mqtt__msg__ids_ga1632120f0c7a4a98ca8b21b2cc0ad019_1ga1632120f0c7a4a98ca8b21b2cc0ad019" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NCT_MSG_ID_DC_UNSUB<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>151</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="group__nrf__cloud__mqtt__msg__ids_ga3345209076894642ff9c6b8cbed3a079_1ga3345209076894642ff9c6b8cbed3a079" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NCT_MSG_ID_CG_UNSUB<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>152</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="group__nrf__cloud__mqtt__msg__ids_gae3f20f97eaf5e7a7f1dc761a4d3ffc7e_1gae3f20f97eaf5e7a7f1dc761a4d3ffc7e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NCT_MSG_ID_FOTA_UNSUB<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>153</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="group__nrf__cloud__mqtt__msg__ids_ga0d8f71af30667c6a234fdfa3713c16d9_1ga0d8f71af30667c6a234fdfa3713c16d9" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NCT_MSG_ID_STATE_REQUEST<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>200</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="group__nrf__cloud__mqtt__msg__ids_gae85321cb971e1264dbcfa525b3879fde_1gae85321cb971e1264dbcfa525b3879fde" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NCT_MSG_ID_FOTA_REQUEST<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>201</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="group__nrf__cloud__mqtt__msg__ids_ga7c14ed995cb2aa93201f07199523f838_1ga7c14ed995cb2aa93201f07199523f838" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NCT_MSG_ID_FOTA_BLE_REQUEST<sp/><sp/><sp/><sp/><sp/>202</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="group__nrf__cloud__mqtt__msg__ids_gaaf66e7e6f6fbedae765a8417dc077d29_1gaaf66e7e6f6fbedae765a8417dc077d29" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NCT_MSG_ID_STATE_REPORT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>300</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="group__nrf__cloud__mqtt__msg__ids_gab6f39cf139077521a9f48982cd1d98cd_1gab6f39cf139077521a9f48982cd1d98cd" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NCT_MSG_ID_PAIR_STATUS_REPORT<sp/><sp/><sp/>301</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="group__nrf__cloud__mqtt__msg__ids_gaef138583c1736dc350521d7d88920a30_1gaef138583c1736dc350521d7d88920a30" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NCT_MSG_ID_FOTA_REPORT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>302</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="group__nrf__cloud__mqtt__msg__ids_ga6666e7983cbdcc2fd8cd4dc7222808a2_1ga6666e7983cbdcc2fd8cd4dc7222808a2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NCT_MSG_ID_FOTA_BLE_REPORT<sp/><sp/><sp/><sp/><sp/><sp/>303</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="group__nrf__cloud__mqtt__msg__ids_gafc494e60aa8445a065cc84c87ca9f72d_1gafc494e60aa8445a065cc84c87ca9f72d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NCT_MSG_ID_INCREMENT_BEGIN<sp/><sp/><sp/><sp/><sp/>1000</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="group__nrf__cloud__mqtt__msg__ids_ga3ef52df4e0d90ed2e2f4aa204736571b_1ga3ef52df4e0d90ed2e2f4aa204736571b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NCT_MSG_ID_INCREMENT_END<sp/><sp/><sp/><sp/><sp/><sp/><sp/>9999</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="group__nrf__cloud__mqtt__msg__ids_ga9f8b89e76e25136540d92b5b08960d08_1ga9f8b89e76e25136540d92b5b08960d08" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NCT_MSG_ID_USER_TAG_BEGIN<sp/><sp/><sp/><sp/><sp/><sp/>(NCT_MSG_ID_INCREMENT_END<sp/>+<sp/>1)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="group__nrf__cloud__mqtt__msg__ids_gabedf9d074c7a9ec8f9ef5ed82aff7b51_1gabedf9d074c7a9ec8f9ef5ed82aff7b51" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NCT_MSG_ID_USER_TAG_END<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0xFFFF<sp/></highlight><highlight class="comment">/*<sp/>MQTT<sp/>message<sp/>IDs<sp/>are<sp/>uint16_t<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="group__nrf__cloud_gaf1fb84dac37607ed1d5f0a7891483384_1gaf1fb84dac37607ed1d5f0a7891483384" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>IS_VALID_USER_TAG(tag)<sp/>((tag<sp/>&gt;=<sp/>NCT_MSG_ID_USER_TAG_BEGIN)<sp/>&amp;&amp;<sp/>\</highlight></codeline>
+<codeline lineno="53"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(tag<sp/>&lt;=<sp/>NCT_MSG_ID_USER_TAG_END))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="group__nrf__cloud_ga957252baf3606e7e08b4df2ed9a99a16_1ga957252baf3606e7e08b4df2ed9a99a16" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_SETTINGS_NAME<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;nrf_cloud&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="group__nrf__cloud_gaca4bb4ecd80d3d6b2e69573d2ae23a7d_1gaca4bb4ecd80d3d6b2e69573d2ae23a7d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_SETTINGS_FOTA_KEY<sp/><sp/><sp/><sp/><sp/>&quot;fota&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="group__nrf__cloud_gaefa27dc00597b3396c26b0d1e43f5179_1gaefa27dc00597b3396c26b0d1e43f5179" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_SETTINGS_FOTA_JOB<sp/><sp/><sp/><sp/><sp/>&quot;job&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="group__nrf__cloud_gae53c676ae8ae4dfe181099deb494480b_1gae53c676ae8ae4dfe181099deb494480b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_SETTINGS_FULL_FOTA<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NRF_CLOUD_SETTINGS_NAME<sp/>\</highlight></codeline>
+<codeline lineno="60"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;/&quot;</highlight><highlight class="normal"><sp/>\</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NRF_CLOUD_SETTINGS_FOTA_KEY</highlight></codeline>
+<codeline lineno="63" refid="group__nrf__cloud_gaf28d7d05f55c6acf1dedb67f3e0a14f1_1gaf28d7d05f55c6acf1dedb67f3e0a14f1" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_SETTINGS_FULL_FOTA_JOB<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NRF_CLOUD_SETTINGS_FULL_FOTA<sp/>\</highlight></codeline>
+<codeline lineno="64"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;/&quot;</highlight><highlight class="normal"><sp/>\</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NRF_CLOUD_SETTINGS_FOTA_JOB</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="group__nrf__cloud_gac82efc4777da62991cc0a14b0202c51d_1gac82efc4777da62991cc0a14b0202c51d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_FOTA_VER<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="group__nrf__cloud_gac2e8b1e48c840d1e5643953ae0fa81e3_1gac2e8b1e48c840d1e5643953ae0fa81e3" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_FOTA_VER_STR<sp/>&quot;fota_v&quot;</highlight><highlight class="normal"><sp/>STRINGIFY(NRF_CLOUD_FOTA_VER)</highlight></codeline>
+<codeline lineno="72" refid="group__nrf__cloud_ga2d605911fd901b0d69820adf7ed82d6d_1ga2d605911fd901b0d69820adf7ed82d6d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_STAGE_ID_MAX_LEN<sp/><sp/><sp/><sp/><sp/><sp/>8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="group__nrf__cloud_ga914ce87ff2d4900a6fe149449c549247_1ga914ce87ff2d4900a6fe149449c549247" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_TENANT_ID_MAX_LEN<sp/><sp/><sp/><sp/><sp/>64</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="group__nrf__cloud_ga06e4361cf1bfbc65f9efbbdd2a0b78c3_1ga06e4361cf1bfbc65f9efbbdd2a0b78c3" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_CLIENT_ID_MAX_LEN<sp/><sp/><sp/><sp/><sp/>64</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="group__nrf__cloud_ga8fbdd5dbb1224d27751a14c55ebead68_1ga8fbdd5dbb1224d27751a14c55ebead68" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_JWT_VALID_TIME_S_MAX<sp/><sp/>(7<sp/>*<sp/>24<sp/>*<sp/>60<sp/>*<sp/>60)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80" refid="group__nrf__cloud_ga82cda44e72db92a4049b9b36b7ef77f5_1ga82cda44e72db92a4049b9b36b7ef77f5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_JWT_VALID_TIME_S_DEF<sp/><sp/>(10<sp/>*<sp/>60)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83" refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1gabfa69ba752561f778c2f055e1ef7c46f" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1gabfa69ba752561f778c2f055e1ef7c46f" kindref="member">nrf_cloud_evt_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="85" refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46facb33822983411b22dd18f41c1d74045e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46facb33822983411b22dd18f41c1d74045e" kindref="member">NRF_CLOUD_EVT_TRANSPORT_CONNECTED</ref><sp/>=<sp/>0x1,</highlight></codeline>
+<codeline lineno="87" refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa3c915fb24bae33e0412b4bf578010962" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa3c915fb24bae33e0412b4bf578010962" kindref="member">NRF_CLOUD_EVT_TRANSPORT_CONNECTING</ref>,</highlight></codeline>
+<codeline lineno="91" refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46faed7a13bf4296a959baf2384307429bf4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46faed7a13bf4296a959baf2384307429bf4" kindref="member">NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST</ref>,</highlight></codeline>
+<codeline lineno="93" refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa94964b5607b056a4d781ee5de7355c32" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa94964b5607b056a4d781ee5de7355c32" kindref="member">NRF_CLOUD_EVT_USER_ASSOCIATED</ref>,</highlight></codeline>
+<codeline lineno="95" refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46faefde723fbee891cc13ce5d016f9eeac2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46faefde723fbee891cc13ce5d016f9eeac2" kindref="member">NRF_CLOUD_EVT_READY</ref>,</highlight></codeline>
+<codeline lineno="97" refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa18c9aca64aa204f172c0fa7f5a031e2f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa18c9aca64aa204f172c0fa7f5a031e2f" kindref="member">NRF_CLOUD_EVT_RX_DATA</ref>,</highlight></codeline>
+<codeline lineno="99" refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa4688afbefc81db7663e9eafe1cea5a2f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa4688afbefc81db7663e9eafe1cea5a2f" kindref="member">NRF_CLOUD_EVT_SENSOR_DATA_ACK</ref>,</highlight></codeline>
+<codeline lineno="101" refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa0fab1bb66c3b4cde300a5893712d2b95" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa0fab1bb66c3b4cde300a5893712d2b95" kindref="member">NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED</ref>,</highlight></codeline>
+<codeline lineno="103" refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa85ef1eb9717bf75a065e7bc2754eb9b2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa85ef1eb9717bf75a065e7bc2754eb9b2" kindref="member">NRF_CLOUD_EVT_FOTA_DONE</ref>,</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa0af1e2654a60982a1e033cea0af42956" kindref="member">NRF_CLOUD_EVT_ERROR</ref><sp/>=<sp/>0xFF</highlight></codeline>
+<codeline lineno="106" refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1ggabfa69ba752561f778c2f055e1ef7c46fa0af1e2654a60982a1e033cea0af42956" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109" refid="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1gae0b5f5ab1c4955313ccf23d16ef92379" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1gae0b5f5ab1c4955313ccf23d16ef92379" kindref="member">nrf_cloud_disconnect_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="110" refid="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1ggae0b5f5ab1c4955313ccf23d16ef92379a126a8c45d9236189f984e0c319efdbb1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1ggae0b5f5ab1c4955313ccf23d16ef92379a126a8c45d9236189f984e0c319efdbb1" kindref="member">NRF_CLOUD_DISCONNECT_USER_REQUEST</ref>,</highlight></codeline>
+<codeline lineno="111" refid="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1ggae0b5f5ab1c4955313ccf23d16ef92379a7f77ee26b6edc3dc9f4aa1086f1dcc57" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1ggae0b5f5ab1c4955313ccf23d16ef92379a7f77ee26b6edc3dc9f4aa1086f1dcc57" kindref="member">NRF_CLOUD_DISCONNECT_CLOSED_BY_REMOTE</ref>,</highlight></codeline>
+<codeline lineno="112" refid="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1ggae0b5f5ab1c4955313ccf23d16ef92379ab560114d19cb4b5e3d552972c91cdae5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1ggae0b5f5ab1c4955313ccf23d16ef92379ab560114d19cb4b5e3d552972c91cdae5" kindref="member">NRF_CLOUD_DISCONNECT_INVALID_REQUEST</ref>,</highlight></codeline>
+<codeline lineno="113" refid="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1ggae0b5f5ab1c4955313ccf23d16ef92379af2cdc53e269ee61341ebd713dee10453" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1ggae0b5f5ab1c4955313ccf23d16ef92379af2cdc53e269ee61341ebd713dee10453" kindref="member">NRF_CLOUD_DISCONNECT_MISC</ref>,</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1ggae0b5f5ab1c4955313ccf23d16ef92379a851911ecd225e943a87bb590be92e382" kindref="member">NRF_CLOUD_DISCONNECT_COUNT</ref></highlight></codeline>
+<codeline lineno="115" refid="group__nrf__cloud_gae0b5f5ab1c4955313ccf23d16ef92379_1ggae0b5f5ab1c4955313ccf23d16ef92379a851911ecd225e943a87bb590be92e382" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118" refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1ga450958e31d88872e957ee628744e7b84" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1ga450958e31d88872e957ee628744e7b84" kindref="member">nrf_cloud_connect_result</ref><sp/>{</highlight></codeline>
+<codeline lineno="119" refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a50d3971e2fcd198040935cf906333cc6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a50d3971e2fcd198040935cf906333cc6" kindref="member">NRF_CLOUD_CONNECT_RES_SUCCESS</ref><sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="120" refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a65e547a85d3938ccda0987610625db37" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a65e547a85d3938ccda0987610625db37" kindref="member">NRF_CLOUD_CONNECT_RES_ERR_NOT_INITD</ref><sp/>=<sp/>-1,</highlight></codeline>
+<codeline lineno="121" refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84ad38217bd3901bcf0ed1f8fb54e4531d0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84ad38217bd3901bcf0ed1f8fb54e4531d0" kindref="member">NRF_CLOUD_CONNECT_RES_ERR_INVALID_PARAM</ref><sp/>=<sp/>-2,</highlight></codeline>
+<codeline lineno="122" refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84ad0ad3ed9df9f871c6b41b21f9a788d9a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84ad0ad3ed9df9f871c6b41b21f9a788d9a" kindref="member">NRF_CLOUD_CONNECT_RES_ERR_NETWORK</ref><sp/>=<sp/>-3,</highlight></codeline>
+<codeline lineno="123" refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a62ec689ab48f60c7b254c6092946e123" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a62ec689ab48f60c7b254c6092946e123" kindref="member">NRF_CLOUD_CONNECT_RES_ERR_BACKEND</ref><sp/>=<sp/>-4,</highlight></codeline>
+<codeline lineno="124" refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a1e7bae15ec6df7f5470911c47611b09e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a1e7bae15ec6df7f5470911c47611b09e" kindref="member">NRF_CLOUD_CONNECT_RES_ERR_MISC</ref><sp/>=<sp/>-5,</highlight></codeline>
+<codeline lineno="125" refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a23f281f5652a565f7d0c436c3053accd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a23f281f5652a565f7d0c436c3053accd" kindref="member">NRF_CLOUD_CONNECT_RES_ERR_NO_MEM</ref><sp/>=<sp/>-6,</highlight></codeline>
+<codeline lineno="127" refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84af1c442c50d9df13a73b9539e13e7e0a6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84af1c442c50d9df13a73b9539e13e7e0a6" kindref="member">NRF_CLOUD_CONNECT_RES_ERR_PRV_KEY</ref><sp/>=<sp/>-7,</highlight></codeline>
+<codeline lineno="129" refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a2168a1f7989ebb7088f00f276cd072a3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a2168a1f7989ebb7088f00f276cd072a3" kindref="member">NRF_CLOUD_CONNECT_RES_ERR_CERT</ref><sp/>=<sp/>-8,</highlight></codeline>
+<codeline lineno="131" refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a3cb716a3e70ec5cc1c60f04380a99932" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a3cb716a3e70ec5cc1c60f04380a99932" kindref="member">NRF_CLOUD_CONNECT_RES_ERR_CERT_MISC</ref><sp/>=<sp/>-9,</highlight></codeline>
+<codeline lineno="133" refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a2759a72e69ee806990fe5df7016b959d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a2759a72e69ee806990fe5df7016b959d" kindref="member">NRF_CLOUD_CONNECT_RES_ERR_TIMEOUT_NO_DATA</ref><sp/>=<sp/>-10,</highlight></codeline>
+<codeline lineno="134" refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a0e21122e3c19f7961a956bde31ebf311" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga450958e31d88872e957ee628744e7b84_1gga450958e31d88872e957ee628744e7b84a0e21122e3c19f7961a956bde31ebf311" kindref="member">NRF_CLOUD_CONNECT_RES_ERR_ALREADY_CONNECTED</ref><sp/>=<sp/>-11,</highlight></codeline>
+<codeline lineno="135"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138" refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1ga4bc09b90a1841097cf01260cb14e27dc" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1ga4bc09b90a1841097cf01260cb14e27dc" kindref="member">nrf_cloud_sensor</ref><sp/>{</highlight></codeline>
+<codeline lineno="140" refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dcaa0c0842e74c188a8ba7547499c8374eb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dcaa0c0842e74c188a8ba7547499c8374eb" kindref="member">NRF_CLOUD_SENSOR_GPS</ref>,</highlight></codeline>
+<codeline lineno="142" refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca0fb464ae63c2c49d45035135a984c0b3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca0fb464ae63c2c49d45035135a984c0b3" kindref="member">NRF_CLOUD_SENSOR_FLIP</ref>,</highlight></codeline>
+<codeline lineno="144" refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca14c0a0279e788dd87556276df3bb8aa6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca14c0a0279e788dd87556276df3bb8aa6" kindref="member">NRF_CLOUD_SENSOR_BUTTON</ref>,</highlight></codeline>
+<codeline lineno="146" refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca3b3ec8d33e0ed4ec3981e5e32e21b1f5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca3b3ec8d33e0ed4ec3981e5e32e21b1f5" kindref="member">NRF_CLOUD_SENSOR_TEMP</ref>,</highlight></codeline>
+<codeline lineno="148" refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca6f0d3ce5e24a229bc0094dd7297c3429" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca6f0d3ce5e24a229bc0094dd7297c3429" kindref="member">NRF_CLOUD_SENSOR_HUMID</ref>,</highlight></codeline>
+<codeline lineno="150" refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca7b4d5a2fe68b8da490b19282eb991c6a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca7b4d5a2fe68b8da490b19282eb991c6a" kindref="member">NRF_CLOUD_SENSOR_AIR_PRESS</ref>,</highlight></codeline>
+<codeline lineno="152" refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca5c3f99f01f27dad06c540756862b8b06" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca5c3f99f01f27dad06c540756862b8b06" kindref="member">NRF_CLOUD_SENSOR_AIR_QUAL</ref>,</highlight></codeline>
+<codeline lineno="154" refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca6d252076baa386af557a2d5f7b4c813c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dca6d252076baa386af557a2d5f7b4c813c" kindref="member">NRF_CLOUD_LTE_LINK_RSRP</ref>,</highlight></codeline>
+<codeline lineno="156" refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dcad0f68a96b97fa176ec9e69440e2555e1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dcad0f68a96b97fa176ec9e69440e2555e1" kindref="member">NRF_CLOUD_DEVICE_INFO</ref>,</highlight></codeline>
+<codeline lineno="158" refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dcaf6ccb5984b908fcd81b7bfe07560304d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1gga4bc09b90a1841097cf01260cb14e27dcaf6ccb5984b908fcd81b7bfe07560304d" kindref="member">NRF_CLOUD_SENSOR_LIGHT</ref>,</highlight></codeline>
+<codeline lineno="159"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162" refid="group__nrf__cloud_ga9e1550556f82615f1a1b92290fa35743_1ga9e1550556f82615f1a1b92290fa35743" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga9e1550556f82615f1a1b92290fa35743_1ga9e1550556f82615f1a1b92290fa35743" kindref="member">nrf_cloud_topic_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="164" refid="group__nrf__cloud_ga9e1550556f82615f1a1b92290fa35743_1gga9e1550556f82615f1a1b92290fa35743a429d84513773e9abd7fafa012a138fc0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga9e1550556f82615f1a1b92290fa35743_1gga9e1550556f82615f1a1b92290fa35743a429d84513773e9abd7fafa012a138fc0" kindref="member">NRF_CLOUD_TOPIC_STATE</ref><sp/>=<sp/>0x1,</highlight></codeline>
+<codeline lineno="166" refid="group__nrf__cloud_ga9e1550556f82615f1a1b92290fa35743_1gga9e1550556f82615f1a1b92290fa35743aa1dd32014a9e2d6f5ecf7c3e91c615ea" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga9e1550556f82615f1a1b92290fa35743_1gga9e1550556f82615f1a1b92290fa35743aa1dd32014a9e2d6f5ecf7c3e91c615ea" kindref="member">NRF_CLOUD_TOPIC_MESSAGE</ref>,</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga9e1550556f82615f1a1b92290fa35743_1gga9e1550556f82615f1a1b92290fa35743a6b2ed93d98ec1ba7b6a7a5e8db86260e" kindref="member">NRF_CLOUD_TOPIC_BULK</ref></highlight></codeline>
+<codeline lineno="172" refid="group__nrf__cloud_ga9e1550556f82615f1a1b92290fa35743_1gga9e1550556f82615f1a1b92290fa35743a6b2ed93d98ec1ba7b6a7a5e8db86260e" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175" refid="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1ga1359b0c3333f11b0d06aa46f99e3668d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1ga1359b0c3333f11b0d06aa46f99e3668d" kindref="member">nrf_cloud_fota_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="176" refid="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da7089f40402e2be5976a2fd9510525c01" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da7089f40402e2be5976a2fd9510525c01" kindref="member">NRF_CLOUD_FOTA_QUEUED</ref><sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="177" refid="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da0bd02e5a9bba46681d0c99cc8bdaf3a6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da0bd02e5a9bba46681d0c99cc8bdaf3a6" kindref="member">NRF_CLOUD_FOTA_IN_PROGRESS</ref><sp/>=<sp/>1,</highlight></codeline>
+<codeline lineno="178" refid="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da0ccba35720713a7b590ce96bc9016bd4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da0ccba35720713a7b590ce96bc9016bd4" kindref="member">NRF_CLOUD_FOTA_FAILED</ref><sp/>=<sp/>2,</highlight></codeline>
+<codeline lineno="179" refid="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da9204d44f2610cbd44048fdf773830e18" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da9204d44f2610cbd44048fdf773830e18" kindref="member">NRF_CLOUD_FOTA_SUCCEEDED</ref><sp/>=<sp/>3,</highlight></codeline>
+<codeline lineno="180" refid="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da4815e53b116abc60a184b7b4044829e8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da4815e53b116abc60a184b7b4044829e8" kindref="member">NRF_CLOUD_FOTA_TIMED_OUT</ref><sp/>=<sp/>4,</highlight></codeline>
+<codeline lineno="181" refid="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da113218cb3d4a95f542bbc15afccb6d49" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da113218cb3d4a95f542bbc15afccb6d49" kindref="member">NRF_CLOUD_FOTA_CANCELED</ref><sp/>=<sp/>5,</highlight></codeline>
+<codeline lineno="182" refid="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da8d8eb86de405a73396ed7cd3b4c7e718" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da8d8eb86de405a73396ed7cd3b4c7e718" kindref="member">NRF_CLOUD_FOTA_REJECTED</ref><sp/>=<sp/>6,</highlight></codeline>
+<codeline lineno="183" refid="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da9da91b253b5d07b289424c3ab4e6ea25" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga1359b0c3333f11b0d06aa46f99e3668d_1gga1359b0c3333f11b0d06aa46f99e3668da9da91b253b5d07b289424c3ab4e6ea25" kindref="member">NRF_CLOUD_FOTA_DOWNLOADING</ref><sp/>=<sp/>7,</highlight></codeline>
+<codeline lineno="184"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187" refid="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1ga6b3a7153a10a31b72dbb6c0ba5c12c32" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1ga6b3a7153a10a31b72dbb6c0ba5c12c32" kindref="member">nrf_cloud_fota_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="188" refid="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1gga6b3a7153a10a31b72dbb6c0ba5c12c32a241b27c5b3dbbcab41ddc400b512b484" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1gga6b3a7153a10a31b72dbb6c0ba5c12c32a241b27c5b3dbbcab41ddc400b512b484" kindref="member">NRF_CLOUD_FOTA_TYPE__FIRST</ref><sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="191" refid="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1gga6b3a7153a10a31b72dbb6c0ba5c12c32a239b4785e4cbead13f0fe5597c11c73d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1gga6b3a7153a10a31b72dbb6c0ba5c12c32a239b4785e4cbead13f0fe5597c11c73d" kindref="member">NRF_CLOUD_FOTA_APPLICATION</ref><sp/>=<sp/><ref refid="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1gga6b3a7153a10a31b72dbb6c0ba5c12c32a241b27c5b3dbbcab41ddc400b512b484" kindref="member">NRF_CLOUD_FOTA_TYPE__FIRST</ref>,</highlight></codeline>
+<codeline lineno="193" refid="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1gga6b3a7153a10a31b72dbb6c0ba5c12c32ae1adb793c1c920711603ebbded787ca1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1gga6b3a7153a10a31b72dbb6c0ba5c12c32ae1adb793c1c920711603ebbded787ca1" kindref="member">NRF_CLOUD_FOTA_MODEM</ref><sp/>=<sp/>1,</highlight></codeline>
+<codeline lineno="195" refid="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1gga6b3a7153a10a31b72dbb6c0ba5c12c32ab39a1f015d21e65f17e864158a77e1e3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1gga6b3a7153a10a31b72dbb6c0ba5c12c32ab39a1f015d21e65f17e864158a77e1e3" kindref="member">NRF_CLOUD_FOTA_BOOTLOADER</ref><sp/>=<sp/>2,</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1gga6b3a7153a10a31b72dbb6c0ba5c12c32a847260b1404cefda80afd1da815a5104" kindref="member">NRF_CLOUD_FOTA_TYPE__INVALID</ref></highlight></codeline>
+<codeline lineno="198" refid="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1gga6b3a7153a10a31b72dbb6c0ba5c12c32a847260b1404cefda80afd1da815a5104" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="201" refid="group__nrf__cloud_ga448090d9b3948302259cc798ff381806_1ga448090d9b3948302259cc798ff381806" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NRF_CLOUD_FOTA_JOB_ID_SIZE<sp/>(32<sp/>+<sp/>4<sp/>+<sp/>1)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight></codeline>
+<codeline lineno="204" refid="structnrf__cloud__fota__job__info" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__fota__job__info" kindref="compound">nrf_cloud_fota_job_info</ref><sp/>{</highlight></codeline>
+<codeline lineno="205" refid="structnrf__cloud__fota__job__info_ab68dc550c9457e423c30492bba29aba9_1ab68dc550c9457e423c30492bba29aba9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1ga6b3a7153a10a31b72dbb6c0ba5c12c32" kindref="member">nrf_cloud_fota_type</ref><sp/><ref refid="structnrf__cloud__fota__job__info_ab68dc550c9457e423c30492bba29aba9_1ab68dc550c9457e423c30492bba29aba9" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="207" refid="structnrf__cloud__fota__job__info_a07d51bba8c3769437e9171c01f768592_1a07d51bba8c3769437e9171c01f768592" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structnrf__cloud__fota__job__info_a07d51bba8c3769437e9171c01f768592_1a07d51bba8c3769437e9171c01f768592" kindref="member">id</ref>;</highlight></codeline>
+<codeline lineno="208" refid="structnrf__cloud__fota__job__info_a28eab106e78b73fc684f2c5a503feb63_1a28eab106e78b73fc684f2c5a503feb63" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structnrf__cloud__fota__job__info_a28eab106e78b73fc684f2c5a503feb63_1a28eab106e78b73fc684f2c5a503feb63" kindref="member">host</ref>;</highlight></codeline>
+<codeline lineno="209" refid="structnrf__cloud__fota__job__info_a266d411a86b0550c96f5d13899508b99_1a266d411a86b0550c96f5d13899508b99" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structnrf__cloud__fota__job__info_a266d411a86b0550c96f5d13899508b99_1a266d411a86b0550c96f5d13899508b99" kindref="member">path</ref>;</highlight></codeline>
+<codeline lineno="210" refid="structnrf__cloud__fota__job__info_a30e3089159c3931642c4f5b8ca413134_1a30e3089159c3931642c4f5b8ca413134" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__fota__job__info_a30e3089159c3931642c4f5b8ca413134_1a30e3089159c3931642c4f5b8ca413134" kindref="member">file_size</ref>;</highlight></codeline>
+<codeline lineno="211"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight></codeline>
+<codeline lineno="214" refid="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1ga5ed03bbd4bf5aa1c0117a948324c5730" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1ga5ed03bbd4bf5aa1c0117a948324c5730" kindref="member">nrf_cloud_fota_validate_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="215" refid="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730add28e1dea9874728e034b149d56d3f03" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730add28e1dea9874728e034b149d56d3f03" kindref="member">NRF_CLOUD_FOTA_VALIDATE_NONE</ref><sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="216" refid="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730aed0bfe9d621309ea631b2cbbe1294e5e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730aed0bfe9d621309ea631b2cbbe1294e5e" kindref="member">NRF_CLOUD_FOTA_VALIDATE_PENDING</ref>,</highlight></codeline>
+<codeline lineno="217" refid="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730a0cad29a0c1c69ca632ca865eb0b16cf3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730a0cad29a0c1c69ca632ca865eb0b16cf3" kindref="member">NRF_CLOUD_FOTA_VALIDATE_PASS</ref>,</highlight></codeline>
+<codeline lineno="218" refid="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730a1441df440e0f95097115c2ef605134fb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730a1441df440e0f95097115c2ef605134fb" kindref="member">NRF_CLOUD_FOTA_VALIDATE_FAIL</ref>,</highlight></codeline>
+<codeline lineno="219" refid="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730aa5b14cb5c4007a03b29df8c14c830bb3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730aa5b14cb5c4007a03b29df8c14c830bb3" kindref="member">NRF_CLOUD_FOTA_VALIDATE_UNKNOWN</ref>,</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730a836871a9320912b7dc5791a2d9c78c85" kindref="member">NRF_CLOUD_FOTA_VALIDATE_DONE</ref></highlight></codeline>
+<codeline lineno="221" refid="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1gga5ed03bbd4bf5aa1c0117a948324c5730a836871a9320912b7dc5791a2d9c78c85" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight></codeline>
+<codeline lineno="224" refid="structnrf__cloud__settings__fota__job" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__settings__fota__job" kindref="compound">nrf_cloud_settings_fota_job</ref><sp/>{</highlight></codeline>
+<codeline lineno="225" refid="structnrf__cloud__settings__fota__job_a678a55dd7b75f64ac76dfbe6981e18d0_1a678a55dd7b75f64ac76dfbe6981e18d0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga5ed03bbd4bf5aa1c0117a948324c5730_1ga5ed03bbd4bf5aa1c0117a948324c5730" kindref="member">nrf_cloud_fota_validate_status</ref><sp/><ref refid="structnrf__cloud__settings__fota__job_a678a55dd7b75f64ac76dfbe6981e18d0_1a678a55dd7b75f64ac76dfbe6981e18d0" kindref="member">validate</ref>;</highlight></codeline>
+<codeline lineno="226" refid="structnrf__cloud__settings__fota__job_aa0afeeff17a8bcd4175fd3958e7facd1_1aa0afeeff17a8bcd4175fd3958e7facd1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga6b3a7153a10a31b72dbb6c0ba5c12c32_1ga6b3a7153a10a31b72dbb6c0ba5c12c32" kindref="member">nrf_cloud_fota_type</ref><sp/><ref refid="structnrf__cloud__settings__fota__job_aa0afeeff17a8bcd4175fd3958e7facd1_1aa0afeeff17a8bcd4175fd3958e7facd1" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="227" refid="structnrf__cloud__settings__fota__job_ad2d14c0dcb6a32431382394d118e8ba6_1ad2d14c0dcb6a32431382394d118e8ba6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">[<ref refid="group__nrf__cloud_ga448090d9b3948302259cc798ff381806_1ga448090d9b3948302259cc798ff381806" kindref="member">NRF_CLOUD_FOTA_JOB_ID_SIZE</ref>];</highlight></codeline>
+<codeline lineno="228"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight></codeline>
+<codeline lineno="231" refid="structnrf__cloud__data" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__data" kindref="compound">nrf_cloud_data</ref><sp/>{</highlight></codeline>
+<codeline lineno="233" refid="structnrf__cloud__data_ae3ecfae868529c17be14d2f4e9a874bc_1ae3ecfae868529c17be14d2f4e9a874bc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structnrf__cloud__data_ae3ecfae868529c17be14d2f4e9a874bc_1ae3ecfae868529c17be14d2f4e9a874bc" kindref="member">len</ref>;</highlight></codeline>
+<codeline lineno="235" refid="structnrf__cloud__data_aeefc762c0e9a6f6e838a3c9efcf1c20c_1aeefc762c0e9a6f6e838a3c9efcf1c20c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structnrf__cloud__data_aeefc762c0e9a6f6e838a3c9efcf1c20c_1aeefc762c0e9a6f6e838a3c9efcf1c20c" kindref="member">ptr</ref>;</highlight></codeline>
+<codeline lineno="236"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"></highlight></codeline>
+<codeline lineno="239" refid="structnrf__cloud__topic" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__topic" kindref="compound">nrf_cloud_topic</ref><sp/>{</highlight></codeline>
+<codeline lineno="241" refid="structnrf__cloud__topic_a4268e543d85f9b37be7556cb602e3ae9_1a4268e543d85f9b37be7556cb602e3ae9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structnrf__cloud__topic_a4268e543d85f9b37be7556cb602e3ae9_1a4268e543d85f9b37be7556cb602e3ae9" kindref="member">len</ref>;</highlight></codeline>
+<codeline lineno="243" refid="structnrf__cloud__topic_ab79cf70c662af523511a18e10a9cc173_1ab79cf70c662af523511a18e10a9cc173" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structnrf__cloud__topic_ab79cf70c662af523511a18e10a9cc173_1ab79cf70c662af523511a18e10a9cc173" kindref="member">ptr</ref>;</highlight></codeline>
+<codeline lineno="244"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"></highlight></codeline>
+<codeline lineno="247" refid="structnrf__cloud__sensor__list" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__sensor__list" kindref="compound">nrf_cloud_sensor_list</ref><sp/>{</highlight></codeline>
+<codeline lineno="249" refid="structnrf__cloud__sensor__list_a61e25bb566acc15756db0b09ba25eaf6_1a61e25bb566acc15756db0b09ba25eaf6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnrf__cloud__sensor__list_a61e25bb566acc15756db0b09ba25eaf6_1a61e25bb566acc15756db0b09ba25eaf6" kindref="member">size</ref>;</highlight></codeline>
+<codeline lineno="251" refid="structnrf__cloud__sensor__list_aca5bfcd57a9ede07feeaf8f98cd210e5_1aca5bfcd57a9ede07feeaf8f98cd210e5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1ga4bc09b90a1841097cf01260cb14e27dc" kindref="member">nrf_cloud_sensor</ref><sp/>*<ref refid="structnrf__cloud__sensor__list_aca5bfcd57a9ede07feeaf8f98cd210e5_1aca5bfcd57a9ede07feeaf8f98cd210e5" kindref="member">ptr</ref>;</highlight></codeline>
+<codeline lineno="252"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"></highlight></codeline>
+<codeline lineno="255" refid="structnrf__cloud__connect__param" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__connect__param" kindref="compound">nrf_cloud_connect_param</ref><sp/>{</highlight></codeline>
+<codeline lineno="257" refid="structnrf__cloud__connect__param_a91c338c164b2afb4b46703cce5aa27c7_1a91c338c164b2afb4b46703cce5aa27c7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__sensor__list" kindref="compound">nrf_cloud_sensor_list</ref><sp/>*<ref refid="structnrf__cloud__connect__param_a91c338c164b2afb4b46703cce5aa27c7_1a91c338c164b2afb4b46703cce5aa27c7" kindref="member">sensor</ref>;</highlight></codeline>
+<codeline lineno="258"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"></highlight></codeline>
+<codeline lineno="261" refid="structnrf__cloud__sensor__data" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__sensor__data" kindref="compound">nrf_cloud_sensor_data</ref><sp/>{</highlight></codeline>
+<codeline lineno="263" refid="structnrf__cloud__sensor__data_a77d0837a914acfd824a68c40770d26e3_1a77d0837a914acfd824a68c40770d26e3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga4bc09b90a1841097cf01260cb14e27dc_1ga4bc09b90a1841097cf01260cb14e27dc" kindref="member">nrf_cloud_sensor</ref><sp/><ref refid="structnrf__cloud__sensor__data_a77d0837a914acfd824a68c40770d26e3_1a77d0837a914acfd824a68c40770d26e3" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="265" refid="structnrf__cloud__sensor__data_a4be0695011c8c9066029a50f9891ed08_1a4be0695011c8c9066029a50f9891ed08" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__data" kindref="compound">nrf_cloud_data</ref><sp/><ref refid="structnrf__cloud__sensor__data_a4be0695011c8c9066029a50f9891ed08_1a4be0695011c8c9066029a50f9891ed08" kindref="member">data</ref>;</highlight></codeline>
+<codeline lineno="271" refid="structnrf__cloud__sensor__data_ad5c532bf20cdc75ee59797ddd910fe29_1ad5c532bf20cdc75ee59797ddd910fe29" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structnrf__cloud__sensor__data_ad5c532bf20cdc75ee59797ddd910fe29_1ad5c532bf20cdc75ee59797ddd910fe29" kindref="member">tag</ref>;</highlight></codeline>
+<codeline lineno="272"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"></highlight></codeline>
+<codeline lineno="275" refid="structnrf__cloud__evt" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__evt" kindref="compound">nrf_cloud_evt</ref><sp/>{</highlight></codeline>
+<codeline lineno="277" refid="structnrf__cloud__evt_a0c977f3e0d6f6e6eb7a9d906d56612cd_1a0c977f3e0d6f6e6eb7a9d906d56612cd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_gabfa69ba752561f778c2f055e1ef7c46f_1gabfa69ba752561f778c2f055e1ef7c46f" kindref="member">nrf_cloud_evt_type</ref><sp/><ref refid="structnrf__cloud__evt_a0c977f3e0d6f6e6eb7a9d906d56612cd_1a0c977f3e0d6f6e6eb7a9d906d56612cd" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="279" refid="structnrf__cloud__evt_a157c32c44a9acf388bfc2b11408819ae_1a157c32c44a9acf388bfc2b11408819ae" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structnrf__cloud__evt_a157c32c44a9acf388bfc2b11408819ae_1a157c32c44a9acf388bfc2b11408819ae" kindref="member">status</ref>;</highlight></codeline>
+<codeline lineno="281" refid="structnrf__cloud__evt_a962a865d46e6d3e0484e2022593b2219_1a962a865d46e6d3e0484e2022593b2219" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__data" kindref="compound">nrf_cloud_data</ref><sp/><ref refid="structnrf__cloud__evt_a962a865d46e6d3e0484e2022593b2219_1a962a865d46e6d3e0484e2022593b2219" kindref="member">data</ref>;</highlight></codeline>
+<codeline lineno="283" refid="structnrf__cloud__evt_a57e97f54ce650d3596d307196b1c0e00_1a57e97f54ce650d3596d307196b1c0e00" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__topic" kindref="compound">nrf_cloud_topic</ref><sp/><ref refid="structnrf__cloud__evt_a57e97f54ce650d3596d307196b1c0e00_1a57e97f54ce650d3596d307196b1c0e00" kindref="member">topic</ref>;</highlight></codeline>
+<codeline lineno="284"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"></highlight></codeline>
+<codeline lineno="287" refid="structnrf__cloud__tx__data" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__tx__data" kindref="compound">nrf_cloud_tx_data</ref><sp/>{</highlight></codeline>
+<codeline lineno="289" refid="structnrf__cloud__tx__data_a23220fa51de8374dad411b86f4e041d5_1a23220fa51de8374dad411b86f4e041d5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__data" kindref="compound">nrf_cloud_data</ref><sp/><ref refid="structnrf__cloud__tx__data_a23220fa51de8374dad411b86f4e041d5_1a23220fa51de8374dad411b86f4e041d5" kindref="member">data</ref>;</highlight></codeline>
+<codeline lineno="291" refid="structnrf__cloud__tx__data_a9d6a4a0fe3b36966fd4dbefe7f7b37d6_1a9d6a4a0fe3b36966fd4dbefe7f7b37d6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga9e1550556f82615f1a1b92290fa35743_1ga9e1550556f82615f1a1b92290fa35743" kindref="member">nrf_cloud_topic_type</ref><sp/><ref refid="structnrf__cloud__tx__data_a9d6a4a0fe3b36966fd4dbefe7f7b37d6_1a9d6a4a0fe3b36966fd4dbefe7f7b37d6" kindref="member">topic_type</ref>;</highlight></codeline>
+<codeline lineno="293" refid="structnrf__cloud__tx__data_ad39da700dbbbf0f45d846fde7837646e_1ad39da700dbbbf0f45d846fde7837646e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/>mqtt_qos<sp/><ref refid="structnrf__cloud__tx__data_ad39da700dbbbf0f45d846fde7837646e_1ad39da700dbbbf0f45d846fde7837646e" kindref="member">qos</ref>;</highlight></codeline>
+<codeline lineno="294"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"></highlight></codeline>
+<codeline lineno="297" refid="structnrf__cloud__svc__info__fota" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__svc__info__fota" kindref="compound">nrf_cloud_svc_info_fota</ref><sp/>{</highlight></codeline>
+<codeline lineno="298" refid="structnrf__cloud__svc__info__fota_ad43a2b42483e6a6a165726002840fa03_1ad43a2b42483e6a6a165726002840fa03" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnrf__cloud__svc__info__fota_ad43a2b42483e6a6a165726002840fa03_1ad43a2b42483e6a6a165726002840fa03" kindref="member">bootloader</ref>:1;</highlight></codeline>
+<codeline lineno="299" refid="structnrf__cloud__svc__info__fota_a10517ab509cabf6c236424a303d52842_1a10517ab509cabf6c236424a303d52842" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnrf__cloud__svc__info__fota_a10517ab509cabf6c236424a303d52842_1a10517ab509cabf6c236424a303d52842" kindref="member">modem</ref>:1;</highlight></codeline>
+<codeline lineno="300" refid="structnrf__cloud__svc__info__fota_a83268fc99708d2f4b950024ad0ad03b5_1a83268fc99708d2f4b950024ad0ad03b5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnrf__cloud__svc__info__fota_a83268fc99708d2f4b950024ad0ad03b5_1a83268fc99708d2f4b950024ad0ad03b5" kindref="member">application</ref>:1;</highlight></codeline>
+<codeline lineno="301"><highlight class="normal"></highlight></codeline>
+<codeline lineno="302"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>_rsvd:5;</highlight></codeline>
+<codeline lineno="303"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="304"><highlight class="normal"></highlight></codeline>
+<codeline lineno="306" refid="structnrf__cloud__svc__info__ui" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__svc__info__ui" kindref="compound">nrf_cloud_svc_info_ui</ref><sp/>{</highlight></codeline>
+<codeline lineno="308" refid="structnrf__cloud__svc__info__ui_ad7072d112709b4d075218ed08444de05_1ad7072d112709b4d075218ed08444de05" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnrf__cloud__svc__info__ui_ad7072d112709b4d075218ed08444de05_1ad7072d112709b4d075218ed08444de05" kindref="member">temperature</ref>:1;</highlight></codeline>
+<codeline lineno="309" refid="structnrf__cloud__svc__info__ui_a14ee0546ab2589ce29cb3c81094beca8_1a14ee0546ab2589ce29cb3c81094beca8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnrf__cloud__svc__info__ui_a14ee0546ab2589ce29cb3c81094beca8_1a14ee0546ab2589ce29cb3c81094beca8" kindref="member">gps</ref>:1;</highlight></codeline>
+<codeline lineno="310" refid="structnrf__cloud__svc__info__ui_a7aaf8d5ccac6b14aa4ac4187cddab7f6_1a7aaf8d5ccac6b14aa4ac4187cddab7f6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnrf__cloud__svc__info__ui_a7aaf8d5ccac6b14aa4ac4187cddab7f6_1a7aaf8d5ccac6b14aa4ac4187cddab7f6" kindref="member">flip</ref>:1;<sp/></highlight><highlight class="comment">/*<sp/>Orientation<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="311" refid="structnrf__cloud__svc__info__ui_a6d81591cef39f8174035fa0b73475d66_1a6d81591cef39f8174035fa0b73475d66" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnrf__cloud__svc__info__ui_a6d81591cef39f8174035fa0b73475d66_1a6d81591cef39f8174035fa0b73475d66" kindref="member">humidity</ref>:1;</highlight></codeline>
+<codeline lineno="312" refid="structnrf__cloud__svc__info__ui_ac1e94ac3e051dffbf9eb55b76189726a_1ac1e94ac3e051dffbf9eb55b76189726a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnrf__cloud__svc__info__ui_ac1e94ac3e051dffbf9eb55b76189726a_1ac1e94ac3e051dffbf9eb55b76189726a" kindref="member">air_pressure</ref>:1;</highlight></codeline>
+<codeline lineno="313" refid="structnrf__cloud__svc__info__ui_ad03551ee949b38dcc4afff095ebdac09_1ad03551ee949b38dcc4afff095ebdac09" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnrf__cloud__svc__info__ui_ad03551ee949b38dcc4afff095ebdac09_1ad03551ee949b38dcc4afff095ebdac09" kindref="member">rsrp</ref>:1;</highlight></codeline>
+<codeline lineno="314"><highlight class="normal"></highlight></codeline>
+<codeline lineno="316" refid="structnrf__cloud__svc__info__ui_a1942e23e7c64576c003d1970467fb1da_1a1942e23e7c64576c003d1970467fb1da" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnrf__cloud__svc__info__ui_a1942e23e7c64576c003d1970467fb1da_1a1942e23e7c64576c003d1970467fb1da" kindref="member">air_quality</ref>:1;</highlight></codeline>
+<codeline lineno="317" refid="structnrf__cloud__svc__info__ui_a0d9279323f5a6464fe15e62f0ed80c9f_1a0d9279323f5a6464fe15e62f0ed80c9f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnrf__cloud__svc__info__ui_a0d9279323f5a6464fe15e62f0ed80c9f_1a0d9279323f5a6464fe15e62f0ed80c9f" kindref="member">light_sensor</ref>:1;</highlight></codeline>
+<codeline lineno="318" refid="structnrf__cloud__svc__info__ui_a01bd065e57b6650d1281ff1e33356672_1a01bd065e57b6650d1281ff1e33356672" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnrf__cloud__svc__info__ui_a01bd065e57b6650d1281ff1e33356672_1a01bd065e57b6650d1281ff1e33356672" kindref="member">button</ref>:1;</highlight></codeline>
+<codeline lineno="319"><highlight class="normal"></highlight></codeline>
+<codeline lineno="320"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>_rsvd:7;</highlight></codeline>
+<codeline lineno="321"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="322"><highlight class="normal"></highlight></codeline>
+<codeline lineno="324" refid="group__nrf__cloud_gaf64999062e1a8b99a963570664862acf_1gaf64999062e1a8b99a963570664862acf" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_gaf64999062e1a8b99a963570664862acf_1gaf64999062e1a8b99a963570664862acf" kindref="member">nrf_cloud_shadow_info</ref><sp/>{</highlight></codeline>
+<codeline lineno="326" refid="group__nrf__cloud_gaf64999062e1a8b99a963570664862acf_1ggaf64999062e1a8b99a963570664862acfa06ae7163bdc8d0ca2c1ab6148f32a10e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_gaf64999062e1a8b99a963570664862acf_1ggaf64999062e1a8b99a963570664862acfa06ae7163bdc8d0ca2c1ab6148f32a10e" kindref="member">NRF_CLOUD_INFO_NO_CHANGE</ref><sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="328" refid="group__nrf__cloud_gaf64999062e1a8b99a963570664862acf_1ggaf64999062e1a8b99a963570664862acfae386122f659e10581f16995cc456c9ae" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_gaf64999062e1a8b99a963570664862acf_1ggaf64999062e1a8b99a963570664862acfae386122f659e10581f16995cc456c9ae" kindref="member">NRF_CLOUD_INFO_SET</ref><sp/>=<sp/>1,</highlight></codeline>
+<codeline lineno="330" refid="group__nrf__cloud_gaf64999062e1a8b99a963570664862acf_1ggaf64999062e1a8b99a963570664862acfa6c2011cb99f0a362b5e33b42ef6729c3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_gaf64999062e1a8b99a963570664862acf_1ggaf64999062e1a8b99a963570664862acfa6c2011cb99f0a362b5e33b42ef6729c3" kindref="member">NRF_CLOUD_INFO_CLEAR</ref><sp/>=<sp/>2,</highlight></codeline>
+<codeline lineno="331"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="332"><highlight class="normal"></highlight></codeline>
+<codeline lineno="334" refid="structnrf__cloud__modem__info" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__modem__info" kindref="compound">nrf_cloud_modem_info</ref><sp/>{</highlight></codeline>
+<codeline lineno="335" refid="structnrf__cloud__modem__info_a00e2c46118c80bdaefcd479e688d9718_1a00e2c46118c80bdaefcd479e688d9718" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_gaf64999062e1a8b99a963570664862acf_1gaf64999062e1a8b99a963570664862acf" kindref="member">nrf_cloud_shadow_info</ref><sp/><ref refid="structnrf__cloud__modem__info_a00e2c46118c80bdaefcd479e688d9718_1a00e2c46118c80bdaefcd479e688d9718" kindref="member">device</ref>;</highlight></codeline>
+<codeline lineno="336" refid="structnrf__cloud__modem__info_a328ba927fdce4416020ed413753c266f_1a328ba927fdce4416020ed413753c266f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_gaf64999062e1a8b99a963570664862acf_1gaf64999062e1a8b99a963570664862acf" kindref="member">nrf_cloud_shadow_info</ref><sp/><ref refid="structnrf__cloud__modem__info_a328ba927fdce4416020ed413753c266f_1a328ba927fdce4416020ed413753c266f" kindref="member">network</ref>;</highlight></codeline>
+<codeline lineno="337" refid="structnrf__cloud__modem__info_a06766141bd68bf83c70c6c4bb327bd94_1a06766141bd68bf83c70c6c4bb327bd94" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_gaf64999062e1a8b99a963570664862acf_1gaf64999062e1a8b99a963570664862acf" kindref="member">nrf_cloud_shadow_info</ref><sp/><ref refid="structnrf__cloud__modem__info_a06766141bd68bf83c70c6c4bb327bd94_1a06766141bd68bf83c70c6c4bb327bd94" kindref="member">sim</ref>;</highlight></codeline>
+<codeline lineno="338"><highlight class="normal"></highlight></codeline>
+<codeline lineno="339"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(CONFIG_MODEM_INFO)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="343"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmodem__param__info" kindref="compound">modem_param_info</ref><sp/>*mpi;</highlight></codeline>
+<codeline lineno="344"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="345"><highlight class="normal"></highlight></codeline>
+<codeline lineno="346"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="347"><highlight class="normal"></highlight></codeline>
+<codeline lineno="349" refid="structnrf__cloud__svc__info" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__svc__info" kindref="compound">nrf_cloud_svc_info</ref><sp/>{</highlight></codeline>
+<codeline lineno="351" refid="structnrf__cloud__svc__info_a431971042c9ab62d1af15df8a4c809b9_1a431971042c9ab62d1af15df8a4c809b9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__svc__info__fota" kindref="compound">nrf_cloud_svc_info_fota</ref><sp/>*<ref refid="structnrf__cloud__svc__info_a431971042c9ab62d1af15df8a4c809b9_1a431971042c9ab62d1af15df8a4c809b9" kindref="member">fota</ref>;</highlight></codeline>
+<codeline lineno="353" refid="structnrf__cloud__svc__info_a80c56834a9947af4b84a30e7211313b2_1a80c56834a9947af4b84a30e7211313b2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__svc__info__ui" kindref="compound">nrf_cloud_svc_info_ui</ref><sp/>*<ref refid="structnrf__cloud__svc__info_a80c56834a9947af4b84a30e7211313b2_1a80c56834a9947af4b84a30e7211313b2" kindref="member">ui</ref>;</highlight></codeline>
+<codeline lineno="354"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="355"><highlight class="normal"></highlight></codeline>
+<codeline lineno="357" refid="structnrf__cloud__device__status" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__device__status" kindref="compound">nrf_cloud_device_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="359" refid="structnrf__cloud__device__status_aed6802eb1e709e3d6100290ed9563f02_1aed6802eb1e709e3d6100290ed9563f02" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__modem__info" kindref="compound">nrf_cloud_modem_info</ref><sp/>*<ref refid="structnrf__cloud__device__status_aed6802eb1e709e3d6100290ed9563f02_1aed6802eb1e709e3d6100290ed9563f02" kindref="member">modem</ref>;</highlight></codeline>
+<codeline lineno="361" refid="structnrf__cloud__device__status_aba66bde8e0c5a70ad2538978b9225b69_1aba66bde8e0c5a70ad2538978b9225b69" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__svc__info" kindref="compound">nrf_cloud_svc_info</ref><sp/>*<ref refid="structnrf__cloud__device__status_aba66bde8e0c5a70ad2538978b9225b69_1aba66bde8e0c5a70ad2538978b9225b69" kindref="member">svc</ref>;</highlight></codeline>
+<codeline lineno="362"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="363"><highlight class="normal"></highlight></codeline>
+<codeline lineno="364"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_NRF_CLOUD_GATEWAY</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="366"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">nrf_cloud_gw_data<sp/>{</highlight></codeline>
+<codeline lineno="367"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__data" kindref="compound">nrf_cloud_data</ref><sp/>data;</highlight></codeline>
+<codeline lineno="368"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/>id;</highlight></codeline>
+<codeline lineno="369"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="370"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="371"><highlight class="normal"></highlight></codeline>
+<codeline lineno="378" refid="group__nrf__cloud_gaba76a1d354a998fcc241531440b28770_1gaba76a1d354a998fcc241531440b28770" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="group__nrf__cloud_gaba76a1d354a998fcc241531440b28770_1gaba76a1d354a998fcc241531440b28770" kindref="member">nrf_cloud_event_handler_t</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__evt" kindref="compound">nrf_cloud_evt</ref><sp/>*evt);</highlight></codeline>
+<codeline lineno="379"><highlight class="normal"></highlight></codeline>
+<codeline lineno="381" refid="structnrf__cloud__init__param" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnrf__cloud__init__param" kindref="compound">nrf_cloud_init_param</ref><sp/>{</highlight></codeline>
+<codeline lineno="383" refid="structnrf__cloud__init__param_a8e668966ecffed099a15d79a4336f1a4_1a8e668966ecffed099a15d79a4336f1a4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__nrf__cloud_gaba76a1d354a998fcc241531440b28770_1gaba76a1d354a998fcc241531440b28770" kindref="member">nrf_cloud_event_handler_t</ref><sp/><ref refid="structnrf__cloud__init__param_a8e668966ecffed099a15d79a4336f1a4_1a8e668966ecffed099a15d79a4336f1a4" kindref="member">event_handler</ref>;</highlight></codeline>
+<codeline lineno="389" refid="structnrf__cloud__init__param_ae6f3328b4ba85bbeb3cf16763f811a70_1ae6f3328b4ba85bbeb3cf16763f811a70" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structnrf__cloud__init__param_ae6f3328b4ba85bbeb3cf16763f811a70_1ae6f3328b4ba85bbeb3cf16763f811a70" kindref="member">client_id</ref>;</highlight></codeline>
+<codeline lineno="390"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="391"><highlight class="normal"></highlight></codeline>
+<codeline lineno="404" refid="group__nrf__cloud_ga1d7e9e66df5c45750c6479c0439f49fd_1ga1d7e9e66df5c45750c6479c0439f49fd" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga1d7e9e66df5c45750c6479c0439f49fd_1ga1d7e9e66df5c45750c6479c0439f49fd" kindref="member">nrf_cloud_init</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__init__param" kindref="compound">nrf_cloud_init_param</ref><sp/>*param);</highlight></codeline>
+<codeline lineno="405"><highlight class="normal"></highlight></codeline>
+<codeline lineno="417" refid="group__nrf__cloud_gaadc1db382c8b1ab5537d74f85d23505d_1gaadc1db382c8b1ab5537d74f85d23505d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_gaadc1db382c8b1ab5537d74f85d23505d_1gaadc1db382c8b1ab5537d74f85d23505d" kindref="member">nrf_cloud_uninit</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="418"><highlight class="normal"></highlight></codeline>
+<codeline lineno="431" refid="group__nrf__cloud_ga7c240d996183a476685ef5cd4e2267f1_1ga7c240d996183a476685ef5cd4e2267f1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga7c240d996183a476685ef5cd4e2267f1_1ga7c240d996183a476685ef5cd4e2267f1" kindref="member">nrf_cloud_connect</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__connect__param" kindref="compound">nrf_cloud_connect_param</ref><sp/>*param);</highlight></codeline>
+<codeline lineno="432"><highlight class="normal"></highlight></codeline>
+<codeline lineno="449" refid="group__nrf__cloud_ga1dc3c251c2ed661d50acd5257e30daae_1ga1dc3c251c2ed661d50acd5257e30daae" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga1dc3c251c2ed661d50acd5257e30daae_1ga1dc3c251c2ed661d50acd5257e30daae" kindref="member">nrf_cloud_sensor_data_send</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__sensor__data" kindref="compound">nrf_cloud_sensor_data</ref><sp/>*param);</highlight></codeline>
+<codeline lineno="450"><highlight class="normal"></highlight></codeline>
+<codeline lineno="461" refid="group__nrf__cloud_ga3005fcfbe5d564e7dedd63d5966ee997_1ga3005fcfbe5d564e7dedd63d5966ee997" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga3005fcfbe5d564e7dedd63d5966ee997_1ga3005fcfbe5d564e7dedd63d5966ee997" kindref="member">nrf_cloud_shadow_update</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__sensor__data" kindref="compound">nrf_cloud_sensor_data</ref><sp/>*param);</highlight></codeline>
+<codeline lineno="462"><highlight class="normal"></highlight></codeline>
+<codeline lineno="472" refid="group__nrf__cloud_gaa516af4650d8d4a82760474e9c66c6df_1gaa516af4650d8d4a82760474e9c66c6df" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_gaa516af4650d8d4a82760474e9c66c6df_1gaa516af4650d8d4a82760474e9c66c6df" kindref="member">nrf_cloud_shadow_device_status_update</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__device__status" kindref="compound">nrf_cloud_device_status</ref><sp/>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>dev_status);</highlight></codeline>
+<codeline lineno="473"><highlight class="normal"></highlight></codeline>
+<codeline lineno="486" refid="group__nrf__cloud_gab8d2abab8fbb5457992f80e4a417bb17_1gab8d2abab8fbb5457992f80e4a417bb17" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_gab8d2abab8fbb5457992f80e4a417bb17_1gab8d2abab8fbb5457992f80e4a417bb17" kindref="member">nrf_cloud_sensor_data_stream</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__sensor__data" kindref="compound">nrf_cloud_sensor_data</ref><sp/>*param);</highlight></codeline>
+<codeline lineno="487"><highlight class="normal"></highlight></codeline>
+<codeline lineno="500" refid="group__nrf__cloud_ga61d5a537212bdfce72502630593cd4f1_1ga61d5a537212bdfce72502630593cd4f1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga61d5a537212bdfce72502630593cd4f1_1ga61d5a537212bdfce72502630593cd4f1" kindref="member">nrf_cloud_send</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__tx__data" kindref="compound">nrf_cloud_tx_data</ref><sp/>*msg);</highlight></codeline>
+<codeline lineno="501"><highlight class="normal"></highlight></codeline>
+<codeline lineno="515" refid="group__nrf__cloud_gad30bcdc3634113f6442b690d85405765_1gad30bcdc3634113f6442b690d85405765" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_gad30bcdc3634113f6442b690d85405765_1gad30bcdc3634113f6442b690d85405765" kindref="member">nrf_cloud_disconnect</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="516"><highlight class="normal"></highlight></codeline>
+<codeline lineno="521" refid="group__nrf__cloud_ga2823e93063091c70c3010a37a5edfdb6_1ga2823e93063091c70c3010a37a5edfdb6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga2823e93063091c70c3010a37a5edfdb6_1ga2823e93063091c70c3010a37a5edfdb6" kindref="member">nrf_cloud_process</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="522"><highlight class="normal"></highlight></codeline>
+<codeline lineno="533" refid="group__nrf__cloud_ga633ff97ccfe1c6df476177994c3b7633_1ga633ff97ccfe1c6df476177994c3b7633" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga633ff97ccfe1c6df476177994c3b7633_1ga633ff97ccfe1c6df476177994c3b7633" kindref="member">nrf_cloud_modem_fota_completed</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>fota_success);</highlight></codeline>
+<codeline lineno="534"><highlight class="normal"></highlight></codeline>
+<codeline lineno="544" refid="group__nrf__cloud_ga443200bdf749275976df40a3ac3412a7_1ga443200bdf749275976df40a3ac3412a7" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga443200bdf749275976df40a3ac3412a7_1ga443200bdf749275976df40a3ac3412a7" kindref="member">nrf_cloud_service_info_json_encode</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__svc__info" kindref="compound">nrf_cloud_svc_info</ref><sp/>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>svc_inf,</highlight></codeline>
+<codeline lineno="545"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>cJSON<sp/>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>svc_inf_obj);</highlight></codeline>
+<codeline lineno="546"><highlight class="normal"></highlight></codeline>
+<codeline lineno="558" refid="group__nrf__cloud_ga81f02b50e17f91219a67f36591398c2f_1ga81f02b50e17f91219a67f36591398c2f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga81f02b50e17f91219a67f36591398c2f_1ga81f02b50e17f91219a67f36591398c2f" kindref="member">nrf_cloud_modem_info_json_encode</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnrf__cloud__modem__info" kindref="compound">nrf_cloud_modem_info</ref><sp/>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>mod_inf,</highlight></codeline>
+<codeline lineno="559"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>cJSON<sp/>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>mod_inf_obj);</highlight></codeline>
+<codeline lineno="560"><highlight class="normal"></highlight></codeline>
+<codeline lineno="570" refid="group__nrf__cloud_ga5f04a8cec21e334048883dfd6056a760_1ga5f04a8cec21e334048883dfd6056a760" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga5f04a8cec21e334048883dfd6056a760_1ga5f04a8cec21e334048883dfd6056a760" kindref="member">nrf_cloud_client_id_get</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*id_buf,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>id_len);</highlight></codeline>
+<codeline lineno="571"><highlight class="normal"></highlight></codeline>
+<codeline lineno="581" refid="group__nrf__cloud_ga44795de56ebd34e465c6deb094c0eb21_1ga44795de56ebd34e465c6deb094c0eb21" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_ga44795de56ebd34e465c6deb094c0eb21_1ga44795de56ebd34e465c6deb094c0eb21" kindref="member">nrf_cloud_tenant_id_get</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*id_buf,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>id_len);</highlight></codeline>
+<codeline lineno="582"><highlight class="normal"></highlight></codeline>
+<codeline lineno="598" refid="group__nrf__cloud_gaa10af80579a93b73db9cefb83eac81fd_1gaa10af80579a93b73db9cefb83eac81fd" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nrf__cloud_gaa10af80579a93b73db9cefb83eac81fd_1gaa10af80579a93b73db9cefb83eac81fd" kindref="member">nrf_cloud_jwt_generate</ref>(uint32_t<sp/>time_valid_s,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>jwt_buf,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>jwt_buf_sz);</highlight></codeline>
+<codeline lineno="599"><highlight class="normal"></highlight></codeline>
+<codeline lineno="602"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="603"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="604"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="605"><highlight class="normal"></highlight></codeline>
+<codeline lineno="606"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>NRF_CLOUD_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/net/nrf_cloud.h"/>
+  </compounddef>
+</doxygen>

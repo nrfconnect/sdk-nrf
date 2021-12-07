@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structmodule__flags" kind="struct" language="C++" prot="public">
+    <compoundname>module_flags</compoundname>
+    <includes refid="module__state__event_8h" local="no">module_state_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmodule__flags_a1c0d122f56f7348c3cb366f849b13b24_1a1c0d122f56f7348c3cb366f849b13b24" prot="public" static="no" mutable="no">
+        <type>atomic_t</type>
+        <definition>atomic_t module_flags::f[ATOMIC_BITMAP_SIZE( CONFIG_CAF_MODULES_FLAGS_COUNT)]</definition>
+        <argsstring>[ATOMIC_BITMAP_SIZE(CONFIG_CAF_MODULES_FLAGS_COUNT)]</argsstring>
+        <name>f</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="80" column="12" bodyfile="include/caf/events/module_state_event.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Structure that provides a flag for every module available in application. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/caf/events/module_state_event.h" line="79" column="1" bodyfile="include/caf/events/module_state_event.h" bodystart="79" bodyend="81"/>
+    <listofallmembers>
+      <member refid="structmodule__flags_a1c0d122f56f7348c3cb366f849b13b24_1a1c0d122f56f7348c3cb366f849b13b24" prot="public" virt="non-virtual"><scope>module_flags</scope><name>f</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

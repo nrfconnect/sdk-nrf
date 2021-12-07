@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__tnep__tag__service__cb" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_tnep_tag_service_cb</compoundname>
+    <includes refid="tag_8h" local="no">tag.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__tnep__tag__service__cb_a0e0986c3cdfbe21b7ec2ccd08b73c092_1a0e0986c3cdfbe21b7ec2ccd08b73c092" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* nfc_tnep_tag_service_cb::selected) (void)</definition>
+        <argsstring>)(void)</argsstring>
+        <name>selected</name>
+        <briefdescription>
+<para>Function called when service was selected. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="44" column="1" bodyfile="include/nfc/tnep/tag.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__tag__service__cb_ace17573d4a865cff77ce0a3f9b1bc3f8_1ace17573d4a865cff77ce0a3f9b1bc3f8" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* nfc_tnep_tag_service_cb::deselected) (void)</definition>
+        <argsstring>)(void)</argsstring>
+        <name>deselected</name>
+        <briefdescription>
+<para>Function called when service deselected. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="47" column="1" bodyfile="include/nfc/tnep/tag.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__tag__service__cb_a6964b9337da1e38bcd40e883b98f98ec_1a6964b9337da1e38bcd40e883b98f98ec" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* nfc_tnep_tag_service_cb::message_received) (const uint8_t *data, size_t len)</definition>
+        <argsstring>)(const uint8_t *data, size_t len)</argsstring>
+        <name>message_received</name>
+        <briefdescription>
+<para>Function called when new message was received. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to received data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Received data length. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="55" column="1" bodyfile="include/nfc/tnep/tag.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__tag__service__cb_ace5ad7760b7e4dc756b1e2b8be314f80_1ace5ad7760b7e4dc756b1e2b8be314f80" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* nfc_tnep_tag_service_cb::error_detected) (int err)</definition>
+        <argsstring>)(int err)</argsstring>
+        <name>error_detected</name>
+        <briefdescription>
+<para>Function called when an internal error in TNEP detected. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Detected error code. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/tag.h" line="62" column="1" bodyfile="include/nfc/tnep/tag.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/nfc/tnep/tag.h" line="42" column="1" bodyfile="include/nfc/tnep/tag.h" bodystart="42" bodyend="63"/>
+    <listofallmembers>
+      <member refid="structnfc__tnep__tag__service__cb_ace17573d4a865cff77ce0a3f9b1bc3f8_1ace17573d4a865cff77ce0a3f9b1bc3f8" prot="public" virt="non-virtual"><scope>nfc_tnep_tag_service_cb</scope><name>deselected</name></member>
+      <member refid="structnfc__tnep__tag__service__cb_ace5ad7760b7e4dc756b1e2b8be314f80_1ace5ad7760b7e4dc756b1e2b8be314f80" prot="public" virt="non-virtual"><scope>nfc_tnep_tag_service_cb</scope><name>error_detected</name></member>
+      <member refid="structnfc__tnep__tag__service__cb_a6964b9337da1e38bcd40e883b98f98ec_1a6964b9337da1e38bcd40e883b98f98ec" prot="public" virt="non-virtual"><scope>nfc_tnep_tag_service_cb</scope><name>message_received</name></member>
+      <member refid="structnfc__tnep__tag__service__cb_a0e0986c3cdfbe21b7ec2ccd08b73c092_1a0e0986c3cdfbe21b7ec2ccd08b73c092" prot="public" virt="non-virtual"><scope>nfc_tnep_tag_service_cb</scope><name>selected</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

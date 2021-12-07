@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structicalendar__parser" kind="struct" language="C++" prot="public">
+    <compoundname>icalendar_parser</compoundname>
+    <includes refid="icalendar__parser_8h" local="no">icalendar_parser.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structicalendar__parser_a04ebeb7343a1462dcda7e6de83034dbe_1a04ebeb7343a1462dcda7e6de83034dbe" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char icalendar_parser::buf[CONFIG_ICAL_PARSER_BUFFER_SIZE+1]</definition>
+        <argsstring>[CONFIG_ICAL_PARSER_BUFFER_SIZE+1]</argsstring>
+        <name>buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Internal Buffer for parsing incoming data stream </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/icalendar_parser.h" line="108" column="6" bodyfile="include/net/icalendar_parser.h" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structicalendar__parser_ade0efe5ca16023f158dc065e997d3824_1ade0efe5ca16023f158dc065e997d3824" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t icalendar_parser::offset</definition>
+        <argsstring></argsstring>
+        <name>offset</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Offset of unparsed data in buf. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/icalendar_parser.h" line="110" column="8" bodyfile="include/net/icalendar_parser.h" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structicalendar__parser_a4d9f380a479b10ce3f0c8752e9855e3a_1a4d9f380a479b10ce3f0c8752e9855e3a" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool icalendar_parser::icalobject_begin</definition>
+        <argsstring></argsstring>
+        <name>icalobject_begin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>begin of iCalendar object delimiter pair </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/icalendar_parser.h" line="112" column="6" bodyfile="include/net/icalendar_parser.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structicalendar__parser_ab40eeec249265cb3f89dd5cc4e706909_1ab40eeec249265cb3f89dd5cc4e706909" prot="public" static="no" mutable="no">
+        <type><ref refid="group__icalendar__parser_ga79124cd74402eeb40042355fb220dca2_1ga79124cd74402eeb40042355fb220dca2" kindref="member">icalendar_parser_callback_t</ref></type>
+        <definition>icalendar_parser_callback_t icalendar_parser::callback</definition>
+        <argsstring></argsstring>
+        <name>callback</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event handler. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/icalendar_parser.h" line="114" column="29" bodyfile="include/net/icalendar_parser.h" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>iCalendar parser instance. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>ical_component</label>
+        <link refid="structical__component"/>
+      </node>
+      <node id="2">
+        <label>ical_parser_evt</label>
+        <link refid="structical__parser__evt"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>ical_com</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>icalendar_parser</label>
+        <link refid="structicalendar__parser"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>callback</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/net/icalendar_parser.h" line="106" column="1" bodyfile="include/net/icalendar_parser.h" bodystart="106" bodyend="115"/>
+    <listofallmembers>
+      <member refid="structicalendar__parser_a04ebeb7343a1462dcda7e6de83034dbe_1a04ebeb7343a1462dcda7e6de83034dbe" prot="public" virt="non-virtual"><scope>icalendar_parser</scope><name>buf</name></member>
+      <member refid="structicalendar__parser_ab40eeec249265cb3f89dd5cc4e706909_1ab40eeec249265cb3f89dd5cc4e706909" prot="public" virt="non-virtual"><scope>icalendar_parser</scope><name>callback</name></member>
+      <member refid="structicalendar__parser_a4d9f380a479b10ce3f0c8752e9855e3a_1a4d9f380a479b10ce3f0c8752e9855e3a" prot="public" virt="non-virtual"><scope>icalendar_parser</scope><name>icalobject_begin</name></member>
+      <member refid="structicalendar__parser_ade0efe5ca16023f158dc065e997d3824_1ade0efe5ca16023f158dc065e997d3824" prot="public" virt="non-virtual"><scope>icalendar_parser</scope><name>offset</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

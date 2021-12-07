@@ -1,0 +1,357 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__sensor__types__ambient__temperature" kind="group">
+    <compoundname>bt_mesh_sensor_types_ambient_temperature</compoundname>
+    <title>Ambient temperature</title>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__ambient__temperature_1ga6c6b7a4646ecdc63ac22f529fd2b1357" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_avg_amb_temp_in_day</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_avg_amb_temp_in_day</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Average ambient temperature in a period of day</para>
+<para>This sensor type supports series access. The series X-axis is measured in Hours.</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Temperature<itemizedlist>
+<listitem><para>Unit: Celsius</para>
+</listitem><listitem><para>Encoding: 8 bit signed scalar (Resolution: 0.5 C)</para>
+</listitem><listitem><para>Range: -64.0 to 63.5</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Start time<itemizedlist>
+<listitem><para>Unit: Hours</para>
+</listitem><listitem><para>Encoding: 8 bit unsigned scalar (Resolution: 0.1 hours)</para>
+</listitem><listitem><para>Range: 0 to 24.0</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>End time<itemizedlist>
+<listitem><para>Unit: Hours</para>
+</listitem><listitem><para>Encoding: 8 bit unsigned scalar (Resolution: 0.1 hours)</para>
+</listitem><listitem><para>Range: 0 to 24.0 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="139" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="139" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__ambient__temperature_1gab71c5d937d53df0ebc46cef45be1b810" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_indoor_amb_temp_stat_values</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_indoor_amb_temp_stat_values</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indoor ambient temperature statistical values</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Average<itemizedlist>
+<listitem><para>Unit: Celsius</para>
+</listitem><listitem><para>Encoding: 8 bit signed scalar (Resolution: 0.5 C)</para>
+</listitem><listitem><para>Range: -64.0 to 63.5</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Standard deviation value<itemizedlist>
+<listitem><para>Unit: Celsius</para>
+</listitem><listitem><para>Encoding: 8 bit signed scalar (Resolution: 0.5 C)</para>
+</listitem><listitem><para>Range: -64.0 to 63.5</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Minimum value<itemizedlist>
+<listitem><para>Unit: Celsius</para>
+</listitem><listitem><para>Encoding: 8 bit signed scalar (Resolution: 0.5 C)</para>
+</listitem><listitem><para>Range: -64.0 to 63.5</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Maximum value<itemizedlist>
+<listitem><para>Unit: Celsius</para>
+</listitem><listitem><para>Encoding: 8 bit signed scalar (Resolution: 0.5 C)</para>
+</listitem><listitem><para>Range: -64.0 to 63.5</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Sensing duration<itemizedlist>
+<listitem><para>Unit: Seconds</para>
+</listitem><listitem><para>Encoding: 8 bit unsigned exponential time (pow(1.1, N - 64) seconds)</para>
+</listitem><listitem><para>Range: 0 to 73216705 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="166" column="1" declfile="include/bluetooth/mesh/sensor_types.h" declline="166" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__ambient__temperature_1ga3e5a6967447c8150347506446972d9a0" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_outdoor_stat_values</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_outdoor_stat_values</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Outdoor statistical values</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Average<itemizedlist>
+<listitem><para>Unit: Celsius</para>
+</listitem><listitem><para>Encoding: 8 bit signed scalar (Resolution: 0.5 C)</para>
+</listitem><listitem><para>Range: -64.0 to 63.5</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Standard deviation value<itemizedlist>
+<listitem><para>Unit: Celsius</para>
+</listitem><listitem><para>Encoding: 8 bit signed scalar (Resolution: 0.5 C)</para>
+</listitem><listitem><para>Range: -64.0 to 63.5</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Minimum value<itemizedlist>
+<listitem><para>Unit: Celsius</para>
+</listitem><listitem><para>Encoding: 8 bit signed scalar (Resolution: 0.5 C)</para>
+</listitem><listitem><para>Range: -64.0 to 63.5</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Maximum value<itemizedlist>
+<listitem><para>Unit: Celsius</para>
+</listitem><listitem><para>Encoding: 8 bit signed scalar (Resolution: 0.5 C)</para>
+</listitem><listitem><para>Range: -64.0 to 63.5</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Sensing duration<itemizedlist>
+<listitem><para>Unit: Seconds</para>
+</listitem><listitem><para>Encoding: 8 bit unsigned exponential time (pow(1.1, N - 64) seconds)</para>
+</listitem><listitem><para>Range: 0 to 73216705 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="192" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="192" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__ambient__temperature_1gac960a3a77187c4ea85e95a0435fa262b" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_present_amb_temp</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_present_amb_temp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present ambient temperature</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Present ambient temperature<itemizedlist>
+<listitem><para>Unit: Celsius</para>
+</listitem><listitem><para>Encoding: 8 bit signed scalar (Resolution: 0.5 C)</para>
+</listitem><listitem><para>Range: -64.0 to 63.5 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="202" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="202" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__ambient__temperature_1ga520339287233733b34e339fc3dfab648" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_present_indoor_amb_temp</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_present_indoor_amb_temp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present indoor ambient temperature</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Present indoor ambient temperature<itemizedlist>
+<listitem><para>Unit: Celsius</para>
+</listitem><listitem><para>Encoding: 8 bit signed scalar (Resolution: 0.5 C)</para>
+</listitem><listitem><para>Range: -64.0 to 63.5 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="212" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="212" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__ambient__temperature_1gae66af8d1bcc3fa5c53a99788f690abfb" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_present_outdoor_amb_temp</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_present_outdoor_amb_temp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Present outdoor ambient temperature</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Present outdoor ambient temperature<itemizedlist>
+<listitem><para>Unit: Celsius</para>
+</listitem><listitem><para>Encoding: 8 bit signed scalar (Resolution: 0.5 C)</para>
+</listitem><listitem><para>Range: -64.0 to 63.5 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="222" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="222" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__ambient__temperature_1ga2cab7266ab5a44b25c1a5f5d0544bbd3" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_desired_amb_temp</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_desired_amb_temp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Desired ambient temperature</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Desired ambient temperature<itemizedlist>
+<listitem><para>Unit: Celsius</para>
+</listitem><listitem><para>Encoding: 8 bit signed scalar (Resolution: 0.5 C)</para>
+</listitem><listitem><para>Range: -64.0 to 63.5 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="232" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="232" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__ambient__temperature_1gaf8a10d6e9312cc3382cbe7351080088a" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_lumen_maintenance_factor</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_lumen_maintenance_factor</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Lumen maintenance factor</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Lumen Maintenance Factor<itemizedlist>
+<listitem><para>Unit: Percent</para>
+</listitem><listitem><para>Encoding: 8 bit unsigned scalar (Resolution: 0.5 %)</para>
+</listitem><listitem><para>Range: 0 to 100.0 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="242" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="242" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__ambient__temperature_1gad0a59849cc0c6ca48908ab591253f722" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_luminous_efficacy</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_luminous_efficacy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Luminous efficacy</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Luminous Efficacy<itemizedlist>
+<listitem><para>Unit: Lumen per Watt</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 0.1 lm/W)</para>
+</listitem><listitem><para>Range: 0 to 6553.3 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="252" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="252" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__ambient__temperature_1ga3ceca808b55b5580e696ad0149cf3e2b" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_luminous_energy_since_turn_on</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_luminous_energy_since_turn_on</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Luminous energy since turn on</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Luminous Energy Since Turn On<itemizedlist>
+<listitem><para>Unit: Kilo Lumen hours</para>
+</listitem><listitem><para>Encoding: 24 bit unsigned scalar (Resolution: 1 klmh)</para>
+</listitem><listitem><para>Range: 0 to 16777213 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="263" column="1" declfile="include/bluetooth/mesh/sensor_types.h" declline="263" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__ambient__temperature_1ga45535fe7d8f3542c0152dd83c79e7c5e" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_luminous_exposure</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_luminous_exposure</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Luminous exposure</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Luminous Exposure<itemizedlist>
+<listitem><para>Unit: Kilo Lux hours</para>
+</listitem><listitem><para>Encoding: 24 bit unsigned scalar (Resolution: 1 klxh)</para>
+</listitem><listitem><para>Range: 0 to 16777213 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="273" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="273" declcolumn="39"/>
+      </memberdef>
+      <memberdef kind="variable" id="group__bt__mesh__sensor__types__ambient__temperature_1gac650dc7fba071ed5c6b9a4fbdaab89a7" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref></type>
+        <definition>const struct bt_mesh_sensor_type bt_mesh_sensor_luminous_flux_range</definition>
+        <argsstring></argsstring>
+        <name>bt_mesh_sensor_luminous_flux_range</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Luminous flux range</para>
+<para>Channels:<itemizedlist>
+<listitem><para>Minimum Luminous Flux<itemizedlist>
+<listitem><para>Unit: Lumen</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1 lm)</para>
+</listitem><listitem><para>Range: 0 to 65533</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>Maximum Luminous Flux<itemizedlist>
+<listitem><para>Unit: Lumen</para>
+</listitem><listitem><para>Encoding: 16 bit unsigned scalar (Resolution: 1 lm)</para>
+</listitem><listitem><para>Range: 0 to 65533 </para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor_types.h" line="287" column="39" declfile="include/bluetooth/mesh/sensor_types.h" declline="287" declcolumn="39"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>sensor types </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

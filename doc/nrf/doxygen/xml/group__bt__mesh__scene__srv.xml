@@ -1,0 +1,337 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__scene__srv" kind="group">
+    <compoundname>bt_mesh_scene_srv</compoundname>
+    <title>Scene Server model</title>
+    <innerclass refid="structbt__mesh__scene__srv" prot="public">bt_mesh_scene_srv</innerclass>
+    <innerclass refid="structbt__mesh__scene__entry" prot="public">bt_mesh_scene_entry</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__scene__srv_1ga0ad626e1db2b96ce7d460d918e843cda" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_mesh_scene_invalidate</definition>
+        <argsstring>(struct bt_mesh_model *mod)</argsstring>
+        <name>bt_mesh_scene_invalidate</name>
+        <param>
+          <type>struct bt_mesh_model *</type>
+          <declname>mod</declname>
+        </param>
+        <briefdescription>
+<para>Notify the Scene Server that a Scene entry has changed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Whenever some state in the Scene has changed outside of Scene recall procedure, this function must be called to notify the Scene Server that the current Scene is no longer active.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">mod</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Model that invalidated the scene. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_srv.h" line="180" column="6" declfile="include/bluetooth/mesh/scene_srv.h" declline="180" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__scene__srv_1gaec8f3cacf43706c4d717d74bb959edea" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_scene_srv_set</definition>
+        <argsstring>(struct bt_mesh_scene_srv *srv, uint16_t scene, struct bt_mesh_model_transition *transition)</argsstring>
+        <name>bt_mesh_scene_srv_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__srv" kindref="compound">bt_mesh_scene_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>scene</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref> *</type>
+          <declname>transition</declname>
+        </param>
+        <briefdescription>
+<para>Set the current Scene. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>All Scene entries of the given Scene Server will transition to the given Scene according to the transition parameters.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene Server model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">scene</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene to transition to. Cannot be <ref refid="group__bt__mesh__scene_gaf68df55bc0247c8e0d90182c34fa35d5_1gaf68df55bc0247c8e0d90182c34fa35d5" kindref="member">BT_MESH_SCENE_NONE</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">transition</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Transition parameters, or NULL to use the default parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully transitioned to the given scene. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid scene number or transition parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOENT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>No such scene. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_srv.h" line="197" column="5" declfile="include/bluetooth/mesh/scene_srv.h" declline="197" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__scene__srv_1gac2ef8ab0a91d5eb4aa74197702f04ba1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_scene_srv_pub</definition>
+        <argsstring>(struct bt_mesh_scene_srv *srv, struct bt_mesh_msg_ctx *ctx)</argsstring>
+        <name>bt_mesh_scene_srv_pub</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__scene__srv" kindref="compound">bt_mesh_scene_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <briefdescription>
+<para>Publish the current Scene status. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene Server model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to publish with the configured parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 Successfully published the current Scene state. </para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_srv.h" line="211" column="5" declfile="include/bluetooth/mesh/scene_srv.h" declline="211" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__scene__srv_1ga28f7377853b6eda79a43cfec06ff7f2d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_scene_srv_current_scene_get</definition>
+        <argsstring>(const struct bt_mesh_scene_srv *srv)</argsstring>
+        <name>bt_mesh_scene_srv_current_scene_get</name>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__scene__srv" kindref="compound">bt_mesh_scene_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <briefdescription>
+<para>Get the current scene. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This will return the scene that the scene servers is currently in. If there is no currently active scene this will return <ref refid="group__bt__mesh__scene_gaf68df55bc0247c8e0d90182c34fa35d5_1gaf68df55bc0247c8e0d90182c34fa35d5" kindref="member">BT_MESH_SCENE_NONE</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene Server model.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Return the current scene for the scene server. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_srv.h" line="224" column="1" declfile="include/bluetooth/mesh/scene_srv.h" declline="224" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__scene__srv_1gad4731e54838569a4736dbbc7c043702b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_scene_srv_target_scene_get</definition>
+        <argsstring>(const struct bt_mesh_scene_srv *srv)</argsstring>
+        <name>bt_mesh_scene_srv_target_scene_get</name>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__scene__srv" kindref="compound">bt_mesh_scene_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <briefdescription>
+<para>Get the target scene. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This will return the scene that the scene servers is transiting into. If there is no transition running this will return <ref refid="group__bt__mesh__scene_gaf68df55bc0247c8e0d90182c34fa35d5_1gaf68df55bc0247c8e0d90182c34fa35d5" kindref="member">BT_MESH_SCENE_NONE</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scene Server model.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Return the target scene for the scene server. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_srv.h" line="236" column="1" declfile="include/bluetooth/mesh/scene_srv.h" declline="236" declcolumn="1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__scene__srv_1gaa53811d0937e9e2500967b302e96b1b6" prot="public" static="no">
+        <name>CONFIG_BT_MESH_SCENES_MAX</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_srv.h" line="27" column="9" bodyfile="include/bluetooth/mesh/scene_srv.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__scene__srv_1gacc3006b0bfae1f4078388db6619d159f" prot="public" static="no">
+        <name>BT_MESH_SCENE_ENTRY_SIG</name>
+        <param><defname>_name</defname></param>
+        <initializer>	static const STRUCT_SECTION_ITERABLE(                                \
+		<ref refid="structbt__mesh__scene__entry" kindref="compound">bt_mesh_scene_entry</ref>, bt_mesh_scene_entry_sig_##_name)</initializer>
+        <briefdescription>
+<para>Scene entry type definition for SIG models. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the scene entry type </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_srv.h" line="36" column="9" bodyfile="include/bluetooth/mesh/scene_srv.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__scene__srv_1ga2dc6ba7da1cb74d5869b7cf641c6826e" prot="public" static="no">
+        <name>BT_MESH_SCENE_ENTRY_VND</name>
+        <param><defname>_name</defname></param>
+        <initializer>	static const STRUCT_SECTION_ITERABLE(                                \
+		<ref refid="structbt__mesh__scene__entry" kindref="compound">bt_mesh_scene_entry</ref>, bt_mesh_scene_entry_vnd_##_name)</initializer>
+        <briefdescription>
+<para>Scene entry type definition for vendor models. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the scene entry type </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_srv.h" line="46" column="9" bodyfile="include/bluetooth/mesh/scene_srv.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__scene__srv_1gaafb98fd13ba00ab41fc90def2fb1f550" prot="public" static="no">
+        <name>BT_MESH_MODEL_SCENE_SRV</name>
+        <param><defname>_srv</defname></param>
+        <initializer>	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_SCENE_SRV, _bt_mesh_scene_srv_op,    \
+			 &amp;(_srv)-&gt;pub,                                         \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__scene__srv" kindref="compound">bt_mesh_scene_srv</ref>,     \
+						 _srv),                        \
+			 &amp;_bt_mesh_scene_srv_cb),                              \
+	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_SCENE_SETUP_SRV,                     \
+			 _bt_mesh_scene_setup_srv_op, NULL,                    \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__scene__srv" kindref="compound">bt_mesh_scene_srv</ref>,     \
+						 _srv),                        \
+			 &amp;_bt_mesh_scene_setup_srv_cb)</initializer>
+        <briefdescription>
+<para>Scene Server model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__scene__srv" kindref="compound">Scene Server model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_srv.h" line="58" column="9" bodyfile="include/bluetooth/mesh/scene_srv.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Scene Server model. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structdownload__client__evt" kind="struct" language="C++" prot="public">
+    <compoundname>download_client_evt</compoundname>
+    <includes refid="download__client_8h" local="no">download_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structdownload__client__evt_a8864fa0d31da67e9339acc3e7a44d2c1_1a8864fa0d31da67e9339acc3e7a44d2c1" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__dl__client_gaabb2b65eab84b7897a777243fbec4cba_1gaabb2b65eab84b7897a777243fbec4cba" kindref="member">download_client_evt_id</ref></type>
+        <definition>enum download_client_evt_id download_client_evt::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event ID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="76" column="28" bodyfile="include/net/download_client.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdownload__client__evt_a16a8312b61de0b3e899c1e9d96d09201_1a16a8312b61de0b3e899c1e9d96d09201" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int download_client_evt::error</definition>
+        <argsstring></argsstring>
+        <name>error</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Error cause. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="80" column="5" bodyfile="include/net/download_client.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdownload__client__evt_ae5da04e5a1509158f05f8d4bb3555a08_1ae5da04e5a1509158f05f8d4bb3555a08" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structdownload__fragment" kindref="compound">download_fragment</ref></type>
+        <definition>struct download_fragment download_client_evt::fragment</definition>
+        <argsstring></argsstring>
+        <name>fragment</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Fragment data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="82" column="24" bodyfile="include/net/download_client.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdownload__client__evt_a172a2c63c14a3474dd2732bb86e6ea2f_1a172a2c63c14a3474dd2732bb86e6ea2f" prot="public" static="no" mutable="no">
+        <type>union download_client_evt::@156</type>
+        <definition>union download_client_evt::@156 download_client_evt::@157</definition>
+        <argsstring></argsstring>
+        <name>@157</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="83" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Download client event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>download_client_evt</label>
+        <link refid="structdownload__client__evt"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>fragment</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>download_fragment</label>
+        <link refid="structdownload__fragment"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/net/download_client.h" line="74" column="1" bodyfile="include/net/download_client.h" bodystart="74" bodyend="84"/>
+    <listofallmembers>
+      <member refid="structdownload__client__evt_a16a8312b61de0b3e899c1e9d96d09201_1a16a8312b61de0b3e899c1e9d96d09201" prot="public" virt="non-virtual"><scope>download_client_evt</scope><name>error</name></member>
+      <member refid="structdownload__client__evt_ae5da04e5a1509158f05f8d4bb3555a08_1ae5da04e5a1509158f05f8d4bb3555a08" prot="public" virt="non-virtual"><scope>download_client_evt</scope><name>fragment</name></member>
+      <member refid="structdownload__client__evt_a8864fa0d31da67e9339acc3e7a44d2c1_1a8864fa0d31da67e9339acc3e7a44d2c1" prot="public" virt="non-virtual"><scope>download_client_evt</scope><name>id</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

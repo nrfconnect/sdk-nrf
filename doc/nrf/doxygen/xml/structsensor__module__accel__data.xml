@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structsensor__module__accel__data" kind="struct" language="C++" prot="public">
+    <compoundname>sensor_module_accel_data</compoundname>
+    <includes refid="sensor__module__event_8h" local="no">sensor_module_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structsensor__module__accel__data_afcdcff1ee5a32f466e32a907f91b67a5_1afcdcff1ee5a32f466e32a907f91b67a5" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t sensor_module_accel_data::timestamp</definition>
+        <argsstring></argsstring>
+        <name>timestamp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/sensor_module_event.h" line="41" column="9" bodyfile="applications/asset_tracker_v2/src/events/sensor_module_event.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsensor__module__accel__data_a740432a5a582a68f2650764544e3d188_1a740432a5a582a68f2650764544e3d188" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double sensor_module_accel_data::values[3]</definition>
+        <argsstring>[3]</argsstring>
+        <name>values</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/sensor_module_event.h" line="42" column="8" bodyfile="applications/asset_tracker_v2/src/events/sensor_module_event.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/events/sensor_module_event.h" line="40" column="1" bodyfile="applications/asset_tracker_v2/src/events/sensor_module_event.h" bodystart="40" bodyend="43"/>
+    <listofallmembers>
+      <member refid="structsensor__module__accel__data_afcdcff1ee5a32f466e32a907f91b67a5_1afcdcff1ee5a32f466e32a907f91b67a5" prot="public" virt="non-virtual"><scope>sensor_module_accel_data</scope><name>timestamp</name></member>
+      <member refid="structsensor__module__accel__data_a740432a5a582a68f2650764544e3d188_1a740432a5a582a68f2650764544e3d188" prot="public" virt="non-virtual"><scope>sensor_module_accel_data</scope><name>values</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

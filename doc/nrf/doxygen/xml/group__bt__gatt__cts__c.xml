@@ -1,0 +1,316 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__gatt__cts__c" kind="group">
+    <compoundname>bt_gatt_cts_c</compoundname>
+    <title>Current Time Service Client</title>
+    <innerclass refid="structbt__cts__exact__time__256" prot="public">bt_cts_exact_time_256</innerclass>
+    <innerclass refid="structbt__cts__adjust__reason" prot="public">bt_cts_adjust_reason</innerclass>
+    <innerclass refid="structbt__cts__current__time" prot="public">bt_cts_current_time</innerclass>
+    <innerclass refid="structbt__cts__client" prot="public">bt_cts_client</innerclass>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__bt__gatt__cts__c_1gabfb977421f36ad2fc0567242e5a829e6" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_cts_read_cb) (struct bt_cts_client *cts_c, struct bt_cts_current_time *current_time, int err)</definition>
+        <argsstring>)(struct bt_cts_client *cts_c, struct bt_cts_current_time *current_time, int err)</argsstring>
+        <name>bt_cts_read_cb</name>
+        <briefdescription>
+<para>Read complete callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is called when the read operation finishes.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cts_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current Time Service client structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>current_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The current time value that was read. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Error code. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="62" column="9" bodyfile="include/bluetooth/services/cts_client.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bt__gatt__cts__c_1ga385428a3225d5730001bb3ab1d4cefb2" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_cts_notify_cb) (struct bt_cts_client *cts_c, struct bt_cts_current_time *current_time)</definition>
+        <argsstring>)(struct bt_cts_client *cts_c, struct bt_cts_current_time *current_time)</argsstring>
+        <name>bt_cts_notify_cb</name>
+        <briefdescription>
+<para>Value notification callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is called every time the server sends a notification for a changed value.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cts_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current Time Service client structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>current_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The notified current time value. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="74" column="9" bodyfile="include/bluetooth/services/cts_client.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__gatt__cts__c_1ga7f51a070279476de6813bfd313ccc471" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_cts_client_init</definition>
+        <argsstring>(struct bt_cts_client *cts_c)</argsstring>
+        <name>bt_cts_client_init</name>
+        <param>
+          <type>struct <ref refid="structbt__cts__client" kindref="compound">bt_cts_client</ref> *</type>
+          <declname>cts_c</declname>
+        </param>
+        <briefdescription>
+<para>Function for initializing the Current Time Service client. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">cts_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current Time Service client structure. This structure must be supplied by the application. It is initialized by this function and can later be used to identify this particular client instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the client was initialized successfully. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="114" column="5" declfile="include/bluetooth/services/cts_client.h" declline="114" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__cts__c_1gaa7c447c73d0dae3b356a5348c8d46950" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_cts_read_current_time</definition>
+        <argsstring>(struct bt_cts_client *cts_c, bt_cts_read_cb func)</argsstring>
+        <name>bt_cts_read_current_time</name>
+        <param>
+          <type>struct <ref refid="structbt__cts__client" kindref="compound">bt_cts_client</ref> *</type>
+          <declname>cts_c</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__gatt__cts__c_gabfb977421f36ad2fc0567242e5a829e6_1gabfb977421f36ad2fc0567242e5a829e6" kindref="member">bt_cts_read_cb</ref></type>
+          <declname>func</declname>
+        </param>
+        <briefdescription>
+<para>Function for reading the peer&apos;s Current Time Service Current Time characteristic. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cts_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current Time Service client structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The callback function.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If all operations are successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="124" column="5" declfile="include/bluetooth/services/cts_client.h" declline="124" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__cts__c_1ga6bec49db3b3c30799be65c9fcb8d72a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_cts_subscribe_current_time</definition>
+        <argsstring>(struct bt_cts_client *cts_c, bt_cts_notify_cb func)</argsstring>
+        <name>bt_cts_subscribe_current_time</name>
+        <param>
+          <type>struct <ref refid="structbt__cts__client" kindref="compound">bt_cts_client</ref> *</type>
+          <declname>cts_c</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__gatt__cts__c_ga385428a3225d5730001bb3ab1d4cefb2_1ga385428a3225d5730001bb3ab1d4cefb2" kindref="member">bt_cts_notify_cb</ref></type>
+          <declname>func</declname>
+        </param>
+        <briefdescription>
+<para>Subscribe to the current time value change notification. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cts_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current Time Service client structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The callback function.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="135" column="5" declfile="include/bluetooth/services/cts_client.h" declline="135" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__cts__c_1gaebc851feed6f38390ac753f006af6519" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_cts_unsubscribe_current_time</definition>
+        <argsstring>(struct bt_cts_client *cts_c)</argsstring>
+        <name>bt_cts_unsubscribe_current_time</name>
+        <param>
+          <type>struct <ref refid="structbt__cts__client" kindref="compound">bt_cts_client</ref> *</type>
+          <declname>cts_c</declname>
+        </param>
+        <briefdescription>
+<para>Remove the subscription. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cts_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current Time Service client structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="146" column="5" declfile="include/bluetooth/services/cts_client.h" declline="146" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__cts__c_1gaeacbe21559ea371c35acecab6505efb3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_cts_handles_assign</definition>
+        <argsstring>(struct bt_gatt_dm *dm, struct bt_cts_client *cts_c)</argsstring>
+        <name>bt_cts_handles_assign</name>
+        <param>
+          <type>struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__cts__client" kindref="compound">bt_cts_client</ref> *</type>
+          <declname>cts_c</declname>
+        </param>
+        <briefdescription>
+<para>Function for assigning handles to this instance of cts_c. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Call this function when a link has been established with a peer to associate the link to this instance of the module. This makes it possible to handle several links and associate each link to a particular instance of this module.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">cts_c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current Time Service client structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation is successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/cts_client.h" line="161" column="5" declfile="include/bluetooth/services/cts_client.h" declline="161" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Current Time Service Client module. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

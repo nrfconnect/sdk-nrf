@@ -1,0 +1,237 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__text__rec" kind="group">
+    <compoundname>nfc_text_rec</compoundname>
+    <title>Text records</title>
+    <innerclass refid="structnfc__ndef__text__rec__payload" prot="public">nfc_ndef_text_rec_payload</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__nfc__text__rec_1gab91c41d8bb56d793f6bb21890e1206aa" prot="public" static="no" strong="no">
+        <type></type>
+        <name>nfc_ndef_text_rec_utf</name>
+        <enumvalue id="group__nfc__text__rec_gab91c41d8bb56d793f6bb21890e1206aa_1ggab91c41d8bb56d793f6bb21890e1206aaa93e8613dae9a76c8d3ec8179ca4d1a79" prot="public">
+          <name>UTF_8</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Unicode Transformation Format 8. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__nfc__text__rec_gab91c41d8bb56d793f6bb21890e1206aa_1ggab91c41d8bb56d793f6bb21890e1206aaa4e9ce18ee4b711f2539ac3a8bd08dbfd" prot="public">
+          <name>UTF_16</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Unicode Transformation Format 16. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Type of the Unicode Transformation Format. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Values to specify the type of UTF for an NFC NDEF Text record. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/text_rec.h" line="32" column="1" bodyfile="include/nfc/ndef/text_rec.h" bodystart="32" bodyend="37"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="group__nfc__text__rec_1ga12ea00af8f4e5ce695640a123765b341" prot="public" static="no" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t nfc_ndef_text_rec_type_field[]</definition>
+        <argsstring>[]</argsstring>
+        <name>nfc_ndef_text_rec_type_field</name>
+        <briefdescription>
+<para>External reference to the type field of the Text record, defined in the file <computeroutput>text_rec.c</computeroutput>. It is used in the <ref refid="group__nfc__text__rec_ga76967f47f9f2dac4ebada420a0e1a1e2_1ga76967f47f9f2dac4ebada420a0e1a1e2" kindref="member">NFC_NDEF_TEXT_RECORD_DESC_DEF</ref> macro. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/text_rec.h" line="77" column="22" declfile="include/nfc/ndef/text_rec.h" declline="77" declcolumn="22"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__text__rec_1gae7cd1970d8fb857dccefe93a4f7c6b3e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_text_rec_payload_encode</definition>
+        <argsstring>(struct nfc_ndef_text_rec_payload *nfc_rec_text_payload_desc, uint8_t *buff, uint32_t *len)</argsstring>
+        <name>nfc_ndef_text_rec_payload_encode</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__text__rec__payload" kindref="compound">nfc_ndef_text_rec_payload</ref> *</type>
+          <declname>nfc_rec_text_payload_desc</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buff</declname>
+        </param>
+        <param>
+          <type>uint32_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Constructor for an NFC NDEF Text record payload. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>nfc_rec_text_payload_desc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Text record description. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buff</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the payload destination. If NULL, function will calculate the expected size of the Text record payload. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the available memory to write as input. Size of the generated record payload as output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/text_rec.h" line="67" column="5" declfile="include/nfc/ndef/text_rec.h" declline="67" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__text__rec_1ga76f9d049e5fad818817f964d8515f052" prot="public" static="no">
+        <name>NFC_NDEF_TEXT_REC_TYPE_LENGTH</name>
+        <initializer>1</initializer>
+        <briefdescription>
+<para>Size of the type field of the Text record, defined in the file <computeroutput>text_rec.c</computeroutput>. It is used in the <ref refid="group__nfc__text__rec_ga76967f47f9f2dac4ebada420a0e1a1e2_1ga76967f47f9f2dac4ebada420a0e1a1e2" kindref="member">NFC_NDEF_TEXT_RECORD_DESC_DEF</ref> macro. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/text_rec.h" line="84" column="9" bodyfile="include/nfc/ndef/text_rec.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__text__rec_1ga76967f47f9f2dac4ebada420a0e1a1e2" prot="public" static="no">
+        <name>NFC_NDEF_TEXT_RECORD_DESC_DEF</name>
+        <param><defname>name</defname></param>
+        <param><defname>utf_arg</defname></param>
+        <param><defname>lang_code_arg</defname></param>
+        <param><defname>lang_code_len_arg</defname></param>
+        <param><defname>data_arg</defname></param>
+        <param><defname>data_len_arg</defname></param>
+        <initializer>	struct <ref refid="structnfc__ndef__text__rec__payload" kindref="compound">nfc_ndef_text_rec_payload</ref> name##_nfc_ndef_text_rec_payload =   \
+	{								      \
+		.utf = utf_arg,						      \
+		.lang_code = lang_code_arg,				      \
+		.lang_code_len = lang_code_len_arg,			      \
+		.data = data_arg,					      \
+		.data_len = data_len_arg,				      \
+	};								      \
+	<ref refid="group__nfc__ndef__record_ga981ac373f5af603b36c7ab2c488785a6_1ga981ac373f5af603b36c7ab2c488785a6" kindref="member">NFC_NDEF_GENERIC_RECORD_DESC_DEF</ref>(name,				      \
+					 <ref refid="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1gga2091295307fa8161219648a88df172a8ace6c9ee74852eebbdb1421e85c4e0041" kindref="member">TNF_WELL_KNOWN</ref>,		      \
+					 0,				      \
+					 0,				      \
+					 <ref refid="group__nfc__text__rec_ga12ea00af8f4e5ce695640a123765b341_1ga12ea00af8f4e5ce695640a123765b341" kindref="member">nfc_ndef_text_rec_type_field</ref>,	      \
+					 <ref refid="group__nfc__text__rec_ga76f9d049e5fad818817f964d8515f052_1ga76f9d049e5fad818817f964d8515f052" kindref="member">NFC_NDEF_TEXT_REC_TYPE_LENGTH</ref>,	      \
+					 <ref refid="group__nfc__text__rec_gae7cd1970d8fb857dccefe93a4f7c6b3e_1gae7cd1970d8fb857dccefe93a4f7c6b3e" kindref="member">nfc_ndef_text_rec_payload_encode</ref>,    \
+					 &amp;(name##_nfc_ndef_text_rec_payload))</initializer>
+        <briefdescription>
+<para>Macro for creating and initializing an NFC NDEF record descriptor for a Text record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates and initializes an instance of type <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> and an instance of type <ref refid="structnfc__ndef__text__rec__payload" kindref="compound">nfc_ndef_text_rec_payload</ref>, which together constitute an instance of a Text record.</para>
+<para>Use the macro <ref refid="group__nfc__text__rec_ga89d3cdf561211054cfda3c0f4e4094f9_1ga89d3cdf561211054cfda3c0f4e4094f9" kindref="member">NFC_NDEF_TEXT_RECORD_DESC</ref> to access the NDEF Text record descriptor instance.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the created record descriptor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>utf_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Unicode Transformation Format. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>lang_code_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the IANA language code. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>lang_code_len_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the IANA language code. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the user text. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data_len_arg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the user text. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/text_rec.h" line="110" column="9" bodyfile="include/nfc/ndef/text_rec.h" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__text__rec_1ga89d3cdf561211054cfda3c0f4e4094f9" prot="public" static="no">
+        <name>NFC_NDEF_TEXT_RECORD_DESC</name>
+        <param><defname>name</defname></param>
+        <initializer><ref refid="group__nfc__ndef__record_ga854ffeb62045f58c823adedf3f0ed615_1ga854ffeb62045f58c823adedf3f0ed615" kindref="member">NFC_NDEF_GENERIC_RECORD_DESC</ref>(name)</initializer>
+        <briefdescription>
+<para>Macro for accessing the NFC NDEF Text record descriptor instance that was created with <ref refid="group__nfc__text__rec_ga76967f47f9f2dac4ebada420a0e1a1e2_1ga76967f47f9f2dac4ebada420a0e1a1e2" kindref="member">NFC_NDEF_TEXT_RECORD_DESC_DEF</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/text_rec.h" line="132" column="9" bodyfile="include/nfc/ndef/text_rec.h" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Generation of NFC NDEF Text record descriptions. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

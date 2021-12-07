@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__ancs__notif__flags" kind="struct" language="C++" prot="public">
+    <compoundname>bt_ancs_notif_flags</compoundname>
+    <includes refid="ancs__client_8h" local="no">ancs_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__ancs__notif__flags_a23e9f811611e5a6ff5b0a5877ff9f0a9_1a23e9f811611e5a6ff5b0a5877ff9f0a9" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_ancs_notif_flags::silent</definition>
+        <argsstring></argsstring>
+        <name>silent</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If this flag is set, the notification has a low priority. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="198" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="198" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__ancs__notif__flags_a331684846c246ffe7cba5fec9b1b7e29_1a331684846c246ffe7cba5fec9b1b7e29" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_ancs_notif_flags::important</definition>
+        <argsstring></argsstring>
+        <name>important</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If this flag is set, the notification has a high priority. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="200" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="200" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__ancs__notif__flags_a13aeb945b19a72fb1561f4aaf28f8d03_1a13aeb945b19a72fb1561f4aaf28f8d03" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_ancs_notif_flags::pre_existing</definition>
+        <argsstring></argsstring>
+        <name>pre_existing</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If this flag is set, the notification is pre-existing. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="202" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="202" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__ancs__notif__flags_a2be8f53199b2a3888acba051e4361979_1a2be8f53199b2a3888acba051e4361979" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_ancs_notif_flags::positive_action</definition>
+        <argsstring></argsstring>
+        <name>positive_action</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If this flag is set, the notification has a positive action that can be taken. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="204" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="204" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__ancs__notif__flags_a16f53189763335ac34e08ea00c5ced1a_1a16f53189763335ac34e08ea00c5ced1a" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_ancs_notif_flags::negative_action</definition>
+        <argsstring></argsstring>
+        <name>negative_action</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If this flag is set, the notification has a negative action that can be taken. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="206" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="206" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Flags for iOS notifications. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/ancs_client.h" line="196" column="1" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="196" bodyend="207"/>
+    <listofallmembers>
+      <member refid="structbt__ancs__notif__flags_a331684846c246ffe7cba5fec9b1b7e29_1a331684846c246ffe7cba5fec9b1b7e29" prot="public" virt="non-virtual"><scope>bt_ancs_notif_flags</scope><name>important</name></member>
+      <member refid="structbt__ancs__notif__flags_a16f53189763335ac34e08ea00c5ced1a_1a16f53189763335ac34e08ea00c5ced1a" prot="public" virt="non-virtual"><scope>bt_ancs_notif_flags</scope><name>negative_action</name></member>
+      <member refid="structbt__ancs__notif__flags_a2be8f53199b2a3888acba051e4361979_1a2be8f53199b2a3888acba051e4361979" prot="public" virt="non-virtual"><scope>bt_ancs_notif_flags</scope><name>positive_action</name></member>
+      <member refid="structbt__ancs__notif__flags_a13aeb945b19a72fb1561f4aaf28f8d03_1a13aeb945b19a72fb1561f4aaf28f8d03" prot="public" virt="non-virtual"><scope>bt_ancs_notif_flags</scope><name>pre_existing</name></member>
+      <member refid="structbt__ancs__notif__flags_a23e9f811611e5a6ff5b0a5877ff9f0a9_1a23e9f811611e5a6ff5b0a5877ff9f0a9" prot="public" virt="non-virtual"><scope>bt_ancs_notif_flags</scope><name>silent</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

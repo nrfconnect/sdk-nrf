@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__rscs__measurement" kind="struct" language="C++" prot="public">
+    <compoundname>bt_rscs_measurement</compoundname>
+    <includes refid="rscs_8h" local="no">rscs.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__rscs__measurement_a4518d0c3c61877f8d7aabe1c6b39a2a7_1a4518d0c3c61877f8d7aabe1c6b39a2a7" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool bt_rscs_measurement::is_inst_stride_len</definition>
+        <argsstring></argsstring>
+        <name>is_inst_stride_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>True if Instantaneous Stride Length is present in the measurement. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="142" column="6" bodyfile="include/bluetooth/services/rscs.h" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rscs__measurement_a2020caa23eec5436ea3480f8bcc52fea_1a2020caa23eec5436ea3480f8bcc52fea" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool bt_rscs_measurement::is_total_distance</definition>
+        <argsstring></argsstring>
+        <name>is_total_distance</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>True if Total Distance is present in the measurement. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="145" column="6" bodyfile="include/bluetooth/services/rscs.h" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rscs__measurement_a7d2c444642077daf21206b6860207dae_1a7d2c444642077daf21206b6860207dae" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool bt_rscs_measurement::is_running</definition>
+        <argsstring></argsstring>
+        <name>is_running</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>True if running, False if walking. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="148" column="6" bodyfile="include/bluetooth/services/rscs.h" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rscs__measurement_a87ae0e05a8a824a1a853d27854945a66_1a87ae0e05a8a824a1a853d27854945a66" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_rscs_measurement::inst_speed</definition>
+        <argsstring></argsstring>
+        <name>inst_speed</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Instantaneous Speed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="151" column="10" bodyfile="include/bluetooth/services/rscs.h" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rscs__measurement_a4e233a735f9a06a2f88638263b1285e6_1a4e233a735f9a06a2f88638263b1285e6" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_rscs_measurement::inst_cadence</definition>
+        <argsstring></argsstring>
+        <name>inst_cadence</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Instantaneous Cadence. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="154" column="9" bodyfile="include/bluetooth/services/rscs.h" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rscs__measurement_a3b404a23ea93ca48fb02959e416e6d99_1a3b404a23ea93ca48fb02959e416e6d99" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_rscs_measurement::inst_stride_length</definition>
+        <argsstring></argsstring>
+        <name>inst_stride_length</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Instantaneous Stride Length. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="157" column="10" bodyfile="include/bluetooth/services/rscs.h" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rscs__measurement_a582b2b920adc14945d43a7cfe57496ce_1a582b2b920adc14945d43a7cfe57496ce" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_rscs_measurement::total_distance</definition>
+        <argsstring></argsstring>
+        <name>total_distance</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Total Distance. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="160" column="10" bodyfile="include/bluetooth/services/rscs.h" bodystart="160" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Running Speed and Cadence Service measurement structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/rscs.h" line="140" column="1" bodyfile="include/bluetooth/services/rscs.h" bodystart="140" bodyend="161"/>
+    <listofallmembers>
+      <member refid="structbt__rscs__measurement_a4e233a735f9a06a2f88638263b1285e6_1a4e233a735f9a06a2f88638263b1285e6" prot="public" virt="non-virtual"><scope>bt_rscs_measurement</scope><name>inst_cadence</name></member>
+      <member refid="structbt__rscs__measurement_a87ae0e05a8a824a1a853d27854945a66_1a87ae0e05a8a824a1a853d27854945a66" prot="public" virt="non-virtual"><scope>bt_rscs_measurement</scope><name>inst_speed</name></member>
+      <member refid="structbt__rscs__measurement_a3b404a23ea93ca48fb02959e416e6d99_1a3b404a23ea93ca48fb02959e416e6d99" prot="public" virt="non-virtual"><scope>bt_rscs_measurement</scope><name>inst_stride_length</name></member>
+      <member refid="structbt__rscs__measurement_a4518d0c3c61877f8d7aabe1c6b39a2a7_1a4518d0c3c61877f8d7aabe1c6b39a2a7" prot="public" virt="non-virtual"><scope>bt_rscs_measurement</scope><name>is_inst_stride_len</name></member>
+      <member refid="structbt__rscs__measurement_a7d2c444642077daf21206b6860207dae_1a7d2c444642077daf21206b6860207dae" prot="public" virt="non-virtual"><scope>bt_rscs_measurement</scope><name>is_running</name></member>
+      <member refid="structbt__rscs__measurement_a2020caa23eec5436ea3480f8bcc52fea_1a2020caa23eec5436ea3480f8bcc52fea" prot="public" virt="non-virtual"><scope>bt_rscs_measurement</scope><name>is_total_distance</name></member>
+      <member refid="structbt__rscs__measurement_a582b2b920adc14945d43a7cfe57496ce_1a582b2b920adc14945d43a7cfe57496ce" prot="public" virt="non-virtual"><scope>bt_rscs_measurement</scope><name>total_distance</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

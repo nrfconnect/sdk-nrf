@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structble__peer__search__event" kind="struct" language="C++" prot="public">
+    <compoundname>ble_peer_search_event</compoundname>
+    <includes refid="ble__common__event_8h" local="no">ble_common_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structble__peer__search__event_acdea7224516409e91580f54936b14409_1acdea7224516409e91580f54936b14409" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header ble_peer_search_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event header. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/ble_common_event.h" line="181" column="19" bodyfile="include/caf/events/ble_common_event.h" bodystart="181" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structble__peer__search__event_a7e97f0c25d89f703d574c0ee9f8949cc_1a7e97f0c25d89f703d574c0ee9f8949cc" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool ble_peer_search_event::active</definition>
+        <argsstring></argsstring>
+        <name>active</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Information if application is currently looking for a Bluetooth peer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/ble_common_event.h" line="184" column="6" bodyfile="include/caf/events/ble_common_event.h" bodystart="184" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Bluetooth LE peer search event. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The Bluetooth LE peer search event is submitted to inform if applcation is currently looking for a Bluetooth peer. The event can be related either to Bluetooth scanning or advertising. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>ble_peer_search_event</label>
+        <link refid="structble__peer__search__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/caf/events/ble_common_event.h" line="179" column="1" bodyfile="include/caf/events/ble_common_event.h" bodystart="179" bodyend="185"/>
+    <listofallmembers>
+      <member refid="structble__peer__search__event_a7e97f0c25d89f703d574c0ee9f8949cc_1a7e97f0c25d89f703d574c0ee9f8949cc" prot="public" virt="non-virtual"><scope>ble_peer_search_event</scope><name>active</name></member>
+      <member refid="structble__peer__search__event_acdea7224516409e91580f54936b14409_1acdea7224516409e91580f54936b14409" prot="public" virt="non-virtual"><scope>ble_peer_search_event</scope><name>header</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

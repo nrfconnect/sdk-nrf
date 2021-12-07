@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__hids__boot__kb__outp__rep" kind="struct" language="C++" prot="public">
+    <compoundname>bt_hids_boot_kb_outp_rep</compoundname>
+    <includes refid="hids_8h" local="no">hids.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__hids__boot__kb__outp__rep_ae3643bc0e6696d7f01b05d4b76c6b1da_1ae3643bc0e6696d7f01b05d4b76c6b1da" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_boot_kb_outp_rep::att_ind</definition>
+        <argsstring></argsstring>
+        <name>att_ind</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Index in the service attribute array. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="300" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="300" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__boot__kb__outp__rep_a48be812f8a2d56c4a7393268d0ecd468_1a48be812f8a2d56c4a7393268d0ecd468" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__hids_gaaaafa67ab95764aba437dfa81eb38d63_1gaaaafa67ab95764aba437dfa81eb38d63" kindref="member">bt_hids_rep_handler_t</ref></type>
+        <definition>bt_hids_rep_handler_t bt_hids_boot_kb_outp_rep::handler</definition>
+        <argsstring></argsstring>
+        <name>handler</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Callback with updated report data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="303" column="23" bodyfile="include/bluetooth/services/hids.h" bodystart="303" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Boot Keyboard Output Report. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_hids_boot_kb_outp_rep</label>
+        <link refid="structbt__hids__boot__kb__outp__rep"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>handler</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_hids_rep</label>
+        <link refid="structbt__hids__rep"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/hids.h" line="298" column="1" bodyfile="include/bluetooth/services/hids.h" bodystart="298" bodyend="304"/>
+    <listofallmembers>
+      <member refid="structbt__hids__boot__kb__outp__rep_ae3643bc0e6696d7f01b05d4b76c6b1da_1ae3643bc0e6696d7f01b05d4b76c6b1da" prot="public" virt="non-virtual"><scope>bt_hids_boot_kb_outp_rep</scope><name>att_ind</name></member>
+      <member refid="structbt__hids__boot__kb__outp__rep_a48be812f8a2d56c4a7393268d0ecd468_1a48be812f8a2d56c4a7393268d0ecd468" prot="public" virt="non-virtual"><scope>bt_hids_boot_kb_outp_rep</scope><name>handler</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__ndef__ch__hc__rec" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_ndef_ch_hc_rec</compoundname>
+    <includes refid="ndef_2ch_8h" local="no">ch.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__ndef__ch__hc__rec_a0fee9b1e992168e71c163d9dcbaa3bce_1a0fee9b1e992168e71c163d9dcbaa3bce" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__nfc__ndef__record_ga2091295307fa8161219648a88df172a8_1ga2091295307fa8161219648a88df172a8" kindref="member">nfc_ndef_record_tnf</ref></type>
+        <definition>enum nfc_ndef_record_tnf nfc_ndef_ch_hc_rec::ctf</definition>
+        <argsstring></argsstring>
+        <name>ctf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Carrier Type Format, it has the same semantics like TNF. Supported TNF:<itemizedlist>
+<listitem><para>NFC Forum Well Known Type</para>
+</listitem><listitem><para>Media Type</para>
+</listitem><listitem><para>Absolute URI</para>
+</listitem><listitem><para>NFC Forum external type </para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="47" column="25" bodyfile="include/nfc/ndef/ch.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__ch__hc__rec_a7c36ed7cbcec745e2a29bd894a7a49f1_1a7c36ed7cbcec745e2a29bd894a7a49f1" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_ndef_ch_hc_rec::type_len</definition>
+        <argsstring></argsstring>
+        <name>type_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Carrier type field length. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="52" column="9" bodyfile="include/nfc/ndef/ch.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__ch__hc__rec_af70023fcbd574d1e304fd3e0de3907bb_1af70023fcbd574d1e304fd3e0de3907bb" prot="public" static="no" mutable="no">
+        <type>const uint8_t *</type>
+        <definition>const uint8_t* nfc_ndef_ch_hc_rec::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>A unique identification od the alternative carrier. It shall follow the structure, encoding, and format implied by the value of the CTF field. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="58" column="15" bodyfile="include/nfc/ndef/ch.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__ch__hc__rec_a89b4a5f51c8e03481c6922fb0abde83c_1a89b4a5f51c8e03481c6922fb0abde83c" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_ndef_ch_hc_rec::data_len</definition>
+        <argsstring></argsstring>
+        <name>data_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Optional data length. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="61" column="9" bodyfile="include/nfc/ndef/ch.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__ch__hc__rec_a5397c4b46867cc34fcd55759b5deadb9_1a5397c4b46867cc34fcd55759b5deadb9" prot="public" static="no" mutable="no">
+        <type>uint8_t *</type>
+        <definition>uint8_t* nfc_ndef_ch_hc_rec::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Optional information about alternative carrier. It length can be calculated using following formula: (NDEF Record Payload length - carrier type length) - 2 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="67" column="9" bodyfile="include/nfc/ndef/ch.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__ch__hc__rec_ac0b4b44bbbb3e0493dbe38dff8eed7a5_1ac0b4b44bbbb3e0493dbe38dff8eed7a5" prot="public" static="no" mutable="no">
+        <type>struct nfc_ndef_ch_hc_rec::@164</type>
+        <definition>struct nfc_ndef_ch_hc_rec::@164 nfc_ndef_ch_hc_rec::carrier</definition>
+        <argsstring></argsstring>
+        <name>carrier</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Carrier description. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch.h" line="68" column="9"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Handover Carrier record payload descriptor. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/nfc/ndef/ch.h" line="39" column="1" bodyfile="include/nfc/ndef/ch.h" bodystart="39" bodyend="69"/>
+    <listofallmembers>
+      <member refid="structnfc__ndef__ch__hc__rec_ac0b4b44bbbb3e0493dbe38dff8eed7a5_1ac0b4b44bbbb3e0493dbe38dff8eed7a5" prot="public" virt="non-virtual"><scope>nfc_ndef_ch_hc_rec</scope><name>carrier</name></member>
+      <member refid="structnfc__ndef__ch__hc__rec_a0fee9b1e992168e71c163d9dcbaa3bce_1a0fee9b1e992168e71c163d9dcbaa3bce" prot="public" virt="non-virtual"><scope>nfc_ndef_ch_hc_rec</scope><name>ctf</name></member>
+      <member refid="structnfc__ndef__ch__hc__rec_a5397c4b46867cc34fcd55759b5deadb9_1a5397c4b46867cc34fcd55759b5deadb9" prot="public" virt="non-virtual"><scope>nfc_ndef_ch_hc_rec</scope><name>data</name></member>
+      <member refid="structnfc__ndef__ch__hc__rec_a89b4a5f51c8e03481c6922fb0abde83c_1a89b4a5f51c8e03481c6922fb0abde83c" prot="public" virt="non-virtual"><scope>nfc_ndef_ch_hc_rec</scope><name>data_len</name></member>
+      <member refid="structnfc__ndef__ch__hc__rec_af70023fcbd574d1e304fd3e0de3907bb_1af70023fcbd574d1e304fd3e0de3907bb" prot="public" virt="non-virtual"><scope>nfc_ndef_ch_hc_rec</scope><name>type</name></member>
+      <member refid="structnfc__ndef__ch__hc__rec_a7c36ed7cbcec745e2a29bd894a7a49f1_1a7c36ed7cbcec745e2a29bd894a7a49f1" prot="public" virt="non-virtual"><scope>nfc_ndef_ch_hc_rec</scope><name>type_len</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

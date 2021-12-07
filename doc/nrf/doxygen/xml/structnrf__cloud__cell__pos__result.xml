@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnrf__cloud__cell__pos__result" kind="struct" language="C++" prot="public">
+    <compoundname>nrf_cloud_cell_pos_result</compoundname>
+    <includes refid="nrf__cloud__cell__pos_8h" local="no">nrf_cloud_cell_pos.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnrf__cloud__cell__pos__result_a4ef82b06953d6b9c6e9acc0c46a514f5_1a4ef82b06953d6b9c6e9acc0c46a514f5" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__nrf__cloud__cell__pos_ga1a10f4b2178d3e44a94fa079642ae847_1ga1a10f4b2178d3e44a94fa079642ae847" kindref="member">nrf_cloud_cell_pos_type</ref></type>
+        <definition>enum nrf_cloud_cell_pos_type nrf_cloud_cell_pos_result::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_cell_pos.h" line="34" column="29" bodyfile="include/net/nrf_cloud_cell_pos.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__cell__pos__result_a10ee2809bc0ecbb967bb9cd489d2ff40_1a10ee2809bc0ecbb967bb9cd489d2ff40" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nrf_cloud_cell_pos_result::lat</definition>
+        <argsstring></argsstring>
+        <name>lat</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_cell_pos.h" line="35" column="8" bodyfile="include/net/nrf_cloud_cell_pos.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__cell__pos__result_a32ad58f0ed0ac1d2a1bae278f22970d6_1a32ad58f0ed0ac1d2a1bae278f22970d6" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nrf_cloud_cell_pos_result::lon</definition>
+        <argsstring></argsstring>
+        <name>lon</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_cell_pos.h" line="36" column="8" bodyfile="include/net/nrf_cloud_cell_pos.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__cell__pos__result_a402c3ec83b799e52e626619b8c3251ff_1a402c3ec83b799e52e626619b8c3251ff" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t nrf_cloud_cell_pos_result::unc</definition>
+        <argsstring></argsstring>
+        <name>unc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_cell_pos.h" line="37" column="10" bodyfile="include/net/nrf_cloud_cell_pos.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Cellular positioning request result. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/nrf_cloud_cell_pos.h" line="33" column="1" bodyfile="include/net/nrf_cloud_cell_pos.h" bodystart="33" bodyend="38"/>
+    <listofallmembers>
+      <member refid="structnrf__cloud__cell__pos__result_a10ee2809bc0ecbb967bb9cd489d2ff40_1a10ee2809bc0ecbb967bb9cd489d2ff40" prot="public" virt="non-virtual"><scope>nrf_cloud_cell_pos_result</scope><name>lat</name></member>
+      <member refid="structnrf__cloud__cell__pos__result_a32ad58f0ed0ac1d2a1bae278f22970d6_1a32ad58f0ed0ac1d2a1bae278f22970d6" prot="public" virt="non-virtual"><scope>nrf_cloud_cell_pos_result</scope><name>lon</name></member>
+      <member refid="structnrf__cloud__cell__pos__result_a4ef82b06953d6b9c6e9acc0c46a514f5_1a4ef82b06953d6b9c6e9acc0c46a514f5" prot="public" virt="non-virtual"><scope>nrf_cloud_cell_pos_result</scope><name>type</name></member>
+      <member refid="structnrf__cloud__cell__pos__result_a402c3ec83b799e52e626619b8c3251ff_1a402c3ec83b799e52e626619b8c3251ff" prot="public" virt="non-virtual"><scope>nrf_cloud_cell_pos_result</scope><name>unc</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

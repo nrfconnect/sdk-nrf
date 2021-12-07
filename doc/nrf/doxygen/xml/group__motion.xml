@@ -1,0 +1,156 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__motion" kind="group">
+    <compoundname>motion</compoundname>
+    <title>MOTION Motion sensor interface¨</title>
+    <innerclass refid="structmotion__acceleration__data__t" prot="public">motion_acceleration_data_t</innerclass>
+    <innerclass refid="structmotion__data__t" prot="public">motion_data_t</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__motion_1ga64b2808569cc487467165359f9d0cada" prot="public" static="no" strong="no">
+        <type></type>
+        <name>motion_orientation_state_t</name>
+        <enumvalue id="group__motion_ga64b2808569cc487467165359f9d0cada_1gga64b2808569cc487467165359f9d0cadaaa91a1784d0d709505e126a943aaae60b" prot="public">
+          <name>MOTION_ORIENTATION_NOT_KNOWN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Initial state. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__motion_ga64b2808569cc487467165359f9d0cada_1gga64b2808569cc487467165359f9d0cadaa184135c7438053d9f5f145584fff2ba5" prot="public">
+          <name>MOTION_ORIENTATION_NORMAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Has normal orientation. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__motion_ga64b2808569cc487467165359f9d0cada_1gga64b2808569cc487467165359f9d0cadaa1e6d48979af1fa169ed7f219fc5703e4" prot="public">
+          <name>MOTION_ORIENTATION_UPSIDE_DOWN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>System is upside down. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__motion_ga64b2808569cc487467165359f9d0cada_1gga64b2808569cc487467165359f9d0cadaa15937f01cb4171f079e479e5935e1bef" prot="public">
+          <name>MOTION_ORIENTATION_ON_SIDE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>System is placed on its side. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Orientation states. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/motion/motion.h" line="28" column="1" bodyfile="applications/asset_tracker/src/motion/motion.h" bodystart="28" bodyend="33"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__motion_1ga4a3913a069cb52526e20bfa3c6c6aa53" prot="public" static="no" strong="no">
+        <type></type>
+        <name>motion_activity_state_t</name>
+        <enumvalue id="group__motion_ga4a3913a069cb52526e20bfa3c6c6aa53_1gga4a3913a069cb52526e20bfa3c6c6aa53adae0c138a03b5322084da22ea7c02d10" prot="public">
+          <name>MOTION_ACTIVITY_NOT_KNOWN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Initial state. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__motion_ga4a3913a069cb52526e20bfa3c6c6aa53_1gga4a3913a069cb52526e20bfa3c6c6aa53ac8095dc1713b4ebefc390dbcb88e46df" prot="public">
+          <name>MOTION_ACTIVITY_ACTIVE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Activity threshold exceeded. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__motion_ga4a3913a069cb52526e20bfa3c6c6aa53_1gga4a3913a069cb52526e20bfa3c6c6aa53a84a1f4950ab23817700b01dbdb9bb5e4" prot="public">
+          <name>MOTION_ACTIVITY_INACTIVE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Inactivity threshold exceeded. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Activity states. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/motion/motion.h" line="36" column="1" bodyfile="applications/asset_tracker/src/motion/motion.h" bodystart="36" bodyend="40"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__motion_1ga18619500c1f329408af7836931e8ff19" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* motion_handler_t) (motion_data_t motion_data)</definition>
+        <argsstring>)(motion_data_t motion_data)</argsstring>
+        <name>motion_handler_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/motion/motion.h" line="55" column="9" bodyfile="applications/asset_tracker/src/motion/motion.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__motion_1ga26ab198d7e3a474fc4ad884aceab7f1b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int motion_init_and_start</definition>
+        <argsstring>(struct k_work_q *work_q, motion_handler_t motion_handler)</argsstring>
+        <name>motion_init_and_start</name>
+        <param>
+          <type>struct k_work_q *</type>
+          <declname>work_q</declname>
+        </param>
+        <param>
+          <type><ref refid="group__motion_ga18619500c1f329408af7836931e8ff19_1ga18619500c1f329408af7836931e8ff19" kindref="member">motion_handler_t</ref></type>
+          <declname>motion_handler</declname>
+        </param>
+        <briefdescription>
+<para>Initialize and start the motion module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>0 if the operation was successful, otherwise a (negative) error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/motion/motion.h" line="62" column="5" declfile="applications/asset_tracker/src/motion/motion.h" declline="62" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__motion_1ga08e995bdbe8d8b845a556ceb1ab5a2b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void motion_simulate_trigger</definition>
+        <argsstring>(void)</argsstring>
+        <name>motion_simulate_trigger</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Manually trigger the motion module to fetch data. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/motion/motion.h" line="68" column="6" declfile="applications/asset_tracker/src/motion/motion.h" declline="68" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Module for interfacing motion sensors for asset tracker. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Basic module for interfacing motion sensors for the asset tracker application. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

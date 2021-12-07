@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_75e28aa259df22344a256d2def86c2df" kind="dir">
+    <compoundname>applications/asset_tracker_v2/include/nrf9160dk_nrf9160_ns</compoundname>
+    <innerfile refid="asset__tracker__v2_2include_2nrf9160dk__nrf9160__ns_2led__state__def_8h">led_state_def.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/include/nrf9160dk_nrf9160_ns/"/>
+  </compounddef>
+</doxygen>

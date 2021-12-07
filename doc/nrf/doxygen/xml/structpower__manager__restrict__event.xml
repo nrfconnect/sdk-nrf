@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structpower__manager__restrict__event" kind="struct" language="C++" prot="public">
+    <compoundname>power_manager_restrict_event</compoundname>
+    <includes refid="power__manager__event_8h" local="no">power_manager_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structpower__manager__restrict__event_ac7c824d77de1e8ad92e36a7840ac4350_1ac7c824d77de1e8ad92e36a7840ac4350" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header power_manager_restrict_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event header. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/power_manager_event.h" line="57" column="19" bodyfile="include/caf/events/power_manager_event.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structpower__manager__restrict__event_a165a999ce05d8719dd407756198db093_1a165a999ce05d8719dd407756198db093" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t power_manager_restrict_event::module_idx</definition>
+        <argsstring></argsstring>
+        <name>module_idx</name>
+        <briefdescription>
+<para>The module index. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The index of the module that wish to block possibility to set power mode below specified level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/power_manager_event.h" line="64" column="8" bodyfile="include/caf/events/power_manager_event.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structpower__manager__restrict__event_a648a06cba524f34aaa1e8727cd659e8c_1a648a06cba524f34aaa1e8727cd659e8c" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__caf__power__manager__event_gacc919dc5eaa5c53a0daf966249c8ac96_1gacc919dc5eaa5c53a0daf966249c8ac96" kindref="member">power_manager_level</ref></type>
+        <definition>enum power_manager_level power_manager_restrict_event::level</definition>
+        <argsstring></argsstring>
+        <name>level</name>
+        <briefdescription>
+<para>The deepest sleep mode allowed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/power_manager_event.h" line="68" column="25" bodyfile="include/caf/events/power_manager_event.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An event to specify which power state is allowed by module. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Any module can set maximum allowed power state that can be configured by power manager. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>power_manager_restrict_event</label>
+        <link refid="structpower__manager__restrict__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/caf/events/power_manager_event.h" line="55" column="1" bodyfile="include/caf/events/power_manager_event.h" bodystart="55" bodyend="69"/>
+    <listofallmembers>
+      <member refid="structpower__manager__restrict__event_ac7c824d77de1e8ad92e36a7840ac4350_1ac7c824d77de1e8ad92e36a7840ac4350" prot="public" virt="non-virtual"><scope>power_manager_restrict_event</scope><name>header</name></member>
+      <member refid="structpower__manager__restrict__event_a648a06cba524f34aaa1e8727cd659e8c_1a648a06cba524f34aaa1e8727cd659e8c" prot="public" virt="non-virtual"><scope>power_manager_restrict_event</scope><name>level</name></member>
+      <member refid="structpower__manager__restrict__event_a165a999ce05d8719dd407756198db093_1a165a999ce05d8719dd407756198db093" prot="public" virt="non-virtual"><scope>power_manager_restrict_event</scope><name>module_idx</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

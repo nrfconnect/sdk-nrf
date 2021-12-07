@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__ndef__tnep__rec__svc__param" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_ndef_tnep_rec_svc_param</compoundname>
+    <includes refid="tnep__rec_8h" local="no">tnep_rec.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__ndef__tnep__rec__svc__param_acf9d9ed1fa2e468095efa9f7f1beb4f0_1acf9d9ed1fa2e468095efa9f7f1beb4f0" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_ndef_tnep_rec_svc_param::version</definition>
+        <argsstring></argsstring>
+        <name>version</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>TNEP Version. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/tnep_rec.h" line="53" column="9" bodyfile="include/nfc/ndef/tnep_rec.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__tnep__rec__svc__param_ab7b3d1346445fc1c0f739a8678ac1bf9_1ab7b3d1346445fc1c0f739a8678ac1bf9" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_ndef_tnep_rec_svc_param::uri_length</definition>
+        <argsstring></argsstring>
+        <name>uri_length</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of the Service Name URI. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/tnep_rec.h" line="56" column="9" bodyfile="include/nfc/ndef/tnep_rec.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__tnep__rec__svc__param_a496b71ffb135082ca49ea8a656f84234_1a496b71ffb135082ca49ea8a656f84234" prot="public" static="no" mutable="no">
+        <type>const uint8_t *</type>
+        <definition>const uint8_t* nfc_ndef_tnep_rec_svc_param::uri</definition>
+        <argsstring></argsstring>
+        <name>uri</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Service Name URI. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/tnep_rec.h" line="59" column="15" bodyfile="include/nfc/ndef/tnep_rec.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__tnep__rec__svc__param_a2531c71718d43792e1abe04860eb1cc4_1a2531c71718d43792e1abe04860eb1cc4" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_ndef_tnep_rec_svc_param::communication_mode</definition>
+        <argsstring></argsstring>
+        <name>communication_mode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>TNEP communication mode </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/tnep_rec.h" line="62" column="9" bodyfile="include/nfc/ndef/tnep_rec.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__tnep__rec__svc__param_a499253503effc718eeb286cb3f2255e9_1a499253503effc718eeb286cb3f2255e9" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_ndef_tnep_rec_svc_param::min_time</definition>
+        <argsstring></argsstring>
+        <name>min_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Minimum waiting time. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/tnep_rec.h" line="65" column="9" bodyfile="include/nfc/ndef/tnep_rec.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__tnep__rec__svc__param_aed7201d89439a214706fab6cddbbc741_1aed7201d89439a214706fab6cddbbc741" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_ndef_tnep_rec_svc_param::max_time_ext</definition>
+        <argsstring></argsstring>
+        <name>max_time_ext</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum number of waiting time extensions N_wait. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/tnep_rec.h" line="68" column="9" bodyfile="include/nfc/ndef/tnep_rec.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__ndef__tnep__rec__svc__param_acb43bdc8611fdf6f08ad91f37ddd5a14_1acb43bdc8611fdf6f08ad91f37ddd5a14" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t nfc_ndef_tnep_rec_svc_param::max_size</definition>
+        <argsstring></argsstring>
+        <name>max_size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum NDEF message size in bytes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/tnep_rec.h" line="71" column="10" bodyfile="include/nfc/ndef/tnep_rec.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Service Parameters in the TNEP&apos;s Initial NDEF message. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/nfc/ndef/tnep_rec.h" line="51" column="1" bodyfile="include/nfc/ndef/tnep_rec.h" bodystart="51" bodyend="72"/>
+    <listofallmembers>
+      <member refid="structnfc__ndef__tnep__rec__svc__param_a2531c71718d43792e1abe04860eb1cc4_1a2531c71718d43792e1abe04860eb1cc4" prot="public" virt="non-virtual"><scope>nfc_ndef_tnep_rec_svc_param</scope><name>communication_mode</name></member>
+      <member refid="structnfc__ndef__tnep__rec__svc__param_acb43bdc8611fdf6f08ad91f37ddd5a14_1acb43bdc8611fdf6f08ad91f37ddd5a14" prot="public" virt="non-virtual"><scope>nfc_ndef_tnep_rec_svc_param</scope><name>max_size</name></member>
+      <member refid="structnfc__ndef__tnep__rec__svc__param_aed7201d89439a214706fab6cddbbc741_1aed7201d89439a214706fab6cddbbc741" prot="public" virt="non-virtual"><scope>nfc_ndef_tnep_rec_svc_param</scope><name>max_time_ext</name></member>
+      <member refid="structnfc__ndef__tnep__rec__svc__param_a499253503effc718eeb286cb3f2255e9_1a499253503effc718eeb286cb3f2255e9" prot="public" virt="non-virtual"><scope>nfc_ndef_tnep_rec_svc_param</scope><name>min_time</name></member>
+      <member refid="structnfc__ndef__tnep__rec__svc__param_a496b71ffb135082ca49ea8a656f84234_1a496b71ffb135082ca49ea8a656f84234" prot="public" virt="non-virtual"><scope>nfc_ndef_tnep_rec_svc_param</scope><name>uri</name></member>
+      <member refid="structnfc__ndef__tnep__rec__svc__param_ab7b3d1346445fc1c0f739a8678ac1bf9_1ab7b3d1346445fc1c0f739a8678ac1bf9" prot="public" virt="non-virtual"><scope>nfc_ndef_tnep_rec_svc_param</scope><name>uri_length</name></member>
+      <member refid="structnfc__ndef__tnep__rec__svc__param_acf9d9ed1fa2e468095efa9f7f1beb4f0_1acf9d9ed1fa2e468095efa9f7f1beb4f0" prot="public" virt="non-virtual"><scope>nfc_ndef_tnep_rec_svc_param</scope><name>version</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

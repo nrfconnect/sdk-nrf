@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structpasskey__input__event" kind="struct" language="C++" prot="public">
+    <compoundname>passkey_input_event</compoundname>
+    <includes refid="passkey__event_8h" local="no">passkey_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structpasskey__input__event_a1f4d1d489af3a79dab47f6f5f4ccabd9_1a1f4d1d489af3a79dab47f6f5f4ccabd9" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header passkey_input_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/passkey_event.h" line="25" column="19" bodyfile="applications/nrf_desktop/src/events/passkey_event.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structpasskey__input__event_ac4b6b708e6a489e95d65aac0d1834204_1ac4b6b708e6a489e95d65aac0d1834204" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t passkey_input_event::passkey</definition>
+        <argsstring></argsstring>
+        <name>passkey</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/passkey_event.h" line="27" column="10" bodyfile="applications/nrf_desktop/src/events/passkey_event.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Passkey input event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>passkey_input_event</label>
+        <link refid="structpasskey__input__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/nrf_desktop/src/events/passkey_event.h" line="24" column="1" bodyfile="applications/nrf_desktop/src/events/passkey_event.h" bodystart="24" bodyend="28"/>
+    <listofallmembers>
+      <member refid="structpasskey__input__event_a1f4d1d489af3a79dab47f6f5f4ccabd9_1a1f4d1d489af3a79dab47f6f5f4ccabd9" prot="public" virt="non-virtual"><scope>passkey_input_event</scope><name>header</name></member>
+      <member refid="structpasskey__input__event_ac4b6b708e6a489e95d65aac0d1834204_1ac4b6b708e6a489e95d65aac0d1834204" prot="public" virt="non-virtual"><scope>passkey_input_event</scope><name>passkey</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

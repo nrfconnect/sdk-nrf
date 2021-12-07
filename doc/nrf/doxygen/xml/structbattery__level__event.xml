@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbattery__level__event" kind="struct" language="C++" prot="public">
+    <compoundname>battery_level_event</compoundname>
+    <includes refid="battery__event_8h" local="no">battery_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbattery__level__event_aad4468fe45f05e80b7c3bef824700495_1aad4468fe45f05e80b7c3bef824700495" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header battery_level_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/battery_event.h" line="51" column="19" bodyfile="applications/nrf_desktop/src/events/battery_event.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbattery__level__event_a59a19705ccc221a3afa080f246f9cf27_1a59a19705ccc221a3afa080f246f9cf27" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t battery_level_event::level</definition>
+        <argsstring></argsstring>
+        <name>level</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/battery_event.h" line="53" column="9" bodyfile="applications/nrf_desktop/src/events/battery_event.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Battery voltage level event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>battery_level_event</label>
+        <link refid="structbattery__level__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/nrf_desktop/src/events/battery_event.h" line="50" column="1" bodyfile="applications/nrf_desktop/src/events/battery_event.h" bodystart="50" bodyend="54"/>
+    <listofallmembers>
+      <member refid="structbattery__level__event_aad4468fe45f05e80b7c3bef824700495_1aad4468fe45f05e80b7c3bef824700495" prot="public" virt="non-virtual"><scope>battery_level_event</scope><name>header</name></member>
+      <member refid="structbattery__level__event_a59a19705ccc221a3afa080f246f9cf27_1a59a19705ccc221a3afa080f246f9cf27" prot="public" virt="non-virtual"><scope>battery_level_event</scope><name>level</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,210 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="nrf5340dk__nrf5340__cpuapp_2ble__discovery__def_8h" kind="file" language="C++">
+    <compoundname>ble_discovery_def.h</compoundname>
+    <includes refid="ble__event_8h" local="yes">ble_event.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp/ble_discovery_def.h</label>
+        <link refid="nrf5340dk__nrf5340__cpuapp_2ble__discovery__def_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ble_event.h</label>
+        <link refid="ble__event_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>hwid.h</label>
+        <link refid="hwid_8h"/>
+      </node>
+      <node id="5">
+        <label>event_manager.h</label>
+        <link refid="event__manager_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>event_manager_profiler.h</label>
+        <link refid="event__manager__profiler_8h"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>profiler.h</label>
+        <link refid="profiler_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bluetooth/bluetooth.h</label>
+      </node>
+      <node id="4">
+        <label>bluetooth/conn.h</label>
+      </node>
+      <node id="11">
+        <label>event_manager_priv.h</label>
+      </node>
+      <node id="15">
+        <label>event_manager_profiler_priv.h</label>
+      </node>
+      <node id="10">
+        <label>logging/log_ctrl.h</label>
+      </node>
+      <node id="9">
+        <label>sys/__assert.h</label>
+      </node>
+      <node id="8">
+        <label>sys/reboot.h</label>
+      </node>
+      <node id="13">
+        <label>sys/util.h</label>
+      </node>
+      <node id="6">
+        <label>zephyr.h</label>
+      </node>
+      <node id="7">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structbt__peripheral" prot="public">bt_peripheral</innerclass>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="nrf5340dk__nrf5340__cpuapp_2ble__discovery__def_8h_ae7e259a5169fae216cb126725679d4b0_1ae7e259a5169fae216cb126725679d4b0" prot="public" static="no" mutable="no">
+        <type>const struct @113</type>
+        <definition>const struct @113 ble_discovery_include_once</definition>
+        <argsstring></argsstring>
+        <name>ble_discovery_include_once</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp/ble_discovery_def.h" line="14" column="40"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf5340dk__nrf5340__cpuapp_2ble__discovery__def_8h_a6023b4604abd7757966b257e23b442af_1a6023b4604abd7757966b257e23b442af" prot="public" static="yes" mutable="no">
+        <type>const uint16_t</type>
+        <definition>const uint16_t vendor_vid</definition>
+        <argsstring></argsstring>
+        <name>vendor_vid</name>
+        <initializer>= 0x1915</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp/ble_discovery_def.h" line="23" column="23" bodyfile="applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp/ble_discovery_def.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="nrf5340dk__nrf5340__cpuapp_2ble__discovery__def_8h_af31e7a0551a05b344a324444c3629a35_1af31e7a0551a05b344a324444c3629a35" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structbt__peripheral" kindref="compound">bt_peripheral</ref></type>
+        <definition>const struct bt_peripheral bt_peripherals[]</definition>
+        <argsstring>[]</argsstring>
+        <name>bt_peripherals</name>
+        <initializer>= {
+	{
+		.pid = 0x52da,
+		.<ref refid="group__ble__event_gac69e3dc77018854dc02597ae99dd9f51_1gac69e3dc77018854dc02597ae99dd9f51" kindref="member">peer_type</ref> = <ref refid="group__ble__event_gac69e3dc77018854dc02597ae99dd9f51_1ggac69e3dc77018854dc02597ae99dd9f51ae345d7fa850b3fd130633e6169000c97" kindref="member">PEER_TYPE_MOUSE</ref>,
+	},
+	{
+		.pid = 0x52db,
+		.<ref refid="group__ble__event_gac69e3dc77018854dc02597ae99dd9f51_1gac69e3dc77018854dc02597ae99dd9f51" kindref="member">peer_type</ref> = <ref refid="group__ble__event_gac69e3dc77018854dc02597ae99dd9f51_1ggac69e3dc77018854dc02597ae99dd9f51ae345d7fa850b3fd130633e6169000c97" kindref="member">PEER_TYPE_MOUSE</ref>,
+	},
+	{
+		.pid = 0x52de,
+		.<ref refid="group__ble__event_gac69e3dc77018854dc02597ae99dd9f51_1gac69e3dc77018854dc02597ae99dd9f51" kindref="member">peer_type</ref> = <ref refid="group__ble__event_gac69e3dc77018854dc02597ae99dd9f51_1ggac69e3dc77018854dc02597ae99dd9f51ae345d7fa850b3fd130633e6169000c97" kindref="member">PEER_TYPE_MOUSE</ref>,
+	},
+	{
+		.pid = 0x52dd,
+		.<ref refid="group__ble__event_gac69e3dc77018854dc02597ae99dd9f51_1gac69e3dc77018854dc02597ae99dd9f51" kindref="member">peer_type</ref> = <ref refid="group__ble__event_gac69e3dc77018854dc02597ae99dd9f51_1ggac69e3dc77018854dc02597ae99dd9f51adbf2ebc8689da47a4f044d79a9b206ea" kindref="member">PEER_TYPE_KEYBOARD</ref>,
+	},
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp/ble_discovery_def.h" line="26" column="33" bodyfile="applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp/ble_discovery_def.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>configuration<sp/>file<sp/>defines<sp/>discovery<sp/>parameters<sp/>for<sp/>BLE<sp/>central.</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/>*<sp/>Used<sp/>only<sp/>by<sp/>ble_discovery<sp/>module.</highlight></codeline>
+<codeline lineno="9"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>structure<sp/>enforces<sp/>the<sp/>header<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>in<sp/>the<sp/>build.</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*<sp/>Violating<sp/>this<sp/>requirement<sp/>triggers<sp/>a<sp/>multiple<sp/>definition<sp/>error<sp/>at<sp/>link<sp/>time.</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14" refid="nrf5340dk__nrf5340__cpuapp_2ble__discovery__def_8h_ae7e259a5169fae216cb126725679d4b0_1ae7e259a5169fae216cb126725679d4b0" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{}<sp/><ref refid="nrf52820dongle__nrf52820_2ble__discovery__def_8h_af33a33dd0fba6c5ead1c2d0430caf124_1af33a33dd0fba6c5ead1c2d0430caf124" kindref="member">ble_discovery_include_once</ref>;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ble__event_8h" kindref="compound">ble_event.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__peripheral" kindref="compound">bt_peripheral</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__peripheral_a9434e121159da0178a43f2ef431c5d00_1a9434e121159da0178a43f2ef431c5d00" kindref="member">pid</ref>;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__ble__event_gac69e3dc77018854dc02597ae99dd9f51_1gac69e3dc77018854dc02597ae99dd9f51" kindref="member">peer_type</ref><sp/><ref refid="structbt__peripheral_aa663bf2d09a3ba424ea0fa4f021f9bcc_1aa663bf2d09a3ba424ea0fa4f021f9bcc" kindref="member">peer_type</ref>;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="nrf5340dk__nrf5340__cpuapp_2ble__discovery__def_8h_a6023b4604abd7757966b257e23b442af_1a6023b4604abd7757966b257e23b442af" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint16_t<sp/><ref refid="nrf5340dk__nrf5340__cpuapp_2ble__discovery__def_8h_a6023b4604abd7757966b257e23b442af_1a6023b4604abd7757966b257e23b442af" kindref="member">vendor_vid</ref><sp/>=<sp/>0x1915;</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Peripherals<sp/>parameters.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="nrf5340dk__nrf5340__cpuapp_2ble__discovery__def_8h_af31e7a0551a05b344a324444c3629a35_1af31e7a0551a05b344a324444c3629a35" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__peripheral" kindref="compound">bt_peripheral</ref><sp/><ref refid="nrf5340dk__nrf5340__cpuapp_2ble__discovery__def_8h_af31e7a0551a05b344a324444c3629a35_1af31e7a0551a05b344a324444c3629a35" kindref="member">bt_peripherals</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.<ref refid="structbt__peripheral_a9434e121159da0178a43f2ef431c5d00_1a9434e121159da0178a43f2ef431c5d00" kindref="member">pid</ref><sp/>=<sp/>0x52da,</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.peer_type<sp/>=<sp/><ref refid="group__ble__event_gac69e3dc77018854dc02597ae99dd9f51_1ggac69e3dc77018854dc02597ae99dd9f51ae345d7fa850b3fd130633e6169000c97" kindref="member">PEER_TYPE_MOUSE</ref>,</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>},</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.pid<sp/>=<sp/>0x52db,</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.peer_type<sp/>=<sp/><ref refid="group__ble__event_gac69e3dc77018854dc02597ae99dd9f51_1ggac69e3dc77018854dc02597ae99dd9f51ae345d7fa850b3fd130633e6169000c97" kindref="member">PEER_TYPE_MOUSE</ref>,</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>},</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.pid<sp/>=<sp/>0x52de,</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.peer_type<sp/>=<sp/><ref refid="group__ble__event_gac69e3dc77018854dc02597ae99dd9f51_1ggac69e3dc77018854dc02597ae99dd9f51ae345d7fa850b3fd130633e6169000c97" kindref="member">PEER_TYPE_MOUSE</ref>,</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>},</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.pid<sp/>=<sp/>0x52dd,</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.peer_type<sp/>=<sp/><ref refid="group__ble__event_gac69e3dc77018854dc02597ae99dd9f51_1ggac69e3dc77018854dc02597ae99dd9f51adbf2ebc8689da47a4f044d79a9b206ea" kindref="member">PEER_TYPE_KEYBOARD</ref>,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>},</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp/ble_discovery_def.h"/>
+  </compounddef>
+</doxygen>

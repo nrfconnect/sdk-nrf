@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structupdate__counter" kind="struct" language="C++" prot="public">
+    <compoundname>update_counter</compoundname>
+    <includes refid="lwm2m__client__utils__fota_8h" local="no">lwm2m_client_utils_fota.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structupdate__counter_a092320b68e0801a6722389ef36d45c74_1a092320b68e0801a6722389ef36d45c74" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int update_counter::current</definition>
+        <argsstring></argsstring>
+        <name>current</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Active image&apos;s state </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils_fota.h" line="22" column="5" bodyfile="include/net/lwm2m_client_utils_fota.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structupdate__counter_a5875d6ac995952313d3ad185f4a71d11_1a5875d6ac995952313d3ad185f4a71d11" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int update_counter::update</definition>
+        <argsstring></argsstring>
+        <name>update</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Update image&apos;s state </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils_fota.h" line="23" column="5" bodyfile="include/net/lwm2m_client_utils_fota.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Update counter. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/lwm2m_client_utils_fota.h" line="21" column="1" bodyfile="include/net/lwm2m_client_utils_fota.h" bodystart="21" bodyend="24"/>
+    <listofallmembers>
+      <member refid="structupdate__counter_a092320b68e0801a6722389ef36d45c74_1a092320b68e0801a6722389ef36d45c74" prot="public" virt="non-virtual"><scope>update_counter</scope><name>current</name></member>
+      <member refid="structupdate__counter_a5875d6ac995952313d3ad185f4a71d11_1a5875d6ac995952313d3ad185f4a71d11" prot="public" virt="non-virtual"><scope>update_counter</scope><name>update</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

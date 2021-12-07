@@ -1,0 +1,329 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__date__time" kind="group">
+    <compoundname>date_time</compoundname>
+    <title>Date Time Library</title>
+    <innerclass refid="structdate__time__evt" prot="public">date_time_evt</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__date__time_1ga0f84f7e7e0b9cb11d7f59a97a0cf36bb" prot="public" static="no" strong="no">
+        <type></type>
+        <name>date_time_evt_type</name>
+        <enumvalue id="group__date__time_ga0f84f7e7e0b9cb11d7f59a97a0cf36bb_1gga0f84f7e7e0b9cb11d7f59a97a0cf36bba39c894e293fc012574fa5df769fb707c" prot="public">
+          <name>DATE_TIME_OBTAINED_MODEM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Date time library has obtained valid time from the modem. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__date__time_ga0f84f7e7e0b9cb11d7f59a97a0cf36bb_1gga0f84f7e7e0b9cb11d7f59a97a0cf36bba09078dff7466297dce92b98dc4102119" prot="public">
+          <name>DATE_TIME_OBTAINED_NTP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Date time library has obtained valid time from NTP servers. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__date__time_ga0f84f7e7e0b9cb11d7f59a97a0cf36bb_1gga0f84f7e7e0b9cb11d7f59a97a0cf36bbaac08b3cb5b091d58605ecbef52e6b7fc" prot="public">
+          <name>DATE_TIME_OBTAINED_EXT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Date time library has obtained valid time from external source. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__date__time_ga0f84f7e7e0b9cb11d7f59a97a0cf36bb_1gga0f84f7e7e0b9cb11d7f59a97a0cf36bba46e6b1ddaaf64c8388ea8fe40660bc5f" prot="public">
+          <name>DATE_TIME_NOT_OBTAINED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Date time library does not have valid time. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Date time notification event types used to signal the application. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/date_time.h" line="26" column="1" bodyfile="include/date_time.h" bodystart="26" bodyend="35"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__date__time_1ga8a9b751a4d2642eda12541cd1d20f7c0" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* date_time_evt_handler_t) (const struct date_time_evt *evt)</definition>
+        <argsstring>)(const struct date_time_evt *evt)</argsstring>
+        <name>date_time_evt_handler_t</name>
+        <briefdescription>
+<para>Date time library asynchronous event handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The event and any associated parameters. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/date_time.h" line="47" column="9" bodyfile="include/date_time.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__date__time_1ga47c7153da7cee97372879dcc1d8f7a2b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int date_time_set</definition>
+        <argsstring>(const struct tm *new_date_time)</argsstring>
+        <name>date_time_set</name>
+        <param>
+          <type>const struct tm *</type>
+          <declname>new_date_time</declname>
+        </param>
+        <briefdescription>
+<para>Set the current date time. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>See <ulink url="http://www.cplusplus.com/reference/ctime/tm/">http://www.cplusplus.com/reference/ctime/tm/</ulink> for accepted input format. Members wday and yday have no impact on the date time UTC and are thus does not need to be set.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">new_date_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a tm structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. </para>
+</simplesect>
+<simplesect kind="return"><para>-EINVAL If a member of the passing variable new_date_time does not adhere to the tm structure format, or pointer is passed in as NULL. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/date_time.h" line="61" column="5" declfile="include/date_time.h" declline="61" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__date__time_1ga0ff2d8af06c64a44262974d1472a0376" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int date_time_uptime_to_unix_time_ms</definition>
+        <argsstring>(int64_t *uptime)</argsstring>
+        <name>date_time_uptime_to_unix_time_ms</name>
+        <param>
+          <type>int64_t *</type>
+          <declname>uptime</declname>
+        </param>
+        <briefdescription>
+<para>Get the date time UTC when the passing variable uptime was set. This function requires that k_uptime_get() has been called on the passing variable uptime prior to the function call. In that case the uptime will not be too large or negative. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>If the function fails, the passed in variable retains its old value.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">uptime</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a previously set uptime.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. </para>
+</simplesect>
+<simplesect kind="return"><para>-ENODATA If the library does not have a valid date time UTC. </para>
+</simplesect>
+<simplesect kind="return"><para>-EINVAL If the passed in pointer is NULL, dereferenced value is too large, already converted or if uptime is negative. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/date_time.h" line="78" column="5" declfile="include/date_time.h" declline="78" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__date__time_1gafa92404e0bfcc60dad5ad4218a494d2e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int date_time_now</definition>
+        <argsstring>(int64_t *unix_time_ms)</argsstring>
+        <name>date_time_now</name>
+        <param>
+          <type>int64_t *</type>
+          <declname>unix_time_ms</declname>
+        </param>
+        <briefdescription>
+<para>Get the current date time UTC. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>If the function fails, the passed in variable retains its old value.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">unix_time_ms</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a variable to store the current date time UTC.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. </para>
+</simplesect>
+<simplesect kind="return"><para>-ENODATA If the library does not have a valid date time UTC. </para>
+</simplesect>
+<simplesect kind="return"><para>-EINVAL If the passed in pointer is NULL. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/date_time.h" line="92" column="5" declfile="include/date_time.h" declline="92" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__date__time_1ga0e471c55da09dbbd71497665e10c6131" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool date_time_is_valid</definition>
+        <argsstring>(void)</argsstring>
+        <name>date_time_is_valid</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Convenience function that checks if the library has obtained an initial valid date time. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>If this function returns false there is no point of subsequent calls to other functions in this API that depend on the validity of the internal date time. We know that they would fail beforehand.</para>
+</simplesect>
+<simplesect kind="return"><para>true The library has obtained an initial date time. </para>
+</simplesect>
+<simplesect kind="return"><para>false The library has not obtained an initial date time. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/date_time.h" line="105" column="6" declfile="include/date_time.h" declline="105" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__date__time_1gac0a6c4c5eb36ee0752d5044ed22df346" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void date_time_register_handler</definition>
+        <argsstring>(date_time_evt_handler_t evt_handler)</argsstring>
+        <name>date_time_register_handler</name>
+        <param>
+          <type><ref refid="group__date__time_ga8a9b751a4d2642eda12541cd1d20f7c0_1ga8a9b751a4d2642eda12541cd1d20f7c0" kindref="member">date_time_evt_handler_t</ref></type>
+          <declname>evt_handler</declname>
+        </param>
+        <briefdescription>
+<para>Register an event handler for Date time library events. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>The library only allows for one event handler to be registered at a time. A passed in event handler in this function will overwrite the previously set event handler.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>evt_handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event handler. Handler is de-registered if parameter is NULL. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/date_time.h" line="116" column="6" declfile="include/date_time.h" declline="116" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__date__time_1ga2ea1b240c33f02b87d6fb056122bc30c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int date_time_update_async</definition>
+        <argsstring>(date_time_evt_handler_t evt_handler)</argsstring>
+        <name>date_time_update_async</name>
+        <param>
+          <type><ref refid="group__date__time_ga8a9b751a4d2642eda12541cd1d20f7c0_1ga8a9b751a4d2642eda12541cd1d20f7c0" kindref="member">date_time_evt_handler_t</ref></type>
+          <declname>evt_handler</declname>
+        </param>
+        <briefdescription>
+<para>Asynchronous update of internal date time UTC. This function initiates a date time update regardless of the internal update interval. If an event handler is provided it will be updated with library events, accordingly. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>evt_handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event handler. If the passed in pointer is NULL the previous registered event handler is not de-registered. This means that library events will still be received in the previously registered event handler.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/date_time.h" line="130" column="5" declfile="include/date_time.h" declline="130" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__date__time_1gabb2553a0364f3b1f2480a399079863e7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int date_time_clear</definition>
+        <argsstring>(void)</argsstring>
+        <name>date_time_clear</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Clear the current date time held by the library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>0 If the operation was successful. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/date_time.h" line="136" column="5" declfile="include/date_time.h" declline="136" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__date__time_1ga6df67eeba7624c050569c4081874ee4b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int date_time_timestamp_clear</definition>
+        <argsstring>(int64_t *unix_timestamp)</argsstring>
+        <name>date_time_timestamp_clear</name>
+        <param>
+          <type>int64_t *</type>
+          <declname>unix_timestamp</declname>
+        </param>
+        <briefdescription>
+<para>Clear a timestamp in unix time ms. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">unix_timestamp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a unix timestamp.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If the operation was successful. </para>
+</simplesect>
+<simplesect kind="return"><para>-EINVAL If the passed in pointer is NULL. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/date_time.h" line="145" column="5" declfile="include/date_time.h" declline="145" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Library that maintains the current date time UTC which can be fetched in order to timestamp data. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

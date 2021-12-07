@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__loc__local" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_loc_local</compoundname>
+    <includes refid="gen__loc_8h" local="no">gen_loc.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__loc__local_af359cf9d35c326d847505904344587a4_1af359cf9d35c326d847505904344587a4" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t bt_mesh_loc_local::north</definition>
+        <argsstring></argsstring>
+        <name>north</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Local north position in decimeters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="69" column="9" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__loc__local_af0df07b45cbdb2e7f5e755345dfe6390_1af0df07b45cbdb2e7f5e755345dfe6390" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t bt_mesh_loc_local::east</definition>
+        <argsstring></argsstring>
+        <name>east</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Local east position in decimeters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="71" column="9" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__loc__local_a055a1f7ee1c32405d1fb5ca502bd8154_1a055a1f7ee1c32405d1fb5ca502bd8154" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t bt_mesh_loc_local::altitude</definition>
+        <argsstring></argsstring>
+        <name>altitude</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Local altitude in decimeters. <simplesect kind="see"><para><ref refid="group__bt__mesh__loc__altitude__defines" kindref="compound">Defines for altitude.</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="73" column="9" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__loc__local_aa9c0fb7e24956dff21fc08e248249939_1aa9c0fb7e24956dff21fc08e248249939" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t bt_mesh_loc_local::floor_number</definition>
+        <argsstring></argsstring>
+        <name>floor_number</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Floor number. <simplesect kind="see"><para><ref refid="group__bt__mesh__loc__floor__number__defines" kindref="compound">Defines for floor number.</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="75" column="9" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__loc__local_a30b45031c26807eafa27aa644be0e48d_1a30b45031c26807eafa27aa644be0e48d" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool bt_mesh_loc_local::is_mobile</definition>
+        <argsstring></argsstring>
+        <name>is_mobile</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Whether the device is movable. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="77" column="6" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__loc__local_acd481c50ed9c51fc8b1f9ddefe6c7bb5_1acd481c50ed9c51fc8b1f9ddefe6c7bb5" prot="public" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t bt_mesh_loc_local::time_delta</definition>
+        <argsstring></argsstring>
+        <name>time_delta</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Time since the previous position update in milliseconds, or <emphasis>SYS_FOREVER_MS</emphasis>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="81" column="9" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__loc__local_a4c6b9691b6e8bbee002c2c0107e579dc_1a4c6b9691b6e8bbee002c2c0107e579dc" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_mesh_loc_local::precision_mm</definition>
+        <argsstring></argsstring>
+        <name>precision_mm</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Precision of the location in millimeters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_loc.h" line="83" column="10" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Local location parameters. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/gen_loc.h" line="67" column="1" bodyfile="include/bluetooth/mesh/gen_loc.h" bodystart="67" bodyend="84"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__loc__local_a055a1f7ee1c32405d1fb5ca502bd8154_1a055a1f7ee1c32405d1fb5ca502bd8154" prot="public" virt="non-virtual"><scope>bt_mesh_loc_local</scope><name>altitude</name></member>
+      <member refid="structbt__mesh__loc__local_af0df07b45cbdb2e7f5e755345dfe6390_1af0df07b45cbdb2e7f5e755345dfe6390" prot="public" virt="non-virtual"><scope>bt_mesh_loc_local</scope><name>east</name></member>
+      <member refid="structbt__mesh__loc__local_aa9c0fb7e24956dff21fc08e248249939_1aa9c0fb7e24956dff21fc08e248249939" prot="public" virt="non-virtual"><scope>bt_mesh_loc_local</scope><name>floor_number</name></member>
+      <member refid="structbt__mesh__loc__local_a30b45031c26807eafa27aa644be0e48d_1a30b45031c26807eafa27aa644be0e48d" prot="public" virt="non-virtual"><scope>bt_mesh_loc_local</scope><name>is_mobile</name></member>
+      <member refid="structbt__mesh__loc__local_af359cf9d35c326d847505904344587a4_1af359cf9d35c326d847505904344587a4" prot="public" virt="non-virtual"><scope>bt_mesh_loc_local</scope><name>north</name></member>
+      <member refid="structbt__mesh__loc__local_a4c6b9691b6e8bbee002c2c0107e579dc_1a4c6b9691b6e8bbee002c2c0107e579dc" prot="public" virt="non-virtual"><scope>bt_mesh_loc_local</scope><name>precision_mm</name></member>
+      <member refid="structbt__mesh__loc__local_acd481c50ed9c51fc8b1f9ddefe6c7bb5_1acd481c50ed9c51fc8b1f9ddefe6c7bb5" prot="public" virt="non-virtual"><scope>bt_mesh_loc_local</scope><name>time_delta</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

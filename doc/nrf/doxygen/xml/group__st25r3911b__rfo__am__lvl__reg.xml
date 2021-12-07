@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__rfo__am__lvl__reg" kind="group">
+    <compoundname>st25r3911b_rfo_am_lvl_reg</compoundname>
+    <title>RFO AM Modulated Level</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__rfo__am__lvl__reg_1ga5a656549d6610d7dbd7daaa16d128f28" prot="public" static="no">
+        <name>ST25R3911B_REG_RFO_AM_LVL_DRAM0</name>
+        <initializer>BIT(0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="492" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="492" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__rfo__am__lvl__reg_1gaccf18282eac7f030f7cb8bd0b1519e89" prot="public" static="no">
+        <name>ST25R3911B_REG_RFO_AM_LVL_DRAM1</name>
+        <initializer>BIT(1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="493" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="493" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__rfo__am__lvl__reg_1ga73a1291cad408780407847579b3accd3" prot="public" static="no">
+        <name>ST25R3911B_REG_RFO_AM_LVL_DRAM2</name>
+        <initializer>BIT(2)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="494" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="494" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__rfo__am__lvl__reg_1ga6fd811f9604d3799c08561ad5c5df0a6" prot="public" static="no">
+        <name>ST25R3911B_REG_RFO_AM_LVL_DRAM3</name>
+        <initializer>BIT(3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="495" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="495" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__rfo__am__lvl__reg_1gafe321c6fc13b25b9c56c5baeb0e72d22" prot="public" static="no">
+        <name>ST25R3911B_REG_RFO_AM_LVL_DRAM4</name>
+        <initializer>BIT(4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="496" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="496" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__rfo__am__lvl__reg_1ga1cb2afdf703e77638876b047f2e86720" prot="public" static="no">
+        <name>ST25R3911B_REG_RFO_AM_LVL_DRAM5</name>
+        <initializer>BIT(5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="497" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="497" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__rfo__am__lvl__reg_1gaf2fd76109d6bf0e66298a9c5496f609e" prot="public" static="no">
+        <name>ST25R3911B_REG_RFO_AM_LVL_DRAM6</name>
+        <initializer>BIT(6)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="498" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="498" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__rfo__am__lvl__reg_1gaa62150e22c87bbe9e4af4debad7c64de" prot="public" static="no">
+        <name>ST25R3911B_REG_RFO_AM_LVL_DRAM7</name>
+        <initializer>BIT(7)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="499" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="499" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Definition Register bits </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

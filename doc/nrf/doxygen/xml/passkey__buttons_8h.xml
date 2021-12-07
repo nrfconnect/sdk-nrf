@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="passkey__buttons_8h" kind="file" language="C++">
+    <compoundname>passkey_buttons.h</compoundname>
+    <includes refid="key__id_8h" local="no">caf/key_id.h</includes>
+    <includedby refid="passkey__buttons__def_8h" local="yes">applications/nrf_desktop/configuration/nrf52kbd_nrf52832/passkey_buttons_def.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/common/passkey_buttons.h</label>
+        <link refid="passkey__buttons_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>caf/key_id.h</label>
+        <link refid="key__id_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>sys/util.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/common/passkey_buttons.h</label>
+        <link refid="passkey__buttons_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>applications/nrf_desktop/configuration/nrf52kbd_nrf52832/passkey_buttons_def.h</label>
+        <link refid="passkey__buttons__def_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structpasskey__input__config" prot="public">passkey_input_config</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="passkey__buttons_8h_a6d96a3f51e2f1507569e93aeb811a2d7_1a6d96a3f51e2f1507569e93aeb811a2d7" prot="public" static="no">
+        <name>DIGIT_CNT</name>
+        <initializer>10</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/passkey_buttons.h" line="12" column="9" bodyfile="applications/nrf_desktop/configuration/common/passkey_buttons.h" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_PASSKEY_BUTTONS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_PASSKEY_BUTTONS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="key__id_8h" kindref="compound">caf/key_id.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12" refid="passkey__buttons_8h_a6d96a3f51e2f1507569e93aeb811a2d7_1a6d96a3f51e2f1507569e93aeb811a2d7" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DIGIT_CNT<sp/>10</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14" refid="structpasskey__input__config" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structpasskey__input__config" kindref="compound">passkey_input_config</ref><sp/>{</highlight></codeline>
+<codeline lineno="15" refid="structpasskey__input__config_a713f1c30142f0df50b7c4c6565fece44_1a713f1c30142f0df50b7c4c6565fece44" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint16_t<sp/><ref refid="structpasskey__input__config_a713f1c30142f0df50b7c4c6565fece44_1a713f1c30142f0df50b7c4c6565fece44" kindref="member">key_ids</ref>[<ref refid="passkey__buttons_8h_a6d96a3f51e2f1507569e93aeb811a2d7_1a6d96a3f51e2f1507569e93aeb811a2d7" kindref="member">DIGIT_CNT</ref>];</highlight></codeline>
+<codeline lineno="16"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_PASSKEY_BUTTONS_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/common/passkey_buttons.h"/>
+  </compounddef>
+</doxygen>

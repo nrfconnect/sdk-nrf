@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__time__zone__status" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_time_zone_status</compoundname>
+    <includes refid="time_8h" local="no">time.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__time__zone__status_a66a0e16cdb24a6f0ecfa1cf1955bda70_1a66a0e16cdb24a6f0ecfa1cf1955bda70" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t bt_mesh_time_zone_status::current_offset</definition>
+        <argsstring></argsstring>
+        <name>current_offset</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current zone offset in 15-minute increments. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time.h" line="68" column="9" bodyfile="include/bluetooth/mesh/time.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__time__zone__status_a1e550f9f334dede564df1b76506055ae_1a1e550f9f334dede564df1b76506055ae" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__time__zone__change" kindref="compound">bt_mesh_time_zone_change</ref></type>
+        <definition>struct bt_mesh_time_zone_change bt_mesh_time_zone_status::time_zone_change</definition>
+        <argsstring></argsstring>
+        <name>time_zone_change</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>New zone update context </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time.h" line="70" column="31" bodyfile="include/bluetooth/mesh/time.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Parameters for the Time Zone Status message. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_mesh_time_zone_change</label>
+        <link refid="structbt__mesh__time__zone__change"/>
+      </node>
+      <node id="1">
+        <label>bt_mesh_time_zone_status</label>
+        <link refid="structbt__mesh__time__zone__status"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>time_zone_change</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/time.h" line="66" column="1" bodyfile="include/bluetooth/mesh/time.h" bodystart="66" bodyend="71"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__time__zone__status_a66a0e16cdb24a6f0ecfa1cf1955bda70_1a66a0e16cdb24a6f0ecfa1cf1955bda70" prot="public" virt="non-virtual"><scope>bt_mesh_time_zone_status</scope><name>current_offset</name></member>
+      <member refid="structbt__mesh__time__zone__status_a1e550f9f334dede564df1b76506055ae_1a1e550f9f334dede564df1b76506055ae" prot="public" virt="non-virtual"><scope>bt_mesh_time_zone_status</scope><name>time_zone_change</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

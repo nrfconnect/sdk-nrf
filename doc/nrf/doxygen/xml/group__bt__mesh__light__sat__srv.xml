@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__light__sat__srv" kind="group">
+    <compoundname>bt_mesh_light_sat_srv</compoundname>
+    <title>Light Saturation Server model</title>
+    <innerclass refid="structbt__mesh__light__sat__srv__handlers" prot="public">bt_mesh_light_sat_srv_handlers</innerclass>
+    <innerclass refid="structbt__mesh__light__sat__srv" prot="public">bt_mesh_light_sat_srv</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__light__sat__srv_1ga1638a9cc7fe4ee43d37af5247587d01b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_sat_srv_pub</definition>
+        <argsstring>(struct bt_mesh_light_sat_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_sat_status *status)</argsstring>
+        <name>bt_mesh_light_sat_srv_pub</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__sat__srv" kindref="compound">bt_mesh_light_sat_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__light__sat__status" kindref="compound">bt_mesh_light_sat_status</ref> *</type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+<para>Publish the current HSL Saturation status. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Asynchronously publishes a HSL Saturation status message with the configured publish parameters.</para>
+<para><simplesect kind="note"><para>This API is only used publishing unprompted status messages. Response messages for get and set messages are handled internally.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server instance to publish on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context to send with, or NULL to send with the default publish parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Status parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Successfully sent the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_sat_srv.h" line="177" column="5" declfile="include/bluetooth/mesh/light_sat_srv.h" declline="177" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__light__sat__srv_1gad610b512e40be7a4a020f61c58356387" prot="public" static="no">
+        <name>BT_MESH_LIGHT_SAT_SRV_INIT</name>
+        <param><defname>_handlers</defname></param>
+        <initializer>	{                                                                      \
+		.handlers = _handlers,                                         \
+		.lvl = <ref refid="group__bt__mesh__lvl__srv_ga05ada4a3cfd8fc616119ce4599365e4f_1ga05ada4a3cfd8fc616119ce4599365e4f" kindref="member">BT_MESH_LVL_SRV_INIT</ref>(                                   \
+			&amp;_bt_mesh_light_sat_srv_lvl_handlers),                 \
+		.range = <ref refid="group__bt__mesh__light__hsl_gaef4a7c65cf4d866162c21b5ebe955b6f_1gaef4a7c65cf4d866162c21b5ebe955b6f" kindref="member">BT_MESH_LIGHT_HSL_OP_RANGE_DEFAULT</ref>,                   \
+	}</initializer>
+        <briefdescription>
+<para>Initialization parameters for a <ref refid="group__bt__mesh__light__sat__srv" kindref="compound">Light Saturation Server model</ref> instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_handlers</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HSL Saturation Server callbacks. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_sat_srv.h" line="34" column="9" bodyfile="include/bluetooth/mesh/light_sat_srv.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__light__sat__srv_1ga7df3bc1cbd7dfef23b2f410bf433b4e4" prot="public" static="no">
+        <name>BT_MESH_MODEL_LIGHT_SAT_SRV</name>
+        <param><defname>_srv</defname></param>
+        <initializer>	<ref refid="group__bt__mesh__lvl__srv_ga32abdd2d1988237709a40da91cbf54b4_1ga32abdd2d1988237709a40da91cbf54b4" kindref="member">BT_MESH_MODEL_LVL_SRV</ref>(&amp;(_srv)-&gt;lvl),                                   \
+	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_HSL_SAT_SRV,                   \
+			 _bt_mesh_light_sat_srv_op, &amp;(_srv)-&gt;pub,              \
+			 BT_MESH_MODEL_USER_DATA(struct <ref refid="structbt__mesh__light__sat__srv" kindref="compound">bt_mesh_light_sat_srv</ref>, \
+						 _srv),                        \
+			 &amp;_bt_mesh_light_sat_srv_cb)</initializer>
+        <briefdescription>
+<para>HSL Saturation Server model composition data entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__light__sat__srv" kindref="compound">Light Saturation Server model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_sat_srv.h" line="48" column="9" bodyfile="include/bluetooth/mesh/light_sat_srv.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Light Saturation Server model. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

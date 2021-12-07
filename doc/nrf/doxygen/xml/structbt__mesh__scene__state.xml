@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__scene__state" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_scene_state</compoundname>
+    <includes refid="scene_8h" local="no">scene.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__scene__state_a45be80104fc73277314f55545d9f4edf_1a45be80104fc73277314f55545d9f4edf" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__mesh__scene_ga2839518fe4e7237b19a640d8e94bc193_1ga2839518fe4e7237b19a640d8e94bc193" kindref="member">bt_mesh_scene_status</ref></type>
+        <definition>enum bt_mesh_scene_status bt_mesh_scene_state::status</definition>
+        <argsstring></argsstring>
+        <name>status</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Status of the previous operation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene.h" line="39" column="26" bodyfile="include/bluetooth/mesh/scene.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scene__state_a8239fc705ec51127ceeaced2b9c42ee9_1a8239fc705ec51127ceeaced2b9c42ee9" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_scene_state::current</definition>
+        <argsstring></argsstring>
+        <name>current</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current scene, or <ref refid="group__bt__mesh__scene_gaf68df55bc0247c8e0d90182c34fa35d5_1gaf68df55bc0247c8e0d90182c34fa35d5" kindref="member">BT_MESH_SCENE_NONE</ref> if no scene is active. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene.h" line="41" column="10" bodyfile="include/bluetooth/mesh/scene.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scene__state_af5c97002e3c638f5e990e69852fae0f4_1af5c97002e3c638f5e990e69852fae0f4" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_scene_state::target</definition>
+        <argsstring></argsstring>
+        <name>target</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Target scene, or <ref refid="group__bt__mesh__scene_gaf68df55bc0247c8e0d90182c34fa35d5_1gaf68df55bc0247c8e0d90182c34fa35d5" kindref="member">BT_MESH_SCENE_NONE</ref> if no transition is in progress. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene.h" line="45" column="10" bodyfile="include/bluetooth/mesh/scene.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scene__state_ae8f6d7e31ae4e73eb1082e47179f3233_1ae8f6d7e31ae4e73eb1082e47179f3233" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_mesh_scene_state::remaining_time</definition>
+        <argsstring></argsstring>
+        <name>remaining_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Remaining time of the scene transition in milliseconds. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene.h" line="47" column="10" bodyfile="include/bluetooth/mesh/scene.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Scene state </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/scene.h" line="37" column="1" bodyfile="include/bluetooth/mesh/scene.h" bodystart="37" bodyend="48"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__scene__state_a8239fc705ec51127ceeaced2b9c42ee9_1a8239fc705ec51127ceeaced2b9c42ee9" prot="public" virt="non-virtual"><scope>bt_mesh_scene_state</scope><name>current</name></member>
+      <member refid="structbt__mesh__scene__state_ae8f6d7e31ae4e73eb1082e47179f3233_1ae8f6d7e31ae4e73eb1082e47179f3233" prot="public" virt="non-virtual"><scope>bt_mesh_scene_state</scope><name>remaining_time</name></member>
+      <member refid="structbt__mesh__scene__state_a45be80104fc73277314f55545d9f4edf_1a45be80104fc73277314f55545d9f4edf" prot="public" virt="non-virtual"><scope>bt_mesh_scene_state</scope><name>status</name></member>
+      <member refid="structbt__mesh__scene__state_af5c97002e3c638f5e990e69852fae0f4_1af5c97002e3c638f5e990e69852fae0f4" prot="public" virt="non-virtual"><scope>bt_mesh_scene_state</scope><name>target</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,221 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="gpio__pins_8h" kind="file" language="C++">
+    <compoundname>gpio_pins.h</compoundname>
+    <includedby refid="machine__learning_2configuration_2nrf52840dk__nrf52840_2buttons__def_8h" local="no">applications/machine_learning/configuration/nrf52840dk_nrf52840/buttons_def.h</includedby>
+    <includedby refid="machine__learning_2configuration_2nrf5340dk__nrf5340__cpuapp_2buttons__def_8h" local="no">applications/machine_learning/configuration/nrf5340dk_nrf5340_cpuapp/buttons_def.h</includedby>
+    <includedby refid="machine__learning_2configuration_2thingy52__nrf52832_2buttons__def_8h" local="no">applications/machine_learning/configuration/thingy52_nrf52832/buttons_def.h</includedby>
+    <includedby refid="machine__learning_2configuration_2thingy53__nrf5340__cpuapp_2buttons__def_8h" local="no">applications/machine_learning/configuration/thingy53_nrf5340_cpuapp/buttons_def.h</includedby>
+    <includedby refid="machine__learning_2configuration_2thingy53__nrf5340__cpuapp__ns_2buttons__def_8h" local="no">applications/machine_learning/configuration/thingy53_nrf5340_cpuapp_ns/buttons_def.h</includedby>
+    <includedby refid="selector__hw_8h" local="no">applications/nrf_desktop/configuration/common/selector_hw.h</includedby>
+    <includedby refid="nrf__desktop_2configuration_2nrf52810dmouse__nrf52810_2buttons__def_8h" local="no">applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/buttons_def.h</includedby>
+    <includedby refid="nrf__desktop_2configuration_2nrf52820dongle__nrf52820_2buttons__def_8h" local="no">applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/buttons_def.h</includedby>
+    <includedby refid="nrf__desktop_2configuration_2nrf52833dk__nrf52833_2buttons__def_8h" local="no">applications/nrf_desktop/configuration/nrf52833dk_nrf52833/buttons_def.h</includedby>
+    <includedby refid="nrf__desktop_2configuration_2nrf52833dongle__nrf52833_2buttons__def_8h" local="no">applications/nrf_desktop/configuration/nrf52833dongle_nrf52833/buttons_def.h</includedby>
+    <includedby refid="nrf__desktop_2configuration_2nrf52840dk__nrf52840_2buttons__def_8h" local="no">applications/nrf_desktop/configuration/nrf52840dk_nrf52840/buttons_def.h</includedby>
+    <includedby refid="nrf__desktop_2configuration_2nrf52840dongle__nrf52840_2buttons__def_8h" local="no">applications/nrf_desktop/configuration/nrf52840dongle_nrf52840/buttons_def.h</includedby>
+    <includedby refid="nrf__desktop_2configuration_2nrf52840gmouse__nrf52840_2buttons__def_8h" local="no">applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/buttons_def.h</includedby>
+    <includedby refid="nrf__desktop_2configuration_2nrf52dmouse__nrf52832_2buttons__def_8h" local="no">applications/nrf_desktop/configuration/nrf52dmouse_nrf52832/buttons_def.h</includedby>
+    <includedby refid="nrf__desktop_2configuration_2nrf52kbd__nrf52832_2buttons__def_8h" local="no">applications/nrf_desktop/configuration/nrf52kbd_nrf52832/buttons_def.h</includedby>
+    <includedby refid="nrf__desktop_2configuration_2nrf5340dk__nrf5340__cpuapp_2buttons__def_8h" local="no">applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp/buttons_def.h</includedby>
+    <includedby refid="pelion__client_2configuration_2nrf52840dk__nrf52840_2buttons__def_8h" local="no">applications/pelion_client/configuration/nrf52840dk_nrf52840/buttons_def.h</includedby>
+    <includedby refid="pelion__client_2configuration_2nrf5340dk__nrf5340__cpuapp_2buttons__def_8h" local="no">applications/pelion_client/configuration/nrf5340dk_nrf5340_cpuapp/buttons_def.h</includedby>
+    <includedby refid="pelion__client_2configuration_2nrf5340dk__nrf5340__cpuapp__ns_2buttons__def_8h" local="no">applications/pelion_client/configuration/nrf5340dk_nrf5340_cpuapp_ns/buttons_def.h</includedby>
+    <includedby refid="pelion__client_2configuration_2nrf9160dk__nrf9160__ns_2buttons__def_8h" local="no">applications/pelion_client/configuration/nrf9160dk_nrf9160_ns/buttons_def.h</includedby>
+    <invincdepgraph>
+      <node id="2">
+        <label>applications/machine_learning/configuration/nrf52840dk_nrf52840/buttons_def.h</label>
+        <link refid="machine__learning_2configuration_2nrf52840dk__nrf52840_2buttons__def_8h"/>
+      </node>
+      <node id="3">
+        <label>applications/machine_learning/configuration/nrf5340dk_nrf5340_cpuapp/buttons_def.h</label>
+        <link refid="machine__learning_2configuration_2nrf5340dk__nrf5340__cpuapp_2buttons__def_8h"/>
+      </node>
+      <node id="4">
+        <label>applications/machine_learning/configuration/thingy52_nrf52832/buttons_def.h</label>
+        <link refid="machine__learning_2configuration_2thingy52__nrf52832_2buttons__def_8h"/>
+      </node>
+      <node id="5">
+        <label>applications/machine_learning/configuration/thingy53_nrf5340_cpuapp/buttons_def.h</label>
+        <link refid="machine__learning_2configuration_2thingy53__nrf5340__cpuapp_2buttons__def_8h"/>
+      </node>
+      <node id="6">
+        <label>applications/machine_learning/configuration/thingy53_nrf5340_cpuapp_ns/buttons_def.h</label>
+        <link refid="machine__learning_2configuration_2thingy53__nrf5340__cpuapp__ns_2buttons__def_8h"/>
+      </node>
+      <node id="7">
+        <label>applications/nrf_desktop/configuration/common/selector_hw.h</label>
+        <link refid="selector__hw_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/buttons_def.h</label>
+        <link refid="nrf__desktop_2configuration_2nrf52810dmouse__nrf52810_2buttons__def_8h"/>
+      </node>
+      <node id="10">
+        <label>applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/buttons_def.h</label>
+        <link refid="nrf__desktop_2configuration_2nrf52820dongle__nrf52820_2buttons__def_8h"/>
+      </node>
+      <node id="11">
+        <label>applications/nrf_desktop/configuration/nrf52833dk_nrf52833/buttons_def.h</label>
+        <link refid="nrf__desktop_2configuration_2nrf52833dk__nrf52833_2buttons__def_8h"/>
+      </node>
+      <node id="12">
+        <label>applications/nrf_desktop/configuration/nrf52833dongle_nrf52833/buttons_def.h</label>
+        <link refid="nrf__desktop_2configuration_2nrf52833dongle__nrf52833_2buttons__def_8h"/>
+      </node>
+      <node id="13">
+        <label>applications/nrf_desktop/configuration/nrf52840dk_nrf52840/buttons_def.h</label>
+        <link refid="nrf__desktop_2configuration_2nrf52840dk__nrf52840_2buttons__def_8h"/>
+      </node>
+      <node id="14">
+        <label>applications/nrf_desktop/configuration/nrf52840dongle_nrf52840/buttons_def.h</label>
+        <link refid="nrf__desktop_2configuration_2nrf52840dongle__nrf52840_2buttons__def_8h"/>
+      </node>
+      <node id="15">
+        <label>applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/buttons_def.h</label>
+        <link refid="nrf__desktop_2configuration_2nrf52840gmouse__nrf52840_2buttons__def_8h"/>
+      </node>
+      <node id="8">
+        <label>applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/selector_hw_def.h</label>
+        <link refid="selector__hw__def_8h"/>
+      </node>
+      <node id="16">
+        <label>applications/nrf_desktop/configuration/nrf52dmouse_nrf52832/buttons_def.h</label>
+        <link refid="nrf__desktop_2configuration_2nrf52dmouse__nrf52832_2buttons__def_8h"/>
+      </node>
+      <node id="17">
+        <label>applications/nrf_desktop/configuration/nrf52kbd_nrf52832/buttons_def.h</label>
+        <link refid="nrf__desktop_2configuration_2nrf52kbd__nrf52832_2buttons__def_8h"/>
+      </node>
+      <node id="18">
+        <label>applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp/buttons_def.h</label>
+        <link refid="nrf__desktop_2configuration_2nrf5340dk__nrf5340__cpuapp_2buttons__def_8h"/>
+      </node>
+      <node id="19">
+        <label>applications/pelion_client/configuration/nrf52840dk_nrf52840/buttons_def.h</label>
+        <link refid="pelion__client_2configuration_2nrf52840dk__nrf52840_2buttons__def_8h"/>
+      </node>
+      <node id="20">
+        <label>applications/pelion_client/configuration/nrf5340dk_nrf5340_cpuapp/buttons_def.h</label>
+        <link refid="pelion__client_2configuration_2nrf5340dk__nrf5340__cpuapp_2buttons__def_8h"/>
+      </node>
+      <node id="21">
+        <label>applications/pelion_client/configuration/nrf5340dk_nrf5340_cpuapp_ns/buttons_def.h</label>
+        <link refid="pelion__client_2configuration_2nrf5340dk__nrf5340__cpuapp__ns_2buttons__def_8h"/>
+      </node>
+      <node id="22">
+        <label>applications/pelion_client/configuration/nrf9160dk_nrf9160_ns/buttons_def.h</label>
+        <link refid="pelion__client_2configuration_2nrf9160dk__nrf9160__ns_2buttons__def_8h"/>
+      </node>
+      <node id="1">
+        <label>include/caf/gpio_pins.h</label>
+        <link refid="gpio__pins_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structgpio__pin" prot="public">gpio_pin</innerclass>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="gpio__pins_8h_a671c0ff8720c937f713f372efe27ed04_1a671c0ff8720c937f713f372efe27ed04" prot="public" static="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const port_map[]</definition>
+        <argsstring>[]</argsstring>
+        <name>port_map</name>
+        <initializer>= {
+
+
+
+		NULL,
+
+
+
+
+		NULL,
+
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/gpio_pins.h" line="10" column="26" bodyfile="include/caf/gpio_pins.h" bodystart="10" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019-2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_GPIO_PINS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_GPIO_PINS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10" refid="gpio__pins_8h_a671c0ff8720c937f713f372efe27ed04_1a671c0ff8720c937f713f372efe27ed04" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="gpio__pins_8h_a671c0ff8720c937f713f372efe27ed04_1a671c0ff8720c937f713f372efe27ed04" kindref="member">port_map</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_GPIO_NRF_P0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>DT_LABEL(DT_NODELABEL(gpio0)),</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL,</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>CONFIG_GPIO_NRF_P0<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_GPIO_NRF_P1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>DT_LABEL(DT_NODELABEL(gpio1)),</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL,</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>CONFIG_GPIO_NRF_P1<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="structgpio__pin" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structgpio__pin" kindref="compound">gpio_pin</ref><sp/>{</highlight></codeline>
+<codeline lineno="24" refid="structgpio__pin_a212f457b42f09b06a050c865bd4f4f2c_1a212f457b42f09b06a050c865bd4f4f2c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structgpio__pin_a212f457b42f09b06a050c865bd4f4f2c_1a212f457b42f09b06a050c865bd4f4f2c" kindref="member">port</ref>;</highlight></codeline>
+<codeline lineno="25" refid="structgpio__pin_ae241fa63054d5bc735d803e4b2de3182_1ae241fa63054d5bc735d803e4b2de3182" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structgpio__pin_ae241fa63054d5bc735d803e4b2de3182_1ae241fa63054d5bc735d803e4b2de3182" kindref="member">pin</ref>;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_GPIO_PINS_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/caf/gpio_pins.h"/>
+  </compounddef>
+</doxygen>

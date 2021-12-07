@@ -154,7 +154,7 @@ The following table lists modules that are part of the application.
 
 All modules react to ``module_state_event``.
 
-On top of these modules, the application uses the following modules from :ref:`lib_caf` (CAF), a set of generic modules based on the Event Manager and available to all applications in the |NCS|:
+On top of these modules, the application uses the following modules :ref:`lib_caf` (CAF), a set of generic modules based on the Event Manager and available to all applications in the |NCS|:
 
 * :ref:`caf_buttons`
 * :ref:`caf_leds`
@@ -375,13 +375,13 @@ The following table shows the LED behavior demonstrated by the application:
 +-------------------------------+------------------------------------+--------------------------------------------------------------------------------+
 | Status                        | LED behavior                       | Related application state                                                      |
 +===============================+====================================+================================================================================+
-| Network back end disconnected | **LED1** breathing (500-ms period) | NET_STATE_DISABLED or NET_STATE_DISCONNECTED                                   |
+| Network back end disconnected | **LED1** breathing (500 ms period) | NET_STATE_DISABLED or NET_STATE_DISCONNECTED                                   |
 +-------------------------------+------------------------------------+--------------------------------------------------------------------------------+
 | Network back end connected    | **LED1** solid on                  | NET_STATE_CONNECTED                                                            |
 +-------------------------------+------------------------------------+--------------------------------------------------------------------------------+
-| Pelion connection search      | **LED2** breathing (500-ms period) | PELION_STATE_DISABLED or PELION_STATE_INITIALIZED or PELION_STATE_UNREGISTERED |
+| Pelion connection search      | **LED2** breathing (500 ms period) | PELION_STATE_DISABLED or PELION_STATE_INITIALIZED or PELION_STATE_UNREGISTERED |
 +-------------------------------+------------------------------------+--------------------------------------------------------------------------------+
-| Pelion device suspended       | **LED2** breathing (200-ms period) | PELION_STATE_SUSPENDED                                                         |
+| Pelion device suspended       | **LED2** breathing (200 ms period) | PELION_STATE_SUSPENDED                                                         |
 +-------------------------------+------------------------------------+--------------------------------------------------------------------------------+
 | Pelion connection established | **LED2** solid on                  | PELION_STATE_REGISTERED                                                        |
 +-------------------------------+------------------------------------+--------------------------------------------------------------------------------+
@@ -433,9 +433,9 @@ Along with the bootloader, you must also enable an image manager with the :kconf
 When MCUboot is enabled the |NCS| build system generates the update image that can be uploaded to the secondary (update) slot.
 The resulting signed file named :file:`app_update.bin` can be found in the build directory.
 For more information refer to :ref:`mcuboot_ncs`.
-This image is signed with MCUboot private key.
-By default, if private key is present at :file:`applications/pelion_client/configuration/${BOARD_NAME}/mcuboot_private.pem` it will be used for signing process.
-If key is not present and configuration does not point to any specific key path, the default sample MCUBoot key will be used.
+This image is signed with the MCUboot private key.
+By default, if a private key is present at :file:`applications/pelion_client/configuration/${BOARD_NAME}/mcuboot_private.pem` it will be used for the signing process.
+If a key is not present and configuration does not point to any specific key path, the default sample MCUBoot key will be used.
 
 Additionally, if the application image is large, you may need to store the update image on an external flash device.
 In such case, enable the external flash support and correctly configure the partition layout.
@@ -443,7 +443,7 @@ In such case, enable the external flash support and correctly configure the part
 The Pelion Device Management library's update manager is enabled when you select the :kconfig:`CONFIG_PELION_UPDATE` Kconfig option.
 This option enables components required for image transport and storage.
 
-For the update campaign to be recognized and the image be accepted, you need to provision the device with the valid update resources (device unique identifiers and certificate used for update process validation).
+For the update campaign to be recognized and the image to be accepted, you need to provision the device with the valid update resources (device unique identifiers and certificate used for update process validation).
 These resources are normally stored on device at production time.
 To simplify the development process, you can have the update resources created by the update manifest generation tool (see `Pelion Manifest Tool for version 4.7`_ in the Pelion documentation).
 The generated C file must be stored to the :file:`update_default_resources.c` file, located in the :file:`applications/pelion_client/configuration/common` directory.
@@ -458,7 +458,7 @@ You can find the configuration files in the :file:`applications/pelion_client/co
 For each supported build target, you can find a subdirectory that contains all configuration files for the given target.
 Configuration files are provided for different `nRF Pelion Client build types`_ for each supported build target.
 
-The build types names are replacing the *${CMAKE_BUILD_TYPE}* variable in the configuration file names (for example, :file:`pm_static_ZDebug.yml`).
+The build type names are replacing the *${CMAKE_BUILD_TYPE}* variable in the configuration file names (for example, :file:`pm_static_ZDebug.yml`).
 If the given build type is not supported on the selected build target, an error message appears when `Building and running`_.
 In addition to the build types mentioned above, some build targets can provide more build types, which can be used to generate an application in a specific variant.
 The selected build type impacts the configuration of all system elements that are enabled (application, bootloader, partition layout).

@@ -1,0 +1,500 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="ch__msg_8h" kind="file" language="C++">
+    <compoundname>ch_msg.h</compoundname>
+    <includes local="no">stddef.h</includes>
+    <includes local="no">zephyr/types.h</includes>
+    <includes refid="ndef_2ch_8h" local="no">nfc/ndef/ch.h</includes>
+    <includes refid="le__oob__rec_8h" local="no">nfc/ndef/le_oob_rec.h</includes>
+    <incdepgraph>
+      <node id="4">
+        <label>nfc/ndef/ch.h</label>
+        <link refid="ndef_2ch_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/nfc/ndef/ch_msg.h</label>
+        <link refid="ch__msg_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>nfc/ndef/le_oob_rec.h</label>
+        <link refid="le__oob__rec_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>nfc/ndef/msg.h</label>
+        <link refid="msg_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>nfc/ndef/payload_type_common.h</label>
+        <link refid="payload__type__common_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>nfc/ndef/record.h</label>
+        <link refid="record_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>bluetooth/bluetooth.h</label>
+      </node>
+      <node id="2">
+        <label>stddef.h</label>
+      </node>
+      <node id="5">
+        <label>stdint.h</label>
+      </node>
+      <node id="6">
+        <label>string.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structnfc__ndef__ch__msg__records" prot="public">nfc_ndef_ch_msg_records</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__ndef__ch__msg_gafb5c0d9a5e876fab9098771f109cd202_1gafb5c0d9a5e876fab9098771f109cd202" prot="public" static="no">
+        <name>NFC_NDEF_CH_MSG_MAJOR_VER</name>
+        <initializer>CONFIG_NFC_NDEF_CH_MAJOR_VERSION</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_msg.h" line="30" column="9" bodyfile="include/nfc/ndef/ch_msg.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__ndef__ch__msg_ga7bf35c812a36ad804bc6db740330bda0_1ga7bf35c812a36ad804bc6db740330bda0" prot="public" static="no">
+        <name>NFC_NDEF_CH_MSG_MINOR_VER</name>
+        <initializer>CONFIG_NFC_NDEF_CH_MINOR_VERSION</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_msg.h" line="31" column="9" bodyfile="include/nfc/ndef/ch_msg.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__ndef__ch__msg_ga3177df93eb0294ef581d40bee47702ca_1ga3177df93eb0294ef581d40bee47702ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_ch_msg_le_oob_encode</definition>
+        <argsstring>(const struct nfc_ndef_le_oob_rec_payload_desc *oob, uint8_t *buf, size_t *len)</argsstring>
+        <name>nfc_ndef_ch_msg_le_oob_encode</name>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__le__oob__rec__payload__desc" kindref="compound">nfc_ndef_le_oob_rec_payload_desc</ref> *</type>
+          <declname>oob</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Encode an NFC NDEF LE OOB message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function encodes an NFC NDEF message into a buffer.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">oob</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the LE OOB Record payload descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer for the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the available memory for the message as input. Size of the generated message as output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_msg.h" line="62" column="5" declfile="include/nfc/ndef/ch_msg.h" declline="62" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__ch__msg_ga0f5bc870aab55885540cf4de2e744806_1ga0f5bc870aab55885540cf4de2e744806" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_ch_msg_hs_create</definition>
+        <argsstring>(struct nfc_ndef_msg_desc *msg, struct nfc_ndef_record_desc *hs_rec, const struct nfc_ndef_ch_msg_records *records)</argsstring>
+        <name>nfc_ndef_ch_msg_hs_create</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref> *</type>
+          <declname>msg</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>hs_rec</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__ch__msg__records" kindref="compound">nfc_ndef_ch_msg_records</ref> *</type>
+          <declname>records</declname>
+        </param>
+        <briefdescription>
+<para>Create an NFC NDEF Handover Select message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function create an NFC NDEF message. It create a nested NDEF message with the Alternative Carrier Records. Next the Records with the Carrier data are added into the main Connection Hanover Select message. Number of the Alternative Carrier Records must be equal to the number of the Carrier Records.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to NDEF message. This message is initialized with Connection Handover Record. The message must be able to keep at least count of the Alternative Carrier Records + 1 records. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">hs_rec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Handover Select Record. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">records</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to structure which contains the Alternative Carrier Records and the Carrier Records</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_msg.h" line="85" column="5" declfile="include/nfc/ndef/ch_msg.h" declline="85" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__ch__msg_ga414c6150e5843da0f8bdaca8f93f3ba0_1ga414c6150e5843da0f8bdaca8f93f3ba0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_ch_msg_hr_create</definition>
+        <argsstring>(struct nfc_ndef_msg_desc *msg, struct nfc_ndef_record_desc *hr_rec, const struct nfc_ndef_record_desc *cr_rec, const struct nfc_ndef_ch_msg_records *records)</argsstring>
+        <name>nfc_ndef_ch_msg_hr_create</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref> *</type>
+          <declname>msg</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>hr_rec</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>cr_rec</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__ch__msg__records" kindref="compound">nfc_ndef_ch_msg_records</ref> *</type>
+          <declname>records</declname>
+        </param>
+        <briefdescription>
+<para>Encode an NFC NDEF Handover Request message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function create an NFC NDEF message. It create a nested NDEF message with the Alternative Carrier Records. Next the Records with the Carrier data are added into the main Connection Hanover Request message. Number of the Alternative Carrier Records must be equal to the number of the Carrier Records.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to NDEF message. This message is initialized with Connection Handover Record. The message must be able to keep at least count of the Alternative Carrier Records + 1 records. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">hr_rec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Handover Request Record. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cr_rec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Collision Resolution Record. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">records</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to structure which contains the Alternative Carrier Records and the Carrier Records</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_msg.h" line="110" column="5" declfile="include/nfc/ndef/ch_msg.h" declline="110" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__ch__msg_gaa09d0edf5da83025bd5840ea86022f81_1gaa09d0edf5da83025bd5840ea86022f81" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_ch_msg_hm_create</definition>
+        <argsstring>(struct nfc_ndef_msg_desc *msg, struct nfc_ndef_record_desc *hm_rec, const struct nfc_ndef_ch_msg_records *records)</argsstring>
+        <name>nfc_ndef_ch_msg_hm_create</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref> *</type>
+          <declname>msg</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>hm_rec</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__ch__msg__records" kindref="compound">nfc_ndef_ch_msg_records</ref> *</type>
+          <declname>records</declname>
+        </param>
+        <briefdescription>
+<para>Create an NFC NDEF Handover Mediation message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function creates an NFC NDEF message. It create a nested NDEF message with the Alternative Carrier Records. Next the Records with the Carrier data are added into the main Connection Hanover Mediation message. Number of the Alternative Carrier Records must be equal to the number of the Carrier Records.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to NDEF message. This message is initialized with Connection Handover Record. The message must be able to keep at least count of the Alternative Carrier Records + 1 records. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">hm_rec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Handover Mediation Record. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">records</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to structure which contains the Alternative Carrier Records and the Carrier Records</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_msg.h" line="135" column="5" declfile="include/nfc/ndef/ch_msg.h" declline="135" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__ndef__ch__msg_gaa33649cb5b349af31d808e8ca93080af_1gaa33649cb5b349af31d808e8ca93080af" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_ndef_ch_msg_hi_create</definition>
+        <argsstring>(struct nfc_ndef_msg_desc *msg, struct nfc_ndef_record_desc *hi_rec, const struct nfc_ndef_ch_msg_records *records)</argsstring>
+        <name>nfc_ndef_ch_msg_hi_create</name>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref> *</type>
+          <declname>msg</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> *</type>
+          <declname>hi_rec</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structnfc__ndef__ch__msg__records" kindref="compound">nfc_ndef_ch_msg_records</ref> *</type>
+          <declname>records</declname>
+        </param>
+        <briefdescription>
+<para>Create an NFC NDEF Handover Initiate message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function creates an NFC NDEF message. It create a nested NDEF message with the Alternative Carrier Records. Next the Records with the Carrier data are added into the main Connection Hanover Initiate message. Number of the Alternative Carrier Records must be equal to the number of the Carrier Records.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to NDEF message. This message is initialized with Connection Handover Record. The message must be able to keep at least count of the Alternative Carrier Records + 1 records. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">hi_rec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the Handover Initiate Record. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">records</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to structure which contains the Alternative Carrier Records and the Carrier Records</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/ndef/ch_msg.h" line="159" column="5" declfile="include/nfc/ndef/ch_msg.h" declline="159" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NFC_NDEF_CH_MSG_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_NDEF_CH_MSG_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stddef.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="ndef_2ch_8h" kindref="compound">nfc/ndef/ch.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="le__oob__rec_8h" kindref="compound">nfc/ndef/le_oob_rec.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>_cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="group__nfc__ndef__ch__msg_gafb5c0d9a5e876fab9098771f109cd202_1gafb5c0d9a5e876fab9098771f109cd202" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_NDEF_CH_MSG_MAJOR_VER<sp/>CONFIG_NFC_NDEF_CH_MAJOR_VERSION</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="group__nfc__ndef__ch__msg_ga7bf35c812a36ad804bc6db740330bda0_1ga7bf35c812a36ad804bc6db740330bda0" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NFC_NDEF_CH_MSG_MINOR_VER<sp/>CONFIG_NFC_NDEF_CH_MINOR_VERSION</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="structnfc__ndef__ch__msg__records" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__ndef__ch__msg__records" kindref="compound">nfc_ndef_ch_msg_records</ref><sp/>{</highlight></codeline>
+<codeline lineno="40" refid="structnfc__ndef__ch__msg__records_ae71de861f614cac7defdda0a48a14af8_1ae71de861f614cac7defdda0a48a14af8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref><sp/>*<ref refid="structnfc__ndef__ch__msg__records_ae71de861f614cac7defdda0a48a14af8_1ae71de861f614cac7defdda0a48a14af8" kindref="member">ac</ref>;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="structnfc__ndef__ch__msg__records_af07b491320ea80bb20b0f660cebd3752_1af07b491320ea80bb20b0f660cebd3752" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref><sp/>*<ref refid="structnfc__ndef__ch__msg__records_af07b491320ea80bb20b0f660cebd3752_1af07b491320ea80bb20b0f660cebd3752" kindref="member">carrier</ref>;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="structnfc__ndef__ch__msg__records_a74c0497a038ac2a99b306d3f69c8edcc_1a74c0497a038ac2a99b306d3f69c8edcc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structnfc__ndef__ch__msg__records_a74c0497a038ac2a99b306d3f69c8edcc_1a74c0497a038ac2a99b306d3f69c8edcc" kindref="member">cnt</ref>;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="group__nfc__ndef__ch__msg_ga3177df93eb0294ef581d40bee47702ca_1ga3177df93eb0294ef581d40bee47702ca" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__ndef__ch__msg_ga3177df93eb0294ef581d40bee47702ca_1ga3177df93eb0294ef581d40bee47702ca" kindref="member">nfc_ndef_ch_msg_le_oob_encode</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__ndef__le__oob__rec__payload__desc" kindref="compound">nfc_ndef_le_oob_rec_payload_desc</ref><sp/>*oob,</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*buf,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>*len);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="group__nfc__ndef__ch__msg_ga0f5bc870aab55885540cf4de2e744806_1ga0f5bc870aab55885540cf4de2e744806" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__ndef__ch__msg_ga0f5bc870aab55885540cf4de2e744806_1ga0f5bc870aab55885540cf4de2e744806" kindref="member">nfc_ndef_ch_msg_hs_create</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref><sp/>*msg,</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref><sp/>*hs_rec,</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__ndef__ch__msg__records" kindref="compound">nfc_ndef_ch_msg_records</ref><sp/>*records);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110" refid="group__nfc__ndef__ch__msg_ga414c6150e5843da0f8bdaca8f93f3ba0_1ga414c6150e5843da0f8bdaca8f93f3ba0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__ndef__ch__msg_ga414c6150e5843da0f8bdaca8f93f3ba0_1ga414c6150e5843da0f8bdaca8f93f3ba0" kindref="member">nfc_ndef_ch_msg_hr_create</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref><sp/>*msg,</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref><sp/>*hr_rec,</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref><sp/>*cr_rec,</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__ndef__ch__msg__records" kindref="compound">nfc_ndef_ch_msg_records</ref><sp/>*records);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135" refid="group__nfc__ndef__ch__msg_gaa09d0edf5da83025bd5840ea86022f81_1gaa09d0edf5da83025bd5840ea86022f81" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__ndef__ch__msg_gaa09d0edf5da83025bd5840ea86022f81_1gaa09d0edf5da83025bd5840ea86022f81" kindref="member">nfc_ndef_ch_msg_hm_create</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref><sp/>*msg,</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref><sp/>*hm_rec,</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__ndef__ch__msg__records" kindref="compound">nfc_ndef_ch_msg_records</ref><sp/>*records);</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159" refid="group__nfc__ndef__ch__msg_gaa33649cb5b349af31d808e8ca93080af_1gaa33649cb5b349af31d808e8ca93080af" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__nfc__ndef__ch__msg_gaa33649cb5b349af31d808e8ca93080af_1gaa33649cb5b349af31d808e8ca93080af" kindref="member">nfc_ndef_ch_msg_hi_create</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref><sp/>*msg,</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref><sp/>*hi_rec,</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnfc__ndef__ch__msg__records" kindref="compound">nfc_ndef_ch_msg_records</ref><sp/>*records);</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>_cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>NFC_NDEF_CH_MSG_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/nfc/ndef/ch_msg.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,199 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="bms_8h" kind="file" language="C++">
+    <compoundname>bms.h</compoundname>
+    <includes local="no">stdlib.h</includes>
+    <includes local="no">zephyr/types.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/bluetooth/services/bms.h</label>
+        <link refid="bms_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stdlib.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structbt__bms__authorize__params" prot="public">bt_bms_authorize_params</innerclass>
+    <innerclass refid="structbt__bms__cb" prot="public">bt_bms_cb</innerclass>
+    <innerclass refid="structbt__bms__feature" prot="public">bt_bms_feature</innerclass>
+    <innerclass refid="structbt__bms__features" prot="public">bt_bms_features</innerclass>
+    <innerclass refid="structbt__bms__init__params" prot="public">bt_bms_init_params</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__bms_ga349279ee23f69b3119e119338ea12eb9_1ga349279ee23f69b3119e119338ea12eb9" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_bms_op</name>
+        <enumvalue id="group__bt__bms_ga349279ee23f69b3119e119338ea12eb9_1gga349279ee23f69b3119e119338ea12eb9ab92aedecd4d6c3c01c108579339c9cee" prot="public">
+          <name>BT_BMS_OP_DEL_REQ_BOND</name>
+          <initializer>= 0x03</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__bms_ga349279ee23f69b3119e119338ea12eb9_1gga349279ee23f69b3119e119338ea12eb9ae7dfdfd95605675746b9d3e5ee82ea85" prot="public">
+          <name>BT_BMS_OP_DEL_ALL_BONDS</name>
+          <initializer>= 0x06</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__bms_ga349279ee23f69b3119e119338ea12eb9_1gga349279ee23f69b3119e119338ea12eb9ad7d3860136608c8e1c5c3c3613ffa25b" prot="public">
+          <name>BT_BMS_OP_DEL_REST_BONDS</name>
+          <initializer>= 0x09</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>BMS Control Point operation codes (LE transport). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bms.h" line="24" column="1" bodyfile="include/bluetooth/services/bms.h" bodystart="24" bodyend="37"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__bms_gae61e7e88e727357315ebf0369f27ea92_1gae61e7e88e727357315ebf0369f27ea92" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_bms_init</definition>
+        <argsstring>(const struct bt_bms_init_params *init_params)</argsstring>
+        <name>bt_bms_init</name>
+        <param>
+          <type>const struct <ref refid="structbt__bms__init__params" kindref="compound">bt_bms_init_params</ref> *</type>
+          <declname>init_params</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the BMS Service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Initialize the BMS Service by specifying a list of supported operations. If any operation is configured as authorized, you need to provide authorize() callback.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>init_params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Initialization parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bms.h" line="113" column="5" declfile="include/bluetooth/services/bms.h" declline="113" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_BMS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_BMS_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdlib.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="group__bt__bms_ga349279ee23f69b3119e119338ea12eb9_1ga349279ee23f69b3119e119338ea12eb9" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__bms_ga349279ee23f69b3119e119338ea12eb9_1ga349279ee23f69b3119e119338ea12eb9" kindref="member">bt_bms_op</ref><sp/>{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Initiates<sp/>the<sp/>procedure<sp/>to<sp/>delete<sp/>the<sp/>bond<sp/>of</highlight></codeline>
+<codeline lineno="26"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<sp/>the<sp/>requesting<sp/>device.</highlight></codeline>
+<codeline lineno="27"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="group__bt__bms_ga349279ee23f69b3119e119338ea12eb9_1gga349279ee23f69b3119e119338ea12eb9ab92aedecd4d6c3c01c108579339c9cee" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__bms_ga349279ee23f69b3119e119338ea12eb9_1gga349279ee23f69b3119e119338ea12eb9ab92aedecd4d6c3c01c108579339c9cee" kindref="member">BT_BMS_OP_DEL_REQ_BOND</ref><sp/>=<sp/>0x03,</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Initiates<sp/>the<sp/>procedure<sp/>to<sp/>delete<sp/>all<sp/>bonds<sp/>on<sp/>the<sp/>device.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="group__bt__bms_ga349279ee23f69b3119e119338ea12eb9_1gga349279ee23f69b3119e119338ea12eb9ae7dfdfd95605675746b9d3e5ee82ea85" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__bms_ga349279ee23f69b3119e119338ea12eb9_1gga349279ee23f69b3119e119338ea12eb9ae7dfdfd95605675746b9d3e5ee82ea85" kindref="member">BT_BMS_OP_DEL_ALL_BONDS</ref><sp/>=<sp/>0x06,</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Initiates<sp/>the<sp/>procedure<sp/>to<sp/>delete<sp/>all<sp/>bonds<sp/>except<sp/>for<sp/>the<sp/>one<sp/>of</highlight></codeline>
+<codeline lineno="34"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<sp/>the<sp/>requesting<sp/>device.</highlight></codeline>
+<codeline lineno="35"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="group__bt__bms_ga349279ee23f69b3119e119338ea12eb9_1gga349279ee23f69b3119e119338ea12eb9ad7d3860136608c8e1c5c3c3613ffa25b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__bms_ga349279ee23f69b3119e119338ea12eb9_1gga349279ee23f69b3119e119338ea12eb9ad7d3860136608c8e1c5c3c3613ffa25b" kindref="member">BT_BMS_OP_DEL_REST_BONDS</ref><sp/>=<sp/>0x09,</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="structbt__bms__authorize__params" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__bms__authorize__params" kindref="compound">bt_bms_authorize_params</ref><sp/>{</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Operation<sp/>code.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="structbt__bms__authorize__params_af67c0454b52b722cd0e54fe898acfd26_1af67c0454b52b722cd0e54fe898acfd26" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__bms_ga349279ee23f69b3119e119338ea12eb9_1ga349279ee23f69b3119e119338ea12eb9" kindref="member">bt_bms_op</ref><sp/><ref refid="structbt__bms__authorize__params_af67c0454b52b722cd0e54fe898acfd26_1af67c0454b52b722cd0e54fe898acfd26" kindref="member">op_code</ref>;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Authorization<sp/>Code.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="structbt__bms__authorize__params_a21a9242520bba70761e0cdd3886f5da2_1a21a9242520bba70761e0cdd3886f5da2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*<ref refid="structbt__bms__authorize__params_a21a9242520bba70761e0cdd3886f5da2_1a21a9242520bba70761e0cdd3886f5da2" kindref="member">code</ref>;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Length<sp/>of<sp/>Authorization<sp/>Code.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="structbt__bms__authorize__params_ad8af0457f569add7d1143bd0e5ea5670_1ad8af0457f569add7d1143bd0e5ea5670" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__bms__authorize__params_ad8af0457f569add7d1143bd0e5ea5670_1ad8af0457f569add7d1143bd0e5ea5670" kindref="member">code_len</ref>;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="structbt__bms__cb" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__bms__cb" kindref="compound">bt_bms_cb</ref><sp/>{</highlight></codeline>
+<codeline lineno="65" refid="structbt__bms__cb_a2832fb9e9f88ab9996f8c7bb1cd69312_1a2832fb9e9f88ab9996f8c7bb1cd69312" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>bool<sp/>(*<ref refid="structbt__bms__cb_a2832fb9e9f88ab9996f8c7bb1cd69312_1a2832fb9e9f88ab9996f8c7bb1cd69312" kindref="member">authorize</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_conn<sp/>*conn,</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__bms__authorize__params" kindref="compound">bt_bms_authorize_params</ref><sp/>*params);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="structbt__bms__feature" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__bms__feature" kindref="compound">bt_bms_feature</ref><sp/>{</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Support<sp/>the<sp/>feature.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="structbt__bms__feature_a5b51a001e52b0e646dc391c91d17b849_1a5b51a001e52b0e646dc391c91d17b849" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__bms__feature_a5b51a001e52b0e646dc391c91d17b849_1a5b51a001e52b0e646dc391c91d17b849" kindref="member">supported</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Enable<sp/>authorization.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="structbt__bms__feature_a08314b3acc77dbdd551b8b890470dd45_1a08314b3acc77dbdd551b8b890470dd45" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__bms__feature_a08314b3acc77dbdd551b8b890470dd45_1a08314b3acc77dbdd551b8b890470dd45" kindref="member">authorize</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="structbt__bms__features" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__bms__features" kindref="compound">bt_bms_features</ref><sp/>{</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Support<sp/>the<sp/>operation<sp/>to<sp/>delete<sp/>all<sp/>bonds.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81" refid="structbt__bms__features_aa4ee8d362fcba690c9aac85986eb9bd1_1aa4ee8d362fcba690c9aac85986eb9bd1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__bms__feature" kindref="compound">bt_bms_feature</ref><sp/><ref refid="structbt__bms__features_aa4ee8d362fcba690c9aac85986eb9bd1_1aa4ee8d362fcba690c9aac85986eb9bd1" kindref="member">delete_all</ref>;</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Support<sp/>the<sp/>operation<sp/>to<sp/>delete<sp/>the<sp/>bonds<sp/>of</highlight></codeline>
+<codeline lineno="84"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<sp/>the<sp/>requesting<sp/>device.</highlight></codeline>
+<codeline lineno="85"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="structbt__bms__features_ac5e5b6556f3de4d9e7b755652371b80e_1ac5e5b6556f3de4d9e7b755652371b80e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__bms__feature" kindref="compound">bt_bms_feature</ref><sp/><ref refid="structbt__bms__features_ac5e5b6556f3de4d9e7b755652371b80e_1ac5e5b6556f3de4d9e7b755652371b80e" kindref="member">delete_requesting</ref>;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Support<sp/>the<sp/>operation<sp/>to<sp/>delete<sp/>all<sp/>bonds<sp/>except<sp/>for<sp/>the<sp/>bond<sp/>of</highlight></codeline>
+<codeline lineno="89"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<sp/>the<sp/>requesting<sp/>device.</highlight></codeline>
+<codeline lineno="90"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91" refid="structbt__bms__features_ad80572446f34e1fdc9e5781a0ca57d1b_1ad80572446f34e1fdc9e5781a0ca57d1b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__bms__feature" kindref="compound">bt_bms_feature</ref><sp/><ref refid="structbt__bms__features_ad80572446f34e1fdc9e5781a0ca57d1b_1ad80572446f34e1fdc9e5781a0ca57d1b" kindref="member">delete_rest</ref>;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="structbt__bms__init__params" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__bms__init__params" kindref="compound">bt_bms_init_params</ref><sp/>{</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Callbacks.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97" refid="structbt__bms__init__params_a803af91d779204d5a546acf677429098_1a803af91d779204d5a546acf677429098" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__bms__cb" kindref="compound">bt_bms_cb</ref><sp/>*<ref refid="structbt__bms__init__params_a803af91d779204d5a546acf677429098_1a803af91d779204d5a546acf677429098" kindref="member">cbs</ref>;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Features.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99" refid="structbt__bms__init__params_a3fe37e474efd950c65e59ec48d610564_1a3fe37e474efd950c65e59ec48d610564" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__bms__features" kindref="compound">bt_bms_features</ref><sp/><ref refid="structbt__bms__init__params_a3fe37e474efd950c65e59ec48d610564_1a3fe37e474efd950c65e59ec48d610564" kindref="member">features</ref>;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113" refid="group__bt__bms_gae61e7e88e727357315ebf0369f27ea92_1gae61e7e88e727357315ebf0369f27ea92" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__bms_gae61e7e88e727357315ebf0369f27ea92_1gae61e7e88e727357315ebf0369f27ea92" kindref="member">bt_bms_init</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__bms__init__params" kindref="compound">bt_bms_init_params</ref><sp/>*init_params);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_BMS_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/services/bms.h"/>
+  </compounddef>
+</doxygen>

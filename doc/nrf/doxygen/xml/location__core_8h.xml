@@ -1,0 +1,235 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="location__core_8h" kind="file" language="C++">
+    <compoundname>location_core.h</compoundname>
+    <innerclass refid="structlocation__method__api" prot="public">location_method_api</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="location__core_8h_a7b865e30cefe6fc616de9200b86f1d1e_1a7b865e30cefe6fc616de9200b86f1d1e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int location_core_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>location_core_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_core.h" line="19" column="5" declfile="lib/location/location_core.h" declline="19" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="location__core_8h_add00dc6d4f12542fb8d2df6372ad9a81_1add00dc6d4f12542fb8d2df6372ad9a81" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int location_core_event_handler_set</definition>
+        <argsstring>(location_event_handler_t handler)</argsstring>
+        <name>location_core_event_handler_set</name>
+        <param>
+          <type><ref refid="group__location_gab537a6011cb1d01b5aaf30c770b2dfb9_1gab537a6011cb1d01b5aaf30c770b2dfb9" kindref="member">location_event_handler_t</ref></type>
+          <declname>handler</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_core.h" line="20" column="5" declfile="lib/location/location_core.h" declline="20" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="location__core_8h_a3395735bf3f55046fb16509bfedb3cde_1a3395735bf3f55046fb16509bfedb3cde" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int location_core_validate_params</definition>
+        <argsstring>(const struct location_config *config)</argsstring>
+        <name>location_core_validate_params</name>
+        <param>
+          <type>const struct <ref refid="structlocation__config" kindref="compound">location_config</ref> *</type>
+          <declname>config</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_core.h" line="21" column="5" declfile="lib/location/location_core.h" declline="21" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="location__core_8h_ae20d156618b1093739e0b251a0573cd4_1ae20d156618b1093739e0b251a0573cd4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int location_core_location_get</definition>
+        <argsstring>(const struct location_config *config)</argsstring>
+        <name>location_core_location_get</name>
+        <param>
+          <type>const struct <ref refid="structlocation__config" kindref="compound">location_config</ref> *</type>
+          <declname>config</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_core.h" line="22" column="5" declfile="lib/location/location_core.h" declline="22" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="location__core_8h_a78f1dbc403390515800f3ee1d631a3df_1a78f1dbc403390515800f3ee1d631a3df" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int location_core_cancel</definition>
+        <argsstring>(void)</argsstring>
+        <name>location_core_cancel</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_core.h" line="23" column="5" declfile="lib/location/location_core.h" declline="23" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="location__core_8h_afe481b9b8673b35acf1270d284029d53_1afe481b9b8673b35acf1270d284029d53" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void location_core_event_cb</definition>
+        <argsstring>(const struct location_data *location)</argsstring>
+        <name>location_core_event_cb</name>
+        <param>
+          <type>const struct <ref refid="structlocation__data" kindref="compound">location_data</ref> *</type>
+          <declname>location</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_core.h" line="25" column="6" declfile="lib/location/location_core.h" declline="25" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="location__core_8h_a5f8396bfdcedd64d70c6185889dbd9ef_1a5f8396bfdcedd64d70c6185889dbd9ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void location_core_event_cb_error</definition>
+        <argsstring>(void)</argsstring>
+        <name>location_core_event_cb_error</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_core.h" line="26" column="6" declfile="lib/location/location_core.h" declline="26" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="location__core_8h_a8102eee32758278c36e1cb246df66c2f_1a8102eee32758278c36e1cb246df66c2f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void location_core_event_cb_timeout</definition>
+        <argsstring>(void)</argsstring>
+        <name>location_core_event_cb_timeout</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_core.h" line="27" column="6" declfile="lib/location/location_core.h" declline="27" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="location__core_8h_ac91181e5c68fa85d5c194b001060cde2_1ac91181e5c68fa85d5c194b001060cde2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void location_core_config_log</definition>
+        <argsstring>(const struct location_config *config)</argsstring>
+        <name>location_core_config_log</name>
+        <param>
+          <type>const struct <ref refid="structlocation__config" kindref="compound">location_config</ref> *</type>
+          <declname>config</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_core.h" line="33" column="6" declfile="lib/location/location_core.h" declline="33" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="location__core_8h_a2207b01f76b644c3c38e664d71efffeb_1a2207b01f76b644c3c38e664d71efffeb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void location_core_timer_start</definition>
+        <argsstring>(uint16_t timeout)</argsstring>
+        <name>location_core_timer_start</name>
+        <param>
+          <type>uint16_t</type>
+          <declname>timeout</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_core.h" line="34" column="6" declfile="lib/location/location_core.h" declline="34" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="location__core_8h_abc5b062d550bb4d01dc9b508ee34657c_1abc5b062d550bb4d01dc9b508ee34657c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct k_work_q *</type>
+        <definition>struct k_work_q * location_core_work_queue_get</definition>
+        <argsstring>(void)</argsstring>
+        <name>location_core_work_queue_get</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/location_core.h" line="35" column="15" declfile="lib/location/location_core.h" declline="35" declcolumn="15"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>LOCATION_CORE_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LOCATION_CORE_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10" refid="structlocation__method__api" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlocation__method__api" kindref="compound">location_method_api</ref><sp/>{</highlight></codeline>
+<codeline lineno="11" refid="structlocation__method__api_a127471a7dc1118593f7cf12c3062710b_1a127471a7dc1118593f7cf12c3062710b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__location_gaf90edf6d88c090d3e8276ce08903aa23_1gaf90edf6d88c090d3e8276ce08903aa23" kindref="member">location_method</ref><sp/><ref refid="structlocation__method__api_a127471a7dc1118593f7cf12c3062710b_1a127471a7dc1118593f7cf12c3062710b" kindref="member">method</ref>;</highlight></codeline>
+<codeline lineno="12" refid="structlocation__method__api_ad84b3969c541aef2c969bc42b29e01af_1ad84b3969c541aef2c969bc42b29e01af" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structlocation__method__api_ad84b3969c541aef2c969bc42b29e01af_1ad84b3969c541aef2c969bc42b29e01af" kindref="member">method_string</ref>[10];</highlight></codeline>
+<codeline lineno="13" refid="structlocation__method__api_a20474acf36aeea6b9c618a3dbdfd3eb4_1a20474acf36aeea6b9c618a3dbdfd3eb4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/><sp/>(*<ref refid="structlocation__method__api_a20474acf36aeea6b9c618a3dbdfd3eb4_1a20474acf36aeea6b9c618a3dbdfd3eb4" kindref="member">init</ref>)(void);</highlight></codeline>
+<codeline lineno="14" refid="structlocation__method__api_aa32bbceecda73acbcf55fd1a544ab2cb_1aa32bbceecda73acbcf55fd1a544ab2cb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/><sp/>(*<ref refid="structlocation__method__api_aa32bbceecda73acbcf55fd1a544ab2cb_1aa32bbceecda73acbcf55fd1a544ab2cb" kindref="member">validate_params</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlocation__method__config" kindref="compound">location_method_config</ref><sp/>*config);</highlight></codeline>
+<codeline lineno="15" refid="structlocation__method__api_aa6d5f5de153fddab40c6f5ee7bbb320c_1aa6d5f5de153fddab40c6f5ee7bbb320c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/><sp/>(*<ref refid="structlocation__method__api_aa6d5f5de153fddab40c6f5ee7bbb320c_1aa6d5f5de153fddab40c6f5ee7bbb320c" kindref="member">location_get</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structlocation__method__config" kindref="compound">location_method_config</ref><sp/>*config);</highlight></codeline>
+<codeline lineno="16" refid="structlocation__method__api_a384af6560d11851dfc0a5d036db682eb_1a384af6560d11851dfc0a5d036db682eb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/><sp/>(*<ref refid="structlocation__method__api_a384af6560d11851dfc0a5d036db682eb_1a384af6560d11851dfc0a5d036db682eb" kindref="member">cancel</ref>)();</highlight></codeline>
+<codeline lineno="17"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="location__core_8h_a7b865e30cefe6fc616de9200b86f1d1e_1a7b865e30cefe6fc616de9200b86f1d1e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="location__core_8h_a7b865e30cefe6fc616de9200b86f1d1e_1a7b865e30cefe6fc616de9200b86f1d1e" kindref="member">location_core_init</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="20" refid="location__core_8h_add00dc6d4f12542fb8d2df6372ad9a81_1add00dc6d4f12542fb8d2df6372ad9a81" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="location__core_8h_add00dc6d4f12542fb8d2df6372ad9a81_1add00dc6d4f12542fb8d2df6372ad9a81" kindref="member">location_core_event_handler_set</ref>(<ref refid="group__location_gab537a6011cb1d01b5aaf30c770b2dfb9_1gab537a6011cb1d01b5aaf30c770b2dfb9" kindref="member">location_event_handler_t</ref><sp/>handler);</highlight></codeline>
+<codeline lineno="21" refid="location__core_8h_a3395735bf3f55046fb16509bfedb3cde_1a3395735bf3f55046fb16509bfedb3cde" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="location__core_8h_a3395735bf3f55046fb16509bfedb3cde_1a3395735bf3f55046fb16509bfedb3cde" kindref="member">location_core_validate_params</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlocation__config" kindref="compound">location_config</ref><sp/>*config);</highlight></codeline>
+<codeline lineno="22" refid="location__core_8h_ae20d156618b1093739e0b251a0573cd4_1ae20d156618b1093739e0b251a0573cd4" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="location__core_8h_ae20d156618b1093739e0b251a0573cd4_1ae20d156618b1093739e0b251a0573cd4" kindref="member">location_core_location_get</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlocation__config" kindref="compound">location_config</ref><sp/>*config);</highlight></codeline>
+<codeline lineno="23" refid="location__core_8h_a78f1dbc403390515800f3ee1d631a3df_1a78f1dbc403390515800f3ee1d631a3df" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="location__core_8h_a78f1dbc403390515800f3ee1d631a3df_1a78f1dbc403390515800f3ee1d631a3df" kindref="member">location_core_cancel</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="location__core_8h_afe481b9b8673b35acf1270d284029d53_1afe481b9b8673b35acf1270d284029d53" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="location__core_8h_afe481b9b8673b35acf1270d284029d53_1afe481b9b8673b35acf1270d284029d53" kindref="member">location_core_event_cb</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlocation__data" kindref="compound">location_data</ref><sp/>*location);</highlight></codeline>
+<codeline lineno="26" refid="location__core_8h_a5f8396bfdcedd64d70c6185889dbd9ef_1a5f8396bfdcedd64d70c6185889dbd9ef" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="location__core_8h_a5f8396bfdcedd64d70c6185889dbd9ef_1a5f8396bfdcedd64d70c6185889dbd9ef" kindref="member">location_core_event_cb_error</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="27" refid="location__core_8h_a8102eee32758278c36e1cb246df66c2f_1a8102eee32758278c36e1cb246df66c2f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="location__core_8h_a8102eee32758278c36e1cb246df66c2f_1a8102eee32758278c36e1cb246df66c2f" kindref="member">location_core_event_cb_timeout</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>location_core_event_cb_assistance_request(</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>nrf_modem_gnss_agps_data_frame<sp/>*request);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="location__core_8h_ac91181e5c68fa85d5c194b001060cde2_1ac91181e5c68fa85d5c194b001060cde2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="location__core_8h_ac91181e5c68fa85d5c194b001060cde2_1ac91181e5c68fa85d5c194b001060cde2" kindref="member">location_core_config_log</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlocation__config" kindref="compound">location_config</ref><sp/>*config);</highlight></codeline>
+<codeline lineno="34" refid="location__core_8h_a2207b01f76b644c3c38e664d71efffeb_1a2207b01f76b644c3c38e664d71efffeb" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="location__core_8h_a2207b01f76b644c3c38e664d71efffeb_1a2207b01f76b644c3c38e664d71efffeb" kindref="member">location_core_timer_start</ref>(uint16_t<sp/>timeout);</highlight></codeline>
+<codeline lineno="35" refid="location__core_8h_abc5b062d550bb4d01dc9b508ee34657c_1abc5b062d550bb4d01dc9b508ee34657c" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">k_work_q<sp/>*<ref refid="location__core_8h_abc5b062d550bb4d01dc9b508ee34657c_1abc5b062d550bb4d01dc9b508ee34657c" kindref="member">location_core_work_queue_get</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>LOCATION_CORE_H<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="lib/location/location_core.h"/>
+  </compounddef>
+</doxygen>

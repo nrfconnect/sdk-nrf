@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__plvl__range" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_plvl_range</compoundname>
+    <includes refid="gen__plvl_8h" local="no">gen_plvl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__plvl__range_a2ccd34dc05fc973e7f96ceea65a4eab0_1a2ccd34dc05fc973e7f96ceea65a4eab0" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_plvl_range::min</definition>
+        <argsstring></argsstring>
+        <name>min</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Minimum allowed Power Level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl.h" line="53" column="10" bodyfile="include/bluetooth/mesh/gen_plvl.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__range_a8a876d399f82f22e40c504806d3ad2a0_1a8a876d399f82f22e40c504806d3ad2a0" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_plvl_range::max</definition>
+        <argsstring></argsstring>
+        <name>max</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum allowed Power Level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl.h" line="54" column="10" bodyfile="include/bluetooth/mesh/gen_plvl.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Power Level range parameters. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/gen_plvl.h" line="52" column="1" bodyfile="include/bluetooth/mesh/gen_plvl.h" bodystart="52" bodyend="55"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__plvl__range_a8a876d399f82f22e40c504806d3ad2a0_1a8a876d399f82f22e40c504806d3ad2a0" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_range</scope><name>max</name></member>
+      <member refid="structbt__mesh__plvl__range_a2ccd34dc05fc973e7f96ceea65a4eab0_1a2ccd34dc05fc973e7f96ceea65a4eab0" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_range</scope><name>min</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

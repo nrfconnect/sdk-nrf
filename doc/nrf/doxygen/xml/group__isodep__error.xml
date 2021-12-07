@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__isodep__error" kind="group">
+    <compoundname>isodep_error</compoundname>
+    <title>ISO-DEP Protocol error</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__isodep__error_1ga8f1b80dc2d81992dd5d3401eb78db1ff" prot="public" static="no">
+        <name>NFC_T4T_ISODEP_SYNTAX_ERROR</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Correct frame was received with invalid content. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="26" column="9" bodyfile="include/nfc/t4t/isodep.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__isodep__error_1gacb9bdb2fb2240d4785ea5198f22b0c97" prot="public" static="no">
+        <name>NFC_T4T_ISODEP_SEMANTIC_ERROR</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Correct frame was received when it is not expected. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="29" column="9" bodyfile="include/nfc/t4t/isodep.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__isodep__error_1ga07d57d523f93497277eaee9584c13eee" prot="public" static="no">
+        <name>NFC_T4T_ISODEP_TRANSMISSION_ERROR</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Unrecoverable transmission error. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="32" column="9" bodyfile="include/nfc/t4t/isodep.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__isodep__error_1gabf75cf10acba7a140ce2e8998c0c5f13" prot="public" static="no">
+        <name>NFC_T4T_ISODEP_TIMEOUT_ERROR</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Unrecoverable timeout error. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t4t/isodep.h" line="35" column="9" bodyfile="include/nfc/t4t/isodep.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

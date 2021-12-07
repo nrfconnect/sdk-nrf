@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structselector__config" kind="struct" language="C++" prot="public">
+    <compoundname>selector_config</compoundname>
+    <includes refid="selector__hw_8h" local="no">selector_hw.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structselector__config_ad308b6dea76ad12accbb8747697c6b68_1ad308b6dea76ad12accbb8747697c6b68" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t selector_config::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/selector_hw.h" line="13" column="9" bodyfile="applications/nrf_desktop/configuration/common/selector_hw.h" bodystart="13" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structselector__config_accd52292d385424849cb163065bc38f0_1accd52292d385424849cb163065bc38f0" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structgpio__pin" kindref="compound">gpio_pin</ref> *</type>
+        <definition>const struct gpio_pin* selector_config::pins</definition>
+        <argsstring></argsstring>
+        <name>pins</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/selector_hw.h" line="14" column="21" bodyfile="applications/nrf_desktop/configuration/common/selector_hw.h" bodystart="14" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structselector__config_afe550f336eae1232bdf2499616be2a87_1afe550f336eae1232bdf2499616be2a87" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t selector_config::pins_size</definition>
+        <argsstring></argsstring>
+        <name>pins_size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/selector_hw.h" line="15" column="9" bodyfile="applications/nrf_desktop/configuration/common/selector_hw.h" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>gpio_pin</label>
+        <link refid="structgpio__pin"/>
+      </node>
+      <node id="1">
+        <label>selector_config</label>
+        <link refid="structselector__config"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>pins</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/nrf_desktop/configuration/common/selector_hw.h" line="12" column="1" bodyfile="applications/nrf_desktop/configuration/common/selector_hw.h" bodystart="12" bodyend="16"/>
+    <listofallmembers>
+      <member refid="structselector__config_ad308b6dea76ad12accbb8747697c6b68_1ad308b6dea76ad12accbb8747697c6b68" prot="public" virt="non-virtual"><scope>selector_config</scope><name>id</name></member>
+      <member refid="structselector__config_accd52292d385424849cb163065bc38f0_1accd52292d385424849cb163065bc38f0" prot="public" virt="non-virtual"><scope>selector_config</scope><name>pins</name></member>
+      <member refid="structselector__config_afe550f336eae1232bdf2499616be2a87_1afe550f336eae1232bdf2499616be2a87" prot="public" virt="non-virtual"><scope>selector_config</scope><name>pins_size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

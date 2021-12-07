@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__battery__srv" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_battery_srv</compoundname>
+    <includes refid="gen__battery__srv_8h" local="no">gen_battery_srv.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__battery__srv_a9ccbbb68ebc1b80483b5f2dae4dc3927_1a9ccbbb68ebc1b80483b5f2dae4dc3927" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model *</type>
+        <definition>struct bt_mesh_model* bt_mesh_battery_srv::model</definition>
+        <argsstring></argsstring>
+        <name>model</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the model entry in the composition data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_battery_srv.h" line="56" column="20" bodyfile="include/bluetooth/mesh/gen_battery_srv.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__battery__srv_ad22326f9a26770e7a11e57f941a77684_1ad22326f9a26770e7a11e57f941a77684" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model_pub</type>
+        <definition>struct bt_mesh_model_pub bt_mesh_battery_srv::pub</definition>
+        <argsstring></argsstring>
+        <name>pub</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Publication parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_battery_srv.h" line="58" column="24" bodyfile="include/bluetooth/mesh/gen_battery_srv.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__battery__srv_a0b4b0c6484a5efa5ab8c6c71a66b3716_1a0b4b0c6484a5efa5ab8c6c71a66b3716" prot="public" static="no" mutable="no">
+        <type>struct net_buf_simple</type>
+        <definition>struct net_buf_simple bt_mesh_battery_srv::pub_buf</definition>
+        <argsstring></argsstring>
+        <name>pub_buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_battery_srv.h" line="60" column="21" bodyfile="include/bluetooth/mesh/gen_battery_srv.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__battery__srv_a55477c74485c413e8f2d927ff34fa3f2_1a55477c74485c413e8f2d927ff34fa3f2" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_battery_srv::pub_data[BT_MESH_MODEL_BUF_LEN(BT_MESH_BATTERY_OP_STATUS, BT_MESH_BATTERY_MSG_LEN_STATUS)]</definition>
+        <argsstring>[BT_MESH_MODEL_BUF_LEN(BT_MESH_BATTERY_OP_STATUS, BT_MESH_BATTERY_MSG_LEN_STATUS)]</argsstring>
+        <name>pub_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_battery_srv.h" line="62" column="9" bodyfile="include/bluetooth/mesh/gen_battery_srv.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__battery__srv_a6c88b3dfad911935292250c76ccaf1f8_1a6c88b3dfad911935292250c76ccaf1f8" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_battery_srv::get) (struct bt_mesh_battery_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_battery_status *rsp)</definition>
+        <argsstring>)(struct bt_mesh_battery_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_battery_status *rsp)</argsstring>
+        <name>get</name>
+        <briefdescription>
+<para>Get the Battery state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server instance to get the state of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context for the message that triggered the change, or NULL if the change is not coming from a message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response structure to be filled. All fields are initialized to special <emphasis>unknown</emphasis> values before calling, so only states that have known values need to be filled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_battery_srv.h" line="76" column="1" bodyfile="include/bluetooth/mesh/gen_battery_srv.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Generic Battery Server instance. Should primarily be initialized with the <ref refid="group__bt__mesh__battery__srv_gadb722cfa9737866d44160f4d561243e4_1gadb722cfa9737866d44160f4d561243e4" kindref="member">BT_MESH_BATTERY_SRV_INIT</ref> macro. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/gen_battery_srv.h" line="54" column="1" bodyfile="include/bluetooth/mesh/gen_battery_srv.h" bodystart="54" bodyend="79"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__battery__srv_a6c88b3dfad911935292250c76ccaf1f8_1a6c88b3dfad911935292250c76ccaf1f8" prot="public" virt="non-virtual"><scope>bt_mesh_battery_srv</scope><name>get</name></member>
+      <member refid="structbt__mesh__battery__srv_a9ccbbb68ebc1b80483b5f2dae4dc3927_1a9ccbbb68ebc1b80483b5f2dae4dc3927" prot="public" virt="non-virtual"><scope>bt_mesh_battery_srv</scope><name>model</name></member>
+      <member refid="structbt__mesh__battery__srv_ad22326f9a26770e7a11e57f941a77684_1ad22326f9a26770e7a11e57f941a77684" prot="public" virt="non-virtual"><scope>bt_mesh_battery_srv</scope><name>pub</name></member>
+      <member refid="structbt__mesh__battery__srv_a0b4b0c6484a5efa5ab8c6c71a66b3716_1a0b4b0c6484a5efa5ab8c6c71a66b3716" prot="public" virt="non-virtual"><scope>bt_mesh_battery_srv</scope><name>pub_buf</name></member>
+      <member refid="structbt__mesh__battery__srv_a55477c74485c413e8f2d927ff34fa3f2_1a55477c74485c413e8f2d927ff34fa3f2" prot="public" virt="non-virtual"><scope>bt_mesh_battery_srv</scope><name>pub_data</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__sensor__channel" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_sensor_channel</compoundname>
+    <includes refid="sensor_8h" local="no">sensor.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__sensor__channel_aeaef5e7b36bc9708f2f41e599022c6e8_1aeaef5e7b36bc9708f2f41e599022c6e8" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__sensor__format" kindref="compound">bt_mesh_sensor_format</ref> *</type>
+        <definition>const struct bt_mesh_sensor_format* bt_mesh_sensor_channel::format</definition>
+        <argsstring></argsstring>
+        <name>format</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Format for this sensor channel. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="194" column="34" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="194" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Signle sensor channel </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_mesh_sensor_channel</label>
+        <link refid="structbt__mesh__sensor__channel"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>format</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_mesh_sensor_format</label>
+        <link refid="structbt__mesh__sensor__format"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/sensor.h" line="192" column="1" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="192" bodyend="199"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__sensor__channel_aeaef5e7b36bc9708f2f41e599022c6e8_1aeaef5e7b36bc9708f2f41e599022c6e8" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_channel</scope><name>format</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

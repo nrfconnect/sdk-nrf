@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__peripheral" kind="struct" language="C++" prot="public">
+    <compoundname>bt_peripheral</compoundname>
+    <includes refid="nrf52820dongle__nrf52820_2ble__discovery__def_8h" local="no">ble_discovery_def.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__peripheral_a9434e121159da0178a43f2ef431c5d00_1a9434e121159da0178a43f2ef431c5d00" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_peripheral::pid</definition>
+        <argsstring></argsstring>
+        <name>pid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/ble_discovery_def.h" line="19" column="10" bodyfile="applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/ble_discovery_def.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__peripheral_aa663bf2d09a3ba424ea0fa4f021f9bcc_1aa663bf2d09a3ba424ea0fa4f021f9bcc" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__ble__event_gac69e3dc77018854dc02597ae99dd9f51_1gac69e3dc77018854dc02597ae99dd9f51" kindref="member">peer_type</ref></type>
+        <definition>enum peer_type bt_peripheral::peer_type</definition>
+        <argsstring></argsstring>
+        <name>peer_type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/ble_discovery_def.h" line="20" column="15" bodyfile="applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/ble_discovery_def.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/ble_discovery_def.h" line="18" column="1" bodyfile="applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/ble_discovery_def.h" bodystart="18" bodyend="21"/>
+    <listofallmembers>
+      <member refid="structbt__peripheral_aa663bf2d09a3ba424ea0fa4f021f9bcc_1aa663bf2d09a3ba424ea0fa4f021f9bcc" prot="public" virt="non-virtual"><scope>bt_peripheral</scope><name>peer_type</name></member>
+      <member refid="structbt__peripheral_a9434e121159da0178a43f2ef431c5d00_1a9434e121159da0178a43f2ef431c5d00" prot="public" virt="non-virtual"><scope>bt_peripheral</scope><name>pid</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__BT__ATT__ANCS__NP__ERROR__CODES" kind="group">
+    <compoundname>BT_ATT_ANCS_NP_ERROR_CODES</compoundname>
+    <title>Notification Provider (iOS) Error Codes</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__BT__ATT__ANCS__NP__ERROR__CODES_1ga9a56d436095f234b9c76e9eac0de97aa" prot="public" static="no">
+        <name>BT_ATT_ERR_ANCS_NP_UNKNOWN_COMMAND</name>
+        <initializer>0xA0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The command ID is unknown to the NP. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="93" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__BT__ATT__ANCS__NP__ERROR__CODES_1ga9de2e561f6d6b2126646ce90a8058a13" prot="public" static="no">
+        <name>BT_ATT_ERR_ANCS_NP_INVALID_COMMAND</name>
+        <initializer>0xA1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The command format is invalid. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="95" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__BT__ATT__ANCS__NP__ERROR__CODES_1ga86d24186e58757f0645ec2606bf85e10" prot="public" static="no">
+        <name>BT_ATT_ERR_ANCS_NP_INVALID_PARAMETER</name>
+        <initializer>0xA2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>One or more parameters do not exist in the NP. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="97" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__BT__ATT__ANCS__NP__ERROR__CODES_1ga5c58d04768948281514b522470c9d15f" prot="public" static="no">
+        <name>BT_ATT_ERR_ANCS_NP_ACTION_FAILED</name>
+        <initializer>0xA3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The action failed to be performed by the NP. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/ancs_client.h" line="99" column="9" bodyfile="include/bluetooth/services/ancs_client.h" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

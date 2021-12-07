@@ -1,0 +1,189 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__rest__client" kind="group">
+    <compoundname>rest_client</compoundname>
+    <title>REST client library</title>
+    <innerclass refid="structrest__client__req__context" prot="public">rest_client_req_context</innerclass>
+    <innerclass refid="structrest__client__resp__context" prot="public">rest_client_resp_context</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__rest__client_1ga0ef4d4d1110234d7178a39e870b4455f" prot="public" static="no" strong="no">
+        <type></type>
+        <name>rest_client_http_status</name>
+        <enumvalue id="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1gga0ef4d4d1110234d7178a39e870b4455fa6e329b5b0be16968d98b26e532bb0ea0" prot="public">
+          <name>REST_CLIENT_HTTP_STATUS_OK</name>
+          <initializer>= 200</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1gga0ef4d4d1110234d7178a39e870b4455fad2ffdd4f2254b0a24edb4b11e8e6fecf" prot="public">
+          <name>REST_CLIENT_HTTP_STATUS_BAD_REQ</name>
+          <initializer>= 400</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1gga0ef4d4d1110234d7178a39e870b4455fa301599f7d1f5470dd7c6271b820edbe2" prot="public">
+          <name>REST_CLIENT_HTTP_STATUS_UNAUTH</name>
+          <initializer>= 401</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1gga0ef4d4d1110234d7178a39e870b4455fad63c4b3bf99ec6aa2d026ae3203481fe" prot="public">
+          <name>REST_CLIENT_HTTP_STATUS_FORBIDDEN</name>
+          <initializer>= 403</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1gga0ef4d4d1110234d7178a39e870b4455fad28e6329999f64311a6bc8b2488e6e7b" prot="public">
+          <name>REST_CLIENT_HTTP_STATUS_NOT_FOUND</name>
+          <initializer>= 404</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Common HTTP status codes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="32" column="1" bodyfile="include/net/rest_client.h" bodystart="32" bodyend="38"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__rest__client_1gaf17c5ae9504203d57ff28b51aa6ec78e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int rest_client_request</definition>
+        <argsstring>(struct rest_client_req_context *req_ctx, struct rest_client_resp_context *resp_ctx)</argsstring>
+        <name>rest_client_request</name>
+        <param>
+          <type>struct <ref refid="structrest__client__req__context" kindref="compound">rest_client_req_context</ref> *</type>
+          <declname>req_ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structrest__client__resp__context" kindref="compound">rest_client_resp_context</ref> *</type>
+          <declname>resp_ctx</declname>
+        </param>
+        <briefdescription>
+<para>REST client request. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function will block the calling thread until the request completes.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">req_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Request context containing input parameters to REST request </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">resp_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response context for returning the response data.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+<parametername>if</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the REST response was received successfully. If response_len &gt; 0, there is also body/content data in a response. http_status_code contains the actual HTTP status code. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="137" column="5" declfile="include/net/rest_client.h" declline="137" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__rest__client_1ga0a2e2eea2de011756cb4dddcac2f6a19" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void rest_client_request_defaults_set</definition>
+        <argsstring>(struct rest_client_req_context *req_ctx)</argsstring>
+        <name>rest_client_request_defaults_set</name>
+        <param>
+          <type>struct <ref refid="structrest__client__req__context" kindref="compound">rest_client_req_context</ref> *</type>
+          <declname>req_ctx</declname>
+        </param>
+        <briefdescription>
+<para>Sets the default values into a given request context. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Intended to be used before calling <ref refid="group__rest__client_gaf17c5ae9504203d57ff28b51aa6ec78e_1gaf17c5ae9504203d57ff28b51aa6ec78e" kindref="member">rest_client_request()</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">req_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Request context for communicating with REST client API. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="147" column="6" declfile="include/net/rest_client.h" declline="147" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__rest__client_1gaf09d5e40e3be5d3357caa3b1c3da53df" prot="public" static="no">
+        <name>REST_CLIENT_SEC_TAG_NO_SEC</name>
+        <initializer>-1</initializer>
+        <briefdescription>
+<para>TLS is not used. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="23" column="9" bodyfile="include/net/rest_client.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__rest__client_1ga2147f43d29cc12de05300cf09c94e40a" prot="public" static="no">
+        <name>REST_CLIENT_TLS_DEFAULT_PEER_VERIFY</name>
+        <initializer>-1</initializer>
+        <briefdescription>
+<para>Use the default TLS peer verification; TLS_PEER_VERIFY_REQUIRED. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="26" column="9" bodyfile="include/net/rest_client.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__rest__client_1gadc0fb731a6eee3dbe8407b635cbd6309" prot="public" static="no">
+        <name>REST_CLIENT_SCKT_CONNECT</name>
+        <initializer>-1</initializer>
+        <briefdescription>
+<para>REST client opens a socket connection. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="29" column="9" bodyfile="include/net/rest_client.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>REST client. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Provide REST client functionality. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

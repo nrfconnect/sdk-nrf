@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__schedule__entry" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_schedule_entry</compoundname>
+    <includes refid="scheduler_8h" local="no">scheduler.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__schedule__entry_aebde28e3ec72530fb538825aa502d2e1_1aebde28e3ec72530fb538825aa502d2e1" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_schedule_entry::year</definition>
+        <argsstring></argsstring>
+        <name>year</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Two last digits of the scheduled year for the action, or <ref refid="group__bt__mesh__scheduler_ga6b51eaeea8df2dfe4721a284537a402c_1ga6b51eaeea8df2dfe4721a284537a402c" kindref="member">BT_MESH_SCHEDULER_ANY_YEAR</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="95" column="9" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__schedule__entry_a6831b1a83f7cb983776d09f119c223d0_1a6831b1a83f7cb983776d09f119c223d0" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__mesh__scheduler_ga68fd3b88ea5749620c6d06299fdb6c1d_1ga68fd3b88ea5749620c6d06299fdb6c1d" kindref="member">bt_mesh_scheduler_month</ref></type>
+        <definition>enum bt_mesh_scheduler_month bt_mesh_schedule_entry::month</definition>
+        <argsstring></argsstring>
+        <name>month</name>
+        <bitfield> 12</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Scheduled month for the action. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="97" column="29" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__schedule__entry_ad6a9fe6c50e3f761343cdc674dd8898f_1ad6a9fe6c50e3f761343cdc674dd8898f" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_schedule_entry::day</definition>
+        <argsstring></argsstring>
+        <name>day</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Scheduled day of the month for the action. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="99" column="9" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__schedule__entry_a4f5d501ac9b34a838756f5d3e5f6c690_1a4f5d501ac9b34a838756f5d3e5f6c690" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_schedule_entry::hour</definition>
+        <argsstring></argsstring>
+        <name>hour</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Scheduled hour for the action. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="101" column="9" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__schedule__entry_a7569fdeb6a67572d0fcf409b331ee6ec_1a7569fdeb6a67572d0fcf409b331ee6ec" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_schedule_entry::minute</definition>
+        <argsstring></argsstring>
+        <name>minute</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Scheduled minute for the action. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="103" column="9" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__schedule__entry_affdb343685f797962e0cacafc6e5a4cb_1affdb343685f797962e0cacafc6e5a4cb" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_schedule_entry::second</definition>
+        <argsstring></argsstring>
+        <name>second</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Scheduled second for the action. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="105" column="9" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__schedule__entry_a16c5b4aeab93bf9a3e35f9a570496b47_1a16c5b4aeab93bf9a3e35f9a570496b47" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__mesh__scheduler_gaeff55d04c01c89a3a0ae7b65333a8414_1gaeff55d04c01c89a3a0ae7b65333a8414" kindref="member">bt_mesh_scheduler_wday</ref></type>
+        <definition>enum bt_mesh_scheduler_wday bt_mesh_schedule_entry::day_of_week</definition>
+        <argsstring></argsstring>
+        <name>day_of_week</name>
+        <bitfield> 7</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Schedule days of the week for the action. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="107" column="28" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__schedule__entry_a3f4625e163643b53d287cf33009c14ea_1a3f4625e163643b53d287cf33009c14ea" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__mesh__scheduler_ga64c1c1f9a042a6eb1b97bfed5c8c9930_1ga64c1c1f9a042a6eb1b97bfed5c8c9930" kindref="member">bt_mesh_scheduler_action</ref></type>
+        <definition>enum bt_mesh_scheduler_action bt_mesh_schedule_entry::action</definition>
+        <argsstring></argsstring>
+        <name>action</name>
+        <bitfield> 4</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Action to be performed at the scheduled time. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="109" column="30" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="109" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__schedule__entry_a0d22cc96206e92e42ffe66d76b67ea9f_1a0d22cc96206e92e42ffe66d76b67ea9f" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_schedule_entry::transition_time</definition>
+        <argsstring></argsstring>
+        <name>transition_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transition time for this action. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="111" column="9" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__schedule__entry_a1ff7c0e01f7c68568ace994cd99f6f3b_1a1ff7c0e01f7c68568ace994cd99f6f3b" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_schedule_entry::scene_number</definition>
+        <argsstring></argsstring>
+        <name>scene_number</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Scene number to be used for some actions. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scheduler.h" line="113" column="10" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Schedule Register entry. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/scheduler.h" line="91" column="1" bodyfile="include/bluetooth/mesh/scheduler.h" bodystart="91" bodyend="114"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__schedule__entry_a3f4625e163643b53d287cf33009c14ea_1a3f4625e163643b53d287cf33009c14ea" prot="public" virt="non-virtual"><scope>bt_mesh_schedule_entry</scope><name>action</name></member>
+      <member refid="structbt__mesh__schedule__entry_ad6a9fe6c50e3f761343cdc674dd8898f_1ad6a9fe6c50e3f761343cdc674dd8898f" prot="public" virt="non-virtual"><scope>bt_mesh_schedule_entry</scope><name>day</name></member>
+      <member refid="structbt__mesh__schedule__entry_a16c5b4aeab93bf9a3e35f9a570496b47_1a16c5b4aeab93bf9a3e35f9a570496b47" prot="public" virt="non-virtual"><scope>bt_mesh_schedule_entry</scope><name>day_of_week</name></member>
+      <member refid="structbt__mesh__schedule__entry_a4f5d501ac9b34a838756f5d3e5f6c690_1a4f5d501ac9b34a838756f5d3e5f6c690" prot="public" virt="non-virtual"><scope>bt_mesh_schedule_entry</scope><name>hour</name></member>
+      <member refid="structbt__mesh__schedule__entry_a7569fdeb6a67572d0fcf409b331ee6ec_1a7569fdeb6a67572d0fcf409b331ee6ec" prot="public" virt="non-virtual"><scope>bt_mesh_schedule_entry</scope><name>minute</name></member>
+      <member refid="structbt__mesh__schedule__entry_a6831b1a83f7cb983776d09f119c223d0_1a6831b1a83f7cb983776d09f119c223d0" prot="public" virt="non-virtual"><scope>bt_mesh_schedule_entry</scope><name>month</name></member>
+      <member refid="structbt__mesh__schedule__entry_a1ff7c0e01f7c68568ace994cd99f6f3b_1a1ff7c0e01f7c68568ace994cd99f6f3b" prot="public" virt="non-virtual"><scope>bt_mesh_schedule_entry</scope><name>scene_number</name></member>
+      <member refid="structbt__mesh__schedule__entry_affdb343685f797962e0cacafc6e5a4cb_1affdb343685f797962e0cacafc6e5a4cb" prot="public" virt="non-virtual"><scope>bt_mesh_schedule_entry</scope><name>second</name></member>
+      <member refid="structbt__mesh__schedule__entry_a0d22cc96206e92e42ffe66d76b67ea9f_1a0d22cc96206e92e42ffe66d76b67ea9f" prot="public" virt="non-virtual"><scope>bt_mesh_schedule_entry</scope><name>transition_time</name></member>
+      <member refid="structbt__mesh__schedule__entry_aebde28e3ec72530fb538825aa502d2e1_1aebde28e3ec72530fb538825aa502d2e1" prot="public" virt="non-virtual"><scope>bt_mesh_schedule_entry</scope><name>year</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

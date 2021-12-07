@@ -1,0 +1,140 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structgps__event" kind="struct" language="C++" prot="public">
+    <compoundname>gps_event</compoundname>
+    <includes refid="gps_8h" local="no">gps.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structgps__event_a3893586a8159592c54fca5f371b224f1_1a3893586a8159592c54fca5f371b224f1" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__gpsapi_ga734c073d2a05d059991d908c0bd30854_1ga734c073d2a05d059991d908c0bd30854" kindref="member">gps_event_type</ref></type>
+        <definition>enum gps_event_type gps_event::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="256" column="20" bodyfile="include/drivers/gps.h" bodystart="256" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__event_aa64dd3d989faf4b98cdb1bedc72112cf_1aa64dd3d989faf4b98cdb1bedc72112cf" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structgps__pvt" kindref="compound">gps_pvt</ref></type>
+        <definition>struct gps_pvt gps_event::pvt</definition>
+        <argsstring></argsstring>
+        <name>pvt</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="258" column="14" bodyfile="include/drivers/gps.h" bodystart="258" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__event_ad9d790748288e1bfd4be535a79e91cb2_1ad9d790748288e1bfd4be535a79e91cb2" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structgps__nmea" kindref="compound">gps_nmea</ref></type>
+        <definition>struct gps_nmea gps_event::nmea</definition>
+        <argsstring></argsstring>
+        <name>nmea</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="259" column="15" bodyfile="include/drivers/gps.h" bodystart="259" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__event_a67134ded4ea0521b8fba4d8f3a10d75b_1a67134ded4ea0521b8fba4d8f3a10d75b" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structgps__agps__request" kindref="compound">gps_agps_request</ref></type>
+        <definition>struct gps_agps_request gps_event::agps_request</definition>
+        <argsstring></argsstring>
+        <name>agps_request</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="260" column="23" bodyfile="include/drivers/gps.h" bodystart="260" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__event_ac407fd820063b2ee7dfd547cae07e7d5_1ac407fd820063b2ee7dfd547cae07e7d5" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__gpsapi_ga2344aec3b94338acce3a8609a5ebabba_1ga2344aec3b94338acce3a8609a5ebabba" kindref="member">gps_error</ref></type>
+        <definition>enum gps_error gps_event::error</definition>
+        <argsstring></argsstring>
+        <name>error</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="261" column="15" bodyfile="include/drivers/gps.h" bodystart="261" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__event_ae9f85741ed133948591c29f5f6632cd6_1ae9f85741ed133948591c29f5f6632cd6" prot="public" static="no" mutable="no">
+        <type>union gps_event::@141</type>
+        <definition>union gps_event::@141 gps_event::@142</definition>
+        <argsstring></argsstring>
+        <name>@142</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="262" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="6">
+        <label>gps_agps_request</label>
+        <link refid="structgps__agps__request"/>
+      </node>
+      <node id="3">
+        <label>gps_datetime</label>
+        <link refid="structgps__datetime"/>
+      </node>
+      <node id="1">
+        <label>gps_event</label>
+        <link refid="structgps__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>pvt</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>nmea</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>agps_request</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>gps_nmea</label>
+        <link refid="structgps__nmea"/>
+      </node>
+      <node id="2">
+        <label>gps_pvt</label>
+        <link refid="structgps__pvt"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>datetime</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>sv</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>gps_sv</label>
+        <link refid="structgps__sv"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/drivers/gps.h" line="255" column="1" bodyfile="include/drivers/gps.h" bodystart="255" bodyend="263"/>
+    <listofallmembers>
+      <member refid="structgps__event_a67134ded4ea0521b8fba4d8f3a10d75b_1a67134ded4ea0521b8fba4d8f3a10d75b" prot="public" virt="non-virtual"><scope>gps_event</scope><name>agps_request</name></member>
+      <member refid="structgps__event_ac407fd820063b2ee7dfd547cae07e7d5_1ac407fd820063b2ee7dfd547cae07e7d5" prot="public" virt="non-virtual"><scope>gps_event</scope><name>error</name></member>
+      <member refid="structgps__event_ad9d790748288e1bfd4be535a79e91cb2_1ad9d790748288e1bfd4be535a79e91cb2" prot="public" virt="non-virtual"><scope>gps_event</scope><name>nmea</name></member>
+      <member refid="structgps__event_aa64dd3d989faf4b98cdb1bedc72112cf_1aa64dd3d989faf4b98cdb1bedc72112cf" prot="public" virt="non-virtual"><scope>gps_event</scope><name>pvt</name></member>
+      <member refid="structgps__event_a3893586a8159592c54fca5f371b224f1_1a3893586a8159592c54fca5f371b224f1" prot="public" virt="non-virtual"><scope>gps_event</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

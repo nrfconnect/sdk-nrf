@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__bms__features" kind="struct" language="C++" prot="public">
+    <compoundname>bt_bms_features</compoundname>
+    <includes refid="bms_8h" local="no">bms.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__bms__features_aa4ee8d362fcba690c9aac85986eb9bd1_1aa4ee8d362fcba690c9aac85986eb9bd1" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__bms__feature" kindref="compound">bt_bms_feature</ref></type>
+        <definition>struct bt_bms_feature bt_bms_features::delete_all</definition>
+        <argsstring></argsstring>
+        <name>delete_all</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bms.h" line="81" column="21" bodyfile="include/bluetooth/services/bms.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__bms__features_ac5e5b6556f3de4d9e7b755652371b80e_1ac5e5b6556f3de4d9e7b755652371b80e" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__bms__feature" kindref="compound">bt_bms_feature</ref></type>
+        <definition>struct bt_bms_feature bt_bms_features::delete_requesting</definition>
+        <argsstring></argsstring>
+        <name>delete_requesting</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bms.h" line="86" column="21" bodyfile="include/bluetooth/services/bms.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__bms__features_ad80572446f34e1fdc9e5781a0ca57d1b_1ad80572446f34e1fdc9e5781a0ca57d1b" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__bms__feature" kindref="compound">bt_bms_feature</ref></type>
+        <definition>struct bt_bms_feature bt_bms_features::delete_rest</definition>
+        <argsstring></argsstring>
+        <name>delete_rest</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bms.h" line="91" column="21" bodyfile="include/bluetooth/services/bms.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Bitmask set of supported features. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bt_bms_feature</label>
+        <link refid="structbt__bms__feature"/>
+      </node>
+      <node id="1">
+        <label>bt_bms_features</label>
+        <link refid="structbt__bms__features"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>delete_all</edgelabel>
+          <edgelabel>delete_requesting</edgelabel>
+          <edgelabel>delete_rest</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/bms.h" line="79" column="1" bodyfile="include/bluetooth/services/bms.h" bodystart="79" bodyend="92"/>
+    <listofallmembers>
+      <member refid="structbt__bms__features_aa4ee8d362fcba690c9aac85986eb9bd1_1aa4ee8d362fcba690c9aac85986eb9bd1" prot="public" virt="non-virtual"><scope>bt_bms_features</scope><name>delete_all</name></member>
+      <member refid="structbt__bms__features_ac5e5b6556f3de4d9e7b755652371b80e_1ac5e5b6556f3de4d9e7b755652371b80e" prot="public" virt="non-virtual"><scope>bt_bms_features</scope><name>delete_requesting</name></member>
+      <member refid="structbt__bms__features_ad80572446f34e1fdc9e5781a0ca57d1b_1ad80572446f34e1fdc9e5781a0ca57d1b" prot="public" virt="non-virtual"><scope>bt_bms_features</scope><name>delete_rest</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

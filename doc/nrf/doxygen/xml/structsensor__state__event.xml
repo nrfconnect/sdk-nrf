@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structsensor__state__event" kind="struct" language="C++" prot="public">
+    <compoundname>sensor_state_event</compoundname>
+    <includes refid="sensor__event_8h" local="no">sensor_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structsensor__state__event_a6a9f80c44444244623580391d56b1635_1a6a9f80c44444244623580391d56b1635" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header sensor_state_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event header. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/sensor_event.h" line="56" column="19" bodyfile="include/caf/events/sensor_event.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsensor__state__event_a84374a4cd4a0e7b40c646fa047414a13_1a84374a4cd4a0e7b40c646fa047414a13" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* sensor_state_event::descr</definition>
+        <argsstring></argsstring>
+        <name>descr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Description of the sensor. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/sensor_event.h" line="58" column="12" bodyfile="include/caf/events/sensor_event.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsensor__state__event_a05206095618aa974b391ade5d02349f4_1a05206095618aa974b391ade5d02349f4" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__caf__sensor__event_ga3d6bbbd93d481807bf4beff831216749_1ga3d6bbbd93d481807bf4beff831216749" kindref="member">sensor_state</ref></type>
+        <definition>enum sensor_state sensor_state_event::state</definition>
+        <argsstring></argsstring>
+        <name>state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>New state of the sensor. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/sensor_event.h" line="59" column="18" bodyfile="include/caf/events/sensor_event.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Sensor state event. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The sensor state event is submitted when state of a sensor changes.</para>
+<para>The description field is a pointer to a string that is used to identify the sensor by the application. The Common Application Framework does not impose any standard way of describing sensors. Format and content of the sensor description is defined by the application.</para>
+<para><simplesect kind="warning"><para>The sensor state event related to the given sensor must use the same description as <ref refid="structsensor__event" kindref="compound">sensor_event</ref> related to the sensor. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>sensor_state_event</label>
+        <link refid="structsensor__state__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/caf/events/sensor_event.h" line="55" column="1" bodyfile="include/caf/events/sensor_event.h" bodystart="55" bodyend="60"/>
+    <listofallmembers>
+      <member refid="structsensor__state__event_a84374a4cd4a0e7b40c646fa047414a13_1a84374a4cd4a0e7b40c646fa047414a13" prot="public" virt="non-virtual"><scope>sensor_state_event</scope><name>descr</name></member>
+      <member refid="structsensor__state__event_a6a9f80c44444244623580391d56b1635_1a6a9f80c44444244623580391d56b1635" prot="public" virt="non-virtual"><scope>sensor_state_event</scope><name>header</name></member>
+      <member refid="structsensor__state__event_a05206095618aa974b391ade5d02349f4_1a05206095618aa974b391ade5d02349f4" prot="public" virt="non-virtual"><scope>sensor_state_event</scope><name>state</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

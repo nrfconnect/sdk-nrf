@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_309d2a879e4d670b1778eb87f7d31480" kind="dir">
+    <compoundname>applications/asset_tracker/src/ui/include</compoundname>
+    <innerfile refid="buzzer_8h">buzzer.h</innerfile>
+    <innerfile refid="applications_2asset__tracker_2src_2ui_2include_2led__effect_8h">led_effect.h</innerfile>
+    <innerfile refid="led__pwm_8h">led_pwm.h</innerfile>
+    <innerfile refid="nmos_8h">nmos.h</innerfile>
+    <innerfile refid="ui_8h">ui.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker/src/ui/include/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,349 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dfu__target__mcuboot_8h" kind="file" language="C++">
+    <compoundname>dfu_target_mcuboot.h</compoundname>
+    <includes local="no">stddef.h</includes>
+    <includes refid="dfu__target_8h" local="no">dfu/dfu_target.h</includes>
+    <incdepgraph>
+      <node id="3">
+        <label>dfu/dfu_target.h</label>
+        <link refid="dfu__target_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/dfu/dfu_target_mcuboot.h</label>
+        <link refid="dfu__target__mcuboot_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stddef.h</label>
+      </node>
+      <node id="4">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__dfu__target__mcuboot_ga7f4e588b1f2d38391fd3beb2373fa9f2_1ga7f4e588b1f2d38391fd3beb2373fa9f2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_ctx_mcuboot_set_b1_file</definition>
+        <argsstring>(const char *file, bool s0_active, const char **update)</argsstring>
+        <name>dfu_ctx_mcuboot_set_b1_file</name>
+        <param>
+          <type>const char *</type>
+          <declname>file</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>s0_active</declname>
+        </param>
+        <param>
+          <type>const char **</type>
+          <declname>update</declname>
+        </param>
+        <briefdescription>
+<para>Find correct MCUBoot update file path entry in space separated string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When supporting upgrades of the MCUBoot bootloader, two variants of the new firmware is presented, each linked against a different address. This function is told what slot is active, and sets the update pointer to point to the correct none active entry in the file path.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>pointer to file path with space separator. Note that the space separator can be replaced by a NULL terminator. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">s0_active</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>bool indicating if S0 is the currently active slot. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">update</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>pointer to correct file MCUBoot bootloader upgrade. Will be set to NULL if no space separator is found.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful (note that this does not imply that a space separator was found) negative errno otherwise. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_mcuboot.h" line="42" column="5" declfile="include/dfu/dfu_target_mcuboot.h" declline="42" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target__mcuboot_ga4e4801350d718a24138fc7285e2db68b_1ga4e4801350d718a24138fc7285e2db68b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_mcuboot_set_buf</definition>
+        <argsstring>(uint8_t *buf, size_t len)</argsstring>
+        <name>dfu_target_mcuboot_set_buf</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Set buffer to use for flash write operations. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>Non-negative</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>value if successful, negative errno otherwise. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_mcuboot.h" line="50" column="5" declfile="include/dfu/dfu_target_mcuboot.h" declline="50" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target__mcuboot_gafabc4d253376dc26de42ad53b55df6d0_1gafabc4d253376dc26de42ad53b55df6d0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool dfu_target_mcuboot_identify</definition>
+        <argsstring>(const void *const buf)</argsstring>
+        <name>dfu_target_mcuboot_identify</name>
+        <param>
+          <type>const void *const</type>
+          <declname>buf</declname>
+        </param>
+        <briefdescription>
+<para>See if data in buf indicates MCUBoot style upgrade. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if data matches, false otherwise. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_mcuboot.h" line="57" column="6" declfile="include/dfu/dfu_target_mcuboot.h" declline="57" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target__mcuboot_ga5901daddae012cbba0c4cfd749fd8a5b_1ga5901daddae012cbba0c4cfd749fd8a5b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_mcuboot_init</definition>
+        <argsstring>(size_t file_size, dfu_target_callback_t cb)</argsstring>
+        <name>dfu_target_mcuboot_init</name>
+        <param>
+          <type>size_t</type>
+          <declname>file_size</declname>
+        </param>
+        <param>
+          <type><ref refid="group__dfu__target_gaa44ceb54189d4c0dba08f4e8044a5981_1gaa44ceb54189d4c0dba08f4e8044a5981" kindref="member">dfu_target_callback_t</ref></type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Initialize dfu target, perform steps necessary to receive firmware. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">file_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the current file being downloaded. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback for signaling events(unused).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful, negative errno otherwise. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_mcuboot.h" line="67" column="5" declfile="include/dfu/dfu_target_mcuboot.h" declline="67" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target__mcuboot_ga6225ff0f74bd70c54431b16e292bdea0_1ga6225ff0f74bd70c54431b16e292bdea0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_mcuboot_offset_get</definition>
+        <argsstring>(size_t *offset)</argsstring>
+        <name>dfu_target_mcuboot_offset_get</name>
+        <param>
+          <type>size_t *</type>
+          <declname>offset</declname>
+        </param>
+        <briefdescription>
+<para>Get offset of firmware. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">offset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Returns the offset of the firmware upgrade.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if success, otherwise negative value if unable to get the offset </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_mcuboot.h" line="76" column="5" declfile="include/dfu/dfu_target_mcuboot.h" declline="76" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target__mcuboot_gacd40fa69f8b596df49500f599ad25687_1gacd40fa69f8b596df49500f599ad25687" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_mcuboot_write</definition>
+        <argsstring>(const void *const buf, size_t len)</argsstring>
+        <name>dfu_target_mcuboot_write</name>
+        <param>
+          <type>const void *const</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Write firmware data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to data that should be written. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of data to write.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, negative errno otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_mcuboot.h" line="86" column="5" declfile="include/dfu/dfu_target_mcuboot.h" declline="86" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target__mcuboot_gacf468b65990570fe98ad9d06dc68c426_1gacf468b65990570fe98ad9d06dc68c426" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_mcuboot_done</definition>
+        <argsstring>(bool successful)</argsstring>
+        <name>dfu_target_mcuboot_done</name>
+        <param>
+          <type>bool</type>
+          <declname>successful</declname>
+        </param>
+        <briefdescription>
+<para>Deinitialize resources and finalize firmware upgrade if successful. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">successful</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Indicate whether the firmware was successfully recived.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, negative errno otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_mcuboot.h" line="95" column="5" declfile="include/dfu/dfu_target_mcuboot.h" declline="95" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>DFU_TARGET_MCUBOOT_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DFU_TARGET_MCUBOOT_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stddef.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="dfu__target_8h" kindref="compound">dfu/dfu_target.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="group__dfu__target__mcuboot_ga7f4e588b1f2d38391fd3beb2373fa9f2_1ga7f4e588b1f2d38391fd3beb2373fa9f2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dfu__target__mcuboot_ga7f4e588b1f2d38391fd3beb2373fa9f2_1ga7f4e588b1f2d38391fd3beb2373fa9f2" kindref="member">dfu_ctx_mcuboot_set_b1_file</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*file,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>s0_active,</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>**update);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="group__dfu__target__mcuboot_ga4e4801350d718a24138fc7285e2db68b_1ga4e4801350d718a24138fc7285e2db68b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dfu__target__mcuboot_ga4e4801350d718a24138fc7285e2db68b_1ga4e4801350d718a24138fc7285e2db68b" kindref="member">dfu_target_mcuboot_set_buf</ref>(uint8_t<sp/>*buf,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>len);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="group__dfu__target__mcuboot_gafabc4d253376dc26de42ad53b55df6d0_1gafabc4d253376dc26de42ad53b55df6d0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__dfu__target__mcuboot_gafabc4d253376dc26de42ad53b55df6d0_1gafabc4d253376dc26de42ad53b55df6d0" kindref="member">dfu_target_mcuboot_identify</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>buf);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="group__dfu__target__mcuboot_ga5901daddae012cbba0c4cfd749fd8a5b_1ga5901daddae012cbba0c4cfd749fd8a5b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dfu__target__mcuboot_ga5901daddae012cbba0c4cfd749fd8a5b_1ga5901daddae012cbba0c4cfd749fd8a5b" kindref="member">dfu_target_mcuboot_init</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>file_size,<sp/><ref refid="group__dfu__target_gaa44ceb54189d4c0dba08f4e8044a5981_1gaa44ceb54189d4c0dba08f4e8044a5981" kindref="member">dfu_target_callback_t</ref><sp/>cb);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="group__dfu__target__mcuboot_ga6225ff0f74bd70c54431b16e292bdea0_1ga6225ff0f74bd70c54431b16e292bdea0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dfu__target__mcuboot_ga6225ff0f74bd70c54431b16e292bdea0_1ga6225ff0f74bd70c54431b16e292bdea0" kindref="member">dfu_target_mcuboot_offset_get</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>*offset);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="group__dfu__target__mcuboot_gacd40fa69f8b596df49500f599ad25687_1gacd40fa69f8b596df49500f599ad25687" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dfu__target__mcuboot_gacd40fa69f8b596df49500f599ad25687_1gacd40fa69f8b596df49500f599ad25687" kindref="member">dfu_target_mcuboot_write</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>buf,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>len);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="group__dfu__target__mcuboot_gacf468b65990570fe98ad9d06dc68c426_1gacf468b65990570fe98ad9d06dc68c426" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__dfu__target__mcuboot_gacf468b65990570fe98ad9d06dc68c426_1gacf468b65990570fe98ad9d06dc68c426" kindref="member">dfu_target_mcuboot_done</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>successful);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>DFU_TARGET_MCUBOOT_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/dfu/dfu_target_mcuboot.h"/>
+  </compounddef>
+</doxygen>

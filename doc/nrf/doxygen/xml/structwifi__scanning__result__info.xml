@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structwifi__scanning__result__info" kind="struct" language="C++" prot="public">
+    <compoundname>wifi_scanning_result_info</compoundname>
+    <includes refid="wifi__service_8h" local="no">wifi_service.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structwifi__scanning__result__info_a04d91bfd09054990412c652be4fad352_1a04d91bfd09054990412c652be4fad352" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char wifi_scanning_result_info::mac_addr_str[17+1]</definition>
+        <argsstring>[17+1]</argsstring>
+        <name>mac_addr_str</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/wifi/wifi_service.h" line="25" column="6" bodyfile="lib/location/wifi/wifi_service.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structwifi__scanning__result__info_a17902f0083d3b19b05c51851cd2f06ba_1a17902f0083d3b19b05c51851cd2f06ba" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char wifi_scanning_result_info::ssid_str[WIFI_SSID_MAX_LEN+1]</definition>
+        <argsstring>[WIFI_SSID_MAX_LEN+1]</argsstring>
+        <name>ssid_str</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/wifi/wifi_service.h" line="26" column="6" bodyfile="lib/location/wifi/wifi_service.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structwifi__scanning__result__info_a035ff71d343cd8c77ba1426906e9b039_1a035ff71d343cd8c77ba1426906e9b039" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t wifi_scanning_result_info::channel</definition>
+        <argsstring></argsstring>
+        <name>channel</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/wifi/wifi_service.h" line="27" column="9" bodyfile="lib/location/wifi/wifi_service.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structwifi__scanning__result__info_a04d6246452b855f207d61c2232d9c41e_1a04d6246452b855f207d61c2232d9c41e" prot="public" static="no" mutable="no">
+        <type>int8_t</type>
+        <definition>int8_t wifi_scanning_result_info::rssi</definition>
+        <argsstring></argsstring>
+        <name>rssi</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/location/wifi/wifi_service.h" line="28" column="8" bodyfile="lib/location/wifi/wifi_service.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Item for passing a Wi-Fi scanning result. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/location/wifi/wifi_service.h" line="24" column="1" bodyfile="lib/location/wifi/wifi_service.h" bodystart="24" bodyend="29"/>
+    <listofallmembers>
+      <member refid="structwifi__scanning__result__info_a035ff71d343cd8c77ba1426906e9b039_1a035ff71d343cd8c77ba1426906e9b039" prot="public" virt="non-virtual"><scope>wifi_scanning_result_info</scope><name>channel</name></member>
+      <member refid="structwifi__scanning__result__info_a04d91bfd09054990412c652be4fad352_1a04d91bfd09054990412c652be4fad352" prot="public" virt="non-virtual"><scope>wifi_scanning_result_info</scope><name>mac_addr_str</name></member>
+      <member refid="structwifi__scanning__result__info_a04d6246452b855f207d61c2232d9c41e_1a04d6246452b855f207d61c2232d9c41e" prot="public" virt="non-virtual"><scope>wifi_scanning_result_info</scope><name>rssi</name></member>
+      <member refid="structwifi__scanning__result__info_a17902f0083d3b19b05c51851cd2f06ba_1a17902f0083d3b19b05c51851cd2f06ba" prot="public" virt="non-virtual"><scope>wifi_scanning_result_info</scope><name>ssid_str</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

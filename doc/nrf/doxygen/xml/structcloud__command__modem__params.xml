@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structcloud__command__modem__params" kind="struct" language="C++" prot="public">
+    <compoundname>cloud_command_modem_params</compoundname>
+    <includes refid="src_2cloud__codec_2cloud__codec_8h" local="no">cloud_codec.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structcloud__command__modem__params_a0fbdf3d15563871936c32a6c73750d16_1a0fbdf3d15563871936c32a6c73750d16" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* cloud_command_modem_params::blob</definition>
+        <argsstring></argsstring>
+        <name>blob</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="179" column="6" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="179" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__command__modem__params_a132e0a200030e60ac15a9d6a45395460_1a132e0a200030e60ac15a9d6a45395460" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* cloud_command_modem_params::checksum</definition>
+        <argsstring></argsstring>
+        <name>checksum</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="180" column="6" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="180" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker/src/cloud_codec/cloud_codec.h" line="177" column="1" bodyfile="applications/asset_tracker/src/cloud_codec/cloud_codec.h" bodystart="177" bodyend="181"/>
+    <listofallmembers>
+      <member refid="structcloud__command__modem__params_a0fbdf3d15563871936c32a6c73750d16_1a0fbdf3d15563871936c32a6c73750d16" prot="public" virt="non-virtual"><scope>cloud_command_modem_params</scope><name>blob</name></member>
+      <member refid="structcloud__command__modem__params_a132e0a200030e60ac15a9d6a45395460_1a132e0a200030e60ac15a9d6a45395460" prot="public" virt="non-virtual"><scope>cloud_command_modem_params</scope><name>checksum</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

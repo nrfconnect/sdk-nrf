@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__tnep__poller__msg" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_tnep_poller_msg</compoundname>
+    <includes refid="poller_8h" local="no">poller.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__tnep__poller__msg_a661f4b7269b105dc12980c319d304b7d_1a661f4b7269b105dc12980c319d304b7d" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__nfc__tnep__base_ga6a3da489c1aade13de10f4017d2ebcf9_1ga6a3da489c1aade13de10f4017d2ebcf9" kindref="member">nfc_tnep_status_value</ref></type>
+        <definition>enum nfc_tnep_status_value nfc_tnep_poller_msg::status</definition>
+        <argsstring></argsstring>
+        <name>status</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>TNEP Status Type. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="45" column="27" bodyfile="include/nfc/tnep/poller.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__poller__msg_a2260f228f77c6cf896d6326bfbf39f97_1a2260f228f77c6cf896d6326bfbf39f97" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structnfc__ndef__msg__desc" kindref="compound">nfc_ndef_msg_desc</ref> *</type>
+        <definition>const struct nfc_ndef_msg_desc* nfc_tnep_poller_msg::msg</definition>
+        <argsstring></argsstring>
+        <name>msg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>TNEP NDEF Message contains additional NDEF Records and NDEF Status Record. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="50" column="30" bodyfile="include/nfc/tnep/poller.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>TNEP Poller Message structure. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This structure contains NDEF Message pointer and TNEP status received from TNEP Status Message after the Tag Device received valid Service Select Message. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>nfc_ndef_msg_desc</label>
+        <link refid="structnfc__ndef__msg__desc"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>record</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>nfc_ndef_record_desc</label>
+        <link refid="structnfc__ndef__record__desc"/>
+      </node>
+      <node id="1">
+        <label>nfc_tnep_poller_msg</label>
+        <link refid="structnfc__tnep__poller__msg"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>msg</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/nfc/tnep/poller.h" line="43" column="1" bodyfile="include/nfc/tnep/poller.h" bodystart="43" bodyend="51"/>
+    <listofallmembers>
+      <member refid="structnfc__tnep__poller__msg_a2260f228f77c6cf896d6326bfbf39f97_1a2260f228f77c6cf896d6326bfbf39f97" prot="public" virt="non-virtual"><scope>nfc_tnep_poller_msg</scope><name>msg</name></member>
+      <member refid="structnfc__tnep__poller__msg_a661f4b7269b105dc12980c319d304b7d_1a661f4b7269b105dc12980c319d304b7d" prot="public" virt="non-virtual"><scope>nfc_tnep_poller_msg</scope><name>status</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,843 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="sensor_8h" kind="file" language="C++">
+    <compoundname>sensor.h</compoundname>
+    <includes local="no">bluetooth/mesh.h</includes>
+    <includes refid="model__types_8h" local="no">bluetooth/mesh/model_types.h</includes>
+    <includes local="no">drivers/sensor.h</includes>
+    <includes local="no">stdlib.h</includes>
+    <includedby refid="light__ctrl__cli_8h" local="no">include/bluetooth/mesh/light_ctrl_cli.h</includedby>
+    <includedby refid="light__ctrl__srv_8h" local="no">include/bluetooth/mesh/light_ctrl_srv.h</includedby>
+    <includedby refid="sensor__cli_8h" local="no">include/bluetooth/mesh/sensor_cli.h</includedby>
+    <includedby refid="sensor__srv_8h" local="no">include/bluetooth/mesh/sensor_srv.h</includedby>
+    <includedby refid="sensor__types_8h" local="no">include/bluetooth/mesh/sensor_types.h</includedby>
+    <incdepgraph>
+      <node id="3">
+        <label>bluetooth/mesh/model_types.h</label>
+        <link refid="model__types_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/mesh/sensor.h</label>
+        <link refid="sensor_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bluetooth/mesh.h</label>
+      </node>
+      <node id="4">
+        <label>drivers/sensor.h</label>
+      </node>
+      <node id="5">
+        <label>stdlib.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>include/bluetooth/mesh/light_ctrl_cli.h</label>
+        <link refid="light__ctrl__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>include/bluetooth/mesh/light_ctrl_srv.h</label>
+        <link refid="light__ctrl__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>include/bluetooth/mesh/models.h</label>
+        <link refid="models_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>include/bluetooth/mesh/sensor.h</label>
+        <link refid="sensor_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>include/bluetooth/mesh/sensor_cli.h</label>
+        <link refid="sensor__cli_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>include/bluetooth/mesh/sensor_srv.h</label>
+        <link refid="sensor__srv_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>include/bluetooth/mesh/sensor_types.h</label>
+        <link refid="sensor__types_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>include/bluetooth/mesh/vnd/silvair_enocean_srv.h</label>
+        <link refid="silvair__enocean__srv_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structbt__mesh__sensor__descriptor" prot="public">bt_mesh_sensor_descriptor</innerclass>
+    <innerclass refid="structbt__mesh__sensor__threshold" prot="public">bt_mesh_sensor_threshold</innerclass>
+    <innerclass refid="structbt__mesh__sensor__unit" prot="public">bt_mesh_sensor_unit</innerclass>
+    <innerclass refid="structbt__mesh__sensor__format" prot="public">bt_mesh_sensor_format</innerclass>
+    <innerclass refid="structbt__mesh__sensor__channel" prot="public">bt_mesh_sensor_channel</innerclass>
+    <innerclass refid="structbt__mesh__sensor__type" prot="public">bt_mesh_sensor_type</innerclass>
+    <innerclass refid="structbt__mesh__sensor__setting" prot="public">bt_mesh_sensor_setting</innerclass>
+    <innerclass refid="structbt__mesh__sensor__column" prot="public">bt_mesh_sensor_column</innerclass>
+    <innerclass refid="structbt__mesh__sensor__series" prot="public">bt_mesh_sensor_series</innerclass>
+    <innerclass refid="structbt__mesh__sensor" prot="public">bt_mesh_sensor</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__sensor_gaf63d21f71ed4efe09614eaa9df39f9b6_1gaf63d21f71ed4efe09614eaa9df39f9b6" prot="public" static="no">
+        <name>BT_MESH_SENSOR_PERIOD_DIV_MAX</name>
+        <initializer>15</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Largest period divisor value allowed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="26" column="9" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__sensor_ga6abeb9cc1864ac44cbd43eb2475a5a9d_1ga6abeb9cc1864ac44cbd43eb2475a5a9d" prot="public" static="no">
+        <name>BT_MESH_SENSOR_INTERVAL_MAX</name>
+        <initializer>26</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Largest sensor interval allowed (in seconds). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="28" column="9" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__sensor_gafbc7ef44d0908ee5a745d6abf93ef502_1gafbc7ef44d0908ee5a745d6abf93ef502" prot="public" static="no">
+        <name>BT_MESH_SENSOR_CH_STR_LEN</name>
+        <initializer>19</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>String length for representing a single sensor channel. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="31" column="9" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__sensor_ga85cd4621595890b015912b46bceceef7_1ga85cd4621595890b015912b46bceceef7" prot="public" static="no">
+        <name>BT_MESH_SENSOR_TYPE_FLAG_SERIES</name>
+        <initializer>BIT(0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Flag indicating this sensor type has a series representation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="202" column="9" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="202" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__sensor_ga8b40f4138c71274f750219a9d6b696e8_1ga8b40f4138c71274f750219a9d6b696e8" prot="public" static="no">
+        <name>bt_mesh_sensor_ch_str</name>
+        <param><defname>ch</defname></param>
+        <initializer>log_strdup(<ref refid="group__bt__mesh__sensor_ga9226efc09580dafd3af93caa7011865b_1ga9226efc09580dafd3af93caa7011865b" kindref="member">bt_mesh_sensor_ch_str_real</ref>(ch))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>String duplication variant of <ref refid="group__bt__mesh__sensor_ga9226efc09580dafd3af93caa7011865b_1ga9226efc09580dafd3af93caa7011865b" kindref="member">bt_mesh_sensor_ch_str_real</ref> for use in logging.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ch</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor channel to represent. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="487" column="9" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="487" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1ga0f4cd1a561942c6cb9e05ed2eb3c3360" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_sensor_sampling</name>
+        <enumvalue id="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360a4311aa0792b8640c9a5836e382d6dcfc" prot="public">
+          <name>BT_MESH_SENSOR_SAMPLING_UNSPECIFIED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The sampling function is unspecified </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360a55f010b4254d69de3faa26c0954b324f" prot="public">
+          <name>BT_MESH_SENSOR_SAMPLING_INSTANTANEOUS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The presented value is an instantaneous sample. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360ad7b397c8c350c629a3d0858af5ad217f" prot="public">
+          <name>BT_MESH_SENSOR_SAMPLING_ARITHMETIC_MEAN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The presented value is the arithmetic mean of multiple samples. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360aa874e25f46c88a787cba9d447cb35e72" prot="public">
+          <name>BT_MESH_SENSOR_SAMPLING_RMS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The presented value is the root mean square of multiple samples. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360a4042b89ca949a0cc228b07ba7efe4fb6" prot="public">
+          <name>BT_MESH_SENSOR_SAMPLING_MAXIMUM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The presented value is the maximum of multiple samples. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360a1ca8de52209c7e551f0bbb43b8072ee4" prot="public">
+          <name>BT_MESH_SENSOR_SAMPLING_MINIMUM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The presented value is the minimum of multiple samples. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360ab30d086a551fe5ea0bf62255ce3ed33c" prot="public">
+          <name>BT_MESH_SENSOR_SAMPLING_ACCUMULATED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The presented value is the accumulated moving average value of the samples. The updating frequency of the moving average should be indicated in <emphasis>bt_mesh_descriptor::update_interval</emphasis>. The total measurement period should be indicated in <emphasis>bt_mesh_descriptor::period</emphasis>. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360aa1a3b4792d9294a1b90179fe09d5473d" prot="public">
+          <name>BT_MESH_SENSOR_SAMPLING_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The presented value is a count of events in a specific measurement period. <emphasis>bt_mesh_descriptor::period</emphasis> should denote the measurement period, or left to 0 to indicate that the sample is a lifetime value. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sensor sampling type.</para>
+<para>Represents the sampling function used to produce the presented sensor value. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="37" column="1" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="37" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__mesh__sensor_ga56d81b2eeefd39c1913bc6ddcd03f48b_1ga56d81b2eeefd39c1913bc6ddcd03f48b" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_sensor_delta</name>
+        <enumvalue id="group__bt__mesh__sensor_ga56d81b2eeefd39c1913bc6ddcd03f48b_1gga56d81b2eeefd39c1913bc6ddcd03f48baa8da97affc73541d82ab2ec546412e47" prot="public">
+          <name>BT_MESH_SENSOR_DELTA_VALUE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Value based delta threshold. The delta threshold values are represented as absolute value changes. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__sensor_ga56d81b2eeefd39c1913bc6ddcd03f48b_1gga56d81b2eeefd39c1913bc6ddcd03f48ba52eb3dee342987c647a64974d6254318" prot="public">
+          <name>BT_MESH_SENSOR_DELTA_PERCENT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Percent based delta threshold. The delta threshold values are represented as percentages of their old value (resolution: 0.01 %). </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Delta threshold type. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="87" column="1" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="87" bodyend="98"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__bt__mesh__sensor_ga0fdc9041080c8b6252c0a9d37a99a4c1_1ga0fdc9041080c8b6252c0a9d37a99a4c1" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_sensor_cadence</name>
+        <enumvalue id="group__bt__mesh__sensor_ga0fdc9041080c8b6252c0a9d37a99a4c1_1gga0fdc9041080c8b6252c0a9d37a99a4c1a2eafc7103a6c12a238c7aa3d88b70b0b" prot="public">
+          <name>BT_MESH_SENSOR_CADENCE_NORMAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Normal sensor publish interval. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__sensor_ga0fdc9041080c8b6252c0a9d37a99a4c1_1gga0fdc9041080c8b6252c0a9d37a99a4c1aad060714094772e5cea2f6a497cc3ab2" prot="public">
+          <name>BT_MESH_SENSOR_CADENCE_FAST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Fast sensor publish interval. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sensor sampling cadence </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="101" column="1" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="101" bodyend="106"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__sensor_ga883fb49275a8c987e1cdadf95799e849_1ga883fb49275a8c987e1cdadf95799e849" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool bt_mesh_sensor_delta_threshold</definition>
+        <argsstring>(const struct bt_mesh_sensor *sensor, const struct sensor_value *value)</argsstring>
+        <name>bt_mesh_sensor_delta_threshold</name>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__sensor" kindref="compound">bt_mesh_sensor</ref> *</type>
+          <declname>sensor</declname>
+        </param>
+        <param>
+          <type>const struct sensor_value *</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Check if a value change breaks the delta threshold. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Sensors should publish their value if the measured sample is outside the delta threshold compared to the previously published value. This function checks the threshold and the previously published value for this sensor, and returns whether the sensor should publish its value.</para>
+<para><simplesect kind="note"><para>Only single-channel sensors support cadence. Multi-channel sensors are always considered out of their threshold range, and will always return true from this function. Single-channel sensors that haven&apos;t been assigned a threshold will return true if the value is different.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">sensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The sensor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the difference between the measurements exceeds the delta threshold, false otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="418" column="6" declfile="include/bluetooth/mesh/sensor.h" declline="418" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__sensor_ga44c23ada7b88628ae74f211d189d97a6_1ga44c23ada7b88628ae74f211d189d97a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref> *</type>
+        <definition>const struct bt_mesh_sensor_type * bt_mesh_sensor_type_get</definition>
+        <argsstring>(uint16_t id)</argsstring>
+        <name>bt_mesh_sensor_type_get</name>
+        <param>
+          <type>uint16_t</type>
+          <declname>id</declname>
+        </param>
+        <briefdescription>
+<para>Get the sensor type associated with the given Device Property ID. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Only known sensor types from <ref refid="group__bt__mesh__sensor__types" kindref="compound">Sensor types</ref> will be available. Sensor types can be made known to the sensor module by enabling <verbatim>embed:rst:inline :kconfig:`CONFIG_BT_MESH_SENSOR_ALL_TYPES` </verbatim> or by referencing them in the application.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A Device Property ID.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The associated sensor type, or NULL if the ID is unknown. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="432" column="32" declfile="include/bluetooth/mesh/sensor.h" declline="432" declcolumn="32"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__sensor_ga4ff2dabdba48b6445721308e72d67759_1ga4ff2dabdba48b6445721308e72d67759" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool bt_mesh_sensor_value_in_column</definition>
+        <argsstring>(const struct sensor_value *value, const struct bt_mesh_sensor_column *col)</argsstring>
+        <name>bt_mesh_sensor_value_in_column</name>
+        <param>
+          <type>const struct sensor_value *</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__sensor__column" kindref="compound">bt_mesh_sensor_column</ref> *</type>
+          <declname>col</declname>
+        </param>
+        <briefdescription>
+<para>Check whether a single channel sensor value lies within a column. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value to check. Only the first channel is considered. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">col</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor column.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the value belongs in the column, false otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="441" column="6" declfile="include/bluetooth/mesh/sensor.h" declline="441" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__sensor_ga1189853141fca3e543001ac2a582afec_1ga1189853141fca3e543001ac2a582afec" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const struct <ref refid="structbt__mesh__sensor__format" kindref="compound">bt_mesh_sensor_format</ref> *</type>
+        <definition>const struct bt_mesh_sensor_format * bt_mesh_sensor_column_format_get</definition>
+        <argsstring>(const struct bt_mesh_sensor_type *type)</argsstring>
+        <name>bt_mesh_sensor_column_format_get</name>
+        <param>
+          <type>const struct <ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref> *</type>
+          <declname>type</declname>
+        </param>
+        <briefdescription>
+<para>Get the format of the sensor column data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor type.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The sensor type&apos;s sensor column format if series access is supported. Otherwise NULL. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="452" column="1" declfile="include/bluetooth/mesh/sensor.h" declline="452" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__sensor_gac0091a7b84c73e56e489b41b8a7a6ea1_1gac0091a7b84c73e56e489b41b8a7a6ea1" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int bt_mesh_sensor_ch_to_str</definition>
+        <argsstring>(const struct sensor_value *ch, char *str, size_t len)</argsstring>
+        <name>bt_mesh_sensor_ch_to_str</name>
+        <param>
+          <type>const struct sensor_value *</type>
+          <declname>ch</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>str</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Get a human readable representation of a single sensor channel. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ch</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor channel to represent. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">str</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>String buffer to fill. Should be <ref refid="group__bt__mesh__sensor_gafbc7ef44d0908ee5a745d6abf93ef502_1gafbc7ef44d0908ee5a745d6abf93ef502" kindref="member">BT_MESH_SENSOR_CH_STR_LEN</ref> bytes long. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of <computeroutput>str</computeroutput> buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of bytes that should have been written if <computeroutput>str</computeroutput> is sufficiently large. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="464" column="19" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="464" bodyend="470"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__sensor_ga9226efc09580dafd3af93caa7011865b_1ga9226efc09580dafd3af93caa7011865b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const char *</type>
+        <definition>const char * bt_mesh_sensor_ch_str_real</definition>
+        <argsstring>(const struct sensor_value *ch)</argsstring>
+        <name>bt_mesh_sensor_ch_str_real</name>
+        <param>
+          <type>const struct sensor_value *</type>
+          <declname>ch</declname>
+        </param>
+        <briefdescription>
+<para>Get a human readable representation of a single sensor channel. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This function is not thread safe.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ch</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sensor channel to represent.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A string representing the sensor channel. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="480" column="12" declfile="include/bluetooth/mesh/sensor.h" declline="480" declcolumn="12"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_MESH_SENSOR_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/mesh.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="model__types_8h" kindref="compound">bluetooth/mesh/model_types.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;drivers/sensor.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdlib.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="group__bt__mesh__sensor_gaf63d21f71ed4efe09614eaa9df39f9b6_1gaf63d21f71ed4efe09614eaa9df39f9b6" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_PERIOD_DIV_MAX<sp/>15</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="group__bt__mesh__sensor_ga6abeb9cc1864ac44cbd43eb2475a5a9d_1ga6abeb9cc1864ac44cbd43eb2475a5a9d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_INTERVAL_MAX<sp/>26</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="group__bt__mesh__sensor_gafbc7ef44d0908ee5a745d6abf93ef502_1gafbc7ef44d0908ee5a745d6abf93ef502" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_CH_STR_LEN<sp/>19</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1ga0f4cd1a561942c6cb9e05ed2eb3c3360" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1ga0f4cd1a561942c6cb9e05ed2eb3c3360" kindref="member">bt_mesh_sensor_sampling</ref><sp/>{</highlight></codeline>
+<codeline lineno="39" refid="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360a4311aa0792b8640c9a5836e382d6dcfc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360a4311aa0792b8640c9a5836e382d6dcfc" kindref="member">BT_MESH_SENSOR_SAMPLING_UNSPECIFIED</ref>,</highlight></codeline>
+<codeline lineno="41" refid="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360a55f010b4254d69de3faa26c0954b324f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360a55f010b4254d69de3faa26c0954b324f" kindref="member">BT_MESH_SENSOR_SAMPLING_INSTANTANEOUS</ref>,</highlight></codeline>
+<codeline lineno="43" refid="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360ad7b397c8c350c629a3d0858af5ad217f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360ad7b397c8c350c629a3d0858af5ad217f" kindref="member">BT_MESH_SENSOR_SAMPLING_ARITHMETIC_MEAN</ref>,</highlight></codeline>
+<codeline lineno="45" refid="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360aa874e25f46c88a787cba9d447cb35e72" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360aa874e25f46c88a787cba9d447cb35e72" kindref="member">BT_MESH_SENSOR_SAMPLING_RMS</ref>,</highlight></codeline>
+<codeline lineno="47" refid="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360a4042b89ca949a0cc228b07ba7efe4fb6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360a4042b89ca949a0cc228b07ba7efe4fb6" kindref="member">BT_MESH_SENSOR_SAMPLING_MAXIMUM</ref>,</highlight></codeline>
+<codeline lineno="49" refid="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360a1ca8de52209c7e551f0bbb43b8072ee4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360a1ca8de52209c7e551f0bbb43b8072ee4" kindref="member">BT_MESH_SENSOR_SAMPLING_MINIMUM</ref>,</highlight></codeline>
+<codeline lineno="56" refid="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360ab30d086a551fe5ea0bf62255ce3ed33c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360ab30d086a551fe5ea0bf62255ce3ed33c" kindref="member">BT_MESH_SENSOR_SAMPLING_ACCUMULATED</ref>,</highlight></codeline>
+<codeline lineno="62" refid="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360aa1a3b4792d9294a1b90179fe09d5473d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1gga0f4cd1a561942c6cb9e05ed2eb3c3360aa1a3b4792d9294a1b90179fe09d5473d" kindref="member">BT_MESH_SENSOR_SAMPLING_COUNT</ref>,</highlight></codeline>
+<codeline lineno="63"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="structbt__mesh__sensor__descriptor" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__descriptor" kindref="compound">bt_mesh_sensor_descriptor</ref><sp/>{</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="72" refid="structbt__mesh__sensor__descriptor_abdb374f7df9312edf3fd9cc8f5a0b1ae_1abdb374f7df9312edf3fd9cc8f5a0b1ae" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">sensor_value<sp/><ref refid="structbt__mesh__sensor__descriptor_abdb374f7df9312edf3fd9cc8f5a0b1ae_1abdb374f7df9312edf3fd9cc8f5a0b1ae" kindref="member">positive</ref>;</highlight></codeline>
+<codeline lineno="76" refid="structbt__mesh__sensor__descriptor_a4aefb5b1872e964b30a164900250b274_1a4aefb5b1872e964b30a164900250b274" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">sensor_value<sp/><ref refid="structbt__mesh__sensor__descriptor_a4aefb5b1872e964b30a164900250b274_1a4aefb5b1872e964b30a164900250b274" kindref="member">negative</ref>;</highlight></codeline>
+<codeline lineno="77" refid="structbt__mesh__sensor__descriptor_adb74cce13095a69a346597d0199f31a0_1adb74cce13095a69a346597d0199f31a0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/><ref refid="structbt__mesh__sensor__descriptor_adb74cce13095a69a346597d0199f31a0_1adb74cce13095a69a346597d0199f31a0" kindref="member">tolerance</ref>;</highlight></codeline>
+<codeline lineno="79" refid="structbt__mesh__sensor__descriptor_a3549c1f21fb5c2b432fb3e0a3736d987_1a3549c1f21fb5c2b432fb3e0a3736d987" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__sensor_ga0f4cd1a561942c6cb9e05ed2eb3c3360_1ga0f4cd1a561942c6cb9e05ed2eb3c3360" kindref="member">bt_mesh_sensor_sampling</ref><sp/><ref refid="structbt__mesh__sensor__descriptor_a3549c1f21fb5c2b432fb3e0a3736d987_1a3549c1f21fb5c2b432fb3e0a3736d987" kindref="member">sampling_type</ref>;</highlight></codeline>
+<codeline lineno="81" refid="structbt__mesh__sensor__descriptor_a56d67bc762a5a4a9e9120c5d43f8d323_1a56d67bc762a5a4a9e9120c5d43f8d323" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/><ref refid="structbt__mesh__sensor__descriptor_a56d67bc762a5a4a9e9120c5d43f8d323_1a56d67bc762a5a4a9e9120c5d43f8d323" kindref="member">period</ref>;</highlight></codeline>
+<codeline lineno="83" refid="structbt__mesh__sensor__descriptor_a766f676d4a797657c21182d215e9a051_1a766f676d4a797657c21182d215e9a051" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/><ref refid="structbt__mesh__sensor__descriptor_a766f676d4a797657c21182d215e9a051_1a766f676d4a797657c21182d215e9a051" kindref="member">update_interval</ref>;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87" refid="group__bt__mesh__sensor_ga56d81b2eeefd39c1913bc6ddcd03f48b_1ga56d81b2eeefd39c1913bc6ddcd03f48b" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__sensor_ga56d81b2eeefd39c1913bc6ddcd03f48b_1ga56d81b2eeefd39c1913bc6ddcd03f48b" kindref="member">bt_mesh_sensor_delta</ref><sp/>{</highlight></codeline>
+<codeline lineno="92" refid="group__bt__mesh__sensor_ga56d81b2eeefd39c1913bc6ddcd03f48b_1gga56d81b2eeefd39c1913bc6ddcd03f48baa8da97affc73541d82ab2ec546412e47" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__sensor_ga56d81b2eeefd39c1913bc6ddcd03f48b_1gga56d81b2eeefd39c1913bc6ddcd03f48baa8da97affc73541d82ab2ec546412e47" kindref="member">BT_MESH_SENSOR_DELTA_VALUE</ref>,</highlight></codeline>
+<codeline lineno="97" refid="group__bt__mesh__sensor_ga56d81b2eeefd39c1913bc6ddcd03f48b_1gga56d81b2eeefd39c1913bc6ddcd03f48ba52eb3dee342987c647a64974d6254318" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__sensor_ga56d81b2eeefd39c1913bc6ddcd03f48b_1gga56d81b2eeefd39c1913bc6ddcd03f48ba52eb3dee342987c647a64974d6254318" kindref="member">BT_MESH_SENSOR_DELTA_PERCENT</ref>,</highlight></codeline>
+<codeline lineno="98"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101" refid="group__bt__mesh__sensor_ga0fdc9041080c8b6252c0a9d37a99a4c1_1ga0fdc9041080c8b6252c0a9d37a99a4c1" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__sensor_ga0fdc9041080c8b6252c0a9d37a99a4c1_1ga0fdc9041080c8b6252c0a9d37a99a4c1" kindref="member">bt_mesh_sensor_cadence</ref><sp/>{</highlight></codeline>
+<codeline lineno="103" refid="group__bt__mesh__sensor_ga0fdc9041080c8b6252c0a9d37a99a4c1_1gga0fdc9041080c8b6252c0a9d37a99a4c1a2eafc7103a6c12a238c7aa3d88b70b0b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__sensor_ga0fdc9041080c8b6252c0a9d37a99a4c1_1gga0fdc9041080c8b6252c0a9d37a99a4c1a2eafc7103a6c12a238c7aa3d88b70b0b" kindref="member">BT_MESH_SENSOR_CADENCE_NORMAL</ref>,</highlight></codeline>
+<codeline lineno="105" refid="group__bt__mesh__sensor_ga0fdc9041080c8b6252c0a9d37a99a4c1_1gga0fdc9041080c8b6252c0a9d37a99a4c1aad060714094772e5cea2f6a497cc3ab2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__bt__mesh__sensor_ga0fdc9041080c8b6252c0a9d37a99a4c1_1gga0fdc9041080c8b6252c0a9d37a99a4c1aad060714094772e5cea2f6a497cc3ab2" kindref="member">BT_MESH_SENSOR_CADENCE_FAST</ref>,</highlight></codeline>
+<codeline lineno="106"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109" refid="structbt__mesh__sensor__threshold" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__threshold" kindref="compound">bt_mesh_sensor_threshold</ref><sp/>{</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="117" refid="structbt__mesh__sensor__threshold_a2e7cd7ebec09c2ccd2061845f77fed40_1a2e7cd7ebec09c2ccd2061845f77fed40" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__sensor_ga56d81b2eeefd39c1913bc6ddcd03f48b_1ga56d81b2eeefd39c1913bc6ddcd03f48b" kindref="member">bt_mesh_sensor_delta</ref><sp/><ref refid="structbt__mesh__sensor__threshold_a2e7cd7ebec09c2ccd2061845f77fed40_1a2e7cd7ebec09c2ccd2061845f77fed40" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="119" refid="structbt__mesh__sensor__threshold_aa4be0ffa3088764302e3327bff8cf9bd_1aa4be0ffa3088764302e3327bff8cf9bd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">sensor_value<sp/><ref refid="structbt__mesh__sensor__threshold_aa4be0ffa3088764302e3327bff8cf9bd_1aa4be0ffa3088764302e3327bff8cf9bd" kindref="member">up</ref>;</highlight></codeline>
+<codeline lineno="121" refid="structbt__mesh__sensor__threshold_ae97be306a9032c57bc001fe2a8f2f0fc_1ae97be306a9032c57bc001fe2a8f2f0fc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">sensor_value<sp/><ref refid="structbt__mesh__sensor__threshold_ae97be306a9032c57bc001fe2a8f2f0fc_1ae97be306a9032c57bc001fe2a8f2f0fc" kindref="member">down</ref>;</highlight></codeline>
+<codeline lineno="122" refid="structbt__mesh__sensor__threshold_aa1f6d18a94b37c7e951fd44c88616c27_1aa1f6d18a94b37c7e951fd44c88616c27" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/><ref refid="structbt__mesh__sensor__threshold_aa1f6d18a94b37c7e951fd44c88616c27_1aa1f6d18a94b37c7e951fd44c88616c27" kindref="member">delta</ref>;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="136" refid="structbt__mesh__sensor__threshold_a6419310364451fa7f6681fbb3cc15b28_1a6419310364451fa7f6681fbb3cc15b28" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__sensor_ga0fdc9041080c8b6252c0a9d37a99a4c1_1ga0fdc9041080c8b6252c0a9d37a99a4c1" kindref="member">bt_mesh_sensor_cadence</ref><sp/><ref refid="structbt__mesh__sensor__threshold_a6419310364451fa7f6681fbb3cc15b28_1a6419310364451fa7f6681fbb3cc15b28" kindref="member">cadence</ref>;</highlight></codeline>
+<codeline lineno="139" refid="structbt__mesh__sensor__threshold_ab3f20eb82601ba7783baec23d11a98d3_1ab3f20eb82601ba7783baec23d11a98d3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">sensor_value<sp/><ref refid="structbt__mesh__sensor__threshold_ab3f20eb82601ba7783baec23d11a98d3_1ab3f20eb82601ba7783baec23d11a98d3" kindref="member">low</ref>;</highlight></codeline>
+<codeline lineno="142" refid="structbt__mesh__sensor__threshold_ae44f611505b91210e2851ec4dbfcb83c_1ae44f611505b91210e2851ec4dbfcb83c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">sensor_value<sp/><ref refid="structbt__mesh__sensor__threshold_ae44f611505b91210e2851ec4dbfcb83c_1ae44f611505b91210e2851ec4dbfcb83c" kindref="member">high</ref>;</highlight></codeline>
+<codeline lineno="143" refid="structbt__mesh__sensor__threshold_a5ffc0bf32ac6e0e8585f24583c0f0f14_1a5ffc0bf32ac6e0e8585f24583c0f0f14" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/><ref refid="structbt__mesh__sensor__threshold_a5ffc0bf32ac6e0e8585f24583c0f0f14_1a5ffc0bf32ac6e0e8585f24583c0f0f14" kindref="member">range</ref>;</highlight></codeline>
+<codeline lineno="144"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147" refid="structbt__mesh__sensor__unit" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__unit" kindref="compound">bt_mesh_sensor_unit</ref><sp/>{</highlight></codeline>
+<codeline lineno="149" refid="structbt__mesh__sensor__unit_a7bd9c77b6b4dd750e461dca2015cec21_1a7bd9c77b6b4dd750e461dca2015cec21" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structbt__mesh__sensor__unit_a7bd9c77b6b4dd750e461dca2015cec21_1a7bd9c77b6b4dd750e461dca2015cec21" kindref="member">name</ref>;</highlight></codeline>
+<codeline lineno="151" refid="structbt__mesh__sensor__unit_ae68a0304884816e8cb71edfa27b3b7f8_1ae68a0304884816e8cb71edfa27b3b7f8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structbt__mesh__sensor__unit_ae68a0304884816e8cb71edfa27b3b7f8_1ae68a0304884816e8cb71edfa27b3b7f8" kindref="member">symbol</ref>;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155" refid="structbt__mesh__sensor__format" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__format" kindref="compound">bt_mesh_sensor_format</ref><sp/>{</highlight></codeline>
+<codeline lineno="164" refid="structbt__mesh__sensor__format_a27532f0cd9fc8df811cc6b21c39630e5_1a27532f0cd9fc8df811cc6b21c39630e5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>(*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__sensor__format_a27532f0cd9fc8df811cc6b21c39630e5_1a27532f0cd9fc8df811cc6b21c39630e5" kindref="member">encode</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__format" kindref="compound">bt_mesh_sensor_format</ref><sp/>*format,</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">sensor_value<sp/>*val,</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">net_buf_simple<sp/>*buf);</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176" refid="structbt__mesh__sensor__format_a48916546dc94327835ca373c96860ae8_1a48916546dc94327835ca373c96860ae8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>(*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__sensor__format_a48916546dc94327835ca373c96860ae8_1a48916546dc94327835ca373c96860ae8" kindref="member">decode</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__format" kindref="compound">bt_mesh_sensor_format</ref><sp/>*format,</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">net_buf_simple<sp/>*buf,</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">sensor_value<sp/>*val);</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181" refid="structbt__mesh__sensor__format_ace2c92d83a630e1436b4f84838be0168_1ace2c92d83a630e1436b4f84838be0168" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structbt__mesh__sensor__format_ace2c92d83a630e1436b4f84838be0168_1ace2c92d83a630e1436b4f84838be0168" kindref="member">user_data</ref>;</highlight></codeline>
+<codeline lineno="183" refid="structbt__mesh__sensor__format_a7de792bb25c2eefbc3c3ffce07f4d045_1a7de792bb25c2eefbc3c3ffce07f4d045" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__sensor__format_a7de792bb25c2eefbc3c3ffce07f4d045_1a7de792bb25c2eefbc3c3ffce07f4d045" kindref="member">size</ref>;</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_BT_MESH_SENSOR_LABELS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__unit" kindref="compound">bt_mesh_sensor_unit</ref><sp/>*unit;</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight></codeline>
+<codeline lineno="192" refid="structbt__mesh__sensor__channel" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__channel" kindref="compound">bt_mesh_sensor_channel</ref><sp/>{</highlight></codeline>
+<codeline lineno="194" refid="structbt__mesh__sensor__channel_aeaef5e7b36bc9708f2f41e599022c6e8_1aeaef5e7b36bc9708f2f41e599022c6e8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__format" kindref="compound">bt_mesh_sensor_format</ref><sp/>*<ref refid="structbt__mesh__sensor__channel_aeaef5e7b36bc9708f2f41e599022c6e8_1aeaef5e7b36bc9708f2f41e599022c6e8" kindref="member">format</ref>;</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_BT_MESH_SENSOR_LABELS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*name;</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="199"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight></codeline>
+<codeline lineno="202" refid="group__bt__mesh__sensor_ga85cd4621595890b015912b46bceceef7_1ga85cd4621595890b015912b46bceceef7" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_TYPE_FLAG_SERIES<sp/>BIT(0)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight></codeline>
+<codeline lineno="207" refid="structbt__mesh__sensor__type" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="209" refid="structbt__mesh__sensor__type_aed31940845cebac81fb571e25c2c6fbe_1aed31940845cebac81fb571e25c2c6fbe" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__mesh__sensor__type_aed31940845cebac81fb571e25c2c6fbe_1aed31940845cebac81fb571e25c2c6fbe" kindref="member">id</ref>;</highlight></codeline>
+<codeline lineno="211" refid="structbt__mesh__sensor__type_ae38ae586fbdc542a1994ef2bc9520fee_1ae38ae586fbdc542a1994ef2bc9520fee" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__sensor__type_ae38ae586fbdc542a1994ef2bc9520fee_1ae38ae586fbdc542a1994ef2bc9520fee" kindref="member">flags</ref>;</highlight></codeline>
+<codeline lineno="213" refid="structbt__mesh__sensor__type_a6b3f8f18c8ed98e9a08c589b1a2dcf3b_1a6b3f8f18c8ed98e9a08c589b1a2dcf3b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__sensor__type_a6b3f8f18c8ed98e9a08c589b1a2dcf3b_1a6b3f8f18c8ed98e9a08c589b1a2dcf3b" kindref="member">channel_count</ref>;</highlight></codeline>
+<codeline lineno="218" refid="structbt__mesh__sensor__type_a84d93aa99ed1eb1d0c1d868c5b37803c_1a84d93aa99ed1eb1d0c1d868c5b37803c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__channel" kindref="compound">bt_mesh_sensor_channel</ref><sp/>*<ref refid="structbt__mesh__sensor__type_a84d93aa99ed1eb1d0c1d868c5b37803c_1a84d93aa99ed1eb1d0c1d868c5b37803c" kindref="member">channels</ref>;</highlight></codeline>
+<codeline lineno="219"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"></highlight></codeline>
+<codeline lineno="221"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor" kindref="compound">bt_mesh_sensor</ref>;</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight></codeline>
+<codeline lineno="224" refid="structbt__mesh__sensor__setting" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__setting" kindref="compound">bt_mesh_sensor_setting</ref><sp/>{</highlight></codeline>
+<codeline lineno="226" refid="structbt__mesh__sensor__setting_a0525a9b02d8696f710a1f2d2a5e5e058_1a0525a9b02d8696f710a1f2d2a5e5e058" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref><sp/>*<ref refid="structbt__mesh__sensor__setting_a0525a9b02d8696f710a1f2d2a5e5e058_1a0525a9b02d8696f710a1f2d2a5e5e058" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"></highlight></codeline>
+<codeline lineno="242" refid="structbt__mesh__sensor__setting_ae387273c522af81ae4a889f6970a7a0a_1ae387273c522af81ae4a889f6970a7a0a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structbt__mesh__sensor__setting_ae387273c522af81ae4a889f6970a7a0a_1ae387273c522af81ae4a889f6970a7a0a" kindref="member">get</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor" kindref="compound">bt_mesh_sensor</ref><sp/>*sensor,</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__setting" kindref="compound">bt_mesh_sensor_setting</ref><sp/>*setting,</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">sensor_value<sp/>*rsp);</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"></highlight></codeline>
+<codeline lineno="261" refid="structbt__mesh__sensor__setting_a24296f949ee0a28f9e30a3b7bd9f2a83_1a24296f949ee0a28f9e30a3b7bd9f2a83" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>(*<ref refid="structbt__mesh__sensor__setting_a24296f949ee0a28f9e30a3b7bd9f2a83_1a24296f949ee0a28f9e30a3b7bd9f2a83" kindref="member">set</ref>)(</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor" kindref="compound">bt_mesh_sensor</ref><sp/>*sensor,</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__setting" kindref="compound">bt_mesh_sensor_setting</ref><sp/>*setting,</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">sensor_value<sp/>*value);</highlight></codeline>
+<codeline lineno="266"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"></highlight></codeline>
+<codeline lineno="281" refid="structbt__mesh__sensor__column" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__column" kindref="compound">bt_mesh_sensor_column</ref><sp/>{</highlight></codeline>
+<codeline lineno="283" refid="structbt__mesh__sensor__column_a5fc3415bc5a480ea9adf7606a42f0ba5_1a5fc3415bc5a480ea9adf7606a42f0ba5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">sensor_value<sp/><ref refid="structbt__mesh__sensor__column_a5fc3415bc5a480ea9adf7606a42f0ba5_1a5fc3415bc5a480ea9adf7606a42f0ba5" kindref="member">start</ref>;</highlight></codeline>
+<codeline lineno="285" refid="structbt__mesh__sensor__column_abd23e2374e50dfceed3e0079d87f1bcd_1abd23e2374e50dfceed3e0079d87f1bcd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">sensor_value<sp/><ref refid="structbt__mesh__sensor__column_abd23e2374e50dfceed3e0079d87f1bcd_1abd23e2374e50dfceed3e0079d87f1bcd" kindref="member">end</ref>;</highlight></codeline>
+<codeline lineno="286"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"></highlight></codeline>
+<codeline lineno="289" refid="structbt__mesh__sensor__series" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__series" kindref="compound">bt_mesh_sensor_series</ref><sp/>{</highlight></codeline>
+<codeline lineno="298" refid="structbt__mesh__sensor__series_ae61f048a6c11bf5c4d4ab6730feaa845_1ae61f048a6c11bf5c4d4ab6730feaa845" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__column" kindref="compound">bt_mesh_sensor_column</ref><sp/>*<ref refid="structbt__mesh__sensor__series_ae61f048a6c11bf5c4d4ab6730feaa845_1ae61f048a6c11bf5c4d4ab6730feaa845" kindref="member">columns</ref>;</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"></highlight></codeline>
+<codeline lineno="301" refid="structbt__mesh__sensor__series_a316cfaa47e6996e73cb72a87dedea108_1a316cfaa47e6996e73cb72a87dedea108" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structbt__mesh__sensor__series_a316cfaa47e6996e73cb72a87dedea108_1a316cfaa47e6996e73cb72a87dedea108" kindref="member">column_count</ref>;</highlight></codeline>
+<codeline lineno="302"><highlight class="normal"></highlight></codeline>
+<codeline lineno="319" refid="structbt__mesh__sensor__series_a4e160448bc8ceb240638bb837c2f918a_1a4e160448bc8ceb240638bb837c2f918a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>(*<ref refid="structbt__mesh__sensor__series_a4e160448bc8ceb240638bb837c2f918a_1a4e160448bc8ceb240638bb837c2f918a" kindref="member">get</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor" kindref="compound">bt_mesh_sensor</ref><sp/>*sensor,<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ctx<sp/>*ctx,</highlight></codeline>
+<codeline lineno="320"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__column" kindref="compound">bt_mesh_sensor_column</ref><sp/>*column,</highlight></codeline>
+<codeline lineno="321"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">sensor_value<sp/>*value);</highlight></codeline>
+<codeline lineno="322"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="323"><highlight class="normal"></highlight></codeline>
+<codeline lineno="325" refid="structbt__mesh__sensor" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor" kindref="compound">bt_mesh_sensor</ref><sp/>{</highlight></codeline>
+<codeline lineno="331" refid="structbt__mesh__sensor_a6ad66790bc7e5c6e4f932235e31e52ac_1a6ad66790bc7e5c6e4f932235e31e52ac" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref><sp/>*<ref refid="structbt__mesh__sensor_a6ad66790bc7e5c6e4f932235e31e52ac_1a6ad66790bc7e5c6e4f932235e31e52ac" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="333" refid="structbt__mesh__sensor_a94285b7b186ac3525c6b5203193826f5_1a94285b7b186ac3525c6b5203193826f5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__descriptor" kindref="compound">bt_mesh_sensor_descriptor</ref><sp/>*<ref refid="structbt__mesh__sensor_a94285b7b186ac3525c6b5203193826f5_1a94285b7b186ac3525c6b5203193826f5" kindref="member">descriptor</ref>;</highlight></codeline>
+<codeline lineno="335"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="337" refid="structbt__mesh__sensor_aafdf9d18b42bb9794429f1159a9004f1_1aafdf9d18b42bb9794429f1159a9004f1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__setting" kindref="compound">bt_mesh_sensor_setting</ref><sp/>*<ref refid="structbt__mesh__sensor_aafdf9d18b42bb9794429f1159a9004f1_1aafdf9d18b42bb9794429f1159a9004f1" kindref="member">list</ref>;</highlight></codeline>
+<codeline lineno="339" refid="structbt__mesh__sensor_a34ab6901bf53460366af9291fd715dc0_1a34ab6901bf53460366af9291fd715dc0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__sensor_a34ab6901bf53460366af9291fd715dc0_1a34ab6901bf53460366af9291fd715dc0" kindref="member">count</ref>;</highlight></codeline>
+<codeline lineno="340" refid="structbt__mesh__sensor_aa33ddf29ec8351daea1673a0692eda98_1aa33ddf29ec8351daea1673a0692eda98" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/><ref refid="structbt__mesh__sensor_aa33ddf29ec8351daea1673a0692eda98_1aa33ddf29ec8351daea1673a0692eda98" kindref="member">settings</ref>;</highlight></codeline>
+<codeline lineno="341"><highlight class="normal"></highlight></codeline>
+<codeline lineno="348" refid="structbt__mesh__sensor_a964eea42aafc7f2ced58320e619a2e50_1a964eea42aafc7f2ced58320e619a2e50" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__series" kindref="compound">bt_mesh_sensor_series</ref><sp/><ref refid="structbt__mesh__sensor_a964eea42aafc7f2ced58320e619a2e50_1a964eea42aafc7f2ced58320e619a2e50" kindref="member">series</ref>;</highlight></codeline>
+<codeline lineno="349"><highlight class="normal"></highlight></codeline>
+<codeline lineno="361" refid="structbt__mesh__sensor_a39c3fc82c44dd68357c8e9c655fdc618_1a39c3fc82c44dd68357c8e9c655fdc618" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>(*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__sensor_a39c3fc82c44dd68357c8e9c655fdc618_1a39c3fc82c44dd68357c8e9c655fdc618" kindref="member">get</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor" kindref="compound">bt_mesh_sensor</ref><sp/>*sensor,</highlight></codeline>
+<codeline lineno="362"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_mesh_msg_ctx<sp/>*ctx,<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">sensor_value<sp/>*rsp);</highlight></codeline>
+<codeline lineno="363"><highlight class="normal"></highlight></codeline>
+<codeline lineno="364"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Internal<sp/>state,<sp/>overwritten<sp/>on<sp/>init.<sp/>Should<sp/>only<sp/>be<sp/>written<sp/>to<sp/>by</highlight></codeline>
+<codeline lineno="365"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<sp/>internal<sp/>modules.</highlight></codeline>
+<codeline lineno="366"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="367"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="369" refid="structbt__mesh__sensor_ae03ddf024a868759ced017870324bfe9_1ae03ddf024a868759ced017870324bfe9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__threshold" kindref="compound">bt_mesh_sensor_threshold</ref><sp/><ref refid="structbt__mesh__sensor_ae03ddf024a868759ced017870324bfe9_1ae03ddf024a868759ced017870324bfe9" kindref="member">threshold</ref>;</highlight></codeline>
+<codeline lineno="370"><highlight class="normal"></highlight></codeline>
+<codeline lineno="372" refid="structbt__mesh__sensor_a3c35c151523921531be28b48e306680e_1a3c35c151523921531be28b48e306680e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sys_snode_t<sp/><ref refid="structbt__mesh__sensor_a3c35c151523921531be28b48e306680e_1a3c35c151523921531be28b48e306680e" kindref="member">node</ref>;</highlight></codeline>
+<codeline lineno="373"><highlight class="normal"></highlight></codeline>
+<codeline lineno="375" refid="structbt__mesh__sensor_a17a1a6148a7a677249db4823272e8faf_1a17a1a6148a7a677249db4823272e8faf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">sensor_value<sp/><ref refid="structbt__mesh__sensor_a17a1a6148a7a677249db4823272e8faf_1a17a1a6148a7a677249db4823272e8faf" kindref="member">prev</ref>;</highlight></codeline>
+<codeline lineno="376"><highlight class="normal"></highlight></codeline>
+<codeline lineno="378" refid="structbt__mesh__sensor_ac10c7c9d4601ebd5de017c244ed14a76_1ac10c7c9d4601ebd5de017c244ed14a76" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structbt__mesh__sensor_ac10c7c9d4601ebd5de017c244ed14a76_1ac10c7c9d4601ebd5de017c244ed14a76" kindref="member">seq</ref>;</highlight></codeline>
+<codeline lineno="379"><highlight class="normal"></highlight></codeline>
+<codeline lineno="385" refid="structbt__mesh__sensor_a923dc3ccfeb625ce4c73b9ba117edeee_1a923dc3ccfeb625ce4c73b9ba117edeee" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__sensor_a923dc3ccfeb625ce4c73b9ba117edeee_1a923dc3ccfeb625ce4c73b9ba117edeee" kindref="member">min_int</ref>;</highlight></codeline>
+<codeline lineno="386"><highlight class="normal"></highlight></codeline>
+<codeline lineno="389" refid="structbt__mesh__sensor_a8b353df165bebdc920252eec3641815a_1a8b353df165bebdc920252eec3641815a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__sensor_a8b353df165bebdc920252eec3641815a_1a8b353df165bebdc920252eec3641815a" kindref="member">pub_div</ref><sp/>:<sp/>4;</highlight></codeline>
+<codeline lineno="390"><highlight class="normal"></highlight></codeline>
+<codeline lineno="393" refid="structbt__mesh__sensor_abc959f5987f2d1cafbb450385fd8752c_1abc959f5987f2d1cafbb450385fd8752c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__sensor_abc959f5987f2d1cafbb450385fd8752c_1abc959f5987f2d1cafbb450385fd8752c" kindref="member">fast_pub</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="394"><highlight class="normal"></highlight></codeline>
+<codeline lineno="396" refid="structbt__mesh__sensor_a7260e7ea750607fdd643be9d94665302_1a7260e7ea750607fdd643be9d94665302" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbt__mesh__sensor_a7260e7ea750607fdd643be9d94665302_1a7260e7ea750607fdd643be9d94665302" kindref="member">configured</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="397" refid="structbt__mesh__sensor_a27c2544d03f1364e2c7b08e717dea3fa_1a27c2544d03f1364e2c7b08e717dea3fa" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/><ref refid="structbt__mesh__sensor_a27c2544d03f1364e2c7b08e717dea3fa_1a27c2544d03f1364e2c7b08e717dea3fa" kindref="member">state</ref>;</highlight></codeline>
+<codeline lineno="398"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="399"><highlight class="normal"></highlight></codeline>
+<codeline lineno="418" refid="group__bt__mesh__sensor_ga883fb49275a8c987e1cdadf95799e849_1ga883fb49275a8c987e1cdadf95799e849" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__sensor_ga883fb49275a8c987e1cdadf95799e849_1ga883fb49275a8c987e1cdadf95799e849" kindref="member">bt_mesh_sensor_delta_threshold</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__sensor" kindref="compound">bt_mesh_sensor</ref><sp/>*sensor,</highlight></codeline>
+<codeline lineno="419"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>sensor_value<sp/>*value);</highlight></codeline>
+<codeline lineno="420"><highlight class="normal"></highlight></codeline>
+<codeline lineno="432" refid="group__bt__mesh__sensor_ga44c23ada7b88628ae74f211d189d97a6_1ga44c23ada7b88628ae74f211d189d97a6" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref><sp/>*<ref refid="group__bt__mesh__sensor_ga44c23ada7b88628ae74f211d189d97a6_1ga44c23ada7b88628ae74f211d189d97a6" kindref="member">bt_mesh_sensor_type_get</ref>(uint16_t<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="433"><highlight class="normal"></highlight></codeline>
+<codeline lineno="441" refid="group__bt__mesh__sensor_ga4ff2dabdba48b6445721308e72d67759_1ga4ff2dabdba48b6445721308e72d67759" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__sensor_ga4ff2dabdba48b6445721308e72d67759_1ga4ff2dabdba48b6445721308e72d67759" kindref="member">bt_mesh_sensor_value_in_column</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>sensor_value<sp/>*value,</highlight></codeline>
+<codeline lineno="442"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__sensor__column" kindref="compound">bt_mesh_sensor_column</ref><sp/>*<ref refid="machine__learning_2configuration_2nrf52840dk__nrf52840_2buttons__def_8h_ab8a7dd48815242eb130a808ef84ddaee_1ab8a7dd48815242eb130a808ef84ddaee" kindref="member">col</ref>);</highlight></codeline>
+<codeline lineno="443"><highlight class="normal"></highlight></codeline>
+<codeline lineno="451"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__mesh__sensor__format" kindref="compound">bt_mesh_sensor_format</ref><sp/>*</highlight></codeline>
+<codeline lineno="452" refid="group__bt__mesh__sensor_ga1189853141fca3e543001ac2a582afec_1ga1189853141fca3e543001ac2a582afec" refkind="member"><highlight class="normal"><ref refid="group__bt__mesh__sensor_ga1189853141fca3e543001ac2a582afec_1ga1189853141fca3e543001ac2a582afec" kindref="member">bt_mesh_sensor_column_format_get</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__mesh__sensor__type" kindref="compound">bt_mesh_sensor_type</ref><sp/>*type);</highlight></codeline>
+<codeline lineno="453"><highlight class="normal"></highlight></codeline>
+<codeline lineno="464" refid="group__bt__mesh__sensor_gac0091a7b84c73e56e489b41b8a7a6ea1_1gac0091a7b84c73e56e489b41b8a7a6ea1" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__mesh__sensor_gac0091a7b84c73e56e489b41b8a7a6ea1_1gac0091a7b84c73e56e489b41b8a7a6ea1" kindref="member">bt_mesh_sensor_ch_to_str</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>sensor_value<sp/>*ch,</highlight></codeline>
+<codeline lineno="465"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*str,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>len)</highlight></codeline>
+<codeline lineno="466"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="467"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>snprintk(str,<sp/>len,<sp/></highlight><highlight class="stringliteral">&quot;%s%u.%06u&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="468"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>((ch-&gt;val1<sp/>&lt;<sp/>0<sp/>||<sp/>ch-&gt;val2<sp/>&lt;<sp/>0)<sp/>?<sp/></highlight><highlight class="stringliteral">&quot;-&quot;</highlight><highlight class="normal"><sp/>:<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">),</highlight></codeline>
+<codeline lineno="469"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>abs(ch-&gt;val1),<sp/>abs(ch-&gt;val2));</highlight></codeline>
+<codeline lineno="470"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="471"><highlight class="normal"></highlight></codeline>
+<codeline lineno="480" refid="group__bt__mesh__sensor_ga9226efc09580dafd3af93caa7011865b_1ga9226efc09580dafd3af93caa7011865b" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="group__bt__mesh__sensor_ga9226efc09580dafd3af93caa7011865b_1ga9226efc09580dafd3af93caa7011865b" kindref="member">bt_mesh_sensor_ch_str_real</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>sensor_value<sp/>*ch);</highlight></codeline>
+<codeline lineno="481"><highlight class="normal"></highlight></codeline>
+<codeline lineno="487" refid="group__bt__mesh__sensor_ga8b40f4138c71274f750219a9d6b696e8_1ga8b40f4138c71274f750219a9d6b696e8" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>bt_mesh_sensor_ch_str(ch)<sp/>log_strdup(bt_mesh_sensor_ch_str_real(ch))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="488"><highlight class="normal"></highlight></codeline>
+<codeline lineno="491"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_OP_DESCRIPTOR_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x30)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="492"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_OP_DESCRIPTOR_STATUS<sp/>BT_MESH_MODEL_OP_1(0x51)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="493"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_OP_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x31)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="494"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_OP_STATUS<sp/>BT_MESH_MODEL_OP_1(0x52)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="495"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_OP_COLUMN_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x32)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="496"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_OP_COLUMN_STATUS<sp/>BT_MESH_MODEL_OP_1(0x53)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="497"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_OP_SERIES_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x33)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="498"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_OP_SERIES_STATUS<sp/>BT_MESH_MODEL_OP_1(0x54)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="499"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_OP_CADENCE_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x34)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="500"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_OP_CADENCE_SET<sp/>BT_MESH_MODEL_OP_1(0x55)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="501"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_OP_CADENCE_SET_UNACKNOWLEDGED<sp/>BT_MESH_MODEL_OP_1(0x56)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="502"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_OP_CADENCE_STATUS<sp/>BT_MESH_MODEL_OP_1(0x57)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="503"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_OP_SETTINGS_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x35)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="504"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_OP_SETTINGS_STATUS<sp/>BT_MESH_MODEL_OP_1(0x58)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="505"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_OP_SETTING_GET<sp/>BT_MESH_MODEL_OP_2(0x82,<sp/>0x36)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="506"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_OP_SETTING_SET<sp/>BT_MESH_MODEL_OP_1(0x59)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="507"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_OP_SETTING_SET_UNACKNOWLEDGED<sp/>BT_MESH_MODEL_OP_1(0x5A)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="508"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_OP_SETTING_STATUS<sp/>BT_MESH_MODEL_OP_1(0x5B)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="509"><highlight class="normal"></highlight></codeline>
+<codeline lineno="510"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="511"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="512"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="513"><highlight class="normal"></highlight></codeline>
+<codeline lineno="514"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>CONFIG_BT_MESH_SENSOR_CHANNELS_MAX</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="515"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CONFIG_BT_MESH_SENSOR_CHANNELS_MAX<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="516"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="517"><highlight class="normal"></highlight></codeline>
+<codeline lineno="518"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>CONFIG_BT_MESH_SENSOR_SRV_SENSORS_MAX</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="519"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>CONFIG_BT_MESH_SENSOR_SRV_SENSORS_MAX<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="520"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="521"><highlight class="normal"></highlight></codeline>
+<codeline lineno="522"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_ENCODED_VALUE_MAXLEN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="523"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(CONFIG_BT_MESH_SENSOR_CHANNELS_MAX<sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="524"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="525"><highlight class="normal"></highlight></codeline>
+<codeline lineno="526"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_STATUS_MAXLEN<sp/>(3<sp/>+<sp/>BT_MESH_SENSOR_ENCODED_VALUE_MAXLEN)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="527"><highlight class="normal"></highlight></codeline>
+<codeline lineno="528"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MINLEN_DESCRIPTOR_GET<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="529"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MAXLEN_DESCRIPTOR_GET<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="530"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MINLEN_DESCRIPTOR_STATUS<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="531"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MAXLEN_DESCRIPTOR_STATUS<sp/>8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="532"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MINLEN_GET<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="533"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MAXLEN_GET<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="534"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MINLEN_STATUS<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="535"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MINLEN_COLUMN_GET<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="536"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MAXLEN_COLUMN_GET<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="537"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(2<sp/>+<sp/>CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="538"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MINLEN_COLUMN_STATUS<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="539"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MAXLEN_COLUMN_STATUS<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="540"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(2<sp/>+<sp/>CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX<sp/>*<sp/>3)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="541"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MINLEN_SERIES_GET<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="542"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MAXLEN_SERIES_GET<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="543"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(2<sp/>+<sp/>2<sp/>*<sp/>CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="544"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MINLEN_SERIES_STATUS<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="545"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_LEN_CADENCE_GET<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="546"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MINLEN_CADENCE_SET<sp/>8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="547"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MAXLEN_CADENCE_SET<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="548"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(4<sp/>+<sp/>CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX<sp/>*<sp/>4)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="549"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MINLEN_CADENCE_STATUS<sp/>8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="550"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MAXLEN_CADENCE_STATUS<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="551"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(4<sp/>+<sp/>4<sp/>*<sp/>CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="552"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_LEN_SETTINGS_GET<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="553"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MINLEN_SETTINGS_STATUS<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="554"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_LEN_SETTING_GET<sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="555"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MINLEN_SETTING_SET<sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="556"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MAXLEN_SETTING_SET<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="557"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(4<sp/>+<sp/>BT_MESH_SENSOR_ENCODED_VALUE_MAXLEN)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="558"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MINLEN_SETTING_STATUS<sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="559"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_MSG_MAXLEN_SETTING_STATUS<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="560"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(4<sp/>+<sp/>BT_MESH_SENSOR_ENCODED_VALUE_MAXLEN)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="561"><highlight class="normal"></highlight></codeline>
+<codeline lineno="562"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_SRV_PUB_MAXLEN(_count)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="563"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_BUF_LEN(BT_MESH_SENSOR_OP_STATUS,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="564"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MAX(CONFIG_BT_MESH_SENSOR_SRV_SENSORS_MAX,<sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="565"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_count)<sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="566"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_SENSOR_STATUS_MAXLEN)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="567"><highlight class="normal"></highlight></codeline>
+<codeline lineno="568"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_MESH_SENSOR_SETUP_SRV_PUB_MAXLEN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="569"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MAX(BT_MESH_MODEL_BUF_LEN(BT_MESH_SENSOR_OP_SETTING_STATUS,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="570"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_SENSOR_MSG_MAXLEN_SETTING_STATUS),<sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="571"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_MODEL_BUF_LEN(BT_MESH_SENSOR_OP_CADENCE_STATUS,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="572"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BT_MESH_SENSOR_MSG_MAXLEN_CADENCE_STATUS))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="575"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="576"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="577"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="578"><highlight class="normal"></highlight></codeline>
+<codeline lineno="581"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_MESH_SENSOR_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/mesh/sensor.h"/>
+  </compounddef>
+</doxygen>

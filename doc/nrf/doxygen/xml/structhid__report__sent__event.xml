@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structhid__report__sent__event" kind="struct" language="C++" prot="public">
+    <compoundname>hid_report_sent_event</compoundname>
+    <includes refid="hid__event_8h" local="no">hid_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structhid__report__sent__event_a117e2308a9b06c981932472fb15ef8cf_1a117e2308a9b06c981932472fb15ef8cf" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header hid_report_sent_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event header. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/hid_event.h" line="56" column="19" bodyfile="applications/nrf_desktop/src/events/hid_event.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structhid__report__sent__event_ad3ccd86fb37f3070d1be2ba92673a07f_1ad3ccd86fb37f3070d1be2ba92673a07f" prot="public" static="no" mutable="no">
+        <type>const void *</type>
+        <definition>const void* hid_report_sent_event::subscriber</definition>
+        <argsstring></argsstring>
+        <name>subscriber</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Id of the report subscriber. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/hid_event.h" line="58" column="12" bodyfile="applications/nrf_desktop/src/events/hid_event.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structhid__report__sent__event_aa7bc4859cf26904be7327947dd1570e2_1aa7bc4859cf26904be7327947dd1570e2" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t hid_report_sent_event::report_id</definition>
+        <argsstring></argsstring>
+        <name>report_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Report id. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/hid_event.h" line="59" column="9" bodyfile="applications/nrf_desktop/src/events/hid_event.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structhid__report__sent__event_aedf87bcc51878fd8b801b278dac60ff9_1aedf87bcc51878fd8b801b278dac60ff9" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool hid_report_sent_event::error</definition>
+        <argsstring></argsstring>
+        <name>error</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If true error occured on send. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/hid_event.h" line="60" column="6" bodyfile="applications/nrf_desktop/src/events/hid_event.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Report sent event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>hid_report_sent_event</label>
+        <link refid="structhid__report__sent__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/nrf_desktop/src/events/hid_event.h" line="55" column="1" bodyfile="applications/nrf_desktop/src/events/hid_event.h" bodystart="55" bodyend="61"/>
+    <listofallmembers>
+      <member refid="structhid__report__sent__event_aedf87bcc51878fd8b801b278dac60ff9_1aedf87bcc51878fd8b801b278dac60ff9" prot="public" virt="non-virtual"><scope>hid_report_sent_event</scope><name>error</name></member>
+      <member refid="structhid__report__sent__event_a117e2308a9b06c981932472fb15ef8cf_1a117e2308a9b06c981932472fb15ef8cf" prot="public" virt="non-virtual"><scope>hid_report_sent_event</scope><name>header</name></member>
+      <member refid="structhid__report__sent__event_aa7bc4859cf26904be7327947dd1570e2_1aa7bc4859cf26904be7327947dd1570e2" prot="public" virt="non-virtual"><scope>hid_report_sent_event</scope><name>report_id</name></member>
+      <member refid="structhid__report__sent__event_ad3ccd86fb37f3070d1be2ba92673a07f_1ad3ccd86fb37f3070d1be2ba92673a07f" prot="public" virt="non-virtual"><scope>hid_report_sent_event</scope><name>subscriber</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__hogp__init__params" kind="struct" language="C++" prot="public">
+    <compoundname>bt_hogp_init_params</compoundname>
+    <includes refid="hogp_8h" local="no">hogp.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__hogp__init__params_ae9a49b355dc0e3d71e3958289c376d27_1ae9a49b355dc0e3d71e3958289c376d27" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__hogp_gaf54d197d81f1cb498f1e68a0081ebe07_1gaf54d197d81f1cb498f1e68a0081ebe07" kindref="member">bt_hogp_ready_cb</ref></type>
+        <definition>bt_hogp_ready_cb bt_hogp_init_params::ready_cb</definition>
+        <argsstring></argsstring>
+        <name>ready_cb</name>
+        <briefdescription>
+<para>Function to call when the HID client is ready. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="122" column="18" bodyfile="include/bluetooth/services/hogp.h" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp__init__params_a35a7d2a7a0fbdfd89c6e6d888ec5a45f_1a35a7d2a7a0fbdfd89c6e6d888ec5a45f" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__hogp_gaa400ad3c297b4234c09269ec4362b980_1gaa400ad3c297b4234c09269ec4362b980" kindref="member">bt_hogp_prep_fail_cb</ref></type>
+        <definition>bt_hogp_prep_fail_cb bt_hogp_init_params::prep_error_cb</definition>
+        <argsstring></argsstring>
+        <name>prep_error_cb</name>
+        <briefdescription>
+<para>Function to call if HID preparation fails. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="126" column="22" bodyfile="include/bluetooth/services/hogp.h" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hogp__init__params_a37bc7b9e6b4a5504990f001812532b25_1a37bc7b9e6b4a5504990f001812532b25" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__hogp_gae538730256abee4e677df9753f440fb7_1gae538730256abee4e677df9753f440fb7" kindref="member">bt_hogp_pm_update_cb</ref></type>
+        <definition>bt_hogp_pm_update_cb bt_hogp_init_params::pm_update_cb</definition>
+        <argsstring></argsstring>
+        <name>pm_update_cb</name>
+        <briefdescription>
+<para>Function to call when the protocol mode is updated. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is called every time the protocol mode is read or written. The old value is not checked. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="133" column="22" bodyfile="include/bluetooth/services/hogp.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>HIDS client parameters for the initialization function. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>bt_hids_info</label>
+        <link refid="structbt__hids__info"/>
+      </node>
+      <node id="2">
+        <label>bt_hogp</label>
+        <link refid="structbt__hogp"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>info_val</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>handlers</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>map_cb</edgelabel>
+          <edgelabel>pm_update_cb</edgelabel>
+          <edgelabel>prep_error_cb</edgelabel>
+          <edgelabel>ready_cb</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>bt_hogp::bt_hogp_handlers</label>
+        <link refid="structbt__hogp_1_1bt__hogp__handlers"/>
+      </node>
+      <node id="1">
+        <label>bt_hogp_init_params</label>
+        <link refid="structbt__hogp__init__params"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>pm_update_cb</edgelabel>
+          <edgelabel>prep_error_cb</edgelabel>
+          <edgelabel>ready_cb</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/services/hogp.h" line="118" column="1" bodyfile="include/bluetooth/services/hogp.h" bodystart="118" bodyend="134"/>
+    <listofallmembers>
+      <member refid="structbt__hogp__init__params_a37bc7b9e6b4a5504990f001812532b25_1a37bc7b9e6b4a5504990f001812532b25" prot="public" virt="non-virtual"><scope>bt_hogp_init_params</scope><name>pm_update_cb</name></member>
+      <member refid="structbt__hogp__init__params_a35a7d2a7a0fbdfd89c6e6d888ec5a45f_1a35a7d2a7a0fbdfd89c6e6d888ec5a45f" prot="public" virt="non-virtual"><scope>bt_hogp_init_params</scope><name>prep_error_cb</name></member>
+      <member refid="structbt__hogp__init__params_ae9a49b355dc0e3d71e3958289c376d27_1ae9a49b355dc0e3d71e3958289c376d27" prot="public" virt="non-virtual"><scope>bt_hogp_init_params</scope><name>ready_cb</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

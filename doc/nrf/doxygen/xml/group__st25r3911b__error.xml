@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__error" kind="group">
+    <compoundname>st25r3911b_error</compoundname>
+    <title>NFC-A protocol and transmission error.</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__error_1ga8d3bb0065bcdd4f428a9001d436e334f" prot="public" static="no">
+        <name>ST25R3911B_NFCA_ERR_CRC</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="38" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__error_1ga9b281af6e6e9a1964af208555d6a6516" prot="public" static="no">
+        <name>ST25R3911B_NFCA_ERR_PARITY</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="39" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__error_1ga047df1dcba3a7cdfa5ea6d5aa3ee5ef5" prot="public" static="no">
+        <name>ST25R3911B_NFCA_ERR_FRAMING</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="40" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__error_1gadd300c6f2d0d955517b8bd722aedba03" prot="public" static="no">
+        <name>ST25R3911B_NFCA_ERR_SOFT_FRAMING</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="41" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__error_1ga1a3c63ec3ac2b229c4ebefe77702a792" prot="public" static="no">
+        <name>ST25R3911B_NFCA_ERR_HARD_FRAMING</name>
+        <initializer>5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="42" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__error_1ga0f9ef474b5f958ce2f124fee9641fa44" prot="public" static="no">
+        <name>ST25R3911B_NFCA_ERR_LAST_BYTE_INCOMPLETE</name>
+        <initializer>6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="43" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__error_1gaa546f8a8ba00d64290e319a9bfbd8fae" prot="public" static="no">
+        <name>ST25R3911B_NFCA_ERR_TRANSMISSION</name>
+        <initializer>7</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="44" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

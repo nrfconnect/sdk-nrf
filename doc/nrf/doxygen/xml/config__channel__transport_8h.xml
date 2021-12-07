@@ -1,0 +1,592 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="config__channel__transport_8h" kind="file" language="C++">
+    <compoundname>config_channel_transport.h</compoundname>
+    <includes refid="config__event_8h" local="yes">config_event.h</includes>
+    <incdepgraph>
+      <node id="20">
+        <label>hid_report_consumer_ctrl.h</label>
+        <link refid="hid__report__consumer__ctrl_8h"/>
+      </node>
+      <node id="14">
+        <label>hid_report_desc.h</label>
+        <link refid="hid__report__desc_8h"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>hid_report_keyboard.h</label>
+        <link refid="hid__report__keyboard_8h"/>
+      </node>
+      <node id="17">
+        <label>hid_report_mouse.h</label>
+        <link refid="hid__report__mouse_8h"/>
+      </node>
+      <node id="19">
+        <label>hid_report_system_ctrl.h</label>
+        <link refid="hid__report__system__ctrl_8h"/>
+      </node>
+      <node id="21">
+        <label>hid_report_user_config.h</label>
+        <link refid="hid__report__user__config_8h"/>
+      </node>
+      <node id="2">
+        <label>config_event.h</label>
+        <link refid="config__event_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>applications/nrf_desktop/src/util/config_channel_transport.h</label>
+        <link refid="config__channel__transport_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_manager.h</label>
+        <link refid="event__manager_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>event_manager_profiler.h</label>
+        <link refid="event__manager__profiler_8h"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>profiler.h</label>
+        <link refid="profiler_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>event_manager_priv.h</label>
+      </node>
+      <node id="13">
+        <label>event_manager_profiler_priv.h</label>
+      </node>
+      <node id="8">
+        <label>logging/log_ctrl.h</label>
+      </node>
+      <node id="15">
+        <label>stddef.h</label>
+      </node>
+      <node id="7">
+        <label>sys/__assert.h</label>
+      </node>
+      <node id="6">
+        <label>sys/reboot.h</label>
+      </node>
+      <node id="11">
+        <label>sys/util.h</label>
+      </node>
+      <node id="16">
+        <label>toolchain/common.h</label>
+      </node>
+      <node id="4">
+        <label>zephyr.h</label>
+      </node>
+      <node id="5">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structconfig__channel__transport" prot="public">config_channel_transport</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__config__channel__transport_ga9050bf9076cc5b6f94390c0a0d39c95c_1ga9050bf9076cc5b6f94390c0a0d39c95c" prot="public" static="no" strong="no">
+        <type></type>
+        <name>config_channel_transport_state</name>
+        <enumvalue id="group__config__channel__transport_ga9050bf9076cc5b6f94390c0a0d39c95c_1gga9050bf9076cc5b6f94390c0a0d39c95cac750eb4396b664d68b842f9aa2a06278" prot="public">
+          <name>CONFIG_CHANNEL_TRANSPORT_DISABLED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__config__channel__transport_ga9050bf9076cc5b6f94390c0a0d39c95c_1gga9050bf9076cc5b6f94390c0a0d39c95ca914597e2f1557f8ee5a018ebaf51ad9c" prot="public">
+          <name>CONFIG_CHANNEL_TRANSPORT_IDLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__config__channel__transport_ga9050bf9076cc5b6f94390c0a0d39c95c_1gga9050bf9076cc5b6f94390c0a0d39c95ca21501edfa747e452859f1b8b8f6d51b8" prot="public">
+          <name>CONFIG_CHANNEL_TRANSPORT_WAIT_RSP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__config__channel__transport_ga9050bf9076cc5b6f94390c0a0d39c95c_1gga9050bf9076cc5b6f94390c0a0d39c95cacea543c83f9964eb473de51ff3f0b4a9" prot="public">
+          <name>CONFIG_CHANNEL_TRANSPORT_RSP_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Config channel transport states. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="47" column="1" bodyfile="applications/nrf_desktop/src/util/config_channel_transport.h" bodystart="47" bodyend="52"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__config__channel__transport_ga89c57f55b78d35634c18f01661184d79_1ga89c57f55b78d35634c18f01661184d79" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int config_channel_report_parse</definition>
+        <argsstring>(const uint8_t *buffer, size_t length, struct config_event *event)</argsstring>
+        <name>config_channel_report_parse</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>length</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structconfig__event" kindref="compound">config_event</ref> *</type>
+          <declname>event</declname>
+        </param>
+        <briefdescription>
+<para>Parse the configuration channel report. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the report buffer to be parsed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>event</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the event used to store the parsed values.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of parsed bytes if the operation was successful. Otherwise, a negative error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="29" column="5" declfile="applications/nrf_desktop/src/util/config_channel_transport.h" declline="29" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__config__channel__transport_ga95318bb6af1353f5f8312648c8cae88a_1ga95318bb6af1353f5f8312648c8cae88a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int config_channel_report_fill</definition>
+        <argsstring>(uint8_t *buffer, const size_t length, const struct config_event *event)</argsstring>
+        <name>config_channel_report_fill</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>length</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structconfig__event" kindref="compound">config_event</ref> *</type>
+          <declname>event</declname>
+        </param>
+        <briefdescription>
+<para>Fill the configuration channel report with values from a provided event. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the report buffer to be filled. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>event</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a event with values to be copied to the buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of written bytes if the operation was successful. Otherwise, a negative error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="43" column="5" declfile="applications/nrf_desktop/src/util/config_channel_transport.h" declline="43" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__config__channel__transport_ga404b12e238955d37ecf91a89b10e5fd0_1ga404b12e238955d37ecf91a89b10e5fd0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void config_channel_transport_init</definition>
+        <argsstring>(struct config_channel_transport *transport)</argsstring>
+        <name>config_channel_transport_init</name>
+        <param>
+          <type>struct <ref refid="structconfig__channel__transport" kindref="compound">config_channel_transport</ref> *</type>
+          <declname>transport</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the configuration channel transport instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>transport</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the configuration channel transport instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="68" column="6" declfile="applications/nrf_desktop/src/util/config_channel_transport.h" declline="68" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__config__channel__transport_gaa08f360b06141e79501fe60ce277f6f0_1gaa08f360b06141e79501fe60ce277f6f0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int config_channel_transport_get</definition>
+        <argsstring>(struct config_channel_transport *transport, uint8_t *buffer, size_t length)</argsstring>
+        <name>config_channel_transport_get</name>
+        <param>
+          <type>struct <ref refid="structconfig__channel__transport" kindref="compound">config_channel_transport</ref> *</type>
+          <declname>transport</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>length</declname>
+        </param>
+        <briefdescription>
+<para>Handle a get operation on the configuration channel. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>transport</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the configuration channel transport instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer to be filled when handling the get request. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the data to be filled.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="81" column="5" declfile="applications/nrf_desktop/src/util/config_channel_transport.h" declline="81" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__config__channel__transport_ga876b1471d74f3925092e00cae212811b_1ga876b1471d74f3925092e00cae212811b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int config_channel_transport_set</definition>
+        <argsstring>(struct config_channel_transport *transport, const uint8_t *buffer, size_t length)</argsstring>
+        <name>config_channel_transport_set</name>
+        <param>
+          <type>struct <ref refid="structconfig__channel__transport" kindref="compound">config_channel_transport</ref> *</type>
+          <declname>transport</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>length</declname>
+        </param>
+        <briefdescription>
+<para>Handle a set operation on the configuration channel. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>transport</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the configuration channel transport instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the report buffer to be parsed to handle the set request. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the incoming data.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="95" column="5" declfile="applications/nrf_desktop/src/util/config_channel_transport.h" declline="95" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__config__channel__transport_ga2c0ab2b64579203812ef5a88d3e99c7e_1ga2c0ab2b64579203812ef5a88d3e99c7e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int config_channel_transport_get_disabled</definition>
+        <argsstring>(uint8_t *buffer, size_t length)</argsstring>
+        <name>config_channel_transport_get_disabled</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>length</declname>
+        </param>
+        <briefdescription>
+<para>Handle a get operation and inform that the transport is disabled. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Fills the buffer with response informing that the transport is disabled and cannot be used to configure device. If a given transport is disabled, set operation should be ignored and get operation should use this function to prepare response for host.</para>
+<para>The disabled transport returns disconnected status.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer to be filled. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the data to be filled.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 if the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="112" column="5" declfile="applications/nrf_desktop/src/util/config_channel_transport.h" declline="112" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__config__channel__transport_gabb9e5f5174e787d72c837ccd2770ab00_1gabb9e5f5174e787d72c837ccd2770ab00" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool config_channel_transport_rsp_receive</definition>
+        <argsstring>(struct config_channel_transport *transport, struct config_event *event)</argsstring>
+        <name>config_channel_transport_rsp_receive</name>
+        <param>
+          <type>struct <ref refid="structconfig__channel__transport" kindref="compound">config_channel_transport</ref> *</type>
+          <declname>transport</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structconfig__event" kindref="compound">config_event</ref> *</type>
+          <declname>event</declname>
+        </param>
+        <briefdescription>
+<para>Handle the response received from higher layer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>transport</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the configuration channel transport instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>event</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the event carrying the received response.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if response was designated for this transport. Otherwise returns false. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="123" column="6" declfile="applications/nrf_desktop/src/util/config_channel_transport.h" declline="123" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__config__channel__transport_gad3b69515199cbf3c197309e76702c3aa_1gad3b69515199cbf3c197309e76702c3aa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void config_channel_transport_disconnect</definition>
+        <argsstring>(struct config_channel_transport *transport)</argsstring>
+        <name>config_channel_transport_disconnect</name>
+        <param>
+          <type>struct <ref refid="structconfig__channel__transport" kindref="compound">config_channel_transport</ref> *</type>
+          <declname>transport</declname>
+        </param>
+        <briefdescription>
+<para>Handle the configuration channel transport disconnection. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>transport</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the configuration channel transport instance </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/config_channel_transport.h" line="131" column="6" declfile="applications/nrf_desktop/src/util/config_channel_transport.h" declline="131" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_CONFIG_CHANNEL_TRANSPORT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_CONFIG_CHANNEL_TRANSPORT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="config__event_8h" kindref="compound">config_event.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="group__config__channel__transport_ga89c57f55b78d35634c18f01661184d79_1ga89c57f55b78d35634c18f01661184d79" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__config__channel__transport_ga89c57f55b78d35634c18f01661184d79_1ga89c57f55b78d35634c18f01661184d79" kindref="member">config_channel_report_parse</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*buffer,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>length,</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structconfig__event" kindref="compound">config_event</ref><sp/>*event);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="group__config__channel__transport_ga95318bb6af1353f5f8312648c8cae88a_1ga95318bb6af1353f5f8312648c8cae88a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__config__channel__transport_ga95318bb6af1353f5f8312648c8cae88a_1ga95318bb6af1353f5f8312648c8cae88a" kindref="member">config_channel_report_fill</ref>(uint8_t<sp/>*buffer,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>length,</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structconfig__event" kindref="compound">config_event</ref><sp/>*event);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="group__config__channel__transport_ga9050bf9076cc5b6f94390c0a0d39c95c_1ga9050bf9076cc5b6f94390c0a0d39c95c" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__config__channel__transport_ga9050bf9076cc5b6f94390c0a0d39c95c_1ga9050bf9076cc5b6f94390c0a0d39c95c" kindref="member">config_channel_transport_state</ref><sp/>{</highlight></codeline>
+<codeline lineno="48" refid="group__config__channel__transport_ga9050bf9076cc5b6f94390c0a0d39c95c_1gga9050bf9076cc5b6f94390c0a0d39c95cac750eb4396b664d68b842f9aa2a06278" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__config__channel__transport_ga9050bf9076cc5b6f94390c0a0d39c95c_1gga9050bf9076cc5b6f94390c0a0d39c95cac750eb4396b664d68b842f9aa2a06278" kindref="member">CONFIG_CHANNEL_TRANSPORT_DISABLED</ref>,</highlight></codeline>
+<codeline lineno="49" refid="group__config__channel__transport_ga9050bf9076cc5b6f94390c0a0d39c95c_1gga9050bf9076cc5b6f94390c0a0d39c95ca914597e2f1557f8ee5a018ebaf51ad9c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__config__channel__transport_ga9050bf9076cc5b6f94390c0a0d39c95c_1gga9050bf9076cc5b6f94390c0a0d39c95ca914597e2f1557f8ee5a018ebaf51ad9c" kindref="member">CONFIG_CHANNEL_TRANSPORT_IDLE</ref>,</highlight></codeline>
+<codeline lineno="50" refid="group__config__channel__transport_ga9050bf9076cc5b6f94390c0a0d39c95c_1gga9050bf9076cc5b6f94390c0a0d39c95ca21501edfa747e452859f1b8b8f6d51b8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__config__channel__transport_ga9050bf9076cc5b6f94390c0a0d39c95c_1gga9050bf9076cc5b6f94390c0a0d39c95ca21501edfa747e452859f1b8b8f6d51b8" kindref="member">CONFIG_CHANNEL_TRANSPORT_WAIT_RSP</ref>,</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__config__channel__transport_ga9050bf9076cc5b6f94390c0a0d39c95c_1gga9050bf9076cc5b6f94390c0a0d39c95cacea543c83f9964eb473de51ff3f0b4a9" kindref="member">CONFIG_CHANNEL_TRANSPORT_RSP_READY</ref></highlight></codeline>
+<codeline lineno="52" refid="group__config__channel__transport_ga9050bf9076cc5b6f94390c0a0d39c95c_1gga9050bf9076cc5b6f94390c0a0d39c95cacea543c83f9964eb473de51ff3f0b4a9" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="structconfig__channel__transport" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structconfig__channel__transport" kindref="compound">config_channel_transport</ref><sp/>{</highlight></codeline>
+<codeline lineno="56" refid="structconfig__channel__transport_a294204f699d83325b18b884fcc175539_1a294204f699d83325b18b884fcc175539" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">k_work_delayable<sp/><ref refid="structconfig__channel__transport_a294204f699d83325b18b884fcc175539_1a294204f699d83325b18b884fcc175539" kindref="member">timeout</ref>;</highlight></codeline>
+<codeline lineno="57" refid="structconfig__channel__transport_a34375e0509b2596da3b6c42a217b07fa_1a34375e0509b2596da3b6c42a217b07fa" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structconfig__channel__transport_a34375e0509b2596da3b6c42a217b07fa_1a34375e0509b2596da3b6c42a217b07fa" kindref="member">data_len</ref>;</highlight></codeline>
+<codeline lineno="58" refid="structconfig__channel__transport_a8685c67bfb7e8968e66a742096d11476_1a8685c67bfb7e8968e66a742096d11476" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structconfig__channel__transport_a8685c67bfb7e8968e66a742096d11476_1a8685c67bfb7e8968e66a742096d11476" kindref="member">transport_id</ref>;</highlight></codeline>
+<codeline lineno="59" refid="structconfig__channel__transport_a2d087033c0090332089b866837dd47bb_1a2d087033c0090332089b866837dd47bb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structconfig__channel__transport_a2d087033c0090332089b866837dd47bb_1a2d087033c0090332089b866837dd47bb" kindref="member">data</ref>[<ref refid="hid__report__user__config_8h_a26c3867b74b7ed6a1e4355db2c1188ec_1a26c3867b74b7ed6a1e4355db2c1188ec" kindref="member">REPORT_SIZE_USER_CONFIG</ref>];</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="structconfig__channel__transport_af7f2521d060cc614c7cca2351b956036_1af7f2521d060cc614c7cca2351b956036" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__config__channel__transport_ga9050bf9076cc5b6f94390c0a0d39c95c_1ga9050bf9076cc5b6f94390c0a0d39c95c" kindref="member">config_channel_transport_state</ref><sp/><ref refid="structconfig__channel__transport_af7f2521d060cc614c7cca2351b956036_1af7f2521d060cc614c7cca2351b956036" kindref="member">state</ref>;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="group__config__channel__transport_ga404b12e238955d37ecf91a89b10e5fd0_1ga404b12e238955d37ecf91a89b10e5fd0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__config__channel__transport_ga404b12e238955d37ecf91a89b10e5fd0_1ga404b12e238955d37ecf91a89b10e5fd0" kindref="member">config_channel_transport_init</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structconfig__channel__transport" kindref="compound">config_channel_transport</ref><sp/>*transport);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81" refid="group__config__channel__transport_gaa08f360b06141e79501fe60ce277f6f0_1gaa08f360b06141e79501fe60ce277f6f0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__config__channel__transport_gaa08f360b06141e79501fe60ce277f6f0_1gaa08f360b06141e79501fe60ce277f6f0" kindref="member">config_channel_transport_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structconfig__channel__transport" kindref="compound">config_channel_transport</ref><sp/>*transport,</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*buffer,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>length);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="group__config__channel__transport_ga876b1471d74f3925092e00cae212811b_1ga876b1471d74f3925092e00cae212811b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__config__channel__transport_ga876b1471d74f3925092e00cae212811b_1ga876b1471d74f3925092e00cae212811b" kindref="member">config_channel_transport_set</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structconfig__channel__transport" kindref="compound">config_channel_transport</ref><sp/>*transport,</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*buffer,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>length);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112" refid="group__config__channel__transport_ga2c0ab2b64579203812ef5a88d3e99c7e_1ga2c0ab2b64579203812ef5a88d3e99c7e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__config__channel__transport_ga2c0ab2b64579203812ef5a88d3e99c7e_1ga2c0ab2b64579203812ef5a88d3e99c7e" kindref="member">config_channel_transport_get_disabled</ref>(uint8_t<sp/>*buffer,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>length);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123" refid="group__config__channel__transport_gabb9e5f5174e787d72c837ccd2770ab00_1gabb9e5f5174e787d72c837ccd2770ab00" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__config__channel__transport_gabb9e5f5174e787d72c837ccd2770ab00_1gabb9e5f5174e787d72c837ccd2770ab00" kindref="member">config_channel_transport_rsp_receive</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structconfig__channel__transport" kindref="compound">config_channel_transport</ref><sp/>*transport,</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structconfig__event" kindref="compound">config_event</ref><sp/>*event);</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131" refid="group__config__channel__transport_gad3b69515199cbf3c197309e76702c3aa_1gad3b69515199cbf3c197309e76702c3aa" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__config__channel__transport_gad3b69515199cbf3c197309e76702c3aa_1gad3b69515199cbf3c197309e76702c3aa" kindref="member">config_channel_transport_disconnect</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structconfig__channel__transport" kindref="compound">config_channel_transport</ref><sp/>*transport);</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*_CONFIG_CHANNEL_TRANSPORT_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/src/util/config_channel_transport.h"/>
+  </compounddef>
+</doxygen>

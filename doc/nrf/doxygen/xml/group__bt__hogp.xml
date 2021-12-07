@@ -1,0 +1,1606 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__hogp" kind="group">
+    <compoundname>bt_hogp</compoundname>
+    <title>Bluetooth LE GATT HIDS Client API</title>
+    <innerclass refid="structbt__hogp__init__params" prot="public">bt_hogp_init_params</innerclass>
+    <innerclass refid="structbt__hogp" prot="public">bt_hogp</innerclass>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__bt__hogp_1gaa298d01e1a7003acf6d8e6ff3ad6b012" prot="public" static="no">
+        <type>uint8_t(*</type>
+        <definition>typedef uint8_t(* bt_hogp_read_cb) (struct bt_hogp *hogp, struct bt_hogp_rep_info *rep, uint8_t err, const uint8_t *data)</definition>
+        <argsstring>)(struct bt_hogp *hogp, struct bt_hogp_rep_info *rep, uint8_t err, const uint8_t *data)</argsstring>
+        <name>bt_hogp_read_cb</name>
+        <briefdescription>
+<para>Callback function that is called when a notification or read response is received. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is called when new data related to the given report object appears. The data size can be obtained from the report object from the <emphasis>bt_hogp_rep_info::size</emphasis> field.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rep</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Report object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ATT error code. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the received data.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>BT_GATT_ITER_STOP</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Stop notification. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>BT_GATT_ITER_CONTINUE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Continue notification. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="46" column="9" bodyfile="include/bluetooth/services/hogp.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bt__hogp_1ga18305771e08492f0286674cd5a63933a" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_hogp_write_cb) (struct bt_hogp *hogp, struct bt_hogp_rep_info *rep, uint8_t err)</definition>
+        <argsstring>)(struct bt_hogp *hogp, struct bt_hogp_rep_info *rep, uint8_t err)</argsstring>
+        <name>bt_hogp_write_cb</name>
+        <briefdescription>
+<para>Callback function that is called when a write response is received. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rep</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Report object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ATT error code. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="58" column="9" bodyfile="include/bluetooth/services/hogp.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bt__hogp_1gaf54d197d81f1cb498f1e68a0081ebe07" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_hogp_ready_cb) (struct bt_hogp *hogp)</definition>
+        <argsstring>)(struct bt_hogp *hogp)</argsstring>
+        <name>bt_hogp_ready_cb</name>
+        <briefdescription>
+<para>Callback function that is called when the HIDS client is ready. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When the <ref refid="group__bt__hogp_ga54f074bbf4687b4c008b216a7aebdda1_1ga54f074bbf4687b4c008b216a7aebdda1" kindref="member">bt_hogp_handles_assign</ref> function is called, the module starts reading all additional information it needs to work. When this process is finished, this callback function is called.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para>bt_hogp_assign_error_cb </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="73" column="9" bodyfile="include/bluetooth/services/hogp.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bt__hogp_1gaa400ad3c297b4234c09269ec4362b980" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_hogp_prep_fail_cb) (struct bt_hogp *hogp, int err)</definition>
+        <argsstring>)(struct bt_hogp *hogp, int err)</argsstring>
+        <name>bt_hogp_prep_fail_cb</name>
+        <briefdescription>
+<para>Callback function that is called when an error is detected during HIDS client preparation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When the <ref refid="group__bt__hogp_ga54f074bbf4687b4c008b216a7aebdda1_1ga54f074bbf4687b4c008b216a7aebdda1" kindref="member">bt_hogp_handles_assign</ref> function is called, the module starts reading all additional information it needs to work. If an error is detected during this process, this callback function is called.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Negative internal error code or positive ATT error code.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="group__bt__hogp_gaf54d197d81f1cb498f1e68a0081ebe07_1gaf54d197d81f1cb498f1e68a0081ebe07" kindref="member">bt_hogp_ready_cb</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="89" column="9" bodyfile="include/bluetooth/services/hogp.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bt__hogp_1ga178dbe3c54eb57554e207b6b8974e2ff" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_hogp_map_cb) (struct bt_hogp *hogp, uint8_t err, const uint8_t *data, size_t size, size_t offset)</definition>
+        <argsstring>)(struct bt_hogp *hogp, uint8_t err, const uint8_t *data, size_t size, size_t offset)</argsstring>
+        <name>bt_hogp_map_cb</name>
+        <briefdescription>
+<para>Callback function that is called when a chunk of a report map data is received. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ATT error code. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the data, or NULL if there is an error or no more data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the received data chunk. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>offset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current data chunk offset. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="103" column="9" bodyfile="include/bluetooth/services/hogp.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bt__hogp_1gae538730256abee4e677df9753f440fb7" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_hogp_pm_update_cb) (struct bt_hogp *hogp)</definition>
+        <argsstring>)(struct bt_hogp *hogp)</argsstring>
+        <name>bt_hogp_pm_update_cb</name>
+        <briefdescription>
+<para>Callback function that is called when the protocol mode is updated. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is called when a protocol mode read or write finishes.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="113" column="9" bodyfile="include/bluetooth/services/hogp.h" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__hogp_1gac501c266d8015909fbfcd8d695c1d956" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_hogp_init</definition>
+        <argsstring>(struct bt_hogp *hogp, const struct bt_hogp_init_params *params)</argsstring>
+        <name>bt_hogp_init</name>
+        <param>
+          <type>struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__hogp__init__params" kindref="compound">bt_hogp_init_params</ref> *</type>
+          <declname>params</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the HIDS client instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>You must call this function on the HOGP object before any other function.</para>
+<para><simplesect kind="note"><para>This function clears the whole memory occupied by the object. Do not call it on the object in use.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Initialization parameters. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="249" column="6" declfile="include/bluetooth/services/hogp.h" declline="249" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1ga54f074bbf4687b4c008b216a7aebdda1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hogp_handles_assign</definition>
+        <argsstring>(struct bt_gatt_dm *dm, struct bt_hogp *hogp)</argsstring>
+        <name>bt_hogp_handles_assign</name>
+        <param>
+          <type>struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <briefdescription>
+<para>Assign handlers to the HIDS client instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function should be called when a link with a peer has been established, to associate the link to this instance of the module. This makes it possible to handle several links and associate each link to a particular instance of this module. The GATT attribute handles are provided by the GATT Discovery Manager.</para>
+<para><simplesect kind="note"><para>This function starts the report discovery process. Wait for one of the functions in <ref refid="structbt__hogp__init__params" kindref="compound">bt_hogp_init_params</ref> before using the HIDS object.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>(-ENOTSUP)</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Special error code used when the UUID of the service does not match the expected UUID. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="274" column="5" declfile="include/bluetooth/services/hogp.h" declline="274" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1gaed961a4e32dcfdda7242ea3b85b57d5b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_hogp_release</definition>
+        <argsstring>(struct bt_hogp *hogp)</argsstring>
+        <name>bt_hogp_release</name>
+        <param>
+          <type>struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <briefdescription>
+<para>Release the HIDS client instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function releases all dynamic memory allocated by the HIDS client instance and clears all the instance data.</para>
+<para><simplesect kind="note"><para>Do not call this function on an instance that was not initialized (see <ref refid="group__bt__hogp_gac501c266d8015909fbfcd8d695c1d956_1gac501c266d8015909fbfcd8d695c1d956" kindref="member">bt_hogp_init</ref>). After the instance is initialized, it is safe to call this function multiple times.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="290" column="6" declfile="include/bluetooth/services/hogp.h" declline="290" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1gaa50f91449d182c9243f6c8c934cb84a3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_hogp_abort_all</definition>
+        <argsstring>(struct bt_hogp *hogp)</argsstring>
+        <name>bt_hogp_abort_all</name>
+        <param>
+          <type>struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <briefdescription>
+<para>Abort all pending transfers. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Call this function only when the server is disconnected. Otherwise, if any read or write transfers are pending, the HOGP object might permanently return an EBUSY error on the following transfer attempts.</para>
+<para><simplesect kind="note"><para>This function disables transfers inside the HIDS client library. It does not abort any pending transfers in the Bluetooth LE stack.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="306" column="6" declfile="include/bluetooth/services/hogp.h" declline="306" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1ga79458e8a46985f8637934492e15088c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool bt_hogp_assign_check</definition>
+        <argsstring>(const struct bt_hogp *hogp)</argsstring>
+        <name>bt_hogp_assign_check</name>
+        <param>
+          <type>const struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <briefdescription>
+<para>Check if the assignment function was called. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the HIDS client has handlers assigned already. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the HIDS client is released. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="316" column="6" declfile="include/bluetooth/services/hogp.h" declline="316" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1ga77d9a53ca67772973cf4dda863eb4fc2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool bt_hogp_ready_check</definition>
+        <argsstring>(const struct bt_hogp *hogp)</argsstring>
+        <name>bt_hogp_ready_check</name>
+        <param>
+          <type>const struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <briefdescription>
+<para>Check if the HIDS client is ready to work. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>If <ref refid="group__bt__hogp_ga79458e8a46985f8637934492e15088c2_1ga79458e8a46985f8637934492e15088c2" kindref="member">bt_hogp_assign_check</ref> returns <computeroutput>true</computeroutput> while this function returns <computeroutput>false</computeroutput>, it means that initialization is in progress.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the HIDS client is ready to work. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the HIDS client is not ready. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="331" column="6" declfile="include/bluetooth/services/hogp.h" declline="331" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1ga5513db5cc14cd2af75694e28f2546eeb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hogp_rep_read</definition>
+        <argsstring>(struct bt_hogp *hogp, struct bt_hogp_rep_info *rep, bt_hogp_read_cb func)</argsstring>
+        <name>bt_hogp_rep_read</name>
+        <param>
+          <type>struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <param>
+          <type>struct bt_hogp_rep_info *</type>
+          <declname>rep</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__hogp_gaa298d01e1a7003acf6d8e6ff3ad6b012_1gaa298d01e1a7003acf6d8e6ff3ad6b012" kindref="member">bt_hogp_read_cb</ref></type>
+          <declname>func</declname>
+        </param>
+        <briefdescription>
+<para>Send a read request addressing the report value descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function can be used on any type of report.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rep</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Report object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Function to be called to process the response.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="345" column="5" declfile="include/bluetooth/services/hogp.h" declline="345" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1ga7edb844daaefb9f6daeeded6502e7ab4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hogp_rep_write</definition>
+        <argsstring>(struct bt_hogp *hogp, struct bt_hogp_rep_info *rep, bt_hogp_write_cb func, const void *data, uint8_t length)</argsstring>
+        <name>bt_hogp_rep_write</name>
+        <param>
+          <type>struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <param>
+          <type>struct bt_hogp_rep_info *</type>
+          <declname>rep</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__hogp_ga18305771e08492f0286674cd5a63933a_1ga18305771e08492f0286674cd5a63933a" kindref="member">bt_hogp_write_cb</ref></type>
+          <declname>func</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>length</declname>
+        </param>
+        <briefdescription>
+<para>Send a write request addressing the report value descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Note that In reports might not support this function. In this case, this function may succeed but pass an ATT error code to the callback function.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rep</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Report object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Function to be called to process the response. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to be sent. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data size.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="365" column="5" declfile="include/bluetooth/services/hogp.h" declline="365" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1ga5ca74b1aeaf7d34a728b73e3ba0a7739" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hogp_rep_write_wo_rsp</definition>
+        <argsstring>(struct bt_hogp *hogp, struct bt_hogp_rep_info *rep, const void *data, uint8_t length, bt_hogp_write_cb func)</argsstring>
+        <name>bt_hogp_rep_write_wo_rsp</name>
+        <param>
+          <type>struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <param>
+          <type>struct bt_hogp_rep_info *</type>
+          <declname>rep</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>length</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__hogp_ga18305771e08492f0286674cd5a63933a_1ga18305771e08492f0286674cd5a63933a" kindref="member">bt_hogp_write_cb</ref></type>
+          <declname>func</declname>
+        </param>
+        <briefdescription>
+<para>Send a write command addressing the report value descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Note that in case of an error, no error response from the server is received. If the server cannot execute the command, it is just ignored.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rep</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Report object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data to be sent. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data size. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Function to be called when operation is completed.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="386" column="5" declfile="include/bluetooth/services/hogp.h" declline="386" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1gae5394eb403dea9a447dcc6b2cde71a1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hogp_rep_subscribe</definition>
+        <argsstring>(struct bt_hogp *hogp, struct bt_hogp_rep_info *rep, bt_hogp_read_cb func)</argsstring>
+        <name>bt_hogp_rep_subscribe</name>
+        <param>
+          <type>struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <param>
+          <type>struct bt_hogp_rep_info *</type>
+          <declname>rep</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__hogp_gaa298d01e1a7003acf6d8e6ff3ad6b012_1gaa298d01e1a7003acf6d8e6ff3ad6b012" kindref="member">bt_hogp_read_cb</ref></type>
+          <declname>func</declname>
+        </param>
+        <briefdescription>
+<para>Subscribe to report notifications. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function may be called only on Input type reports.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rep</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Report object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Function to be called to handle the notificated value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="403" column="5" declfile="include/bluetooth/services/hogp.h" declline="403" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1ga6b8cb1e5656cd9f3db6c905ffc75f346" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hogp_rep_unsubscribe</definition>
+        <argsstring>(struct bt_hogp *hogp, struct bt_hogp_rep_info *rep)</argsstring>
+        <name>bt_hogp_rep_unsubscribe</name>
+        <param>
+          <type>struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <param>
+          <type>struct bt_hogp_rep_info *</type>
+          <declname>rep</declname>
+        </param>
+        <briefdescription>
+<para>Remove the subscription for a selected report. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rep</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Report object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="416" column="5" declfile="include/bluetooth/services/hogp.h" declline="416" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1gabfbb99e34e7b8fd5a344fcd468ff1e8b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hogp_map_read</definition>
+        <argsstring>(struct bt_hogp *hogp, bt_hogp_map_cb func, size_t offset, k_timeout_t timeout)</argsstring>
+        <name>bt_hogp_map_read</name>
+        <param>
+          <type>struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__hogp_ga178dbe3c54eb57554e207b6b8974e2ff_1ga178dbe3c54eb57554e207b6b8974e2ff" kindref="member">bt_hogp_map_cb</ref></type>
+          <declname>func</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>offset</declname>
+        </param>
+        <param>
+          <type>k_timeout_t</type>
+          <declname>timeout</declname>
+        </param>
+        <briefdescription>
+<para>Read part of the report map. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function sends a read request to the report map value. Depending on the <computeroutput>offset</computeroutput>, either read or read blob is sent.</para>
+<para>The report map might not fit into a single PDU. To read the whole map, call this function repeatedly with a different offset.</para>
+<para><simplesect kind="note"><para>This function uses the common read parameters structure inside the HIDS client object. This object may be used by other functions and is protected by semaphore.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Function to be called to process the response. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>offset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Byte offset where to start data read. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>timeout</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time-out for the common read structure usage.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="442" column="5" declfile="include/bluetooth/services/hogp.h" declline="442" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1ga738cb169259d80cbe8e2f792762a11b1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hogp_pm_update</definition>
+        <argsstring>(struct bt_hogp *hogp, k_timeout_t timeout)</argsstring>
+        <name>bt_hogp_pm_update</name>
+        <param>
+          <type>struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <param>
+          <type>k_timeout_t</type>
+          <declname>timeout</declname>
+        </param>
+        <briefdescription>
+<para>Read the current protocol mode from the server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The callback is called when a read response is received.</para>
+<para><simplesect kind="note"><para><itemizedlist>
+<listitem><para>Usually, the protocol mode value is read during HIDS client preparation, and its value is followed after that. This function may be used in an error recovery situation and should not be required in normal usage.</para>
+</listitem><listitem><para>This function uses the common read parameters structure inside the HOGP object. This object may be used by other functions and is protected by semaphore.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__bt__hogp_ga0dc8dea6233a8fbd929705d35dda3395_1ga0dc8dea6233a8fbd929705d35dda3395" kindref="member">bt_hogp_pm_get</ref></para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>timeout</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time-out for the common read structure usage.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="469" column="5" declfile="include/bluetooth/services/hogp.h" declline="469" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1ga0dc8dea6233a8fbd929705d35dda3395" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>enum <ref refid="group__bt__hids_ga7bf00e4f8e959a950b8c8b82ccc3cf05_1ga7bf00e4f8e959a950b8c8b82ccc3cf05" kindref="member">bt_hids_pm</ref></type>
+        <definition>enum bt_hids_pm bt_hogp_pm_get</definition>
+        <argsstring>(const struct bt_hogp *hogp)</argsstring>
+        <name>bt_hogp_pm_get</name>
+        <param>
+          <type>const struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <briefdescription>
+<para>Get the current protocol mode. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function returns the protocol mode stored in the HOGP object. It does not generate any traffic on the radio.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Current protocol mode. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="481" column="16" declfile="include/bluetooth/services/hogp.h" declline="481" declcolumn="16"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1gad4775d1ca22c828707e9613a81078112" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hogp_pm_write</definition>
+        <argsstring>(struct bt_hogp *hogp, enum bt_hids_pm pm)</argsstring>
+        <name>bt_hogp_pm_write</name>
+        <param>
+          <type>struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__bt__hids_ga7bf00e4f8e959a950b8c8b82ccc3cf05_1ga7bf00e4f8e959a950b8c8b82ccc3cf05" kindref="member">bt_hids_pm</ref></type>
+          <declname>pm</declname>
+        </param>
+        <briefdescription>
+<para>Set the current protocol mode. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function sends a write command to the Protocol Mode value.</para>
+<para><simplesect kind="note"><para>For the Protocol Mode value, only Write Without Response is used, so there is no control over the real Protocol Mode value if the write does not succeed.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>pm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Protocol mode to select.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="499" column="5" declfile="include/bluetooth/services/hogp.h" declline="499" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1ga192ef8cbcc16e0c14f5d451becbd0006" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hogp_suspend</definition>
+        <argsstring>(struct bt_hogp *hogp)</argsstring>
+        <name>bt_hogp_suspend</name>
+        <param>
+          <type>struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <briefdescription>
+<para>Suspend the device. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function sends a SUSPEND command using the Control Point Characteristic. It should be called when the HOST enters SUSPEND state.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="512" column="5" declfile="include/bluetooth/services/hogp.h" declline="512" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1gac332299d31c6a02cad0d0a60cf9635c5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_hogp_exit_suspend</definition>
+        <argsstring>(struct bt_hogp *hogp)</argsstring>
+        <name>bt_hogp_exit_suspend</name>
+        <param>
+          <type>struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <briefdescription>
+<para>Exit suspend and resume. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is used to inform the device that the HOST exits SUSPEND state.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="525" column="5" declfile="include/bluetooth/services/hogp.h" declline="525" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1ga8115d96f6b6d5410979449252461cc25" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct bt_conn *</type>
+        <definition>struct bt_conn * bt_hogp_conn</definition>
+        <argsstring>(const struct bt_hogp *hogp)</argsstring>
+        <name>bt_hogp_conn</name>
+        <param>
+          <type>const struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <briefdescription>
+<para>Get the connection object from the HIDS client. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function gets the connection object that is used with a given HIDS client.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Connection object. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="538" column="14" declfile="include/bluetooth/services/hogp.h" declline="538" declcolumn="14"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1ga1e4490391eda8e8b0ae78c06ea46a888" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const struct <ref refid="structbt__hids__info" kindref="compound">bt_hids_info</ref> *</type>
+        <definition>const struct bt_hids_info * bt_hogp_conn_info_val</definition>
+        <argsstring>(const struct bt_hogp *hogp)</argsstring>
+        <name>bt_hogp_conn_info_val</name>
+        <param>
+          <type>const struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <briefdescription>
+<para>Access the HID information value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function accesses the structure with the decoded HID Information Characteristic value.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Pointer to the decoded HID information structure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="550" column="25" declfile="include/bluetooth/services/hogp.h" declline="550" declcolumn="25"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1ga35c5c1a894f07535b21d94ea05e3d277" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct bt_hogp_rep_info *</type>
+        <definition>struct bt_hogp_rep_info * bt_hogp_rep_boot_kbd_in</definition>
+        <argsstring>(struct bt_hogp *hogp)</argsstring>
+        <name>bt_hogp_rep_boot_kbd_in</name>
+        <param>
+          <type>struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <briefdescription>
+<para>Access boot keyboard input report. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The report pointer, or NULL if the device does not support boot keyboard protocol mode. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="560" column="23" declfile="include/bluetooth/services/hogp.h" declline="560" declcolumn="23"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1ga83d82c0475bf1673a3d256b3d1f21010" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct bt_hogp_rep_info *</type>
+        <definition>struct bt_hogp_rep_info * bt_hogp_rep_boot_kbd_out</definition>
+        <argsstring>(struct bt_hogp *hogp)</argsstring>
+        <name>bt_hogp_rep_boot_kbd_out</name>
+        <param>
+          <type>struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <briefdescription>
+<para>Access boot keyboard output report. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The report pointer, or NULL if the device does not support boot keyboard protocol mode. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="570" column="23" declfile="include/bluetooth/services/hogp.h" declline="570" declcolumn="23"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1ga16ccde9a8f0b954647610af47a2e3e3d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct bt_hogp_rep_info *</type>
+        <definition>struct bt_hogp_rep_info * bt_hogp_rep_boot_mouse_in</definition>
+        <argsstring>(struct bt_hogp *hogp)</argsstring>
+        <name>bt_hogp_rep_boot_mouse_in</name>
+        <param>
+          <type>struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <briefdescription>
+<para>Access boot mouse input report. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The report pointer, or NULL if the device does not support boot mouse protocol mode. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="580" column="23" declfile="include/bluetooth/services/hogp.h" declline="580" declcolumn="23"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1gae5b428366acce526cd1ffb788b032cb5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t bt_hogp_rep_count</definition>
+        <argsstring>(const struct bt_hogp *hogp)</argsstring>
+        <name>bt_hogp_rep_count</name>
+        <param>
+          <type>const struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <briefdescription>
+<para>Get the number of HID reports in the device. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This function does not take boot records into account. They can be accessed using separate functions.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The number of records. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="593" column="8" declfile="include/bluetooth/services/hogp.h" declline="593" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1ga58cc8ae87739a689481676c8b19c6538" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct bt_hogp_rep_info *</type>
+        <definition>struct bt_hogp_rep_info * bt_hogp_rep_next</definition>
+        <argsstring>(struct bt_hogp *hogp, const struct bt_hogp_rep_info *rep)</argsstring>
+        <name>bt_hogp_rep_next</name>
+        <param>
+          <type>struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <param>
+          <type>const struct bt_hogp_rep_info *</type>
+          <declname>rep</declname>
+        </param>
+        <briefdescription>
+<para>Get the next report in the HOGP object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rep</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The record before the one to access, or NULL to access the first record.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The next report according to <computeroutput>rep</computeroutput>, or NULL if no more reports are available. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="605" column="23" declfile="include/bluetooth/services/hogp.h" declline="605" declcolumn="23"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1ga0959a8a54257ee975fba44733c86433e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct bt_hogp_rep_info *</type>
+        <definition>struct bt_hogp_rep_info * bt_hogp_rep_find</definition>
+        <argsstring>(struct bt_hogp *hogp, enum bt_hids_report_type type, uint8_t id)</argsstring>
+        <name>bt_hogp_rep_find</name>
+        <param>
+          <type>struct <ref refid="structbt__hogp" kindref="compound">bt_hogp</ref> *</type>
+          <declname>hogp</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__bt__hids_ga17ad39fc4573254727d2174a099c9b4c_1ga17ad39fc4573254727d2174a099c9b4c" kindref="member">bt_hids_report_type</ref></type>
+          <declname>type</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>id</declname>
+        </param>
+        <briefdescription>
+<para>Find a report. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function searches for a report with the given type and identifier.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>hogp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>HOGP object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The report type to find. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The identifier to find. Note that valid identifiers start from 1, but the value 0 may be used for devices that have one report of each type and there is no report ID inside the report map.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The report that was found, or NULL. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="622" column="23" declfile="include/bluetooth/services/hogp.h" declline="622" declcolumn="23"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1gae2c47b5dac051d0c735fe5de2bd3d98d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_hogp_rep_user_data_set</definition>
+        <argsstring>(struct bt_hogp_rep_info *rep, void *data)</argsstring>
+        <name>bt_hogp_rep_user_data_set</name>
+        <param>
+          <type>struct bt_hogp_rep_info *</type>
+          <declname>rep</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Set user data in report. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rep</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Report object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>User data pointer to set. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="632" column="6" declfile="include/bluetooth/services/hogp.h" declline="632" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1ga471b4da6457eabeeb53efc6c3f6fcf89" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void * bt_hogp_rep_user_data</definition>
+        <argsstring>(const struct bt_hogp_rep_info *rep)</argsstring>
+        <name>bt_hogp_rep_user_data</name>
+        <param>
+          <type>const struct bt_hogp_rep_info *</type>
+          <declname>rep</declname>
+        </param>
+        <briefdescription>
+<para>Get user data from report. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rep</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Report object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>User data pointer. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="641" column="6" declfile="include/bluetooth/services/hogp.h" declline="641" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1gabd249ed143b0eb9e88cddd7853e78cdd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hogp_rep_id</definition>
+        <argsstring>(const struct bt_hogp_rep_info *rep)</argsstring>
+        <name>bt_hogp_rep_id</name>
+        <param>
+          <type>const struct bt_hogp_rep_info *</type>
+          <declname>rep</declname>
+        </param>
+        <briefdescription>
+<para>Get report identifier. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rep</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Report object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Report identifier. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="650" column="9" declfile="include/bluetooth/services/hogp.h" declline="650" declcolumn="9"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1gaee428c9d1f268f6182f283d58c95dce7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>enum <ref refid="group__bt__hids_ga17ad39fc4573254727d2174a099c9b4c_1ga17ad39fc4573254727d2174a099c9b4c" kindref="member">bt_hids_report_type</ref></type>
+        <definition>enum bt_hids_report_type bt_hogp_rep_type</definition>
+        <argsstring>(const struct bt_hogp_rep_info *rep)</argsstring>
+        <name>bt_hogp_rep_type</name>
+        <param>
+          <type>const struct bt_hogp_rep_info *</type>
+          <declname>rep</declname>
+        </param>
+        <briefdescription>
+<para>Get report type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rep</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Report object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Report type. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="659" column="25" declfile="include/bluetooth/services/hogp.h" declline="659" declcolumn="25"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__hogp_1gac43f9248803bb9ffa09c30cf229d8265" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t bt_hogp_rep_size</definition>
+        <argsstring>(const struct bt_hogp_rep_info *rep)</argsstring>
+        <name>bt_hogp_rep_size</name>
+        <param>
+          <type>const struct bt_hogp_rep_info *</type>
+          <declname>rep</declname>
+        </param>
+        <briefdescription>
+<para>Get report size. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>You can rely on this function after completing the read procedure for your target HID report with the <ref refid="group__bt__hogp_ga5513db5cc14cd2af75694e28f2546eeb_1ga5513db5cc14cd2af75694e28f2546eeb" kindref="member">bt_hogp_rep_read</ref> API. The completion is reported by the appropriate callback. Alternatively, you can subscribe to your target report with <ref refid="group__bt__hogp_gae5394eb403dea9a447dcc6b2cde71a1a_1gae5394eb403dea9a447dcc6b2cde71a1a" kindref="member">bt_hogp_rep_subscribe</ref> API and start using the function below once you receive the first notification. In all other cases, the size information is not available.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rep</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Report object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The size of the report or 0 if not available. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hogp.h" line="675" column="8" declfile="include/bluetooth/services/hogp.h" declline="675" declcolumn="8"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Bluetooth LE GATT HID Service (HIDS) Client. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

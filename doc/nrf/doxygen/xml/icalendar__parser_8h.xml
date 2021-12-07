@@ -1,0 +1,361 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="icalendar__parser_8h" kind="file" language="C++">
+    <compoundname>icalendar_parser.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <includes local="no">zephyr/types.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/net/icalendar_parser.h</label>
+        <link refid="icalendar__parser_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structical__component" prot="public">ical_component</innerclass>
+    <innerclass refid="structical__parser__evt" prot="public">ical_parser_evt</innerclass>
+    <innerclass refid="structicalendar__parser" prot="public">icalendar_parser</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1ga640f2a121fe99d2b283f7edbe19313dc" prot="public" static="no" strong="no">
+        <type></type>
+        <name>ical_parser_evt_id</name>
+        <enumvalue id="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1gga640f2a121fe99d2b283f7edbe19313dca35c2ca9048e3f6b90c28a911cdb30e51" prot="public">
+          <name>ICAL_EVT_VEVENT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Event Component parsed </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1gga640f2a121fe99d2b283f7edbe19313dca0aaa978c0184487868bcaaac1b847976" prot="public">
+          <name>ICAL_EVT_VTODO</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Todo Component parsed </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1gga640f2a121fe99d2b283f7edbe19313dca379bbf47886e1d605ac5ab0511319b81" prot="public">
+          <name>ICAL_EVT_VJOURNAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Journal Component parsed </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1gga640f2a121fe99d2b283f7edbe19313dca75b21ab78493e59f1acfd7a720568a94" prot="public">
+          <name>ICAL_EVT_VTIMEZONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Timezone Component parsed </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1gga640f2a121fe99d2b283f7edbe19313dca16733e650122028a28f02d9efc17c095" prot="public">
+          <name>ICAL_EVT_VFREEBUSY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FreeBusy Component parsed </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>iCalendar parser event IDs. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/icalendar_parser.h" line="28" column="1" bodyfile="include/net/icalendar_parser.h" bodystart="28" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1gafafd0a950e7a24b211ad2bc7b7827d89" prot="public" static="no" strong="no">
+        <type></type>
+        <name>ical_parser_error_id</name>
+        <enumvalue id="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89a8c365fe7c436773a0862dd7875bd9a3f" prot="public">
+          <name>ICAL_ERROR_NONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>No error </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89ae12106e2287f30b05709e1ebedcfa756" prot="public">
+          <name>ICAL_ERROR_SUMMARY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>SUMMARY property error </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89a78e8637c545a3fc816f40fe9f7363f5b" prot="public">
+          <name>ICAL_ERROR_LOCATION</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>LOCATION property error </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89a426bcd9555b24ae4ce626d0382ec9942" prot="public">
+          <name>ICAL_ERROR_DESCRIPTION</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>DESCRIPTION property error </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89acb33e011d7e966964465da07e69f2cb2" prot="public">
+          <name>ICAL_ERROR_DTSTART</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>DTSTART property error </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89a445fb1b5099c0d766c7951a7698cb330" prot="public">
+          <name>ICAL_ERROR_DTEND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>DTEND property error </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89a0ea11c7cf5ed60566f5b747dd7860d39" prot="public">
+          <name>ICAL_ERROR_COM_NOT_SUPPORTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Component not supported error </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>iCalendar parser error IDs. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/icalendar_parser.h" line="44" column="1" bodyfile="include/net/icalendar_parser.h" bodystart="44" bodyend="59"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__icalendar__parser_ga79124cd74402eeb40042355fb220dca2_1ga79124cd74402eeb40042355fb220dca2" prot="public" static="no">
+        <type>int(*</type>
+        <definition>typedef int(* icalendar_parser_callback_t) (const struct ical_parser_evt *event)</definition>
+        <argsstring>)(const struct ical_parser_evt *event)</argsstring>
+        <name>icalendar_parser_callback_t</name>
+        <briefdescription>
+<para>iCalendar parser asynchronous event handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Through this callback, the application receives events, such as parsed component with errors code.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">event</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The iCalendar event.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Zero to continue the parsing, non-zero otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/icalendar_parser.h" line="100" column="9" bodyfile="include/net/icalendar_parser.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__icalendar__parser_ga3b1406ef9e0b9edfd4473d66ae00cdbe_1ga3b1406ef9e0b9edfd4473d66ae00cdbe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ical_parser_init</definition>
+        <argsstring>(struct icalendar_parser *ical, icalendar_parser_callback_t callback)</argsstring>
+        <name>ical_parser_init</name>
+        <param>
+          <type>struct <ref refid="structicalendar__parser" kindref="compound">icalendar_parser</ref> *</type>
+          <declname>ical</declname>
+        </param>
+        <param>
+          <type><ref refid="group__icalendar__parser_ga79124cd74402eeb40042355fb220dca2_1ga79124cd74402eeb40042355fb220dca2" kindref="member">icalendar_parser_callback_t</ref></type>
+          <declname>callback</declname>
+        </param>
+        <briefdescription>
+<para>Initialize iCalendar parser. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">ical</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>iCalendar parser instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">callback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback for sending calendar parsing event.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 If successful, or an error code on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/icalendar_parser.h" line="125" column="5" declfile="include/net/icalendar_parser.h" declline="125" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__icalendar__parser_ga19b1fdbc5e50abd5d979f7413bfb4913_1ga19b1fdbc5e50abd5d979f7413bfb4913" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t ical_parser_parse</definition>
+        <argsstring>(struct icalendar_parser *ical, const char *data, size_t len)</argsstring>
+        <name>ical_parser_parse</name>
+        <param>
+          <type>struct <ref refid="structicalendar__parser" kindref="compound">icalendar_parser</ref> *</type>
+          <declname>ical</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Parse the iCalendar data stream. Return the parsed bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">ical</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>iCalendar parser instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data to be parsed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of input data stream.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>size_t</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parsed bytes. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/icalendar_parser.h" line="137" column="8" declfile="include/net/icalendar_parser.h" declline="137" declcolumn="8"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for parsing iCalendar format calendaring information. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>ICAL_PARSER_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ICAL_PARSER_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1ga640f2a121fe99d2b283f7edbe19313dc" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1ga640f2a121fe99d2b283f7edbe19313dc" kindref="member">ical_parser_evt_id</ref><sp/>{</highlight></codeline>
+<codeline lineno="30" refid="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1gga640f2a121fe99d2b283f7edbe19313dca35c2ca9048e3f6b90c28a911cdb30e51" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1gga640f2a121fe99d2b283f7edbe19313dca35c2ca9048e3f6b90c28a911cdb30e51" kindref="member">ICAL_EVT_VEVENT</ref>,</highlight></codeline>
+<codeline lineno="32" refid="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1gga640f2a121fe99d2b283f7edbe19313dca0aaa978c0184487868bcaaac1b847976" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1gga640f2a121fe99d2b283f7edbe19313dca0aaa978c0184487868bcaaac1b847976" kindref="member">ICAL_EVT_VTODO</ref>,</highlight></codeline>
+<codeline lineno="34" refid="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1gga640f2a121fe99d2b283f7edbe19313dca379bbf47886e1d605ac5ab0511319b81" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1gga640f2a121fe99d2b283f7edbe19313dca379bbf47886e1d605ac5ab0511319b81" kindref="member">ICAL_EVT_VJOURNAL</ref>,</highlight></codeline>
+<codeline lineno="36" refid="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1gga640f2a121fe99d2b283f7edbe19313dca75b21ab78493e59f1acfd7a720568a94" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1gga640f2a121fe99d2b283f7edbe19313dca75b21ab78493e59f1acfd7a720568a94" kindref="member">ICAL_EVT_VTIMEZONE</ref>,</highlight></codeline>
+<codeline lineno="38" refid="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1gga640f2a121fe99d2b283f7edbe19313dca16733e650122028a28f02d9efc17c095" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1gga640f2a121fe99d2b283f7edbe19313dca16733e650122028a28f02d9efc17c095" kindref="member">ICAL_EVT_VFREEBUSY</ref>,</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1gafafd0a950e7a24b211ad2bc7b7827d89" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1gafafd0a950e7a24b211ad2bc7b7827d89" kindref="member">ical_parser_error_id</ref><sp/>{</highlight></codeline>
+<codeline lineno="46" refid="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89a8c365fe7c436773a0862dd7875bd9a3f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89a8c365fe7c436773a0862dd7875bd9a3f" kindref="member">ICAL_ERROR_NONE</ref>,</highlight></codeline>
+<codeline lineno="48" refid="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89ae12106e2287f30b05709e1ebedcfa756" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89ae12106e2287f30b05709e1ebedcfa756" kindref="member">ICAL_ERROR_SUMMARY</ref>,</highlight></codeline>
+<codeline lineno="50" refid="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89a78e8637c545a3fc816f40fe9f7363f5b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89a78e8637c545a3fc816f40fe9f7363f5b" kindref="member">ICAL_ERROR_LOCATION</ref>,</highlight></codeline>
+<codeline lineno="52" refid="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89a426bcd9555b24ae4ce626d0382ec9942" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89a426bcd9555b24ae4ce626d0382ec9942" kindref="member">ICAL_ERROR_DESCRIPTION</ref>,</highlight></codeline>
+<codeline lineno="54" refid="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89acb33e011d7e966964465da07e69f2cb2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89acb33e011d7e966964465da07e69f2cb2" kindref="member">ICAL_ERROR_DTSTART</ref>,</highlight></codeline>
+<codeline lineno="56" refid="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89a445fb1b5099c0d766c7951a7698cb330" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89a445fb1b5099c0d766c7951a7698cb330" kindref="member">ICAL_ERROR_DTEND</ref>,</highlight></codeline>
+<codeline lineno="58" refid="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89a0ea11c7cf5ed60566f5b747dd7860d39" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1ggafafd0a950e7a24b211ad2bc7b7827d89a0ea11c7cf5ed60566f5b747dd7860d39" kindref="member">ICAL_ERROR_COM_NOT_SUPPORTED</ref>,</highlight></codeline>
+<codeline lineno="59"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="structical__component" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structical__component" kindref="compound">ical_component</ref><sp/>{</highlight></codeline>
+<codeline lineno="66" refid="structical__component_a57c33af8bed4bad50d4eb3dcab9a7ff6_1a57c33af8bed4bad50d4eb3dcab9a7ff6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structical__component_a57c33af8bed4bad50d4eb3dcab9a7ff6_1a57c33af8bed4bad50d4eb3dcab9a7ff6" kindref="member">summary</ref>[CONFIG_ICAL_PARSER_SUMMARY_SIZE<sp/>+<sp/>1];</highlight></codeline>
+<codeline lineno="68" refid="structical__component_a8917eb2784692503be0d0dfb18aadd5d_1a8917eb2784692503be0d0dfb18aadd5d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structical__component_a8917eb2784692503be0d0dfb18aadd5d_1a8917eb2784692503be0d0dfb18aadd5d" kindref="member">location</ref>[CONFIG_ICAL_PARSER_LOCATION_SIZE<sp/>+<sp/>1];</highlight></codeline>
+<codeline lineno="70" refid="structical__component_a1f6e9b148850064c336634b8e6cb2d5f_1a1f6e9b148850064c336634b8e6cb2d5f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structical__component_a1f6e9b148850064c336634b8e6cb2d5f_1a1f6e9b148850064c336634b8e6cb2d5f" kindref="member">description</ref>[CONFIG_ICAL_PARSER_DESCRIPTION_SIZE<sp/>+<sp/>1];</highlight></codeline>
+<codeline lineno="72" refid="structical__component_a4e0497135b8df08dadb12b7601684769_1a4e0497135b8df08dadb12b7601684769" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structical__component_a4e0497135b8df08dadb12b7601684769_1a4e0497135b8df08dadb12b7601684769" kindref="member">dtstart</ref>[CONFIG_ICAL_PARSER_DTSTART_SIZE<sp/>+<sp/>1];</highlight></codeline>
+<codeline lineno="74" refid="structical__component_acb140108169358ca04abec7cf8a19a96_1acb140108169358ca04abec7cf8a19a96" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structical__component_acb140108169358ca04abec7cf8a19a96_1acb140108169358ca04abec7cf8a19a96" kindref="member">dtend</ref>[CONFIG_ICAL_PARSER_DTEND_SIZE<sp/>+<sp/>1];</highlight></codeline>
+<codeline lineno="75"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80" refid="structical__parser__evt" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structical__parser__evt" kindref="compound">ical_parser_evt</ref><sp/>{</highlight></codeline>
+<codeline lineno="82" refid="structical__parser__evt_aa63feb61b0030e0adde356d4baaf7325_1aa63feb61b0030e0adde356d4baaf7325" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__icalendar__parser_ga640f2a121fe99d2b283f7edbe19313dc_1ga640f2a121fe99d2b283f7edbe19313dc" kindref="member">ical_parser_evt_id</ref><sp/><ref refid="structical__parser__evt_aa63feb61b0030e0adde356d4baaf7325_1aa63feb61b0030e0adde356d4baaf7325" kindref="member">id</ref>;</highlight></codeline>
+<codeline lineno="84" refid="structical__parser__evt_aa9ba44008493bf6ddc9f11f939029b3d_1aa9ba44008493bf6ddc9f11f939029b3d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__icalendar__parser_gafafd0a950e7a24b211ad2bc7b7827d89_1gafafd0a950e7a24b211ad2bc7b7827d89" kindref="member">ical_parser_error_id</ref><sp/><ref refid="structical__parser__evt_aa9ba44008493bf6ddc9f11f939029b3d_1aa9ba44008493bf6ddc9f11f939029b3d" kindref="member">error</ref>;</highlight></codeline>
+<codeline lineno="86" refid="structical__parser__evt_aad8c779ee87e2d0d2384c2ccf9fd3534_1aad8c779ee87e2d0d2384c2ccf9fd3534" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structical__component" kindref="compound">ical_component</ref><sp/><ref refid="structical__parser__evt_aad8c779ee87e2d0d2384c2ccf9fd3534_1aad8c779ee87e2d0d2384c2ccf9fd3534" kindref="member">ical_com</ref>;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100" refid="group__icalendar__parser_ga79124cd74402eeb40042355fb220dca2_1ga79124cd74402eeb40042355fb220dca2" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>int<sp/>(*<ref refid="group__icalendar__parser_ga79124cd74402eeb40042355fb220dca2_1ga79124cd74402eeb40042355fb220dca2" kindref="member">icalendar_parser_callback_t</ref>)(</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structical__parser__evt" kindref="compound">ical_parser_evt</ref><sp/>*event);</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106" refid="structicalendar__parser" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structicalendar__parser" kindref="compound">icalendar_parser</ref><sp/>{</highlight></codeline>
+<codeline lineno="108" refid="structicalendar__parser_a04ebeb7343a1462dcda7e6de83034dbe_1a04ebeb7343a1462dcda7e6de83034dbe" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structicalendar__parser_a04ebeb7343a1462dcda7e6de83034dbe_1a04ebeb7343a1462dcda7e6de83034dbe" kindref="member">buf</ref>[CONFIG_ICAL_PARSER_BUFFER_SIZE<sp/>+<sp/>1];</highlight></codeline>
+<codeline lineno="110" refid="structicalendar__parser_ade0efe5ca16023f158dc065e997d3824_1ade0efe5ca16023f158dc065e997d3824" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structicalendar__parser_ade0efe5ca16023f158dc065e997d3824_1ade0efe5ca16023f158dc065e997d3824" kindref="member">offset</ref>;</highlight></codeline>
+<codeline lineno="112" refid="structicalendar__parser_a4d9f380a479b10ce3f0c8752e9855e3a_1a4d9f380a479b10ce3f0c8752e9855e3a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structicalendar__parser_a4d9f380a479b10ce3f0c8752e9855e3a_1a4d9f380a479b10ce3f0c8752e9855e3a" kindref="member">icalobject_begin</ref>;</highlight></codeline>
+<codeline lineno="114" refid="structicalendar__parser_ab40eeec249265cb3f89dd5cc4e706909_1ab40eeec249265cb3f89dd5cc4e706909" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__icalendar__parser_ga79124cd74402eeb40042355fb220dca2_1ga79124cd74402eeb40042355fb220dca2" kindref="member">icalendar_parser_callback_t</ref><sp/><ref refid="structicalendar__parser_ab40eeec249265cb3f89dd5cc4e706909_1ab40eeec249265cb3f89dd5cc4e706909" kindref="member">callback</ref>;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125" refid="group__icalendar__parser_ga3b1406ef9e0b9edfd4473d66ae00cdbe_1ga3b1406ef9e0b9edfd4473d66ae00cdbe" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__icalendar__parser_ga3b1406ef9e0b9edfd4473d66ae00cdbe_1ga3b1406ef9e0b9edfd4473d66ae00cdbe" kindref="member">ical_parser_init</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structicalendar__parser" kindref="compound">icalendar_parser</ref><sp/>*ical,</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__icalendar__parser_ga79124cd74402eeb40042355fb220dca2_1ga79124cd74402eeb40042355fb220dca2" kindref="member">icalendar_parser_callback_t</ref><sp/>callback);</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137" refid="group__icalendar__parser_ga19b1fdbc5e50abd5d979f7413bfb4913_1ga19b1fdbc5e50abd5d979f7413bfb4913" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="group__icalendar__parser_ga19b1fdbc5e50abd5d979f7413bfb4913_1ga19b1fdbc5e50abd5d979f7413bfb4913" kindref="member">ical_parser_parse</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structicalendar__parser" kindref="compound">icalendar_parser</ref><sp/>*ical,</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*data,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>len);</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>ICAL_PARSER_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/net/icalendar_parser.h"/>
+  </compounddef>
+</doxygen>

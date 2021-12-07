@@ -1,0 +1,160 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__hids__inp__rep" kind="struct" language="C++" prot="public">
+    <compoundname>bt_hids_inp_rep</compoundname>
+    <includes refid="hids_8h" local="no">hids.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__hids__inp__rep_a86e0e6d3d7e0c352c8c90d492e35de7c_1a86e0e6d3d7e0c352c8c90d492e35de7c" prot="public" static="no" mutable="no">
+        <type>struct _bt_gatt_ccc</type>
+        <definition>struct _bt_gatt_ccc bt_hids_inp_rep::ccc</definition>
+        <argsstring></argsstring>
+        <name>ccc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>CCC descriptor. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="184" column="19" bodyfile="include/bluetooth/services/hids.h" bodystart="184" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__inp__rep_a2ef17eaaaedfe104f549f5898b46dd37_1a2ef17eaaaedfe104f549f5898b46dd37" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_inp_rep::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Report ID defined in the HIDS Report Map. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="187" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="187" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__inp__rep_a3be351862c520dca647936903bb4469b_1a3be351862c520dca647936903bb4469b" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_inp_rep::idx</definition>
+        <argsstring></argsstring>
+        <name>idx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Index in Input Report Array. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="190" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="190" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__inp__rep_a3032629e55445e83892243068710d132_1a3032629e55445e83892243068710d132" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_inp_rep::att_ind</definition>
+        <argsstring></argsstring>
+        <name>att_ind</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Index in the service attribute array. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="193" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="193" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__inp__rep_ada968b41bee912a6e5e0a093a94920ed_1ada968b41bee912a6e5e0a093a94920ed" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_inp_rep::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of report. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="196" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="196" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__inp__rep_a458905c1ccc5e0d920612df023789a88_1a458905c1ccc5e0d920612df023789a88" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_inp_rep::offset</definition>
+        <argsstring></argsstring>
+        <name>offset</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Report data offset. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="199" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="199" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__inp__rep_a65cdb02a14a990daaf4da6d7785563ad_1a65cdb02a14a990daaf4da6d7785563ad" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_inp_rep::perm</definition>
+        <argsstring></argsstring>
+        <name>perm</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Report permissions</para>
+<para>Use GATT attribute permission bit field values here. As input report can only be read only 3 flags are used:<itemizedlist>
+<listitem><para>BT_GATT_PERM_READ</para>
+</listitem><listitem><para>BT_GATT_PERM_READ_ENCRYPT</para>
+</listitem><listitem><para>BT_GATT_PERM_READ_AUTHEN</para>
+</listitem></itemizedlist>
+</para>
+<para>If no attribute is chosen, the configured default is used.</para>
+<para>The CCC register would have set the proper permissions for read and write, based on the read permissions for the whole report. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="214" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="214" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__inp__rep_aca8927ad09e6a47b161ef8594e9cc44c_1aca8927ad09e6a47b161ef8594e9cc44c" prot="public" static="no" mutable="no">
+        <type>const uint8_t *</type>
+        <definition>const uint8_t* bt_hids_inp_rep::rep_mask</definition>
+        <argsstring></argsstring>
+        <name>rep_mask</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to report mask. The least significant bit corresponds to the least significant byte of the report value. If this bit is set to 1 then the first byte of report is stored. For example, report is 16 byte length to mask this the 2 byte is needed, so if first byte is 0b11111111 then the first 8 byte of report is stored, if second byte is 0b00001111 the only next 4 bytes so first 12 byte of report is stored. The user must provide a mask of the appropriate length to mask all bytes of the report. If rep_mask is NULL then whole report is stored. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="226" column="15" bodyfile="include/bluetooth/services/hids.h" bodystart="226" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__inp__rep_ac139f888fefef3c9fea421771e751b5c_1ac139f888fefef3c9fea421771e751b5c" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__hids_gab1b327abc112792947b20763cb1b8936_1gab1b327abc112792947b20763cb1b8936" kindref="member">bt_hids_notify_handler_t</ref></type>
+        <definition>bt_hids_notify_handler_t bt_hids_inp_rep::handler</definition>
+        <argsstring></argsstring>
+        <name>handler</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Callback with the notification event. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="229" column="26" bodyfile="include/bluetooth/services/hids.h" bodystart="229" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Input Report. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/hids.h" line="182" column="1" bodyfile="include/bluetooth/services/hids.h" bodystart="182" bodyend="230"/>
+    <listofallmembers>
+      <member refid="structbt__hids__inp__rep_a3032629e55445e83892243068710d132_1a3032629e55445e83892243068710d132" prot="public" virt="non-virtual"><scope>bt_hids_inp_rep</scope><name>att_ind</name></member>
+      <member refid="structbt__hids__inp__rep_a86e0e6d3d7e0c352c8c90d492e35de7c_1a86e0e6d3d7e0c352c8c90d492e35de7c" prot="public" virt="non-virtual"><scope>bt_hids_inp_rep</scope><name>ccc</name></member>
+      <member refid="structbt__hids__inp__rep_ac139f888fefef3c9fea421771e751b5c_1ac139f888fefef3c9fea421771e751b5c" prot="public" virt="non-virtual"><scope>bt_hids_inp_rep</scope><name>handler</name></member>
+      <member refid="structbt__hids__inp__rep_a2ef17eaaaedfe104f549f5898b46dd37_1a2ef17eaaaedfe104f549f5898b46dd37" prot="public" virt="non-virtual"><scope>bt_hids_inp_rep</scope><name>id</name></member>
+      <member refid="structbt__hids__inp__rep_a3be351862c520dca647936903bb4469b_1a3be351862c520dca647936903bb4469b" prot="public" virt="non-virtual"><scope>bt_hids_inp_rep</scope><name>idx</name></member>
+      <member refid="structbt__hids__inp__rep_a458905c1ccc5e0d920612df023789a88_1a458905c1ccc5e0d920612df023789a88" prot="public" virt="non-virtual"><scope>bt_hids_inp_rep</scope><name>offset</name></member>
+      <member refid="structbt__hids__inp__rep_a65cdb02a14a990daaf4da6d7785563ad_1a65cdb02a14a990daaf4da6d7785563ad" prot="public" virt="non-virtual"><scope>bt_hids_inp_rep</scope><name>perm</name></member>
+      <member refid="structbt__hids__inp__rep_aca8927ad09e6a47b161ef8594e9cc44c_1aca8927ad09e6a47b161ef8594e9cc44c" prot="public" virt="non-virtual"><scope>bt_hids_inp_rep</scope><name>rep_mask</name></member>
+      <member refid="structbt__hids__inp__rep_ada968b41bee912a6e5e0a093a94920ed_1ada968b41bee912a6e5e0a093a94920ed" prot="public" virt="non-virtual"><scope>bt_hids_inp_rep</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

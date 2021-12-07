@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlocation__wifi__config" kind="struct" language="C++" prot="public">
+    <compoundname>location_wifi_config</compoundname>
+    <includes refid="location_8h" local="no">location.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlocation__wifi__config_a386be33a8135fec81d1f3cc6a65b369e_1a386be33a8135fec81d1f3cc6a65b369e" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t location_wifi_config::timeout</definition>
+        <argsstring></argsstring>
+        <name>timeout</name>
+        <briefdescription>
+<para>Timeout (in seconds) of how long the Wi-Fi positioning procedure can take. Zero means that the timer is disabled. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="170" column="10" bodyfile="include/modem/location.h" bodystart="170" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlocation__wifi__config_a5066e1ef753736683c0585904091aaad_1a5066e1ef753736683c0585904091aaad" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__location_ga065818dd61883219339120739cf46c7d_1ga065818dd61883219339120739cf46c7d" kindref="member">location_service</ref></type>
+        <definition>enum location_service location_wifi_config::service</definition>
+        <argsstring></argsstring>
+        <name>service</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Used Wi-Fi positioning service. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/location.h" line="173" column="22" bodyfile="include/modem/location.h" bodystart="173" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Wi-Fi positioning configuration. </para>
+    </detaileddescription>
+    <location file="include/modem/location.h" line="165" column="1" bodyfile="include/modem/location.h" bodystart="165" bodyend="174"/>
+    <listofallmembers>
+      <member refid="structlocation__wifi__config_a5066e1ef753736683c0585904091aaad_1a5066e1ef753736683c0585904091aaad" prot="public" virt="non-virtual"><scope>location_wifi_config</scope><name>service</name></member>
+      <member refid="structlocation__wifi__config_a386be33a8135fec81d1f3cc6a65b369e_1a386be33a8135fec81d1f3cc6a65b369e" prot="public" virt="non-virtual"><scope>location_wifi_config</scope><name>timeout</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,152 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structcb__data" kind="struct" language="C++" prot="public">
+    <compoundname>cb_data</compoundname>
+    <includes refid="scan_8h" local="no">scan.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structcb__data_a905d248d7e797ba3aeff263af6237004_1a905d248d7e797ba3aeff263af6237004" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* cb_data::filter_match) (struct bt_scan_device_info *device_info, struct bt_scan_filter_match *filter_match, bool connectable)</definition>
+        <argsstring>)(struct bt_scan_device_info *device_info, struct bt_scan_filter_match *filter_match, bool connectable)</argsstring>
+        <name>filter_match</name>
+        <briefdescription>
+<para>Scan filter matched. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">device_info</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data needed to establish connection and advertising information. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">filter_match</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Filter match status. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">connectable</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Inform that device is connectable. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="340" column="1" bodyfile="include/bluetooth/scan.h" bodystart="340" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcb__data_ae6cc16c436bd3771fe5dfa30193655fd_1ae6cc16c436bd3771fe5dfa30193655fd" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* cb_data::filter_no_match) (struct bt_scan_device_info *device_info, bool connectable)</definition>
+        <argsstring>)(struct bt_scan_device_info *device_info, bool connectable)</argsstring>
+        <name>filter_no_match</name>
+        <briefdescription>
+<para>Scan filter unmatched. The device was not found. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">device_info</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data needed to establish connection and advertising information. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">connectable</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Inform that device is connectable.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>Even if the filters are disable and not set, then all devices will be reported by this callback. It can be useful if the scan is used without filters. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="354" column="1" bodyfile="include/bluetooth/scan.h" bodystart="354" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcb__data_af15465dbea8e95a02b14d454f1c9b685_1af15465dbea8e95a02b14d454f1c9b685" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* cb_data::connecting_error) (struct bt_scan_device_info *device_info)</definition>
+        <argsstring>)(struct bt_scan_device_info *device_info)</argsstring>
+        <name>connecting_error</name>
+        <briefdescription>
+<para>Error when connecting. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">device_info</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data needed to establish connection and advertising information. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="362" column="1" bodyfile="include/bluetooth/scan.h" bodystart="362" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcb__data_aad8d7c4957e8345a8c324cee46aadd32_1aad8d7c4957e8345a8c324cee46aadd32" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* cb_data::connecting) (struct bt_scan_device_info *device_info, struct bt_conn *conn)</definition>
+        <argsstring>)(struct bt_scan_device_info *device_info, struct bt_conn *conn)</argsstring>
+        <name>connecting</name>
+        <briefdescription>
+<para>Connecting data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">device_info</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data needed to establish connection and advertising information. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connection object. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="369" column="1" bodyfile="include/bluetooth/scan.h" bodystart="369" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Data for scanning callback structure. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This structure is used for storing callback functions pointers. It is used by <ref refid="structbt__scan__cb" kindref="compound">bt_scan_cb</ref> structure. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/scan.h" line="332" column="1" bodyfile="include/bluetooth/scan.h" bodystart="332" bodyend="372"/>
+    <listofallmembers>
+      <member refid="structcb__data_aad8d7c4957e8345a8c324cee46aadd32_1aad8d7c4957e8345a8c324cee46aadd32" prot="public" virt="non-virtual"><scope>cb_data</scope><name>connecting</name></member>
+      <member refid="structcb__data_af15465dbea8e95a02b14d454f1c9b685_1af15465dbea8e95a02b14d454f1c9b685" prot="public" virt="non-virtual"><scope>cb_data</scope><name>connecting_error</name></member>
+      <member refid="structcb__data_a905d248d7e797ba3aeff263af6237004_1a905d248d7e797ba3aeff263af6237004" prot="public" virt="non-virtual"><scope>cb_data</scope><name>filter_match</name></member>
+      <member refid="structcb__data_ae6cc16c436bd3771fe5dfa30193655fd_1ae6cc16c436bd3771fe5dfa30193655fd" prot="public" virt="non-virtual"><scope>cb_data</scope><name>filter_no_match</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_22803ae85420a7f79cbedaa82be66496" kind="dir">
+    <compoundname>applications/serial_lte_modem/src/twi</compoundname>
+    <innerfile refid="slm__at__twi_8h">slm_at_twi.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/serial_lte_modem/src/twi/"/>
+  </compounddef>
+</doxygen>

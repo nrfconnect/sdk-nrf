@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_e0dd51c0387aa99ae1b18a4f7dfa78e6" kind="dir">
+    <compoundname>lib/multicell_location</compoundname>
+    <innerdir refid="dir_4163df8369b4e23b5734195f984b2f5d">lib/multicell_location/services</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/multicell_location/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__sat__status" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_sat_status</compoundname>
+    <includes refid="light__hsl_8h" local="no">light_hsl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__sat__status_a728ffb3ebd50187ab1b46a06ad764581_1a728ffb3ebd50187ab1b46a06ad764581" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_light_sat_status::current</definition>
+        <argsstring></argsstring>
+        <name>current</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current level </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl.h" line="147" column="10" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__sat__status_a6136928e563d7d68dc8a79e7f2c8283d_1a6136928e563d7d68dc8a79e7f2c8283d" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_light_sat_status::target</definition>
+        <argsstring></argsstring>
+        <name>target</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Target level </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl.h" line="149" column="10" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="149" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__sat__status_acb157f11ef0a330084c72c99f24d40ed_1acb157f11ef0a330084c72c99f24d40ed" prot="public" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t bt_mesh_light_sat_status::remaining_time</definition>
+        <argsstring></argsstring>
+        <name>remaining_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Remaining time for the state change (ms). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl.h" line="151" column="9" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Common Light Saturation status message parameters. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/light_hsl.h" line="145" column="1" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="145" bodyend="152"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__sat__status_a728ffb3ebd50187ab1b46a06ad764581_1a728ffb3ebd50187ab1b46a06ad764581" prot="public" virt="non-virtual"><scope>bt_mesh_light_sat_status</scope><name>current</name></member>
+      <member refid="structbt__mesh__light__sat__status_acb157f11ef0a330084c72c99f24d40ed_1acb157f11ef0a330084c72c99f24d40ed" prot="public" virt="non-virtual"><scope>bt_mesh_light_sat_status</scope><name>remaining_time</name></member>
+      <member refid="structbt__mesh__light__sat__status_a6136928e563d7d68dc8a79e7f2c8283d_1a6136928e563d7d68dc8a79e7f2c8283d" prot="public" virt="non-virtual"><scope>bt_mesh_light_sat_status</scope><name>target</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

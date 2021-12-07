@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnrf__cloud__init__param" kind="struct" language="C++" prot="public">
+    <compoundname>nrf_cloud_init_param</compoundname>
+    <includes refid="nrf__cloud_8h" local="no">nrf_cloud.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnrf__cloud__init__param_a8e668966ecffed099a15d79a4336f1a4_1a8e668966ecffed099a15d79a4336f1a4" prot="public" static="no" mutable="no">
+        <type><ref refid="group__nrf__cloud_gaba76a1d354a998fcc241531440b28770_1gaba76a1d354a998fcc241531440b28770" kindref="member">nrf_cloud_event_handler_t</ref></type>
+        <definition>nrf_cloud_event_handler_t nrf_cloud_init_param::event_handler</definition>
+        <argsstring></argsstring>
+        <name>event_handler</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event handler that is registered with the module. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="383" column="27" bodyfile="include/net/nrf_cloud.h" bodystart="383" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__init__param_ae6f3328b4ba85bbeb3cf16763f811a70_1ae6f3328b4ba85bbeb3cf16763f811a70" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* nrf_cloud_init_param::client_id</definition>
+        <argsstring></argsstring>
+        <name>client_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>NULL-terminated MQTT client ID string. Must not exceed NRF_CLOUD_CLIENT_ID_MAX_LEN. Must be set if NRF_CLOUD_CLIENT_ID_SRC_RUNTIME is enabled; otherwise, NULL. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="389" column="6" bodyfile="include/net/nrf_cloud.h" bodystart="389" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Initialization parameters for the module. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>nrf_cloud_data</label>
+        <link refid="structnrf__cloud__data"/>
+      </node>
+      <node id="2">
+        <label>nrf_cloud_evt</label>
+        <link refid="structnrf__cloud__evt"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>data</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>topic</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>nrf_cloud_init_param</label>
+        <link refid="structnrf__cloud__init__param"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>event_handler</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>nrf_cloud_topic</label>
+        <link refid="structnrf__cloud__topic"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/net/nrf_cloud.h" line="381" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="381" bodyend="390"/>
+    <listofallmembers>
+      <member refid="structnrf__cloud__init__param_ae6f3328b4ba85bbeb3cf16763f811a70_1ae6f3328b4ba85bbeb3cf16763f811a70" prot="public" virt="non-virtual"><scope>nrf_cloud_init_param</scope><name>client_id</name></member>
+      <member refid="structnrf__cloud__init__param_a8e668966ecffed099a15d79a4336f1a4_1a8e668966ecffed099a15d79a4336f1a4" prot="public" virt="non-virtual"><scope>nrf_cloud_init_param</scope><name>event_handler</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

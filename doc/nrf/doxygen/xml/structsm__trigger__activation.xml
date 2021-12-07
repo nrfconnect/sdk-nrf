@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structsm__trigger__activation" kind="struct" language="C++" prot="public">
+    <compoundname>sm_trigger_activation</compoundname>
+    <includes refid="sensor__manager_8h" local="no">sensor_manager.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structsm__trigger__activation_a620375692afd23d9d257063a6c23d76a_1a620375692afd23d9d257063a6c23d76a" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="sensor__manager_8h_a7d9bdb539fe951cd5e448f49833c02ed_1a7d9bdb539fe951cd5e448f49833c02ed" kindref="member">act_type</ref></type>
+        <definition>enum act_type sm_trigger_activation::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/sensor_manager.h" line="22" column="14" bodyfile="include/caf/sensor_manager.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsm__trigger__activation_ab224fc99abbf035f20dce13bc90f2ad1_1ab224fc99abbf035f20dce13bc90f2ad1" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float sm_trigger_activation::thresh</definition>
+        <argsstring></argsstring>
+        <name>thresh</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/sensor_manager.h" line="23" column="7" bodyfile="include/caf/sensor_manager.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsm__trigger__activation_ada0c9d4b56425511b1229a9ad152ab1a_1ada0c9d4b56425511b1229a9ad152ab1a" prot="public" static="no" mutable="no">
+        <type>unsigned int</type>
+        <definition>unsigned int sm_trigger_activation::timeout_ms</definition>
+        <argsstring></argsstring>
+        <name>timeout_ms</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/sensor_manager.h" line="24" column="14" bodyfile="include/caf/sensor_manager.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/caf/sensor_manager.h" line="21" column="1" bodyfile="include/caf/sensor_manager.h" bodystart="21" bodyend="25"/>
+    <listofallmembers>
+      <member refid="structsm__trigger__activation_ab224fc99abbf035f20dce13bc90f2ad1_1ab224fc99abbf035f20dce13bc90f2ad1" prot="public" virt="non-virtual"><scope>sm_trigger_activation</scope><name>thresh</name></member>
+      <member refid="structsm__trigger__activation_ada0c9d4b56425511b1229a9ad152ab1a_1ada0c9d4b56425511b1229a9ad152ab1a" prot="public" virt="non-virtual"><scope>sm_trigger_activation</scope><name>timeout_ms</name></member>
+      <member refid="structsm__trigger__activation_a620375692afd23d9d257063a6c23d76a_1a620375692afd23d9d257063a6c23d76a" prot="public" virt="non-virtual"><scope>sm_trigger_activation</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__time__zone__change" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_time_zone_change</compoundname>
+    <includes refid="time_8h" local="no">time.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__time__zone__change_abec61089b0af1185069ec8ad150323c9_1abec61089b0af1185069ec8ad150323c9" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t bt_mesh_time_zone_change::new_offset</definition>
+        <argsstring></argsstring>
+        <name>new_offset</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>New zone offset in 15-minute increments. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time.h" line="60" column="9" bodyfile="include/bluetooth/mesh/time.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__time__zone__change_aaf316d3cfd333027ac173da35ebe4bf8_1aaf316d3cfd333027ac173da35ebe4bf8" prot="public" static="no" mutable="no">
+        <type>uint64_t</type>
+        <definition>uint64_t bt_mesh_time_zone_change::timestamp</definition>
+        <argsstring></argsstring>
+        <name>timestamp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>TAI update point for Time Zone Offset. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/time.h" line="62" column="10" bodyfile="include/bluetooth/mesh/time.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Time zone change. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/time.h" line="58" column="1" bodyfile="include/bluetooth/mesh/time.h" bodystart="58" bodyend="63"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__time__zone__change_abec61089b0af1185069ec8ad150323c9_1abec61089b0af1185069ec8ad150323c9" prot="public" virt="non-virtual"><scope>bt_mesh_time_zone_change</scope><name>new_offset</name></member>
+      <member refid="structbt__mesh__time__zone__change_aaf316d3cfd333027ac173da35ebe4bf8_1aaf316d3cfd333027ac173da35ebe4bf8" prot="public" virt="non-virtual"><scope>bt_mesh_time_zone_change</scope><name>timestamp</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

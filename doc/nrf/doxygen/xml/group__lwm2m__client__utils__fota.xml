@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__lwm2m__client__utils__fota" kind="group">
+    <compoundname>lwm2m_client_utils_fota</compoundname>
+    <title>LwM2M FOTA</title>
+    <innerclass refid="structupdate__counter" prot="public">update_counter</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__lwm2m__client__utils__fota_1ga88d7e7c1f1ccad444adb066d12334d4a" prot="public" static="no" strong="no">
+        <type></type>
+        <name>counter_type</name>
+        <enumvalue id="group__lwm2m__client__utils__fota_ga88d7e7c1f1ccad444adb066d12334d4a_1gga88d7e7c1f1ccad444adb066d12334d4aa406148a884c72890f3341dfc0dcd83b9" prot="public">
+          <name>COUNTER_CURRENT</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Active image&apos;s counter </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__lwm2m__client__utils__fota_ga88d7e7c1f1ccad444adb066d12334d4a_1gga88d7e7c1f1ccad444adb066d12334d4aa2c6f881ed9497f512cf2acb368a13ff6" prot="public">
+          <name>COUNTER_UPDATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Update image&apos;s counter </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Counter type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils_fota.h" line="29" column="1" bodyfile="include/net/lwm2m_client_utils_fota.h" bodystart="29" bodyend="32"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__lwm2m__client__utils__fota_1ga655fdfea70b4ea4949853c8d71abf103" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int fota_update_counter_read</definition>
+        <argsstring>(struct update_counter *update_counter)</argsstring>
+        <name>fota_update_counter_read</name>
+        <param>
+          <type>struct <ref refid="structupdate__counter" kindref="compound">update_counter</ref> *</type>
+          <declname>update_counter</declname>
+        </param>
+        <briefdescription>
+<para>Read the update counter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils_fota.h" line="37" column="5" declfile="include/net/lwm2m_client_utils_fota.h" declline="37" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__client__utils__fota_1ga1c1c98ae19bb743c534b5c41a1f9be9b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int fota_update_counter_update</definition>
+        <argsstring>(enum counter_type type, uint32_t new_value)</argsstring>
+        <name>fota_update_counter_update</name>
+        <param>
+          <type>enum <ref refid="group__lwm2m__client__utils__fota_ga88d7e7c1f1ccad444adb066d12334d4a_1ga88d7e7c1f1ccad444adb066d12334d4a" kindref="member">counter_type</ref></type>
+          <declname>type</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>new_value</declname>
+        </param>
+        <briefdescription>
+<para>Update the update counter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils_fota.h" line="42" column="5" declfile="include/net/lwm2m_client_utils_fota.h" declline="42" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__lwm2m__client__utils__fota_1ga7911b7c3ebd1fbe74f008f64a21a21d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int fota_settings_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>fota_settings_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize FOTA settings. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/lwm2m_client_utils_fota.h" line="47" column="5" declfile="include/net/lwm2m_client_utils_fota.h" declline="47" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the LwM2M based FOTA. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

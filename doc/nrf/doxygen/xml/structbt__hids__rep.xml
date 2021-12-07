@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__hids__rep" kind="struct" language="C++" prot="public">
+    <compoundname>bt_hids_rep</compoundname>
+    <includes refid="hids_8h" local="no">hids.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__hids__rep_aa1c0b4acda8ada5387e379e3e877ed03_1aa1c0b4acda8ada5387e379e3e877ed03" prot="public" static="no" mutable="no">
+        <type>uint8_t *</type>
+        <definition>uint8_t* bt_hids_rep::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the report data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="158" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__rep_a18dbf30881f49430052307144f7016eb_1a18dbf30881f49430052307144f7016eb" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_rep::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Size of the report. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="161" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="161" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Report data. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/hids.h" line="156" column="1" bodyfile="include/bluetooth/services/hids.h" bodystart="156" bodyend="162"/>
+    <listofallmembers>
+      <member refid="structbt__hids__rep_aa1c0b4acda8ada5387e379e3e877ed03_1aa1c0b4acda8ada5387e379e3e877ed03" prot="public" virt="non-virtual"><scope>bt_hids_rep</scope><name>data</name></member>
+      <member refid="structbt__hids__rep_a18dbf30881f49430052307144f7016eb_1a18dbf30881f49430052307144f7016eb" prot="public" virt="non-virtual"><scope>bt_hids_rep</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

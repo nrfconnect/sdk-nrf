@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structdownload__client__cfg" kind="struct" language="C++" prot="public">
+    <compoundname>download_client_cfg</compoundname>
+    <includes refid="download__client_8h" local="no">download_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structdownload__client__cfg_a576a877c28f895b33a6e1fac7d0107c7_1a576a877c28f895b33a6e1fac7d0107c7" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int download_client_cfg::sec_tag</definition>
+        <argsstring></argsstring>
+        <name>sec_tag</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>TLS security tag. Pass -1 to disable TLS. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="93" column="5" bodyfile="include/net/download_client.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdownload__client__cfg_a30c38fda06999643f58b72f3643fb20f_1a30c38fda06999643f58b72f3643fb20f" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t download_client_cfg::pdn_id</definition>
+        <argsstring></argsstring>
+        <name>pdn_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>PDN ID to be used for the download. Zero is the default PDN. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="98" column="9" bodyfile="include/net/download_client.h" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdownload__client__cfg_a60551f647bf13a15ca1a44fa1dcdb893_1a60551f647bf13a15ca1a44fa1dcdb893" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t download_client_cfg::frag_size_override</definition>
+        <argsstring></argsstring>
+        <name>frag_size_override</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum fragment size to download. 0 indicates that Kconfigured values shall be used. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="102" column="8" bodyfile="include/net/download_client.h" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdownload__client__cfg_ab06f9c3d44ffe1031a43af7752940d24_1ab06f9c3d44ffe1031a43af7752940d24" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool download_client_cfg::set_tls_hostname</definition>
+        <argsstring></argsstring>
+        <name>set_tls_hostname</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set hostname for TLS Server Name Indication extension </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/download_client.h" line="104" column="6" bodyfile="include/net/download_client.h" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Download client configuration options. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/download_client.h" line="89" column="1" bodyfile="include/net/download_client.h" bodystart="89" bodyend="105"/>
+    <listofallmembers>
+      <member refid="structdownload__client__cfg_a60551f647bf13a15ca1a44fa1dcdb893_1a60551f647bf13a15ca1a44fa1dcdb893" prot="public" virt="non-virtual"><scope>download_client_cfg</scope><name>frag_size_override</name></member>
+      <member refid="structdownload__client__cfg_a30c38fda06999643f58b72f3643fb20f_1a30c38fda06999643f58b72f3643fb20f" prot="public" virt="non-virtual"><scope>download_client_cfg</scope><name>pdn_id</name></member>
+      <member refid="structdownload__client__cfg_a576a877c28f895b33a6e1fac7d0107c7_1a576a877c28f895b33a6e1fac7d0107c7" prot="public" virt="non-virtual"><scope>download_client_cfg</scope><name>sec_tag</name></member>
+      <member refid="structdownload__client__cfg_ab06f9c3d44ffe1031a43af7752940d24_1ab06f9c3d44ffe1031a43af7752940d24" prot="public" virt="non-virtual"><scope>download_client_cfg</scope><name>set_tls_hostname</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

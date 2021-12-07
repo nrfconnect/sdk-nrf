@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__lightness__status" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_lightness_status</compoundname>
+    <includes refid="lightness_8h" local="no">lightness.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__lightness__status_a4e913f71445e1a6f3064a271115124b7_1a4e913f71445e1a6f3064a271115124b7" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_lightness_status::current</definition>
+        <argsstring></argsstring>
+        <name>current</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current Lightness level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness.h" line="46" column="10" bodyfile="include/bluetooth/mesh/lightness.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__status_a62d6089f1881785a9d48f2fefb79c5bf_1a62d6089f1881785a9d48f2fefb79c5bf" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_lightness_status::target</definition>
+        <argsstring></argsstring>
+        <name>target</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Target Lightness level. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness.h" line="48" column="10" bodyfile="include/bluetooth/mesh/lightness.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lightness__status_a9be6911fe39ed24b3c68a174af8f15c7_1a9be6911fe39ed24b3c68a174af8f15c7" prot="public" static="no" mutable="no">
+        <type>int32_t</type>
+        <definition>int32_t bt_mesh_lightness_status::remaining_time</definition>
+        <argsstring></argsstring>
+        <name>remaining_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Time remaining of the ongoing transition in milliseconds, or <emphasis>SYS_FOREVER_MS</emphasis>. If there&apos;s no ongoing transition, <computeroutput>remaining_time</computeroutput> is 0. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/lightness.h" line="54" column="9" bodyfile="include/bluetooth/mesh/lightness.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Lightness status message parameters. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/lightness.h" line="44" column="1" bodyfile="include/bluetooth/mesh/lightness.h" bodystart="44" bodyend="55"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__lightness__status_a4e913f71445e1a6f3064a271115124b7_1a4e913f71445e1a6f3064a271115124b7" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_status</scope><name>current</name></member>
+      <member refid="structbt__mesh__lightness__status_a9be6911fe39ed24b3c68a174af8f15c7_1a9be6911fe39ed24b3c68a174af8f15c7" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_status</scope><name>remaining_time</name></member>
+      <member refid="structbt__mesh__lightness__status_a62d6089f1881785a9d48f2fefb79c5bf_1a62d6089f1881785a9d48f2fefb79c5bf" prot="public" virt="non-virtual"><scope>bt_mesh_lightness_status</scope><name>target</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

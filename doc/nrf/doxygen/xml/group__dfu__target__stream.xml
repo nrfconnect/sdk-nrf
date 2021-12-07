@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__dfu__target__stream" kind="group">
+    <compoundname>dfu_target_stream</compoundname>
+    <title>Flash stream DFU Target</title>
+    <innerclass refid="structdfu__target__stream__init" prot="public">dfu_target_stream_init</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__dfu__target__stream_1ga6631bd2616dfd21a4dc2ae641bf6d47e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct stream_flash_ctx *</type>
+        <definition>struct stream_flash_ctx * dfu_target_stream_get_stream</definition>
+        <argsstring>(void)</argsstring>
+        <name>dfu_target_stream_get_stream</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_stream.h" line="25" column="23" declfile="include/dfu/dfu_target_stream.h" declline="25" declcolumn="23"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target__stream_1ga36c2e3bb84f5c5ea85e902878e75b845" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_stream_init</definition>
+        <argsstring>(const struct dfu_target_stream_init *init)</argsstring>
+        <name>dfu_target_stream_init</name>
+        <param>
+          <type>const struct <ref refid="structdfu__target__stream__init" kindref="compound">dfu_target_stream_init</ref> *</type>
+          <declname>init</declname>
+        </param>
+        <briefdescription>
+<para>Initialize dfu target. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">init</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Init parameters</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>Non-negative</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>value if successful, negative errno otherwise. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_stream.h" line="65" column="5" declfile="include/dfu/dfu_target_stream.h" declline="65" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target__stream_1ga9ef66e2fa3cb4c299d7b8b7e2dfc6cc1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_stream_offset_get</definition>
+        <argsstring>(size_t *offset)</argsstring>
+        <name>dfu_target_stream_offset_get</name>
+        <param>
+          <type>size_t *</type>
+          <declname>offset</declname>
+        </param>
+        <briefdescription>
+<para>Get the offset within the payload of the next byte to download. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is used to pick up an aborted download. If for instance 0x1000 bytes of the payload has been downloaded and stored to flash, this would return 0x1000. For this function to work across reboots, the option <computeroutput>CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS</computeroutput> must be set.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">offset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Returns the offset of the firmware upgrade.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Non-negative value if success, otherwise negative value if unable to get the offset </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_stream.h" line="80" column="5" declfile="include/dfu/dfu_target_stream.h" declline="80" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target__stream_1ga7cc4f64083176bc9bed00f739b20e2f2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_stream_write</definition>
+        <argsstring>(const uint8_t *buf, size_t len)</argsstring>
+        <name>dfu_target_stream_write</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Write a chunk of firmware data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to data that should be written. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of data to write.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Non-negative value on success, negative errno otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_stream.h" line="90" column="5" declfile="include/dfu/dfu_target_stream.h" declline="90" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__dfu__target__stream_1ga0cfa5fd9c5b5f132f88a434f0317bd2d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int dfu_target_stream_done</definition>
+        <argsstring>(bool successful)</argsstring>
+        <name>dfu_target_stream_done</name>
+        <param>
+          <type>bool</type>
+          <declname>successful</declname>
+        </param>
+        <briefdescription>
+<para>De-initialize resources and finalize stream flash write if successful. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">successful</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Indicate whether the firmware was successfully received.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Non-negative value on success, negative errno otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target_stream.h" line="100" column="5" declfile="include/dfu/dfu_target_stream.h" declline="100" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Provides an API for other DFU targets that need to write a large object to flash. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

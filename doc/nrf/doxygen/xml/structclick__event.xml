@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structclick__event" kind="struct" language="C++" prot="public">
+    <compoundname>click_event</compoundname>
+    <includes refid="click__event_8h" local="no">click_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structclick__event_ae98937b1b1c76dd971956a63ac91b59e_1ae98937b1b1c76dd971956a63ac91b59e" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header click_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event header. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/click_event.h" line="53" column="19" bodyfile="include/caf/events/click_event.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclick__event_ac05203e0857756a573cb90bb657a9838_1ac05203e0857756a573cb90bb657a9838" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t click_event::key_id</definition>
+        <argsstring></argsstring>
+        <name>key_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>ID of the button - matching the key_id used by the <ref refid="structbutton__event" kindref="compound">button_event</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/click_event.h" line="56" column="10" bodyfile="include/caf/events/click_event.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclick__event_acc5d646650f95408852b542218b7d271_1acc5d646650f95408852b542218b7d271" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__caf__click__event_gaa4ab9acde58c39ed8f273e894f51fa69_1gaa4ab9acde58c39ed8f273e894f51fa69" kindref="member">click</ref></type>
+        <definition>enum click click_event::click</definition>
+        <argsstring></argsstring>
+        <name>click</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Detected click type. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/click_event.h" line="59" column="11" bodyfile="include/caf/events/click_event.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Click event. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The click event is submitted when a click type is recorded for one of the monitored buttons. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>click_event</label>
+        <link refid="structclick__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/caf/events/click_event.h" line="51" column="1" bodyfile="include/caf/events/click_event.h" bodystart="51" bodyend="60"/>
+    <listofallmembers>
+      <member refid="structclick__event_acc5d646650f95408852b542218b7d271_1acc5d646650f95408852b542218b7d271" prot="public" virt="non-virtual"><scope>click_event</scope><name>click</name></member>
+      <member refid="structclick__event_ae98937b1b1c76dd971956a63ac91b59e_1ae98937b1b1c76dd971956a63ac91b59e" prot="public" virt="non-virtual"><scope>click_event</scope><name>header</name></member>
+      <member refid="structclick__event_ac05203e0857756a573cb90bb657a9838_1ac05203e0857756a573cb90bb657a9838" prot="public" virt="non-virtual"><scope>click_event</scope><name>key_id</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

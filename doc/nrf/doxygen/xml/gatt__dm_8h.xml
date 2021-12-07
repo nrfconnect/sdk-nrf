@@ -1,0 +1,837 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="gatt__dm_8h" kind="file" language="C++">
+    <compoundname>gatt_dm.h</compoundname>
+    <includes local="no">bluetooth/gatt.h</includes>
+    <includes local="no">bluetooth/uuid.h</includes>
+    <includedby refid="ancs__client_8h" local="no">include/bluetooth/services/ancs_client.h</includedby>
+    <includedby refid="bas__client_8h" local="no">include/bluetooth/services/bas_client.h</includedby>
+    <includedby refid="cts__client_8h" local="no">include/bluetooth/services/cts_client.h</includedby>
+    <includedby refid="dfu__smp_8h" local="no">include/bluetooth/services/dfu_smp.h</includedby>
+    <includedby refid="gattp_8h" local="no">include/bluetooth/services/gattp.h</includedby>
+    <includedby refid="hogp_8h" local="no">include/bluetooth/services/hogp.h</includedby>
+    <includedby refid="hrs__client_8h" local="no">include/bluetooth/services/hrs_client.h</includedby>
+    <includedby refid="latency_8h" local="no">include/bluetooth/services/latency.h</includedby>
+    <includedby refid="latency__client_8h" local="no">include/bluetooth/services/latency_client.h</includedby>
+    <includedby refid="nus__client_8h" local="no">include/bluetooth/services/nus_client.h</includedby>
+    <includedby refid="throughput_8h" local="no">include/bluetooth/services/throughput.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/bluetooth/gatt_dm.h</label>
+        <link refid="gatt__dm_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bluetooth/gatt.h</label>
+      </node>
+      <node id="3">
+        <label>bluetooth/uuid.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>include/bluetooth/gatt_dm.h</label>
+        <link refid="gatt__dm_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>include/bluetooth/services/ancs_client.h</label>
+        <link refid="ancs__client_8h"/>
+      </node>
+      <node id="3">
+        <label>include/bluetooth/services/bas_client.h</label>
+        <link refid="bas__client_8h"/>
+      </node>
+      <node id="4">
+        <label>include/bluetooth/services/cts_client.h</label>
+        <link refid="cts__client_8h"/>
+      </node>
+      <node id="5">
+        <label>include/bluetooth/services/dfu_smp.h</label>
+        <link refid="dfu__smp_8h"/>
+      </node>
+      <node id="6">
+        <label>include/bluetooth/services/gattp.h</label>
+        <link refid="gattp_8h"/>
+      </node>
+      <node id="7">
+        <label>include/bluetooth/services/hogp.h</label>
+        <link refid="hogp_8h"/>
+      </node>
+      <node id="8">
+        <label>include/bluetooth/services/hrs_client.h</label>
+        <link refid="hrs__client_8h"/>
+      </node>
+      <node id="9">
+        <label>include/bluetooth/services/latency.h</label>
+        <link refid="latency_8h"/>
+      </node>
+      <node id="10">
+        <label>include/bluetooth/services/latency_client.h</label>
+        <link refid="latency__client_8h"/>
+      </node>
+      <node id="11">
+        <label>include/bluetooth/services/nus_client.h</label>
+        <link refid="nus__client_8h"/>
+      </node>
+      <node id="12">
+        <label>include/bluetooth/services/throughput.h</label>
+        <link refid="throughput_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structbt__gatt__dm__attr" prot="public">bt_gatt_dm_attr</innerclass>
+    <innerclass refid="structbt__gatt__dm__cb" prot="public">bt_gatt_dm_cb</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__gatt__dm_ga9709fa5d23f397128f875d5ccfb7042f_1ga9709fa5d23f397128f875d5ccfb7042f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct bt_gatt_service_val *</type>
+        <definition>struct bt_gatt_service_val * bt_gatt_dm_attr_service_val</definition>
+        <argsstring>(const struct bt_gatt_dm_attr *attr)</argsstring>
+        <name>bt_gatt_dm_attr_service_val</name>
+        <param>
+          <type>const struct <ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref> *</type>
+          <declname>attr</declname>
+        </param>
+        <briefdescription>
+<para>Access service value saved with service attribute. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function access the service value parsed and saved previously in the user_data attribute field.</para>
+<para><simplesect kind="note"><para>Use it only on the attribute parsed in this module. To access service attribute use <ref refid="group__bt__gatt__dm_gab973fee7e07072342cbb1bf63a56e655_1gab973fee7e07072342cbb1bf63a56e655" kindref="member">bt_gatt_dm_service_get</ref> function.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">attr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Service attribute</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The service value from the parsed attribute or NULL when attribute UUID value is unexpected. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_dm.h" line="104" column="26" declfile="include/bluetooth/gatt_dm.h" declline="104" declcolumn="26"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__dm_gac5044c09a62ab11eb6e38680c594c362_1gac5044c09a62ab11eb6e38680c594c362" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct bt_gatt_chrc *</type>
+        <definition>struct bt_gatt_chrc * bt_gatt_dm_attr_chrc_val</definition>
+        <argsstring>(const struct bt_gatt_dm_attr *attr)</argsstring>
+        <name>bt_gatt_dm_attr_chrc_val</name>
+        <param>
+          <type>const struct <ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref> *</type>
+          <declname>attr</declname>
+        </param>
+        <briefdescription>
+<para>Access characteristic value saved with characteristic attribute. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function access the characteristic value parsed and saved previously in the user_data attribute field.</para>
+<para><simplesect kind="note"><para>Use it only on the attribute parsed in this module. To access characteristic attribute use <ref refid="group__bt__gatt__dm_gaeb6c1dbc4182b1da7bb5fd498cde4ddb_1gaeb6c1dbc4182b1da7bb5fd498cde4ddb" kindref="member">bt_gatt_dm_char_next</ref> function.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">attr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Characteristic attribute</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The characteristic value from parser attribute or NULL when attribute UUID value is unexpected. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_dm.h" line="121" column="19" declfile="include/bluetooth/gatt_dm.h" declline="121" declcolumn="19"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__dm_ga0da89dbfb87606a352be11370a2bd301_1ga0da89dbfb87606a352be11370a2bd301" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct bt_conn *</type>
+        <definition>struct bt_conn * bt_gatt_dm_conn_get</definition>
+        <argsstring>(struct bt_gatt_dm *dm)</argsstring>
+        <name>bt_gatt_dm_conn_get</name>
+        <param>
+          <type>struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <briefdescription>
+<para>Get the connection object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Function returns connection object that is used by given discovery manager instance.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery Manager instance</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Connection object. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_dm.h" line="133" column="14" declfile="include/bluetooth/gatt_dm.h" declline="133" declcolumn="14"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__dm_ga8b99aa2f86e7a76082d0f4b2bd08c485_1ga8b99aa2f86e7a76082d0f4b2bd08c485" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t bt_gatt_dm_attr_cnt</definition>
+        <argsstring>(const struct bt_gatt_dm *dm)</argsstring>
+        <name>bt_gatt_dm_attr_cnt</name>
+        <param>
+          <type>const struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <briefdescription>
+<para>Get total number of attributes decoded. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The number of attributes including the service attribute. It means that service without any attribute would return 1 here.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery Manager instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Total number of attributes parsed. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_dm.h" line="144" column="8" declfile="include/bluetooth/gatt_dm.h" declline="144" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__dm_gab973fee7e07072342cbb1bf63a56e655_1gab973fee7e07072342cbb1bf63a56e655" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const struct <ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref> *</type>
+        <definition>const struct bt_gatt_dm_attr * bt_gatt_dm_service_get</definition>
+        <argsstring>(const struct bt_gatt_dm *dm)</argsstring>
+        <name>bt_gatt_dm_service_get</name>
+        <param>
+          <type>const struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <briefdescription>
+<para>Get service value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Function returns the value that contains UUID and attribute end handler of the service found.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery Manager instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The pointer service value structure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_dm.h" line="155" column="28" declfile="include/bluetooth/gatt_dm.h" declline="155" declcolumn="28"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__dm_gaeb6c1dbc4182b1da7bb5fd498cde4ddb_1gaeb6c1dbc4182b1da7bb5fd498cde4ddb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const struct <ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref> *</type>
+        <definition>const struct bt_gatt_dm_attr * bt_gatt_dm_char_next</definition>
+        <argsstring>(const struct bt_gatt_dm *dm, const struct bt_gatt_dm_attr *prev)</argsstring>
+        <name>bt_gatt_dm_char_next</name>
+        <param>
+          <type>const struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref> *</type>
+          <declname>prev</declname>
+        </param>
+        <briefdescription>
+<para>Get next characteristic. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery Manager instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">prev</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An attribute where start to search. If NULL - the first characteristic in the service would be found. Note: It can be the previous characteristic attribute or the last descriptor inside the previous attribute. Function would start searching for the next characteristic from that point.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The pointer for an attribute that describes the characteristic or NULL if no more characteristic is present. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_dm.h" line="171" column="28" declfile="include/bluetooth/gatt_dm.h" declline="171" declcolumn="28"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__dm_ga59aa8e43d4ad0e927f32b56a0d82363d_1ga59aa8e43d4ad0e927f32b56a0d82363d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const struct <ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref> *</type>
+        <definition>const struct bt_gatt_dm_attr * bt_gatt_dm_char_by_uuid</definition>
+        <argsstring>(const struct bt_gatt_dm *dm, const struct bt_uuid *uuid)</argsstring>
+        <name>bt_gatt_dm_char_by_uuid</name>
+        <param>
+          <type>const struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <param>
+          <type>const struct bt_uuid *</type>
+          <declname>uuid</declname>
+        </param>
+        <briefdescription>
+<para>Get the characteristic by its UUID. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Function finds characteristic attribute by the UUID stored in its characteristic value. If the selected characteristic is not found in parsed service it returns NULL.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery instance </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">uuid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The UUID of the characteristic</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The characteristic attribute (the one with UUID set to <emphasis>BT_UUID_GATT_CHRC</emphasis>) with the selected UUID inside the characteristic value. Returns NULL if no such characteristic is present in the current service. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_dm.h" line="191" column="28" declfile="include/bluetooth/gatt_dm.h" declline="191" declcolumn="28"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__dm_gadcaae426fc2c9b7b9d232569801744cd_1gadcaae426fc2c9b7b9d232569801744cd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const struct <ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref> *</type>
+        <definition>const struct bt_gatt_dm_attr * bt_gatt_dm_attr_by_handle</definition>
+        <argsstring>(const struct bt_gatt_dm *dm, uint16_t handle)</argsstring>
+        <name>bt_gatt_dm_attr_by_handle</name>
+        <param>
+          <type>const struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>handle</declname>
+        </param>
+        <briefdescription>
+<para>Get attribute by handle. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Function returns any type of the attribute using its handle.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery Manager instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">handle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The handle to find</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The pointer to the attribute or NULL if there is no attribute with such a pointer. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_dm.h" line="205" column="28" declfile="include/bluetooth/gatt_dm.h" declline="205" declcolumn="28"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__dm_ga423258eb0c60913ed6324a708906dd17_1ga423258eb0c60913ed6324a708906dd17" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const struct <ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref> *</type>
+        <definition>const struct bt_gatt_dm_attr * bt_gatt_dm_attr_next</definition>
+        <argsstring>(const struct bt_gatt_dm *dm, const struct bt_gatt_dm_attr *prev)</argsstring>
+        <name>bt_gatt_dm_attr_next</name>
+        <param>
+          <type>const struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref> *</type>
+          <declname>prev</declname>
+        </param>
+        <briefdescription>
+<para>Get next attribute. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Function returns the attribute next to the given one. It returns any type of the attribute.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery Manager instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">prev</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Previous attribute or NULL if we wish to get first attribute (just after service).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Attribute next to the <computeroutput>prev</computeroutput> or the first attribute if NULL is given. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_dm.h" line="220" column="28" declfile="include/bluetooth/gatt_dm.h" declline="220" declcolumn="28"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__dm_gabb3f6f0b92360fb46161a9c0c6dab757_1gabb3f6f0b92360fb46161a9c0c6dab757" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const struct <ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref> *</type>
+        <definition>const struct bt_gatt_dm_attr * bt_gatt_dm_desc_by_uuid</definition>
+        <argsstring>(const struct bt_gatt_dm *dm, const struct bt_gatt_dm_attr *attr_chrc, const struct bt_uuid *uuid)</argsstring>
+        <name>bt_gatt_dm_desc_by_uuid</name>
+        <param>
+          <type>const struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref> *</type>
+          <declname>attr_chrc</declname>
+        </param>
+        <param>
+          <type>const struct bt_uuid *</type>
+          <declname>uuid</declname>
+        </param>
+        <briefdescription>
+<para>Search the descriptor by UUID. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Function searches for the descriptor with given UUID inside given characteristic.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery Manager instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">attr_chrc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The characteristic attribute where to search </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">uuid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The UUID of the searched descriptor.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Pointer to the attribute or NULL if the attribute cannot be found. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_dm.h" line="236" column="28" declfile="include/bluetooth/gatt_dm.h" declline="236" declcolumn="28"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__dm_ga6ebf76aeaca3f77f936347977498cf2e_1ga6ebf76aeaca3f77f936347977498cf2e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const struct <ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref> *</type>
+        <definition>const struct bt_gatt_dm_attr * bt_gatt_dm_desc_next</definition>
+        <argsstring>(const struct bt_gatt_dm *dm, const struct bt_gatt_dm_attr *prev)</argsstring>
+        <name>bt_gatt_dm_desc_next</name>
+        <param>
+          <type>const struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref> *</type>
+          <declname>prev</declname>
+        </param>
+        <briefdescription>
+<para>Get next descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Function returns next descriptor. The difference between this function and <ref refid="group__bt__gatt__dm_ga423258eb0c60913ed6324a708906dd17_1ga423258eb0c60913ed6324a708906dd17" kindref="member">bt_gatt_dm_attr_next</ref> is that it returns NULL also when returned attribute appears to be next characteristic.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery Manager instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">prev</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Previous attribute. The characteristic if we wish to get first descriptor or previous descriptor. If NULL or pointer to service attribute is given the result is undefined.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The pointer to the descriptor attribute or NULL if there is no more descriptors in the characteristic. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_dm.h" line="258" column="28" declfile="include/bluetooth/gatt_dm.h" declline="258" declcolumn="28"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__dm_ga4136dfeba6a514033aeec118c3daf56b_1ga4136dfeba6a514033aeec118c3daf56b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_gatt_dm_start</definition>
+        <argsstring>(struct bt_conn *conn, const struct bt_uuid *svc_uuid, const struct bt_gatt_dm_cb *cb, void *context)</argsstring>
+        <name>bt_gatt_dm_start</name>
+        <param>
+          <type>struct bt_conn *</type>
+          <declname>conn</declname>
+        </param>
+        <param>
+          <type>const struct bt_uuid *</type>
+          <declname>svc_uuid</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__gatt__dm__cb" kindref="compound">bt_gatt_dm_cb</ref> *</type>
+          <declname>cb</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+<para>Start service discovery. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is asynchronous. Discovery results are passed through the supplied callback.</para>
+<para><simplesect kind="note"><para>Only one discovery procedure can be started simultaneously. To start another one, wait for the result of the previous procedure to finish and call <ref refid="group__bt__gatt__dm_ga559dac5698864a7c66be8104a673d240_1ga559dac5698864a7c66be8104a673d240" kindref="member">bt_gatt_dm_data_release</ref> if it was successful.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connection object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">svc_uuid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>UUID of target service or NULL if any service should be discovered. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context argument to be passed to callback functions.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>If <computeroutput>svc_uuid</computeroutput> is set to NULL, all services may be discovered. To process the next service, call <ref refid="group__bt__gatt__dm_ga40270baa5019747f7773e4357d2309ec_1ga40270baa5019747f7773e4357d2309ec" kindref="member">bt_gatt_dm_continue</ref>.</para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_dm.h" line="285" column="5" declfile="include/bluetooth/gatt_dm.h" declline="285" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__dm_ga40270baa5019747f7773e4357d2309ec_1ga40270baa5019747f7773e4357d2309ec" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_gatt_dm_continue</definition>
+        <argsstring>(struct bt_gatt_dm *dm, void *context)</argsstring>
+        <name>bt_gatt_dm_continue</name>
+        <param>
+          <type>struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+<para>Continue service discovery. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function continues service discovery. Call it after the previous data was released by <ref refid="group__bt__gatt__dm_ga559dac5698864a7c66be8104a673d240_1ga559dac5698864a7c66be8104a673d240" kindref="member">bt_gatt_dm_data_release</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery Manager instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">context</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context argument to be passed to callback functions.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_dm.h" line="302" column="5" declfile="include/bluetooth/gatt_dm.h" declline="302" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__dm_ga559dac5698864a7c66be8104a673d240_1ga559dac5698864a7c66be8104a673d240" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_gatt_dm_data_release</definition>
+        <argsstring>(struct bt_gatt_dm *dm)</argsstring>
+        <name>bt_gatt_dm_data_release</name>
+        <param>
+          <type>struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <briefdescription>
+<para>Release data associated with service discovery. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>After calling this function, you cannot rely on the discovery data that was passed with the discovery completed callback (see <ref refid="structbt__gatt__dm__cb" kindref="compound">bt_gatt_dm_cb</ref>).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery Manager instance</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_dm.h" line="314" column="5" declfile="include/bluetooth/gatt_dm.h" declline="314" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__dm_ga3c604b4f59743a5acb3e64a166f6a42d_1ga3c604b4f59743a5acb3e64a166f6a42d" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void bt_gatt_dm_data_print</definition>
+        <argsstring>(const struct bt_gatt_dm *dm)</argsstring>
+        <name>bt_gatt_dm_data_print</name>
+        <param>
+          <type>const struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <briefdescription>
+<para>Print service discovery data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function prints GATT attributes that belong to the discovered service.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery Manager instance </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_dm.h" line="325" column="20" bodyfile="include/bluetooth/gatt_dm.h" bodystart="325" bodyend="327"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2018<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BT_GATT_DM_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BT_GATT_DM_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/gatt.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;bluetooth/uuid.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_gatt_dm;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="structbt__gatt__dm__attr" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref><sp/>{</highlight></codeline>
+<codeline lineno="39" refid="structbt__gatt__dm__attr_aaf1d037692455480abe5b9d088b81e41_1aaf1d037692455480abe5b9d088b81e41" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_uuid<sp/><sp/>*<ref refid="structbt__gatt__dm__attr_aaf1d037692455480abe5b9d088b81e41_1aaf1d037692455480abe5b9d088b81e41" kindref="member">uuid</ref>;</highlight></codeline>
+<codeline lineno="41" refid="structbt__gatt__dm__attr_a3b58134804aa4c7df1525eef38dae486_1a3b58134804aa4c7df1525eef38dae486" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structbt__gatt__dm__attr_a3b58134804aa4c7df1525eef38dae486_1a3b58134804aa4c7df1525eef38dae486" kindref="member">handle</ref>;</highlight></codeline>
+<codeline lineno="43" refid="structbt__gatt__dm__attr_a0907c16b9f674cca94feb2a8150607b8_1a0907c16b9f674cca94feb2a8150607b8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structbt__gatt__dm__attr_a0907c16b9f674cca94feb2a8150607b8_1a0907c16b9f674cca94feb2a8150607b8" kindref="member">perm</ref>;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="structbt__gatt__dm__cb" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__gatt__dm__cb" kindref="compound">bt_gatt_dm_cb</ref><sp/>{</highlight></codeline>
+<codeline lineno="63" refid="structbt__gatt__dm__cb_a12804c5776589567db21fc57e1085b6b_1a12804c5776589567db21fc57e1085b6b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structbt__gatt__dm__cb_a12804c5776589567db21fc57e1085b6b_1a12804c5776589567db21fc57e1085b6b" kindref="member">completed</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_gatt_dm<sp/>*dm,</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*context);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="structbt__gatt__dm__cb_aa3e88057b9c6437149238c2ad9a99538_1aa3e88057b9c6437149238c2ad9a99538" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structbt__gatt__dm__cb_aa3e88057b9c6437149238c2ad9a99538_1aa3e88057b9c6437149238c2ad9a99538" kindref="member">service_not_found</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_conn<sp/>*conn,</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*context);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="structbt__gatt__dm__cb_a29e0a679cb5bdceca7661f4ce5dc14e7_1a29e0a679cb5bdceca7661f4ce5dc14e7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structbt__gatt__dm__cb_a29e0a679cb5bdceca7661f4ce5dc14e7_1a29e0a679cb5bdceca7661f4ce5dc14e7" kindref="member">error_found</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_conn<sp/>*conn,</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>err,</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*context);</highlight></codeline>
+<codeline lineno="89"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104" refid="group__bt__gatt__dm_ga9709fa5d23f397128f875d5ccfb7042f_1ga9709fa5d23f397128f875d5ccfb7042f" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_gatt_service_val<sp/>*<ref refid="group__bt__gatt__dm_ga9709fa5d23f397128f875d5ccfb7042f_1ga9709fa5d23f397128f875d5ccfb7042f" kindref="member">bt_gatt_dm_attr_service_val</ref>(</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref><sp/>*attr);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121" refid="group__bt__gatt__dm_gac5044c09a62ab11eb6e38680c594c362_1gac5044c09a62ab11eb6e38680c594c362" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_gatt_chrc<sp/>*<ref refid="group__bt__gatt__dm_gac5044c09a62ab11eb6e38680c594c362_1gac5044c09a62ab11eb6e38680c594c362" kindref="member">bt_gatt_dm_attr_chrc_val</ref>(</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref><sp/>*attr);</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133" refid="group__bt__gatt__dm_ga0da89dbfb87606a352be11370a2bd301_1ga0da89dbfb87606a352be11370a2bd301" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">bt_conn<sp/>*<ref refid="group__bt__gatt__dm_ga0da89dbfb87606a352be11370a2bd301_1ga0da89dbfb87606a352be11370a2bd301" kindref="member">bt_gatt_dm_conn_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_gatt_dm<sp/>*dm);</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144" refid="group__bt__gatt__dm_ga8b99aa2f86e7a76082d0f4b2bd08c485_1ga8b99aa2f86e7a76082d0f4b2bd08c485" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="group__bt__gatt__dm_ga8b99aa2f86e7a76082d0f4b2bd08c485_1ga8b99aa2f86e7a76082d0f4b2bd08c485" kindref="member">bt_gatt_dm_attr_cnt</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_gatt_dm<sp/>*dm);</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155" refid="group__bt__gatt__dm_gab973fee7e07072342cbb1bf63a56e655_1gab973fee7e07072342cbb1bf63a56e655" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref><sp/>*<ref refid="group__bt__gatt__dm_gab973fee7e07072342cbb1bf63a56e655_1gab973fee7e07072342cbb1bf63a56e655" kindref="member">bt_gatt_dm_service_get</ref>(</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_gatt_dm<sp/>*dm);</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171" refid="group__bt__gatt__dm_gaeb6c1dbc4182b1da7bb5fd498cde4ddb_1gaeb6c1dbc4182b1da7bb5fd498cde4ddb" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref><sp/>*<ref refid="group__bt__gatt__dm_gaeb6c1dbc4182b1da7bb5fd498cde4ddb_1gaeb6c1dbc4182b1da7bb5fd498cde4ddb" kindref="member">bt_gatt_dm_char_next</ref>(</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_gatt_dm<sp/>*dm,</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref><sp/>*prev);</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="191" refid="group__bt__gatt__dm_ga59aa8e43d4ad0e927f32b56a0d82363d_1ga59aa8e43d4ad0e927f32b56a0d82363d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref><sp/>*<ref refid="group__bt__gatt__dm_ga59aa8e43d4ad0e927f32b56a0d82363d_1ga59aa8e43d4ad0e927f32b56a0d82363d" kindref="member">bt_gatt_dm_char_by_uuid</ref>(</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_gatt_dm<sp/>*dm,</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_uuid<sp/>*<ref refid="structbt__gatt__dm__attr_aaf1d037692455480abe5b9d088b81e41_1aaf1d037692455480abe5b9d088b81e41" kindref="member">uuid</ref>);</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205" refid="group__bt__gatt__dm_gadcaae426fc2c9b7b9d232569801744cd_1gadcaae426fc2c9b7b9d232569801744cd" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref><sp/>*<ref refid="group__bt__gatt__dm_gadcaae426fc2c9b7b9d232569801744cd_1gadcaae426fc2c9b7b9d232569801744cd" kindref="member">bt_gatt_dm_attr_by_handle</ref>(</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_gatt_dm<sp/>*dm,<sp/>uint16_t<sp/><ref refid="structbt__gatt__dm__attr_a3b58134804aa4c7df1525eef38dae486_1a3b58134804aa4c7df1525eef38dae486" kindref="member">handle</ref>);</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight></codeline>
+<codeline lineno="220" refid="group__bt__gatt__dm_ga423258eb0c60913ed6324a708906dd17_1ga423258eb0c60913ed6324a708906dd17" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref><sp/>*<ref refid="group__bt__gatt__dm_ga423258eb0c60913ed6324a708906dd17_1ga423258eb0c60913ed6324a708906dd17" kindref="member">bt_gatt_dm_attr_next</ref>(</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_gatt_dm<sp/>*dm,</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref><sp/>*prev);</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"></highlight></codeline>
+<codeline lineno="224"><highlight class="normal"></highlight></codeline>
+<codeline lineno="236" refid="group__bt__gatt__dm_gabb3f6f0b92360fb46161a9c0c6dab757_1gabb3f6f0b92360fb46161a9c0c6dab757" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref><sp/>*<ref refid="group__bt__gatt__dm_gabb3f6f0b92360fb46161a9c0c6dab757_1gabb3f6f0b92360fb46161a9c0c6dab757" kindref="member">bt_gatt_dm_desc_by_uuid</ref>(</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_gatt_dm<sp/>*dm,</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref><sp/>*attr_chrc,</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_uuid<sp/>*<ref refid="structbt__gatt__dm__attr_aaf1d037692455480abe5b9d088b81e41_1aaf1d037692455480abe5b9d088b81e41" kindref="member">uuid</ref>);</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"></highlight></codeline>
+<codeline lineno="258" refid="group__bt__gatt__dm_ga6ebf76aeaca3f77f936347977498cf2e_1ga6ebf76aeaca3f77f936347977498cf2e" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref><sp/>*<ref refid="group__bt__gatt__dm_ga6ebf76aeaca3f77f936347977498cf2e_1ga6ebf76aeaca3f77f936347977498cf2e" kindref="member">bt_gatt_dm_desc_next</ref>(</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_gatt_dm<sp/>*dm,</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__gatt__dm__attr" kindref="compound">bt_gatt_dm_attr</ref><sp/>*prev);</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"></highlight></codeline>
+<codeline lineno="285" refid="group__bt__gatt__dm_ga4136dfeba6a514033aeec118c3daf56b_1ga4136dfeba6a514033aeec118c3daf56b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__gatt__dm_ga4136dfeba6a514033aeec118c3daf56b_1ga4136dfeba6a514033aeec118c3daf56b" kindref="member">bt_gatt_dm_start</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_conn<sp/>*conn,</highlight></codeline>
+<codeline lineno="286"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_uuid<sp/>*svc_uuid,</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structbt__gatt__dm__cb" kindref="compound">bt_gatt_dm_cb</ref><sp/>*cb,</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*context);</highlight></codeline>
+<codeline lineno="289"><highlight class="normal"></highlight></codeline>
+<codeline lineno="302" refid="group__bt__gatt__dm_ga40270baa5019747f7773e4357d2309ec_1ga40270baa5019747f7773e4357d2309ec" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__gatt__dm_ga40270baa5019747f7773e4357d2309ec_1ga40270baa5019747f7773e4357d2309ec" kindref="member">bt_gatt_dm_continue</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_gatt_dm<sp/>*dm,<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*context);</highlight></codeline>
+<codeline lineno="303"><highlight class="normal"></highlight></codeline>
+<codeline lineno="314" refid="group__bt__gatt__dm_ga559dac5698864a7c66be8104a673d240_1ga559dac5698864a7c66be8104a673d240" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__bt__gatt__dm_ga559dac5698864a7c66be8104a673d240_1ga559dac5698864a7c66be8104a673d240" kindref="member">bt_gatt_dm_data_release</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_gatt_dm<sp/>*dm);</highlight></codeline>
+<codeline lineno="315"><highlight class="normal"></highlight></codeline>
+<codeline lineno="322"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_BT_GATT_DM_DATA_PRINT</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="323"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__bt__gatt__dm_ga3c604b4f59743a5acb3e64a166f6a42d_1ga3c604b4f59743a5acb3e64a166f6a42d" kindref="member">bt_gatt_dm_data_print</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_gatt_dm<sp/>*dm);</highlight></codeline>
+<codeline lineno="324"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="325" refid="group__bt__gatt__dm_ga3c604b4f59743a5acb3e64a166f6a42d_1ga3c604b4f59743a5acb3e64a166f6a42d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__bt__gatt__dm_ga3c604b4f59743a5acb3e64a166f6a42d_1ga3c604b4f59743a5acb3e64a166f6a42d" kindref="member">bt_gatt_dm_data_print</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>bt_gatt_dm<sp/>*dm)</highlight></codeline>
+<codeline lineno="326"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="327"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="328"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="329"><highlight class="normal"></highlight></codeline>
+<codeline lineno="330"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="331"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="332"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="333"><highlight class="normal"></highlight></codeline>
+<codeline lineno="338"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>BT_GATT_DM_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/bluetooth/gatt_dm.h"/>
+  </compounddef>
+</doxygen>

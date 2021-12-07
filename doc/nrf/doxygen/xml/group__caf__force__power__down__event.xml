@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__caf__force__power__down__event" kind="group">
+    <compoundname>caf_force_power_down_event</compoundname>
+    <title>CAF Force Power Down Event</title>
+    <innerclass refid="structforce__power__down__event" prot="public">force_power_down_event</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__caf__force__power__down__event_1ga557e42a03e85820c23f8435feb3d4f06" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void force_power_down</definition>
+        <argsstring>(void)</argsstring>
+        <name>force_power_down</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Force power down now. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/force_power_down_event.h" line="42" column="20" bodyfile="include/caf/events/force_power_down_event.h" bodystart="42" bodyend="47"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>CAF Force Power Down Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

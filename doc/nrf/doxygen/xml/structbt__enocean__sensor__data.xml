@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__enocean__sensor__data" kind="struct" language="C++" prot="public">
+    <compoundname>bt_enocean_sensor_data</compoundname>
+    <includes refid="enocean_8h" local="no">enocean.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__enocean__sensor__data_a1074b78a9a66ecda0f5cbf810d5b104d_1a1074b78a9a66ecda0f5cbf810d5b104d" prot="public" static="no" mutable="no">
+        <type>bool *</type>
+        <definition>bool* bt_enocean_sensor_data::occupancy</definition>
+        <argsstring></argsstring>
+        <name>occupancy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current occupancy status. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="38" column="6" bodyfile="include/bluetooth/enocean.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__enocean__sensor__data_a5f3eca117d8d6c5580bbefae1cf30f95_1a5f3eca117d8d6c5580bbefae1cf30f95" prot="public" static="no" mutable="no">
+        <type>uint16_t *</type>
+        <definition>uint16_t* bt_enocean_sensor_data::light_sensor</definition>
+        <argsstring></argsstring>
+        <name>light_sensor</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light level in sensor (lx). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="39" column="10" bodyfile="include/bluetooth/enocean.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__enocean__sensor__data_a63263482478d2fef77e167d9a7e4edcb_1a63263482478d2fef77e167d9a7e4edcb" prot="public" static="no" mutable="no">
+        <type>uint16_t *</type>
+        <definition>uint16_t* bt_enocean_sensor_data::battery_voltage</definition>
+        <argsstring></argsstring>
+        <name>battery_voltage</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Backup battery voltage (mV). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="40" column="10" bodyfile="include/bluetooth/enocean.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__enocean__sensor__data_a40c9639f05f1b22d6b0215ee3c62691a_1a40c9639f05f1b22d6b0215ee3c62691a" prot="public" static="no" mutable="no">
+        <type>uint16_t *</type>
+        <definition>uint16_t* bt_enocean_sensor_data::light_solar_cell</definition>
+        <argsstring></argsstring>
+        <name>light_solar_cell</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light level in solar cell (lx). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="41" column="10" bodyfile="include/bluetooth/enocean.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__enocean__sensor__data_a1bbf8d4bf170d10d7316b1f03316946a_1a1bbf8d4bf170d10d7316b1f03316946a" prot="public" static="no" mutable="no">
+        <type>uint8_t *</type>
+        <definition>uint8_t* bt_enocean_sensor_data::energy_lvl</definition>
+        <argsstring></argsstring>
+        <name>energy_lvl</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Energy level (percent). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/enocean.h" line="42" column="9" bodyfile="include/bluetooth/enocean.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>EnOcean sensor data message. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/enocean.h" line="37" column="1" bodyfile="include/bluetooth/enocean.h" bodystart="37" bodyend="43"/>
+    <listofallmembers>
+      <member refid="structbt__enocean__sensor__data_a63263482478d2fef77e167d9a7e4edcb_1a63263482478d2fef77e167d9a7e4edcb" prot="public" virt="non-virtual"><scope>bt_enocean_sensor_data</scope><name>battery_voltage</name></member>
+      <member refid="structbt__enocean__sensor__data_a1bbf8d4bf170d10d7316b1f03316946a_1a1bbf8d4bf170d10d7316b1f03316946a" prot="public" virt="non-virtual"><scope>bt_enocean_sensor_data</scope><name>energy_lvl</name></member>
+      <member refid="structbt__enocean__sensor__data_a5f3eca117d8d6c5580bbefae1cf30f95_1a5f3eca117d8d6c5580bbefae1cf30f95" prot="public" virt="non-virtual"><scope>bt_enocean_sensor_data</scope><name>light_sensor</name></member>
+      <member refid="structbt__enocean__sensor__data_a40c9639f05f1b22d6b0215ee3c62691a_1a40c9639f05f1b22d6b0215ee3c62691a" prot="public" virt="non-virtual"><scope>bt_enocean_sensor_data</scope><name>light_solar_cell</name></member>
+      <member refid="structbt__enocean__sensor__data_a1074b78a9a66ecda0f5cbf810d5b104d_1a1074b78a9a66ecda0f5cbf810d5b104d" prot="public" virt="non-virtual"><scope>bt_enocean_sensor_data</scope><name>occupancy</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,212 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="battery__event_8h" kind="file" language="C++">
+    <compoundname>battery_event.h</compoundname>
+    <includes refid="event__manager_8h" local="no">event_manager.h</includes>
+    <includes refid="event__manager__profiler_8h" local="no">event_manager_profiler.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/nrf_desktop/src/events/battery_event.h</label>
+        <link refid="battery__event_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>event_manager.h</label>
+        <link refid="event__manager_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>event_manager_profiler.h</label>
+        <link refid="event__manager__profiler_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>profiler.h</label>
+        <link refid="profiler_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>event_manager_priv.h</label>
+      </node>
+      <node id="12">
+        <label>event_manager_profiler_priv.h</label>
+      </node>
+      <node id="7">
+        <label>logging/log_ctrl.h</label>
+      </node>
+      <node id="6">
+        <label>sys/__assert.h</label>
+      </node>
+      <node id="5">
+        <label>sys/reboot.h</label>
+      </node>
+      <node id="10">
+        <label>sys/util.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr.h</label>
+      </node>
+      <node id="4">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structbattery__state__event" prot="public">battery_state_event</innerclass>
+    <innerclass refid="structbattery__level__event" prot="public">battery_level_event</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__battery__event_ga69c58fd3c795f20daaf50575a928922e_1ga69c58fd3c795f20daaf50575a928922e" prot="public" static="no">
+        <name>BATTERY_STATE_LIST</name>
+        <initializer>	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(IDLE)			\
+	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(CHARGING)		\
+	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(ERROR)</initializer>
+        <briefdescription>
+<para>Battery state list. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/battery_event.h" line="24" column="9" bodyfile="applications/nrf_desktop/src/events/battery_event.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="battery__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" prot="public" static="no">
+        <name>X</name>
+        <param><defname>name</defname></param>
+        <initializer>_CONCAT(BATTERY_STATE_, name),</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/battery_event.h" line="31" column="9" bodyfile="applications/nrf_desktop/src/events/battery_event.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__battery__event_ga2dea9a97c86318a10297e8714a1b3d4a_1ga2dea9a97c86318a10297e8714a1b3d4a" prot="public" static="no" strong="no">
+        <type></type>
+        <name>battery_state</name>
+        <enumvalue id="group__battery__event_ga2dea9a97c86318a10297e8714a1b3d4a_1gga2dea9a97c86318a10297e8714a1b3d4a" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(BATTERY_STATE_,  IDLE )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__battery__event_ga2dea9a97c86318a10297e8714a1b3d4a_1gga2dea9a97c86318a10297e8714a1b3d4a" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(BATTERY_STATE_,  IDLE )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__battery__event_ga2dea9a97c86318a10297e8714a1b3d4a_1gga2dea9a97c86318a10297e8714a1b3d4a" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(BATTERY_STATE_,  IDLE )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__battery__event_ga2dea9a97c86318a10297e8714a1b3d4a_1gga2dea9a97c86318a10297e8714a1b3d4aa3cf36fdcd0a3f23a9b30c4cf72ea5a93" prot="public">
+          <name>BATTERY_STATE_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Battery states. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/battery_event.h" line="30" column="1" bodyfile="applications/nrf_desktop/src/events/battery_event.h" bodystart="30" bodyend="36"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2018<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_BATTERY_EVENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_BATTERY_EVENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="event__manager_8h" kindref="compound">event_manager.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="event__manager__profiler_8h" kindref="compound">event_manager_profiler.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="group__battery__event_ga69c58fd3c795f20daaf50575a928922e_1ga69c58fd3c795f20daaf50575a928922e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BATTERY_STATE_LIST<sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="25"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>X(IDLE)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="26"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>X(CHARGING)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="27"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>X(ERROR)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="group__battery__event_ga2dea9a97c86318a10297e8714a1b3d4a_1ga2dea9a97c86318a10297e8714a1b3d4a" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__battery__event_ga2dea9a97c86318a10297e8714a1b3d4a_1ga2dea9a97c86318a10297e8714a1b3d4a" kindref="member">battery_state</ref><sp/>{</highlight></codeline>
+<codeline lineno="31" refid="battery__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>X(name)<sp/>_CONCAT(BATTERY_STATE_,<sp/>name),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__battery__event_ga69c58fd3c795f20daaf50575a928922e_1ga69c58fd3c795f20daaf50575a928922e" kindref="member">BATTERY_STATE_LIST</ref></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#undef<sp/>X</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__battery__event_ga2dea9a97c86318a10297e8714a1b3d4a_1gga2dea9a97c86318a10297e8714a1b3d4aa3cf36fdcd0a3f23a9b30c4cf72ea5a93" kindref="member">BATTERY_STATE_COUNT</ref></highlight></codeline>
+<codeline lineno="36" refid="group__battery__event_ga2dea9a97c86318a10297e8714a1b3d4a_1gga2dea9a97c86318a10297e8714a1b3d4aa3cf36fdcd0a3f23a9b30c4cf72ea5a93" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="structbattery__state__event" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbattery__state__event" kindref="compound">battery_state_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="41" refid="structbattery__state__event_a88e309eb9e0b406a4c9f47583515d294_1a88e309eb9e0b406a4c9f47583515d294" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structevent__header" kindref="compound">event_header</ref><sp/><ref refid="structbattery__state__event_a88e309eb9e0b406a4c9f47583515d294_1a88e309eb9e0b406a4c9f47583515d294" kindref="member">header</ref>;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="structbattery__state__event_a623c0e4e712fee440acc000fcd4f6b0e_1a623c0e4e712fee440acc000fcd4f6b0e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__battery__event_ga2dea9a97c86318a10297e8714a1b3d4a_1ga2dea9a97c86318a10297e8714a1b3d4a" kindref="member">battery_state</ref><sp/><ref refid="structbattery__state__event_a623c0e4e712fee440acc000fcd4f6b0e_1a623c0e4e712fee440acc000fcd4f6b0e" kindref="member">state</ref>;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><ref refid="group__event__manager_gade0652b21cddf1a6b4d58e668b402caa_1gade0652b21cddf1a6b4d58e668b402caa" kindref="member">EVENT_TYPE_DECLARE</ref>(<ref refid="structbattery__state__event" kindref="compound">battery_state_event</ref>);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="structbattery__level__event" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structbattery__level__event" kindref="compound">battery_level_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="51" refid="structbattery__level__event_aad4468fe45f05e80b7c3bef824700495_1aad4468fe45f05e80b7c3bef824700495" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structevent__header" kindref="compound">event_header</ref><sp/><ref refid="structbattery__level__event_aad4468fe45f05e80b7c3bef824700495_1aad4468fe45f05e80b7c3bef824700495" kindref="member">header</ref>;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="structbattery__level__event_a59a19705ccc221a3afa080f246f9cf27_1a59a19705ccc221a3afa080f246f9cf27" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structbattery__level__event_a59a19705ccc221a3afa080f246f9cf27_1a59a19705ccc221a3afa080f246f9cf27" kindref="member">level</ref>;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><ref refid="group__event__manager_gade0652b21cddf1a6b4d58e668b402caa_1gade0652b21cddf1a6b4d58e668b402caa" kindref="member">EVENT_TYPE_DECLARE</ref>(<ref refid="structbattery__level__event" kindref="compound">battery_level_event</ref>);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_BATTERY_EVENT_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/src/events/battery_event.h"/>
+  </compounddef>
+</doxygen>

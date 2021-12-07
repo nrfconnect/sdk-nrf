@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__t2t__sn" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_t2t_sn</compoundname>
+    <includes refid="include_2nfc_2t2t_2parser_8h" local="no">parser.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__t2t__sn_aabb60644317e9ac690b10f424dcf2d45_1aabb60644317e9ac690b10f424dcf2d45" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_t2t_sn::manufacturer_id</definition>
+        <argsstring></argsstring>
+        <name>manufacturer_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Manufacturer ID (the most significant byte of the UID/serial number). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="29" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t2t__sn_a45c0edb9ba5ed45cab94be15949ec022_1a45c0edb9ba5ed45cab94be15949ec022" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t nfc_t2t_sn::serial_number_part_1</definition>
+        <argsstring></argsstring>
+        <name>serial_number_part_1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Bytes 5-4 of the tag UID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="32" column="10" bodyfile="include/nfc/t2t/parser.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t2t__sn_ad62036d18fb0b69c5a0215f13fb768e0_1ad62036d18fb0b69c5a0215f13fb768e0" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t nfc_t2t_sn::serial_number_part_2</definition>
+        <argsstring></argsstring>
+        <name>serial_number_part_2</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Bytes 3-0 of the tag UID. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="35" column="10" bodyfile="include/nfc/t2t/parser.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t2t__sn_aee4644a13ecb81ffdfd53c795971a878_1aee4644a13ecb81ffdfd53c795971a878" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_t2t_sn::check_byte_0</definition>
+        <argsstring></argsstring>
+        <name>check_byte_0</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>First block check character byte (XOR of the cascade tag byte, manufacturer ID byte, and the serial_number_part_1 bytes). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="40" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t2t__sn_ab53fad5ea9899388032bdae36dc781bb_1ab53fad5ea9899388032bdae36dc781bb" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_t2t_sn::check_byte_1</definition>
+        <argsstring></argsstring>
+        <name>check_byte_1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Second block check character byte (XOR of the serial_number_part_2 bytes). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="45" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t2t__sn_a35f55942d46816bb60623605da3d076f_1a35f55942d46816bb60623605da3d076f" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_t2t_sn::internal</definition>
+        <argsstring></argsstring>
+        <name>internal</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Tag internal bytes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="48" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Descriptor for the internal bytes of a Type 2 Tag. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/nfc/t2t/parser.h" line="25" column="1" bodyfile="include/nfc/t2t/parser.h" bodystart="25" bodyend="49"/>
+    <listofallmembers>
+      <member refid="structnfc__t2t__sn_aee4644a13ecb81ffdfd53c795971a878_1aee4644a13ecb81ffdfd53c795971a878" prot="public" virt="non-virtual"><scope>nfc_t2t_sn</scope><name>check_byte_0</name></member>
+      <member refid="structnfc__t2t__sn_ab53fad5ea9899388032bdae36dc781bb_1ab53fad5ea9899388032bdae36dc781bb" prot="public" virt="non-virtual"><scope>nfc_t2t_sn</scope><name>check_byte_1</name></member>
+      <member refid="structnfc__t2t__sn_a35f55942d46816bb60623605da3d076f_1a35f55942d46816bb60623605da3d076f" prot="public" virt="non-virtual"><scope>nfc_t2t_sn</scope><name>internal</name></member>
+      <member refid="structnfc__t2t__sn_aabb60644317e9ac690b10f424dcf2d45_1aabb60644317e9ac690b10f424dcf2d45" prot="public" virt="non-virtual"><scope>nfc_t2t_sn</scope><name>manufacturer_id</name></member>
+      <member refid="structnfc__t2t__sn_a45c0edb9ba5ed45cab94be15949ec022_1a45c0edb9ba5ed45cab94be15949ec022" prot="public" virt="non-virtual"><scope>nfc_t2t_sn</scope><name>serial_number_part_1</name></member>
+      <member refid="structnfc__t2t__sn_ad62036d18fb0b69c5a0215f13fb768e0_1ad62036d18fb0b69c5a0215f13fb768e0" prot="public" virt="non-virtual"><scope>nfc_t2t_sn</scope><name>serial_number_part_2</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

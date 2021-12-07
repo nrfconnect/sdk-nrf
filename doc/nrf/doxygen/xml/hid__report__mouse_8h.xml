@@ -1,0 +1,440 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="hid__report__mouse_8h" kind="file" language="C++">
+    <compoundname>hid_report_mouse.h</compoundname>
+    <includedby refid="hid__report__desc_8h" local="yes">applications/nrf_desktop/configuration/common/hid_report_desc.h</includedby>
+    <invincdepgraph>
+      <node id="3">
+        <label>applications/nrf_desktop/configuration/common/hid_keymap.h</label>
+        <link refid="hid__keymap_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>applications/nrf_desktop/configuration/common/hid_report_desc.h</label>
+        <link refid="hid__report__desc_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/common/hid_report_mouse.h</label>
+        <link refid="hid__report__mouse_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/hid_keymap_def.h</label>
+        <link refid="nrf52810dmouse__nrf52810_2hid__keymap__def_8h"/>
+      </node>
+      <node id="5">
+        <label>applications/nrf_desktop/configuration/nrf52840dk_nrf52840/hid_keymap_def.h</label>
+        <link refid="nrf52840dk__nrf52840_2hid__keymap__def_8h"/>
+      </node>
+      <node id="6">
+        <label>applications/nrf_desktop/configuration/nrf52840dk_nrf52840/hid_keymap_def_keyboard.h</label>
+        <link refid="hid__keymap__def__keyboard_8h"/>
+      </node>
+      <node id="7">
+        <label>applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/hid_keymap_def.h</label>
+        <link refid="nrf52840gmouse__nrf52840_2hid__keymap__def_8h"/>
+      </node>
+      <node id="8">
+        <label>applications/nrf_desktop/configuration/nrf52dmouse_nrf52832/hid_keymap_def.h</label>
+        <link refid="nrf52dmouse__nrf52832_2hid__keymap__def_8h"/>
+      </node>
+      <node id="9">
+        <label>applications/nrf_desktop/configuration/nrf52kbd_nrf52832/hid_keymap_def.h</label>
+        <link refid="nrf52kbd__nrf52832_2hid__keymap__def_8h"/>
+      </node>
+      <node id="10">
+        <label>applications/nrf_desktop/src/events/config_event.h</label>
+        <link refid="config__event_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>applications/nrf_desktop/src/events/hid_event.h</label>
+        <link refid="hid__event_8h"/>
+      </node>
+      <node id="13">
+        <label>applications/nrf_desktop/src/events/hids_event.h</label>
+        <link refid="hids__event_8h"/>
+      </node>
+      <node id="11">
+        <label>applications/nrf_desktop/src/util/config_channel_transport.h</label>
+        <link refid="config__channel__transport_8h"/>
+      </node>
+    </invincdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="hid__report__mouse_8h_a12a809e08e4bb04e0f75e244e2d98461_1a12a809e08e4bb04e0f75e244e2d98461" prot="public" static="no">
+        <name>REPORT_SIZE_MOUSE</name>
+        <initializer>5 /* Bytes */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_mouse.h" line="20" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_mouse.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__mouse_8h_a9c61cb7b2d81138be30e19404e48e8a4_1a9c61cb7b2d81138be30e19404e48e8a4" prot="public" static="no">
+        <name>REPORT_SIZE_MOUSE_BOOT</name>
+        <initializer>3 /* Bytes */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_mouse.h" line="27" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_mouse.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__mouse_8h_a9c946c0bc11a4de5aeeee47b6299007c_1a9c946c0bc11a4de5aeeee47b6299007c" prot="public" static="no">
+        <name>REPORT_MASK_MOUSE</name>
+        <initializer>{0x01}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_mouse.h" line="30" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_mouse.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__mouse_8h_a0124d97e2ad99fb0d546c3327da3a8c0_1a0124d97e2ad99fb0d546c3327da3a8c0" prot="public" static="no">
+        <name>USAGE_PAGE_MOUSE_XY</name>
+        <initializer>0x01</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_mouse.h" line="33" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_mouse.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__mouse_8h_a10c4158444c6ff3cd6a186c8101672e9_1a10c4158444c6ff3cd6a186c8101672e9" prot="public" static="no">
+        <name>USAGE_PAGE_MOUSE_WHEEL</name>
+        <initializer>0x01</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_mouse.h" line="34" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_mouse.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__mouse_8h_ad4de4599761921bfe96fe2076738b048_1ad4de4599761921bfe96fe2076738b048" prot="public" static="no">
+        <name>USAGE_PAGE_KEYBOARD</name>
+        <initializer>0x07</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_mouse.h" line="35" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_mouse.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__mouse_8h_a89b142d44fc7d0de78d7d5fadc851892_1a89b142d44fc7d0de78d7d5fadc851892" prot="public" static="no">
+        <name>USAGE_PAGE_LEDS</name>
+        <initializer>0x08</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_mouse.h" line="36" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_mouse.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__mouse_8h_a204712387dda66e267c9c3a34c4583ad_1a204712387dda66e267c9c3a34c4583ad" prot="public" static="no">
+        <name>USAGE_PAGE_MOUSE_BUTTONS</name>
+        <initializer>0x09</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_mouse.h" line="37" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_mouse.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__mouse_8h_a466bf3b7b80380788e4761b53160eb3e_1a466bf3b7b80380788e4761b53160eb3e" prot="public" static="no">
+        <name>MOUSE_REPORT_WHEEL_MIN</name>
+        <initializer>(-0x7F)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_mouse.h" line="39" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_mouse.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__mouse_8h_a9a5a420b26a511b5ff44949c4676d51b_1a9a5a420b26a511b5ff44949c4676d51b" prot="public" static="no">
+        <name>MOUSE_REPORT_WHEEL_MAX</name>
+        <initializer>(0x7F)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_mouse.h" line="40" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_mouse.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__mouse_8h_a20e7cc194fc4d9209133db84751ecc0a_1a20e7cc194fc4d9209133db84751ecc0a" prot="public" static="no">
+        <name>MOUSE_REPORT_XY_MIN</name>
+        <initializer>(-0x07ff)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_mouse.h" line="41" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_mouse.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__mouse_8h_a9e293f1c28fa5d93cd74e3444895d5f3_1a9e293f1c28fa5d93cd74e3444895d5f3" prot="public" static="no">
+        <name>MOUSE_REPORT_XY_MAX</name>
+        <initializer>(0x07ff)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_mouse.h" line="42" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_mouse.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__mouse_8h_a83b502bc5545a1ce4d3e0c721aae1942_1a83b502bc5545a1ce4d3e0c721aae1942" prot="public" static="no">
+        <name>MOUSE_REPORT_XY_MIN_BOOT</name>
+        <initializer>(-0x80)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_mouse.h" line="43" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_mouse.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__mouse_8h_ad7803e3969b0d416574d0fed0c47277f_1ad7803e3969b0d416574d0fed0c47277f" prot="public" static="no">
+        <name>MOUSE_REPORT_XY_MAX_BOOT</name>
+        <initializer>(0x7f)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_mouse.h" line="44" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_mouse.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__mouse_8h_a8e5b882444546056298ebf5a27825aec_1a8e5b882444546056298ebf5a27825aec" prot="public" static="no">
+        <name>MOUSE_REPORT_BUTTON_COUNT_MAX</name>
+        <initializer>8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_mouse.h" line="45" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_mouse.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__mouse_8h_a921aa6a7b3d8670fbbc89525bb468181_1a921aa6a7b3d8670fbbc89525bb468181" prot="public" static="no">
+        <name>REPORT_MAP_MOUSE</name>
+        <param><defname>report_id</defname></param>
+        <initializer>									\
+	/* Report: Mouse */						\
+	0x09, 0x01,       /* Usage (Pointer) */				\
+	0xA1, 0x00,       /* Collection (Physical) */			\
+									\
+	0x85, <ref refid="hid__report__desc_8h_a677c0028ae9b6d936dea027454211958_1a677c0028ae9b6d936dea027454211958" kindref="member">report_id</ref>,    /* Report ID */				\
+									\
+	0x05, <ref refid="hid__report__mouse_8h_a204712387dda66e267c9c3a34c4583ad_1a204712387dda66e267c9c3a34c4583ad" kindref="member">USAGE_PAGE_MOUSE_BUTTONS</ref>,					\
+	0x19, 0x01,         /* Usage Minimum (1) */			\
+	0x29, 0x08,         /* Usage Maximum (8) */			\
+	0x15, 0x00,         /* Logical Minimum (0) */			\
+	0x25, 0x01,         /* Logical Maximum (1) */			\
+	0x75, 0x01,         /* Report Size (1) */			\
+	0x95, <ref refid="hid__report__mouse_8h_a8e5b882444546056298ebf5a27825aec_1a8e5b882444546056298ebf5a27825aec" kindref="member">MOUSE_REPORT_BUTTON_COUNT_MAX</ref>, /* Report Count */		\
+	0x81, 0x02,         /* Input (Data, Variable, Absolute) */	\
+									\
+	0x05, <ref refid="hid__report__mouse_8h_a10c4158444c6ff3cd6a186c8101672e9_1a10c4158444c6ff3cd6a186c8101672e9" kindref="member">USAGE_PAGE_MOUSE_WHEEL</ref>,					\
+	0x09, 0x38,         /* Usage (Wheel) */				\
+	0x15, 0x81,         /* Logical Minimum (-127) */		\
+	0x25, 0x7F,         /* Logical Maximum (127) */			\
+	0x75, 0x08,         /* Report Size (8) */			\
+	0x95, 0x01,         /* Report Count (1) */			\
+	0x81, 0x06,         /* Input (Data, Variable, Relative) */	\
+									\
+	0x05, <ref refid="hid__report__mouse_8h_a0124d97e2ad99fb0d546c3327da3a8c0_1a0124d97e2ad99fb0d546c3327da3a8c0" kindref="member">USAGE_PAGE_MOUSE_XY</ref>,					\
+	0x09, 0x30,         /* Usage (<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>) */				\
+	0x09, 0x31,         /* Usage (Y) */				\
+	0x16, 0x01, 0xF8,   /* Logical Maximum (2047) */		\
+	0x26, 0xFF, 0x07,   /* Logical Minimum (-2047) */		\
+	0x75, 0x0C,         /* Report Size (12) */			\
+	0x95, 0x02,         /* Report Count (2) */			\
+	0x81, 0x06,         /* Input (Data, Variable, Relative) */	\
+									\
+	0xC0              /* End Collection (Physical) */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_mouse.h" line="55" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_mouse.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="hid__report__mouse_8h_ae8a3b6a5d0d3244ed73924ab2421a0d0_1ae8a3b6a5d0d3244ed73924ab2421a0d0" prot="public" static="no" strong="no">
+        <type></type>
+        <name>@48</name>
+        <enumvalue id="hid__report__mouse_8h_ae8a3b6a5d0d3244ed73924ab2421a0d0_1ae8a3b6a5d0d3244ed73924ab2421a0d0a20f3279f3253a54f9f4e0515a82a5df1" prot="public">
+          <name>MOUSE_REPORT_AXIS_X</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="hid__report__mouse_8h_ae8a3b6a5d0d3244ed73924ab2421a0d0_1ae8a3b6a5d0d3244ed73924ab2421a0d0a61df105aa8bdf9f0ca59e9ad1d9ab989" prot="public">
+          <name>MOUSE_REPORT_AXIS_Y</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="hid__report__mouse_8h_ae8a3b6a5d0d3244ed73924ab2421a0d0_1ae8a3b6a5d0d3244ed73924ab2421a0d0aa80e2eeb409e6c066783acdb184a7ee5" prot="public">
+          <name>MOUSE_REPORT_AXIS_WHEEL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="hid__report__mouse_8h_ae8a3b6a5d0d3244ed73924ab2421a0d0_1ae8a3b6a5d0d3244ed73924ab2421a0d0a61a834dff2372600f06e783548e78309" prot="public">
+          <name>MOUSE_REPORT_AXIS_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_mouse.h" line="47" column="1" bodyfile="applications/nrf_desktop/configuration/common/hid_report_mouse.h" bodystart="47" bodyend="52"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_HID_REPORT_MOUSE_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_HID_REPORT_MOUSE_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Mouse<sp/>report<sp/>uses<sp/>5<sp/>bytes:</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*<sp/><sp/>8<sp/>bits<sp/>-<sp/>pressed<sp/>buttons<sp/>bitmask</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*<sp/><sp/>8<sp/>bits<sp/>-<sp/>wheel<sp/>rotation</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*<sp/>12<sp/>bits<sp/>-<sp/>x<sp/>movement</highlight></codeline>
+<codeline lineno="18"><highlight class="comment"><sp/>*<sp/>12<sp/>bits<sp/>-<sp/>y<sp/>movement</highlight></codeline>
+<codeline lineno="19"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20" refid="hid__report__mouse_8h_a12a809e08e4bb04e0f75e244e2d98461_1a12a809e08e4bb04e0f75e244e2d98461" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>REPORT_SIZE_MOUSE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>5<sp/></highlight><highlight class="comment">/*<sp/>Bytes<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Mouse<sp/>boot<sp/>report<sp/>uses<sp/>3<sp/>bytes:</highlight></codeline>
+<codeline lineno="23"><highlight class="comment"><sp/>*<sp/>8<sp/>bits<sp/>-<sp/>pressed<sp/>buttons<sp/>bitmask</highlight></codeline>
+<codeline lineno="24"><highlight class="comment"><sp/>*<sp/>8<sp/>bits<sp/>-<sp/>x<sp/>movement</highlight></codeline>
+<codeline lineno="25"><highlight class="comment"><sp/>*<sp/>8<sp/>bits<sp/>-<sp/>y<sp/>movement</highlight></codeline>
+<codeline lineno="26"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="hid__report__mouse_8h_a9c61cb7b2d81138be30e19404e48e8a4_1a9c61cb7b2d81138be30e19404e48e8a4" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>REPORT_SIZE_MOUSE_BOOT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3<sp/></highlight><highlight class="comment">/*<sp/>Bytes<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Report<sp/>mask<sp/>marks<sp/>which<sp/>bytes<sp/>should<sp/>are<sp/>absolute<sp/>and<sp/>should<sp/>be<sp/>stored.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="hid__report__mouse_8h_a9c946c0bc11a4de5aeeee47b6299007c_1a9c946c0bc11a4de5aeeee47b6299007c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>REPORT_MASK_MOUSE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{0x01}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="hid__report__mouse_8h_a0124d97e2ad99fb0d546c3327da3a8c0_1a0124d97e2ad99fb0d546c3327da3a8c0" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>USAGE_PAGE_MOUSE_XY<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x01</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="hid__report__mouse_8h_a10c4158444c6ff3cd6a186c8101672e9_1a10c4158444c6ff3cd6a186c8101672e9" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>USAGE_PAGE_MOUSE_WHEEL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x01</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="hid__report__mouse_8h_ad4de4599761921bfe96fe2076738b048_1ad4de4599761921bfe96fe2076738b048" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>USAGE_PAGE_KEYBOARD<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x07</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="hid__report__mouse_8h_a89b142d44fc7d0de78d7d5fadc851892_1a89b142d44fc7d0de78d7d5fadc851892" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>USAGE_PAGE_LEDS<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x08</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="hid__report__mouse_8h_a204712387dda66e267c9c3a34c4583ad_1a204712387dda66e267c9c3a34c4583ad" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>USAGE_PAGE_MOUSE_BUTTONS<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x09</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="hid__report__mouse_8h_a466bf3b7b80380788e4761b53160eb3e_1a466bf3b7b80380788e4761b53160eb3e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MOUSE_REPORT_WHEEL_MIN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(-0x7F)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="hid__report__mouse_8h_a9a5a420b26a511b5ff44949c4676d51b_1a9a5a420b26a511b5ff44949c4676d51b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MOUSE_REPORT_WHEEL_MAX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x7F)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="hid__report__mouse_8h_a20e7cc194fc4d9209133db84751ecc0a_1a20e7cc194fc4d9209133db84751ecc0a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MOUSE_REPORT_XY_MIN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(-0x07ff)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="hid__report__mouse_8h_a9e293f1c28fa5d93cd74e3444895d5f3_1a9e293f1c28fa5d93cd74e3444895d5f3" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MOUSE_REPORT_XY_MAX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x07ff)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="hid__report__mouse_8h_a83b502bc5545a1ce4d3e0c721aae1942_1a83b502bc5545a1ce4d3e0c721aae1942" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MOUSE_REPORT_XY_MIN_BOOT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(-0x80)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="hid__report__mouse_8h_ad7803e3969b0d416574d0fed0c47277f_1ad7803e3969b0d416574d0fed0c47277f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MOUSE_REPORT_XY_MAX_BOOT<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(0x7f)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="hid__report__mouse_8h_a8e5b882444546056298ebf5a27825aec_1a8e5b882444546056298ebf5a27825aec" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MOUSE_REPORT_BUTTON_COUNT_MAX<sp/><sp/><sp/>8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="48" refid="hid__report__mouse_8h_ae8a3b6a5d0d3244ed73924ab2421a0d0_1ae8a3b6a5d0d3244ed73924ab2421a0d0a20f3279f3253a54f9f4e0515a82a5df1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__mouse_8h_ae8a3b6a5d0d3244ed73924ab2421a0d0_1ae8a3b6a5d0d3244ed73924ab2421a0d0a20f3279f3253a54f9f4e0515a82a5df1" kindref="member">MOUSE_REPORT_AXIS_X</ref>,</highlight></codeline>
+<codeline lineno="49" refid="hid__report__mouse_8h_ae8a3b6a5d0d3244ed73924ab2421a0d0_1ae8a3b6a5d0d3244ed73924ab2421a0d0a61df105aa8bdf9f0ca59e9ad1d9ab989" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__mouse_8h_ae8a3b6a5d0d3244ed73924ab2421a0d0_1ae8a3b6a5d0d3244ed73924ab2421a0d0a61df105aa8bdf9f0ca59e9ad1d9ab989" kindref="member">MOUSE_REPORT_AXIS_Y</ref>,</highlight></codeline>
+<codeline lineno="50" refid="hid__report__mouse_8h_ae8a3b6a5d0d3244ed73924ab2421a0d0_1ae8a3b6a5d0d3244ed73924ab2421a0d0aa80e2eeb409e6c066783acdb184a7ee5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__mouse_8h_ae8a3b6a5d0d3244ed73924ab2421a0d0_1ae8a3b6a5d0d3244ed73924ab2421a0d0aa80e2eeb409e6c066783acdb184a7ee5" kindref="member">MOUSE_REPORT_AXIS_WHEEL</ref>,</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="hid__report__mouse_8h_ae8a3b6a5d0d3244ed73924ab2421a0d0_1ae8a3b6a5d0d3244ed73924ab2421a0d0a61a834dff2372600f06e783548e78309" kindref="member">MOUSE_REPORT_AXIS_COUNT</ref></highlight></codeline>
+<codeline lineno="52" refid="hid__report__mouse_8h_ae8a3b6a5d0d3244ed73924ab2421a0d0_1ae8a3b6a5d0d3244ed73924ab2421a0d0a61a834dff2372600f06e783548e78309" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="hid__report__mouse_8h_a921aa6a7b3d8670fbbc89525bb468181_1a921aa6a7b3d8670fbbc89525bb468181" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>REPORT_MAP_MOUSE(report_id)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="56"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="57"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Report:<sp/>Mouse<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="58"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x09,<sp/>0x01,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Usage<sp/>(Pointer)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="59"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0xA1,<sp/>0x00,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Collection<sp/>(Physical)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="60"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="61"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x85,<sp/>report_id,<sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Report<sp/>ID<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="62"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="63"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x05,<sp/>USAGE_PAGE_MOUSE_BUTTONS,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="64"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x19,<sp/>0x01,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Usage<sp/>Minimum<sp/>(1)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="65"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x29,<sp/>0x08,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Usage<sp/>Maximum<sp/>(8)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="66"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x15,<sp/>0x00,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Logical<sp/>Minimum<sp/>(0)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="67"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x25,<sp/>0x01,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Logical<sp/>Maximum<sp/>(1)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="68"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x75,<sp/>0x01,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Report<sp/>Size<sp/>(1)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="69"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x95,<sp/>MOUSE_REPORT_BUTTON_COUNT_MAX,<sp/></highlight><highlight class="comment">/*<sp/>Report<sp/>Count<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="70"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x81,<sp/>0x02,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Input<sp/>(Data,<sp/>Variable,<sp/>Absolute)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="71"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="72"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x05,<sp/>USAGE_PAGE_MOUSE_WHEEL,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="73"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x09,<sp/>0x38,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Usage<sp/>(Wheel)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="74"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x15,<sp/>0x81,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Logical<sp/>Minimum<sp/>(-127)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="75"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x25,<sp/>0x7F,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Logical<sp/>Maximum<sp/>(127)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="76"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x75,<sp/>0x08,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Report<sp/>Size<sp/>(8)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="77"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x95,<sp/>0x01,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Report<sp/>Count<sp/>(1)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="78"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x81,<sp/>0x06,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Input<sp/>(Data,<sp/>Variable,<sp/>Relative)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="79"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="80"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x05,<sp/>USAGE_PAGE_MOUSE_XY,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="81"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x09,<sp/>0x30,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Usage<sp/>(X)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="82"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x09,<sp/>0x31,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Usage<sp/>(Y)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="83"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x16,<sp/>0x01,<sp/>0xF8,<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Logical<sp/>Maximum<sp/>(2047)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="84"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x26,<sp/>0xFF,<sp/>0x07,<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Logical<sp/>Minimum<sp/>(-2047)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="85"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x75,<sp/>0x0C,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Report<sp/>Size<sp/>(12)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="86"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x95,<sp/>0x02,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Report<sp/>Count<sp/>(2)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="87"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x81,<sp/>0x06,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Input<sp/>(Data,<sp/>Variable,<sp/>Relative)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="88"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="89"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0xC0<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>End<sp/>Collection<sp/>(Physical)<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_HID_REPORT_MOUSE_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/common/hid_report_mouse.h"/>
+  </compounddef>
+</doxygen>

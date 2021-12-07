@@ -1,0 +1,274 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="rest__client_8h" kind="file" language="C++">
+    <compoundname>rest_client.h</compoundname>
+    <includes local="no">net/http_parser.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/net/rest_client.h</label>
+        <link refid="rest__client_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>net/http_parser.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structrest__client__req__context" prot="public">rest_client_req_context</innerclass>
+    <innerclass refid="structrest__client__resp__context" prot="public">rest_client_resp_context</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__rest__client_gaf09d5e40e3be5d3357caa3b1c3da53df_1gaf09d5e40e3be5d3357caa3b1c3da53df" prot="public" static="no">
+        <name>REST_CLIENT_SEC_TAG_NO_SEC</name>
+        <initializer>-1</initializer>
+        <briefdescription>
+<para>TLS is not used. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="23" column="9" bodyfile="include/net/rest_client.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__rest__client_ga2147f43d29cc12de05300cf09c94e40a_1ga2147f43d29cc12de05300cf09c94e40a" prot="public" static="no">
+        <name>REST_CLIENT_TLS_DEFAULT_PEER_VERIFY</name>
+        <initializer>-1</initializer>
+        <briefdescription>
+<para>Use the default TLS peer verification; TLS_PEER_VERIFY_REQUIRED. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="26" column="9" bodyfile="include/net/rest_client.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__rest__client_gadc0fb731a6eee3dbe8407b635cbd6309_1gadc0fb731a6eee3dbe8407b635cbd6309" prot="public" static="no">
+        <name>REST_CLIENT_SCKT_CONNECT</name>
+        <initializer>-1</initializer>
+        <briefdescription>
+<para>REST client opens a socket connection. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="29" column="9" bodyfile="include/net/rest_client.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1ga0ef4d4d1110234d7178a39e870b4455f" prot="public" static="no" strong="no">
+        <type></type>
+        <name>rest_client_http_status</name>
+        <enumvalue id="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1gga0ef4d4d1110234d7178a39e870b4455fa6e329b5b0be16968d98b26e532bb0ea0" prot="public">
+          <name>REST_CLIENT_HTTP_STATUS_OK</name>
+          <initializer>= 200</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1gga0ef4d4d1110234d7178a39e870b4455fad2ffdd4f2254b0a24edb4b11e8e6fecf" prot="public">
+          <name>REST_CLIENT_HTTP_STATUS_BAD_REQ</name>
+          <initializer>= 400</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1gga0ef4d4d1110234d7178a39e870b4455fa301599f7d1f5470dd7c6271b820edbe2" prot="public">
+          <name>REST_CLIENT_HTTP_STATUS_UNAUTH</name>
+          <initializer>= 401</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1gga0ef4d4d1110234d7178a39e870b4455fad63c4b3bf99ec6aa2d026ae3203481fe" prot="public">
+          <name>REST_CLIENT_HTTP_STATUS_FORBIDDEN</name>
+          <initializer>= 403</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1gga0ef4d4d1110234d7178a39e870b4455fad28e6329999f64311a6bc8b2488e6e7b" prot="public">
+          <name>REST_CLIENT_HTTP_STATUS_NOT_FOUND</name>
+          <initializer>= 404</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Common HTTP status codes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="32" column="1" bodyfile="include/net/rest_client.h" bodystart="32" bodyend="38"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__rest__client_gaf17c5ae9504203d57ff28b51aa6ec78e_1gaf17c5ae9504203d57ff28b51aa6ec78e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int rest_client_request</definition>
+        <argsstring>(struct rest_client_req_context *req_ctx, struct rest_client_resp_context *resp_ctx)</argsstring>
+        <name>rest_client_request</name>
+        <param>
+          <type>struct <ref refid="structrest__client__req__context" kindref="compound">rest_client_req_context</ref> *</type>
+          <declname>req_ctx</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structrest__client__resp__context" kindref="compound">rest_client_resp_context</ref> *</type>
+          <declname>resp_ctx</declname>
+        </param>
+        <briefdescription>
+<para>REST client request. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function will block the calling thread until the request completes.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">req_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Request context containing input parameters to REST request </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">resp_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response context for returning the response data.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+<parametername>if</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the REST response was received successfully. If response_len &gt; 0, there is also body/content data in a response. http_status_code contains the actual HTTP status code. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="137" column="5" declfile="include/net/rest_client.h" declline="137" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__rest__client_ga0a2e2eea2de011756cb4dddcac2f6a19_1ga0a2e2eea2de011756cb4dddcac2f6a19" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void rest_client_request_defaults_set</definition>
+        <argsstring>(struct rest_client_req_context *req_ctx)</argsstring>
+        <name>rest_client_request_defaults_set</name>
+        <param>
+          <type>struct <ref refid="structrest__client__req__context" kindref="compound">rest_client_req_context</ref> *</type>
+          <declname>req_ctx</declname>
+        </param>
+        <briefdescription>
+<para>Sets the default values into a given request context. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Intended to be used before calling <ref refid="group__rest__client_gaf17c5ae9504203d57ff28b51aa6ec78e_1gaf17c5ae9504203d57ff28b51aa6ec78e" kindref="member">rest_client_request()</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">req_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Request context for communicating with REST client API. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="147" column="6" declfile="include/net/rest_client.h" declline="147" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>REST_CLIENT_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>REST_CLIENT_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;net/http_parser.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="group__rest__client_gaf09d5e40e3be5d3357caa3b1c3da53df_1gaf09d5e40e3be5d3357caa3b1c3da53df" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>REST_CLIENT_SEC_TAG_NO_SEC<sp/>-1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="group__rest__client_ga2147f43d29cc12de05300cf09c94e40a_1ga2147f43d29cc12de05300cf09c94e40a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>REST_CLIENT_TLS_DEFAULT_PEER_VERIFY<sp/>-1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="group__rest__client_gadc0fb731a6eee3dbe8407b635cbd6309_1gadc0fb731a6eee3dbe8407b635cbd6309" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>REST_CLIENT_SCKT_CONNECT<sp/>-1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1ga0ef4d4d1110234d7178a39e870b4455f" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1ga0ef4d4d1110234d7178a39e870b4455f" kindref="member">rest_client_http_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="33" refid="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1gga0ef4d4d1110234d7178a39e870b4455fa6e329b5b0be16968d98b26e532bb0ea0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1gga0ef4d4d1110234d7178a39e870b4455fa6e329b5b0be16968d98b26e532bb0ea0" kindref="member">REST_CLIENT_HTTP_STATUS_OK</ref><sp/>=<sp/>200,</highlight></codeline>
+<codeline lineno="34" refid="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1gga0ef4d4d1110234d7178a39e870b4455fad2ffdd4f2254b0a24edb4b11e8e6fecf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1gga0ef4d4d1110234d7178a39e870b4455fad2ffdd4f2254b0a24edb4b11e8e6fecf" kindref="member">REST_CLIENT_HTTP_STATUS_BAD_REQ</ref><sp/>=<sp/>400,</highlight></codeline>
+<codeline lineno="35" refid="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1gga0ef4d4d1110234d7178a39e870b4455fa301599f7d1f5470dd7c6271b820edbe2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1gga0ef4d4d1110234d7178a39e870b4455fa301599f7d1f5470dd7c6271b820edbe2" kindref="member">REST_CLIENT_HTTP_STATUS_UNAUTH</ref><sp/>=<sp/>401,</highlight></codeline>
+<codeline lineno="36" refid="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1gga0ef4d4d1110234d7178a39e870b4455fad63c4b3bf99ec6aa2d026ae3203481fe" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1gga0ef4d4d1110234d7178a39e870b4455fad63c4b3bf99ec6aa2d026ae3203481fe" kindref="member">REST_CLIENT_HTTP_STATUS_FORBIDDEN</ref><sp/>=<sp/>403,</highlight></codeline>
+<codeline lineno="37" refid="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1gga0ef4d4d1110234d7178a39e870b4455fad28e6329999f64311a6bc8b2488e6e7b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__rest__client_ga0ef4d4d1110234d7178a39e870b4455f_1gga0ef4d4d1110234d7178a39e870b4455fad28e6329999f64311a6bc8b2488e6e7b" kindref="member">REST_CLIENT_HTTP_STATUS_NOT_FOUND</ref><sp/>=<sp/>404,</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="structrest__client__req__context" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structrest__client__req__context" kindref="compound">rest_client_req_context</ref><sp/>{</highlight></codeline>
+<codeline lineno="50" refid="structrest__client__req__context_ab894f7a0b44980396e5d3ef13f278cf9_1ab894f7a0b44980396e5d3ef13f278cf9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structrest__client__req__context_ab894f7a0b44980396e5d3ef13f278cf9_1ab894f7a0b44980396e5d3ef13f278cf9" kindref="member">connect_socket</ref>;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="structrest__client__req__context_a39de871a91584ccee123c7c9e9718471_1a39de871a91584ccee123c7c9e9718471" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structrest__client__req__context_a39de871a91584ccee123c7c9e9718471_1a39de871a91584ccee123c7c9e9718471" kindref="member">keep_alive</ref>;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="structrest__client__req__context_aee7d61410bd589b637c6228a3c3aceaa_1aee7d61410bd589b637c6228a3c3aceaa" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structrest__client__req__context_aee7d61410bd589b637c6228a3c3aceaa_1aee7d61410bd589b637c6228a3c3aceaa" kindref="member">sec_tag</ref>;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="structrest__client__req__context_a1cae11f32bf4ee4a1660d2b86b02ec16_1a1cae11f32bf4ee4a1660d2b86b02ec16" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structrest__client__req__context_a1cae11f32bf4ee4a1660d2b86b02ec16_1a1cae11f32bf4ee4a1660d2b86b02ec16" kindref="member">tls_peer_verify</ref>;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65" refid="structrest__client__req__context_a0fc59fcb279b93478226e2b8b55ab075_1a0fc59fcb279b93478226e2b8b55ab075" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="structrest__client__req__context_a0fc59fcb279b93478226e2b8b55ab075_1a0fc59fcb279b93478226e2b8b55ab075" kindref="member">http_method</ref><sp/><ref refid="structrest__client__req__context_a0fc59fcb279b93478226e2b8b55ab075_1a0fc59fcb279b93478226e2b8b55ab075" kindref="member">http_method</ref>;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="structrest__client__req__context_a2628acd8ab199726ece91495a19bee45_1a2628acd8ab199726ece91495a19bee45" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structrest__client__req__context_a2628acd8ab199726ece91495a19bee45_1a2628acd8ab199726ece91495a19bee45" kindref="member">host</ref>;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71" refid="structrest__client__req__context_a7c472025d45b464587495919a1821dc6_1a7c472025d45b464587495919a1821dc6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structrest__client__req__context_a7c472025d45b464587495919a1821dc6_1a7c472025d45b464587495919a1821dc6" kindref="member">port</ref>;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="structrest__client__req__context_abffe63f73535e24ad8b327e125ccefac_1abffe63f73535e24ad8b327e125ccefac" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structrest__client__req__context_abffe63f73535e24ad8b327e125ccefac_1abffe63f73535e24ad8b327e125ccefac" kindref="member">url</ref>;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="structrest__client__req__context_a5d3ce7259443e8ca5985cfa9f90085a7_1a5d3ce7259443e8ca5985cfa9f90085a7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>**<ref refid="structrest__client__req__context_a5d3ce7259443e8ca5985cfa9f90085a7_1a5d3ce7259443e8ca5985cfa9f90085a7" kindref="member">header_fields</ref>;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="structrest__client__req__context_aa006c7a399d35fa9742cf27aa832140c_1aa006c7a399d35fa9742cf27aa832140c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structrest__client__req__context_aa006c7a399d35fa9742cf27aa832140c_1aa006c7a399d35fa9742cf27aa832140c" kindref="member">body</ref>;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87" refid="structrest__client__req__context_abbc7ff1c124923d8557e0c3273a48ef6_1abbc7ff1c124923d8557e0c3273a48ef6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int32_t<sp/><ref refid="structrest__client__req__context_abbc7ff1c124923d8557e0c3273a48ef6_1abbc7ff1c124923d8557e0c3273a48ef6" kindref="member">timeout_ms</ref>;</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="structrest__client__req__context_aac2c6577f6dd6a76e43f1a01043d19b5_1aac2c6577f6dd6a76e43f1a01043d19b5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structrest__client__req__context_aac2c6577f6dd6a76e43f1a01043d19b5_1aac2c6577f6dd6a76e43f1a01043d19b5" kindref="member">resp_buff</ref>;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="structrest__client__req__context_a9536c9f7ba05b8f0c777f46da9fc9ef4_1a9536c9f7ba05b8f0c777f46da9fc9ef4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structrest__client__req__context_a9536c9f7ba05b8f0c777f46da9fc9ef4_1a9536c9f7ba05b8f0c777f46da9fc9ef4" kindref="member">resp_buff_len</ref>;</highlight></codeline>
+<codeline lineno="94"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102" refid="structrest__client__resp__context" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structrest__client__resp__context" kindref="compound">rest_client_resp_context</ref><sp/>{</highlight></codeline>
+<codeline lineno="104" refid="structrest__client__resp__context_a9a4c54e73fda44773f6c8fe22b6e9267_1a9a4c54e73fda44773f6c8fe22b6e9267" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structrest__client__resp__context_a9a4c54e73fda44773f6c8fe22b6e9267_1a9a4c54e73fda44773f6c8fe22b6e9267" kindref="member">total_response_len</ref>;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107" refid="structrest__client__resp__context_a7b05f069715e50ac4f4ab763db27355f_1a7b05f069715e50ac4f4ab763db27355f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structrest__client__resp__context_a7b05f069715e50ac4f4ab763db27355f_1a7b05f069715e50ac4f4ab763db27355f" kindref="member">response_len</ref>;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110" refid="structrest__client__resp__context_a9246481c3b8ee63a837fda4f4c5299d5_1a9246481c3b8ee63a837fda4f4c5299d5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structrest__client__resp__context_a9246481c3b8ee63a837fda4f4c5299d5_1a9246481c3b8ee63a837fda4f4c5299d5" kindref="member">response</ref>;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113" refid="structrest__client__resp__context_a5fab4d1a009c152318a8de81900ec456_1a5fab4d1a009c152318a8de81900ec456" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint16_t<sp/><ref refid="structrest__client__resp__context_a5fab4d1a009c152318a8de81900ec456_1a5fab4d1a009c152318a8de81900ec456" kindref="member">http_status_code</ref>;</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118" refid="structrest__client__resp__context_a9e17521ee33d607a2e82b4fd68bf0074_1a9e17521ee33d607a2e82b4fd68bf0074" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structrest__client__resp__context_a9e17521ee33d607a2e82b4fd68bf0074_1a9e17521ee33d607a2e82b4fd68bf0074" kindref="member">used_socket_id</ref>;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121" refid="structrest__client__resp__context_a1ec0b1c529f28836c3f4b3383dfc8489_1a1ec0b1c529f28836c3f4b3383dfc8489" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structrest__client__resp__context_a1ec0b1c529f28836c3f4b3383dfc8489_1a1ec0b1c529f28836c3f4b3383dfc8489" kindref="member">used_socket_is_alive</ref>;</highlight></codeline>
+<codeline lineno="122"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137" refid="group__rest__client_gaf17c5ae9504203d57ff28b51aa6ec78e_1gaf17c5ae9504203d57ff28b51aa6ec78e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__rest__client_gaf17c5ae9504203d57ff28b51aa6ec78e_1gaf17c5ae9504203d57ff28b51aa6ec78e" kindref="member">rest_client_request</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structrest__client__req__context" kindref="compound">rest_client_req_context</ref><sp/>*req_ctx,</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structrest__client__resp__context" kindref="compound">rest_client_resp_context</ref><sp/>*resp_ctx);</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147" refid="group__rest__client_ga0a2e2eea2de011756cb4dddcac2f6a19_1ga0a2e2eea2de011756cb4dddcac2f6a19" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="group__rest__client_ga0a2e2eea2de011756cb4dddcac2f6a19_1ga0a2e2eea2de011756cb4dddcac2f6a19" kindref="member">rest_client_request_defaults_set</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structrest__client__req__context" kindref="compound">rest_client_req_context</ref><sp/>*req_ctx);</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>REST_CLIENT_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/net/rest_client.h"/>
+  </compounddef>
+</doxygen>

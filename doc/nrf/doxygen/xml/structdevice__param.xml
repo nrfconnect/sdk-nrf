@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structdevice__param" kind="struct" language="C++" prot="public">
+    <compoundname>device_param</compoundname>
+    <includes refid="modem__info_8h" local="no">modem_info.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structdevice__param_a557b140e84947f4a89a1949991d33fa5_1a557b140e84947f4a89a1949991d33fa5" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__param" kindref="compound">lte_param</ref></type>
+        <definition>struct lte_param device_param::modem_fw</definition>
+        <argsstring></argsstring>
+        <name>modem_fw</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Modem firmware version. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="109" column="16" bodyfile="include/modem/modem_info.h" bodystart="109" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdevice__param_a2a237542299071c5b6ce3aa824fcab1e_1a2a237542299071c5b6ce3aa824fcab1e" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__param" kindref="compound">lte_param</ref></type>
+        <definition>struct lte_param device_param::battery</definition>
+        <argsstring></argsstring>
+        <name>battery</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Battery voltage. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="110" column="16" bodyfile="include/modem/modem_info.h" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdevice__param_aded860b69128d04965a168b9e0a28c75_1aded860b69128d04965a168b9e0a28c75" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__param" kindref="compound">lte_param</ref></type>
+        <definition>struct lte_param device_param::imei</definition>
+        <argsstring></argsstring>
+        <name>imei</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Modem serial number. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="111" column="16" bodyfile="include/modem/modem_info.h" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdevice__param_aea2948aed837a13d94b02bd5fd5a3837_1aea2948aed837a13d94b02bd5fd5a3837" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* device_param::board</definition>
+        <argsstring></argsstring>
+        <name>board</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Board version. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="112" column="12" bodyfile="include/modem/modem_info.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdevice__param_a1c361020fc4bd984d03a80955801d4ac_1a1c361020fc4bd984d03a80955801d4ac" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* device_param::app_version</definition>
+        <argsstring></argsstring>
+        <name>app_version</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Application version. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="113" column="12" bodyfile="include/modem/modem_info.h" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdevice__param_a2798e272b8ecf40ed4efb75ca62f62f7_1a2798e272b8ecf40ed4efb75ca62f62f7" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* device_param::app_name</definition>
+        <argsstring></argsstring>
+        <name>app_name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Application name. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="114" column="12" bodyfile="include/modem/modem_info.h" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Device parameters. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>device_param</label>
+        <link refid="structdevice__param"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>battery</edgelabel>
+          <edgelabel>imei</edgelabel>
+          <edgelabel>modem_fw</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>lte_param</label>
+        <link refid="structlte__param"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/modem/modem_info.h" line="108" column="1" bodyfile="include/modem/modem_info.h" bodystart="108" bodyend="115"/>
+    <listofallmembers>
+      <member refid="structdevice__param_a2798e272b8ecf40ed4efb75ca62f62f7_1a2798e272b8ecf40ed4efb75ca62f62f7" prot="public" virt="non-virtual"><scope>device_param</scope><name>app_name</name></member>
+      <member refid="structdevice__param_a1c361020fc4bd984d03a80955801d4ac_1a1c361020fc4bd984d03a80955801d4ac" prot="public" virt="non-virtual"><scope>device_param</scope><name>app_version</name></member>
+      <member refid="structdevice__param_a2a237542299071c5b6ce3aa824fcab1e_1a2a237542299071c5b6ce3aa824fcab1e" prot="public" virt="non-virtual"><scope>device_param</scope><name>battery</name></member>
+      <member refid="structdevice__param_aea2948aed837a13d94b02bd5fd5a3837_1aea2948aed837a13d94b02bd5fd5a3837" prot="public" virt="non-virtual"><scope>device_param</scope><name>board</name></member>
+      <member refid="structdevice__param_aded860b69128d04965a168b9e0a28c75_1aded860b69128d04965a168b9e0a28c75" prot="public" virt="non-virtual"><scope>device_param</scope><name>imei</name></member>
+      <member refid="structdevice__param_a557b140e84947f4a89a1949991d33fa5_1a557b140e84947f4a89a1949991d33fa5" prot="public" virt="non-virtual"><scope>device_param</scope><name>modem_fw</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__latency__client" kind="struct" language="C++" prot="public">
+    <compoundname>bt_latency_client</compoundname>
+    <includes refid="latency__client_8h" local="no">latency_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__latency__client_a99f8d806d86325783fdbaee1c9210a37_1a99f8d806d86325783fdbaee1c9210a37" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_latency_client::handle</definition>
+        <argsstring></argsstring>
+        <name>handle</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Characteristic handle. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/latency_client.h" line="44" column="10" bodyfile="include/bluetooth/services/latency_client.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__latency__client_a7a185e277b31f9b1c707f2ba15b3e703_1a7a185e277b31f9b1c707f2ba15b3e703" prot="public" static="no" mutable="no">
+        <type>struct bt_gatt_write_params</type>
+        <definition>struct bt_gatt_write_params bt_latency_client::latency_params</definition>
+        <argsstring></argsstring>
+        <name>latency_params</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Latency parameter. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/latency_client.h" line="47" column="27" bodyfile="include/bluetooth/services/latency_client.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__latency__client_abb2a0ce5cfabc33cc54cf98273639f94_1abb2a0ce5cfabc33cc54cf98273639f94" prot="public" static="no" mutable="no">
+        <type>struct bt_conn *</type>
+        <definition>struct bt_conn* bt_latency_client::conn</definition>
+        <argsstring></argsstring>
+        <name>conn</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Connection object. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/latency_client.h" line="50" column="14" bodyfile="include/bluetooth/services/latency_client.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__latency__client_a11db0b04c48e46af2ebe542af8c91430_1a11db0b04c48e46af2ebe542af8c91430" prot="public" static="no" mutable="no">
+        <type>atomic_t</type>
+        <definition>atomic_t bt_latency_client::state</definition>
+        <argsstring></argsstring>
+        <name>state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Internal state. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/latency_client.h" line="53" column="10" bodyfile="include/bluetooth/services/latency_client.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Latency client structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/latency_client.h" line="42" column="1" bodyfile="include/bluetooth/services/latency_client.h" bodystart="42" bodyend="54"/>
+    <listofallmembers>
+      <member refid="structbt__latency__client_abb2a0ce5cfabc33cc54cf98273639f94_1abb2a0ce5cfabc33cc54cf98273639f94" prot="public" virt="non-virtual"><scope>bt_latency_client</scope><name>conn</name></member>
+      <member refid="structbt__latency__client_a99f8d806d86325783fdbaee1c9210a37_1a99f8d806d86325783fdbaee1c9210a37" prot="public" virt="non-virtual"><scope>bt_latency_client</scope><name>handle</name></member>
+      <member refid="structbt__latency__client_a7a185e277b31f9b1c707f2ba15b3e703_1a7a185e277b31f9b1c707f2ba15b3e703" prot="public" virt="non-virtual"><scope>bt_latency_client</scope><name>latency_params</name></member>
+      <member refid="structbt__latency__client_a11db0b04c48e46af2ebe542af8c91430_1a11db0b04c48e46af2ebe542af8c91430" prot="public" virt="non-virtual"><scope>bt_latency_client</scope><name>state</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

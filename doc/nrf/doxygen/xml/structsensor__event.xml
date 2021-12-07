@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structsensor__event" kind="struct" language="C++" prot="public">
+    <compoundname>sensor_event</compoundname>
+    <includes refid="sensor__event_8h" local="no">sensor_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structsensor__event_a27202915ec55244a7c150c91c32ac016_1a27202915ec55244a7c150c91c32ac016" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header sensor_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event header. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/sensor_event.h" line="81" column="19" bodyfile="include/caf/events/sensor_event.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsensor__event_a937521ac26922ff0e6c2b82193b93804_1a937521ac26922ff0e6c2b82193b93804" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* sensor_event::descr</definition>
+        <argsstring></argsstring>
+        <name>descr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Description of the sensor. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/sensor_event.h" line="83" column="12" bodyfile="include/caf/events/sensor_event.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsensor__event_ade63153fb96ccf8b3a4fed52b96cea92_1ade63153fb96ccf8b3a4fed52b96cea92" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__dyndata" kindref="compound">event_dyndata</ref></type>
+        <definition>struct event_dyndata sensor_event::dyndata</definition>
+        <argsstring></argsstring>
+        <name>dyndata</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sensor data. Provided as floating-point values. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/sensor_event.h" line="84" column="20" bodyfile="include/caf/events/sensor_event.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Sensor event. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The sensor event is submitted when a sensor is sampled.</para>
+<para>The description field is a pointer to a string that is used to identify the sensor by the application. The Common Application Framework does not impose any standard way of describing sensors. Format and content of the sensor description is defined by the application.</para>
+<para>The dyndata contains sensor readouts represented as array of floating-point values. Content of the array depends only on selected sensor. For example an accelerometer may report acceleration in X, Y and Z axis as three floating-point values. <ref refid="group__caf__sensor__event_gaf92d41c8319140c932cf0781a819407f_1gaf92d41c8319140c932cf0781a819407f" kindref="member">sensor_event_get_data_cnt</ref> and <ref refid="group__caf__sensor__event_ga91156904173e28396c783c3ff14f2ce6_1ga91156904173e28396c783c3ff14f2ce6" kindref="member">sensor_event_get_data_ptr</ref> can be used to access the sensor data provided by a given sensor event.</para>
+<para><simplesect kind="warning"><para>The sensor event related to the given sensor must use the same description as <ref refid="structsensor__state__event" kindref="compound">sensor_state_event</ref> related to the sensor. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="6">
+        <label>event_dyndata</label>
+        <link refid="structevent__dyndata"/>
+      </node>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>sensor_event</label>
+        <link refid="structsensor__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>dyndata</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/caf/events/sensor_event.h" line="80" column="1" bodyfile="include/caf/events/sensor_event.h" bodystart="80" bodyend="85"/>
+    <listofallmembers>
+      <member refid="structsensor__event_a937521ac26922ff0e6c2b82193b93804_1a937521ac26922ff0e6c2b82193b93804" prot="public" virt="non-virtual"><scope>sensor_event</scope><name>descr</name></member>
+      <member refid="structsensor__event_ade63153fb96ccf8b3a4fed52b96cea92_1ade63153fb96ccf8b3a4fed52b96cea92" prot="public" virt="non-virtual"><scope>sensor_event</scope><name>dyndata</name></member>
+      <member refid="structsensor__event_a27202915ec55244a7c150c91c32ac016_1a27202915ec55244a7c150c91c32ac016" prot="public" virt="non-virtual"><scope>sensor_event</scope><name>header</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structcloud__data__pgps__request" kind="struct" language="C++" prot="public">
+    <compoundname>cloud_data_pgps_request</compoundname>
+    <includes refid="v2_2src_2cloud_2cloud__codec_2cloud__codec_8h" local="no">cloud_codec.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structcloud__data__pgps__request_a3208ea259735872b2ab13e91f7c76573_1a3208ea259735872b2ab13e91f7c76573" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t cloud_data_pgps_request::count</definition>
+        <argsstring></argsstring>
+        <name>count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of requested predictions. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="220" column="10" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="220" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__pgps__request_a1a4693fdf0c42d4e2eedebe64d5216e8_1a1a4693fdf0c42d4e2eedebe64d5216e8" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t cloud_data_pgps_request::interval</definition>
+        <argsstring></argsstring>
+        <name>interval</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Time in between predictions, in minutes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="222" column="10" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="222" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__pgps__request_a9b665fe73b00b1155e276dfe15bfa8ea_1a9b665fe73b00b1155e276dfe15bfa8ea" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t cloud_data_pgps_request::day</definition>
+        <argsstring></argsstring>
+        <name>day</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The day to start the prediction from. Days since GPS epoch. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="224" column="10" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="224" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__pgps__request_ae325c2983d569f409d12f6671b3847fc_1ae325c2983d569f409d12f6671b3847fc" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t cloud_data_pgps_request::time</definition>
+        <argsstring></argsstring>
+        <name>time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The start time of the prediction in seconds in a day. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="226" column="10" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="226" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__pgps__request_a77135d4fde4f8cb8413a767c145c89b9_1a77135d4fde4f8cb8413a767c145c89b9" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool cloud_data_pgps_request::queued</definition>
+        <argsstring></argsstring>
+        <name>queued</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Flag signifying that the data entry is to be encoded. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="228" column="6" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="228" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="218" column="1" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="218" bodyend="229"/>
+    <listofallmembers>
+      <member refid="structcloud__data__pgps__request_a3208ea259735872b2ab13e91f7c76573_1a3208ea259735872b2ab13e91f7c76573" prot="public" virt="non-virtual"><scope>cloud_data_pgps_request</scope><name>count</name></member>
+      <member refid="structcloud__data__pgps__request_a9b665fe73b00b1155e276dfe15bfa8ea_1a9b665fe73b00b1155e276dfe15bfa8ea" prot="public" virt="non-virtual"><scope>cloud_data_pgps_request</scope><name>day</name></member>
+      <member refid="structcloud__data__pgps__request_a1a4693fdf0c42d4e2eedebe64d5216e8_1a1a4693fdf0c42d4e2eedebe64d5216e8" prot="public" virt="non-virtual"><scope>cloud_data_pgps_request</scope><name>interval</name></member>
+      <member refid="structcloud__data__pgps__request_a77135d4fde4f8cb8413a767c145c89b9_1a77135d4fde4f8cb8413a767c145c89b9" prot="public" virt="non-virtual"><scope>cloud_data_pgps_request</scope><name>queued</name></member>
+      <member refid="structcloud__data__pgps__request_ae325c2983d569f409d12f6671b3847fc_1ae325c2983d569f409d12f6671b3847fc" prot="public" virt="non-virtual"><scope>cloud_data_pgps_request</scope><name>time</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

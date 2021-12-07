@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structmpsl__cx__thread__interface__config" kind="struct" language="C++" prot="public">
+    <compoundname>mpsl_cx_thread_interface_config</compoundname>
+    <includes refid="mpsl__cx__config__thread_8h" local="no">mpsl_cx_config_thread.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmpsl__cx__thread__interface__config_ac9400c4bf85c14e133a771f23294a87d_1ac9400c4bf85c14e133a771f23294a87d" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t mpsl_cx_thread_interface_config::request_pin</definition>
+        <argsstring></argsstring>
+        <name>request_pin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>GPIO pin number of REQUEST pin. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/mpsl/mpsl_cx_config_thread.h" line="25" column="9" bodyfile="include/mpsl/mpsl_cx_config_thread.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmpsl__cx__thread__interface__config_afd0a4c6556c2b990198392f4246a5853_1afd0a4c6556c2b990198392f4246a5853" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t mpsl_cx_thread_interface_config::priority_pin</definition>
+        <argsstring></argsstring>
+        <name>priority_pin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>GPIO pin number of PRIORITY pin. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/mpsl/mpsl_cx_config_thread.h" line="27" column="9" bodyfile="include/mpsl/mpsl_cx_config_thread.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmpsl__cx__thread__interface__config_ad635e8693b3605d9743de32881180305_1ad635e8693b3605d9743de32881180305" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t mpsl_cx_thread_interface_config::granted_pin</definition>
+        <argsstring></argsstring>
+        <name>granted_pin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>GPIO pin number of GRANTED pin. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/mpsl/mpsl_cx_config_thread.h" line="29" column="9" bodyfile="include/mpsl/mpsl_cx_config_thread.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Configuration parameters for the Thread Radio Coexistence variant. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/mpsl/mpsl_cx_config_thread.h" line="23" column="1" bodyfile="include/mpsl/mpsl_cx_config_thread.h" bodystart="23" bodyend="30"/>
+    <listofallmembers>
+      <member refid="structmpsl__cx__thread__interface__config_ad635e8693b3605d9743de32881180305_1ad635e8693b3605d9743de32881180305" prot="public" virt="non-virtual"><scope>mpsl_cx_thread_interface_config</scope><name>granted_pin</name></member>
+      <member refid="structmpsl__cx__thread__interface__config_afd0a4c6556c2b990198392f4246a5853_1afd0a4c6556c2b990198392f4246a5853" prot="public" virt="non-virtual"><scope>mpsl_cx_thread_interface_config</scope><name>priority_pin</name></member>
+      <member refid="structmpsl__cx__thread__interface__config_ac9400c4bf85c14e133a771f23294a87d_1ac9400c4bf85c14e133a771f23294a87d" prot="public" virt="non-virtual"><scope>mpsl_cx_thread_interface_config</scope><name>request_pin</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

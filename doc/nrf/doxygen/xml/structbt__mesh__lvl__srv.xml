@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__lvl__srv" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_lvl_srv</compoundname>
+    <includes refid="gen__lvl__srv_8h" local="no">gen_lvl_srv.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__lvl__srv_a25a631c4d3eb5fe367ae5178d532474a_1a25a631c4d3eb5fe367ae5178d532474a" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__lvl__srv__handlers" kindref="compound">bt_mesh_lvl_srv_handlers</ref> *const</type>
+        <definition>const struct bt_mesh_lvl_srv_handlers* const bt_mesh_lvl_srv::handlers</definition>
+        <argsstring></argsstring>
+        <name>handlers</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Application handler functions. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl_srv.h" line="145" column="43" bodyfile="include/bluetooth/mesh/gen_lvl_srv.h" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lvl__srv_abbff2c5fb36ac4ac469d2b25369d4c4a_1abbff2c5fb36ac4ac469d2b25369d4c4a" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model *</type>
+        <definition>struct bt_mesh_model* bt_mesh_lvl_srv::model</definition>
+        <argsstring></argsstring>
+        <name>model</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the mesh model entry. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl_srv.h" line="147" column="20" bodyfile="include/bluetooth/mesh/gen_lvl_srv.h" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lvl__srv_a6be5dbb98932fc96244f786b2040b6de_1a6be5dbb98932fc96244f786b2040b6de" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model_pub</type>
+        <definition>struct bt_mesh_model_pub bt_mesh_lvl_srv::pub</definition>
+        <argsstring></argsstring>
+        <name>pub</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Model publication parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl_srv.h" line="149" column="24" bodyfile="include/bluetooth/mesh/gen_lvl_srv.h" bodystart="149" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lvl__srv_a0225e554f4c60524c35bef1c429fc4d6_1a0225e554f4c60524c35bef1c429fc4d6" prot="public" static="no" mutable="no">
+        <type>struct net_buf_simple</type>
+        <definition>struct net_buf_simple bt_mesh_lvl_srv::pub_buf</definition>
+        <argsstring></argsstring>
+        <name>pub_buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl_srv.h" line="151" column="21" bodyfile="include/bluetooth/mesh/gen_lvl_srv.h" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lvl__srv_a3057feb901745d43077aec92092f20b2_1a3057feb901745d43077aec92092f20b2" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_lvl_srv::pub_data[BT_MESH_MODEL_BUF_LEN(BT_MESH_LVL_OP_STATUS, BT_MESH_LVL_MSG_MAXLEN_STATUS)]</definition>
+        <argsstring>[BT_MESH_MODEL_BUF_LEN(BT_MESH_LVL_OP_STATUS, BT_MESH_LVL_MSG_MAXLEN_STATUS)]</argsstring>
+        <name>pub_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl_srv.h" line="153" column="9" bodyfile="include/bluetooth/mesh/gen_lvl_srv.h" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__lvl__srv_aa509a88525054d3e2f6fc46d9e03348b_1aa509a88525054d3e2f6fc46d9e03348b" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structbt__mesh__tid__ctx" kindref="compound">bt_mesh_tid_ctx</ref></type>
+        <definition>struct bt_mesh_tid_ctx bt_mesh_lvl_srv::tid</definition>
+        <argsstring></argsstring>
+        <name>tid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transaction ID tracking. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_lvl_srv.h" line="156" column="22" bodyfile="include/bluetooth/mesh/gen_lvl_srv.h" bodystart="156" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Generic Level Server instance. Should be initialized with the <ref refid="group__bt__mesh__lvl__srv_ga05ada4a3cfd8fc616119ce4599365e4f_1ga05ada4a3cfd8fc616119ce4599365e4f" kindref="member">BT_MESH_LVL_SRV_INIT</ref> macro. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_mesh_lvl_srv</label>
+        <link refid="structbt__mesh__lvl__srv"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>handlers</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>tid</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_mesh_lvl_srv_handlers</label>
+        <link refid="structbt__mesh__lvl__srv__handlers"/>
+      </node>
+      <node id="3">
+        <label>bt_mesh_tid_ctx</label>
+        <link refid="structbt__mesh__tid__ctx"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/gen_lvl_srv.h" line="143" column="1" bodyfile="include/bluetooth/mesh/gen_lvl_srv.h" bodystart="143" bodyend="157"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__lvl__srv_a25a631c4d3eb5fe367ae5178d532474a_1a25a631c4d3eb5fe367ae5178d532474a" prot="public" virt="non-virtual"><scope>bt_mesh_lvl_srv</scope><name>handlers</name></member>
+      <member refid="structbt__mesh__lvl__srv_abbff2c5fb36ac4ac469d2b25369d4c4a_1abbff2c5fb36ac4ac469d2b25369d4c4a" prot="public" virt="non-virtual"><scope>bt_mesh_lvl_srv</scope><name>model</name></member>
+      <member refid="structbt__mesh__lvl__srv_a6be5dbb98932fc96244f786b2040b6de_1a6be5dbb98932fc96244f786b2040b6de" prot="public" virt="non-virtual"><scope>bt_mesh_lvl_srv</scope><name>pub</name></member>
+      <member refid="structbt__mesh__lvl__srv_a0225e554f4c60524c35bef1c429fc4d6_1a0225e554f4c60524c35bef1c429fc4d6" prot="public" virt="non-virtual"><scope>bt_mesh_lvl_srv</scope><name>pub_buf</name></member>
+      <member refid="structbt__mesh__lvl__srv_a3057feb901745d43077aec92092f20b2_1a3057feb901745d43077aec92092f20b2" prot="public" virt="non-virtual"><scope>bt_mesh_lvl_srv</scope><name>pub_data</name></member>
+      <member refid="structbt__mesh__lvl__srv_aa509a88525054d3e2f6fc46d9e03348b_1aa509a88525054d3e2f6fc46d9e03348b" prot="public" virt="non-virtual"><scope>bt_mesh_lvl_srv</scope><name>tid</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__temp" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_temp</compoundname>
+    <includes refid="light__ctl_8h" local="no">light_ctl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__temp_ace72c5a9da6e28e4ab828c52e36e1ef6_1ace72c5a9da6e28e4ab828c52e36e1ef6" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_light_temp::temp</definition>
+        <argsstring></argsstring>
+        <name>temp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light temperature </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl.h" line="41" column="10" bodyfile="include/bluetooth/mesh/light_ctl.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__temp_ad1031386fc9e2082e7471fb38c6bfd18_1ad1031386fc9e2082e7471fb38c6bfd18" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t bt_mesh_light_temp::delta_uv</definition>
+        <argsstring></argsstring>
+        <name>delta_uv</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Delta UV </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctl.h" line="43" column="9" bodyfile="include/bluetooth/mesh/light_ctl.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Light temperature parameters. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/light_ctl.h" line="39" column="1" bodyfile="include/bluetooth/mesh/light_ctl.h" bodystart="39" bodyend="44"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__temp_ad1031386fc9e2082e7471fb38c6bfd18_1ad1031386fc9e2082e7471fb38c6bfd18" prot="public" virt="non-virtual"><scope>bt_mesh_light_temp</scope><name>delta_uv</name></member>
+      <member refid="structbt__mesh__light__temp_ace72c5a9da6e28e4ab828c52e36e1ef6_1ace72c5a9da6e28e4ab828c52e36e1ef6" prot="public" virt="non-virtual"><scope>bt_mesh_light_temp</scope><name>temp</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

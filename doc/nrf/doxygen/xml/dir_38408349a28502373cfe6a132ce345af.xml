@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_38408349a28502373cfe6a132ce345af" kind="dir">
+    <compoundname>applications/pelion_client/configuration/common</compoundname>
+    <innerfile refid="pelion__client_2configuration_2common_2led__state_8h">led_state.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/pelion_client/configuration/common/"/>
+  </compounddef>
+</doxygen>

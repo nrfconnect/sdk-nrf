@@ -1,0 +1,861 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="at__utils_8h" kind="file" language="C++">
+    <compoundname>at_utils.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <includes local="no">stddef.h</includes>
+    <includes local="no">ctype.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>lib/at_cmd_parser/at_utils.h</label>
+        <link refid="at__utils_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ctype.h</label>
+      </node>
+      <node id="3">
+        <label>stddef.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__at__cmd__parser__utils_gadd39e567a3fb99b982e22fa83faf70ce_1gadd39e567a3fb99b982e22fa83faf70ce" prot="public" static="no">
+        <name>AT_PARAM_SEPARATOR</name>
+        <initializer>&apos;,&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="23" column="9" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__cmd__parser__utils_gabc8b5af16a272dc24b9fb3340f70ddaf_1gabc8b5af16a272dc24b9fb3340f70ddaf" prot="public" static="no">
+        <name>AT_RSP_SEPARATOR</name>
+        <initializer>&apos;:&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="24" column="9" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__cmd__parser__utils_gac45fc1b7cede821e5e5585dddc4348ef_1gac45fc1b7cede821e5e5585dddc4348ef" prot="public" static="no">
+        <name>AT_CMD_SEPARATOR</name>
+        <initializer>&apos;=&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="25" column="9" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__cmd__parser__utils_ga203ecae7d15294823ff9466652576e82_1ga203ecae7d15294823ff9466652576e82" prot="public" static="no">
+        <name>AT_CMD_READ_TEST_IDENTIFIER</name>
+        <initializer>&apos;?&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="26" column="9" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__cmd__parser__utils_gaa5b8c5a9fa97922d28a30c55857bc57f_1gaa5b8c5a9fa97922d28a30c55857bc57f" prot="public" static="no">
+        <name>AT_CMD_BUFFER_TERMINATOR</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="27" column="9" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__cmd__parser__utils_ga5d7f881624085c36bc42382352a8b124_1ga5d7f881624085c36bc42382352a8b124" prot="public" static="no">
+        <name>AT_CMD_STRING_IDENTIFIER</name>
+        <initializer>&apos;\&quot;&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="28" column="9" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__cmd__parser__utils_ga3a9a13fae6333f455a8e33fac2c38943_1ga3a9a13fae6333f455a8e33fac2c38943" prot="public" static="no">
+        <name>AT_STANDARD_NOTIFICATION_PREFIX</name>
+        <initializer>&apos;+&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="29" column="9" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__cmd__parser__utils_gad467d9371b2e4ccc235ae54131649e68_1gad467d9371b2e4ccc235ae54131649e68" prot="public" static="no">
+        <name>AT_PROP_NOTIFICATION_PREFX</name>
+        <initializer>&apos;%&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="30" column="9" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__at__cmd__parser__utils_gab018aa30c8f1697c724ab380947423a2_1gab018aa30c8f1697c724ab380947423a2" prot="public" static="no">
+        <name>AT_CUSTOM_COMMAND_PREFX</name>
+        <initializer>&apos;#&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="31" column="9" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__at__cmd__parser__utils_gad1b3f29d2b74f317c014bb4057a4e871_1gad1b3f29d2b74f317c014bb4057a4e871" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_notification</definition>
+        <argsstring>(char chr)</argsstring>
+        <name>is_notification</name>
+        <param>
+          <type>char</type>
+          <declname>chr</declname>
+        </param>
+        <briefdescription>
+<para>Check if character is a notification start character. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function will check if the character is a + or % which identifies a notification from the AT host.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">chr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character that should be examined</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is + or % </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is something else </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="44" column="20" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="44" bodyend="52"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser__utils_gaab7b66248176daa09ba6762264ae8301_1gaab7b66248176daa09ba6762264ae8301" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_valid_command_char</definition>
+        <argsstring>(char chr)</argsstring>
+        <name>is_valid_command_char</name>
+        <param>
+          <type>char</type>
+          <declname>chr</declname>
+        </param>
+        <briefdescription>
+<para>Verify that the character is a valid character. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Command strings can only contain alphanemuric characters.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">chr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character that should be examined</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is valid </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is not valid </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="64" column="20" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="64" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser__utils_ga9c7d62fe5981c369e69eecff8782c218_1ga9c7d62fe5981c369e69eecff8782c218" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_valid_notification_char</definition>
+        <argsstring>(char chr)</argsstring>
+        <name>is_valid_notification_char</name>
+        <param>
+          <type>char</type>
+          <declname>chr</declname>
+        </param>
+        <briefdescription>
+<para>Verify that the character is a valid character. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Notification ID strings can only contain upper case letters &apos;A&apos; through &apos;Z&apos;</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">chr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character that should be examined</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is valid </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is not valid </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="83" column="20" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="83" bodyend="92"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser__utils_ga7cb556c7e979fa8a0744caac6dfd3755_1ga7cb556c7e979fa8a0744caac6dfd3755" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_terminated</definition>
+        <argsstring>(char chr)</argsstring>
+        <name>is_terminated</name>
+        <param>
+          <type>char</type>
+          <declname>chr</declname>
+        </param>
+        <briefdescription>
+<para>Check if the character identifies the end of the buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>All strings returned from the AT Host is null terminated, this function will check if we have hit the termination character.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">chr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character that should be examined</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is 0 </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is not 0 </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="105" column="20" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="105" bodyend="112"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser__utils_gac57f5fd685cae62a1fa50166bee12c55_1gac57f5fd685cae62a1fa50166bee12c55" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_separator</definition>
+        <argsstring>(char chr)</argsstring>
+        <name>is_separator</name>
+        <param>
+          <type>char</type>
+          <declname>chr</declname>
+        </param>
+        <briefdescription>
+<para>Check if character is a valid AT string separator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Elements in the AT string can either be separated by &apos;:&apos; or &apos;,&apos;, this function will check if the character is either.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">chr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character that should be examined</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is &apos;:&apos; or &apos;,&apos; </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>In all other cases </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="125" column="20" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="125" bodyend="133"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser__utils_gabcb41f4292114dfdf675b799446ba24e_1gabcb41f4292114dfdf675b799446ba24e" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_lfcr</definition>
+        <argsstring>(char chr)</argsstring>
+        <name>is_lfcr</name>
+        <param>
+          <type>char</type>
+          <declname>chr</declname>
+        </param>
+        <briefdescription>
+<para>Check if character linefeed or carry return characters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A line shift in an AT string is always identified by a &apos;\r\n&apos; sequence</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">chr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character that should be examined</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If an line shift character is detected </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is something else </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="145" column="20" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="145" bodyend="152"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser__utils_gabdb63199586188b7573ddb540834f840_1gabdb63199586188b7573ddb540834f840" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_dblquote</definition>
+        <argsstring>(char chr)</argsstring>
+        <name>is_dblquote</name>
+        <param>
+          <type>char</type>
+          <declname>chr</declname>
+        </param>
+        <briefdescription>
+<para>Check if character is a double quote character. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A string in an AT string is always started and stopped with a double quote character.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">chr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character that should be examined</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is " </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is something else </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="165" column="20" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="165" bodyend="172"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser__utils_gaae89a598534afde6b08047f035fbe6e7_1gaae89a598534afde6b08047f035fbe6e7" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_array_start</definition>
+        <argsstring>(char chr)</argsstring>
+        <name>is_array_start</name>
+        <param>
+          <type>char</type>
+          <declname>chr</declname>
+        </param>
+        <briefdescription>
+<para>Check if character is an array start character. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>An array in an AT string is always started with a left parenthesis</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">chr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character that should be examined</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is ( </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is something else </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="184" column="20" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="184" bodyend="191"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser__utils_gadc6521a07ffcaeae0f7c06a788b49eda_1gadc6521a07ffcaeae0f7c06a788b49eda" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_array_stop</definition>
+        <argsstring>(char chr)</argsstring>
+        <name>is_array_stop</name>
+        <param>
+          <type>char</type>
+          <declname>chr</declname>
+        </param>
+        <briefdescription>
+<para>Check if character is an array stop character. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>An array in an AT string is always stopped with a right parenthesis</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">chr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character that should be examined</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is ) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is something else </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="203" column="20" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="203" bodyend="210"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser__utils_gae64f8b37c5049d4637d087cff4b28cf4_1gae64f8b37c5049d4637d087cff4b28cf4" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_number</definition>
+        <argsstring>(char chr)</argsstring>
+        <name>is_number</name>
+        <param>
+          <type>char</type>
+          <declname>chr</declname>
+        </param>
+        <briefdescription>
+<para>Check if character is a number character (including + and -) </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Detect number characters in an AT string, including the + and - sign</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">chr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character that should be examined</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is number character </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If character is something else </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="222" column="20" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="222" bodyend="229"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser__utils_ga320bfcaefc63888c9c1a12d2dab6e1ab_1ga320bfcaefc63888c9c1a12d2dab6e1ab" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_command</definition>
+        <argsstring>(const char *str)</argsstring>
+        <name>is_command</name>
+        <param>
+          <type>const char *</type>
+          <declname>str</declname>
+        </param>
+        <briefdescription>
+<para>Check if a string is a beginning of an AT command. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function will check if the string is a valid AT command prefix.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">str</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>String to examine</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the string is an AT command </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Otherwise </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="241" column="20" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="241" bodyend="262"/>
+      </memberdef>
+      <memberdef kind="function" id="group__at__cmd__parser__utils_ga20b5c2f8c82e96126e97199cc037bedd_1ga20b5c2f8c82e96126e97199cc037bedd" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool is_clac</definition>
+        <argsstring>(const char *str)</argsstring>
+        <name>is_clac</name>
+        <param>
+          <type>const char *</type>
+          <declname>str</declname>
+        </param>
+        <briefdescription>
+<para>Check if a string is a beginning of an AT CLAC response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function will check if the string is a CLAC response prefix. Valid prefixes: AT+ and AT%, except ATX</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">str</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>String to examine</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the string is a CLAC response </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Otherwise </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/at_cmd_parser/at_utils.h" line="275" column="13" bodyfile="lib/at_cmd_parser/at_utils.h" bodystart="275" bodyend="302"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>AT_UTILS_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_UTILS_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stddef.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;ctype.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="group__at__cmd__parser__utils_gadd39e567a3fb99b982e22fa83faf70ce_1gadd39e567a3fb99b982e22fa83faf70ce" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_PARAM_SEPARATOR<sp/>&apos;,&apos;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="group__at__cmd__parser__utils_gabc8b5af16a272dc24b9fb3340f70ddaf_1gabc8b5af16a272dc24b9fb3340f70ddaf" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_RSP_SEPARATOR<sp/>&apos;:&apos;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="group__at__cmd__parser__utils_gac45fc1b7cede821e5e5585dddc4348ef_1gac45fc1b7cede821e5e5585dddc4348ef" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CMD_SEPARATOR<sp/>&apos;=&apos;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="group__at__cmd__parser__utils_ga203ecae7d15294823ff9466652576e82_1ga203ecae7d15294823ff9466652576e82" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CMD_READ_TEST_IDENTIFIER<sp/>&apos;?&apos;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="group__at__cmd__parser__utils_gaa5b8c5a9fa97922d28a30c55857bc57f_1gaa5b8c5a9fa97922d28a30c55857bc57f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CMD_BUFFER_TERMINATOR<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="group__at__cmd__parser__utils_ga5d7f881624085c36bc42382352a8b124_1ga5d7f881624085c36bc42382352a8b124" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AT_CMD_STRING_IDENTIFIER<sp/>&apos;\&quot;&apos;</highlight></codeline>
+<codeline lineno="29" refid="group__at__cmd__parser__utils_ga3a9a13fae6333f455a8e33fac2c38943_1ga3a9a13fae6333f455a8e33fac2c38943" refkind="member"><highlight class="preprocessor">#define<sp/>AT_STANDARD_NOTIFICATION_PREFIX<sp/>&apos;+&apos;</highlight></codeline>
+<codeline lineno="30" refid="group__at__cmd__parser__utils_gad467d9371b2e4ccc235ae54131649e68_1gad467d9371b2e4ccc235ae54131649e68" refkind="member"><highlight class="preprocessor">#define<sp/>AT_PROP_NOTIFICATION_PREFX<sp/>&apos;%&apos;</highlight></codeline>
+<codeline lineno="31" refid="group__at__cmd__parser__utils_gab018aa30c8f1697c724ab380947423a2_1gab018aa30c8f1697c724ab380947423a2" refkind="member"><highlight class="preprocessor">#define<sp/>AT_CUSTOM_COMMAND_PREFX<sp/>&apos;#&apos;</highlight></codeline>
+<codeline lineno="32"><highlight class="preprocessor"></highlight></codeline>
+<codeline lineno="44" refid="group__at__cmd__parser__utils_gad1b3f29d2b74f317c014bb4057a4e871_1gad1b3f29d2b74f317c014bb4057a4e871" refkind="member"><highlight class="preprocessor">static<sp/>inline<sp/>bool<sp/>is_notification(char<sp/>chr)</highlight></codeline>
+<codeline lineno="45"><highlight class="preprocessor">{</highlight></codeline>
+<codeline lineno="46"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if<sp/>((chr<sp/>==<sp/>AT_STANDARD_NOTIFICATION_PREFIX)<sp/>||</highlight></codeline>
+<codeline lineno="47"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(chr<sp/>==<sp/>AT_PROP_NOTIFICATION_PREFX))<sp/>{</highlight></codeline>
+<codeline lineno="48"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/>true;</highlight></codeline>
+<codeline lineno="49"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="50"><highlight class="preprocessor"></highlight></codeline>
+<codeline lineno="51"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/>false;</highlight></codeline>
+<codeline lineno="52"><highlight class="preprocessor">}</highlight></codeline>
+<codeline lineno="53"><highlight class="preprocessor"></highlight></codeline>
+<codeline lineno="64" refid="group__at__cmd__parser__utils_gaab7b66248176daa09ba6762264ae8301_1gaab7b66248176daa09ba6762264ae8301" refkind="member"><highlight class="preprocessor">static<sp/>inline<sp/>bool<sp/>is_valid_command_char(char<sp/>chr)</highlight></codeline>
+<codeline lineno="65"><highlight class="preprocessor">{</highlight></codeline>
+<codeline lineno="66"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if<sp/>(isalpha((int)chr)<sp/>||<sp/>isdigit((int)chr))<sp/>{</highlight></codeline>
+<codeline lineno="67"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/>true;</highlight></codeline>
+<codeline lineno="68"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="69"><highlight class="preprocessor"></highlight></codeline>
+<codeline lineno="70"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/>false;</highlight></codeline>
+<codeline lineno="71"><highlight class="preprocessor">}</highlight></codeline>
+<codeline lineno="72"><highlight class="preprocessor"></highlight></codeline>
+<codeline lineno="83" refid="group__at__cmd__parser__utils_ga9c7d62fe5981c369e69eecff8782c218_1ga9c7d62fe5981c369e69eecff8782c218" refkind="member"><highlight class="preprocessor">static<sp/>inline<sp/>bool<sp/>is_valid_notification_char(char<sp/>chr)</highlight></codeline>
+<codeline lineno="84"><highlight class="preprocessor">{</highlight></codeline>
+<codeline lineno="85"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>chr<sp/>=<sp/>toupper((int)chr);</highlight></codeline>
+<codeline lineno="86"><highlight class="preprocessor"></highlight></codeline>
+<codeline lineno="87"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if<sp/>((chr<sp/>&gt;=<sp/>&apos;A&apos;)<sp/>&amp;&amp;<sp/>(chr<sp/>&lt;=<sp/>&apos;Z&apos;))<sp/>{</highlight></codeline>
+<codeline lineno="88"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/>true;</highlight></codeline>
+<codeline lineno="89"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="90"><highlight class="preprocessor"></highlight></codeline>
+<codeline lineno="91"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/>false;</highlight></codeline>
+<codeline lineno="92"><highlight class="preprocessor">}</highlight></codeline>
+<codeline lineno="93"><highlight class="preprocessor"></highlight></codeline>
+<codeline lineno="105" refid="group__at__cmd__parser__utils_ga7cb556c7e979fa8a0744caac6dfd3755_1ga7cb556c7e979fa8a0744caac6dfd3755" refkind="member"><highlight class="preprocessor">static<sp/>inline<sp/>bool<sp/>is_terminated(char<sp/>chr)</highlight></codeline>
+<codeline lineno="106"><highlight class="preprocessor">{</highlight></codeline>
+<codeline lineno="107"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if<sp/>(chr<sp/>==<sp/>AT_CMD_BUFFER_TERMINATOR)<sp/>{</highlight></codeline>
+<codeline lineno="108"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/>true;</highlight></codeline>
+<codeline lineno="109"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="110"><highlight class="preprocessor"></highlight></codeline>
+<codeline lineno="111"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/>false;</highlight></codeline>
+<codeline lineno="112"><highlight class="preprocessor">}</highlight></codeline>
+<codeline lineno="113"><highlight class="preprocessor"></highlight></codeline>
+<codeline lineno="125" refid="group__at__cmd__parser__utils_gac57f5fd685cae62a1fa50166bee12c55_1gac57f5fd685cae62a1fa50166bee12c55" refkind="member"><highlight class="preprocessor">static<sp/>inline<sp/>bool<sp/>is_separator(char<sp/>chr)</highlight></codeline>
+<codeline lineno="126"><highlight class="preprocessor">{</highlight></codeline>
+<codeline lineno="127"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if<sp/>((chr<sp/>==<sp/>AT_PARAM_SEPARATOR)<sp/>||<sp/>(chr<sp/>==<sp/>AT_RSP_SEPARATOR)<sp/>||</highlight></codeline>
+<codeline lineno="128"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(chr<sp/>==<sp/>AT_CMD_SEPARATOR))<sp/>{</highlight></codeline>
+<codeline lineno="129"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/>true;</highlight></codeline>
+<codeline lineno="130"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="131"><highlight class="preprocessor"></highlight></codeline>
+<codeline lineno="132"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/>false;</highlight></codeline>
+<codeline lineno="133"><highlight class="preprocessor">}</highlight></codeline>
+<codeline lineno="134"><highlight class="preprocessor"></highlight></codeline>
+<codeline lineno="145" refid="group__at__cmd__parser__utils_gabcb41f4292114dfdf675b799446ba24e_1gabcb41f4292114dfdf675b799446ba24e" refkind="member"><highlight class="preprocessor">static<sp/>inline<sp/>bool<sp/>is_lfcr(char<sp/>chr)</highlight></codeline>
+<codeline lineno="146"><highlight class="preprocessor">{</highlight></codeline>
+<codeline lineno="147"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if<sp/>((chr<sp/>==<sp/>&apos;\r&apos;)<sp/>||<sp/>(chr<sp/>==<sp/>&apos;\n&apos;))<sp/>{</highlight></codeline>
+<codeline lineno="148"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/>true;</highlight></codeline>
+<codeline lineno="149"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="150"><highlight class="preprocessor"></highlight></codeline>
+<codeline lineno="151"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/>false;</highlight></codeline>
+<codeline lineno="152"><highlight class="preprocessor">}</highlight></codeline>
+<codeline lineno="153"><highlight class="preprocessor"></highlight></codeline>
+<codeline lineno="165" refid="group__at__cmd__parser__utils_gabdb63199586188b7573ddb540834f840_1gabdb63199586188b7573ddb540834f840" refkind="member"><highlight class="preprocessor">static<sp/>inline<sp/>bool<sp/>is_dblquote(char<sp/>chr)</highlight></codeline>
+<codeline lineno="166"><highlight class="preprocessor">{</highlight></codeline>
+<codeline lineno="167"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if<sp/>(chr<sp/>==<sp/>&apos;&quot;</highlight><highlight class="normal">&apos;)<sp/>{</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="172"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
+<codeline lineno="184" refid="group__at__cmd__parser__utils_gaae89a598534afde6b08047f035fbe6e7_1gaae89a598534afde6b08047f035fbe6e7" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__at__cmd__parser__utils_gaae89a598534afde6b08047f035fbe6e7_1gaae89a598534afde6b08047f035fbe6e7" kindref="member">is_array_start</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>chr)</highlight></codeline>
+<codeline lineno="185"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(chr<sp/>==<sp/></highlight><highlight class="charliteral">&apos;(&apos;</highlight><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="191"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight></codeline>
+<codeline lineno="203" refid="group__at__cmd__parser__utils_gadc6521a07ffcaeae0f7c06a788b49eda_1gadc6521a07ffcaeae0f7c06a788b49eda" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__at__cmd__parser__utils_gadc6521a07ffcaeae0f7c06a788b49eda_1gadc6521a07ffcaeae0f7c06a788b49eda" kindref="member">is_array_stop</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>chr)</highlight></codeline>
+<codeline lineno="204"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(chr<sp/>==<sp/></highlight><highlight class="charliteral">&apos;)&apos;</highlight><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="210"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight></codeline>
+<codeline lineno="222" refid="group__at__cmd__parser__utils_gae64f8b37c5049d4637d087cff4b28cf4_1gae64f8b37c5049d4637d087cff4b28cf4" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__at__cmd__parser__utils_gae64f8b37c5049d4637d087cff4b28cf4_1gae64f8b37c5049d4637d087cff4b28cf4" kindref="member">is_number</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>chr)</highlight></codeline>
+<codeline lineno="223"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(isdigit((</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">)chr)<sp/>||<sp/>(chr<sp/>==<sp/></highlight><highlight class="charliteral">&apos;-&apos;</highlight><highlight class="normal">)<sp/>||<sp/>(chr<sp/>==<sp/></highlight><highlight class="charliteral">&apos;+&apos;</highlight><highlight class="normal">))<sp/>{</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"></highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="229"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight></codeline>
+<codeline lineno="241" refid="group__at__cmd__parser__utils_ga320bfcaefc63888c9c1a12d2dab6e1ab_1ga320bfcaefc63888c9c1a12d2dab6e1ab" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__at__cmd__parser__utils_ga320bfcaefc63888c9c1a12d2dab6e1ab_1ga320bfcaefc63888c9c1a12d2dab6e1ab" kindref="member">is_command</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*str)</highlight></codeline>
+<codeline lineno="242"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(strlen(str)<sp/>&lt;<sp/>2)<sp/>{</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"></highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((toupper((</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">)str[0])<sp/>!=<sp/></highlight><highlight class="charliteral">&apos;A&apos;</highlight><highlight class="normal">)<sp/>||<sp/>(toupper((</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">)str[1])<sp/>!=<sp/></highlight><highlight class="charliteral">&apos;T&apos;</highlight><highlight class="normal">))<sp/>{</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"></highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Third<sp/>character<sp/>has<sp/>be<sp/>one<sp/>of<sp/>the<sp/>command<sp/>special<sp/>characters.</highlight></codeline>
+<codeline lineno="252"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<sp/>The<sp/>special<sp/>case<sp/>is<sp/>a<sp/>lone<sp/>&quot;AT&quot;<sp/>command.</highlight></codeline>
+<codeline lineno="253"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((str[2]<sp/>==<sp/><ref refid="group__at__cmd__parser__utils_ga3a9a13fae6333f455a8e33fac2c38943_1ga3a9a13fae6333f455a8e33fac2c38943" kindref="member">AT_STANDARD_NOTIFICATION_PREFIX</ref>)<sp/>||</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(str[2]<sp/>==<sp/><ref refid="group__at__cmd__parser__utils_gad467d9371b2e4ccc235ae54131649e68_1gad467d9371b2e4ccc235ae54131649e68" kindref="member">AT_PROP_NOTIFICATION_PREFX</ref>)<sp/>||</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(str[2]<sp/>==<sp/><ref refid="group__at__cmd__parser__utils_gab018aa30c8f1697c724ab380947423a2_1gab018aa30c8f1697c724ab380947423a2" kindref="member">AT_CUSTOM_COMMAND_PREFX</ref>)<sp/>||</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__at__cmd__parser__utils_gabcb41f4292114dfdf675b799446ba24e_1gabcb41f4292114dfdf675b799446ba24e" kindref="member">is_lfcr</ref>(str[2])<sp/>||<sp/><ref refid="group__at__cmd__parser__utils_ga7cb556c7e979fa8a0744caac6dfd3755_1ga7cb556c7e979fa8a0744caac6dfd3755" kindref="member">is_terminated</ref>(str[2]))<sp/>{</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"></highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="262"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"></highlight></codeline>
+<codeline lineno="275" refid="group__at__cmd__parser__utils_ga20b5c2f8c82e96126e97199cc037bedd_1ga20b5c2f8c82e96126e97199cc037bedd" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__at__cmd__parser__utils_ga20b5c2f8c82e96126e97199cc037bedd_1ga20b5c2f8c82e96126e97199cc037bedd" kindref="member">is_clac</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*str)</highlight></codeline>
+<codeline lineno="276"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>skip<sp/>leading<sp/>&lt;CR&gt;&lt;LF&gt;,<sp/>if<sp/>any,<sp/>as<sp/>check<sp/>not<sp/>from<sp/>index<sp/>0<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(<ref refid="group__at__cmd__parser__utils_gabcb41f4292114dfdf675b799446ba24e_1gabcb41f4292114dfdf675b799446ba24e" kindref="member">is_lfcr</ref>(*str))<sp/>{</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>str++;</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"></highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(strlen(str)<sp/>&lt;<sp/>4)<sp/>{</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="284"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"></highlight></codeline>
+<codeline lineno="286"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((toupper(str[0])<sp/>!=<sp/></highlight><highlight class="charliteral">&apos;A&apos;</highlight><highlight class="normal">)<sp/>||<sp/>(toupper(str[1])<sp/>!=<sp/></highlight><highlight class="charliteral">&apos;T&apos;</highlight><highlight class="normal">))<sp/>{</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Not<sp/>an<sp/>AT<sp/>command<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="288"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"></highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((toupper(str[2])<sp/>!=<sp/></highlight><highlight class="charliteral">&apos;+&apos;</highlight><highlight class="normal">)<sp/>&amp;&amp;<sp/>(toupper(str[2])<sp/>!=<sp/></highlight><highlight class="charliteral">&apos;%&apos;</highlight><highlight class="normal">))<sp/>{</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Neither<sp/>AT+<sp/>nor<sp/>AT%<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"></highlight></codeline>
+<codeline lineno="296"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((toupper(str[2])<sp/>==<sp/></highlight><highlight class="charliteral">&apos;%&apos;</highlight><highlight class="normal">)<sp/>&amp;&amp;<sp/>(toupper(str[3])<sp/>==<sp/></highlight><highlight class="charliteral">&apos;X&apos;</highlight><highlight class="normal">))<sp/>{</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Ignore<sp/>AT%X<sp/>to<sp/>avoid<sp/>false<sp/>detect<sp/>(read<sp/>resp<sp/>XCOEX0<sp/>etc.)<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="298"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="300"><highlight class="normal"></highlight></codeline>
+<codeline lineno="301"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="302"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="305"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>AT_UTILS_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="lib/at_cmd_parser/at_utils.h"/>
+  </compounddef>
+</doxygen>

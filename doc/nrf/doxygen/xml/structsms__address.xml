@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structsms__address" kind="struct" language="C++" prot="public">
+    <compoundname>sms_address</compoundname>
+    <includes refid="sms_8h" local="no">sms.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structsms__address_ab8d20ee2557e3d68b0fe5c6e76b21dcf_1ab8d20ee2557e3d68b0fe5c6e76b21dcf" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char sms_address::address_str[20+1]</definition>
+        <argsstring>[20+1]</argsstring>
+        <name>address_str</name>
+        <briefdescription>
+<para>Address in NUL-terminated string format. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="70" column="6" bodyfile="include/modem/sms.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsms__address_a797f89fc9361ae031e4359785f97e846_1a797f89fc9361ae031e4359785f97e846" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t sms_address::length</definition>
+        <argsstring></argsstring>
+        <name>length</name>
+        <briefdescription>
+<para>Address length in number of characters. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="72" column="9" bodyfile="include/modem/sms.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsms__address_a4f4a560887525bc6ac8745712b5e1434_1a4f4a560887525bc6ac8745712b5e1434" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t sms_address::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+<para>Address type as specified in 3GPP TS 23.040 Section 9.1.2.5. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="74" column="9" bodyfile="include/modem/sms.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>SMS address, i.e., phone number. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This may represent either originating or destination address and is specified in 3GPP TS 23.040 Section 9.1.2.5. </para>
+    </detaileddescription>
+    <location file="include/modem/sms.h" line="68" column="1" bodyfile="include/modem/sms.h" bodystart="68" bodyend="75"/>
+    <listofallmembers>
+      <member refid="structsms__address_ab8d20ee2557e3d68b0fe5c6e76b21dcf_1ab8d20ee2557e3d68b0fe5c6e76b21dcf" prot="public" virt="non-virtual"><scope>sms_address</scope><name>address_str</name></member>
+      <member refid="structsms__address_a797f89fc9361ae031e4359785f97e846_1a797f89fc9361ae031e4359785f97e846" prot="public" virt="non-virtual"><scope>sms_address</scope><name>length</name></member>
+      <member refid="structsms__address_a4f4a560887525bc6ac8745712b5e1434_1a4f4a560887525bc6ac8745712b5e1434" prot="public" virt="non-virtual"><scope>sms_address</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

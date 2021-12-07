@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__bms__authorize__params" kind="struct" language="C++" prot="public">
+    <compoundname>bt_bms_authorize_params</compoundname>
+    <includes refid="bms_8h" local="no">bms.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__bms__authorize__params_af67c0454b52b722cd0e54fe898acfd26_1af67c0454b52b722cd0e54fe898acfd26" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__bms_ga349279ee23f69b3119e119338ea12eb9_1ga349279ee23f69b3119e119338ea12eb9" kindref="member">bt_bms_op</ref></type>
+        <definition>enum bt_bms_op bt_bms_authorize_params::op_code</definition>
+        <argsstring></argsstring>
+        <name>op_code</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bms.h" line="42" column="15" bodyfile="include/bluetooth/services/bms.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__bms__authorize__params_a21a9242520bba70761e0cdd3886f5da2_1a21a9242520bba70761e0cdd3886f5da2" prot="public" static="no" mutable="no">
+        <type>const uint8_t *</type>
+        <definition>const uint8_t* bt_bms_authorize_params::code</definition>
+        <argsstring></argsstring>
+        <name>code</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bms.h" line="45" column="15" bodyfile="include/bluetooth/services/bms.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__bms__authorize__params_ad8af0457f569add7d1143bd0e5ea5670_1ad8af0457f569add7d1143bd0e5ea5670" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_bms_authorize_params::code_len</definition>
+        <argsstring></argsstring>
+        <name>code_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/bms.h" line="48" column="10" bodyfile="include/bluetooth/services/bms.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>BMS authorization callback parameters. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/bms.h" line="40" column="1" bodyfile="include/bluetooth/services/bms.h" bodystart="40" bodyend="49"/>
+    <listofallmembers>
+      <member refid="structbt__bms__authorize__params_a21a9242520bba70761e0cdd3886f5da2_1a21a9242520bba70761e0cdd3886f5da2" prot="public" virt="non-virtual"><scope>bt_bms_authorize_params</scope><name>code</name></member>
+      <member refid="structbt__bms__authorize__params_ad8af0457f569add7d1143bd0e5ea5670_1ad8af0457f569add7d1143bd0e5ea5670" prot="public" virt="non-virtual"><scope>bt_bms_authorize_params</scope><name>code_len</name></member>
+      <member refid="structbt__bms__authorize__params_af67c0454b52b722cd0e54fe898acfd26_1af67c0454b52b722cd0e54fe898acfd26" prot="public" virt="non-virtual"><scope>bt_bms_authorize_params</scope><name>op_code</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

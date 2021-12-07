@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structdfu__target" kind="struct" language="C++" prot="public">
+    <compoundname>dfu_target</compoundname>
+    <includes refid="dfu__target_8h" local="no">dfu_target.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structdfu__target_a3df8ae97c6877c88642905689e6ed815_1a3df8ae97c6877c88642905689e6ed815" prot="public" static="no" mutable="no">
+        <type>int(*</type>
+        <definition>int(* dfu_target::init) (size_t file_size, dfu_target_callback_t cb)</definition>
+        <argsstring>)(size_t file_size, dfu_target_callback_t cb)</argsstring>
+        <name>init</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target.h" line="40" column="1" bodyfile="include/dfu/dfu_target.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdfu__target_ad48ea0c23a032d13739d4a1e46188b16_1ad48ea0c23a032d13739d4a1e46188b16" prot="public" static="no" mutable="no">
+        <type>int(*</type>
+        <definition>int(* dfu_target::offset_get) (size_t *offset)</definition>
+        <argsstring>)(size_t *offset)</argsstring>
+        <name>offset_get</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target.h" line="41" column="1" bodyfile="include/dfu/dfu_target.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdfu__target_a733cd92a8b6c3375cc1453c80a00b3c3_1a733cd92a8b6c3375cc1453c80a00b3c3" prot="public" static="no" mutable="no">
+        <type>int(*</type>
+        <definition>int(* dfu_target::write) (const void *const buf, size_t len)</definition>
+        <argsstring>)(const void *const buf, size_t len)</argsstring>
+        <name>write</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target.h" line="42" column="1" bodyfile="include/dfu/dfu_target.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structdfu__target_a68ecdbb7596a2ef382721ff1b6d56f59_1a68ecdbb7596a2ef382721ff1b6d56f59" prot="public" static="no" mutable="no">
+        <type>int(*</type>
+        <definition>int(* dfu_target::done) (bool successful)</definition>
+        <argsstring>)(bool successful)</argsstring>
+        <name>done</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/dfu/dfu_target.h" line="43" column="1" bodyfile="include/dfu/dfu_target.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Functions which needs to be supported by all DFU targets. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/dfu/dfu_target.h" line="39" column="1" bodyfile="include/dfu/dfu_target.h" bodystart="39" bodyend="44"/>
+    <listofallmembers>
+      <member refid="structdfu__target_a68ecdbb7596a2ef382721ff1b6d56f59_1a68ecdbb7596a2ef382721ff1b6d56f59" prot="public" virt="non-virtual"><scope>dfu_target</scope><name>done</name></member>
+      <member refid="structdfu__target_a3df8ae97c6877c88642905689e6ed815_1a3df8ae97c6877c88642905689e6ed815" prot="public" virt="non-virtual"><scope>dfu_target</scope><name>init</name></member>
+      <member refid="structdfu__target_ad48ea0c23a032d13739d4a1e46188b16_1ad48ea0c23a032d13739d4a1e46188b16" prot="public" virt="non-virtual"><scope>dfu_target</scope><name>offset_get</name></member>
+      <member refid="structdfu__target_a733cd92a8b6c3375cc1453c80a00b3c3_1a733cd92a8b6c3375cc1453c80a00b3c3" prot="public" virt="non-virtual"><scope>dfu_target</scope><name>write</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

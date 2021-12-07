@@ -1,0 +1,239 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="peer__conn__event_8h" kind="file" language="C++">
+    <compoundname>peer_conn_event.h</compoundname>
+    <includes local="no">string.h</includes>
+    <includes local="no">toolchain/common.h</includes>
+    <includes refid="event__manager_8h" local="no">event_manager.h</includes>
+    <includes refid="event__manager__profiler_8h" local="no">event_manager_profiler.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/connectivity_bridge/src/events/peer_conn_event.h</label>
+        <link refid="peer__conn__event_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>event_manager.h</label>
+        <link refid="event__manager_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>event_manager_profiler.h</label>
+        <link refid="event__manager__profiler_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>profiler.h</label>
+        <link refid="profiler_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>event_manager_priv.h</label>
+      </node>
+      <node id="14">
+        <label>event_manager_profiler_priv.h</label>
+      </node>
+      <node id="9">
+        <label>logging/log_ctrl.h</label>
+      </node>
+      <node id="2">
+        <label>string.h</label>
+      </node>
+      <node id="8">
+        <label>sys/__assert.h</label>
+      </node>
+      <node id="7">
+        <label>sys/reboot.h</label>
+      </node>
+      <node id="12">
+        <label>sys/util.h</label>
+      </node>
+      <node id="3">
+        <label>toolchain/common.h</label>
+      </node>
+      <node id="5">
+        <label>zephyr.h</label>
+      </node>
+      <node id="6">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structpeer__conn__event" prot="public">peer_conn_event</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__peer__conn__event_gae853f8afe5afdcea92d0ba4964add362_1gae853f8afe5afdcea92d0ba4964add362" prot="public" static="no">
+        <name>PEER_ID_LIST</name>
+        <initializer>	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(USB)		\
+	<ref refid="config__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" kindref="member">X</ref>(BLE)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Peer type list. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/peer_conn_event.h" line="27" column="9" bodyfile="applications/connectivity_bridge/src/events/peer_conn_event.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="peer__conn__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" prot="public" static="no">
+        <name>X</name>
+        <param><defname>name</defname></param>
+        <initializer>_CONCAT(PEER_ID_, name),</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/peer_conn_event.h" line="33" column="9" bodyfile="applications/connectivity_bridge/src/events/peer_conn_event.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__peer__conn__event_ga94dc9b7a737f8d6a3d887f3d3274fbd6_1ga94dc9b7a737f8d6a3d887f3d3274fbd6" prot="public" static="no" strong="no">
+        <type></type>
+        <name>peer_id</name>
+        <enumvalue id="group__peer__conn__event_ga94dc9b7a737f8d6a3d887f3d3274fbd6_1gga94dc9b7a737f8d6a3d887f3d3274fbd6" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(PEER_ID_,  USB )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__peer__conn__event_ga94dc9b7a737f8d6a3d887f3d3274fbd6_1gga94dc9b7a737f8d6a3d887f3d3274fbd6" prot="public">
+          <name>_CONCAT</name>
+          <initializer>=(PEER_ID_,  USB )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__peer__conn__event_ga94dc9b7a737f8d6a3d887f3d3274fbd6_1gga94dc9b7a737f8d6a3d887f3d3274fbd6a2e90495e32d6e3f246a6e8c98b983760" prot="public">
+          <name>PEER_ID_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Peer ID list. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/peer_conn_event.h" line="32" column="1" bodyfile="applications/connectivity_bridge/src/events/peer_conn_event.h" bodystart="32" bodyend="38"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__peer__conn__event_ga33b043d79cb9d6cbd9c0ae1372c984e0_1ga33b043d79cb9d6cbd9c0ae1372c984e0" prot="public" static="no" strong="no">
+        <type></type>
+        <name>peer_conn_state</name>
+        <enumvalue id="group__peer__conn__event_ga33b043d79cb9d6cbd9c0ae1372c984e0_1gga33b043d79cb9d6cbd9c0ae1372c984e0ac89a6ebf34e029db43c011d000d166f6" prot="public">
+          <name>PEER_STATE_CONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__peer__conn__event_ga33b043d79cb9d6cbd9c0ae1372c984e0_1gga33b043d79cb9d6cbd9c0ae1372c984e0af77a841c1c7c80bda9c81dc293a213c2" prot="public">
+          <name>PEER_STATE_DISCONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/peer_conn_event.h" line="40" column="1" bodyfile="applications/connectivity_bridge/src/events/peer_conn_event.h" bodystart="40" bodyend="43"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_PEER_CONN_EVENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_PEER_CONN_EVENT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;toolchain/common.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="event__manager_8h" kindref="compound">event_manager.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="event__manager__profiler_8h" kindref="compound">event_manager_profiler.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="group__peer__conn__event_gae853f8afe5afdcea92d0ba4964add362_1gae853f8afe5afdcea92d0ba4964add362" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PEER_ID_LIST<sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="28"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>X(USB)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="29"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>X(BLE)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="group__peer__conn__event_ga94dc9b7a737f8d6a3d887f3d3274fbd6_1ga94dc9b7a737f8d6a3d887f3d3274fbd6" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__peer__conn__event_ga94dc9b7a737f8d6a3d887f3d3274fbd6_1ga94dc9b7a737f8d6a3d887f3d3274fbd6" kindref="member">peer_id</ref><sp/>{</highlight></codeline>
+<codeline lineno="33" refid="peer__conn__event_8h_a826edd40636cbaa44266b97c8c6a4fa3_1a826edd40636cbaa44266b97c8c6a4fa3" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>X(name)<sp/>_CONCAT(PEER_ID_,<sp/>name),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__peer__conn__event_gae853f8afe5afdcea92d0ba4964add362_1gae853f8afe5afdcea92d0ba4964add362" kindref="member">PEER_ID_LIST</ref></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#undef<sp/>X</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__peer__conn__event_ga94dc9b7a737f8d6a3d887f3d3274fbd6_1gga94dc9b7a737f8d6a3d887f3d3274fbd6a2e90495e32d6e3f246a6e8c98b983760" kindref="member">PEER_ID_COUNT</ref></highlight></codeline>
+<codeline lineno="38" refid="group__peer__conn__event_ga94dc9b7a737f8d6a3d887f3d3274fbd6_1gga94dc9b7a737f8d6a3d887f3d3274fbd6a2e90495e32d6e3f246a6e8c98b983760" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="group__peer__conn__event_ga33b043d79cb9d6cbd9c0ae1372c984e0_1ga33b043d79cb9d6cbd9c0ae1372c984e0" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__peer__conn__event_ga33b043d79cb9d6cbd9c0ae1372c984e0_1ga33b043d79cb9d6cbd9c0ae1372c984e0" kindref="member">peer_conn_state</ref><sp/>{</highlight></codeline>
+<codeline lineno="41" refid="group__peer__conn__event_ga33b043d79cb9d6cbd9c0ae1372c984e0_1gga33b043d79cb9d6cbd9c0ae1372c984e0ac89a6ebf34e029db43c011d000d166f6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__peer__conn__event_ga33b043d79cb9d6cbd9c0ae1372c984e0_1gga33b043d79cb9d6cbd9c0ae1372c984e0ac89a6ebf34e029db43c011d000d166f6" kindref="member">PEER_STATE_CONNECTED</ref>,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__peer__conn__event_ga33b043d79cb9d6cbd9c0ae1372c984e0_1gga33b043d79cb9d6cbd9c0ae1372c984e0af77a841c1c7c80bda9c81dc293a213c2" kindref="member">PEER_STATE_DISCONNECTED</ref></highlight></codeline>
+<codeline lineno="43" refid="group__peer__conn__event_ga33b043d79cb9d6cbd9c0ae1372c984e0_1gga33b043d79cb9d6cbd9c0ae1372c984e0af77a841c1c7c80bda9c81dc293a213c2" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="structpeer__conn__event" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structpeer__conn__event" kindref="compound">peer_conn_event</ref><sp/>{</highlight></codeline>
+<codeline lineno="47" refid="structpeer__conn__event_a4ecc6722a10a8c4dd23d707b70571537_1a4ecc6722a10a8c4dd23d707b70571537" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structevent__header" kindref="compound">event_header</ref><sp/><ref refid="structpeer__conn__event_a4ecc6722a10a8c4dd23d707b70571537_1a4ecc6722a10a8c4dd23d707b70571537" kindref="member">header</ref>;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="structpeer__conn__event_a05b0e6303180edf7e3fd420f5872c734_1a05b0e6303180edf7e3fd420f5872c734" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__peer__conn__event_ga94dc9b7a737f8d6a3d887f3d3274fbd6_1ga94dc9b7a737f8d6a3d887f3d3274fbd6" kindref="member">peer_id</ref><sp/><ref refid="structpeer__conn__event_a05b0e6303180edf7e3fd420f5872c734_1a05b0e6303180edf7e3fd420f5872c734" kindref="member">peer_id</ref>;</highlight></codeline>
+<codeline lineno="50" refid="structpeer__conn__event_a6975df5787212985202eb2349abde353_1a6975df5787212985202eb2349abde353" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structpeer__conn__event_a6975df5787212985202eb2349abde353_1a6975df5787212985202eb2349abde353" kindref="member">dev_idx</ref>;</highlight></codeline>
+<codeline lineno="51" refid="structpeer__conn__event_a68e51710826904bd6aa81a80181eba22_1a68e51710826904bd6aa81a80181eba22" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__peer__conn__event_ga33b043d79cb9d6cbd9c0ae1372c984e0_1ga33b043d79cb9d6cbd9c0ae1372c984e0" kindref="member">peer_conn_state</ref><sp/><ref refid="structpeer__conn__event_a68e51710826904bd6aa81a80181eba22_1a68e51710826904bd6aa81a80181eba22" kindref="member">conn_state</ref>;</highlight></codeline>
+<codeline lineno="52" refid="structpeer__conn__event_ac4cf40838dcafba04cb4ca6c0a4b0ecc_1ac4cf40838dcafba04cb4ca6c0a4b0ecc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structpeer__conn__event_ac4cf40838dcafba04cb4ca6c0a4b0ecc_1ac4cf40838dcafba04cb4ca6c0a4b0ecc" kindref="member">baudrate</ref>;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><ref refid="group__event__manager_gade0652b21cddf1a6b4d58e668b402caa_1gade0652b21cddf1a6b4d58e668b402caa" kindref="member">EVENT_TYPE_DECLARE</ref>(<ref refid="structpeer__conn__event" kindref="compound">peer_conn_event</ref>);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_PEER_CONN_EVENT_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/connectivity_bridge/src/events/peer_conn_event.h"/>
+  </compounddef>
+</doxygen>

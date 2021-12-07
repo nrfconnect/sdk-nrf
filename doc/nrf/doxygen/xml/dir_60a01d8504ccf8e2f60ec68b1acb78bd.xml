@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_60a01d8504ccf8e2f60ec68b1acb78bd" kind="dir">
+    <compoundname>applications/serial_lte_modem/src</compoundname>
+    <innerdir refid="dir_f120738490f65f1b4b5ab2af32c6868e">applications/serial_lte_modem/src/ftp_c</innerdir>
+    <innerdir refid="dir_9c48bc33daa2c96c03ada53c4d368684">applications/serial_lte_modem/src/gnss</innerdir>
+    <innerdir refid="dir_ab656675c48d5006874ed47709aaa88e">applications/serial_lte_modem/src/gpio</innerdir>
+    <innerdir refid="dir_62c5a78cd0a02d36c7a5c459fef7d49a">applications/serial_lte_modem/src/http_c</innerdir>
+    <innerdir refid="dir_4a4aeaec040a4be5d0f2b22b6eb52bf9">applications/serial_lte_modem/src/mqtt_c</innerdir>
+    <innerdir refid="dir_22803ae85420a7f79cbedaa82be66496">applications/serial_lte_modem/src/twi</innerdir>
+    <innerfile refid="slm__at__cmng_8h">slm_at_cmng.h</innerfile>
+    <innerfile refid="slm__at__fota_8h">slm_at_fota.h</innerfile>
+    <innerfile refid="slm__at__host_8h">slm_at_host.h</innerfile>
+    <innerfile refid="slm__at__icmp_8h">slm_at_icmp.h</innerfile>
+    <innerfile refid="slm__at__sms_8h">slm_at_sms.h</innerfile>
+    <innerfile refid="slm__at__socket_8h">slm_at_socket.h</innerfile>
+    <innerfile refid="slm__at__tcp__proxy_8h">slm_at_tcp_proxy.h</innerfile>
+    <innerfile refid="slm__at__udp__proxy_8h">slm_at_udp_proxy.h</innerfile>
+    <innerfile refid="slm__defines_8h">slm_defines.h</innerfile>
+    <innerfile refid="slm__native__tls_8h">slm_native_tls.h</innerfile>
+    <innerfile refid="slm__util_8h">slm_util.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/serial_lte_modem/src/"/>
+  </compounddef>
+</doxygen>

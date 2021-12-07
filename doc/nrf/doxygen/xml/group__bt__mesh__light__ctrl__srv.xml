@@ -1,0 +1,402 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__light__ctrl__srv" kind="group">
+    <compoundname>bt_mesh_light_ctrl_srv</compoundname>
+    <title>Light Lightness Control Server</title>
+    <innerclass refid="structbt__mesh__light__ctrl__srv__cfg" prot="public">bt_mesh_light_ctrl_srv_cfg</innerclass>
+    <innerclass refid="structbt__mesh__light__ctrl__srv__reg__cfg" prot="public">bt_mesh_light_ctrl_srv_reg_cfg</innerclass>
+    <innerclass refid="structbt__mesh__light__ctrl__srv__reg" prot="public">bt_mesh_light_ctrl_srv_reg</innerclass>
+    <innerclass refid="structbt__mesh__light__ctrl__srv" prot="public">bt_mesh_light_ctrl_srv</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__mesh__light__ctrl__srv_1ga5ab0fe016100e77a9caafbbb18912c7d" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_light_ctrl_srv_state</name>
+        <enumvalue id="group__bt__mesh__light__ctrl__srv_ga5ab0fe016100e77a9caafbbb18912c7d_1gga5ab0fe016100e77a9caafbbb18912c7dabbdce276617ba2641d56b7a54a8982a1" prot="public">
+          <name>LIGHT_CTRL_STATE_STANDBY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Standby state </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl__srv_ga5ab0fe016100e77a9caafbbb18912c7d_1gga5ab0fe016100e77a9caafbbb18912c7da9b97b8aaf64f0411de2cba1c803c5588" prot="public">
+          <name>LIGHT_CTRL_STATE_ON</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>On state </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl__srv_ga5ab0fe016100e77a9caafbbb18912c7d_1gga5ab0fe016100e77a9caafbbb18912c7da95bacece9b3421a815649e0c2e1e771e" prot="public">
+          <name>LIGHT_CTRL_STATE_PROLONG</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Prolong state </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__light__ctrl__srv_ga5ab0fe016100e77a9caafbbb18912c7d_1gga5ab0fe016100e77a9caafbbb18912c7da1b949044bccfe035bd40661aab31d279" prot="public">
+          <name>LIGHT_CTRL_STATE_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The number of states. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Light Lightness Control Server state </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="67" column="1" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="67" bodyend="77"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__srv_1ga22e6434414814fcb0ee469f41caf275d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_srv_on</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_srv *srv)</argsstring>
+        <name>bt_mesh_light_ctrl_srv_on</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <briefdescription>
+<para>Turn the light on. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Instructs the controlled Lightness Server to turn the light on. If the light was already on, the dimming timeout is reset. If the light was in the Prolong state, it&apos;s moved back into the On state.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Lightness Control Server instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Light Lightness Control Server was successfully turned on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EBUSY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Light Lightness Control Server is disabled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="205" column="5" declfile="include/bluetooth/mesh/light_ctrl_srv.h" declline="205" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__srv_1ga3224811b702ef0b6066b5d5e529cdeb6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_srv_off</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_srv *srv)</argsstring>
+        <name>bt_mesh_light_ctrl_srv_off</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <briefdescription>
+<para>Manually turn the light off. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Instructs the controlled Lightness Server to turn the light off (Standby state). Calling this function temporarily disables occupancy sensor triggering (referred to as &quot;manual mode&quot; in the documentation). The server will remain in manual mode until the manual mode timer expires, see <verbatim>embed:rst:inline :kconfig:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_MANUAL` </verbatim>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Lightness Control Server instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Light Lightness Control Server was successfully turned off. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EBUSY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Light Lightness Control Server is disabled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="221" column="5" declfile="include/bluetooth/mesh/light_ctrl_srv.h" declline="221" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__srv_1gaa454c6cd9e77aeb1fc8b18ce3a180889" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_srv_enable</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_srv *srv)</argsstring>
+        <name>bt_mesh_light_ctrl_srv_enable</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <briefdescription>
+<para>Enable the Light Lightness Control Server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The Server must be enabled to take control of the Lightness Server.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Lightness Control Server instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Light Lightness Control Server was successfully enabled. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Light Lightness Control Server was already enabled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="233" column="5" declfile="include/bluetooth/mesh/light_ctrl_srv.h" declline="233" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__srv_1ga91a8835348034a260a76d74a77a8fe63" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_srv_disable</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_srv *srv)</argsstring>
+        <name>bt_mesh_light_ctrl_srv_disable</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <briefdescription>
+<para>Disable the Light Lightness Control Server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The server must be enabled to take control of the Lightness Server. Disabling the server disengages the control over the Lightness Server, which will start running as an independent model.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Lightness Control Server instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Light Lightness Control Server was successfully enabled. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EALREADY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Light Lightness Control Server was already enabled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="247" column="5" declfile="include/bluetooth/mesh/light_ctrl_srv.h" declline="247" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__srv_1gad2e284e80e64856ca36a8947dd965bc3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool bt_mesh_light_ctrl_srv_is_on</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_srv *srv)</argsstring>
+        <name>bt_mesh_light_ctrl_srv_is_on</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <briefdescription>
+<para>Check if the Light Lightness Control Server has turned the light on. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Lightness Control Server instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the Lightness Server&apos;s light is on because of its binding with the Light Lightness Control Server, false otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="256" column="6" declfile="include/bluetooth/mesh/light_ctrl_srv.h" declline="256" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__light__ctrl__srv_1gaaf1177482eba55c8fe4c0cf495598b30" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_light_ctrl_srv_pub</definition>
+        <argsstring>(struct bt_mesh_light_ctrl_srv *srv, struct bt_mesh_msg_ctx *ctx)</argsstring>
+        <name>bt_mesh_light_ctrl_srv_pub</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <briefdescription>
+<para>Publish the current OnOff state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Light Lightness Control Server instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to publish with the configured parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 Successfully published the current Light state. </para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="269" column="5" declfile="include/bluetooth/mesh/light_ctrl_srv.h" declline="269" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__light__ctrl__srv_1ga3f8a8e78a86277a5a98eb288b54e081b" prot="public" static="no">
+        <name>BT_MESH_LIGHT_CTRL_SRV_INIT</name>
+        <param><defname>_lightness_srv</defname></param>
+        <initializer>	{                                                                      \
+		.cfg = BT_MESH_LIGHT_CTRL_SRV_CFG_INIT,                        \
+		.onoff = <ref refid="group__bt__mesh__onoff__srv_ga2740ed46b33f82bea0a7c95fbed91719_1ga2740ed46b33f82bea0a7c95fbed91719" kindref="member">BT_MESH_ONOFF_SRV_INIT</ref>(                               \
+			&amp;_bt_mesh_light_ctrl_srv_onoff),                       \
+		.lightness = _lightness_srv,                                   \
+		BT_MESH_LIGHT_CTRL_SRV_REG_INIT                                \
+	}</initializer>
+        <briefdescription>
+<para>Initialization parameters for <ref refid="group__bt__mesh__light__ctrl__srv" kindref="compound">Light Lightness Control Server</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_lightness_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the <ref refid="group__bt__mesh__lightness__srv" kindref="compound">Light Lightness Server model</ref> this server controls. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="37" column="9" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__light__ctrl__srv_1ga58a880f2c9085debeadec225a7a19da3" prot="public" static="no">
+        <name>BT_MESH_MODEL_LIGHT_CTRL_SRV</name>
+        <param><defname>_srv</defname></param>
+        <initializer>	<ref refid="group__bt__mesh__onoff__srv_ga54dd5c38b8014b3cc42f2ea68cda40d8_1ga54dd5c38b8014b3cc42f2ea68cda40d8" kindref="member">BT_MESH_MODEL_ONOFF_SRV</ref>(&amp;(_srv)-&gt;onoff),                               \
+	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_LC_SRV,                        \
+			 _bt_mesh_light_ctrl_srv_op, &amp;(_srv)-&gt;pub,             \
+			 BT_MESH_MODEL_USER_DATA(                              \
+				 struct <ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref>, _srv),         \
+			 &amp;_bt_mesh_light_ctrl_srv_cb),                         \
+	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_LC_SETUPSRV,                   \
+			 _bt_mesh_light_ctrl_setup_srv_op,                     \
+			 &amp;(_srv)-&gt;setup_pub,                                   \
+			 BT_MESH_MODEL_USER_DATA(                              \
+				 struct <ref refid="structbt__mesh__light__ctrl__srv" kindref="compound">bt_mesh_light_ctrl_srv</ref>, _srv),         \
+			 &amp;_bt_mesh_light_ctrl_setup_srv_cb)</initializer>
+        <briefdescription>
+<para>Light Lightness model entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__light__ctrl__srv" kindref="compound">Light Lightness Control Server</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_ctrl_srv.h" line="52" column="9" bodyfile="include/bluetooth/mesh/light_ctrl_srv.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Light Lightness Control Server model API. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlog__event__buf" kind="struct" language="C++" prot="public">
+    <compoundname>log_event_buf</compoundname>
+    <includes refid="profiler_8h" local="no">profiler.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlog__event__buf_a9d5ddd14dc5014ca275490f04dd5dfae_1a9d5ddd14dc5014ca275490f04dd5dfae" prot="public" static="no" mutable="no">
+        <type>uint8_t *</type>
+        <definition>uint8_t* log_event_buf::payload</definition>
+        <argsstring></argsstring>
+        <name>payload</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the end of the payload. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="73" column="9" bodyfile="include/profiler.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlog__event__buf_aaeffb97aaf63f2d4a75bfbd632d9a441_1aaeffb97aaf63f2d4a75bfbd632d9a441" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t log_event_buf::payload_start[CONFIG_PROFILER_CUSTOM_EVENT_BUF_LEN]</definition>
+        <argsstring>[CONFIG_PROFILER_CUSTOM_EVENT_BUF_LEN]</argsstring>
+        <name>payload_start</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Array where the payload is located before it is sent. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/profiler.h" line="75" column="9" bodyfile="include/profiler.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Buffer required for data that is sent with the event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/profiler.h" line="70" column="1" bodyfile="include/profiler.h" bodystart="70" bodyend="77"/>
+    <listofallmembers>
+      <member refid="structlog__event__buf_a9d5ddd14dc5014ca275490f04dd5dfae_1a9d5ddd14dc5014ca275490f04dd5dfae" prot="public" virt="non-virtual"><scope>log_event_buf</scope><name>payload</name></member>
+      <member refid="structlog__event__buf_aaeffb97aaf63f2d4a75bfbd632d9a441_1aaeffb97aaf63f2d4a75bfbd632d9a441" prot="public" virt="non-virtual"><scope>log_event_buf</scope><name>payload_start</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__hids__conn__data" kind="struct" language="C++" prot="public">
+    <compoundname>bt_hids_conn_data</compoundname>
+    <includes refid="hids_8h" local="no">hids.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__hids__conn__data_a48176a1d723e6f35ba609f8e5089cfda_1a48176a1d723e6f35ba609f8e5089cfda" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_conn_data::pm_ctx_value</definition>
+        <argsstring></argsstring>
+        <name>pm_ctx_value</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Protocol Mode context data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="469" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="469" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__conn__data_a583afa742e9f6b8797961cf2baca1abf_1a583afa742e9f6b8797961cf2baca1abf" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_conn_data::hids_boot_mouse_inp_rep_ctx[8]</definition>
+        <argsstring>[8]</argsstring>
+        <name>hids_boot_mouse_inp_rep_ctx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>HIDS Boot Mouse Input Report Context. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="472" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="472" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__conn__data_ad19449bbbf5a6b78e0ec35feaf0de074_1ad19449bbbf5a6b78e0ec35feaf0de074" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_conn_data::hids_boot_kb_inp_rep_ctx[8]</definition>
+        <argsstring>[8]</argsstring>
+        <name>hids_boot_kb_inp_rep_ctx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>HIDS Boot Keyboard Input Report Context. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="475" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="475" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__conn__data_a239fc6f4738a429a0685f8efa7785df0_1a239fc6f4738a429a0685f8efa7785df0" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_conn_data::hids_boot_kb_outp_rep_ctx[1]</definition>
+        <argsstring>[1]</argsstring>
+        <name>hids_boot_kb_outp_rep_ctx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>HIDS Boot Keyboard Output Report Context. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="478" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="478" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__conn__data_a7548b8add8930478ef3d29d9770a4176_1a7548b8add8930478ef3d29d9770a4176" prot="public" static="no" mutable="no">
+        <type>uint8_t *</type>
+        <definition>uint8_t* bt_hids_conn_data::inp_rep_ctx</definition>
+        <argsstring></argsstring>
+        <name>inp_rep_ctx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to Input Reports Context data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="481" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="481" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__conn__data_a8074bda431259dcbbf7ff3838f8993cc_1a8074bda431259dcbbf7ff3838f8993cc" prot="public" static="no" mutable="no">
+        <type>uint8_t *</type>
+        <definition>uint8_t* bt_hids_conn_data::outp_rep_ctx</definition>
+        <argsstring></argsstring>
+        <name>outp_rep_ctx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to Output Reports Context data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="484" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="484" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__conn__data_a23034a554ca5e1f77b69661ee6af8117_1a23034a554ca5e1f77b69661ee6af8117" prot="public" static="no" mutable="no">
+        <type>uint8_t *</type>
+        <definition>uint8_t* bt_hids_conn_data::feat_rep_ctx</definition>
+        <argsstring></argsstring>
+        <name>feat_rep_ctx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to Feature Reports Context data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="487" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="487" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>HID Connection context data structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/hids.h" line="467" column="1" bodyfile="include/bluetooth/services/hids.h" bodystart="467" bodyend="488"/>
+    <listofallmembers>
+      <member refid="structbt__hids__conn__data_a23034a554ca5e1f77b69661ee6af8117_1a23034a554ca5e1f77b69661ee6af8117" prot="public" virt="non-virtual"><scope>bt_hids_conn_data</scope><name>feat_rep_ctx</name></member>
+      <member refid="structbt__hids__conn__data_ad19449bbbf5a6b78e0ec35feaf0de074_1ad19449bbbf5a6b78e0ec35feaf0de074" prot="public" virt="non-virtual"><scope>bt_hids_conn_data</scope><name>hids_boot_kb_inp_rep_ctx</name></member>
+      <member refid="structbt__hids__conn__data_a239fc6f4738a429a0685f8efa7785df0_1a239fc6f4738a429a0685f8efa7785df0" prot="public" virt="non-virtual"><scope>bt_hids_conn_data</scope><name>hids_boot_kb_outp_rep_ctx</name></member>
+      <member refid="structbt__hids__conn__data_a583afa742e9f6b8797961cf2baca1abf_1a583afa742e9f6b8797961cf2baca1abf" prot="public" virt="non-virtual"><scope>bt_hids_conn_data</scope><name>hids_boot_mouse_inp_rep_ctx</name></member>
+      <member refid="structbt__hids__conn__data_a7548b8add8930478ef3d29d9770a4176_1a7548b8add8930478ef3d29d9770a4176" prot="public" virt="non-virtual"><scope>bt_hids_conn_data</scope><name>inp_rep_ctx</name></member>
+      <member refid="structbt__hids__conn__data_a8074bda431259dcbbf7ff3838f8993cc_1a8074bda431259dcbbf7ff3838f8993cc" prot="public" virt="non-virtual"><scope>bt_hids_conn_data</scope><name>outp_rep_ctx</name></member>
+      <member refid="structbt__hids__conn__data_a48176a1d723e6f35ba609f8e5089cfda_1a48176a1d723e6f35ba609f8e5089cfda" prot="public" virt="non-virtual"><scope>bt_hids_conn_data</scope><name>pm_ctx_value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

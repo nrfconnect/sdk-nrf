@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__zb__error" kind="group">
+    <compoundname>zb_error</compoundname>
+    <title>ZBOSS error handling utilities</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__zb__error_1ga01b3c4e0d5327133f85adf2bee34e54c" prot="public" static="no">
+        <name>ZB_ERROR_CHECK</name>
+        <param><defname>ERR_CODE</defname></param>
+        <initializer>	do {								\
+		const uint32_t LOCAL_ERR_CODE = (uint32_t) (-ERR_CODE);	\
+		if (LOCAL_ERR_CODE != RET_OK) {				\
+			LOG_ERR(&quot;ERROR %u [%s] at %s:%u&quot;,		\
+				LOCAL_ERR_CODE,				\
+				zb_error_to_string_get(LOCAL_ERR_CODE),	\
+				__FILE__,				\
+				__LINE__);				\
+			k_fatal_halt(K_ERR_KERNEL_PANIC);		\
+		}							\
+	} while (0)</initializer>
+        <briefdescription>
+<para>Macro for calling the error handler function if the supplied ZBOSS return code is different than RET_OK. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ERR_CODE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Error code supplied to the error handler. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_error_handler.h" line="32" column="9" bodyfile="include/zigbee/zigbee_error_handler.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__zb__error_1ga22de709f2ead7261623e9bc5589dc81e" prot="public" static="no">
+        <name>ZB_COMM_STATUS_CHECK</name>
+        <param><defname>COMM_STATUS</defname></param>
+        <initializer>	do {								      \
+		if (COMM_STATUS != ZB_TRUE) {				      \
+			LOG_ERR(&quot;Unable to start BDB commissioning at %s:%u&quot;, \
+				__FILE__,				      \
+				__LINE__);				      \
+			<ref refid="group__zb__error_ga01b3c4e0d5327133f85adf2bee34e54c_1ga01b3c4e0d5327133f85adf2bee34e54c" kindref="member">ZB_ERROR_CHECK</ref>(RET_ERROR);			      \
+		}							      \
+	} while (0)</initializer>
+        <briefdescription>
+<para>Macro for calling the error handler function if the return code for bdb_start_top_level_commissioning indicates that the BDB procedure did not succeed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">COMM_STATUS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value returned by the bdb_start_top_level_commissioning function. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_error_handler.h" line="52" column="9" bodyfile="include/zigbee/zigbee_error_handler.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This file defines the error handler utilities for ZBOSS error codes. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

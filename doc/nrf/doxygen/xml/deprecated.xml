@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="deprecated" kind="page">
+    <compoundname>deprecated</compoundname>
+    <title>Deprecated List</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><variablelist>
+<varlistentry><term>File <ref refid="agps_8h" kindref="compound">agps.h</ref>  </term></varlistentry>
+<listitem><para><anchor id="deprecated_1_deprecated000002"/>since v1.8.0. </para>
+</listitem>
+<varlistentry><term>File <ref refid="gps_8h" kindref="compound">gps.h</ref>  </term></varlistentry>
+<listitem><para><anchor id="deprecated_1_deprecated000001"/>since v1.7.0. </para>
+</listitem>
+</variablelist>
+</para>
+    </detaileddescription>
+    <location file="deprecated"/>
+  </compounddef>
+</doxygen>

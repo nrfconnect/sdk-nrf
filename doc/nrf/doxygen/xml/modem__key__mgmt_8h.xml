@@ -1,0 +1,637 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="modem__key__mgmt_8h" kind="file" language="C++">
+    <compoundname>modem_key_mgmt.h</compoundname>
+    <includes local="no">stdbool.h</includes>
+    <includes local="no">stdint.h</includes>
+    <includes local="no">nrf_socket.h</includes>
+    <includedby refid="slm__native__tls_8h" local="no">applications/serial_lte_modem/src/slm_native_tls.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>include/modem/modem_key_mgmt.h</label>
+        <link refid="modem__key__mgmt_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>nrf_socket.h</label>
+      </node>
+      <node id="2">
+        <label>stdbool.h</label>
+      </node>
+      <node id="3">
+        <label>stdint.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>applications/serial_lte_modem/src/slm_native_tls.h</label>
+        <link refid="slm__native__tls_8h"/>
+      </node>
+      <node id="1">
+        <label>include/modem/modem_key_mgmt.h</label>
+        <link refid="modem__key__mgmt_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1gaf6e72956fd99711667f2492b33ab526f" prot="public" static="no" strong="no">
+        <type></type>
+        <name>modem_key_mgmt_cred_type</name>
+        <enumvalue id="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1ggaf6e72956fd99711667f2492b33ab526fa5232c3f37f6c44e78f71fc690fe08efd" prot="public">
+          <name>MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1ggaf6e72956fd99711667f2492b33ab526fafc0b09c63c516de185a32b96dac81777" prot="public">
+          <name>MODEM_KEY_MGMT_CRED_TYPE_PUBLIC_CERT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1ggaf6e72956fd99711667f2492b33ab526fa32f4ba1007a51230d87c036c91069040" prot="public">
+          <name>MODEM_KEY_MGMT_CRED_TYPE_PRIVATE_CERT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1ggaf6e72956fd99711667f2492b33ab526faf09cbe94d7d2141448faee917e9cfda6" prot="public">
+          <name>MODEM_KEY_MGMT_CRED_TYPE_PSK</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1ggaf6e72956fd99711667f2492b33ab526fa45d1c7eb2517277046e52b1f1e35eb4f" prot="public">
+          <name>MODEM_KEY_MGMT_CRED_TYPE_IDENTITY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Credential types. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_key_mgmt.h" line="21" column="1" bodyfile="include/modem/modem_key_mgmt.h" bodystart="21" bodyend="27"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__modem__key__mgmt_ga0372fdc1948100f00bdf26593c2a1698_1ga0372fdc1948100f00bdf26593c2a1698" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_key_mgmt_write</definition>
+        <argsstring>(nrf_sec_tag_t sec_tag, enum modem_key_mgmt_cred_type cred_type, const void *buf, size_t len)</argsstring>
+        <name>modem_key_mgmt_write</name>
+        <param>
+          <type>nrf_sec_tag_t</type>
+          <declname>sec_tag</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1gaf6e72956fd99711667f2492b33ab526f" kindref="member">modem_key_mgmt_cred_type</ref></type>
+          <declname>cred_type</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Write or update a credential in persistent storage. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Store the credential and associate it with the given security tag, which can later be used to access it.</para>
+<para><simplesect kind="note"><para>If used when the LTE link is active, the function will return an error and the key will not be written.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">sec_tag</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Security tag to associate with this credential. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cred_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The credential type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer containing the credential data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>On success. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOBUFS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Internal buffer is too small. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Not enough memory to store the credential. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EACCES</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Th operation failed because the LTE link is active. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOENT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The security tag could not be written. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EPERM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Insufficient permissions. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_key_mgmt.h" line="51" column="5" declfile="include/modem/modem_key_mgmt.h" declline="51" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__modem__key__mgmt_ga1df7971042abd9226ee5860e0e478df9_1ga1df7971042abd9226ee5860e0e478df9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_key_mgmt_read</definition>
+        <argsstring>(nrf_sec_tag_t sec_tag, enum modem_key_mgmt_cred_type cred_type, void *buf, size_t *len)</argsstring>
+        <name>modem_key_mgmt_read</name>
+        <param>
+          <type>nrf_sec_tag_t</type>
+          <declname>sec_tag</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1gaf6e72956fd99711667f2492b33ab526f" kindref="member">modem_key_mgmt_cred_type</ref></type>
+          <declname>cred_type</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Read a credential from persistent storage. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">sec_tag</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The security tag of the credential. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cred_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The credential type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to read the credential into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the buffer, length of the credential.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>On success. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOBUFS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Internal buffer is too small. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If provided buffer is too small for result data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOENT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>No credential associated with the given <computeroutput>sec_tag</computeroutput> and <computeroutput>cred_type</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EPERM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Insufficient permissions. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_key_mgmt.h" line="71" column="5" declfile="include/modem/modem_key_mgmt.h" declline="71" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__modem__key__mgmt_gaa9da12e30f10b3e0847cdaec5f631759_1gaa9da12e30f10b3e0847cdaec5f631759" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_key_mgmt_cmp</definition>
+        <argsstring>(nrf_sec_tag_t sec_tag, enum modem_key_mgmt_cred_type cred_type, const void *buf, size_t len)</argsstring>
+        <name>modem_key_mgmt_cmp</name>
+        <param>
+          <type>nrf_sec_tag_t</type>
+          <declname>sec_tag</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1gaf6e72956fd99711667f2492b33ab526f" kindref="member">modem_key_mgmt_cred_type</ref></type>
+          <declname>cred_type</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Compare a credential with a credential in persistent storage. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">sec_tag</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The security tag of the credential. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cred_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The credential type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to compare the credential to. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the credentials match. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>1</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the credentials do not match. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOBUFS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Internal buffer is too small. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOENT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>No credential associated with the given <computeroutput>sec_tag</computeroutput> and <computeroutput>cred_type</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EPERM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Insufficient permissions. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_key_mgmt.h" line="90" column="5" declfile="include/modem/modem_key_mgmt.h" declline="90" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__modem__key__mgmt_ga72d113685d117a2a83540412c7cd4dab_1ga72d113685d117a2a83540412c7cd4dab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_key_mgmt_delete</definition>
+        <argsstring>(nrf_sec_tag_t sec_tag, enum modem_key_mgmt_cred_type cred_type)</argsstring>
+        <name>modem_key_mgmt_delete</name>
+        <param>
+          <type>nrf_sec_tag_t</type>
+          <declname>sec_tag</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1gaf6e72956fd99711667f2492b33ab526f" kindref="member">modem_key_mgmt_cred_type</ref></type>
+          <declname>cred_type</declname>
+        </param>
+        <briefdescription>
+<para>Delete a credential from persistent storage. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>If used when the LTE link is active, the function will return an error and the key will not be written.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">sec_tag</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The security tag of the credential. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cred_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The credential type.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>On success. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOBUFS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Internal buffer is too small. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EACCES</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The operation failed because the LTE link is active. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOENT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>No credential associated with the given <computeroutput>sec_tag</computeroutput> and <computeroutput>cred_type</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EPERM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Insufficient permissions. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_key_mgmt.h" line="110" column="5" declfile="include/modem/modem_key_mgmt.h" declline="110" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__modem__key__mgmt_gaaf87a50b8a27306ae76ae42cef45b5fb_1gaaf87a50b8a27306ae76ae42cef45b5fb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int modem_key_mgmt_exists</definition>
+        <argsstring>(nrf_sec_tag_t sec_tag, enum modem_key_mgmt_cred_type cred_type, bool *exists)</argsstring>
+        <name>modem_key_mgmt_exists</name>
+        <param>
+          <type>nrf_sec_tag_t</type>
+          <declname>sec_tag</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1gaf6e72956fd99711667f2492b33ab526f" kindref="member">modem_key_mgmt_cred_type</ref></type>
+          <declname>cred_type</declname>
+        </param>
+        <param>
+          <type>bool *</type>
+          <declname>exists</declname>
+        </param>
+        <briefdescription>
+<para>Check if a credential exists in persistent storage. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">sec_tag</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The security tag to search for. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cred_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The credential type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">exists</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether the credential exists. Only valid if the operation is successful.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>On success. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOBUFS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Internal buffer is too small. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EPERM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Insufficient permissions. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_key_mgmt.h" line="125" column="5" declfile="include/modem/modem_key_mgmt.h" declline="125" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MODEM_KEY_MGMT_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MODEM_KEY_MGMT_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdbool.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdint.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;nrf_socket.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1gaf6e72956fd99711667f2492b33ab526f" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1gaf6e72956fd99711667f2492b33ab526f" kindref="member">modem_key_mgmt_cred_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="22" refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1ggaf6e72956fd99711667f2492b33ab526fa5232c3f37f6c44e78f71fc690fe08efd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1ggaf6e72956fd99711667f2492b33ab526fa5232c3f37f6c44e78f71fc690fe08efd" kindref="member">MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN</ref>,</highlight></codeline>
+<codeline lineno="23" refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1ggaf6e72956fd99711667f2492b33ab526fafc0b09c63c516de185a32b96dac81777" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1ggaf6e72956fd99711667f2492b33ab526fafc0b09c63c516de185a32b96dac81777" kindref="member">MODEM_KEY_MGMT_CRED_TYPE_PUBLIC_CERT</ref>,</highlight></codeline>
+<codeline lineno="24" refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1ggaf6e72956fd99711667f2492b33ab526fa32f4ba1007a51230d87c036c91069040" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1ggaf6e72956fd99711667f2492b33ab526fa32f4ba1007a51230d87c036c91069040" kindref="member">MODEM_KEY_MGMT_CRED_TYPE_PRIVATE_CERT</ref>,</highlight></codeline>
+<codeline lineno="25" refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1ggaf6e72956fd99711667f2492b33ab526faf09cbe94d7d2141448faee917e9cfda6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1ggaf6e72956fd99711667f2492b33ab526faf09cbe94d7d2141448faee917e9cfda6" kindref="member">MODEM_KEY_MGMT_CRED_TYPE_PSK</ref>,</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1ggaf6e72956fd99711667f2492b33ab526fa45d1c7eb2517277046e52b1f1e35eb4f" kindref="member">MODEM_KEY_MGMT_CRED_TYPE_IDENTITY</ref></highlight></codeline>
+<codeline lineno="27" refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1ggaf6e72956fd99711667f2492b33ab526fa45d1c7eb2517277046e52b1f1e35eb4f" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="group__modem__key__mgmt_ga0372fdc1948100f00bdf26593c2a1698_1ga0372fdc1948100f00bdf26593c2a1698" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__modem__key__mgmt_ga0372fdc1948100f00bdf26593c2a1698_1ga0372fdc1948100f00bdf26593c2a1698" kindref="member">modem_key_mgmt_write</ref>(nrf_sec_tag_t<sp/>sec_tag,</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1gaf6e72956fd99711667f2492b33ab526f" kindref="member">modem_key_mgmt_cred_type</ref><sp/>cred_type,</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*buf,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>len);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71" refid="group__modem__key__mgmt_ga1df7971042abd9226ee5860e0e478df9_1ga1df7971042abd9226ee5860e0e478df9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__modem__key__mgmt_ga1df7971042abd9226ee5860e0e478df9_1ga1df7971042abd9226ee5860e0e478df9" kindref="member">modem_key_mgmt_read</ref>(nrf_sec_tag_t<sp/>sec_tag,</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1gaf6e72956fd99711667f2492b33ab526f" kindref="member">modem_key_mgmt_cred_type</ref><sp/>cred_type,</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*buf,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>*len);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="group__modem__key__mgmt_gaa9da12e30f10b3e0847cdaec5f631759_1gaa9da12e30f10b3e0847cdaec5f631759" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__modem__key__mgmt_gaa9da12e30f10b3e0847cdaec5f631759_1gaa9da12e30f10b3e0847cdaec5f631759" kindref="member">modem_key_mgmt_cmp</ref>(nrf_sec_tag_t<sp/>sec_tag,</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1gaf6e72956fd99711667f2492b33ab526f" kindref="member">modem_key_mgmt_cred_type</ref><sp/>cred_type,</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*buf,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>len);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110" refid="group__modem__key__mgmt_ga72d113685d117a2a83540412c7cd4dab_1ga72d113685d117a2a83540412c7cd4dab" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__modem__key__mgmt_ga72d113685d117a2a83540412c7cd4dab_1ga72d113685d117a2a83540412c7cd4dab" kindref="member">modem_key_mgmt_delete</ref>(nrf_sec_tag_t<sp/>sec_tag,</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1gaf6e72956fd99711667f2492b33ab526f" kindref="member">modem_key_mgmt_cred_type</ref><sp/>cred_type);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125" refid="group__modem__key__mgmt_gaaf87a50b8a27306ae76ae42cef45b5fb_1gaaf87a50b8a27306ae76ae42cef45b5fb" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__modem__key__mgmt_gaaf87a50b8a27306ae76ae42cef45b5fb_1gaaf87a50b8a27306ae76ae42cef45b5fb" kindref="member">modem_key_mgmt_exists</ref>(nrf_sec_tag_t<sp/>sec_tag,</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__modem__key__mgmt_gaf6e72956fd99711667f2492b33ab526f_1gaf6e72956fd99711667f2492b33ab526f" kindref="member">modem_key_mgmt_cred_type</ref><sp/>cred_type,</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>*exists);</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>MODEM_KEY_MGMT_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="include/modem/modem_key_mgmt.h"/>
+  </compounddef>
+</doxygen>

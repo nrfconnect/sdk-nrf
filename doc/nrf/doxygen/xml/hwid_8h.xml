@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="hwid_8h" kind="file" language="C++">
+    <compoundname>hwid.h</compoundname>
+    <includedby refid="ble__event_8h" local="yes">applications/nrf_desktop/src/events/ble_event.h</includedby>
+    <invincdepgraph>
+      <node id="3">
+        <label>applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/ble_discovery_def.h</label>
+        <link refid="nrf52820dongle__nrf52820_2ble__discovery__def_8h"/>
+      </node>
+      <node id="4">
+        <label>applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/ble_scan_def.h</label>
+        <link refid="nrf52820dongle__nrf52820_2ble__scan__def_8h"/>
+      </node>
+      <node id="5">
+        <label>applications/nrf_desktop/configuration/nrf52833dk_nrf52833/ble_discovery_def.h</label>
+        <link refid="nrf52833dk__nrf52833_2ble__discovery__def_8h"/>
+      </node>
+      <node id="6">
+        <label>applications/nrf_desktop/configuration/nrf52833dk_nrf52833/ble_scan_def.h</label>
+        <link refid="nrf52833dk__nrf52833_2ble__scan__def_8h"/>
+      </node>
+      <node id="7">
+        <label>applications/nrf_desktop/configuration/nrf52833dongle_nrf52833/ble_discovery_def.h</label>
+        <link refid="nrf52833dongle__nrf52833_2ble__discovery__def_8h"/>
+      </node>
+      <node id="8">
+        <label>applications/nrf_desktop/configuration/nrf52833dongle_nrf52833/ble_scan_def.h</label>
+        <link refid="nrf52833dongle__nrf52833_2ble__scan__def_8h"/>
+      </node>
+      <node id="9">
+        <label>applications/nrf_desktop/configuration/nrf52840dk_nrf52840/ble_discovery_def.h</label>
+        <link refid="nrf52840dk__nrf52840_2ble__discovery__def_8h"/>
+      </node>
+      <node id="10">
+        <label>applications/nrf_desktop/configuration/nrf52840dk_nrf52840/ble_scan_def.h</label>
+        <link refid="nrf52840dk__nrf52840_2ble__scan__def_8h"/>
+      </node>
+      <node id="11">
+        <label>applications/nrf_desktop/configuration/nrf52840dongle_nrf52840/ble_discovery_def.h</label>
+        <link refid="nrf52840dongle__nrf52840_2ble__discovery__def_8h"/>
+      </node>
+      <node id="12">
+        <label>applications/nrf_desktop/configuration/nrf52840dongle_nrf52840/ble_scan_def.h</label>
+        <link refid="nrf52840dongle__nrf52840_2ble__scan__def_8h"/>
+      </node>
+      <node id="13">
+        <label>applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp/ble_discovery_def.h</label>
+        <link refid="nrf5340dk__nrf5340__cpuapp_2ble__discovery__def_8h"/>
+      </node>
+      <node id="14">
+        <label>applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp/ble_scan_def.h</label>
+        <link refid="nrf5340dk__nrf5340__cpuapp_2ble__scan__def_8h"/>
+      </node>
+      <node id="2">
+        <label>applications/nrf_desktop/src/events/ble_event.h</label>
+        <link refid="ble__event_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>applications/nrf_desktop/src/util/hwid.h</label>
+        <link refid="hwid_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="hwid_8h_aae642da1bd83af43e0ecfca6b59cd455_1aae642da1bd83af43e0ecfca6b59cd455" prot="public" static="no">
+        <name>HWID_LEN</name>
+        <initializer>8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/hwid.h" line="10" column="9" bodyfile="applications/nrf_desktop/src/util/hwid.h" bodystart="10" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="hwid_8h_a07e57be3470290542697d22ce25d2a7e_1a07e57be3470290542697d22ce25d2a7e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void hwid_get</definition>
+        <argsstring>(uint8_t *buf, size_t buf_size)</argsstring>
+        <name>hwid_get</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buf_size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/util/hwid.h" line="12" column="6" declfile="applications/nrf_desktop/src/util/hwid.h" declline="12" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_HWID_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_HWID_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10" refid="hwid_8h_aae642da1bd83af43e0ecfca6b59cd455_1aae642da1bd83af43e0ecfca6b59cd455" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>HWID_LEN<sp/>8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12" refid="hwid_8h_a07e57be3470290542697d22ce25d2a7e_1a07e57be3470290542697d22ce25d2a7e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="hwid_8h_a07e57be3470290542697d22ce25d2a7e_1a07e57be3470290542697d22ce25d2a7e" kindref="member">hwid_get</ref>(uint8_t<sp/>*buf,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>buf_size);</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_HWID_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/src/util/hwid.h"/>
+  </compounddef>
+</doxygen>

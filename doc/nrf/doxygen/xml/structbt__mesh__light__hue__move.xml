@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__hue__move" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_hue_move</compoundname>
+    <includes refid="light__hsl_8h" local="no">light_hsl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__hue__move_a75ef694a2668d0c00d51d8a352ba5713_1a75ef694a2668d0c00d51d8a352ba5713" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t bt_mesh_light_hue_move::delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Translation to make for every transition step. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl.h" line="85" column="9" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__hue__move_ad4249079699ebe153ad37d38f30b8882_1ad4249079699ebe153ad37d38f30b8882" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structbt__mesh__model__transition" kindref="compound">bt_mesh_model_transition</ref> *</type>
+        <definition>const struct bt_mesh_model_transition* bt_mesh_light_hue_move::transition</definition>
+        <argsstring></argsstring>
+        <name>transition</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transition parameters. <computeroutput>delay</computeroutput> indicates time until the move should start, <computeroutput>time</computeroutput> indicates the amount of time each <computeroutput>delta</computeroutput> step should take.</para>
+<para>When sending, setting the transition to NULL makes the receiver use its default transition time parameters, or 0 if no default transition time is set. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_hsl.h" line="95" column="37" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Hue move set parameters </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_mesh_light_hue_move</label>
+        <link refid="structbt__mesh__light__hue__move"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>transition</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bt_mesh_model_transition</label>
+        <link refid="structbt__mesh__model__transition"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/mesh/light_hsl.h" line="83" column="1" bodyfile="include/bluetooth/mesh/light_hsl.h" bodystart="83" bodyend="96"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__hue__move_a75ef694a2668d0c00d51d8a352ba5713_1a75ef694a2668d0c00d51d8a352ba5713" prot="public" virt="non-virtual"><scope>bt_mesh_light_hue_move</scope><name>delta</name></member>
+      <member refid="structbt__mesh__light__hue__move_ad4249079699ebe153ad37d38f30b8882_1ad4249079699ebe153ad37d38f30b8882" prot="public" virt="non-virtual"><scope>bt_mesh_light_hue_move</scope><name>transition</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

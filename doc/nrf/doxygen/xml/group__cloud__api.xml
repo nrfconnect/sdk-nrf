@@ -1,0 +1,1057 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__cloud__api" kind="group">
+    <compoundname>cloud_api</compoundname>
+    <title>Cloud API</title>
+    <innerclass refid="structcloud__endpoint" prot="public">cloud_endpoint</innerclass>
+    <innerclass refid="structcloud__msg" prot="public">cloud_msg</innerclass>
+    <innerclass refid="structcloud__event" prot="public">cloud_event</innerclass>
+    <innerclass refid="structcloud__api" prot="public">cloud_api</innerclass>
+    <innerclass refid="structcloud__backend__config" prot="public">cloud_backend_config</innerclass>
+    <innerclass refid="structcloud__backend" prot="public">cloud_backend</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__cloud__api_1ga83f6f81630a03b2bc02ad2f8eb7f97bf" prot="public" static="no" strong="no">
+        <type></type>
+        <name>cloud_event_type</name>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa327335bba4b9dd730ad17bf2a94eddf0" prot="public">
+          <name>CLOUD_EVT_CONNECTING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The cloud backend is connecting to the configured cloud vendor. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa30bd0a019f29f6dbba94f47e59d459d3" prot="public">
+          <name>CLOUD_EVT_CONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The cloud backend is connected to the cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa7f4f61ab1c2141f8c4c5354d914c6473" prot="public">
+          <name>CLOUD_EVT_DISCONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The cloud backend got disconnected from the cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa7652003e2b728032462debf3d58f1f7a" prot="public">
+          <name>CLOUD_EVT_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The cloud backend has established the appropriate resources for the connection. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa8d49eb658f77345c2b65ced6d58fed38" prot="public">
+          <name>CLOUD_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>An error has occurred in the cloud backend. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa4951ec1da730aeb92befd1332c0d7d8a" prot="public">
+          <name>CLOUD_EVT_DATA_SENT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Data has been sent to the cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa2ee24ec295da769675bfa6cb28ec0931" prot="public">
+          <name>CLOUD_EVT_DATA_RECEIVED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Data has been received from the cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfaf25a6b2e70dd9b61546c8ffe1cba0e29" prot="public">
+          <name>CLOUD_EVT_PAIR_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The device is not yet associated with the user. Pairing requested. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfa4a0e77965d3612a262975dd2995d8acc" prot="public">
+          <name>CLOUD_EVT_PAIR_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Pairing with the user has been carried out. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfabae9672c0c9fafb18b9e1e61670487a7" prot="public">
+          <name>CLOUD_EVT_FOTA_START</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA has started. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfab341959d608eb475f3b6799c40d8d84f" prot="public">
+          <name>CLOUD_EVT_FOTA_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA has finished. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfad5d86a1acce82139e004a1891e6943d8" prot="public">
+          <name>CLOUD_EVT_FOTA_ERASE_PENDING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The underlying FOTA process has a pending image erase. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfacc7a1c9502fb85bc1f62e446c425f0d1" prot="public">
+          <name>CLOUD_EVT_FOTA_ERASE_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The FOTA image erase has finished. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfab3e1ee8df6955e4a1091b3710073d978" prot="public">
+          <name>CLOUD_EVT_FOTA_DL_PROGRESS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA download progress event. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfaee8e202a1797be01281c0096dbcfc555" prot="public">
+          <name>CLOUD_EVT_FOTA_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>FOTA error. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga83f6f81630a03b2bc02ad2f8eb7f97bf_1gga83f6f81630a03b2bc02ad2f8eb7f97bfac91bec487631ff2aedb268ed6b45f0a2" prot="public">
+          <name>CLOUD_EVT_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Cloud events that can be notified asynchronously by the backend. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="19" column="1" bodyfile="include/net/cloud.h" bodystart="19" bodyend="55"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__cloud__api_1ga58647e0b8eaee7a2be5f2bdfb96f4ef1" prot="public" static="no" strong="no">
+        <type></type>
+        <name>cloud_disconnect_reason</name>
+        <enumvalue id="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1gga58647e0b8eaee7a2be5f2bdfb96f4ef1a3222f12cb9fbc5c93ef2c112e7be9fa5" prot="public">
+          <name>CLOUD_DISCONNECT_USER_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1gga58647e0b8eaee7a2be5f2bdfb96f4ef1a95f544192be492a88316781b957c43e0" prot="public">
+          <name>CLOUD_DISCONNECT_CLOSED_BY_REMOTE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The connection was closed by the cloud </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1gga58647e0b8eaee7a2be5f2bdfb96f4ef1a4862ed7ce58a453ad8f3fb5d03de2d82" prot="public">
+          <name>CLOUD_DISCONNECT_INVALID_REQUEST</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>The connection is no longer valid </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1gga58647e0b8eaee7a2be5f2bdfb96f4ef1a1d13e5d201f9fadb21d468eb1cf6d926" prot="public">
+          <name>CLOUD_DISCONNECT_MISC</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Miscellaneous error </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga58647e0b8eaee7a2be5f2bdfb96f4ef1_1gga58647e0b8eaee7a2be5f2bdfb96f4ef1a1c92e6d7b52ddcd13b746f6cf4b3e507" prot="public">
+          <name>CLOUD_DISCONNECT_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="57" column="1" bodyfile="include/net/cloud.h" bodystart="57" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__cloud__api_1gac89f68ad5ef44eba1320e0c97d264b96" prot="public" static="no" strong="no">
+        <type></type>
+        <name>cloud_qos</name>
+        <enumvalue id="group__cloud__api_gac89f68ad5ef44eba1320e0c97d264b96_1ggac89f68ad5ef44eba1320e0c97d264b96a5ba99b5d58e65d97564f6bf582db4597" prot="public">
+          <name>CLOUD_QOS_AT_MOST_ONCE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_gac89f68ad5ef44eba1320e0c97d264b96_1ggac89f68ad5ef44eba1320e0c97d264b96a6f6bd985272713c3e8c769756224f733" prot="public">
+          <name>CLOUD_QOS_AT_LEAST_ONCE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_gac89f68ad5ef44eba1320e0c97d264b96_1ggac89f68ad5ef44eba1320e0c97d264b96a76ecaecef79f3f3087a27640b8bf89b8" prot="public">
+          <name>CLOUD_QOS_EXACTLY_ONCE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_gac89f68ad5ef44eba1320e0c97d264b96_1ggac89f68ad5ef44eba1320e0c97d264b96aa326feb1c162cf9aa4fae6c7028ff84e" prot="public">
+          <name>CLOUD_QOS_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Quality of Service for message sent by a cloud backend. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="70" column="1" bodyfile="include/net/cloud.h" bodystart="70" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__cloud__api_1gafdfebe6e28634145da5dbc14d11d29c4" prot="public" static="no" strong="no">
+        <type></type>
+        <name>cloud_endpoint_type</name>
+        <enumvalue id="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4afe1c65561efa7d78d09ca917f8a1a2d9" prot="public">
+          <name>CLOUD_EP_MSG</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Endpoint used to send messages to cloud. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4aa1a15f330e1bc9c93e62e5f729c4808d" prot="public">
+          <name>CLOUD_EP_STATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Endpoint used to update the cloud-side device state. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4abc28d135c0d67b5d8bfc5331fc76517a" prot="public">
+          <name>CLOUD_EP_STATE_DELETE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Endpoint used to delete the cloud-side device state. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4a4a799f391127a70b574e29a527658208" prot="public">
+          <name>CLOUD_EP_STATE_GET</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Enpoint used to request the cloud-side device state. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4a93c32993e74f138e696169d67e7461f7" prot="public">
+          <name>CLOUD_EP_PAIR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Endpoint used to pair the device with a user. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4a8fdcd93ca0064e622c3baaa3bd0eefb0" prot="public">
+          <name>CLOUD_EP_COMMON_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4abccf2a3d54c4256ee805ec69672360c6" prot="public">
+          <name>CLOUD_EP_PRIV_START</name>
+          <initializer>= CLOUD_EP_COMMON_COUNT</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_gafdfebe6e28634145da5dbc14d11d29c4_1ggafdfebe6e28634145da5dbc14d11d29c4aacb0ea3725cfa771204b634540397813" prot="public">
+          <name>CLOUD_EP_PRIV_END</name>
+          <initializer>= INT16_MAX</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Cloud endpoint type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="79" column="1" bodyfile="include/net/cloud.h" bodystart="79" bodyend="94"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__cloud__api_1ga2bc0fd6d66de372926e927b113679c60" prot="public" static="no" strong="no">
+        <type></type>
+        <name>cloud_connect_result</name>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a452baa6ebfd471971ba6d775aa1ca3c9" prot="public">
+          <name>CLOUD_CONNECT_RES_SUCCESS</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a79ecb99a28aeadc50b522ef4f5c4ebd7" prot="public">
+          <name>CLOUD_CONNECT_RES_ERR_NOT_INITD</name>
+          <initializer>= -1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Cloud backend is not initialized. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60ac5a2bdbb595850b4449f7c4b53aa5a48" prot="public">
+          <name>CLOUD_CONNECT_RES_ERR_INVALID_PARAM</name>
+          <initializer>= -2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Invalid parameters in cloud connection request. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60abe1ca0cbfd0828e36da1b7c8a19f71f9" prot="public">
+          <name>CLOUD_CONNECT_RES_ERR_NETWORK</name>
+          <initializer>= -3</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Host cannot be found with the available network interfaces. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a9c4a8ac57de7b4e66c460fe746150c25" prot="public">
+          <name>CLOUD_CONNECT_RES_ERR_BACKEND</name>
+          <initializer>= -4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>A backend-specific error. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a5d18e02bf92b1ce43e149bcb1757fffa" prot="public">
+          <name>CLOUD_CONNECT_RES_ERR_MISC</name>
+          <initializer>= -5</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Error cause cannot be determined. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a450388f03192fda4596140267d230a39" prot="public">
+          <name>CLOUD_CONNECT_RES_ERR_NO_MEM</name>
+          <initializer>= -6</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>MQTT RX/TX buffers were not initialized. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60af1e8c1d0c6f4597f4310f7f67a3ba648" prot="public">
+          <name>CLOUD_CONNECT_RES_ERR_PRV_KEY</name>
+          <initializer>= -7</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Invalid private key </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a4b50746614b4fde6713fec9b80233b1d" prot="public">
+          <name>CLOUD_CONNECT_RES_ERR_CERT</name>
+          <initializer>= -8</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Invalid CA or client certificate </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60aeefc3baac196c36e931414c6f57079f7" prot="public">
+          <name>CLOUD_CONNECT_RES_ERR_CERT_MISC</name>
+          <initializer>= -9</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Miscellaneous certificate error </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a25917fe242c42b6d6810a879d675c769" prot="public">
+          <name>CLOUD_CONNECT_RES_ERR_TIMEOUT_NO_DATA</name>
+          <initializer>= -10</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Timeout; typically occurs when the inserted SIM card has no data </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__cloud__api_ga2bc0fd6d66de372926e927b113679c60_1gga2bc0fd6d66de372926e927b113679c60a8155c9c24ad6ea6a62f920d55194da30" prot="public">
+          <name>CLOUD_CONNECT_RES_ERR_ALREADY_CONNECTED</name>
+          <initializer>= -11</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Connection process has already been started. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Cloud connect results. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="97" column="1" bodyfile="include/net/cloud.h" bodystart="97" bodyend="121"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__cloud__api_1ga3257fcdffa6d48cea667361250191cfa" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* cloud_evt_handler_t) (const struct cloud_backend *const backend, const struct cloud_event *const evt, void *user_data)</definition>
+        <argsstring>)(const struct cloud_backend *const backend, const struct cloud_event *const evt, void *user_data)</argsstring>
+        <name>cloud_evt_handler_t</name>
+        <briefdescription>
+<para>Cloud event handler function type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud backend. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud event. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>user_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to user defined data that will be passed on as argument to cloud event handler. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="161" column="9" bodyfile="include/net/cloud.h" bodystart="161" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__cloud__api_1ga2e61dcbcce601b76ff3120a21e83d4e4" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_init</definition>
+        <argsstring>(struct cloud_backend *const backend, cloud_evt_handler_t handler)</argsstring>
+        <name>cloud_init</name>
+        <param>
+          <type>struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <param>
+          <type><ref refid="group__cloud__api_ga3257fcdffa6d48cea667361250191cfa_1ga3257fcdffa6d48cea667361250191cfa" kindref="member">cloud_evt_handler_t</ref></type>
+          <declname>handler</declname>
+        </param>
+        <briefdescription>
+<para>Initialize a cloud backend. Performs all necessary configuration of the backend required to connect its online counterpart. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud backend structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Handler to receive events from the backend. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="217" column="19" bodyfile="include/net/cloud.h" bodystart="217" bodyend="230"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_1gae2d267d6c8de4a2431441078fedfab03" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_uninit</definition>
+        <argsstring>(const struct cloud_backend *const backend)</argsstring>
+        <name>cloud_uninit</name>
+        <param>
+          <type>const struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <briefdescription>
+<para>Uninitialize a cloud backend. Gracefully disconnects remote endpoint and releases memory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud backend structure. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="237" column="19" bodyfile="include/net/cloud.h" bodystart="237" bodyend="245"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_1gae91c2eb0563f05ad5180e42b268ad66b" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_connect</definition>
+        <argsstring>(const struct cloud_backend *const backend)</argsstring>
+        <name>cloud_connect</name>
+        <param>
+          <type>const struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <briefdescription>
+<para>Request connection to a cloud backend. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The backend is required to expose the socket in use when this function returns. The socket should then be available through backend-&gt;config-&gt;socket and the application may start listening for events on it.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a cloud backend structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>connect result defined by enum cloud_connect_result. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="258" column="19" bodyfile="include/net/cloud.h" bodystart="258" bodyend="266"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_1gad6804d9cfc9a06d6a6260f4ca0aa5363" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_disconnect</definition>
+        <argsstring>(const struct cloud_backend *const backend)</argsstring>
+        <name>cloud_disconnect</name>
+        <param>
+          <type>const struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <briefdescription>
+<para>Disconnect from a cloud backend. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a cloud backend structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 or a negative error code indicating reason of failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="274" column="19" bodyfile="include/net/cloud.h" bodystart="274" bodyend="282"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_1ga6db3fead1a7216b0d2d5fec203b2983c" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_send</definition>
+        <argsstring>(const struct cloud_backend *const backend, struct cloud_msg *msg)</argsstring>
+        <name>cloud_send</name>
+        <param>
+          <type>const struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__msg" kindref="compound">cloud_msg</ref> *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+<para>Send data to a cloud. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a cloud backend structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud message structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 or a negative error code indicating reason of failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="291" column="19" bodyfile="include/net/cloud.h" bodystart="291" bodyend="300"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_1gafd387ddce9aeba5c025acd243195f0a3" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_ping</definition>
+        <argsstring>(const struct cloud_backend *const backend)</argsstring>
+        <name>cloud_ping</name>
+        <param>
+          <type>const struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <briefdescription>
+<para>Optional API to ping the cloud&apos;s remote endpoint periodically. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud backend.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 or a negative error code indicating reason of failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="309" column="19" bodyfile="include/net/cloud.h" bodystart="309" bodyend="321"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_1gacf5033c0fd6813f9e27a5bbda75896c6" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_keepalive_time_left</definition>
+        <argsstring>(const struct cloud_backend *const backend)</argsstring>
+        <name>cloud_keepalive_time_left</name>
+        <param>
+          <type>const struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <briefdescription>
+<para>Helper function to determine when next keep alive message should be sent. Can be used for instance as a source for <computeroutput>poll</computeroutput> timeout. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud backend.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Time in milliseconds until next keep alive message is expected to be sent. </para>
+</simplesect>
+<simplesect kind="return"><para>-1 if keep alive messages are not enabled. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="333" column="19" bodyfile="include/net/cloud.h" bodystart="333" bodyend="342"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_1ga82c59c34e70738ff31b136c0d7db21b6" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_input</definition>
+        <argsstring>(const struct cloud_backend *const backend)</argsstring>
+        <name>cloud_input</name>
+        <param>
+          <type>const struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <briefdescription>
+<para>Process incoming data to backend. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This is a non-blocking call.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud backend.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 or a negative error code indicating reason of failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="353" column="19" bodyfile="include/net/cloud.h" bodystart="353" bodyend="361"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_1ga0f3ccb36621b55882445b8c136bbbac8" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_ep_subscriptions_add</definition>
+        <argsstring>(const struct cloud_backend *const backend, const struct cloud_endpoint *list, size_t list_count)</argsstring>
+        <name>cloud_ep_subscriptions_add</name>
+        <param>
+          <type>const struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structcloud__endpoint" kindref="compound">cloud_endpoint</ref> *</type>
+          <declname>list</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>list_count</declname>
+        </param>
+        <briefdescription>
+<para>Add Cloud endpoint subscriptions. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud backend structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a list of endpoint subscriptions. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>list_count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of entries in the endpoint subscription list. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="369" column="19" bodyfile="include/net/cloud.h" bodystart="369" bodyend="379"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_1ga6c226527a95ba86358c26cfe4c1e808b" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_ep_subscriptions_remove</definition>
+        <argsstring>(const struct cloud_backend *const backend, const struct cloud_endpoint *list, size_t list_count)</argsstring>
+        <name>cloud_ep_subscriptions_remove</name>
+        <param>
+          <type>const struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structcloud__endpoint" kindref="compound">cloud_endpoint</ref> *</type>
+          <declname>list</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>list_count</declname>
+        </param>
+        <briefdescription>
+<para>Remove Cloud endpoint subscriptions. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud backend structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a list of endpoint subscriptions. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>list_count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of entries in the endpoint subscriptions list. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="387" column="19" bodyfile="include/net/cloud.h" bodystart="387" bodyend="397"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_1gac9047e76248be44d3f54aa469f0cec3c" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_user_data_set</definition>
+        <argsstring>(struct cloud_backend *const backend, void *user_data)</argsstring>
+        <name>cloud_user_data_set</name>
+        <param>
+          <type>struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>user_data</declname>
+        </param>
+        <briefdescription>
+<para>Set the user-defined data that is passed as an argument to cloud event handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud backend structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>user_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to user defined data that will be passed on as argument to cloud event handler. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="406" column="19" bodyfile="include/net/cloud.h" bodystart="406" bodyend="419"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_1ga3ef414608a17afc180b80ec640858bbc" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int cloud_get_id</definition>
+        <argsstring>(const struct cloud_backend *const backend, char *id, size_t id_len)</argsstring>
+        <name>cloud_get_id</name>
+        <param>
+          <type>const struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *const</type>
+          <declname>backend</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>id</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>id_len</declname>
+        </param>
+        <briefdescription>
+<para>Get the id string for the current device. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud backend structure. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to buffer to receive ID. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>id_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success otherwise error number. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="428" column="19" bodyfile="include/net/cloud.h" bodystart="428" bodyend="441"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_1ga8200644d153b615934f48d66e6a48a4f" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void cloud_notify_event</definition>
+        <argsstring>(struct cloud_backend *backend, struct cloud_event *evt, void *user_data)</argsstring>
+        <name>cloud_notify_event</name>
+        <param>
+          <type>struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *</type>
+          <declname>backend</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structcloud__event" kindref="compound">cloud_event</ref> *</type>
+          <declname>evt</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>user_data</declname>
+        </param>
+        <briefdescription>
+<para>Calls the user-provided event handler with event data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>backend</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to cloud backend. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to event data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>user_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to user-defined data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="450" column="20" bodyfile="include/net/cloud.h" bodystart="450" bodyend="457"/>
+      </memberdef>
+      <memberdef kind="function" id="group__cloud__api_1ga4b9c7fd192df8927529970cd406696f9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> *</type>
+        <definition>struct cloud_backend * cloud_get_binding</definition>
+        <argsstring>(const char *name)</argsstring>
+        <name>cloud_get_binding</name>
+        <param>
+          <type>const char *</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+<para>Get binding (pointer) to cloud backend if a registered backend matches the provided name. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>String with the name of the cloud backend.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Pointer to the cloud backend structure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="467" column="20" declfile="include/net/cloud.h" declline="467" declcolumn="20"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__cloud__api_1ga7f0285fb1cf452b338b284655da892ef" prot="public" static="no">
+        <name>CLOUD_BACKEND_DEFINE</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_api</defname></param>
+        <initializer>									       \
+	static struct <ref refid="structcloud__backend__config" kindref="compound">cloud_backend_config</ref> UTIL_CAT(_name, _config) =	       \
+	{								       \
+		.name = STRINGIFY(_name)				       \
+	};								       \
+									       \
+	static const struct <ref refid="structcloud__backend" kindref="compound">cloud_backend</ref> _name				       \
+	__attribute__ ((section(&quot;.cloud_backends&quot;))) __attribute__((used)) =   \
+	{								       \
+		.api = &amp;_api,						       \
+		.config = &amp;UTIL_CAT(_name, _config)			       \
+	};</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="469" column="9" bodyfile="include/net/cloud.h" bodystart="469" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Cloud API. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

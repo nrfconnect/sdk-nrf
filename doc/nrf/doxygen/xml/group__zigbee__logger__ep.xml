@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__zigbee__logger__ep" kind="group">
+    <compoundname>zigbee_logger_ep</compoundname>
+    <title>Zigbee endpoint logger library.</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__zigbee__logger__ep_1ga6c4249a44d074d6f6892612a4cc6e1a0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>zb_uint8_t</type>
+        <definition>zb_uint8_t zigbee_logger_eprxzcl_ep_handler</definition>
+        <argsstring>(zb_bufid_t bufid)</argsstring>
+        <name>zigbee_logger_eprxzcl_ep_handler</name>
+        <param>
+          <type>zb_bufid_t</type>
+          <declname>bufid</declname>
+        </param>
+        <briefdescription>
+<para>Handler function which may be called to log an incoming frame onto zigbee endpoint. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When this function is called as a callback bound to endpoint via ZB_AF_SET_ENDPOINT_HANDLER(), (directly or indirectly) it produces a log line similar to the following: <programlisting><codeline><highlight class="normal">Received<sp/>ZCL<sp/>command<sp/>(17):<sp/>src_addr=0x0000(short)<sp/>src_ep=64<sp/>dst_ep=64</highlight></codeline>
+<codeline><highlight class="normal">cluster_id=0x0000<sp/>profile_id=0x0104<sp/>rssi=0<sp/>cmd_dir=0<sp/>common_cmd=1<sp/>cmd_id=0x00</highlight></codeline>
+<codeline><highlight class="normal">cmd_seq=128<sp/>disable_def_resp=0<sp/>manuf_code=void<sp/>payload=[0700]<sp/>(17)</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bufid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Reference to zigbee buffer holding received zcl command to be logged</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>ZB_FALSE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>in all conditions. This enables possibility to use this function directly as zigbee stack endpoint handler. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/zigbee/zigbee_logger_eprxzcl.h" line="47" column="12" declfile="include/zigbee/zigbee_logger_eprxzcl.h" declline="47" declcolumn="12"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Library for logging incoming ZCL packets. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Provides Zigbee endpoint handler for parsing incoming ZCL packets and logging packet&apos;s fields and payload. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

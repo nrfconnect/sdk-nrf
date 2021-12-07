@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__prop__list" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_prop_list</compoundname>
+    <includes refid="gen__prop__cli_8h" local="no">gen_prop_cli.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__prop__list_a755acab95da5db1a76e65852ce53e544_1a755acab95da5db1a76e65852ce53e544" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_prop_list::count</definition>
+        <argsstring></argsstring>
+        <name>count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of IDs in the list. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_cli.h" line="54" column="9" bodyfile="include/bluetooth/mesh/gen_prop_cli.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__prop__list_a0bb665ff146338466a602c327a7e7f7a_1a0bb665ff146338466a602c327a7e7f7a" prot="public" static="no" mutable="no">
+        <type>uint16_t *</type>
+        <definition>uint16_t* bt_mesh_prop_list::ids</definition>
+        <argsstring></argsstring>
+        <name>ids</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Available Property IDs. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_prop_cli.h" line="55" column="10" bodyfile="include/bluetooth/mesh/gen_prop_cli.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>List of property IDs. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/gen_prop_cli.h" line="53" column="1" bodyfile="include/bluetooth/mesh/gen_prop_cli.h" bodystart="53" bodyend="56"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__prop__list_a755acab95da5db1a76e65852ce53e544_1a755acab95da5db1a76e65852ce53e544" prot="public" virt="non-virtual"><scope>bt_mesh_prop_list</scope><name>count</name></member>
+      <member refid="structbt__mesh__prop__list_a0bb665ff146338466a602c327a7e7f7a_1a0bb665ff146338466a602c327a7e7f7a" prot="public" virt="non-virtual"><scope>bt_mesh_prop_list</scope><name>ids</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

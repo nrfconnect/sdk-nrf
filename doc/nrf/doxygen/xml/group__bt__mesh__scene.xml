@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__scene" kind="group">
+    <compoundname>bt_mesh_scene</compoundname>
+    <title>Scene models</title>
+    <innerclass refid="structbt__mesh__scene__state" prot="public">bt_mesh_scene_state</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__bt__mesh__scene_1ga2839518fe4e7237b19a640d8e94bc193" prot="public" static="no" strong="no">
+        <type></type>
+        <name>bt_mesh_scene_status</name>
+        <enumvalue id="group__bt__mesh__scene_ga2839518fe4e7237b19a640d8e94bc193_1gga2839518fe4e7237b19a640d8e94bc193a4a4ea1e7c4232a9ecced1f3b9d1e4c59" prot="public">
+          <name>BT_MESH_SCENE_SUCCESS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Operation successful </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__scene_ga2839518fe4e7237b19a640d8e94bc193_1gga2839518fe4e7237b19a640d8e94bc193a850ea7d1c7d1313eae4e562c61ef7b15" prot="public">
+          <name>BT_MESH_SCENE_REGISTER_FULL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Not enough room in the Server&apos;s scene register. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__bt__mesh__scene_ga2839518fe4e7237b19a640d8e94bc193_1gga2839518fe4e7237b19a640d8e94bc193a0f47948c88d1467ee6380f04ecb7dacf" prot="public">
+          <name>BT_MESH_SCENE_NOT_FOUND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Couldn&apos;t find the requested scene </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Scene status codes </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene.h" line="27" column="1" bodyfile="include/bluetooth/mesh/scene.h" bodystart="27" bodyend="34"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__scene_1gaf68df55bc0247c8e0d90182c34fa35d5" prot="public" static="no">
+        <name>BT_MESH_SCENE_NONE</name>
+        <initializer>0x0000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>No scene is active </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene.h" line="24" column="9" bodyfile="include/bluetooth/mesh/scene.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Common API for the Scene models. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structazure__iot__hub__topic__data" kind="struct" language="C++" prot="public">
+    <compoundname>azure_iot_hub_topic_data</compoundname>
+    <includes refid="azure__iot__hub_8h" local="no">azure_iot_hub.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structazure__iot__hub__topic__data_ae25c2734c3289944a5e38b568de77b81_1ae25c2734c3289944a5e38b568de77b81" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__azure__iot__hub_gaa776eff16c91b0ad21020f812c07d2e5_1gaa776eff16c91b0ad21020f812c07d2e5" kindref="member">azure_iot_hub_topic_type</ref></type>
+        <definition>enum azure_iot_hub_topic_type azure_iot_hub_topic_data::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Topic type. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="128" column="30" bodyfile="include/net/azure_iot_hub.h" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structazure__iot__hub__topic__data_a0b4663c7945f0106481df9771ed04d7a_1a0b4663c7945f0106481df9771ed04d7a" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* azure_iot_hub_topic_data::str</definition>
+        <argsstring></argsstring>
+        <name>str</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to topic name. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="130" column="6" bodyfile="include/net/azure_iot_hub.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structazure__iot__hub__topic__data_a8b13d79871e87d3c0c646382554ad331_1a8b13d79871e87d3c0c646382554ad331" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t azure_iot_hub_topic_data::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of topic name. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="132" column="8" bodyfile="include/net/azure_iot_hub.h" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structazure__iot__hub__topic__data_a6cc5b6f1143d9948d4498b64f564b127_1a6cc5b6f1143d9948d4498b64f564b127" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structazure__iot__hub__prop__bag" kindref="compound">azure_iot_hub_prop_bag</ref> *</type>
+        <definition>struct azure_iot_hub_prop_bag* azure_iot_hub_topic_data::prop_bag</definition>
+        <argsstring></argsstring>
+        <name>prop_bag</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="134" column="29" bodyfile="include/net/azure_iot_hub.h" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structazure__iot__hub__topic__data_a7a5e748317496fa0b6f3f1001db0252f_1a7a5e748317496fa0b6f3f1001db0252f" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t azure_iot_hub_topic_data::prop_bag_count</definition>
+        <argsstring></argsstring>
+        <name>prop_bag_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_iot_hub.h" line="136" column="8" bodyfile="include/net/azure_iot_hub.h" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Azure IoT Hub topic data. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>azure_iot_hub_prop_bag</label>
+        <link refid="structazure__iot__hub__prop__bag"/>
+      </node>
+      <node id="1">
+        <label>azure_iot_hub_topic_data</label>
+        <link refid="structazure__iot__hub__topic__data"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>prop_bag</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/net/azure_iot_hub.h" line="126" column="1" bodyfile="include/net/azure_iot_hub.h" bodystart="126" bodyend="137"/>
+    <listofallmembers>
+      <member refid="structazure__iot__hub__topic__data_a8b13d79871e87d3c0c646382554ad331_1a8b13d79871e87d3c0c646382554ad331" prot="public" virt="non-virtual"><scope>azure_iot_hub_topic_data</scope><name>len</name></member>
+      <member refid="structazure__iot__hub__topic__data_a6cc5b6f1143d9948d4498b64f564b127_1a6cc5b6f1143d9948d4498b64f564b127" prot="public" virt="non-virtual"><scope>azure_iot_hub_topic_data</scope><name>prop_bag</name></member>
+      <member refid="structazure__iot__hub__topic__data_a7a5e748317496fa0b6f3f1001db0252f_1a7a5e748317496fa0b6f3f1001db0252f" prot="public" virt="non-virtual"><scope>azure_iot_hub_topic_data</scope><name>prop_bag_count</name></member>
+      <member refid="structazure__iot__hub__topic__data_a0b4663c7945f0106481df9771ed04d7a_1a0b4663c7945f0106481df9771ed04d7a" prot="public" virt="non-virtual"><scope>azure_iot_hub_topic_data</scope><name>str</name></member>
+      <member refid="structazure__iot__hub__topic__data_ae25c2734c3289944a5e38b568de77b81_1ae25c2734c3289944a5e38b568de77b81" prot="public" virt="non-virtual"><scope>azure_iot_hub_topic_data</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,859 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="st25r3911b__nfca_8h" kind="file" language="C++">
+    <compoundname>st25r3911b_nfca.h</compoundname>
+    <includes local="no">kernel.h</includes>
+    <includes local="no">zephyr/types.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/st25r3911b_nfca.h</label>
+        <link refid="st25r3911b__nfca_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>kernel.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structst25r3911b__nfca__buf" prot="public">st25r3911b_nfca_buf</innerclass>
+    <innerclass refid="structst25r3911b__nfca__sens__resp" prot="public">st25r3911b_nfca_sens_resp</innerclass>
+    <innerclass refid="structst25r3911b__nfca__tag__info" prot="public">st25r3911b_nfca_tag_info</innerclass>
+    <innerclass refid="structst25r3911b__nfca__crc" prot="public">st25r3911b_nfca_crc</innerclass>
+    <innerclass refid="structst25r3911b__nfca__cb" prot="public">st25r3911b_nfca_cb</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__nfca_ga7ae9ab82a3b3b0e4698c571894f6d03c_1ga7ae9ab82a3b3b0e4698c571894f6d03c" prot="public" static="no">
+        <name>ST25R3911B_NFCA_EVENT_CNT</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>NFC-A Events count. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="26" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__nfca_ga114e20452cbf14f78dc0269021d38213_1ga114e20452cbf14f78dc0269021d38213" prot="public" static="no">
+        <name>ST25R3911B_NFCA_CRC_LEN</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>NFC-A CRC length. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="29" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__nfca_ga88c6a7b81368685325eeb6a06ca23cbb_1ga88c6a7b81368685325eeb6a06ca23cbb" prot="public" static="no">
+        <name>ST25R3911B_NFCA_NFCID1_MAX_LEN</name>
+        <initializer>10</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>NFC-A NFCID1 maximum length. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="32" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__error_ga8d3bb0065bcdd4f428a9001d436e334f_1ga8d3bb0065bcdd4f428a9001d436e334f" prot="public" static="no">
+        <name>ST25R3911B_NFCA_ERR_CRC</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="38" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__error_ga9b281af6e6e9a1964af208555d6a6516_1ga9b281af6e6e9a1964af208555d6a6516" prot="public" static="no">
+        <name>ST25R3911B_NFCA_ERR_PARITY</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="39" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__error_ga047df1dcba3a7cdfa5ea6d5aa3ee5ef5_1ga047df1dcba3a7cdfa5ea6d5aa3ee5ef5" prot="public" static="no">
+        <name>ST25R3911B_NFCA_ERR_FRAMING</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="40" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__error_gadd300c6f2d0d955517b8bd722aedba03_1gadd300c6f2d0d955517b8bd722aedba03" prot="public" static="no">
+        <name>ST25R3911B_NFCA_ERR_SOFT_FRAMING</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="41" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__error_ga1a3c63ec3ac2b229c4ebefe77702a792_1ga1a3c63ec3ac2b229c4ebefe77702a792" prot="public" static="no">
+        <name>ST25R3911B_NFCA_ERR_HARD_FRAMING</name>
+        <initializer>5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="42" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__error_ga0f9ef474b5f958ce2f124fee9641fa44_1ga0f9ef474b5f958ce2f124fee9641fa44" prot="public" static="no">
+        <name>ST25R3911B_NFCA_ERR_LAST_BYTE_INCOMPLETE</name>
+        <initializer>6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="43" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__error_gaa546f8a8ba00d64290e319a9bfbd8fae_1gaa546f8a8ba00d64290e319a9bfbd8fae" prot="public" static="no">
+        <name>ST25R3911B_NFCA_ERR_TRANSMISSION</name>
+        <initializer>7</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="44" column="9" bodyfile="include/st25r3911b_nfca.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1gaf280d5487f8a7a46504caa9e4f6390be" prot="public" static="no" strong="no">
+        <type></type>
+        <name>st25r3911b_nfca_tag_type</name>
+        <enumvalue id="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1ggaf280d5487f8a7a46504caa9e4f6390beac445d0c51848a5b50ec061147deec957" prot="public">
+          <name>ST25R3911B_NFCA_TAG_TYPE_T2T</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1ggaf280d5487f8a7a46504caa9e4f6390bea243b8c28ad15d90395582f30e35a0393" prot="public">
+          <name>ST25R3911B_NFCA_TAG_TYPE_T4T</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1ggaf280d5487f8a7a46504caa9e4f6390bea417d56353cecd34b2fa779466a6dbc03" prot="public">
+          <name>ST25R3911B_NFCA_TAG_TYPE_NFCDEP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1ggaf280d5487f8a7a46504caa9e4f6390beab0db281106d9c97b8d580c2017f76871" prot="public">
+          <name>ST25R3911B_NFCA_TAG_TYPE_T4T_NFCDEP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1ggaf280d5487f8a7a46504caa9e4f6390beaaf2c447ac23e6929bd69515ef2a44bd2" prot="public">
+          <name>ST25R3911B_NFCA_TAG_TYPE_T1T</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>NFC-A Tag types. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="52" column="1" bodyfile="include/st25r3911b_nfca.h" bodystart="52" bodyend="58"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__st25r3911b__nfca_ga9bdb31bdc0dded0829dae8847090494b_1ga9bdb31bdc0dded0829dae8847090494b" prot="public" static="no" strong="no">
+        <type></type>
+        <name>st25r3911b_nfca_detect_cmd</name>
+        <enumvalue id="group__st25r3911b__nfca_ga9bdb31bdc0dded0829dae8847090494b_1gga9bdb31bdc0dded0829dae8847090494bac0e932c93e5b8e561924041c8002a13c" prot="public">
+          <name>ST25R3911B_NFCA_DETECT_CMD_ALL_REQ</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__st25r3911b__nfca_ga9bdb31bdc0dded0829dae8847090494b_1gga9bdb31bdc0dded0829dae8847090494bad20460569e6c117d5e861c550557c4b1" prot="public">
+          <name>ST25R3911B_NFCA_DETECT_CMD_SENS_REQ</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>NFC-A Tag detect command. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="62" column="1" bodyfile="include/st25r3911b_nfca.h" bodystart="62" bodyend="65"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__st25r3911b__nfca_ga3f74998e11b1e777eff80e7d2d8609ef_1ga3f74998e11b1e777eff80e7d2d8609ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_nfca_init</definition>
+        <argsstring>(struct k_poll_event *events, uint8_t cnt, const struct st25r3911b_nfca_cb *cb)</argsstring>
+        <name>st25r3911b_nfca_init</name>
+        <param>
+          <type>struct k_poll_event *</type>
+          <declname>events</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>cnt</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structst25r3911b__nfca__cb" kindref="compound">st25r3911b_nfca_cb</ref> *</type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Initialize NFC Reader NFC-A technology. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function initializes everything that is required, like interrupts and common reader functionality.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">events</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>NFC-A Events. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cnt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Event count. This driver needs 2 events. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback structure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="178" column="5" declfile="include/st25r3911b_nfca.h" declline="178" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfca_ga9545d3bf0e53532a02596822e239f547_1ga9545d3bf0e53532a02596822e239f547" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_nfca_field_on</definition>
+        <argsstring>(void)</argsstring>
+        <name>st25r3911b_nfca_field_on</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Switch on the NFC Reader field. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If the field is switched on successfully, the <emphasis>nfca_cb.field_on()</emphasis> callback is called.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="189" column="5" declfile="include/st25r3911b_nfca.h" declline="189" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfca_gaf50ceacaf08dd8ff0ee358c0e8fa2053_1gaf50ceacaf08dd8ff0ee358c0e8fa2053" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_nfca_field_off</definition>
+        <argsstring>(void)</argsstring>
+        <name>st25r3911b_nfca_field_off</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Switch off the NFC Reader field. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If the field is switched off successfully, the <emphasis>nfca_cb.field_off()</emphasis> callback is called.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="199" column="5" declfile="include/st25r3911b_nfca.h" declline="199" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfca_ga41d4a0a6a28122d0de094aa820ce31a8_1ga41d4a0a6a28122d0de094aa820ce31a8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_nfca_tag_detect</definition>
+        <argsstring>(enum st25r3911b_nfca_detect_cmd cmd)</argsstring>
+        <name>st25r3911b_nfca_tag_detect</name>
+        <param>
+          <type>enum <ref refid="group__st25r3911b__nfca_ga9bdb31bdc0dded0829dae8847090494b_1ga9bdb31bdc0dded0829dae8847090494b" kindref="member">st25r3911b_nfca_detect_cmd</ref></type>
+          <declname>cmd</declname>
+        </param>
+        <briefdescription>
+<para>Detect tag by sending a detection command. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The command is sent according to NFC Forum Digital 2.0 6.6. After success, the <emphasis>nfca_cb.tag_detected()</emphasis> callback is called.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cmd</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Command.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="212" column="5" declfile="include/st25r3911b_nfca.h" declline="212" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfca_ga85fe067b0e729c1f3283171d4ce37253_1ga85fe067b0e729c1f3283171d4ce37253" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_nfca_anticollision_start</definition>
+        <argsstring>(void)</argsstring>
+        <name>st25r3911b_nfca_anticollision_start</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>NFC-A collision resolution procedure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The collision resolution procedure is described in NFC Forum Activity 2.0 9.4.4. After this procedure, <emphasis>nfca_cb.anticollision_completed()</emphasis> is called.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="223" column="5" declfile="include/st25r3911b_nfca.h" declline="223" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfca_gae422cea60db829312b62b29ba5a61994_1gae422cea60db829312b62b29ba5a61994" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_nfca_transfer</definition>
+        <argsstring>(const struct st25r3911b_nfca_buf *tx, const struct st25r3911b_nfca_buf *rx, uint32_t fdt, bool auto_crc)</argsstring>
+        <name>st25r3911b_nfca_transfer</name>
+        <param>
+          <type>const struct <ref refid="structst25r3911b__nfca__buf" kindref="compound">st25r3911b_nfca_buf</ref> *</type>
+          <declname>tx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structst25r3911b__nfca__buf" kindref="compound">st25r3911b_nfca_buf</ref> *</type>
+          <declname>rx</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>fdt</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>auto_crc</declname>
+        </param>
+        <briefdescription>
+<para>Exchange the specified amount of data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is a generic function for NFC-A data exchange.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">tx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>TX data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">rx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>RX data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">fdt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum frame delay time (according to NFC Forum Digital 2.0 6.10.1). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">auto_crc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If set, the CRC is generated automatically by the NFC Reader. Otherwise, the CRC must be added manually to the TX buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="239" column="5" declfile="include/st25r3911b_nfca.h" declline="239" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfca_ga253ea18506de0423270e389b243792e7_1ga253ea18506de0423270e389b243792e7" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int st25r3911b_nfca_transfer_with_crc</definition>
+        <argsstring>(const struct st25r3911b_nfca_buf *tx, const struct st25r3911b_nfca_buf *rx, uint32_t fdt)</argsstring>
+        <name>st25r3911b_nfca_transfer_with_crc</name>
+        <param>
+          <type>const struct <ref refid="structst25r3911b__nfca__buf" kindref="compound">st25r3911b_nfca_buf</ref> *</type>
+          <declname>tx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structst25r3911b__nfca__buf" kindref="compound">st25r3911b_nfca_buf</ref> *</type>
+          <declname>rx</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>fdt</declname>
+        </param>
+        <briefdescription>
+<para>Exchange the specified amount of data with an automatically generated CRC. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">tx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>TX data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">rx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>RX data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">fdt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum frame delay time (according to NFC Forum Digital 2.0 6.10.1).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="254" column="19" bodyfile="include/st25r3911b_nfca.h" bodystart="254" bodyend="259"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfca_gaf590cc132f1bf60ed6bfcd4e398f55b7_1gaf590cc132f1bf60ed6bfcd4e398f55b7" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int st25r3911b_nfca_transfer_without_crc</definition>
+        <argsstring>(const struct st25r3911b_nfca_buf *tx, const struct st25r3911b_nfca_buf *rx, uint32_t fdt)</argsstring>
+        <name>st25r3911b_nfca_transfer_without_crc</name>
+        <param>
+          <type>const struct <ref refid="structst25r3911b__nfca__buf" kindref="compound">st25r3911b_nfca_buf</ref> *</type>
+          <declname>tx</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structst25r3911b__nfca__buf" kindref="compound">st25r3911b_nfca_buf</ref> *</type>
+          <declname>rx</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>fdt</declname>
+        </param>
+        <briefdescription>
+<para>Exchange the specified amount of data with a manually generated CRC. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The CRC must be added manually to the TX buffer.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">tx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>TX data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">rx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>RX data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">fdt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum frame delay time (according to NFC Forum Digital 2.0 6.10.1).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="274" column="19" bodyfile="include/st25r3911b_nfca.h" bodystart="274" bodyend="279"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfca_ga10376019cd87a2e80bdc6ded845ba062_1ga10376019cd87a2e80bdc6ded845ba062" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_nfca_tag_sleep</definition>
+        <argsstring>(void)</argsstring>
+        <name>st25r3911b_nfca_tag_sleep</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Send NFC-A tag sleep command. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function sends the tag sleep command (according to NFC Forum Digital 2.0 6.9).</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="289" column="5" declfile="include/st25r3911b_nfca.h" declline="289" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfca_ga1528b301a41ba86d4c24d9924513d569_1ga1528b301a41ba86d4c24d9924513d569" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_nfca_crc_calculate</definition>
+        <argsstring>(const uint8_t *data, size_t len, struct st25r3911b_nfca_crc *crc_val)</argsstring>
+        <name>st25r3911b_nfca_crc_calculate</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structst25r3911b__nfca__crc" kindref="compound">st25r3911b_nfca_crc</ref> *</type>
+          <declname>crc_val</declname>
+        </param>
+        <briefdescription>
+<para>Calculate CRC 16 for NFC-A payload. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function generates an NFC-A CRC (according to NFC Forum Digital 2.0 6.4.1.3).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Payload data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data length. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">crc_val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>NFC-A CRC value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="303" column="5" declfile="include/st25r3911b_nfca.h" declline="303" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__nfca_ga0f66a560da32fa383295e08be5271082_1ga0f66a560da32fa383295e08be5271082" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_nfca_process</definition>
+        <argsstring>(void)</argsstring>
+        <name>st25r3911b_nfca_process</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Process NFC-A library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function must be called periodically from thread to process the NFC reader state and interrupts.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/st25r3911b_nfca.h" line="314" column="5" declfile="include/st25r3911b_nfca.h" declline="314" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>ST25R3911B_NFCA_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_NFCA_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;kernel.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="group__st25r3911b__nfca_ga7ae9ab82a3b3b0e4698c571894f6d03c_1ga7ae9ab82a3b3b0e4698c571894f6d03c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_NFCA_EVENT_CNT<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="group__st25r3911b__nfca_ga114e20452cbf14f78dc0269021d38213_1ga114e20452cbf14f78dc0269021d38213" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_NFCA_CRC_LEN<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="group__st25r3911b__nfca_ga88c6a7b81368685325eeb6a06ca23cbb_1ga88c6a7b81368685325eeb6a06ca23cbb" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_NFCA_NFCID1_MAX_LEN<sp/>10</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="group__st25r3911b__error_ga8d3bb0065bcdd4f428a9001d436e334f_1ga8d3bb0065bcdd4f428a9001d436e334f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_NFCA_ERR_CRC<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="group__st25r3911b__error_ga9b281af6e6e9a1964af208555d6a6516_1ga9b281af6e6e9a1964af208555d6a6516" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_NFCA_ERR_PARITY<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="group__st25r3911b__error_ga047df1dcba3a7cdfa5ea6d5aa3ee5ef5_1ga047df1dcba3a7cdfa5ea6d5aa3ee5ef5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_NFCA_ERR_FRAMING<sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="group__st25r3911b__error_gadd300c6f2d0d955517b8bd722aedba03_1gadd300c6f2d0d955517b8bd722aedba03" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_NFCA_ERR_SOFT_FRAMING<sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="group__st25r3911b__error_ga1a3c63ec3ac2b229c4ebefe77702a792_1ga1a3c63ec3ac2b229c4ebefe77702a792" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_NFCA_ERR_HARD_FRAMING<sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="group__st25r3911b__error_ga0f9ef474b5f958ce2f124fee9641fa44_1ga0f9ef474b5f958ce2f124fee9641fa44" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_NFCA_ERR_LAST_BYTE_INCOMPLETE<sp/>6</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="group__st25r3911b__error_gaa546f8a8ba00d64290e319a9bfbd8fae_1gaa546f8a8ba00d64290e319a9bfbd8fae" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ST25R3911B_NFCA_ERR_TRANSMISSION<sp/>7</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1gaf280d5487f8a7a46504caa9e4f6390be" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1gaf280d5487f8a7a46504caa9e4f6390be" kindref="member">st25r3911b_nfca_tag_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="53" refid="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1ggaf280d5487f8a7a46504caa9e4f6390beac445d0c51848a5b50ec061147deec957" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1ggaf280d5487f8a7a46504caa9e4f6390beac445d0c51848a5b50ec061147deec957" kindref="member">ST25R3911B_NFCA_TAG_TYPE_T2T</ref>,</highlight></codeline>
+<codeline lineno="54" refid="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1ggaf280d5487f8a7a46504caa9e4f6390bea243b8c28ad15d90395582f30e35a0393" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1ggaf280d5487f8a7a46504caa9e4f6390bea243b8c28ad15d90395582f30e35a0393" kindref="member">ST25R3911B_NFCA_TAG_TYPE_T4T</ref>,</highlight></codeline>
+<codeline lineno="55" refid="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1ggaf280d5487f8a7a46504caa9e4f6390bea417d56353cecd34b2fa779466a6dbc03" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1ggaf280d5487f8a7a46504caa9e4f6390bea417d56353cecd34b2fa779466a6dbc03" kindref="member">ST25R3911B_NFCA_TAG_TYPE_NFCDEP</ref>,</highlight></codeline>
+<codeline lineno="56" refid="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1ggaf280d5487f8a7a46504caa9e4f6390beab0db281106d9c97b8d580c2017f76871" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1ggaf280d5487f8a7a46504caa9e4f6390beab0db281106d9c97b8d580c2017f76871" kindref="member">ST25R3911B_NFCA_TAG_TYPE_T4T_NFCDEP</ref>,</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1ggaf280d5487f8a7a46504caa9e4f6390beaaf2c447ac23e6929bd69515ef2a44bd2" kindref="member">ST25R3911B_NFCA_TAG_TYPE_T1T</ref></highlight></codeline>
+<codeline lineno="58" refid="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1ggaf280d5487f8a7a46504caa9e4f6390beaaf2c447ac23e6929bd69515ef2a44bd2" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="group__st25r3911b__nfca_ga9bdb31bdc0dded0829dae8847090494b_1ga9bdb31bdc0dded0829dae8847090494b" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfca_ga9bdb31bdc0dded0829dae8847090494b_1ga9bdb31bdc0dded0829dae8847090494b" kindref="member">st25r3911b_nfca_detect_cmd</ref><sp/>{</highlight></codeline>
+<codeline lineno="63" refid="group__st25r3911b__nfca_ga9bdb31bdc0dded0829dae8847090494b_1gga9bdb31bdc0dded0829dae8847090494bac0e932c93e5b8e561924041c8002a13c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__st25r3911b__nfca_ga9bdb31bdc0dded0829dae8847090494b_1gga9bdb31bdc0dded0829dae8847090494bac0e932c93e5b8e561924041c8002a13c" kindref="member">ST25R3911B_NFCA_DETECT_CMD_ALL_REQ</ref>,</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__st25r3911b__nfca_ga9bdb31bdc0dded0829dae8847090494b_1gga9bdb31bdc0dded0829dae8847090494bad20460569e6c117d5e861c550557c4b1" kindref="member">ST25R3911B_NFCA_DETECT_CMD_SENS_REQ</ref></highlight></codeline>
+<codeline lineno="65" refid="group__st25r3911b__nfca_ga9bdb31bdc0dded0829dae8847090494b_1gga9bdb31bdc0dded0829dae8847090494bad20460569e6c117d5e861c550557c4b1" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="structst25r3911b__nfca__buf" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structst25r3911b__nfca__buf" kindref="compound">st25r3911b_nfca_buf</ref><sp/>{</highlight></codeline>
+<codeline lineno="71" refid="structst25r3911b__nfca__buf_aef6622972d946cea5ac0dc77309594dd_1aef6622972d946cea5ac0dc77309594dd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*<ref refid="structst25r3911b__nfca__buf_aef6622972d946cea5ac0dc77309594dd_1aef6622972d946cea5ac0dc77309594dd" kindref="member">data</ref>;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="structst25r3911b__nfca__buf_af88bae4449806d07fd435c058e12c16a_1af88bae4449806d07fd435c058e12c16a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structst25r3911b__nfca__buf_af88bae4449806d07fd435c058e12c16a_1af88bae4449806d07fd435c058e12c16a" kindref="member">len</ref>;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="structst25r3911b__nfca__sens__resp" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structst25r3911b__nfca__sens__resp" kindref="compound">st25r3911b_nfca_sens_resp</ref><sp/>{</highlight></codeline>
+<codeline lineno="81" refid="structst25r3911b__nfca__sens__resp_a45e458c44c2c198c50107b09874ae60d_1a45e458c44c2c198c50107b09874ae60d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structst25r3911b__nfca__sens__resp_a45e458c44c2c198c50107b09874ae60d_1a45e458c44c2c198c50107b09874ae60d" kindref="member">anticollison</ref>;</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84" refid="structst25r3911b__nfca__sens__resp_ac69dce3594b46f9afcf867dbad4552ad_1ac69dce3594b46f9afcf867dbad4552ad" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structst25r3911b__nfca__sens__resp_ac69dce3594b46f9afcf867dbad4552ad_1ac69dce3594b46f9afcf867dbad4552ad" kindref="member">platform_info</ref>;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89" refid="structst25r3911b__nfca__tag__info" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structst25r3911b__nfca__tag__info" kindref="compound">st25r3911b_nfca_tag_info</ref><sp/>{</highlight></codeline>
+<codeline lineno="91" refid="structst25r3911b__nfca__tag__info_a3bd549f0998e8e56e9415d95e1b24622_1a3bd549f0998e8e56e9415d95e1b24622" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfca_gaf280d5487f8a7a46504caa9e4f6390be_1gaf280d5487f8a7a46504caa9e4f6390be" kindref="member">st25r3911b_nfca_tag_type</ref><sp/><ref refid="structst25r3911b__nfca__tag__info_a3bd549f0998e8e56e9415d95e1b24622_1a3bd549f0998e8e56e9415d95e1b24622" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94" refid="structst25r3911b__nfca__tag__info_a6988c6076eab29180c3a7cb868aa4de9_1a6988c6076eab29180c3a7cb868aa4de9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structst25r3911b__nfca__sens__resp" kindref="compound">st25r3911b_nfca_sens_resp</ref><sp/><ref refid="structst25r3911b__nfca__tag__info_a6988c6076eab29180c3a7cb868aa4de9_1a6988c6076eab29180c3a7cb868aa4de9" kindref="member">sens_resp</ref>;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97" refid="structst25r3911b__nfca__tag__info_aa35b442ee457a7e49771e962669bef5d_1aa35b442ee457a7e49771e962669bef5d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structst25r3911b__nfca__tag__info_aa35b442ee457a7e49771e962669bef5d_1aa35b442ee457a7e49771e962669bef5d" kindref="member">sel_resp</ref>;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100" refid="structst25r3911b__nfca__tag__info_a7e7f32c43e4d01aa570c19bbe6eb8590_1a7e7f32c43e4d01aa570c19bbe6eb8590" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structst25r3911b__nfca__tag__info_a7e7f32c43e4d01aa570c19bbe6eb8590_1a7e7f32c43e4d01aa570c19bbe6eb8590" kindref="member">nfcid1_len</ref>;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103" refid="structst25r3911b__nfca__tag__info_a624abd96bb1428442e918cf06e56e5ee_1a624abd96bb1428442e918cf06e56e5ee" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structst25r3911b__nfca__tag__info_a624abd96bb1428442e918cf06e56e5ee_1a624abd96bb1428442e918cf06e56e5ee" kindref="member">nfcid1</ref>[<ref refid="group__st25r3911b__nfca_ga88c6a7b81368685325eeb6a06ca23cbb_1ga88c6a7b81368685325eeb6a06ca23cbb" kindref="member">ST25R3911B_NFCA_NFCID1_MAX_LEN</ref>];</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106" refid="structst25r3911b__nfca__tag__info_ae11ce3796fd61da57907fbf72d39673e_1ae11ce3796fd61da57907fbf72d39673e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structst25r3911b__nfca__tag__info_ae11ce3796fd61da57907fbf72d39673e_1ae11ce3796fd61da57907fbf72d39673e" kindref="member">sleep</ref>;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111" refid="structst25r3911b__nfca__crc" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structst25r3911b__nfca__crc" kindref="compound">st25r3911b_nfca_crc</ref><sp/>{</highlight></codeline>
+<codeline lineno="113" refid="structst25r3911b__nfca__crc_a4e0ef4fb261a90c866c8418154e4cd54_1a4e0ef4fb261a90c866c8418154e4cd54" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structst25r3911b__nfca__crc_a4e0ef4fb261a90c866c8418154e4cd54_1a4e0ef4fb261a90c866c8418154e4cd54" kindref="member">crc</ref>[<ref refid="group__st25r3911b__nfca_ga114e20452cbf14f78dc0269021d38213_1ga114e20452cbf14f78dc0269021d38213" kindref="member">ST25R3911B_NFCA_CRC_LEN</ref>];</highlight></codeline>
+<codeline lineno="114"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120" refid="structst25r3911b__nfca__cb" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structst25r3911b__nfca__cb" kindref="compound">st25r3911b_nfca_cb</ref><sp/>{</highlight></codeline>
+<codeline lineno="125" refid="structst25r3911b__nfca__cb_a914b4714fb882541c3d7c9e494423d2f_1a914b4714fb882541c3d7c9e494423d2f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structst25r3911b__nfca__cb_a914b4714fb882541c3d7c9e494423d2f_1a914b4714fb882541c3d7c9e494423d2f" kindref="member">field_on</ref>)(void);</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129" refid="structst25r3911b__nfca__cb_a2123e1490a67304f9256f6a54f9a3ef3_1a2123e1490a67304f9256f6a54f9a3ef3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structst25r3911b__nfca__cb_a2123e1490a67304f9256f6a54f9a3ef3_1a2123e1490a67304f9256f6a54f9a3ef3" kindref="member">field_off</ref>)(void);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137" refid="structst25r3911b__nfca__cb_a82e4b61d476d29c66cfc2ffda526f631_1a82e4b61d476d29c66cfc2ffda526f631" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structst25r3911b__nfca__cb_a82e4b61d476d29c66cfc2ffda526f631_1a82e4b61d476d29c66cfc2ffda526f631" kindref="member">tag_detected</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structst25r3911b__nfca__sens__resp" kindref="compound">st25r3911b_nfca_sens_resp</ref><sp/>*sens_resp);</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144" refid="structst25r3911b__nfca__cb_a8311a395a826e0b9fde29b8c78562098_1a8311a395a826e0b9fde29b8c78562098" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structst25r3911b__nfca__cb_a8311a395a826e0b9fde29b8c78562098_1a8311a395a826e0b9fde29b8c78562098" kindref="member">anticollision_completed</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structst25r3911b__nfca__tag__info" kindref="compound">st25r3911b_nfca_tag_info</ref><sp/>*tag_info,</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>err);</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153" refid="structst25r3911b__nfca__cb_a1f7c2cb79d7969e01f4626f0c9bef892_1a1f7c2cb79d7969e01f4626f0c9bef892" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structst25r3911b__nfca__cb_a1f7c2cb79d7969e01f4626f0c9bef892_1a1f7c2cb79d7969e01f4626f0c9bef892" kindref="member">transfer_completed</ref>)(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*data,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>len,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>err);</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159" refid="structst25r3911b__nfca__cb_a616b6941748306200c5adf7a965a5b60_1a616b6941748306200c5adf7a965a5b60" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structst25r3911b__nfca__cb_a616b6941748306200c5adf7a965a5b60_1a616b6941748306200c5adf7a965a5b60" kindref="member">rx_timeout</ref>)(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structst25r3911b__nfca__cb_a717acbd44271ab3592f45379b26de0e1_1a717acbd44271ab3592f45379b26de0e1" kindref="member">tag_sleep</ref>);</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163" refid="structst25r3911b__nfca__cb_a717acbd44271ab3592f45379b26de0e1_1a717acbd44271ab3592f45379b26de0e1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/>(*<ref refid="structst25r3911b__nfca__cb_a717acbd44271ab3592f45379b26de0e1_1a717acbd44271ab3592f45379b26de0e1" kindref="member">tag_sleep</ref>)(void);</highlight></codeline>
+<codeline lineno="164"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178" refid="group__st25r3911b__nfca_ga3f74998e11b1e777eff80e7d2d8609ef_1ga3f74998e11b1e777eff80e7d2d8609ef" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfca_ga3f74998e11b1e777eff80e7d2d8609ef_1ga3f74998e11b1e777eff80e7d2d8609ef" kindref="member">st25r3911b_nfca_init</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>k_poll_event<sp/>*events,<sp/>uint8_t<sp/>cnt,</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structst25r3911b__nfca__cb" kindref="compound">st25r3911b_nfca_cb</ref><sp/>*cb);</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189" refid="group__st25r3911b__nfca_ga9545d3bf0e53532a02596822e239f547_1ga9545d3bf0e53532a02596822e239f547" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfca_ga9545d3bf0e53532a02596822e239f547_1ga9545d3bf0e53532a02596822e239f547" kindref="member">st25r3911b_nfca_field_on</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight></codeline>
+<codeline lineno="199" refid="group__st25r3911b__nfca_gaf50ceacaf08dd8ff0ee358c0e8fa2053_1gaf50ceacaf08dd8ff0ee358c0e8fa2053" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfca_gaf50ceacaf08dd8ff0ee358c0e8fa2053_1gaf50ceacaf08dd8ff0ee358c0e8fa2053" kindref="member">st25r3911b_nfca_field_off</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight></codeline>
+<codeline lineno="212" refid="group__st25r3911b__nfca_ga41d4a0a6a28122d0de094aa820ce31a8_1ga41d4a0a6a28122d0de094aa820ce31a8" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfca_ga41d4a0a6a28122d0de094aa820ce31a8_1ga41d4a0a6a28122d0de094aa820ce31a8" kindref="member">st25r3911b_nfca_tag_detect</ref>(</highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfca_ga9bdb31bdc0dded0829dae8847090494b_1ga9bdb31bdc0dded0829dae8847090494b" kindref="member">st25r3911b_nfca_detect_cmd</ref><sp/>cmd);</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight></codeline>
+<codeline lineno="223" refid="group__st25r3911b__nfca_ga85fe067b0e729c1f3283171d4ce37253_1ga85fe067b0e729c1f3283171d4ce37253" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfca_ga85fe067b0e729c1f3283171d4ce37253_1ga85fe067b0e729c1f3283171d4ce37253" kindref="member">st25r3911b_nfca_anticollision_start</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"></highlight></codeline>
+<codeline lineno="239" refid="group__st25r3911b__nfca_gae422cea60db829312b62b29ba5a61994_1gae422cea60db829312b62b29ba5a61994" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfca_gae422cea60db829312b62b29ba5a61994_1gae422cea60db829312b62b29ba5a61994" kindref="member">st25r3911b_nfca_transfer</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structst25r3911b__nfca__buf" kindref="compound">st25r3911b_nfca_buf</ref><sp/>*tx,</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structst25r3911b__nfca__buf" kindref="compound">st25r3911b_nfca_buf</ref><sp/>*rx,</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/>fdt,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>auto_crc);</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"></highlight></codeline>
+<codeline lineno="254" refid="group__st25r3911b__nfca_ga253ea18506de0423270e389b243792e7_1ga253ea18506de0423270e389b243792e7" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfca_ga253ea18506de0423270e389b243792e7_1ga253ea18506de0423270e389b243792e7" kindref="member">st25r3911b_nfca_transfer_with_crc</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structst25r3911b__nfca__buf" kindref="compound">st25r3911b_nfca_buf</ref><sp/>*tx,</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structst25r3911b__nfca__buf" kindref="compound">st25r3911b_nfca_buf</ref><sp/>*rx,</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/>fdt)</highlight></codeline>
+<codeline lineno="257"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfca_gae422cea60db829312b62b29ba5a61994_1gae422cea60db829312b62b29ba5a61994" kindref="member">st25r3911b_nfca_transfer</ref>(tx,<sp/>rx,<sp/>fdt,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="259"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"></highlight></codeline>
+<codeline lineno="274" refid="group__st25r3911b__nfca_gaf590cc132f1bf60ed6bfcd4e398f55b7_1gaf590cc132f1bf60ed6bfcd4e398f55b7" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfca_gaf590cc132f1bf60ed6bfcd4e398f55b7_1gaf590cc132f1bf60ed6bfcd4e398f55b7" kindref="member">st25r3911b_nfca_transfer_without_crc</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structst25r3911b__nfca__buf" kindref="compound">st25r3911b_nfca_buf</ref><sp/>*tx,</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structst25r3911b__nfca__buf" kindref="compound">st25r3911b_nfca_buf</ref><sp/>*rx,</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/>fdt)</highlight></codeline>
+<codeline lineno="277"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfca_gae422cea60db829312b62b29ba5a61994_1gae422cea60db829312b62b29ba5a61994" kindref="member">st25r3911b_nfca_transfer</ref>(tx,<sp/>rx,<sp/>fdt,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="279"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"></highlight></codeline>
+<codeline lineno="289" refid="group__st25r3911b__nfca_ga10376019cd87a2e80bdc6ded845ba062_1ga10376019cd87a2e80bdc6ded845ba062" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfca_ga10376019cd87a2e80bdc6ded845ba062_1ga10376019cd87a2e80bdc6ded845ba062" kindref="member">st25r3911b_nfca_tag_sleep</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"></highlight></codeline>
+<codeline lineno="303" refid="group__st25r3911b__nfca_ga1528b301a41ba86d4c24d9924513d569_1ga1528b301a41ba86d4c24d9924513d569" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfca_ga1528b301a41ba86d4c24d9924513d569_1ga1528b301a41ba86d4c24d9924513d569" kindref="member">st25r3911b_nfca_crc_calculate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*data,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>len,</highlight></codeline>
+<codeline lineno="304"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structst25r3911b__nfca__crc" kindref="compound">st25r3911b_nfca_crc</ref><sp/>*crc_val);</highlight></codeline>
+<codeline lineno="305"><highlight class="normal"></highlight></codeline>
+<codeline lineno="314" refid="group__st25r3911b__nfca_ga0f66a560da32fa383295e08be5271082_1ga0f66a560da32fa383295e08be5271082" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__st25r3911b__nfca_ga0f66a560da32fa383295e08be5271082_1ga0f66a560da32fa383295e08be5271082" kindref="member">st25r3911b_nfca_process</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="315"><highlight class="normal"></highlight></codeline>
+<codeline lineno="316"><highlight class="normal"></highlight></codeline>
+<codeline lineno="317"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="318"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="319"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="320"><highlight class="normal"></highlight></codeline>
+<codeline lineno="325"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>ST25R3911B_NFCA_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/st25r3911b_nfca.h"/>
+  </compounddef>
+</doxygen>

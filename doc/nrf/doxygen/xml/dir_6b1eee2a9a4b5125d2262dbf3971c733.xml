@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_6b1eee2a9a4b5125d2262dbf3971c733" kind="dir">
+    <compoundname>applications/nrf_desktop/configuration</compoundname>
+    <innerdir refid="dir_1dc780b6d2d8f5f3f7448fc9785a1d50">applications/nrf_desktop/configuration/common</innerdir>
+    <innerdir refid="dir_245a1ead4d5e778ce3a4b5d855203349">applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810</innerdir>
+    <innerdir refid="dir_e2cd4bd0de11bbe7f3bdd73ed5f10b87">applications/nrf_desktop/configuration/nrf52820dongle_nrf52820</innerdir>
+    <innerdir refid="dir_f9b1babcadcf492ffa42f34d1bac7944">applications/nrf_desktop/configuration/nrf52833dk_nrf52833</innerdir>
+    <innerdir refid="dir_2a43c33e9156e499fcc465dea63c5c5b">applications/nrf_desktop/configuration/nrf52833dongle_nrf52833</innerdir>
+    <innerdir refid="dir_21f1b4580776a51493c75c50170e349a">applications/nrf_desktop/configuration/nrf52840dk_nrf52840</innerdir>
+    <innerdir refid="dir_1bdcd292ce36f4d4ed8b9b80eeea1135">applications/nrf_desktop/configuration/nrf52840dongle_nrf52840</innerdir>
+    <innerdir refid="dir_146691eaba5c7a6679b85fd745bce911">applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840</innerdir>
+    <innerdir refid="dir_1ab68e3a6cf73f2183687fdd48c50d12">applications/nrf_desktop/configuration/nrf52dmouse_nrf52832</innerdir>
+    <innerdir refid="dir_4b689d4e74db7ae1ae204b2aec58a21f">applications/nrf_desktop/configuration/nrf52kbd_nrf52832</innerdir>
+    <innerdir refid="dir_82564aaa0c7e0a690c6b5437f130df2c">applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/nrf_desktop/configuration/"/>
+  </compounddef>
+</doxygen>

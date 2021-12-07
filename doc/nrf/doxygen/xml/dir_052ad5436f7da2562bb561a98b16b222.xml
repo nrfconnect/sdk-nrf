@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_052ad5436f7da2562bb561a98b16b222" kind="dir">
+    <compoundname>include/bluetooth/services</compoundname>
+    <innerfile refid="ancs__client_8h">ancs_client.h</innerfile>
+    <innerfile refid="bas__client_8h">bas_client.h</innerfile>
+    <innerfile refid="bms_8h">bms.h</innerfile>
+    <innerfile refid="cts__client_8h">cts_client.h</innerfile>
+    <innerfile refid="dfu__smp_8h">dfu_smp.h</innerfile>
+    <innerfile refid="gadgets_8h">gadgets.h</innerfile>
+    <innerfile refid="gadgets__profile_8h">gadgets_profile.h</innerfile>
+    <innerfile refid="gattp_8h">gattp.h</innerfile>
+    <innerfile refid="hids_8h">hids.h</innerfile>
+    <innerfile refid="hogp_8h">hogp.h</innerfile>
+    <innerfile refid="hrs__client_8h">hrs_client.h</innerfile>
+    <innerfile refid="latency_8h">latency.h</innerfile>
+    <innerfile refid="latency__client_8h">latency_client.h</innerfile>
+    <innerfile refid="lbs_8h">lbs.h</innerfile>
+    <innerfile refid="nus_8h">nus.h</innerfile>
+    <innerfile refid="nus__client_8h">nus_client.h</innerfile>
+    <innerfile refid="rscs_8h">rscs.h</innerfile>
+    <innerfile refid="throughput_8h">throughput.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/"/>
+  </compounddef>
+</doxygen>

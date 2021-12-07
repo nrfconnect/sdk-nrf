@@ -1,0 +1,201 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__ponoff__srv" kind="group">
+    <compoundname>bt_mesh_ponoff_srv</compoundname>
+    <title>Generic Power OnOff Server model</title>
+    <innerclass refid="structbt__mesh__ponoff__srv" prot="public">bt_mesh_ponoff_srv</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__mesh__ponoff__srv_1gae607e1a3b8ab1a4bdad922f3da4a1655" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_mesh_ponoff_srv_set</definition>
+        <argsstring>(struct bt_mesh_ponoff_srv *srv, enum bt_mesh_on_power_up on_power_up)</argsstring>
+        <name>bt_mesh_ponoff_srv_set</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__ponoff__srv" kindref="compound">bt_mesh_ponoff_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__bt__mesh__ponoff_gaafb92a05caf33aee2d2b7af52719fcf7_1gaafb92a05caf33aee2d2b7af52719fcf7" kindref="member">bt_mesh_on_power_up</ref></type>
+          <declname>on_power_up</declname>
+        </param>
+        <briefdescription>
+<para>Set the OnPowerUp state of a Power OnOff server. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If an update handler is set, it&apos;ll be called with the updated OnPowerUp value. If publication is configured, the change will cause the server to publish.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server to set the OnPowerUp state of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">on_power_up</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New OnPowerUp value. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_ponoff_srv.h" line="124" column="6" declfile="include/bluetooth/mesh/gen_ponoff_srv.h" declline="124" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__mesh__ponoff__srv_1ga99d33c0b81a351a48fede00b710aecd6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_mesh_ponoff_srv_pub</definition>
+        <argsstring>(struct bt_mesh_ponoff_srv *srv, struct bt_mesh_msg_ctx *ctx)</argsstring>
+        <name>bt_mesh_ponoff_srv_pub</name>
+        <param>
+          <type>struct <ref refid="structbt__mesh__ponoff__srv" kindref="compound">bt_mesh_ponoff_srv</ref> *</type>
+          <declname>srv</declname>
+        </param>
+        <param>
+          <type>struct bt_mesh_msg_ctx *</type>
+          <declname>ctx</declname>
+        </param>
+        <briefdescription>
+<para>Publish the current OnPowerUp state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Publishes a Generic Power OnOff status message with the configured publish parameters, or using the given message context.</para>
+<para><simplesect kind="note"><para>This API is only used for publishing unprompted status messages. Response messages for get and set messages are handled internally.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server instance to publish with. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL to publish with the configured parameters.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 Successfully published the current OnPowerUp state. </para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-EADDRNOTAVAIL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A message context was not provided and publishing is not configured. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EAGAIN</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device has not been provisioned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_ponoff_srv.h" line="144" column="5" declfile="include/bluetooth/mesh/gen_ponoff_srv.h" declline="144" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__mesh__ponoff__srv_1ga81dae4cf1a9db325ed782805f99b25e9" prot="public" static="no">
+        <name>BT_MESH_PONOFF_SRV_INIT</name>
+        <param><defname>_onoff_handlers</defname></param>
+        <param><defname>_dtt_change_handler</defname></param>
+        <param><defname>_on_power_up_change_handler</defname></param>
+        <initializer>	{                                                                      \
+		.onoff = <ref refid="group__bt__mesh__onoff__srv_ga2740ed46b33f82bea0a7c95fbed91719_1ga2740ed46b33f82bea0a7c95fbed91719" kindref="member">BT_MESH_ONOFF_SRV_INIT</ref>(                               \
+			&amp;_bt_mesh_ponoff_onoff_intercept),                     \
+		.dtt = <ref refid="group__bt__mesh__dtt__srv_ga51f86601b5863f3ab0a5041d9708611f_1ga51f86601b5863f3ab0a5041d9708611f" kindref="member">BT_MESH_DTT_SRV_INIT</ref>(_dtt_change_handler),              \
+		.onoff_handlers = _onoff_handlers,                             \
+		.update = _on_power_up_change_handler,                         \
+	}</initializer>
+        <briefdescription>
+<para>Initialization parameters for <ref refid="group__bt__mesh__ponoff__srv" kindref="compound">Generic Power OnOff Server model</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_onoff_handlers</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Handlers for the underlying Generic OnOff Server. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_dtt_change_handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Handler function for changes to the Default Transition Time Server state. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_on_power_up_change_handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Handler function for changes to the OnPowerUp state. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_ponoff_srv.h" line="39" column="9" bodyfile="include/bluetooth/mesh/gen_ponoff_srv.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__mesh__ponoff__srv_1gad794c782e217570f624f3074286f1a88" prot="public" static="no">
+        <name>BT_MESH_MODEL_PONOFF_SRV</name>
+        <param><defname>_srv</defname></param>
+        <initializer>	<ref refid="group__bt__mesh__onoff__srv_ga54dd5c38b8014b3cc42f2ea68cda40d8_1ga54dd5c38b8014b3cc42f2ea68cda40d8" kindref="member">BT_MESH_MODEL_ONOFF_SRV</ref>(&amp;(_srv)-&gt;onoff),                               \
+		<ref refid="group__bt__mesh__dtt__srv_ga3d97499d30dc351c2e4d4c704b258ba1_1ga3d97499d30dc351c2e4d4c704b258ba1" kindref="member">BT_MESH_MODEL_DTT_SRV</ref>(&amp;(_srv)-&gt;dtt),                           \
+		BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_POWER_ONOFF_SRV,         \
+				 _bt_mesh_ponoff_srv_op, &amp;(_srv)-&gt;pub,         \
+				 BT_MESH_MODEL_USER_DATA(                      \
+					 struct <ref refid="structbt__mesh__ponoff__srv" kindref="compound">bt_mesh_ponoff_srv</ref>, _srv),     \
+				 &amp;_bt_mesh_ponoff_srv_cb),                     \
+		BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_POWER_ONOFF_SETUP_SRV,   \
+				 _bt_mesh_ponoff_setup_srv_op, NULL,           \
+				 BT_MESH_MODEL_USER_DATA(                      \
+					 struct <ref refid="structbt__mesh__ponoff__srv" kindref="compound">bt_mesh_ponoff_srv</ref>, _srv),     \
+				 &amp;_bt_mesh_ponoff_setup_srv_cb)</initializer>
+        <briefdescription>
+<para>Generic Power OnOff model entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="group__bt__mesh__ponoff__srv" kindref="compound">Generic Power OnOff Server model</ref> instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_ponoff_srv.h" line="54" column="9" bodyfile="include/bluetooth/mesh/gen_ponoff_srv.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Generic Power OnOff Server. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

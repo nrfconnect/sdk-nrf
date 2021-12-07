@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__t2t" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_t2t</compoundname>
+    <includes refid="include_2nfc_2t2t_2parser_8h" local="no">parser.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__t2t_a391bc16311562db60f47cd32760af5a3_1a391bc16311562db60f47cd32760af5a3" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structnfc__t2t__sn" kindref="compound">nfc_t2t_sn</ref></type>
+        <definition>struct nfc_t2t_sn nfc_t2t::sn</definition>
+        <argsstring></argsstring>
+        <name>sn</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Values within the serial number area of the tag. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="74" column="17" bodyfile="include/nfc/t2t/parser.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t2t_a7e33c69a56963a1b462a1641e9a926dd_1a7e33c69a56963a1b462a1641e9a926dd" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t nfc_t2t::lock_bytes</definition>
+        <argsstring></argsstring>
+        <name>lock_bytes</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Value of the lock bytes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="77" column="10" bodyfile="include/nfc/t2t/parser.h" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t2t_a23c1c6139d937b7783161fc4f5803621_1a23c1c6139d937b7783161fc4f5803621" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structnfc__t2t__cc" kindref="compound">nfc_t2t_cc</ref></type>
+        <definition>struct nfc_t2t_cc nfc_t2t::cc</definition>
+        <argsstring></argsstring>
+        <name>cc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Values within the Capability Container area of the tag. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="80" column="17" bodyfile="include/nfc/t2t/parser.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t2t_a885979963531c504d6a37422b061f706_1a885979963531c504d6a37422b061f706" prot="public" static="no" mutable="no">
+        <type>const uint16_t</type>
+        <definition>const uint16_t nfc_t2t::max_tlv_blocks</definition>
+        <argsstring></argsstring>
+        <name>max_tlv_blocks</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum number of TLV blocks that can be stored. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="83" column="16" bodyfile="include/nfc/t2t/parser.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t2t_a712736f4ecbb894915a13f425fea084d_1a712736f4ecbb894915a13f425fea084d" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structnfc__t2t__tlv__block" kindref="compound">nfc_t2t_tlv_block</ref> *</type>
+        <definition>struct nfc_t2t_tlv_block* nfc_t2t::tlv_block_array</definition>
+        <argsstring></argsstring>
+        <name>tlv_block_array</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the array for TLV blocks. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="86" column="24" bodyfile="include/nfc/t2t/parser.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__t2t_a2ad84b7ffce8fb889798f3f4830f79b4_1a2ad84b7ffce8fb889798f3f4830f79b4" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t nfc_t2t::tlv_count</definition>
+        <argsstring></argsstring>
+        <name>tlv_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of TLV blocks stored in the Type 2 Tag. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="89" column="10" bodyfile="include/nfc/t2t/parser.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Type 2 Tag descriptor. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>nfc_t2t</label>
+        <link refid="structnfc__t2t"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>sn</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>cc</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>tlv_block_array</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>nfc_t2t_cc</label>
+        <link refid="structnfc__t2t__cc"/>
+      </node>
+      <node id="2">
+        <label>nfc_t2t_sn</label>
+        <link refid="structnfc__t2t__sn"/>
+      </node>
+      <node id="4">
+        <label>nfc_t2t_tlv_block</label>
+        <link refid="structnfc__t2t__tlv__block"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/nfc/t2t/parser.h" line="72" column="1" bodyfile="include/nfc/t2t/parser.h" bodystart="72" bodyend="90"/>
+    <listofallmembers>
+      <member refid="structnfc__t2t_a23c1c6139d937b7783161fc4f5803621_1a23c1c6139d937b7783161fc4f5803621" prot="public" virt="non-virtual"><scope>nfc_t2t</scope><name>cc</name></member>
+      <member refid="structnfc__t2t_a7e33c69a56963a1b462a1641e9a926dd_1a7e33c69a56963a1b462a1641e9a926dd" prot="public" virt="non-virtual"><scope>nfc_t2t</scope><name>lock_bytes</name></member>
+      <member refid="structnfc__t2t_a885979963531c504d6a37422b061f706_1a885979963531c504d6a37422b061f706" prot="public" virt="non-virtual"><scope>nfc_t2t</scope><name>max_tlv_blocks</name></member>
+      <member refid="structnfc__t2t_a391bc16311562db60f47cd32760af5a3_1a391bc16311562db60f47cd32760af5a3" prot="public" virt="non-virtual"><scope>nfc_t2t</scope><name>sn</name></member>
+      <member refid="structnfc__t2t_a712736f4ecbb894915a13f425fea084d_1a712736f4ecbb894915a13f425fea084d" prot="public" virt="non-virtual"><scope>nfc_t2t</scope><name>tlv_block_array</name></member>
+      <member refid="structnfc__t2t_a2ad84b7ffce8fb889798f3f4830f79b4_1a2ad84b7ffce8fb889798f3f4830f79b4" prot="public" virt="non-virtual"><scope>nfc_t2t</scope><name>tlv_count</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

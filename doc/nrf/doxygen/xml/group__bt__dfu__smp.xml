@@ -1,0 +1,415 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__dfu__smp" kind="group">
+    <compoundname>bt_dfu_smp</compoundname>
+    <title>Bluetooth LE GATT DFU SMP Client API</title>
+    <innerclass refid="structbt__dfu__smp__header" prot="public">bt_dfu_smp_header</innerclass>
+    <innerclass refid="structbt__dfu__smp__rsp__state" prot="public">bt_dfu_smp_rsp_state</innerclass>
+    <innerclass refid="structbt__dfu__smp__init__params" prot="public">bt_dfu_smp_init_params</innerclass>
+    <innerclass refid="structbt__dfu__smp" prot="public">bt_dfu_smp</innerclass>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__bt__dfu__smp_1gaebfee109791f03135019a8af056543f3" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_dfu_smp_rsp_part_cb) (struct bt_dfu_smp *dfu_smp)</definition>
+        <argsstring>)(struct bt_dfu_smp *dfu_smp)</argsstring>
+        <name>bt_dfu_smp_rsp_part_cb</name>
+        <briefdescription>
+<para>Handle part of the response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dfu_smp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>DFU SMP Client instance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="93" column="9" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__bt__dfu__smp_1ga0cb485283d5d22cedb8b968b2c36a059" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* bt_dfu_smp_error_cb) (struct bt_dfu_smp *dfu_smp, int err)</definition>
+        <argsstring>)(struct bt_dfu_smp *dfu_smp, int err)</argsstring>
+        <name>bt_dfu_smp_error_cb</name>
+        <briefdescription>
+<para>Global function that is called when an error occurs. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dfu_smp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>DFU SMP Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Negative internal error code or positive GATT error code. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="100" column="9" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__dfu__smp_1ga5dcc9695fc6904a1336b0865fe1fc1a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_dfu_smp_init</definition>
+        <argsstring>(struct bt_dfu_smp *dfu_smp, const struct bt_dfu_smp_init_params *params)</argsstring>
+        <name>bt_dfu_smp_init</name>
+        <param>
+          <type>struct <ref refid="structbt__dfu__smp" kindref="compound">bt_dfu_smp</ref> *</type>
+          <declname>dfu_smp</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structbt__dfu__smp__init__params" kindref="compound">bt_dfu_smp_init_params</ref> *</type>
+          <declname>params</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the DFU SMP Client module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">dfu_smp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>DFU SMP Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Initialization parameter.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="162" column="5" declfile="include/bluetooth/services/dfu_smp.h" declline="162" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__dfu__smp_1gaed5cb0d405302c6c0c9e2a10e9abd8e8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_dfu_smp_handles_assign</definition>
+        <argsstring>(struct bt_gatt_dm *dm, struct bt_dfu_smp *dfu_smp)</argsstring>
+        <name>bt_dfu_smp_handles_assign</name>
+        <param>
+          <type>struct bt_gatt_dm *</type>
+          <declname>dm</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structbt__dfu__smp" kindref="compound">bt_dfu_smp</ref> *</type>
+          <declname>dfu_smp</declname>
+        </param>
+        <briefdescription>
+<para>Assign handles to the DFU SMP Client instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">dm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Discovery object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">dfu_smp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>DFU SMP Client instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>(-ENOTSUP)</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Special error code used when the UUID of the service does not match the expected UUID. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="175" column="5" declfile="include/bluetooth/services/dfu_smp.h" declline="175" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__dfu__smp_1ga8307223846219139dc605c9cb398b1a5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_dfu_smp_command</definition>
+        <argsstring>(struct bt_dfu_smp *dfu_smp, bt_dfu_smp_rsp_part_cb rsp_cb, size_t cmd_size, const void *cmd_data)</argsstring>
+        <name>bt_dfu_smp_command</name>
+        <param>
+          <type>struct <ref refid="structbt__dfu__smp" kindref="compound">bt_dfu_smp</ref> *</type>
+          <declname>dfu_smp</declname>
+        </param>
+        <param>
+          <type><ref refid="group__bt__dfu__smp_gaebfee109791f03135019a8af056543f3_1gaebfee109791f03135019a8af056543f3" kindref="member">bt_dfu_smp_rsp_part_cb</ref></type>
+          <declname>rsp_cb</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>cmd_size</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>cmd_data</declname>
+        </param>
+        <briefdescription>
+<para>Execute a command. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">dfu_smp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>DFU SMP Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">rsp_cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback function to process the response. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cmd_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the command data buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cmd_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="188" column="5" declfile="include/bluetooth/services/dfu_smp.h" declline="188" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__dfu__smp_1ga8765b27f2fd43465ae2c94c5482b648a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct bt_conn *</type>
+        <definition>struct bt_conn * bt_dfu_smp_conn</definition>
+        <argsstring>(const struct bt_dfu_smp *dfu_smp)</argsstring>
+        <name>bt_dfu_smp_conn</name>
+        <param>
+          <type>const struct <ref refid="structbt__dfu__smp" kindref="compound">bt_dfu_smp</ref> *</type>
+          <declname>dfu_smp</declname>
+        </param>
+        <briefdescription>
+<para>Get the connection object that is used with the DFU SMP Client. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">dfu_smp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>DFU SMP Client instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Connection object. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="198" column="14" declfile="include/bluetooth/services/dfu_smp.h" declline="198" declcolumn="14"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__dfu__smp_1ga9c01f83ca8124fe3ee6b46e8fc94099e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const struct <ref refid="structbt__dfu__smp__rsp__state" kindref="compound">bt_dfu_smp_rsp_state</ref> *</type>
+        <definition>const struct bt_dfu_smp_rsp_state * bt_dfu_smp_rsp_state</definition>
+        <argsstring>(const struct bt_dfu_smp *dfu_smp)</argsstring>
+        <name>bt_dfu_smp_rsp_state</name>
+        <param>
+          <type>const struct <ref refid="structbt__dfu__smp" kindref="compound">bt_dfu_smp</ref> *</type>
+          <declname>dfu_smp</declname>
+        </param>
+        <briefdescription>
+<para>Get the current response state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This function should be used inside a response callback function that is provided to <ref refid="group__bt__dfu__smp_ga8307223846219139dc605c9cb398b1a5_1ga8307223846219139dc605c9cb398b1a5" kindref="member">bt_dfu_smp_command</ref>.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dfu_smp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>DFU SMP Client instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The pointer to the response state structure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="210" column="33" declfile="include/bluetooth/services/dfu_smp.h" declline="210" declcolumn="33"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__dfu__smp_1ga587bb5b1446eda02e434a51500799975" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool bt_dfu_smp_rsp_total_check</definition>
+        <argsstring>(const struct bt_dfu_smp *dfu_smp)</argsstring>
+        <name>bt_dfu_smp_rsp_total_check</name>
+        <param>
+          <type>const struct <ref refid="structbt__dfu__smp" kindref="compound">bt_dfu_smp</ref> *</type>
+          <declname>dfu_smp</declname>
+        </param>
+        <briefdescription>
+<para>Check if all response parts have been received. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This auxiliary function checks if the current response part is the final one.</para>
+<para><simplesect kind="note"><para>This function should be used inside a response callback function that is provided to <ref refid="group__bt__dfu__smp_ga8307223846219139dc605c9cb398b1a5_1ga8307223846219139dc605c9cb398b1a5" kindref="member">bt_dfu_smp_command</ref>.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dfu_smp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>DFU SMP Client instance.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the current part is the final one. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the current part is not the final one. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="227" column="6" declfile="include/bluetooth/services/dfu_smp.h" declline="227" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__dfu__smp_1ga420abb2aa80e0d17921a30f694658222" prot="public" static="no">
+        <name>BT_UUID_DFU_SMP_SERVICE_VAL</name>
+        <initializer>	BT_UUID_128_ENCODE(0x8D53DC1D, 0x1DB7, 0x4CD3, 0x868B, 0x8A527460AA84)</initializer>
+        <briefdescription>
+<para>SMP Service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The 128-bit service UUID is 8D53DC1D-1DB7-4CD3-868B-8A527460AA84. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="31" column="9" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__dfu__smp_1gab392d9da380a59778b06a4397aa3684b" prot="public" static="no">
+        <name>BT_UUID_DFU_SMP_SERVICE</name>
+        <initializer>BT_UUID_DECLARE_128(<ref refid="group__bt__dfu__smp_ga420abb2aa80e0d17921a30f694658222_1ga420abb2aa80e0d17921a30f694658222" kindref="member">BT_UUID_DFU_SMP_SERVICE_VAL</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="34" column="9" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__dfu__smp_1ga9e7d149da0fb3c32c83ea074ab84649a" prot="public" static="no">
+        <name>BT_UUID_DFU_SMP_CHAR_VAL</name>
+        <initializer>	BT_UUID_128_ENCODE(0xDA2E7828, 0xFBCE, 0x4E01, 0xAE9E, 0x261174997C48)</initializer>
+        <briefdescription>
+<para>SMP Characteristic. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The characteristic is used for both requests and responses. The UUID is DA2E7828-FBCE-4E01-AE9E-261174997C48. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="41" column="9" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__dfu__smp_1gac28f5e542bd238054d171a3c056c37ed" prot="public" static="no">
+        <name>BT_UUID_DFU_SMP_CHAR</name>
+        <initializer>BT_UUID_DECLARE_128(<ref refid="group__bt__dfu__smp_ga9e7d149da0fb3c32c83ea074ab84649a_1ga9e7d149da0fb3c32c83ea074ab84649a" kindref="member">BT_UUID_DFU_SMP_CHAR_VAL</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/dfu_smp.h" line="45" column="9" bodyfile="include/bluetooth/services/dfu_smp.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the Bluetooth LE GATT DFU SMP (DFU_SMP) Client. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

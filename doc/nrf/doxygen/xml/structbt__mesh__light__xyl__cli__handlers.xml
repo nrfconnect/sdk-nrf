@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__light__xyl__cli__handlers" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_light_xyl_cli_handlers</compoundname>
+    <includes refid="light__xyl__cli_8h" local="no">light_xyl_cli.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__cli__handlers_a38c28522e979a3c403dbb7be9f9ba1e0_1a38c28522e979a3c403dbb7be9f9ba1e0" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_light_xyl_cli_handlers::xyl_status) (struct bt_mesh_light_xyl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_xyl_status *status)</definition>
+        <argsstring>)(struct bt_mesh_light_xyl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_xyl_status *status)</argsstring>
+        <name>xyl_status</name>
+        <briefdescription>
+<para>xyL status message handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>xyL status contained in the message. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_cli.h" line="48" column="1" bodyfile="include/bluetooth/mesh/light_xyl_cli.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__cli__handlers_abf1e318ea01f0db41845d737f0164cb4_1abf1e318ea01f0db41845d737f0164cb4" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_light_xyl_cli_handlers::target_status) (struct bt_mesh_light_xyl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_xyl_status *status)</definition>
+        <argsstring>)(struct bt_mesh_light_xyl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_xyl_status *status)</argsstring>
+        <name>target_status</name>
+        <briefdescription>
+<para>xyL target status message handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target xyL status contained in the message. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_cli.h" line="59" column="1" bodyfile="include/bluetooth/mesh/light_xyl_cli.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__cli__handlers_ab878a87b0d038fa40c6fa2fb50fe2bd1_1ab878a87b0d038fa40c6fa2fb50fe2bd1" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_light_xyl_cli_handlers::range_status) (struct bt_mesh_light_xyl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_xyl_range_status *status)</definition>
+        <argsstring>)(struct bt_mesh_light_xyl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_xyl_range_status *status)</argsstring>
+        <name>range_status</name>
+        <briefdescription>
+<para>xyL Range status message handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>xyL Range state of the server. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_cli.h" line="69" column="1" bodyfile="include/bluetooth/mesh/light_xyl_cli.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__light__xyl__cli__handlers_aa7a94ef77dd2f03b920aeda849235c26_1aa7a94ef77dd2f03b920aeda849235c26" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_light_xyl_cli_handlers::default_status) (struct bt_mesh_light_xyl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_xyl *status)</definition>
+        <argsstring>)(struct bt_mesh_light_xyl_cli *cli, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_light_xyl *status)</argsstring>
+        <name>default_status</name>
+        <briefdescription>
+<para>Default parameter status message handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the status message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Default xyL value of the server. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/light_xyl_cli.h" line="79" column="1" bodyfile="include/bluetooth/mesh/light_xyl_cli.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Light xyL Client state access handlers. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/light_xyl_cli.h" line="40" column="1" bodyfile="include/bluetooth/mesh/light_xyl_cli.h" bodystart="40" bodyend="82"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__light__xyl__cli__handlers_aa7a94ef77dd2f03b920aeda849235c26_1aa7a94ef77dd2f03b920aeda849235c26" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_cli_handlers</scope><name>default_status</name></member>
+      <member refid="structbt__mesh__light__xyl__cli__handlers_ab878a87b0d038fa40c6fa2fb50fe2bd1_1ab878a87b0d038fa40c6fa2fb50fe2bd1" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_cli_handlers</scope><name>range_status</name></member>
+      <member refid="structbt__mesh__light__xyl__cli__handlers_abf1e318ea01f0db41845d737f0164cb4_1abf1e318ea01f0db41845d737f0164cb4" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_cli_handlers</scope><name>target_status</name></member>
+      <member refid="structbt__mesh__light__xyl__cli__handlers_a38c28522e979a3c403dbb7be9f9ba1e0_1a38c28522e979a3c403dbb7be9f9ba1e0" prot="public" virt="non-virtual"><scope>bt_mesh_light_xyl_cli_handlers</scope><name>xyl_status</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

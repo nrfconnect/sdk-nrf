@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structsms__udh__app__port" kind="struct" language="C++" prot="public">
+    <compoundname>sms_udh_app_port</compoundname>
+    <includes refid="sms_8h" local="no">sms.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structsms__udh__app__port_a5cadcc19aff59b00384a70240791dcfe_1a5cadcc19aff59b00384a70240791dcfe" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool sms_udh_app_port::present</definition>
+        <argsstring></argsstring>
+        <name>present</name>
+        <briefdescription>
+<para>Indicates whether this field is present in the SMS message. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="100" column="6" bodyfile="include/modem/sms.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsms__udh__app__port_a595ab37434bf3b5f088fbc5fa3d22d26_1a595ab37434bf3b5f088fbc5fa3d22d26" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t sms_udh_app_port::dest_port</definition>
+        <argsstring></argsstring>
+        <name>dest_port</name>
+        <briefdescription>
+<para>Destination port. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="102" column="10" bodyfile="include/modem/sms.h" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsms__udh__app__port_a174f8bfba04bffbc2ef85460a6ae277b_1a174f8bfba04bffbc2ef85460a6ae277b" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t sms_udh_app_port::src_port</definition>
+        <argsstring></argsstring>
+        <name>src_port</name>
+        <briefdescription>
+<para>Source port. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/sms.h" line="104" column="10" bodyfile="include/modem/sms.h" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>SMS application port addressing information. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This is specified in 3GPP TS 23.040 Section 9.2.3.24.3 and 9.2.3.24.4. </para>
+    </detaileddescription>
+    <location file="include/modem/sms.h" line="98" column="1" bodyfile="include/modem/sms.h" bodystart="98" bodyend="105"/>
+    <listofallmembers>
+      <member refid="structsms__udh__app__port_a595ab37434bf3b5f088fbc5fa3d22d26_1a595ab37434bf3b5f088fbc5fa3d22d26" prot="public" virt="non-virtual"><scope>sms_udh_app_port</scope><name>dest_port</name></member>
+      <member refid="structsms__udh__app__port_a5cadcc19aff59b00384a70240791dcfe_1a5cadcc19aff59b00384a70240791dcfe" prot="public" virt="non-virtual"><scope>sms_udh_app_port</scope><name>present</name></member>
+      <member refid="structsms__udh__app__port_a174f8bfba04bffbc2ef85460a6ae277b_1a174f8bfba04bffbc2ef85460a6ae277b" prot="public" virt="non-virtual"><scope>sms_udh_app_port</scope><name>src_port</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__gadgets__evt" kind="struct" language="C++" prot="public">
+    <compoundname>bt_gadgets_evt</compoundname>
+    <includes refid="gadgets__profile_8h" local="no">gadgets_profile.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__gadgets__evt_a1b52d1dda2df4755fdce8cd0d1d379ee_1a1b52d1dda2df4755fdce8cd0d1d379ee" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1ga07b0617ffa14a591dfa0a89e13bc0e4f" kindref="member">bt_gadgets_evt_type</ref></type>
+        <definition>enum bt_gadgets_evt_type bt_gadgets_evt::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets_profile.h" line="95" column="25" bodyfile="include/bluetooth/services/gadgets_profile.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__gadgets__evt_a5193aa1fbdd374032ef4825e2141e1ff_1a5193aa1fbdd374032ef4825e2141e1ff" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* bt_gadgets_evt::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets_profile.h" line="133" column="12" bodyfile="include/bluetooth/services/gadgets_profile.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__gadgets__evt_ad51fd550f96b5ce2bcce9f94bb351548_1ad51fd550f96b5ce2bcce9f94bb351548" prot="public" static="no" mutable="no">
+        <type>const void *</type>
+        <definition>const void* bt_gadgets_evt::payload</definition>
+        <argsstring></argsstring>
+        <name>payload</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets_profile.h" line="134" column="12" bodyfile="include/bluetooth/services/gadgets_profile.h" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__gadgets__evt_af76b7337f26b0f3fde00f7cc8ef5dab5_1af76b7337f26b0f3fde00f7cc8ef5dab5" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t bt_gadgets_evt::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets_profile.h" line="135" column="8" bodyfile="include/bluetooth/services/gadgets_profile.h" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__gadgets__evt_a0feceb86ef3e1e45c909563fd661308c_1a0feceb86ef3e1e45c909563fd661308c" prot="public" static="no" mutable="no">
+        <type>struct bt_gadgets_evt::@137::@138</type>
+        <definition>struct bt_gadgets_evt::@137::@138 bt_gadgets_evt::custom_directive</definition>
+        <argsstring></argsstring>
+        <name>custom_directive</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Parameters for <ref refid="group__bt__gadgets__profile_ga07b0617ffa14a591dfa0a89e13bc0e4f_1gga07b0617ffa14a591dfa0a89e13bc0e4fabb5dc31a422a977a3b665f396a42e2b5" kindref="member">BT_GADGETS_EVT_CUSTOM</ref> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets_profile.h" line="136" column="18"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__gadgets__evt_a455d80408e9bdf1dc46c577aad6e5753_1a455d80408e9bdf1dc46c577aad6e5753" prot="public" static="no" mutable="no">
+        <type>union bt_gadgets_evt::@137</type>
+        <definition>union bt_gadgets_evt::@137 bt_gadgets_evt::parameters</definition>
+        <argsstring></argsstring>
+        <name>parameters</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gadgets_profile.h" line="137" column="12"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Gadgets event details. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/gadgets_profile.h" line="94" column="1" bodyfile="include/bluetooth/services/gadgets_profile.h" bodystart="94" bodyend="138"/>
+    <listofallmembers>
+      <member refid="structbt__gadgets__evt_a0feceb86ef3e1e45c909563fd661308c_1a0feceb86ef3e1e45c909563fd661308c" prot="public" virt="non-virtual"><scope>bt_gadgets_evt</scope><name>custom_directive</name></member>
+      <member refid="structbt__gadgets__evt_a5193aa1fbdd374032ef4825e2141e1ff_1a5193aa1fbdd374032ef4825e2141e1ff" prot="public" virt="non-virtual"><scope>bt_gadgets_evt</scope><name>name</name></member>
+      <member refid="structbt__gadgets__evt_a455d80408e9bdf1dc46c577aad6e5753_1a455d80408e9bdf1dc46c577aad6e5753" prot="public" virt="non-virtual"><scope>bt_gadgets_evt</scope><name>parameters</name></member>
+      <member refid="structbt__gadgets__evt_ad51fd550f96b5ce2bcce9f94bb351548_1ad51fd550f96b5ce2bcce9f94bb351548" prot="public" virt="non-virtual"><scope>bt_gadgets_evt</scope><name>payload</name></member>
+      <member refid="structbt__gadgets__evt_af76b7337f26b0f3fde00f7cc8ef5dab5_1af76b7337f26b0f3fde00f7cc8ef5dab5" prot="public" virt="non-virtual"><scope>bt_gadgets_evt</scope><name>size</name></member>
+      <member refid="structbt__gadgets__evt_a1b52d1dda2df4755fdce8cd0d1d379ee_1a1b52d1dda2df4755fdce8cd0d1d379ee" prot="public" virt="non-virtual"><scope>bt_gadgets_evt</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,263 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__nfc__t2t__parser" kind="group">
+    <compoundname>nfc_t2t_parser</compoundname>
+    <title>Type 2 Tag</title>
+    <innerclass refid="structnfc__t2t__sn" prot="public">nfc_t2t_sn</innerclass>
+    <innerclass refid="structnfc__t2t__cc" prot="public">nfc_t2t_cc</innerclass>
+    <innerclass refid="structnfc__t2t" prot="public">nfc_t2t</innerclass>
+    <innergroup refid="group__nfc__t2t__tlv__block">Type 2 Tag TLV blocks</innergroup>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__nfc__t2t__parser_1ga534e5604b9e598368f14e7e97c753a89" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_t2t_clear</definition>
+        <argsstring>(struct nfc_t2t *t2t)</argsstring>
+        <name>nfc_t2t_clear</name>
+        <param>
+          <type>struct <ref refid="structnfc__t2t" kindref="compound">nfc_t2t</ref> *</type>
+          <declname>t2t</declname>
+        </param>
+        <briefdescription>
+<para>Clear the <ref refid="structnfc__t2t" kindref="compound">nfc_t2t</ref> structure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">t2t</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the structure that should be cleared. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="150" column="6" declfile="include/nfc/t2t/parser.h" declline="150" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t2t__parser_1ga3c9d4d75f246211fcfc84ec2062f8ea7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int nfc_t2t_parse</definition>
+        <argsstring>(struct nfc_t2t *t2t, const uint8_t *raw_data)</argsstring>
+        <name>nfc_t2t_parse</name>
+        <param>
+          <type>struct <ref refid="structnfc__t2t" kindref="compound">nfc_t2t</ref> *</type>
+          <declname>t2t</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>raw_data</declname>
+        </param>
+        <briefdescription>
+<para>Parse raw data that was read from a Type 2 Tag. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function parses the header and the following TLV blocks of a Type 2 Tag. The data is read from a buffer and stored in a <ref refid="structnfc__t2t" kindref="compound">nfc_t2t</ref> structure.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">t2t</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the structure that will be filled with parsed data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">raw_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer with raw data from the tag (should point at the first byte of the first block of the tag).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="167" column="5" declfile="include/nfc/t2t/parser.h" declline="167" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__nfc__t2t__parser_1ga7337e690d90bd306cd10b5ea593dcc31" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nfc_t2t_printout</definition>
+        <argsstring>(const struct nfc_t2t *t2t)</argsstring>
+        <name>nfc_t2t_printout</name>
+        <param>
+          <type>const struct <ref refid="structnfc__t2t" kindref="compound">nfc_t2t</ref> *</type>
+          <declname>t2t</declname>
+        </param>
+        <briefdescription>
+<para>Print parsed contents of the Type 2 Tag. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">t2t</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the structure that should be printed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="174" column="6" declfile="include/nfc/t2t/parser.h" declline="174" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__nfc__t2t__parser_1ga25f701fac758c2c6602253b3d2763695" prot="public" static="no">
+        <name>NFC_T2T_DESC_DEF</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_max_blocks</defname></param>
+        <initializer>	static struct <ref refid="structnfc__t2t__tlv__block" kindref="compound">nfc_t2t_tlv_block</ref>  _name##_tlv_block_array[_max_blocks]; \
+	static struct <ref refid="structnfc__t2t" kindref="compound">nfc_t2t</ref> <ref refid="group__nfc__t2t__parser_ga7e0592a96292d15600d8abe46c3674cd_1ga7e0592a96292d15600d8abe46c3674cd" kindref="member">NFC_T2T_DESC</ref>(_name) =                            \
+	{                                                                      \
+		.max_tlv_blocks = _max_blocks,                                 \
+		.tlv_block_array = _name##_tlv_block_array,                    \
+		.tlv_count = 0                                                 \
+	}</initializer>
+        <briefdescription>
+<para>Create and initialize a Type 2 Tag descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates and initializes a static instance of an <ref refid="structnfc__t2t" kindref="compound">nfc_t2t</ref> structure and an array of <ref refid="group__nfc__t2t__tlv__block" kindref="compound">Type 2 Tag TLV blocks</ref> descriptors.</para>
+<para>Use the macro <ref refid="group__nfc__t2t__parser_ga7e0592a96292d15600d8abe46c3674cd_1ga7e0592a96292d15600d8abe46c3674cd" kindref="member">NFC_T2T_DESC</ref> to access the Type 2 Tag descriptor instance.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the created descriptor instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_max_blocks</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of <ref refid="group__nfc__t2t__tlv__block" kindref="compound">Type 2 Tag TLV blocks</ref> descriptors that can be stored in the array. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="106" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t2t__parser_1ga7e0592a96292d15600d8abe46c3674cd" prot="public" static="no">
+        <name>NFC_T2T_DESC</name>
+        <param><defname>_name</defname></param>
+        <initializer>(_name##_t2t)</initializer>
+        <briefdescription>
+<para>Access the <ref refid="structnfc__t2t" kindref="compound">nfc_t2t</ref> instance that was created with <ref refid="group__nfc__t2t__parser_ga25f701fac758c2c6602253b3d2763695_1ga25f701fac758c2c6602253b3d2763695" kindref="member">NFC_T2T_DESC_DEF</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="118" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t2t__parser_1ga102ad794bb6029cf11cd537e65161fb8" prot="public" static="no">
+        <name>NFC_T2T_NFC_FORUM_DEFINED_DATA</name>
+        <initializer>0xE1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Value indicating that the Type 2 Tag contains NFC Forum defined data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="121" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t2t__parser_1gab55123039b381beb70bc9d2f4f6b080b" prot="public" static="no">
+        <name>NFC_T2T_UID_BCC_CASCADE_BYTE</name>
+        <initializer>0x88</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Value used for calculating the first BCC byte of a Type 2 Tag serial number. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="126" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t2t__parser_1ga4e51e1a30a6ac1782a58974c0a45d558" prot="public" static="no">
+        <name>NFC_T2T_SUPPORTED_MAJOR_VERSION</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Supported major version of the Type 2 Tag specification. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="130" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t2t__parser_1ga9e7069153bb658cf30367199823f6c09" prot="public" static="no">
+        <name>NFC_T2T_SUPPORTED_MINOR_VERSION</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Supported minor version of the Type 2 Tag specification. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="133" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t2t__parser_1gaf1c87f814fe5e0e4e8a4e4d497d69b28" prot="public" static="no">
+        <name>NFC_T2T_BLOCK_SIZE</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Type 2 Tag block size in bytes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="136" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t2t__parser_1ga992bc2e3dff817a1857630e95bb8bb8c" prot="public" static="no">
+        <name>NFC_T2T_CC_BLOCK_OFFSET</name>
+        <initializer>12</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Offset of the Capability Container area in the Type 2 Tag. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="139" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__nfc__t2t__parser_1gac759ddf1b1dedcd9ead7c79b545c6740" prot="public" static="no">
+        <name>NFC_T2T_FIRST_DATA_BLOCK_OFFSET</name>
+        <initializer>16</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Offset of the data area in the Type 2 Tag. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/t2t/parser.h" line="142" column="9" bodyfile="include/nfc/t2t/parser.h" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>NFC Type 2 Tag parser. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

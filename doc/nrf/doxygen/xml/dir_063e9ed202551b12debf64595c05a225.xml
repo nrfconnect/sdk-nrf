@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_063e9ed202551b12debf64595c05a225" kind="dir">
+    <compoundname>lib/multithreading_lock</compoundname>
+    <innerfile refid="multithreading__lock_8h">multithreading_lock.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/multithreading_lock/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structext__api__provide__ext__api" kind="struct" language="C++" prot="public">
+    <compoundname>ext_api_provide_ext_api</compoundname>
+    <includes refid="fw__info_8h" local="no">fw_info.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structext__api__provide__ext__api_a7d4270f7be4d57dc3b89bda940eef569_1a7d4270f7be4d57dc3b89bda940eef569" prot="public" static="no" mutable="no">
+        <type><ref refid="group__fw__info_ga19e9a54005602c6d04fe25b1f0980500_1ga19e9a54005602c6d04fe25b1f0980500" kindref="member">fw_info_ext_api_provide_t</ref></type>
+        <definition>fw_info_ext_api_provide_t ext_api_provide_ext_api::ext_api_provide</definition>
+        <argsstring></argsstring>
+        <name>ext_api_provide</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="399" column="27" bodyfile="include/fw_info.h" bodystart="399" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Structure describing the EXT_API_PROVIDE EXT_API. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>ext_api_provide_ext_api</label>
+        <link refid="structext__api__provide__ext__api"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>ext_api_provide</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>fw_info</label>
+        <link refid="structfw__info"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>ext_apis</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>fw_info_ext_api</label>
+        <link refid="structfw__info__ext__api"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/fw_info.h" line="398" column="1" bodyfile="include/fw_info.h" bodystart="398" bodyend="400"/>
+    <listofallmembers>
+      <member refid="structext__api__provide__ext__api_a7d4270f7be4d57dc3b89bda940eef569_1a7d4270f7be4d57dc3b89bda940eef569" prot="public" virt="non-virtual"><scope>ext_api_provide_ext_api</scope><name>ext_api_provide</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

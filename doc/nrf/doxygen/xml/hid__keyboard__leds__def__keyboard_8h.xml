@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="hid__keyboard__leds__def__keyboard_8h" kind="file" language="C++">
+    <compoundname>hid_keyboard_leds_def_keyboard.h</compoundname>
+    <includes refid="hid__keyboard__leds_8h" local="yes">hid_keyboard_leds.h</includes>
+    <incdepgraph>
+      <node id="2">
+        <label>hid_keyboard_leds.h</label>
+        <link refid="hid__keyboard__leds_8h"/>
+      </node>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/nrf52840dk_nrf52840/hid_keyboard_leds_def_keyboard.h</label>
+        <link refid="hid__keyboard__leds__def__keyboard_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="hid__keyboard__leds__def__keyboard_8h_a7952093edc9de9dcaffb47afa4bce867_1a7952093edc9de9dcaffb47afa4bce867" prot="public" static="no" mutable="no">
+        <type>const struct @79</type>
+        <definition>const struct @79 hid_keyboard_leds_def_include_once</definition>
+        <argsstring></argsstring>
+        <name>hid_keyboard_leds_def_include_once</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840dk_nrf52840/hid_keyboard_leds_def_keyboard.h" line="16" column="48"/>
+      </memberdef>
+      <memberdef kind="variable" id="hid__keyboard__leds__def__keyboard_8h_a3f87a946b51b2f45c6c1e301a60c79d9_1a3f87a946b51b2f45c6c1e301a60c79d9" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structled__effect" kindref="compound">led_effect</ref></type>
+        <definition>const struct led_effect keyboard_led_on</definition>
+        <argsstring></argsstring>
+        <name>keyboard_led_on</name>
+        <initializer>= <ref refid="group__led__effect__CAF_ga7fb4ef307bd2b1730f82410432b823c9_1ga7fb4ef307bd2b1730f82410432b823c9" kindref="member">LED_EFFECT_LED_ON</ref>(<ref refid="group__led__effect__CAF_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(255, 255, 255))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840dk_nrf52840/hid_keyboard_leds_def_keyboard.h" line="18" column="30" bodyfile="applications/nrf_desktop/configuration/nrf52840dk_nrf52840/hid_keyboard_leds_def_keyboard.h" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="hid__keyboard__leds__def__keyboard_8h_a380892e2242bb0d524c79862af9992c3_1a380892e2242bb0d524c79862af9992c3" prot="public" static="yes" mutable="no">
+        <type>const struct <ref refid="structled__effect" kindref="compound">led_effect</ref></type>
+        <definition>const struct led_effect keyboard_led_off</definition>
+        <argsstring></argsstring>
+        <name>keyboard_led_off</name>
+        <initializer>= <ref refid="group__led__effect__CAF_ga6eb404e4fd938a846223091c2d5dbb97_1ga6eb404e4fd938a846223091c2d5dbb97" kindref="member">LED_EFFECT_LED_OFF</ref>()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840dk_nrf52840/hid_keyboard_leds_def_keyboard.h" line="19" column="30" bodyfile="applications/nrf_desktop/configuration/nrf52840dk_nrf52840/hid_keyboard_leds_def_keyboard.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="hid__keyboard__leds__def__keyboard_8h_a4042ec0f909dafc40cb3700c01d90443_1a4042ec0f909dafc40cb3700c01d90443" prot="public" static="yes" mutable="no">
+        <type>const uint8_t</type>
+        <definition>const uint8_t keyboard_led_map[]</definition>
+        <argsstring>[]</argsstring>
+        <name>keyboard_led_map</name>
+        <initializer>= {
+	[<ref refid="hid__keyboard__leds_8h_af3520ff6d43011872bab77edd27d4de3_1af3520ff6d43011872bab77edd27d4de3a70f2d4aee60ae7c9b57260122b544756" kindref="member">HID_KEYBOARD_LEDS_NUM_LOCK</ref>] = 2,
+	[<ref refid="hid__keyboard__leds_8h_af3520ff6d43011872bab77edd27d4de3_1af3520ff6d43011872bab77edd27d4de3a3f94ae90e1b0d09517e08cada50231c2" kindref="member">HID_KEYBOARD_LEDS_CAPS_LOCK</ref>] = 3,
+	[<ref refid="hid__keyboard__leds_8h_af3520ff6d43011872bab77edd27d4de3_1af3520ff6d43011872bab77edd27d4de3a6202f8a1728d2f7fd4ea826865b01ac3" kindref="member">HID_KEYBOARD_LEDS_SCROLL_LOCK</ref>] = <ref refid="group__led__state_gadc8c409756ef96aeb3ef4db80c3f7e71_1gadc8c409756ef96aeb3ef4db80c3f7e71" kindref="member">LED_UNAVAILABLE</ref>,
+	[<ref refid="hid__keyboard__leds_8h_af3520ff6d43011872bab77edd27d4de3_1af3520ff6d43011872bab77edd27d4de3a57a2bd05f92eb685eb8bc2a9b9323e12" kindref="member">HID_KEYBOARD_LEDS_COMPOSE</ref>] = <ref refid="group__led__state_gadc8c409756ef96aeb3ef4db80c3f7e71_1gadc8c409756ef96aeb3ef4db80c3f7e71" kindref="member">LED_UNAVAILABLE</ref>,
+	[<ref refid="hid__keyboard__leds_8h_af3520ff6d43011872bab77edd27d4de3_1af3520ff6d43011872bab77edd27d4de3a7d4455b5ea1e257151f86be14f6c2f8c" kindref="member">HID_KEYBOARD_LEDS_KANA</ref>] = <ref refid="group__led__state_gadc8c409756ef96aeb3ef4db80c3f7e71_1gadc8c409756ef96aeb3ef4db80c3f7e71" kindref="member">LED_UNAVAILABLE</ref>,
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/nrf52840dk_nrf52840/hid_keyboard_leds_def_keyboard.h" line="22" column="22" bodyfile="applications/nrf_desktop/configuration/nrf52840dk_nrf52840/hid_keyboard_leds_def_keyboard.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="hid__keyboard__leds_8h" kindref="compound">hid_keyboard_leds.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>configuration<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>from<sp/>hid_state<sp/>module<sp/>and<sp/>holds</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*<sp/>information<sp/>about<sp/>LEDs<sp/>associated<sp/>with<sp/>HID<sp/>keyboard<sp/>LEDs<sp/>report.</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>structure<sp/>enforces<sp/>the<sp/>header<sp/>file<sp/>is<sp/>included<sp/>only<sp/>once<sp/>in<sp/>the<sp/>build.</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*<sp/>Violating<sp/>this<sp/>requirement<sp/>triggers<sp/>a<sp/>multiple<sp/>definition<sp/>error<sp/>at<sp/>link<sp/>time.</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16" refid="hid__keyboard__leds__def__keyboard_8h_a7952093edc9de9dcaffb47afa4bce867_1a7952093edc9de9dcaffb47afa4bce867" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{}<sp/><ref refid="hid__keyboard__leds__def__keyboard_8h_a7952093edc9de9dcaffb47afa4bce867_1a7952093edc9de9dcaffb47afa4bce867" kindref="member">hid_keyboard_leds_def_include_once</ref>;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="hid__keyboard__leds__def__keyboard_8h_a3f87a946b51b2f45c6c1e301a60c79d9_1a3f87a946b51b2f45c6c1e301a60c79d9" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structled__effect" kindref="compound">led_effect</ref><sp/><ref refid="hid__keyboard__leds__def__keyboard_8h_a3f87a946b51b2f45c6c1e301a60c79d9_1a3f87a946b51b2f45c6c1e301a60c79d9" kindref="member">keyboard_led_on</ref><sp/>=<sp/><ref refid="group__led__effect_ga7fb4ef307bd2b1730f82410432b823c9_1ga7fb4ef307bd2b1730f82410432b823c9" kindref="member">LED_EFFECT_LED_ON</ref>(<ref refid="group__led__effect_ga0598a87619ee2a4515a7168a5c59fe62_1ga0598a87619ee2a4515a7168a5c59fe62" kindref="member">LED_COLOR</ref>(255,<sp/>255,<sp/>255));</highlight></codeline>
+<codeline lineno="19" refid="hid__keyboard__leds__def__keyboard_8h_a380892e2242bb0d524c79862af9992c3_1a380892e2242bb0d524c79862af9992c3" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structled__effect" kindref="compound">led_effect</ref><sp/><ref refid="hid__keyboard__leds__def__keyboard_8h_a380892e2242bb0d524c79862af9992c3_1a380892e2242bb0d524c79862af9992c3" kindref="member">keyboard_led_off</ref><sp/>=<sp/><ref refid="group__led__effect_ga6eb404e4fd938a846223091c2d5dbb97_1ga6eb404e4fd938a846223091c2d5dbb97" kindref="member">LED_EFFECT_LED_OFF</ref>();</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Map<sp/>HID<sp/>keyboard<sp/>LEDs<sp/>to<sp/>application<sp/>LED<sp/>IDs.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22" refid="hid__keyboard__leds__def__keyboard_8h_a4042ec0f909dafc40cb3700c01d90443_1a4042ec0f909dafc40cb3700c01d90443" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/><ref refid="hid__keyboard__leds__def__keyboard_8h_a4042ec0f909dafc40cb3700c01d90443_1a4042ec0f909dafc40cb3700c01d90443" kindref="member">keyboard_led_map</ref>[]<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="hid__keyboard__leds_8h_af3520ff6d43011872bab77edd27d4de3_1af3520ff6d43011872bab77edd27d4de3a70f2d4aee60ae7c9b57260122b544756" kindref="member">HID_KEYBOARD_LEDS_NUM_LOCK</ref>]<sp/>=<sp/>2,</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="hid__keyboard__leds_8h_af3520ff6d43011872bab77edd27d4de3_1af3520ff6d43011872bab77edd27d4de3a3f94ae90e1b0d09517e08cada50231c2" kindref="member">HID_KEYBOARD_LEDS_CAPS_LOCK</ref>]<sp/>=<sp/>3,</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="hid__keyboard__leds_8h_af3520ff6d43011872bab77edd27d4de3_1af3520ff6d43011872bab77edd27d4de3a6202f8a1728d2f7fd4ea826865b01ac3" kindref="member">HID_KEYBOARD_LEDS_SCROLL_LOCK</ref>]<sp/>=<sp/><ref refid="machine__learning_2configuration_2common_2led__state_8h_adc8c409756ef96aeb3ef4db80c3f7e71_1adc8c409756ef96aeb3ef4db80c3f7e71" kindref="member">LED_UNAVAILABLE</ref>,</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="hid__keyboard__leds_8h_af3520ff6d43011872bab77edd27d4de3_1af3520ff6d43011872bab77edd27d4de3a57a2bd05f92eb685eb8bc2a9b9323e12" kindref="member">HID_KEYBOARD_LEDS_COMPOSE</ref>]<sp/>=<sp/><ref refid="machine__learning_2configuration_2common_2led__state_8h_adc8c409756ef96aeb3ef4db80c3f7e71_1adc8c409756ef96aeb3ef4db80c3f7e71" kindref="member">LED_UNAVAILABLE</ref>,</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[<ref refid="hid__keyboard__leds_8h_af3520ff6d43011872bab77edd27d4de3_1af3520ff6d43011872bab77edd27d4de3a7d4455b5ea1e257151f86be14f6c2f8c" kindref="member">HID_KEYBOARD_LEDS_KANA</ref>]<sp/>=<sp/><ref refid="machine__learning_2configuration_2common_2led__state_8h_adc8c409756ef96aeb3ef4db80c3f7e71_1adc8c409756ef96aeb3ef4db80c3f7e71" kindref="member">LED_UNAVAILABLE</ref>,</highlight></codeline>
+<codeline lineno="28"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/nrf52840dk_nrf52840/hid_keyboard_leds_def_keyboard.h"/>
+  </compounddef>
+</doxygen>

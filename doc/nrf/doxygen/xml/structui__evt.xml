@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structui__evt" kind="struct" language="C++" prot="public">
+    <compoundname>ui_evt</compoundname>
+    <includes refid="ui_8h" local="no">ui.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structui__evt_a15aa74fe75db1166f7ed5bffe4cd6cd3_1a15aa74fe75db1166f7ed5bffe4cd6cd3" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="ui_8h_a7252397dca463ab7196a509c7480f798_1a7252397dca463ab7196a509c7480f798" kindref="member">ui_evt_type</ref></type>
+        <definition>enum ui_evt_type ui_evt::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="133" column="17" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structui__evt_a5eb9cecae171d3a88edebbc253ad12fb_1a5eb9cecae171d3a88edebbc253ad12fb" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t ui_evt::button</definition>
+        <argsstring></argsstring>
+        <name>button</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="136" column="10" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structui__evt_ace07e9c222b5a5f37050362769215380_1ace07e9c222b5a5f37050362769215380" prot="public" static="no" mutable="no">
+        <type>union ui_evt::@1</type>
+        <definition>union ui_evt::@1 ui_evt::@2</definition>
+        <argsstring></argsstring>
+        <name>@2</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="137" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>UI event structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker/src/ui/include/ui.h" line="132" column="1" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="132" bodyend="138"/>
+    <listofallmembers>
+      <member refid="structui__evt_a5eb9cecae171d3a88edebbc253ad12fb_1a5eb9cecae171d3a88edebbc253ad12fb" prot="public" virt="non-virtual"><scope>ui_evt</scope><name>button</name></member>
+      <member refid="structui__evt_a15aa74fe75db1166f7ed5bffe4cd6cd3_1a15aa74fe75db1166f7ed5bffe4cd6cd3" prot="public" virt="non-virtual"><scope>ui_evt</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

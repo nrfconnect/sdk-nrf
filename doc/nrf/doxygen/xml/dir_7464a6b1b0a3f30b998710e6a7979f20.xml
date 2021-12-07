@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_7464a6b1b0a3f30b998710e6a7979f20" kind="dir">
+    <compoundname>include/dfu</compoundname>
+    <innerfile refid="dfu__target_8h">dfu_target.h</innerfile>
+    <innerfile refid="dfu__target__full__modem_8h">dfu_target_full_modem.h</innerfile>
+    <innerfile refid="dfu__target__mcuboot_8h">dfu_target_mcuboot.h</innerfile>
+    <innerfile refid="dfu__target__modem__delta_8h">dfu_target_modem_delta.h</innerfile>
+    <innerfile refid="dfu__target__stream_8h">dfu_target_stream.h</innerfile>
+    <innerfile refid="fmfu__fdev_8h">fmfu_fdev.h</innerfile>
+    <innerfile refid="pcd_8h">pcd.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/dfu/"/>
+  </compounddef>
+</doxygen>

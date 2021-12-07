@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_e8cb83a13f8863767a97a288db2ed3d3" kind="dir">
+    <compoundname>include/mgmt</compoundname>
+    <innerfile refid="fmfu__mgmt_8h">fmfu_mgmt.h</innerfile>
+    <innerfile refid="fmfu__mgmt__stat_8h">fmfu_mgmt_stat.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/mgmt/"/>
+  </compounddef>
+</doxygen>

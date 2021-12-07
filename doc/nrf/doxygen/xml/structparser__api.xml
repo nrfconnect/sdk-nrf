@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structparser__api" kind="struct" language="C++" prot="public">
+    <compoundname>parser_api</compoundname>
+    <includes refid="lib_2sms_2parser_8h" local="no">parser.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structparser__api_ab05c0036b53555f873d47005fba7431a_1ab05c0036b53555f873d47005fba7431a" prot="public" static="no" mutable="no">
+        <type>uint32_t(*</type>
+        <definition>uint32_t(* parser_api::data_size) (void)</definition>
+        <argsstring>)(void)</argsstring>
+        <name>data_size</name>
+        <briefdescription>
+<para>Function type for getting data size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/parser.h" line="36" column="1" bodyfile="lib/sms/parser.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structparser__api_aa13c0ef22d0e2622c44558142c1ae4e9_1aa13c0ef22d0e2622c44558142c1ae4e9" prot="public" static="no" mutable="no">
+        <type>void *(*</type>
+        <definition>void *(* parser_api::get_parsers) (void)</definition>
+        <argsstring>)(void)</argsstring>
+        <name>get_parsers</name>
+        <briefdescription>
+<para>Function type for getting list of sub parsers that are processed sequentially. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/parser.h" line="38" column="1" bodyfile="lib/sms/parser.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structparser__api_a5cf2a0cedfc5d460ccb0718b3f855ef9_1a5cf2a0cedfc5d460ccb0718b3f855ef9" prot="public" static="no" mutable="no">
+        <type>void *(*</type>
+        <definition>void *(* parser_api::get_decoder) (void)</definition>
+        <argsstring>)(void)</argsstring>
+        <name>get_decoder</name>
+        <briefdescription>
+<para>Function type for getting payload/data decoder. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/parser.h" line="40" column="1" bodyfile="lib/sms/parser.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structparser__api_afaae83a7ff3c491ba9a5ac375bc29554_1afaae83a7ff3c491ba9a5ac375bc29554" prot="public" static="no" mutable="no">
+        <type>int(*</type>
+        <definition>int(* parser_api::get_parser_count) (void)</definition>
+        <argsstring>)(void)</argsstring>
+        <name>get_parser_count</name>
+        <briefdescription>
+<para>Function type for getting number of sub parsers. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/parser.h" line="42" column="1" bodyfile="lib/sms/parser.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structparser__api_a669d238280c324b614ba2453354946ff_1a669d238280c324b614ba2453354946ff" prot="public" static="no" mutable="no">
+        <type>int(*</type>
+        <definition>int(* parser_api::get_header) (struct parser *parser, void *header)</definition>
+        <argsstring>)(struct parser *parser, void *header)</argsstring>
+        <name>get_header</name>
+        <briefdescription>
+<para>Function type for getting header information. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/sms/parser.h" line="44" column="1" bodyfile="lib/sms/parser.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Set of parser functions needed for parser framework to operate. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/sms/parser.h" line="34" column="1" bodyfile="lib/sms/parser.h" bodystart="34" bodyend="45"/>
+    <listofallmembers>
+      <member refid="structparser__api_ab05c0036b53555f873d47005fba7431a_1ab05c0036b53555f873d47005fba7431a" prot="public" virt="non-virtual"><scope>parser_api</scope><name>data_size</name></member>
+      <member refid="structparser__api_a5cf2a0cedfc5d460ccb0718b3f855ef9_1a5cf2a0cedfc5d460ccb0718b3f855ef9" prot="public" virt="non-virtual"><scope>parser_api</scope><name>get_decoder</name></member>
+      <member refid="structparser__api_a669d238280c324b614ba2453354946ff_1a669d238280c324b614ba2453354946ff" prot="public" virt="non-virtual"><scope>parser_api</scope><name>get_header</name></member>
+      <member refid="structparser__api_afaae83a7ff3c491ba9a5ac375bc29554_1afaae83a7ff3c491ba9a5ac375bc29554" prot="public" virt="non-virtual"><scope>parser_api</scope><name>get_parser_count</name></member>
+      <member refid="structparser__api_aa13c0ef22d0e2622c44558142c1ae4e9_1aa13c0ef22d0e2622c44558142c1ae4e9" prot="public" virt="non-virtual"><scope>parser_api</scope><name>get_parsers</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

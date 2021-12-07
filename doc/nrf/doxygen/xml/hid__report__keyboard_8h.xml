@@ -1,0 +1,318 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="hid__report__keyboard_8h" kind="file" language="C++">
+    <compoundname>hid_report_keyboard.h</compoundname>
+    <includedby refid="hid__report__desc_8h" local="yes">applications/nrf_desktop/configuration/common/hid_report_desc.h</includedby>
+    <invincdepgraph>
+      <node id="3">
+        <label>applications/nrf_desktop/configuration/common/hid_keymap.h</label>
+        <link refid="hid__keymap_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>applications/nrf_desktop/configuration/common/hid_report_desc.h</label>
+        <link refid="hid__report__desc_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/common/hid_report_keyboard.h</label>
+        <link refid="hid__report__keyboard_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/hid_keymap_def.h</label>
+        <link refid="nrf52810dmouse__nrf52810_2hid__keymap__def_8h"/>
+      </node>
+      <node id="5">
+        <label>applications/nrf_desktop/configuration/nrf52840dk_nrf52840/hid_keymap_def.h</label>
+        <link refid="nrf52840dk__nrf52840_2hid__keymap__def_8h"/>
+      </node>
+      <node id="6">
+        <label>applications/nrf_desktop/configuration/nrf52840dk_nrf52840/hid_keymap_def_keyboard.h</label>
+        <link refid="hid__keymap__def__keyboard_8h"/>
+      </node>
+      <node id="7">
+        <label>applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/hid_keymap_def.h</label>
+        <link refid="nrf52840gmouse__nrf52840_2hid__keymap__def_8h"/>
+      </node>
+      <node id="8">
+        <label>applications/nrf_desktop/configuration/nrf52dmouse_nrf52832/hid_keymap_def.h</label>
+        <link refid="nrf52dmouse__nrf52832_2hid__keymap__def_8h"/>
+      </node>
+      <node id="9">
+        <label>applications/nrf_desktop/configuration/nrf52kbd_nrf52832/hid_keymap_def.h</label>
+        <link refid="nrf52kbd__nrf52832_2hid__keymap__def_8h"/>
+      </node>
+      <node id="10">
+        <label>applications/nrf_desktop/src/events/config_event.h</label>
+        <link refid="config__event_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>applications/nrf_desktop/src/events/hid_event.h</label>
+        <link refid="hid__event_8h"/>
+      </node>
+      <node id="13">
+        <label>applications/nrf_desktop/src/events/hids_event.h</label>
+        <link refid="hids__event_8h"/>
+      </node>
+      <node id="11">
+        <label>applications/nrf_desktop/src/util/config_channel_transport.h</label>
+        <link refid="config__channel__transport_8h"/>
+      </node>
+    </invincdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="hid__report__keyboard_8h_a403ec3f1a0d701bcb3dd6372d24d6236_1a403ec3f1a0d701bcb3dd6372d24d6236" prot="public" static="no">
+        <name>REPORT_SIZE_KEYBOARD_KEYS</name>
+        <initializer>8 /* bytes */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_keyboard.h" line="23" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_keyboard.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__keyboard_8h_a74e38b3853d1bbb331e317f475495dcb_1a74e38b3853d1bbb331e317f475495dcb" prot="public" static="no">
+        <name>REPORT_SIZE_KEYBOARD_LEDS</name>
+        <initializer>1 /* bytes */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_keyboard.h" line="24" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_keyboard.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__keyboard_8h_a246a4acbcf618e2d18677b9deecbb2fd_1a246a4acbcf618e2d18677b9deecbb2fd" prot="public" static="no">
+        <name>REPORT_MASK_KEYBOARD_KEYS</name>
+        <initializer>{} /* Store the whole report */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_keyboard.h" line="27" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_keyboard.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__keyboard_8h_a5dd3db230aa87e40eb1b0a76483eb1f4_1a5dd3db230aa87e40eb1b0a76483eb1f4" prot="public" static="no">
+        <name>KEYBOARD_REPORT_LAST_KEY</name>
+        <initializer>0x65 /* Keyboard Application */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_keyboard.h" line="30" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_keyboard.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__keyboard_8h_affdf98a26b54274419f582e34706798e_1affdf98a26b54274419f582e34706798e" prot="public" static="no">
+        <name>KEYBOARD_REPORT_FIRST_MODIFIER</name>
+        <initializer>0xE0 /* Keyboard Left Ctrl */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_keyboard.h" line="31" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_keyboard.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__keyboard_8h_aa540820e031a1b1f78765ed2c4334a8b_1aa540820e031a1b1f78765ed2c4334a8b" prot="public" static="no">
+        <name>KEYBOARD_REPORT_LAST_MODIFIER</name>
+        <initializer>0xE7 /* Keyboard Right GUI */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_keyboard.h" line="32" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_keyboard.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__keyboard_8h_a7e061288a2a499bb26a118257722b804_1a7e061288a2a499bb26a118257722b804" prot="public" static="no">
+        <name>KEYBOARD_REPORT_KEY_COUNT_MAX</name>
+        <initializer>6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_keyboard.h" line="33" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_keyboard.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="hid__report__keyboard_8h_ad7e2ef77d5750ebe2027c48cb4a80a13_1ad7e2ef77d5750ebe2027c48cb4a80a13" prot="public" static="no">
+        <name>REPORT_MAP_KEYBOARD</name>
+        <param><defname>report_id_keys</defname></param>
+        <param><defname>report_id_leds</defname></param>
+        <initializer>									\
+	/* Report: Keyboard Keys (input) */				\
+	0x85, report_id_keys,						\
+									\
+	/* Keyboard - Modifiers */					\
+	0x05, <ref refid="hid__report__mouse_8h_ad4de4599761921bfe96fe2076738b048_1ad4de4599761921bfe96fe2076738b048" kindref="member">USAGE_PAGE_KEYBOARD</ref>,					\
+	0x19, <ref refid="hid__report__keyboard_8h_affdf98a26b54274419f582e34706798e_1affdf98a26b54274419f582e34706798e" kindref="member">KEYBOARD_REPORT_FIRST_MODIFIER</ref>, /* Usage Minimum */	\
+	0x29, <ref refid="hid__report__keyboard_8h_aa540820e031a1b1f78765ed2c4334a8b_1aa540820e031a1b1f78765ed2c4334a8b" kindref="member">KEYBOARD_REPORT_LAST_MODIFIER</ref>,  /* Usage Maximum */	\
+	0x15, 0x00,       /* Logical Minimum (0) */			\
+	0x25, 0x01,       /* Logical Maximum (1) */			\
+	0x75, 0x01,       /* Report Size (1) */				\
+	0x95, 0x08,       /* Report Count (8) */			\
+	0x81, 0x02,       /* Input (Data, Variable, Absolute) */	\
+									\
+	/* Keyboard - Reserved */					\
+	0x75, 0x08,       /* Report Size (8) */				\
+	0x95, 0x01,       /* Report Count (1) */			\
+	0x81, 0x01,       /* Input (Constant) */			\
+									\
+	/* Keyboard - Keys */						\
+	0x05, <ref refid="hid__report__mouse_8h_ad4de4599761921bfe96fe2076738b048_1ad4de4599761921bfe96fe2076738b048" kindref="member">USAGE_PAGE_KEYBOARD</ref>,					\
+	0x19, 0x00,       /* Usage Minimum (0) */			\
+	0x29, <ref refid="hid__report__keyboard_8h_a5dd3db230aa87e40eb1b0a76483eb1f4_1a5dd3db230aa87e40eb1b0a76483eb1f4" kindref="member">KEYBOARD_REPORT_LAST_KEY</ref>, /* Usage Maximum */		\
+	0x15, 0x00,       /* Logical Minimum (0) */			\
+	0x25, <ref refid="hid__report__keyboard_8h_a5dd3db230aa87e40eb1b0a76483eb1f4_1a5dd3db230aa87e40eb1b0a76483eb1f4" kindref="member">KEYBOARD_REPORT_LAST_KEY</ref>, /* Logical Maximum */		\
+	0x75, 0x08,       /* Report Size (8) */				\
+	0x95, <ref refid="hid__report__keyboard_8h_a7e061288a2a499bb26a118257722b804_1a7e061288a2a499bb26a118257722b804" kindref="member">KEYBOARD_REPORT_KEY_COUNT_MAX</ref>, /* Report Count */		\
+	0x81, 0x00,       /* Input (Data, Array) */			\
+									\
+	/* Report: Keyboard LEDS (output) */				\
+	0x85, report_id_leds,						\
+									\
+	/* Keyboard - LEDs */						\
+	0x05, <ref refid="hid__report__mouse_8h_a89b142d44fc7d0de78d7d5fadc851892_1a89b142d44fc7d0de78d7d5fadc851892" kindref="member">USAGE_PAGE_LEDS</ref>,						\
+	0x19, 0x01,       /* Usage Minimum (1) */			\
+	0x29, 0x05,       /* Usage Maximum (5) */			\
+	0x15, 0x00,       /* Logical Minimum (0) */			\
+	0x25, 0x01,       /* Logical Maximum (1) */			\
+	0x95, 0x05,       /* Report Count (5) */			\
+	0x75, 0x01,       /* Report Size (1) */				\
+	0x91, 0x02,       /* Output (Data, Variable, Absolute) */	\
+									\
+	/* Keyboard - LEDs padding */					\
+	0x95, 0x01,       /* Report Count (1) */			\
+	0x75, 0x03,       /* Report Size (3) (padding) */		\
+	0x91, 0x01        /* Output (Constant, Array, Absolute) */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/hid_report_keyboard.h" line="36" column="9" bodyfile="applications/nrf_desktop/configuration/common/hid_report_keyboard.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2020<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_HID_REPORT_KEYBOARD_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_HID_REPORT_KEYBOARD_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Keyboard<sp/>report<sp/>uses<sp/>8<sp/>bytes<sp/>for<sp/>input<sp/>and<sp/>1<sp/>byte<sp/>for<sp/>output.</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*<sp/>Input<sp/>bytes:</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/>8<sp/>bits<sp/>-<sp/>pressed<sp/>modifier<sp/>buttons<sp/>bitmask</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/>8<sp/>bits<sp/>-<sp/>reserved</highlight></codeline>
+<codeline lineno="18"><highlight class="comment"><sp/>*<sp/>6<sp/>x<sp/>8<sp/>bits<sp/>-<sp/>6<sp/>slots<sp/>for<sp/>pressed<sp/>key<sp/>ids</highlight></codeline>
+<codeline lineno="19"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="20"><highlight class="comment"><sp/>*<sp/>Output<sp/>bytes:</highlight></codeline>
+<codeline lineno="21"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/>8<sp/>bits<sp/>-<sp/>active<sp/>LED<sp/>indicators<sp/>bitmask</highlight></codeline>
+<codeline lineno="22"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="hid__report__keyboard_8h_a403ec3f1a0d701bcb3dd6372d24d6236_1a403ec3f1a0d701bcb3dd6372d24d6236" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>REPORT_SIZE_KEYBOARD_KEYS<sp/><sp/><sp/><sp/><sp/><sp/><sp/>8<sp/></highlight><highlight class="comment">/*<sp/>bytes<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="hid__report__keyboard_8h_a74e38b3853d1bbb331e317f475495dcb_1a74e38b3853d1bbb331e317f475495dcb" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>REPORT_SIZE_KEYBOARD_LEDS<sp/><sp/><sp/><sp/><sp/><sp/><sp/>1<sp/></highlight><highlight class="comment">/*<sp/>bytes<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Report<sp/>mask<sp/>marks<sp/>which<sp/>bytes<sp/>should<sp/>are<sp/>absolute<sp/>and<sp/>should<sp/>be<sp/>stored.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="hid__report__keyboard_8h_a246a4acbcf618e2d18677b9deecbb2fd_1a246a4acbcf618e2d18677b9deecbb2fd" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>REPORT_MASK_KEYBOARD_KEYS<sp/><sp/><sp/><sp/><sp/><sp/><sp/>{}<sp/></highlight><highlight class="comment">/*<sp/>Store<sp/>the<sp/>whole<sp/>report<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="hid__report__keyboard_8h_a5dd3db230aa87e40eb1b0a76483eb1f4_1a5dd3db230aa87e40eb1b0a76483eb1f4" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>KEYBOARD_REPORT_LAST_KEY<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x65<sp/></highlight><highlight class="comment">/*<sp/>Keyboard<sp/>Application<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="hid__report__keyboard_8h_affdf98a26b54274419f582e34706798e_1affdf98a26b54274419f582e34706798e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>KEYBOARD_REPORT_FIRST_MODIFIER<sp/><sp/>0xE0<sp/></highlight><highlight class="comment">/*<sp/>Keyboard<sp/>Left<sp/>Ctrl<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="hid__report__keyboard_8h_aa540820e031a1b1f78765ed2c4334a8b_1aa540820e031a1b1f78765ed2c4334a8b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>KEYBOARD_REPORT_LAST_MODIFIER<sp/><sp/><sp/>0xE7<sp/></highlight><highlight class="comment">/*<sp/>Keyboard<sp/>Right<sp/>GUI<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="hid__report__keyboard_8h_a7e061288a2a499bb26a118257722b804_1a7e061288a2a499bb26a118257722b804" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>KEYBOARD_REPORT_KEY_COUNT_MAX<sp/><sp/><sp/>6</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="hid__report__keyboard_8h_ad7e2ef77d5750ebe2027c48cb4a80a13_1ad7e2ef77d5750ebe2027c48cb4a80a13" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>REPORT_MAP_KEYBOARD(report_id_keys,<sp/>report_id_leds)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="37"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="38"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Report:<sp/>Keyboard<sp/>Keys<sp/>(input)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="39"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x85,<sp/>report_id_keys,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="40"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="41"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Keyboard<sp/>-<sp/>Modifiers<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="42"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x05,<sp/>USAGE_PAGE_KEYBOARD,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="43"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x19,<sp/>KEYBOARD_REPORT_FIRST_MODIFIER,<sp/></highlight><highlight class="comment">/*<sp/>Usage<sp/>Minimum<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="44"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x29,<sp/>KEYBOARD_REPORT_LAST_MODIFIER,<sp/><sp/></highlight><highlight class="comment">/*<sp/>Usage<sp/>Maximum<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="45"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x15,<sp/>0x00,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Logical<sp/>Minimum<sp/>(0)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="46"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x25,<sp/>0x01,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Logical<sp/>Maximum<sp/>(1)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="47"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x75,<sp/>0x01,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Report<sp/>Size<sp/>(1)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="48"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x95,<sp/>0x08,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Report<sp/>Count<sp/>(8)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="49"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x81,<sp/>0x02,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Input<sp/>(Data,<sp/>Variable,<sp/>Absolute)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="50"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="51"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Keyboard<sp/>-<sp/>Reserved<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="52"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x75,<sp/>0x08,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Report<sp/>Size<sp/>(8)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="53"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x95,<sp/>0x01,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Report<sp/>Count<sp/>(1)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="54"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x81,<sp/>0x01,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Input<sp/>(Constant)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="55"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="56"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Keyboard<sp/>-<sp/>Keys<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="57"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x05,<sp/>USAGE_PAGE_KEYBOARD,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="58"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x19,<sp/>0x00,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Usage<sp/>Minimum<sp/>(0)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="59"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x29,<sp/>KEYBOARD_REPORT_LAST_KEY,<sp/></highlight><highlight class="comment">/*<sp/>Usage<sp/>Maximum<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="60"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x15,<sp/>0x00,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Logical<sp/>Minimum<sp/>(0)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="61"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x25,<sp/>KEYBOARD_REPORT_LAST_KEY,<sp/></highlight><highlight class="comment">/*<sp/>Logical<sp/>Maximum<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="62"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x75,<sp/>0x08,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Report<sp/>Size<sp/>(8)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="63"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x95,<sp/>KEYBOARD_REPORT_KEY_COUNT_MAX,<sp/></highlight><highlight class="comment">/*<sp/>Report<sp/>Count<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="64"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x81,<sp/>0x00,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Input<sp/>(Data,<sp/>Array)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="65"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="66"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Report:<sp/>Keyboard<sp/>LEDS<sp/>(output)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="67"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x85,<sp/>report_id_leds,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="68"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="69"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Keyboard<sp/>-<sp/>LEDs<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="70"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x05,<sp/>USAGE_PAGE_LEDS,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="71"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x19,<sp/>0x01,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Usage<sp/>Minimum<sp/>(1)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="72"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x29,<sp/>0x05,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Usage<sp/>Maximum<sp/>(5)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="73"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x15,<sp/>0x00,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Logical<sp/>Minimum<sp/>(0)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="74"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x25,<sp/>0x01,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Logical<sp/>Maximum<sp/>(1)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="75"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x95,<sp/>0x05,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Report<sp/>Count<sp/>(5)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="76"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x75,<sp/>0x01,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Report<sp/>Size<sp/>(1)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="77"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x91,<sp/>0x02,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Output<sp/>(Data,<sp/>Variable,<sp/>Absolute)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="78"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="79"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Keyboard<sp/>-<sp/>LEDs<sp/>padding<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="80"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x95,<sp/>0x01,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Report<sp/>Count<sp/>(1)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="81"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x75,<sp/>0x03,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Report<sp/>Size<sp/>(3)<sp/>(padding)<sp/>*/</highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="82"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0x91,<sp/>0x01<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Output<sp/>(Constant,<sp/>Array,<sp/>Absolute)<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_HID_REPORT_KEYBOARD_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/common/hid_report_keyboard.h"/>
+  </compounddef>
+</doxygen>

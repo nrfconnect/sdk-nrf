@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__tnep__ch__record" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_tnep_ch_record</compoundname>
+    <includes refid="tnep_2ch_8h" local="no">ch.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__tnep__ch__record_aa0f0208c9acebbc72f7794c4cc5c2559_1aa0f0208c9acebbc72f7794c4cc5c2559" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structnfc__ndef__ch__ac__rec" kindref="compound">nfc_ndef_ch_ac_rec</ref> *</type>
+        <definition>const struct nfc_ndef_ch_ac_rec* nfc_tnep_ch_record::ac</definition>
+        <argsstring></argsstring>
+        <name>ac</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the first Alternative Carrier Record. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/ch.h" line="34" column="31" bodyfile="include/nfc/tnep/ch.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__ch__record_a74033ebfb185d369912b35b7cc7c70aa_1a74033ebfb185d369912b35b7cc7c70aa" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structnfc__ndef__record__desc" kindref="compound">nfc_ndef_record_desc</ref> **</type>
+        <definition>const struct nfc_ndef_record_desc** nfc_tnep_ch_record::carrier</definition>
+        <argsstring></argsstring>
+        <name>carrier</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pointer to the first Carrier Record. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/ch.h" line="37" column="33" bodyfile="include/nfc/tnep/ch.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__ch__record_aa33f7be8a007daacd2e511b58c73caed_1aa33f7be8a007daacd2e511b58c73caed" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t nfc_tnep_ch_record::count</definition>
+        <argsstring></argsstring>
+        <name>count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Count of the Alternative Carriers Records and Carrier Records. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/ch.h" line="40" column="8" bodyfile="include/nfc/tnep/ch.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__ch__record_afe72dc817df48bccfa77654a090f405d_1afe72dc817df48bccfa77654a090f405d" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_tnep_ch_record::major_ver</definition>
+        <argsstring></argsstring>
+        <name>major_ver</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Connection Handover major version. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/ch.h" line="43" column="9" bodyfile="include/nfc/tnep/ch.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__ch__record_a11e09d736cdf3769c67b6e2fc76c6d08_1a11e09d736cdf3769c67b6e2fc76c6d08" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t nfc_tnep_ch_record::minor_ver</definition>
+        <argsstring></argsstring>
+        <name>minor_ver</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Connection Handover minor version. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/ch.h" line="46" column="9" bodyfile="include/nfc/tnep/ch.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Connection Handover Record structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>nfc_ndef_ch_ac_rec</label>
+        <link refid="structnfc__ndef__ch__ac__rec"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>aux_data_ref</edgelabel>
+          <edgelabel>carrier_data_ref</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>nfc_ndef_ch_ac_rec_ref</label>
+        <link refid="structnfc__ndef__ch__ac__rec__ref"/>
+      </node>
+      <node id="4">
+        <label>nfc_ndef_record_desc</label>
+        <link refid="structnfc__ndef__record__desc"/>
+      </node>
+      <node id="1">
+        <label>nfc_tnep_ch_record</label>
+        <link refid="structnfc__tnep__ch__record"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>ac</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>carrier</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/nfc/tnep/ch.h" line="32" column="1" bodyfile="include/nfc/tnep/ch.h" bodystart="32" bodyend="47"/>
+    <listofallmembers>
+      <member refid="structnfc__tnep__ch__record_aa0f0208c9acebbc72f7794c4cc5c2559_1aa0f0208c9acebbc72f7794c4cc5c2559" prot="public" virt="non-virtual"><scope>nfc_tnep_ch_record</scope><name>ac</name></member>
+      <member refid="structnfc__tnep__ch__record_a74033ebfb185d369912b35b7cc7c70aa_1a74033ebfb185d369912b35b7cc7c70aa" prot="public" virt="non-virtual"><scope>nfc_tnep_ch_record</scope><name>carrier</name></member>
+      <member refid="structnfc__tnep__ch__record_aa33f7be8a007daacd2e511b58c73caed_1aa33f7be8a007daacd2e511b58c73caed" prot="public" virt="non-virtual"><scope>nfc_tnep_ch_record</scope><name>count</name></member>
+      <member refid="structnfc__tnep__ch__record_afe72dc817df48bccfa77654a090f405d_1afe72dc817df48bccfa77654a090f405d" prot="public" virt="non-virtual"><scope>nfc_tnep_ch_record</scope><name>major_ver</name></member>
+      <member refid="structnfc__tnep__ch__record_a11e09d736cdf3769c67b6e2fc76c6d08_1a11e09d736cdf3769c67b6e2fc76c6d08" prot="public" virt="non-virtual"><scope>nfc_tnep_ch_record</scope><name>minor_ver</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structble__discovery__complete__event" kind="struct" language="C++" prot="public">
+    <compoundname>ble_discovery_complete_event</compoundname>
+    <includes refid="ble__event_8h" local="no">ble_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structble__discovery__complete__event_a844bee4a0ef7b8c07aab3b648463843a_1a844bee4a0ef7b8c07aab3b648463843a" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header ble_discovery_complete_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/ble_event.h" line="41" column="19" bodyfile="applications/nrf_desktop/src/events/ble_event.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structble__discovery__complete__event_ac079f10deb05a1acb120d803ea688bb6_1ac079f10deb05a1acb120d803ea688bb6" prot="public" static="no" mutable="no">
+        <type>struct bt_gatt_dm *</type>
+        <definition>struct bt_gatt_dm* ble_discovery_complete_event::dm</definition>
+        <argsstring></argsstring>
+        <name>dm</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/ble_event.h" line="43" column="17" bodyfile="applications/nrf_desktop/src/events/ble_event.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structble__discovery__complete__event_a63e0229b395f23ff0698bb7770c322f6_1a63e0229b395f23ff0698bb7770c322f6" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t ble_discovery_complete_event::pid</definition>
+        <argsstring></argsstring>
+        <name>pid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/ble_event.h" line="44" column="10" bodyfile="applications/nrf_desktop/src/events/ble_event.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structble__discovery__complete__event_a18fdaf5ea56ddd84a49de363b72168cf_1a18fdaf5ea56ddd84a49de363b72168cf" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t ble_discovery_complete_event::hwid[HWID_LEN]</definition>
+        <argsstring>[HWID_LEN]</argsstring>
+        <name>hwid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/ble_event.h" line="45" column="9" bodyfile="applications/nrf_desktop/src/events/ble_event.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structble__discovery__complete__event_a019d92551431373159265103039131a6_1a019d92551431373159265103039131a6" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool ble_discovery_complete_event::peer_llpm_support</definition>
+        <argsstring></argsstring>
+        <name>peer_llpm_support</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/ble_event.h" line="46" column="6" bodyfile="applications/nrf_desktop/src/events/ble_event.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structble__discovery__complete__event_a13f1c4d33f84fb3f56c239fbf9218411_1a13f1c4d33f84fb3f56c239fbf9218411" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__ble__event_gac69e3dc77018854dc02597ae99dd9f51_1gac69e3dc77018854dc02597ae99dd9f51" kindref="member">peer_type</ref></type>
+        <definition>enum peer_type ble_discovery_complete_event::peer_type</definition>
+        <argsstring></argsstring>
+        <name>peer_type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/ble_event.h" line="47" column="15" bodyfile="applications/nrf_desktop/src/events/ble_event.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>BLE discovery complete event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>ble_discovery_complete_event</label>
+        <link refid="structble__discovery__complete__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/nrf_desktop/src/events/ble_event.h" line="40" column="1" bodyfile="applications/nrf_desktop/src/events/ble_event.h" bodystart="40" bodyend="48"/>
+    <listofallmembers>
+      <member refid="structble__discovery__complete__event_ac079f10deb05a1acb120d803ea688bb6_1ac079f10deb05a1acb120d803ea688bb6" prot="public" virt="non-virtual"><scope>ble_discovery_complete_event</scope><name>dm</name></member>
+      <member refid="structble__discovery__complete__event_a844bee4a0ef7b8c07aab3b648463843a_1a844bee4a0ef7b8c07aab3b648463843a" prot="public" virt="non-virtual"><scope>ble_discovery_complete_event</scope><name>header</name></member>
+      <member refid="structble__discovery__complete__event_a18fdaf5ea56ddd84a49de363b72168cf_1a18fdaf5ea56ddd84a49de363b72168cf" prot="public" virt="non-virtual"><scope>ble_discovery_complete_event</scope><name>hwid</name></member>
+      <member refid="structble__discovery__complete__event_a019d92551431373159265103039131a6_1a019d92551431373159265103039131a6" prot="public" virt="non-virtual"><scope>ble_discovery_complete_event</scope><name>peer_llpm_support</name></member>
+      <member refid="structble__discovery__complete__event_a13f1c4d33f84fb3f56c239fbf9218411_1a13f1c4d33f84fb3f56c239fbf9218411" prot="public" virt="non-virtual"><scope>ble_discovery_complete_event</scope><name>peer_type</name></member>
+      <member refid="structble__discovery__complete__event_a63e0229b395f23ff0698bb7770c322f6_1a63e0229b395f23ff0698bb7770c322f6" prot="public" virt="non-virtual"><scope>ble_discovery_complete_event</scope><name>pid</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

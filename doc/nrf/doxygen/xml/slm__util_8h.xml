@@ -1,0 +1,632 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="slm__util_8h" kind="file" language="C++">
+    <compoundname>slm_util.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <includes local="no">ctype.h</includes>
+    <includes local="no">stdbool.h</includes>
+    <includes local="no">net/socket.h</includes>
+    <includes refid="at__cmd__parser_8h" local="no">modem/at_cmd_parser.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/serial_lte_modem/src/slm_util.h</label>
+        <link refid="slm__util_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>modem/at_cmd_parser.h</label>
+        <link refid="at__cmd__parser_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>modem/at_params.h</label>
+        <link refid="at__params_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ctype.h</label>
+      </node>
+      <node id="5">
+        <label>net/socket.h</label>
+      </node>
+      <node id="4">
+        <label>stdbool.h</label>
+      </node>
+      <node id="7">
+        <label>stdlib.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="user-defined">
+      <memberdef kind="function" id="slm__util_8h_aa70b4757fdd22c2d1c9f607a3af40a7b_1aa70b4757fdd22c2d1c9f607a3af40a7b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool slm_util_casecmp</definition>
+        <argsstring>(const char *str1, const char *str2)</argsstring>
+        <name>slm_util_casecmp</name>
+        <param>
+          <type>const char *</type>
+          <declname>str1</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>str2</declname>
+        </param>
+        <briefdescription>
+<para>Compare string ignoring case. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>str1</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>First string </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>str2</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Second string</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true If two commands match, false if not. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_util.h" line="30" column="6" declfile="applications/serial_lte_modem/src/slm_util.h" declline="30" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="slm__util_8h_ad7725565fa5a88f265407aae9623d75c_1ad7725565fa5a88f265407aae9623d75c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool slm_util_cmd_casecmp</definition>
+        <argsstring>(const char *cmd, const char *slm_cmd)</argsstring>
+        <name>slm_util_cmd_casecmp</name>
+        <param>
+          <type>const char *</type>
+          <declname>cmd</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>slm_cmd</declname>
+        </param>
+        <briefdescription>
+<para>Compare name of AT command ignoring case. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cmd</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Command string received from UART </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>slm_cmd</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Propreiatry command supported by SLM</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true If two commands match, false if not. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_util.h" line="40" column="6" declfile="applications/serial_lte_modem/src/slm_util.h" declline="40" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="slm__util_8h_a3c712aa082eab24504165eba57d51647_1a3c712aa082eab24504165eba57d51647" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool slm_util_hexstr_check</definition>
+        <argsstring>(const uint8_t *data, uint16_t data_len)</argsstring>
+        <name>slm_util_hexstr_check</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>data_len</declname>
+        </param>
+        <briefdescription>
+<para>Detect hexdecimal string data type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Hexdecimal string arrary to be checked </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of array</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the input is hexdecimal string array, otherwise false </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_util.h" line="50" column="6" declfile="applications/serial_lte_modem/src/slm_util.h" declline="50" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="slm__util_8h_a6be4a59b553373b62ecdef9b7495b45d_1a6be4a59b553373b62ecdef9b7495b45d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int slm_util_htoa</definition>
+        <argsstring>(const uint8_t *hex, uint16_t hex_len, char *ascii, uint16_t ascii_len)</argsstring>
+        <name>slm_util_htoa</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>hex</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>hex_len</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>ascii</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>ascii_len</declname>
+        </param>
+        <briefdescription>
+<para>Encode hex array to hexdecimal string (ASCII text) </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">hex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Hex arrary to be encoded </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">hex_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of hex array </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">ascii</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>encoded hexdecimal string </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ascii_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>reserved buffer size</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>actual size of ascii string if the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_util.h" line="63" column="5" declfile="applications/serial_lte_modem/src/slm_util.h" declline="63" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="slm__util_8h_aa69e4cfe7aa0102a892f404b6b383328_1aa69e4cfe7aa0102a892f404b6b383328" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int slm_util_atoh</definition>
+        <argsstring>(const char *ascii, uint16_t ascii_len, uint8_t *hex, uint16_t hex_len)</argsstring>
+        <name>slm_util_atoh</name>
+        <param>
+          <type>const char *</type>
+          <declname>ascii</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>ascii_len</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>hex</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>hex_len</declname>
+        </param>
+        <briefdescription>
+<para>Decode hexdecimal string (ASCII text) to hex array. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ascii</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>encoded hexdecimal string </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ascii_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>size of hexdecimal string </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">hex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>decoded hex arrary </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">hex_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>reserved size of hex array</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>actual size of hex array if the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_util.h" line="76" column="5" declfile="applications/serial_lte_modem/src/slm_util.h" declline="76" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="slm__util_8h_aba120b4a3563a2cab8685bd2a837d161_1aba120b4a3563a2cab8685bd2a837d161" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int util_string_get</definition>
+        <argsstring>(const struct at_param_list *list, size_t index, char *value, size_t *len)</argsstring>
+        <name>util_string_get</name>
+        <param>
+          <type>const struct <ref refid="structat__param__list" kindref="compound">at_param_list</ref> *</type>
+          <declname>list</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>size_t *</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Get string value from AT command with length check. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><computeroutput>len</computeroutput> must be bigger than the string length, or an error is returned. The copied string is null-terminated.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter index in the list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the buffer where to copy the value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Available space in <computeroutput>value</computeroutput>, returns actual length copied into string buffer in bytes, excluding the terminating null character.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_util.h" line="94" column="5" declfile="applications/serial_lte_modem/src/slm_util.h" declline="94" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="slm__util_8h_a778648a0c1d7038bd2418ca0ce65a3a8_1a778648a0c1d7038bd2418ca0ce65a3a8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void util_get_ip_addr</definition>
+        <argsstring>(int cid, char *addr4, char *addr6)</argsstring>
+        <name>util_get_ip_addr</name>
+        <param>
+          <type>int</type>
+          <declname>cid</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>addr4</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>addr6</declname>
+        </param>
+        <briefdescription>
+<para>use AT command to get IPv4 and IPv6 addresses for specified PDN </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>PDP Context ID as defined in &quot;+CGDCONT&quot; command (0~10). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">addr4</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to hold the IPv4 address, size NET_IPV4_ADDR_LEN. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">addr6</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to hold the IPv6 address, size NET_IPV6_ADDR_LEN. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_util.h" line="103" column="6" declfile="applications/serial_lte_modem/src/slm_util.h" declline="103" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="slm__util_8h_aefcf089cb56e269cb3e91143e26ab51a_1aefcf089cb56e269cb3e91143e26ab51a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int util_str_to_int</definition>
+        <argsstring>(const char *str, int base, int *output)</argsstring>
+        <name>util_str_to_int</name>
+        <param>
+          <type>const char *</type>
+          <declname>str</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>base</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>convert string to integer </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">str</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A string containing the representation of an integral number. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">base</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The base, which must be between 2 and 36 inclusive or the special value 0. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The converted integral number as a long int value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_util.h" line="115" column="5" declfile="applications/serial_lte_modem/src/slm_util.h" declline="115" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="slm__util_8h_a0452e49d37e58949f74518bf59a54bc2_1a0452e49d37e58949f74518bf59a54bc2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int util_resolve_host</definition>
+        <argsstring>(int cid, const char *host, uint16_t port, int family, struct sockaddr *sa)</argsstring>
+        <name>util_resolve_host</name>
+        <param>
+          <type>int</type>
+          <declname>cid</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>host</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>port</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>family</declname>
+        </param>
+        <param>
+          <type>struct sockaddr *</type>
+          <declname>sa</declname>
+        </param>
+        <briefdescription>
+<para>Resolve remote host by host name or IP address. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function wraps up getaddrinfo() to return first resolved address.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>PDP Context ID as defined in &quot;+CGDCONT&quot; command (0~10). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">host</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name or IP address of remote host. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">port</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Service port of remote host. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">family</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Desired address family for the returned address. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">sa</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The returned address.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, EAI error code as defined by getaddrinfo(). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_util.h" line="131" column="5" declfile="applications/serial_lte_modem/src/slm_util.h" declline="131" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Utility functions for serial LTE modem. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>SLM_UTIL_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SLM_UTIL_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;ctype.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdbool.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;net/socket.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="at__cmd__parser_8h" kindref="compound">modem/at_cmd_parser.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="slm__util_8h_aa70b4757fdd22c2d1c9f607a3af40a7b_1aa70b4757fdd22c2d1c9f607a3af40a7b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="slm__util_8h_aa70b4757fdd22c2d1c9f607a3af40a7b_1aa70b4757fdd22c2d1c9f607a3af40a7b" kindref="member">slm_util_casecmp</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*str1,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*str2);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="slm__util_8h_ad7725565fa5a88f265407aae9623d75c_1ad7725565fa5a88f265407aae9623d75c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="slm__util_8h_ad7725565fa5a88f265407aae9623d75c_1ad7725565fa5a88f265407aae9623d75c" kindref="member">slm_util_cmd_casecmp</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*cmd,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*slm_cmd);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="slm__util_8h_a3c712aa082eab24504165eba57d51647_1a3c712aa082eab24504165eba57d51647" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="slm__util_8h_a3c712aa082eab24504165eba57d51647_1a3c712aa082eab24504165eba57d51647" kindref="member">slm_util_hexstr_check</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*data,<sp/>uint16_t<sp/>data_len);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63" refid="slm__util_8h_a6be4a59b553373b62ecdef9b7495b45d_1a6be4a59b553373b62ecdef9b7495b45d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="slm__util_8h_a6be4a59b553373b62ecdef9b7495b45d_1a6be4a59b553373b62ecdef9b7495b45d" kindref="member">slm_util_htoa</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*hex,<sp/>uint16_t<sp/>hex_len,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*ascii,<sp/>uint16_t<sp/>ascii_len);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="slm__util_8h_aa69e4cfe7aa0102a892f404b6b383328_1aa69e4cfe7aa0102a892f404b6b383328" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="slm__util_8h_aa69e4cfe7aa0102a892f404b6b383328_1aa69e4cfe7aa0102a892f404b6b383328" kindref="member">slm_util_atoh</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*ascii,<sp/>uint16_t<sp/>ascii_len,<sp/>uint8_t<sp/>*hex,<sp/>uint16_t<sp/>hex_len);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94" refid="slm__util_8h_aba120b4a3563a2cab8685bd2a837d161_1aba120b4a3563a2cab8685bd2a837d161" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="slm__util_8h_aba120b4a3563a2cab8685bd2a837d161_1aba120b4a3563a2cab8685bd2a837d161" kindref="member">util_string_get</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structat__param__list" kindref="compound">at_param_list</ref><sp/>*list,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>index,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*value,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>*len);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103" refid="slm__util_8h_a778648a0c1d7038bd2418ca0ce65a3a8_1a778648a0c1d7038bd2418ca0ce65a3a8" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="slm__util_8h_a778648a0c1d7038bd2418ca0ce65a3a8_1a778648a0c1d7038bd2418ca0ce65a3a8" kindref="member">util_get_ip_addr</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>cid,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*addr4,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*addr6);</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115" refid="slm__util_8h_aefcf089cb56e269cb3e91143e26ab51a_1aefcf089cb56e269cb3e91143e26ab51a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="slm__util_8h_aefcf089cb56e269cb3e91143e26ab51a_1aefcf089cb56e269cb3e91143e26ab51a" kindref="member">util_str_to_int</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*str,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>base,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*output);</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131" refid="slm__util_8h_a0452e49d37e58949f74518bf59a54bc2_1a0452e49d37e58949f74518bf59a54bc2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="slm__util_8h_a0452e49d37e58949f74518bf59a54bc2_1a0452e49d37e58949f74518bf59a54bc2" kindref="member">util_resolve_host</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>cid,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*host,<sp/>uint16_t<sp/>port,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>family,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>sockaddr<sp/>*sa);</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>SLM_UTIL_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/serial_lte_modem/src/slm_util.h"/>
+  </compounddef>
+</doxygen>

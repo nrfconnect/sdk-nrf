@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__onoff__srv__handlers" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_onoff_srv_handlers</compoundname>
+    <includes refid="gen__onoff__srv_8h" local="no">gen_onoff_srv.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__onoff__srv__handlers_afd508dcb1553c1c17e814280fe99d236_1afd508dcb1553c1c17e814280fe99d236" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_onoff_srv_handlers::set) (struct bt_mesh_onoff_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_onoff_set *set, struct bt_mesh_onoff_status *rsp)</definition>
+        <argsstring>)(struct bt_mesh_onoff_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_onoff_set *set, struct bt_mesh_onoff_status *rsp)</argsstring>
+        <name>set</name>
+        <briefdescription>
+<para>Set the OnOff state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When a set message is received, the model publishes a status message, with the response set to <computeroutput>rsp</computeroutput>. When an acknowledged set message is received, the model also sends a response back to a client. If a state change is non-instantaneous, for example when <ref refid="group__bt__mesh__model__types_gaa845685eb265d1294b17bb80fbde4996_1gaa845685eb265d1294b17bb80fbde4996" kindref="member">bt_mesh_model_transition_time</ref> returns a nonzero value, the application is responsible for publishing a value of the OnOff state at the end of the transition.</para>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server instance to set the state of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context for the message that triggered the change, or NULL if the change is not coming from a message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters of the state change. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response structure to be filled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_onoff_srv.h" line="69" column="1" bodyfile="include/bluetooth/mesh/gen_onoff_srv.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__onoff__srv__handlers_a3bc1aae0d8838688989defc4a3030d75_1a3bc1aae0d8838688989defc4a3030d75" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_onoff_srv_handlers::get) (struct bt_mesh_onoff_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_onoff_status *rsp)</definition>
+        <argsstring>)(struct bt_mesh_onoff_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_onoff_status *rsp)</argsstring>
+        <name>get</name>
+        <briefdescription>
+<para>Get the OnOff state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server instance to get the state of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context for the message that triggered the change, or NULL if the change is not coming from a message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response structure to be filled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_onoff_srv.h" line="83" column="1" bodyfile="include/bluetooth/mesh/gen_onoff_srv.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Generic OnOff Server state access handlers. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/gen_onoff_srv.h" line="52" column="1" bodyfile="include/bluetooth/mesh/gen_onoff_srv.h" bodystart="52" bodyend="86"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__onoff__srv__handlers_a3bc1aae0d8838688989defc4a3030d75_1a3bc1aae0d8838688989defc4a3030d75" prot="public" virt="non-virtual"><scope>bt_mesh_onoff_srv_handlers</scope><name>get</name></member>
+      <member refid="structbt__mesh__onoff__srv__handlers_afd508dcb1553c1c17e814280fe99d236_1afd508dcb1553c1c17e814280fe99d236" prot="public" virt="non-virtual"><scope>bt_mesh_onoff_srv_handlers</scope><name>set</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

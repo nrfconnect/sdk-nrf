@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__gattp__handle__range" kind="struct" language="C++" prot="public">
+    <compoundname>bt_gattp_handle_range</compoundname>
+    <includes refid="gattp_8h" local="no">gattp.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__gattp__handle__range_a9fc7fc3dc7f77e4cf7aa5f22470bd651_1a9fc7fc3dc7f77e4cf7aa5f22470bd651" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_gattp_handle_range::start_handle</definition>
+        <argsstring></argsstring>
+        <name>start_handle</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Start handle. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gattp.h" line="29" column="10" bodyfile="include/bluetooth/services/gattp.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__gattp__handle__range_a3c9b3f1aebf37b5c3d9f78e342c3148e_1a3c9b3f1aebf37b5c3d9f78e342c3148e" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_gattp_handle_range::end_handle</definition>
+        <argsstring></argsstring>
+        <name>end_handle</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>End handle. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/gattp.h" line="32" column="10" bodyfile="include/bluetooth/services/gattp.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Structure for Service Changed handle range. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/gattp.h" line="27" column="1" bodyfile="include/bluetooth/services/gattp.h" bodystart="27" bodyend="33"/>
+    <listofallmembers>
+      <member refid="structbt__gattp__handle__range_a3c9b3f1aebf37b5c3d9f78e342c3148e_1a3c9b3f1aebf37b5c3d9f78e342c3148e" prot="public" virt="non-virtual"><scope>bt_gattp_handle_range</scope><name>end_handle</name></member>
+      <member refid="structbt__gattp__handle__range_a9fc7fc3dc7f77e4cf7aa5f22470bd651_1a9fc7fc3dc7f77e4cf7aa5f22470bd651" prot="public" virt="non-virtual"><scope>bt_gattp_handle_range</scope><name>start_handle</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structrest__client__resp__context" kind="struct" language="C++" prot="public">
+    <compoundname>rest_client_resp_context</compoundname>
+    <includes refid="rest__client_8h" local="no">rest_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structrest__client__resp__context_a9a4c54e73fda44773f6c8fe22b6e9267_1a9a4c54e73fda44773f6c8fe22b6e9267" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t rest_client_resp_context::total_response_len</definition>
+        <argsstring></argsstring>
+        <name>total_response_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of HTTP headers + response body/content data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="104" column="8" bodyfile="include/net/rest_client.h" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structrest__client__resp__context_a7b05f069715e50ac4f4ab763db27355f_1a7b05f069715e50ac4f4ab763db27355f" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t rest_client_resp_context::response_len</definition>
+        <argsstring></argsstring>
+        <name>response_len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Length of response body/content data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="107" column="8" bodyfile="include/net/rest_client.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structrest__client__resp__context_a9246481c3b8ee63a837fda4f4c5299d5_1a9246481c3b8ee63a837fda4f4c5299d5" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* rest_client_resp_context::response</definition>
+        <argsstring></argsstring>
+        <name>response</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Start of response data (the body/content) in resp_buff. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="110" column="6" bodyfile="include/net/rest_client.h" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structrest__client__resp__context_a5fab4d1a009c152318a8de81900ec456_1a5fab4d1a009c152318a8de81900ec456" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t rest_client_resp_context::http_status_code</definition>
+        <argsstring></argsstring>
+        <name>http_status_code</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Numeric HTTP status code. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="113" column="10" bodyfile="include/net/rest_client.h" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structrest__client__resp__context_a9e17521ee33d607a2e82b4fd68bf0074_1a9e17521ee33d607a2e82b4fd68bf0074" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int rest_client_resp_context::used_socket_id</definition>
+        <argsstring></argsstring>
+        <name>used_socket_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Used socket identifier. Use this for keepalive connections as connect_socket for upcoming requests. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="118" column="5" bodyfile="include/net/rest_client.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structrest__client__resp__context_a1ec0b1c529f28836c3f4b3383dfc8489_1a1ec0b1c529f28836c3f4b3383dfc8489" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int rest_client_resp_context::used_socket_is_alive</definition>
+        <argsstring></argsstring>
+        <name>used_socket_is_alive</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>True if used_socket_id was kept alive and was not closed after the REST request. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/rest_client.h" line="121" column="5" bodyfile="include/net/rest_client.h" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>REST client response context. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>When <ref refid="group__rest__client_gaf17c5ae9504203d57ff28b51aa6ec78e_1gaf17c5ae9504203d57ff28b51aa6ec78e" kindref="member">rest_client_request</ref> returns, response-related data can be read from this structure. </para>
+    </detaileddescription>
+    <location file="include/net/rest_client.h" line="102" column="1" bodyfile="include/net/rest_client.h" bodystart="102" bodyend="122"/>
+    <listofallmembers>
+      <member refid="structrest__client__resp__context_a5fab4d1a009c152318a8de81900ec456_1a5fab4d1a009c152318a8de81900ec456" prot="public" virt="non-virtual"><scope>rest_client_resp_context</scope><name>http_status_code</name></member>
+      <member refid="structrest__client__resp__context_a9246481c3b8ee63a837fda4f4c5299d5_1a9246481c3b8ee63a837fda4f4c5299d5" prot="public" virt="non-virtual"><scope>rest_client_resp_context</scope><name>response</name></member>
+      <member refid="structrest__client__resp__context_a7b05f069715e50ac4f4ab763db27355f_1a7b05f069715e50ac4f4ab763db27355f" prot="public" virt="non-virtual"><scope>rest_client_resp_context</scope><name>response_len</name></member>
+      <member refid="structrest__client__resp__context_a9a4c54e73fda44773f6c8fe22b6e9267_1a9a4c54e73fda44773f6c8fe22b6e9267" prot="public" virt="non-virtual"><scope>rest_client_resp_context</scope><name>total_response_len</name></member>
+      <member refid="structrest__client__resp__context_a9e17521ee33d607a2e82b4fd68bf0074_1a9e17521ee33d607a2e82b4fd68bf0074" prot="public" virt="non-virtual"><scope>rest_client_resp_context</scope><name>used_socket_id</name></member>
+      <member refid="structrest__client__resp__context_a1ec0b1c529f28836c3f4b3383dfc8489_1a1ec0b1c529f28836c3f4b3383dfc8489" prot="public" virt="non-virtual"><scope>rest_client_resp_context</scope><name>used_socket_is_alive</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

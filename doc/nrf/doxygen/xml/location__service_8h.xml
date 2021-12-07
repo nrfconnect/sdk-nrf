@@ -1,0 +1,188 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="location__service_8h" kind="file" language="C++">
+    <compoundname>location_service.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <includes refid="lte__lc_8h" local="no">modem/lte_lc.h</includes>
+    <includes refid="multicell__location_8h" local="no">net/multicell_location.h</includes>
+    <incdepgraph>
+      <node id="3">
+        <label>modem/lte_lc.h</label>
+        <link refid="lte__lc_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>net/multicell_location.h</label>
+        <link refid="multicell__location_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>lib/multicell_location/services/location_service.h</label>
+        <link refid="location__service_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>stdbool.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="location__service_8h_a612ea83a8c31077b618839bea06a3ba5_1a612ea83a8c31077b618839bea06a3ba5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const char *</type>
+        <definition>const char * location_service_get_certificate</definition>
+        <argsstring>(enum multicell_service service)</argsstring>
+        <name>location_service_get_certificate</name>
+        <param>
+          <type>enum <ref refid="group__multicell__location_ga9567c3abc8b007ab123ba94828319fc0_1ga9567c3abc8b007ab123ba94828319fc0" kindref="member">multicell_service</ref></type>
+          <declname>service</declname>
+        </param>
+        <briefdescription>
+<para>Get pointer to certificate to location service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">service</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Cellular positioning service to be used.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A pointer to null-terminated root CA certificate in case of success, or NULL in case of failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/multicell_location/services/location_service.h" line="26" column="12" declfile="lib/multicell_location/services/location_service.h" declline="26" declcolumn="12"/>
+      </memberdef>
+      <memberdef kind="function" id="location__service_8h_ae2f1035ecf710122993190a28cd96fc1_1ae2f1035ecf710122993190a28cd96fc1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int location_service_get_cell_location</definition>
+        <argsstring>(enum multicell_service service, const struct lte_lc_cells_info *cell_data, struct multicell_location *const location)</argsstring>
+        <name>location_service_get_cell_location</name>
+        <param>
+          <type>enum <ref refid="group__multicell__location_ga9567c3abc8b007ab123ba94828319fc0_1ga9567c3abc8b007ab123ba94828319fc0" kindref="member">multicell_service</ref></type>
+          <declname>service</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structlte__lc__cells__info" kindref="compound">lte_lc_cells_info</ref> *</type>
+          <declname>cell_data</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structmulticell__location" kindref="compound">multicell_location</ref> *const</type>
+          <declname>location</declname>
+        </param>
+        <briefdescription>
+<para>Generate location request, send, and parse response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">service</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Cellular positioning service to be used. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cell_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to neighbor cell data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">location</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Storage for the result from response parsing.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, or negative error code on failure. </para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-ENOENT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>No cellular cells found from cell_data. I.e., even current cell is not available and there is no cellular connectivity. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Out of memory. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMSG</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parsing response from the location service failed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/multicell_location/services/location_service.h" line="41" column="5" declfile="lib/multicell_location/services/location_service.h" declline="41" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>LOCATION_SERVICE_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>LOCATION_SERVICE_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="lte__lc_8h" kindref="compound">modem/lte_lc.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="multicell__location_8h" kindref="compound">net/multicell_location.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="location__service_8h_a612ea83a8c31077b618839bea06a3ba5_1a612ea83a8c31077b618839bea06a3ba5" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="location__service_8h_a612ea83a8c31077b618839bea06a3ba5_1a612ea83a8c31077b618839bea06a3ba5" kindref="member">location_service_get_certificate</ref>(</highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__multicell__location_ga9567c3abc8b007ab123ba94828319fc0_1ga9567c3abc8b007ab123ba94828319fc0" kindref="member">multicell_service</ref><sp/>service);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="location__service_8h_ae2f1035ecf710122993190a28cd96fc1_1ae2f1035ecf710122993190a28cd96fc1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="location__service_8h_ae2f1035ecf710122993190a28cd96fc1_1ae2f1035ecf710122993190a28cd96fc1" kindref="member">location_service_get_cell_location</ref>(</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__multicell__location_ga9567c3abc8b007ab123ba94828319fc0_1ga9567c3abc8b007ab123ba94828319fc0" kindref="member">multicell_service</ref><sp/>service,</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structlte__lc__cells__info" kindref="compound">lte_lc_cells_info</ref><sp/>*cell_data,</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structmulticell__location" kindref="compound">multicell_location</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>location);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>LOCATION_SERVICE_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="lib/multicell_location/services/location_service.h"/>
+  </compounddef>
+</doxygen>

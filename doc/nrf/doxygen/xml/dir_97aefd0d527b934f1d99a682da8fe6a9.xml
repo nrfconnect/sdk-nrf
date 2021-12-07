@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_97aefd0d527b934f1d99a682da8fe6a9" kind="dir">
+    <compoundname>lib</compoundname>
+    <innerdir refid="dir_7456b09ec688ca7002861595a79860fb">lib/at_cmd_parser</innerdir>
+    <innerdir refid="dir_b64409957492c4acc7c8169caad36064">lib/bin</innerdir>
+    <innerdir refid="dir_e9729322b6c49a46d018e13caa85fab0">lib/hw_unique_key</innerdir>
+    <innerdir refid="dir_95bc18144412456f5cbabe059a4294ca">lib/location</innerdir>
+    <innerdir refid="dir_956be9e8bd54c032f7963dd8ed4767b1">lib/lte_link_control</innerdir>
+    <innerdir refid="dir_e0dd51c0387aa99ae1b18a4f7dfa78e6">lib/multicell_location</innerdir>
+    <innerdir refid="dir_063e9ed202551b12debf64595c05a225">lib/multithreading_lock</innerdir>
+    <innerdir refid="dir_20fe89fdf9941f4183318c5c59679f97">lib/sms</innerdir>
+    <innerdir refid="dir_4fff61b75fe24f97fdde2ec04e075be5">lib/st25r3911b</innerdir>
+    <innerdir refid="dir_57b0fd26a56d6d337f8b30fcd4067695">lib/supl</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/"/>
+  </compounddef>
+</doxygen>

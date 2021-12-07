@@ -1,0 +1,587 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__gatt__pool" kind="group">
+    <compoundname>bt_gatt_pool</compoundname>
+    <title>Bluetooth LE GATT attribute pools API</title>
+    <innerclass refid="structbt__gatt__pool" prot="public">bt_gatt_pool</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__bt__gatt__pool_1ga906b7d14c4dbfb36a7e03e5223c232e6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_gatt_pool_svc_alloc</definition>
+        <argsstring>(struct bt_gatt_pool *gp, struct bt_uuid const *svc_uuid)</argsstring>
+        <name>bt_gatt_pool_svc_alloc</name>
+        <param>
+          <type>struct <ref refid="structbt__gatt__pool" kindref="compound">bt_gatt_pool</ref> *</type>
+          <declname>gp</declname>
+        </param>
+        <param>
+          <type>struct bt_uuid const *</type>
+          <declname>svc_uuid</declname>
+        </param>
+        <briefdescription>
+<para>Take a primary service descriptor from the pool. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>gp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>GATT service object with dynamic attribute allocation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>svc_uuid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Service UUID.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Operation finished successfully. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Invalid input value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOSPC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of arguments in <computeroutput>svc</computeroutput> would exceed <computeroutput>array_size</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>No internal memory in the gatt_poll module. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_pool.h" line="145" column="5" declfile="include/bluetooth/gatt_pool.h" declline="145" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__pool_1ga339fbe78e76d6d505d12ef3f30860941" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_gatt_pool_chrc_alloc</definition>
+        <argsstring>(struct bt_gatt_pool *gp, uint8_t props, struct bt_gatt_attr const *attr)</argsstring>
+        <name>bt_gatt_pool_chrc_alloc</name>
+        <param>
+          <type>struct <ref refid="structbt__gatt__pool" kindref="compound">bt_gatt_pool</ref> *</type>
+          <declname>gp</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>props</declname>
+        </param>
+        <param>
+          <type>struct bt_gatt_attr const *</type>
+          <declname>attr</declname>
+        </param>
+        <briefdescription>
+<para>Take a characteristic descriptor from the pool. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>gp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>GATT service object with dynamic attribute allocation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>props</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Properties of the characteristic. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>attr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Characteristic value attribute.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 or a negative error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_pool.h" line="156" column="5" declfile="include/bluetooth/gatt_pool.h" declline="156" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__pool_1gad94d0b10a8dcaf2f43d7d0ca5e1fc23f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_gatt_pool_desc_alloc</definition>
+        <argsstring>(struct bt_gatt_pool *gp, struct bt_gatt_attr const *descriptor)</argsstring>
+        <name>bt_gatt_pool_desc_alloc</name>
+        <param>
+          <type>struct <ref refid="structbt__gatt__pool" kindref="compound">bt_gatt_pool</ref> *</type>
+          <declname>gp</declname>
+        </param>
+        <param>
+          <type>struct bt_gatt_attr const *</type>
+          <declname>descriptor</declname>
+        </param>
+        <briefdescription>
+<para>Take an attribute descriptor from the pool. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>gp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>GATT service object with dynamic attribute allocation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>descriptor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Attribute descriptor.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 or negative error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_pool.h" line="166" column="5" declfile="include/bluetooth/gatt_pool.h" declline="166" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__pool_1gabeaa3e9c570484375708c42039d91197" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int bt_gatt_pool_ccc_alloc</definition>
+        <argsstring>(struct bt_gatt_pool *gp, struct _bt_gatt_ccc *ccc, uint8_t perm)</argsstring>
+        <name>bt_gatt_pool_ccc_alloc</name>
+        <param>
+          <type>struct <ref refid="structbt__gatt__pool" kindref="compound">bt_gatt_pool</ref> *</type>
+          <declname>gp</declname>
+        </param>
+        <param>
+          <type>struct _bt_gatt_ccc *</type>
+          <declname>ccc</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>perm</declname>
+        </param>
+        <briefdescription>
+<para>Take a CCC descriptor from the pool. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>gp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>GATT service object with dynamic attribute allocation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ccc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>CCC descriptor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>perm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Permissions to access CCC. Use the GATT attribute permission bit field values.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 or negative error code. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_pool.h" line="178" column="5" declfile="include/bluetooth/gatt_pool.h" declline="178" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__bt__gatt__pool_1ga9feeed5c5653b73172d15bc4fd3f3daf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void bt_gatt_pool_free</definition>
+        <argsstring>(struct bt_gatt_pool *gp)</argsstring>
+        <name>bt_gatt_pool_free</name>
+        <param>
+          <type>struct <ref refid="structbt__gatt__pool" kindref="compound">bt_gatt_pool</ref> *</type>
+          <declname>gp</declname>
+        </param>
+        <briefdescription>
+<para>Free the whole dynamically created GATT service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>gp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>GATT service object with dynamic attribute allocation. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_pool.h" line="186" column="6" declfile="include/bluetooth/gatt_pool.h" declline="186" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__bt__gatt__pool_1ga8fa84f84e580facc1016ae4984922c6a" prot="public" static="no">
+        <name>BT_GATT_POOL_INIT</name>
+        <param><defname>_attr_array_size</defname></param>
+        <initializer>	{                                                                      \
+		.svc =                                                         \
+		{                                                              \
+			.attrs = (struct bt_gatt_attr[_attr_array_size])       \
+				{ {0} }                                        \
+		},                                                             \
+		.attr_array_size = _attr_array_size                            \
+	}</initializer>
+        <briefdescription>
+<para>Initialization of the GATT attribute pool variable. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates the initializer for the new attribute pool.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>_attr_array_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the attribute array. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_pool.h" line="31" column="9" bodyfile="include/bluetooth/gatt_pool.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__gatt__pool_1ga82d965ec3c2a0b8fe94d98cd7ffdf1f0" prot="public" static="no">
+        <name>BT_GATT_POOL_DEF</name>
+        <param><defname>_name</defname></param>
+        <param><defname>_attr_array_size</defname></param>
+        <initializer>	const static struct <ref refid="structbt__gatt__pool" kindref="compound">bt_gatt_pool</ref> _name =  \
+		<ref refid="group__bt__gatt__pool_ga8fa84f84e580facc1016ae4984922c6a_1ga8fa84f84e580facc1016ae4984922c6a" kindref="member">BT_GATT_POOL_INIT</ref>(_attr_array_size)</initializer>
+        <briefdescription>
+<para>Define a new GATT attribute pool. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This macro creates a new attribute pool.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the pool created. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_attr_array_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the attribute array. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_pool.h" line="48" column="9" bodyfile="include/bluetooth/gatt_pool.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__gatt__pool_1ga11f3ac45b17a37a257524253e710bde1" prot="public" static="no">
+        <name>BT_GATT_POOL_SVC</name>
+        <param><defname>_gp</defname></param>
+        <param><defname>_svc_uuid_init</defname></param>
+        <initializer>	do {                                                                   \
+		int _ret;                                                      \
+		const struct bt_uuid *_svc_uuid = _svc_uuid_init;              \
+		_ret = <ref refid="group__bt__gatt__pool_ga906b7d14c4dbfb36a7e03e5223c232e6_1ga906b7d14c4dbfb36a7e03e5223c232e6" kindref="member">bt_gatt_pool_svc_alloc</ref>(_gp, _svc_uuid);                 \
+		__ASSERT_NO_MSG(!_ret);                                        \
+		(void)_ret;                                                    \
+	} while (0)</initializer>
+        <briefdescription>
+<para>Register a primary service descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>_gp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>GATT service object with dynamic attribute allocation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_svc_uuid_init</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Service UUID. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_pool.h" line="57" column="9" bodyfile="include/bluetooth/gatt_pool.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__gatt__pool_1ga8b0f2a989a99af7f8b94670b287d19d9" prot="public" static="no">
+        <name>BT_GATT_POOL_CHRC</name>
+        <param><defname>_gp</defname></param>
+        <param><defname>_uuid</defname></param>
+        <param><defname>_props</defname></param>
+        <param><defname>_perm</defname></param>
+        <param><defname>_read</defname></param>
+        <param><defname>_write</defname></param>
+        <param><defname>_value</defname></param>
+        <initializer>	do {                                                                   \
+		int _ret;                                                      \
+		const struct bt_gatt_attr _attr = BT_GATT_ATTRIBUTE(           \
+			_uuid, _perm, _read, _write, _value);                  \
+		_ret = <ref refid="group__bt__gatt__pool_ga339fbe78e76d6d505d12ef3f30860941_1ga339fbe78e76d6d505d12ef3f30860941" kindref="member">bt_gatt_pool_chrc_alloc</ref>(_gp, _props, &amp;_attr);           \
+		__ASSERT_NO_MSG(!_ret);                                        \
+		(void)_ret;                                                    \
+	} while (0)</initializer>
+        <briefdescription>
+<para>Register a characteristic descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>_gp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>GATT service object with dynamic attribute allocation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_uuid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Characteristic UUID. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_props</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Characteristic properties. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_perm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Characteristic access permissions. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_read</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Characteristic read callback. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_write</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Characteristic write callback. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Characteristic value. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_pool.h" line="76" column="9" bodyfile="include/bluetooth/gatt_pool.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__gatt__pool_1gaf4d738330980578b764a002b31dad059" prot="public" static="no">
+        <name>BT_GATT_POOL_DESC</name>
+        <param><defname>_gp</defname></param>
+        <param><defname>_uuid</defname></param>
+        <param><defname>_perm</defname></param>
+        <param><defname>_read</defname></param>
+        <param><defname>_write</defname></param>
+        <param><defname>_value</defname></param>
+        <initializer>	do {                                                                   \
+		int _ret;                                                      \
+		const struct bt_gatt_attr _descriptor = BT_GATT_DESCRIPTOR(    \
+			_uuid, _perm, _read, _write, _value);                  \
+		_ret = <ref refid="group__bt__gatt__pool_gad94d0b10a8dcaf2f43d7d0ca5e1fc23f_1gad94d0b10a8dcaf2f43d7d0ca5e1fc23f" kindref="member">bt_gatt_pool_desc_alloc</ref>(_gp, &amp;_descriptor);             \
+		__ASSERT_NO_MSG(!_ret);                                        \
+		(void)_ret;                                                    \
+	} while (0)</initializer>
+        <briefdescription>
+<para>Register an attribute descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>_gp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>GATT service object with dynamic attribute allocation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_uuid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Descriptor UUID. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_perm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Descriptor access permissions. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_read</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Descriptor read callback. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_write</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Descriptor write callback. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Descriptor value. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_pool.h" line="95" column="9" bodyfile="include/bluetooth/gatt_pool.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__bt__gatt__pool_1gaf084c9a38f2b7a8a6e3446b6484f7530" prot="public" static="no">
+        <name>BT_GATT_POOL_CCC</name>
+        <param><defname>_gp</defname></param>
+        <param><defname>_ccc</defname></param>
+        <param><defname>_ccc_changed</defname></param>
+        <param><defname>_perm</defname></param>
+        <initializer>	do {                                                                   \
+		int _ret;                                                      \
+		_ccc = (struct _bt_gatt_ccc)BT_GATT_CCC_INITIALIZER(\
+			_ccc_changed, NULL, NULL);      \
+		_ret = <ref refid="group__bt__gatt__pool_gabeaa3e9c570484375708c42039d91197_1gabeaa3e9c570484375708c42039d91197" kindref="member">bt_gatt_pool_ccc_alloc</ref>(_gp, &amp;_ccc, _perm);              \
+		__ASSERT_NO_MSG(!_ret);                                        \
+		(void)_ret;                                                    \
+	} while (0)</initializer>
+        <briefdescription>
+<para>Register a CCC descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>_gp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>GATT service object with dynamic attribute allocation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_ccc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>CCC descriptor configuration. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_ccc_changed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>CCC value changed callback. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_perm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>CCC descriptor permissions. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/gatt_pool.h" line="112" column="9" bodyfile="include/bluetooth/gatt_pool.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Bluetooth LE GATT attribute pools. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

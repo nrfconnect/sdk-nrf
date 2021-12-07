@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__scene__register" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_scene_register</compoundname>
+    <includes refid="scene__cli_8h" local="no">scene_cli.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__scene__register_a29276fff8d72b0c184e720cc19ce0073_1a29276fff8d72b0c184e720cc19ce0073" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__bt__mesh__scene_ga2839518fe4e7237b19a640d8e94bc193_1ga2839518fe4e7237b19a640d8e94bc193" kindref="member">bt_mesh_scene_status</ref></type>
+        <definition>enum bt_mesh_scene_status bt_mesh_scene_register::status</definition>
+        <argsstring></argsstring>
+        <name>status</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Status of the previous operation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="41" column="26" bodyfile="include/bluetooth/mesh/scene_cli.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scene__register_a59f046ac3105ff1b230a08a8945f8a5e_1a59f046ac3105ff1b230a08a8945f8a5e" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t bt_mesh_scene_register::current</definition>
+        <argsstring></argsstring>
+        <name>current</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current scene. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="43" column="10" bodyfile="include/bluetooth/mesh/scene_cli.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scene__register_aafd7c4f88a4d3e0383a422dc3973cb69_1aafd7c4f88a4d3e0383a422dc3973cb69" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t bt_mesh_scene_register::count</definition>
+        <argsstring></argsstring>
+        <name>count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of entries in the scenes list. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="45" column="8" bodyfile="include/bluetooth/mesh/scene_cli.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__scene__register_a92950ee03d458a110b49f9d5478b33cb_1a92950ee03d458a110b49f9d5478b33cb" prot="public" static="no" mutable="no">
+        <type>uint16_t *</type>
+        <definition>uint16_t* bt_mesh_scene_register::scenes</definition>
+        <argsstring></argsstring>
+        <name>scenes</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Optional list of scenes to populate. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/scene_cli.h" line="47" column="11" bodyfile="include/bluetooth/mesh/scene_cli.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Scene register parameters </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/scene_cli.h" line="39" column="1" bodyfile="include/bluetooth/mesh/scene_cli.h" bodystart="39" bodyend="48"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__scene__register_aafd7c4f88a4d3e0383a422dc3973cb69_1aafd7c4f88a4d3e0383a422dc3973cb69" prot="public" virt="non-virtual"><scope>bt_mesh_scene_register</scope><name>count</name></member>
+      <member refid="structbt__mesh__scene__register_a59f046ac3105ff1b230a08a8945f8a5e_1a59f046ac3105ff1b230a08a8945f8a5e" prot="public" virt="non-virtual"><scope>bt_mesh_scene_register</scope><name>current</name></member>
+      <member refid="structbt__mesh__scene__register_a92950ee03d458a110b49f9d5478b33cb_1a92950ee03d458a110b49f9d5478b33cb" prot="public" virt="non-virtual"><scope>bt_mesh_scene_register</scope><name>scenes</name></member>
+      <member refid="structbt__mesh__scene__register_a29276fff8d72b0c184e720cc19ce0073_1a29276fff8d72b0c184e720cc19ce0073" prot="public" virt="non-virtual"><scope>bt_mesh_scene_register</scope><name>status</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

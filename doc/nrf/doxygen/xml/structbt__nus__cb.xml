@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__nus__cb" kind="struct" language="C++" prot="public">
+    <compoundname>bt_nus_cb</compoundname>
+    <includes refid="nus_8h" local="no">nus.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__nus__cb_a849730242b95e45734108a96a489e57a_1a849730242b95e45734108a96a489e57a" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_nus_cb::received) (struct bt_conn *conn, const uint8_t *const data, uint16_t len)</definition>
+        <argsstring>)(struct bt_conn *conn, const uint8_t *const data, uint16_t len)</argsstring>
+        <name>received</name>
+        <briefdescription>
+<para>Data received callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The data has been received as a write request on the NUS RX Characteristic.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to connection object that has received data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Received data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of received data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus.h" line="61" column="1" bodyfile="include/bluetooth/services/nus.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__nus__cb_ad4c23a697593d249df729e52641affb1_1ad4c23a697593d249df729e52641affb1" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_nus_cb::sent) (struct bt_conn *conn)</definition>
+        <argsstring>)(struct bt_conn *conn)</argsstring>
+        <name>sent</name>
+        <briefdescription>
+<para>Data sent callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The data has been sent as a notification and written on the NUS TX Characteristic.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to connection object, or NULL if sent to all connected peers. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus.h" line="72" column="1" bodyfile="include/bluetooth/services/nus.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__nus__cb_a53344e1216848238c073635263ff318b_1a53344e1216848238c073635263ff318b" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_nus_cb::send_enabled) (enum bt_nus_send_status status)</definition>
+        <argsstring>)(enum bt_nus_send_status status)</argsstring>
+        <name>send_enabled</name>
+        <briefdescription>
+<para>Send state callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicate the CCCD descriptor status of the NUS TX characteristic.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Send notification status. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus.h" line="80" column="1" bodyfile="include/bluetooth/services/nus.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Pointers to the callback functions for service events. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/nus.h" line="51" column="1" bodyfile="include/bluetooth/services/nus.h" bodystart="51" bodyend="82"/>
+    <listofallmembers>
+      <member refid="structbt__nus__cb_a849730242b95e45734108a96a489e57a_1a849730242b95e45734108a96a489e57a" prot="public" virt="non-virtual"><scope>bt_nus_cb</scope><name>received</name></member>
+      <member refid="structbt__nus__cb_a53344e1216848238c073635263ff318b_1a53344e1216848238c073635263ff318b" prot="public" virt="non-virtual"><scope>bt_nus_cb</scope><name>send_enabled</name></member>
+      <member refid="structbt__nus__cb_ad4c23a697593d249df729e52641affb1_1ad4c23a697593d249df729e52641affb1" prot="public" virt="non-virtual"><scope>bt_nus_cb</scope><name>sent</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

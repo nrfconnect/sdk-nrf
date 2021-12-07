@@ -1,0 +1,453 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="slm__at__host_8h" kind="file" language="C++">
+    <compoundname>slm_at_host.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <includes local="no">ctype.h</includes>
+    <includes local="no">nrf_modem_at.h</includes>
+    <includes refid="at__monitor_8h" local="no">modem/at_monitor.h</includes>
+    <includes refid="at__cmd__parser_8h" local="no">modem/at_cmd_parser.h</includes>
+    <includes refid="slm__defines_8h" local="yes">slm_defines.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/serial_lte_modem/src/slm_at_host.h</label>
+        <link refid="slm__at__host_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>slm_defines.h</label>
+        <link refid="slm__defines_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>modem/at_cmd_parser.h</label>
+        <link refid="at__cmd__parser_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>modem/at_monitor.h</label>
+        <link refid="at__monitor_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>modem/at_params.h</label>
+        <link refid="at__params_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ctype.h</label>
+      </node>
+      <node id="7">
+        <label>kernel.h</label>
+      </node>
+      <node id="14">
+        <label>net/net_ip.h</label>
+      </node>
+      <node id="4">
+        <label>nrf_modem_at.h</label>
+      </node>
+      <node id="6">
+        <label>stddef.h</label>
+      </node>
+      <node id="11">
+        <label>stdlib.h</label>
+      </node>
+      <node id="8">
+        <label>sys/util_macro.h</label>
+      </node>
+      <node id="9">
+        <label>toolchain/common.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="user-defined">
+      <memberdef kind="enum" id="slm__at__host_8h_a04442b4bdad4c9c5692f383cee323673_1a04442b4bdad4c9c5692f383cee323673" prot="public" static="no" strong="no">
+        <type></type>
+        <name>slm_datamode_operation</name>
+        <enumvalue id="slm__at__host_8h_a04442b4bdad4c9c5692f383cee323673_1a04442b4bdad4c9c5692f383cee323673a590dec8d8b199e56cad57c973a114a33" prot="public">
+          <name>DATAMODE_SEND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="slm__at__host_8h_a04442b4bdad4c9c5692f383cee323673_1a04442b4bdad4c9c5692f383cee323673ab7a1d9526648c439a2a9e92135f0a5f4" prot="public">
+          <name>DATAMODE_EXIT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Operations in datamode. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_at_host.h" line="24" column="1" bodyfile="applications/serial_lte_modem/src/slm_at_host.h" bodystart="24" bodyend="27"/>
+      </memberdef>
+      <memberdef kind="enum" id="slm__at__host_8h_a3a01a459d6d9b0ec212f862197e51377_1a3a01a459d6d9b0ec212f862197e51377" prot="public" static="no" strong="no">
+        <type></type>
+        <name>slm_datamode_exit_mode</name>
+        <enumvalue id="slm__at__host_8h_a3a01a459d6d9b0ec212f862197e51377_1a3a01a459d6d9b0ec212f862197e51377ac87d82c778fcee4ba176a3362439d1ac" prot="public">
+          <name>DATAMODE_EXIT_OK</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="slm__at__host_8h_a3a01a459d6d9b0ec212f862197e51377_1a3a01a459d6d9b0ec212f862197e51377a84320cd5e663bdeb8ac1a39b8b2d0b2b" prot="public">
+          <name>DATAMODE_EXIT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="slm__at__host_8h_a3a01a459d6d9b0ec212f862197e51377_1a3a01a459d6d9b0ec212f862197e51377afe2ed97f86a53a7555700b15333250b9" prot="public">
+          <name>DATAMODE_EXIT_URC</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Exit modes in datamode. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_at_host.h" line="30" column="1" bodyfile="applications/serial_lte_modem/src/slm_at_host.h" bodystart="30" bodyend="34"/>
+      </memberdef>
+      <memberdef kind="typedef" id="slm__at__host_8h_a94d2d150919ed0a105a92ca8c94e3542_1a94d2d150919ed0a105a92ca8c94e3542" prot="public" static="no">
+        <type>int(*</type>
+        <definition>typedef int(* slm_datamode_handler_t) (uint8_t op, const uint8_t *data, int len)</definition>
+        <argsstring>)(uint8_t op, const uint8_t *data, int len)</argsstring>
+        <name>slm_datamode_handler_t</name>
+        <briefdescription>
+<para>Data mode sending handler type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>means all data is sent successfully. Positive value means the actual size of bytes that has been sent. Negative value means error occurrs in sending. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_at_host.h" line="42" column="9" bodyfile="applications/serial_lte_modem/src/slm_at_host.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="function" id="slm__at__host_8h_a5b4c2b6fecd832c9acbe0972fc40d978_1a5b4c2b6fecd832c9acbe0972fc40d978" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int slm_at_host_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>slm_at_host_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize AT host for serial LTE modem. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_at_host.h" line="50" column="5" declfile="applications/serial_lte_modem/src/slm_at_host.h" declline="50" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="slm__at__host_8h_ac5da73287dcb0b9e2969951ccb059c6c_1ac5da73287dcb0b9e2969951ccb059c6c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void slm_at_host_uninit</definition>
+        <argsstring>(void)</argsstring>
+        <name>slm_at_host_uninit</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Uninitialize AT host for serial LTE modem. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_at_host.h" line="56" column="6" declfile="applications/serial_lte_modem/src/slm_at_host.h" declline="56" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="slm__at__host_8h_a858c031a994f2d39da523da95947eea5_1a858c031a994f2d39da523da95947eea5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void rsp_send</definition>
+        <argsstring>(const char *str, size_t len)</argsstring>
+        <name>rsp_send</name>
+        <param>
+          <type>const char *</type>
+          <declname>str</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Send AT command response. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>str</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response message </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of response message </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_at_host.h" line="65" column="6" declfile="applications/serial_lte_modem/src/slm_at_host.h" declline="65" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="slm__at__host_8h_acdfcc4498985f51306f736bf808b34e9_1acdfcc4498985f51306f736bf808b34e9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void datamode_send</definition>
+        <argsstring>(const uint8_t *data, size_t len)</argsstring>
+        <name>datamode_send</name>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Send raw data received in data mode. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Raw data received </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of raw data </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_at_host.h" line="74" column="6" declfile="applications/serial_lte_modem/src/slm_at_host.h" declline="74" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="slm__at__host_8h_ac077ae13694d6220af0d1c652543519e_1ac077ae13694d6220af0d1c652543519e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int enter_datamode</definition>
+        <argsstring>(slm_datamode_handler_t handler)</argsstring>
+        <name>enter_datamode</name>
+        <param>
+          <type><ref refid="slm__at__host_8h_a94d2d150919ed0a105a92ca8c94e3542_1a94d2d150919ed0a105a92ca8c94e3542" kindref="member">slm_datamode_handler_t</ref></type>
+          <declname>handler</declname>
+        </param>
+        <briefdescription>
+<para>Request SLM AT host to enter data mode. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>No AT unsolicited message or command response allowed in data mode.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data mode handler provided by requesting module</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_at_host.h" line="86" column="5" declfile="applications/serial_lte_modem/src/slm_at_host.h" declline="86" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="slm__at__host_8h_a0faa91217fe310a6a8af185cc73c54a0_1a0faa91217fe310a6a8af185cc73c54a0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool in_datamode</definition>
+        <argsstring>(void)</argsstring>
+        <name>in_datamode</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Check whether SLM AT host is in data mode. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if yes, false if no. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_at_host.h" line="93" column="6" declfile="applications/serial_lte_modem/src/slm_at_host.h" declline="93" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="slm__at__host_8h_a49b7061848238ad0250ff2f77ec2981e_1a49b7061848238ad0250ff2f77ec2981e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool exit_datamode</definition>
+        <argsstring>(int exit_mode)</argsstring>
+        <name>exit_datamode</name>
+        <param>
+          <type>int</type>
+          <declname>exit_mode</declname>
+        </param>
+        <briefdescription>
+<para>Request SLM AT host to exit data mode. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>exit_mode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response type. Refer to enum slm_datamode_exit_mode.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If normal exit from data mode. false If not in data mode. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/serial_lte_modem/src/slm_at_host.h" line="103" column="6" declfile="applications/serial_lte_modem/src/slm_at_host.h" declline="103" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>AT host for serial LTE modem. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>SLM_AT_HOST_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SLM_AT_HOST_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;ctype.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;nrf_modem_at.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="at__monitor_8h" kindref="compound">modem/at_monitor.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="at__cmd__parser_8h" kindref="compound">modem/at_cmd_parser.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="slm__defines_8h" kindref="compound">slm_defines.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="slm__at__host_8h_a04442b4bdad4c9c5692f383cee323673_1a04442b4bdad4c9c5692f383cee323673" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="slm__at__host_8h_a04442b4bdad4c9c5692f383cee323673_1a04442b4bdad4c9c5692f383cee323673" kindref="member">slm_datamode_operation</ref><sp/>{</highlight></codeline>
+<codeline lineno="25" refid="slm__at__host_8h_a04442b4bdad4c9c5692f383cee323673_1a04442b4bdad4c9c5692f383cee323673a590dec8d8b199e56cad57c973a114a33" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="slm__at__host_8h_a04442b4bdad4c9c5692f383cee323673_1a04442b4bdad4c9c5692f383cee323673a590dec8d8b199e56cad57c973a114a33" kindref="member">DATAMODE_SEND</ref>,<sp/><sp/></highlight><highlight class="comment">/*<sp/>Send<sp/>data<sp/>in<sp/>datamode<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="slm__at__host_8h_a04442b4bdad4c9c5692f383cee323673_1a04442b4bdad4c9c5692f383cee323673ab7a1d9526648c439a2a9e92135f0a5f4" kindref="member">DATAMODE_EXIT</ref><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Exit<sp/>data<sp/>mode<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="slm__at__host_8h_a04442b4bdad4c9c5692f383cee323673_1a04442b4bdad4c9c5692f383cee323673ab7a1d9526648c439a2a9e92135f0a5f4" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="slm__at__host_8h_a3a01a459d6d9b0ec212f862197e51377_1a3a01a459d6d9b0ec212f862197e51377" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="slm__at__host_8h_a3a01a459d6d9b0ec212f862197e51377_1a3a01a459d6d9b0ec212f862197e51377" kindref="member">slm_datamode_exit_mode</ref><sp/>{</highlight></codeline>
+<codeline lineno="31" refid="slm__at__host_8h_a3a01a459d6d9b0ec212f862197e51377_1a3a01a459d6d9b0ec212f862197e51377ac87d82c778fcee4ba176a3362439d1ac" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="slm__at__host_8h_a3a01a459d6d9b0ec212f862197e51377_1a3a01a459d6d9b0ec212f862197e51377ac87d82c778fcee4ba176a3362439d1ac" kindref="member">DATAMODE_EXIT_OK</ref>,<sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Exit<sp/>datamode,<sp/>send<sp/>OK<sp/>response<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="slm__at__host_8h_a3a01a459d6d9b0ec212f862197e51377_1a3a01a459d6d9b0ec212f862197e51377a84320cd5e663bdeb8ac1a39b8b2d0b2b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="slm__at__host_8h_a3a01a459d6d9b0ec212f862197e51377_1a3a01a459d6d9b0ec212f862197e51377a84320cd5e663bdeb8ac1a39b8b2d0b2b" kindref="member">DATAMODE_EXIT_ERROR</ref>,<sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Exit<sp/>datamode,<sp/>send<sp/>ERROR<sp/>response<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="slm__at__host_8h_a3a01a459d6d9b0ec212f862197e51377_1a3a01a459d6d9b0ec212f862197e51377afe2ed97f86a53a7555700b15333250b9" kindref="member">DATAMODE_EXIT_URC</ref><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Exit<sp/>datamode,<sp/>send<sp/>URC<sp/>notification<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="slm__at__host_8h_a3a01a459d6d9b0ec212f862197e51377_1a3a01a459d6d9b0ec212f862197e51377afe2ed97f86a53a7555700b15333250b9" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="slm__at__host_8h_a94d2d150919ed0a105a92ca8c94e3542_1a94d2d150919ed0a105a92ca8c94e3542" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>int<sp/>(*<ref refid="slm__at__host_8h_a94d2d150919ed0a105a92ca8c94e3542_1a94d2d150919ed0a105a92ca8c94e3542" kindref="member">slm_datamode_handler_t</ref>)(uint8_t<sp/>op,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*data,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>len);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="slm__at__host_8h_a5b4c2b6fecd832c9acbe0972fc40d978_1a5b4c2b6fecd832c9acbe0972fc40d978" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="slm__at__host_8h_a5b4c2b6fecd832c9acbe0972fc40d978_1a5b4c2b6fecd832c9acbe0972fc40d978" kindref="member">slm_at_host_init</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="slm__at__host_8h_ac5da73287dcb0b9e2969951ccb059c6c_1ac5da73287dcb0b9e2969951ccb059c6c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="slm__at__host_8h_ac5da73287dcb0b9e2969951ccb059c6c_1ac5da73287dcb0b9e2969951ccb059c6c" kindref="member">slm_at_host_uninit</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65" refid="slm__at__host_8h_a858c031a994f2d39da523da95947eea5_1a858c031a994f2d39da523da95947eea5" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="slm__at__host_8h_a858c031a994f2d39da523da95947eea5_1a858c031a994f2d39da523da95947eea5" kindref="member">rsp_send</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*str,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>len);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="slm__at__host_8h_acdfcc4498985f51306f736bf808b34e9_1acdfcc4498985f51306f736bf808b34e9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="slm__at__host_8h_acdfcc4498985f51306f736bf808b34e9_1acdfcc4498985f51306f736bf808b34e9" kindref="member">datamode_send</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*data,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>len);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="slm__at__host_8h_ac077ae13694d6220af0d1c652543519e_1ac077ae13694d6220af0d1c652543519e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="slm__at__host_8h_ac077ae13694d6220af0d1c652543519e_1ac077ae13694d6220af0d1c652543519e" kindref="member">enter_datamode</ref>(<ref refid="slm__at__host_8h_a94d2d150919ed0a105a92ca8c94e3542_1a94d2d150919ed0a105a92ca8c94e3542" kindref="member">slm_datamode_handler_t</ref><sp/>handler);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="slm__at__host_8h_a0faa91217fe310a6a8af185cc73c54a0_1a0faa91217fe310a6a8af185cc73c54a0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="slm__at__host_8h_a0faa91217fe310a6a8af185cc73c54a0_1a0faa91217fe310a6a8af185cc73c54a0" kindref="member">in_datamode</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103" refid="slm__at__host_8h_a49b7061848238ad0250ff2f77ec2981e_1a49b7061848238ad0250ff2f77ec2981e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="slm__at__host_8h_a49b7061848238ad0250ff2f77ec2981e_1a49b7061848238ad0250ff2f77ec2981e" kindref="member">exit_datamode</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>exit_mode);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>SLM_AT_HOST_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/serial_lte_modem/src/slm_at_host.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structlte__lc__edrx__cfg" kind="struct" language="C++" prot="public">
+    <compoundname>lte_lc_edrx_cfg</compoundname>
+    <includes refid="lte__lc_8h" local="no">lte_lc.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structlte__lc__edrx__cfg_a2ed7a0215ce65b4da75f18d7e4aad2f3_1a2ed7a0215ce65b4da75f18d7e4aad2f3" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__lte__lc_ga85a1606ed90f717b1c0607ecb0ad88d2_1ga85a1606ed90f717b1c0607ecb0ad88d2" kindref="member">lte_lc_lte_mode</ref></type>
+        <definition>enum lte_lc_lte_mode lte_lc_edrx_cfg::mode</definition>
+        <argsstring></argsstring>
+        <name>mode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="253" column="21" bodyfile="include/modem/lte_lc.h" bodystart="253" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__edrx__cfg_abb8e3c6b27cbdab28e5ec1e4698759ff_1abb8e3c6b27cbdab28e5ec1e4698759ff" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float lte_lc_edrx_cfg::edrx</definition>
+        <argsstring></argsstring>
+        <name>edrx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="255" column="7" bodyfile="include/modem/lte_lc.h" bodystart="255" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structlte__lc__edrx__cfg_aef18567a711abee0ceee7785c71179a3_1aef18567a711abee0ceee7785c71179a3" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float lte_lc_edrx_cfg::ptw</definition>
+        <argsstring></argsstring>
+        <name>ptw</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/lte_lc.h" line="257" column="7" bodyfile="include/modem/lte_lc.h" bodystart="257" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/modem/lte_lc.h" line="251" column="1" bodyfile="include/modem/lte_lc.h" bodystart="251" bodyend="258"/>
+    <listofallmembers>
+      <member refid="structlte__lc__edrx__cfg_abb8e3c6b27cbdab28e5ec1e4698759ff_1abb8e3c6b27cbdab28e5ec1e4698759ff" prot="public" virt="non-virtual"><scope>lte_lc_edrx_cfg</scope><name>edrx</name></member>
+      <member refid="structlte__lc__edrx__cfg_a2ed7a0215ce65b4da75f18d7e4aad2f3_1a2ed7a0215ce65b4da75f18d7e4aad2f3" prot="public" virt="non-virtual"><scope>lte_lc_edrx_cfg</scope><name>mode</name></member>
+      <member refid="structlte__lc__edrx__cfg_aef18567a711abee0ceee7785c71179a3_1aef18567a711abee0ceee7785c71179a3" prot="public" virt="non-virtual"><scope>lte_lc_edrx_cfg</scope><name>ptw</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

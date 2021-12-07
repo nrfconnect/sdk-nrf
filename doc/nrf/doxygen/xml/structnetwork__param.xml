@@ -1,0 +1,294 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnetwork__param" kind="struct" language="C++" prot="public">
+    <compoundname>network_param</compoundname>
+    <includes refid="modem__info_8h" local="no">modem_info.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnetwork__param_a09c7e516ea0eb0588a15a401f2f109a4_1a09c7e516ea0eb0588a15a401f2f109a4" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__param" kindref="compound">lte_param</ref></type>
+        <definition>struct lte_param network_param::current_band</definition>
+        <argsstring></argsstring>
+        <name>current_band</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current LTE band. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="80" column="16" bodyfile="include/modem/modem_info.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnetwork__param_afbf2aee7833635a5dde3f0a7805e959a_1afbf2aee7833635a5dde3f0a7805e959a" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__param" kindref="compound">lte_param</ref></type>
+        <definition>struct lte_param network_param::sup_band</definition>
+        <argsstring></argsstring>
+        <name>sup_band</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Supported LTE bands. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="81" column="16" bodyfile="include/modem/modem_info.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnetwork__param_a276b282f7096b62b005442b75bd81d19_1a276b282f7096b62b005442b75bd81d19" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__param" kindref="compound">lte_param</ref></type>
+        <definition>struct lte_param network_param::area_code</definition>
+        <argsstring></argsstring>
+        <name>area_code</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Tracking area code. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="82" column="16" bodyfile="include/modem/modem_info.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnetwork__param_a83fb8a8582a81400ba87bf2aa38c7a43_1a83fb8a8582a81400ba87bf2aa38c7a43" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__param" kindref="compound">lte_param</ref></type>
+        <definition>struct lte_param network_param::current_operator</definition>
+        <argsstring></argsstring>
+        <name>current_operator</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current operator. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="83" column="16" bodyfile="include/modem/modem_info.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnetwork__param_a6487e63431a0ab4df1d9fa05dbc5a1bf_1a6487e63431a0ab4df1d9fa05dbc5a1bf" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__param" kindref="compound">lte_param</ref></type>
+        <definition>struct lte_param network_param::mcc</definition>
+        <argsstring></argsstring>
+        <name>mcc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Mobile country code. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="84" column="16" bodyfile="include/modem/modem_info.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnetwork__param_a78ab9ab7f4ca449dee55f8fa04b499db_1a78ab9ab7f4ca449dee55f8fa04b499db" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__param" kindref="compound">lte_param</ref></type>
+        <definition>struct lte_param network_param::mnc</definition>
+        <argsstring></argsstring>
+        <name>mnc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Mobile network code. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="85" column="16" bodyfile="include/modem/modem_info.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnetwork__param_a83f79fbf2db4aa31c9bd38017d09f272_1a83f79fbf2db4aa31c9bd38017d09f272" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__param" kindref="compound">lte_param</ref></type>
+        <definition>struct lte_param network_param::cellid_hex</definition>
+        <argsstring></argsstring>
+        <name>cellid_hex</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Cell ID of the device (in HEX format). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="86" column="16" bodyfile="include/modem/modem_info.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnetwork__param_a6c73857cef3b77b11834cd14a8051eab_1a6c73857cef3b77b11834cd14a8051eab" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__param" kindref="compound">lte_param</ref></type>
+        <definition>struct lte_param network_param::ip_address</definition>
+        <argsstring></argsstring>
+        <name>ip_address</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>IP address of the device. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="87" column="16" bodyfile="include/modem/modem_info.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnetwork__param_a4b284b81d9903bd03dce9e58d54f89b8_1a4b284b81d9903bd03dce9e58d54f89b8" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__param" kindref="compound">lte_param</ref></type>
+        <definition>struct lte_param network_param::ue_mode</definition>
+        <argsstring></argsstring>
+        <name>ue_mode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Current mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="88" column="16" bodyfile="include/modem/modem_info.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnetwork__param_a1e78208b2128cdea818c71af4d27c30f_1a1e78208b2128cdea818c71af4d27c30f" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__param" kindref="compound">lte_param</ref></type>
+        <definition>struct lte_param network_param::lte_mode</definition>
+        <argsstring></argsstring>
+        <name>lte_mode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>LTE-M support mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="89" column="16" bodyfile="include/modem/modem_info.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnetwork__param_a5cc4c822aade24e900357e9e10762fd2_1a5cc4c822aade24e900357e9e10762fd2" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__param" kindref="compound">lte_param</ref></type>
+        <definition>struct lte_param network_param::nbiot_mode</definition>
+        <argsstring></argsstring>
+        <name>nbiot_mode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>NB-IoT support mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="90" column="16" bodyfile="include/modem/modem_info.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnetwork__param_af801ee43d4b73cee6c27ae1fe78c7df9_1af801ee43d4b73cee6c27ae1fe78c7df9" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__param" kindref="compound">lte_param</ref></type>
+        <definition>struct lte_param network_param::gps_mode</definition>
+        <argsstring></argsstring>
+        <name>gps_mode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>GPS support mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="91" column="16" bodyfile="include/modem/modem_info.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnetwork__param_a09f0ae7ba7653458cf390f56f67becda_1a09f0ae7ba7653458cf390f56f67becda" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__param" kindref="compound">lte_param</ref></type>
+        <definition>struct lte_param network_param::date_time</definition>
+        <argsstring></argsstring>
+        <name>date_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Mobile network time and date </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="92" column="16" bodyfile="include/modem/modem_info.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnetwork__param_a67e0f2f106f7b9e3248081f00d13e5f1_1a67e0f2f106f7b9e3248081f00d13e5f1" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__param" kindref="compound">lte_param</ref></type>
+        <definition>struct lte_param network_param::apn</definition>
+        <argsstring></argsstring>
+        <name>apn</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Access point name (string). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="93" column="16" bodyfile="include/modem/modem_info.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnetwork__param_ab56910155b8444c2fbe82035630dbd2c_1ab56910155b8444c2fbe82035630dbd2c" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structlte__param" kindref="compound">lte_param</ref></type>
+        <definition>struct lte_param network_param::rsrp</definition>
+        <argsstring></argsstring>
+        <name>rsrp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Received signal strength. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="94" column="16" bodyfile="include/modem/modem_info.h" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnetwork__param_ad2baff59ef4a55743131b570c04762ac_1ad2baff59ef4a55743131b570c04762ac" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double network_param::cellid_dec</definition>
+        <argsstring></argsstring>
+        <name>cellid_dec</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Cell ID of the device (in decimal format). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="96" column="8" bodyfile="include/modem/modem_info.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnetwork__param_ad40f5bb5c97b3b47ae282bf6e1077c6a_1ad40f5bb5c97b3b47ae282bf6e1077c6a" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char network_param::network_mode[12]</definition>
+        <argsstring>[12]</argsstring>
+        <name>network_mode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/modem/modem_info.h" line="97" column="6" bodyfile="include/modem/modem_info.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Network parameters. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>lte_param</label>
+        <link refid="structlte__param"/>
+      </node>
+      <node id="1">
+        <label>network_param</label>
+        <link refid="structnetwork__param"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>apn</edgelabel>
+          <edgelabel>area_code</edgelabel>
+          <edgelabel>cellid_hex</edgelabel>
+          <edgelabel>current_band</edgelabel>
+          <edgelabel>current_operator</edgelabel>
+          <edgelabel>date_time</edgelabel>
+          <edgelabel>gps_mode</edgelabel>
+          <edgelabel>ip_address</edgelabel>
+          <edgelabel>lte_mode</edgelabel>
+          <edgelabel>mcc</edgelabel>
+          <edgelabel>...</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/modem/modem_info.h" line="79" column="1" bodyfile="include/modem/modem_info.h" bodystart="79" bodyend="98"/>
+    <listofallmembers>
+      <member refid="structnetwork__param_a67e0f2f106f7b9e3248081f00d13e5f1_1a67e0f2f106f7b9e3248081f00d13e5f1" prot="public" virt="non-virtual"><scope>network_param</scope><name>apn</name></member>
+      <member refid="structnetwork__param_a276b282f7096b62b005442b75bd81d19_1a276b282f7096b62b005442b75bd81d19" prot="public" virt="non-virtual"><scope>network_param</scope><name>area_code</name></member>
+      <member refid="structnetwork__param_ad2baff59ef4a55743131b570c04762ac_1ad2baff59ef4a55743131b570c04762ac" prot="public" virt="non-virtual"><scope>network_param</scope><name>cellid_dec</name></member>
+      <member refid="structnetwork__param_a83f79fbf2db4aa31c9bd38017d09f272_1a83f79fbf2db4aa31c9bd38017d09f272" prot="public" virt="non-virtual"><scope>network_param</scope><name>cellid_hex</name></member>
+      <member refid="structnetwork__param_a09c7e516ea0eb0588a15a401f2f109a4_1a09c7e516ea0eb0588a15a401f2f109a4" prot="public" virt="non-virtual"><scope>network_param</scope><name>current_band</name></member>
+      <member refid="structnetwork__param_a83fb8a8582a81400ba87bf2aa38c7a43_1a83fb8a8582a81400ba87bf2aa38c7a43" prot="public" virt="non-virtual"><scope>network_param</scope><name>current_operator</name></member>
+      <member refid="structnetwork__param_a09f0ae7ba7653458cf390f56f67becda_1a09f0ae7ba7653458cf390f56f67becda" prot="public" virt="non-virtual"><scope>network_param</scope><name>date_time</name></member>
+      <member refid="structnetwork__param_af801ee43d4b73cee6c27ae1fe78c7df9_1af801ee43d4b73cee6c27ae1fe78c7df9" prot="public" virt="non-virtual"><scope>network_param</scope><name>gps_mode</name></member>
+      <member refid="structnetwork__param_a6c73857cef3b77b11834cd14a8051eab_1a6c73857cef3b77b11834cd14a8051eab" prot="public" virt="non-virtual"><scope>network_param</scope><name>ip_address</name></member>
+      <member refid="structnetwork__param_a1e78208b2128cdea818c71af4d27c30f_1a1e78208b2128cdea818c71af4d27c30f" prot="public" virt="non-virtual"><scope>network_param</scope><name>lte_mode</name></member>
+      <member refid="structnetwork__param_a6487e63431a0ab4df1d9fa05dbc5a1bf_1a6487e63431a0ab4df1d9fa05dbc5a1bf" prot="public" virt="non-virtual"><scope>network_param</scope><name>mcc</name></member>
+      <member refid="structnetwork__param_a78ab9ab7f4ca449dee55f8fa04b499db_1a78ab9ab7f4ca449dee55f8fa04b499db" prot="public" virt="non-virtual"><scope>network_param</scope><name>mnc</name></member>
+      <member refid="structnetwork__param_a5cc4c822aade24e900357e9e10762fd2_1a5cc4c822aade24e900357e9e10762fd2" prot="public" virt="non-virtual"><scope>network_param</scope><name>nbiot_mode</name></member>
+      <member refid="structnetwork__param_ad40f5bb5c97b3b47ae282bf6e1077c6a_1ad40f5bb5c97b3b47ae282bf6e1077c6a" prot="public" virt="non-virtual"><scope>network_param</scope><name>network_mode</name></member>
+      <member refid="structnetwork__param_ab56910155b8444c2fbe82035630dbd2c_1ab56910155b8444c2fbe82035630dbd2c" prot="public" virt="non-virtual"><scope>network_param</scope><name>rsrp</name></member>
+      <member refid="structnetwork__param_afbf2aee7833635a5dde3f0a7805e959a_1afbf2aee7833635a5dde3f0a7805e959a" prot="public" virt="non-virtual"><scope>network_param</scope><name>sup_band</name></member>
+      <member refid="structnetwork__param_a4b284b81d9903bd03dce9e58d54f89b8_1a4b284b81d9903bd03dce9e58d54f89b8" prot="public" virt="non-virtual"><scope>network_param</scope><name>ue_mode</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

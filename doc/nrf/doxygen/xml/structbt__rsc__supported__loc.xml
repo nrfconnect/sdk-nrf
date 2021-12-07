@@ -1,0 +1,272 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__rsc__supported__loc" kind="struct" language="C++" prot="public">
+    <compoundname>bt_rsc_supported_loc</compoundname>
+    <includes refid="rscs_8h" local="no">rscs.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__rsc__supported__loc_aea76c843cbafd5ed4a82fa31b815eda4_1aea76c843cbafd5ed4a82fa31b815eda4" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_rsc_supported_loc::other</definition>
+        <argsstring></argsstring>
+        <name>other</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="48" column="10" bodyfile="include/bluetooth/services/rscs.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rsc__supported__loc_a28520213dc6e582d09dfd61fedb41011_1a28520213dc6e582d09dfd61fedb41011" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_rsc_supported_loc::top_of_shoe</definition>
+        <argsstring></argsstring>
+        <name>top_of_shoe</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="49" column="10" bodyfile="include/bluetooth/services/rscs.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rsc__supported__loc_a935ffda793b0563fc68086f93760ef10_1a935ffda793b0563fc68086f93760ef10" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_rsc_supported_loc::in_shoe</definition>
+        <argsstring></argsstring>
+        <name>in_shoe</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="50" column="10" bodyfile="include/bluetooth/services/rscs.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rsc__supported__loc_aabdff780caa51afcb4fb924b411a56a8_1aabdff780caa51afcb4fb924b411a56a8" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_rsc_supported_loc::hip</definition>
+        <argsstring></argsstring>
+        <name>hip</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="51" column="10" bodyfile="include/bluetooth/services/rscs.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rsc__supported__loc_a1a48fee74e24d9aede1c3e54ff33144c_1a1a48fee74e24d9aede1c3e54ff33144c" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_rsc_supported_loc::front_wheel</definition>
+        <argsstring></argsstring>
+        <name>front_wheel</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="52" column="10" bodyfile="include/bluetooth/services/rscs.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rsc__supported__loc_a3e15d284629fac8f35b78be1efdd33ab_1a3e15d284629fac8f35b78be1efdd33ab" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_rsc_supported_loc::left_crank</definition>
+        <argsstring></argsstring>
+        <name>left_crank</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="53" column="10" bodyfile="include/bluetooth/services/rscs.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rsc__supported__loc_a51d1acb06d7e2dffaf6795e54e19c1ff_1a51d1acb06d7e2dffaf6795e54e19c1ff" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_rsc_supported_loc::right_crank</definition>
+        <argsstring></argsstring>
+        <name>right_crank</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="54" column="10" bodyfile="include/bluetooth/services/rscs.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rsc__supported__loc_ad9c2c4466b4d0c3d23db14e7136596a8_1ad9c2c4466b4d0c3d23db14e7136596a8" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_rsc_supported_loc::left_pedal</definition>
+        <argsstring></argsstring>
+        <name>left_pedal</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="55" column="10" bodyfile="include/bluetooth/services/rscs.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rsc__supported__loc_a7dfdbea9f8773592b3c29409d62c33b7_1a7dfdbea9f8773592b3c29409d62c33b7" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_rsc_supported_loc::right_pedal</definition>
+        <argsstring></argsstring>
+        <name>right_pedal</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="56" column="10" bodyfile="include/bluetooth/services/rscs.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rsc__supported__loc_a173a29045deff95deadc58b1d129155f_1a173a29045deff95deadc58b1d129155f" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_rsc_supported_loc::front_hub</definition>
+        <argsstring></argsstring>
+        <name>front_hub</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="57" column="10" bodyfile="include/bluetooth/services/rscs.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rsc__supported__loc_aabb858cfe429937258468f72f543a26a_1aabb858cfe429937258468f72f543a26a" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_rsc_supported_loc::rear_dropout</definition>
+        <argsstring></argsstring>
+        <name>rear_dropout</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="58" column="10" bodyfile="include/bluetooth/services/rscs.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rsc__supported__loc_ac04abc55aa8730be0371cbc91830ca9c_1ac04abc55aa8730be0371cbc91830ca9c" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_rsc_supported_loc::chainstay</definition>
+        <argsstring></argsstring>
+        <name>chainstay</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="59" column="10" bodyfile="include/bluetooth/services/rscs.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rsc__supported__loc_a0b0839e930142c3b04c8d59684706d86_1a0b0839e930142c3b04c8d59684706d86" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_rsc_supported_loc::rear_wheel</definition>
+        <argsstring></argsstring>
+        <name>rear_wheel</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="60" column="10" bodyfile="include/bluetooth/services/rscs.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rsc__supported__loc_af7d554c9e66640182bd6cebc12d789d4_1af7d554c9e66640182bd6cebc12d789d4" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_rsc_supported_loc::rear_hub</definition>
+        <argsstring></argsstring>
+        <name>rear_hub</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="61" column="10" bodyfile="include/bluetooth/services/rscs.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rsc__supported__loc_ab842a6510d75a8493e33cef0d22834a9_1ab842a6510d75a8493e33cef0d22834a9" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_rsc_supported_loc::chest</definition>
+        <argsstring></argsstring>
+        <name>chest</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="62" column="10" bodyfile="include/bluetooth/services/rscs.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rsc__supported__loc_af9bf2efad58bbb9a5fb72f2289924e02_1af9bf2efad58bbb9a5fb72f2289924e02" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_rsc_supported_loc::spider</definition>
+        <argsstring></argsstring>
+        <name>spider</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="63" column="10" bodyfile="include/bluetooth/services/rscs.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__rsc__supported__loc_a55f1e6b563010c6abb3f7de22612a106_1a55f1e6b563010c6abb3f7de22612a106" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t bt_rsc_supported_loc::chain_ring</definition>
+        <argsstring></argsstring>
+        <name>chain_ring</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/rscs.h" line="64" column="10" bodyfile="include/bluetooth/services/rscs.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Bitmask set of supported location. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/rscs.h" line="47" column="1" bodyfile="include/bluetooth/services/rscs.h" bodystart="47" bodyend="65"/>
+    <listofallmembers>
+      <member refid="structbt__rsc__supported__loc_a55f1e6b563010c6abb3f7de22612a106_1a55f1e6b563010c6abb3f7de22612a106" prot="public" virt="non-virtual"><scope>bt_rsc_supported_loc</scope><name>chain_ring</name></member>
+      <member refid="structbt__rsc__supported__loc_ac04abc55aa8730be0371cbc91830ca9c_1ac04abc55aa8730be0371cbc91830ca9c" prot="public" virt="non-virtual"><scope>bt_rsc_supported_loc</scope><name>chainstay</name></member>
+      <member refid="structbt__rsc__supported__loc_ab842a6510d75a8493e33cef0d22834a9_1ab842a6510d75a8493e33cef0d22834a9" prot="public" virt="non-virtual"><scope>bt_rsc_supported_loc</scope><name>chest</name></member>
+      <member refid="structbt__rsc__supported__loc_a173a29045deff95deadc58b1d129155f_1a173a29045deff95deadc58b1d129155f" prot="public" virt="non-virtual"><scope>bt_rsc_supported_loc</scope><name>front_hub</name></member>
+      <member refid="structbt__rsc__supported__loc_a1a48fee74e24d9aede1c3e54ff33144c_1a1a48fee74e24d9aede1c3e54ff33144c" prot="public" virt="non-virtual"><scope>bt_rsc_supported_loc</scope><name>front_wheel</name></member>
+      <member refid="structbt__rsc__supported__loc_aabdff780caa51afcb4fb924b411a56a8_1aabdff780caa51afcb4fb924b411a56a8" prot="public" virt="non-virtual"><scope>bt_rsc_supported_loc</scope><name>hip</name></member>
+      <member refid="structbt__rsc__supported__loc_a935ffda793b0563fc68086f93760ef10_1a935ffda793b0563fc68086f93760ef10" prot="public" virt="non-virtual"><scope>bt_rsc_supported_loc</scope><name>in_shoe</name></member>
+      <member refid="structbt__rsc__supported__loc_a3e15d284629fac8f35b78be1efdd33ab_1a3e15d284629fac8f35b78be1efdd33ab" prot="public" virt="non-virtual"><scope>bt_rsc_supported_loc</scope><name>left_crank</name></member>
+      <member refid="structbt__rsc__supported__loc_ad9c2c4466b4d0c3d23db14e7136596a8_1ad9c2c4466b4d0c3d23db14e7136596a8" prot="public" virt="non-virtual"><scope>bt_rsc_supported_loc</scope><name>left_pedal</name></member>
+      <member refid="structbt__rsc__supported__loc_aea76c843cbafd5ed4a82fa31b815eda4_1aea76c843cbafd5ed4a82fa31b815eda4" prot="public" virt="non-virtual"><scope>bt_rsc_supported_loc</scope><name>other</name></member>
+      <member refid="structbt__rsc__supported__loc_aabb858cfe429937258468f72f543a26a_1aabb858cfe429937258468f72f543a26a" prot="public" virt="non-virtual"><scope>bt_rsc_supported_loc</scope><name>rear_dropout</name></member>
+      <member refid="structbt__rsc__supported__loc_af7d554c9e66640182bd6cebc12d789d4_1af7d554c9e66640182bd6cebc12d789d4" prot="public" virt="non-virtual"><scope>bt_rsc_supported_loc</scope><name>rear_hub</name></member>
+      <member refid="structbt__rsc__supported__loc_a0b0839e930142c3b04c8d59684706d86_1a0b0839e930142c3b04c8d59684706d86" prot="public" virt="non-virtual"><scope>bt_rsc_supported_loc</scope><name>rear_wheel</name></member>
+      <member refid="structbt__rsc__supported__loc_a51d1acb06d7e2dffaf6795e54e19c1ff_1a51d1acb06d7e2dffaf6795e54e19c1ff" prot="public" virt="non-virtual"><scope>bt_rsc_supported_loc</scope><name>right_crank</name></member>
+      <member refid="structbt__rsc__supported__loc_a7dfdbea9f8773592b3c29409d62c33b7_1a7dfdbea9f8773592b3c29409d62c33b7" prot="public" virt="non-virtual"><scope>bt_rsc_supported_loc</scope><name>right_pedal</name></member>
+      <member refid="structbt__rsc__supported__loc_af9bf2efad58bbb9a5fb72f2289924e02_1af9bf2efad58bbb9a5fb72f2289924e02" prot="public" virt="non-virtual"><scope>bt_rsc_supported_loc</scope><name>spider</name></member>
+      <member refid="structbt__rsc__supported__loc_a28520213dc6e582d09dfd61fedb41011_1a28520213dc6e582d09dfd61fedb41011" prot="public" virt="non-virtual"><scope>bt_rsc_supported_loc</scope><name>top_of_shoe</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

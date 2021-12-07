@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__ble__event" kind="group">
+    <compoundname>ble_event</compoundname>
+    <title>BLE Event</title>
+    <innerclass refid="structble__discovery__complete__event" prot="public">ble_discovery_complete_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__ble__event_1gac69e3dc77018854dc02597ae99dd9f51" prot="public" static="no" strong="no">
+        <type></type>
+        <name>peer_type</name>
+        <enumvalue id="group__ble__event_gac69e3dc77018854dc02597ae99dd9f51_1ggac69e3dc77018854dc02597ae99dd9f51ae345d7fa850b3fd130633e6169000c97" prot="public">
+          <name>PEER_TYPE_MOUSE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ble__event_gac69e3dc77018854dc02597ae99dd9f51_1ggac69e3dc77018854dc02597ae99dd9f51adbf2ebc8689da47a4f044d79a9b206ea" prot="public">
+          <name>PEER_TYPE_KEYBOARD</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__ble__event_gac69e3dc77018854dc02597ae99dd9f51_1ggac69e3dc77018854dc02597ae99dd9f51aa3d5141a764f45ba31a9069c66d01bf4" prot="public">
+          <name>PEER_TYPE_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Peer types (position in bitmask). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/ble_event.h" line="32" column="1" bodyfile="applications/nrf_desktop/src/events/ble_event.h" bodystart="32" bodyend="37"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>BLE Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

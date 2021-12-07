@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__field__threshold__reg" kind="group">
+    <compoundname>st25r3911b_field_threshold_reg</compoundname>
+    <title>External Field</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__field__threshold__reg_1ga051864d8ee1ecc0f6e3cf1b3cf8b9a2c" prot="public" static="no">
+        <name>ST25R3911B_REG_FIELD_THRESHOLD_RFE_TO</name>
+        <initializer>BIT(0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="509" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="509" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__field__threshold__reg_1gab7970455604c9db68544805282cb9ec8" prot="public" static="no">
+        <name>ST25R3911B_REG_FIELD_THRESHOLD_RTE_T1</name>
+        <initializer>BIT(1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="510" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="510" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__field__threshold__reg_1ga029a4721370859dcaaec8cf03b7059cd" prot="public" static="no">
+        <name>ST25R3911B_REG_FIELD_THRESHOLD_RTE_T2</name>
+        <initializer>BIT(2)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="511" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="511" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__field__threshold__reg_1ga4659e67a8dc588fec2637837581469d3" prot="public" static="no">
+        <name>ST25R3911B_REG_FIELD_THRESHOLD_RTE_T3</name>
+        <initializer>BIT(3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="512" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="512" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__field__threshold__reg_1ga762acfbb6f44495f1b331408a78ddfe8" prot="public" static="no">
+        <name>ST25R3911B_REG_FIELD_THRESHOLD_TRG_IO</name>
+        <initializer>BIT(4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="513" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="513" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__field__threshold__reg_1ga2003049bd885f2c4e52a54efbb0dab68" prot="public" static="no">
+        <name>ST25R3911B_REG_FIELD_THRESHOLD_TRG_I1</name>
+        <initializer>BIT(5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="514" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="514" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__field__threshold__reg_1ga113b1592c5c517f227624272952475d5" prot="public" static="no">
+        <name>ST25R3911B_REG_FIELD_THRESHOLD_TRG_I2</name>
+        <initializer>BIT(6)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="515" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="515" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__field__threshold__reg_1gab966f1acc3a0581253c9a125d8f4b856" prot="public" static="no">
+        <name>ST25R3911B_REG_FIELD_THRESHOLD_RFE_MASK</name>
+        <initializer>(0x0F)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="516" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="516" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__field__threshold__reg_1gac4af45777eb13c01118088ba9c55f833" prot="public" static="no">
+        <name>ST25R3911B_REG_FIELD_THRESHOLD_TRG_MASK</name>
+        <initializer>(0xF0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="517" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="517" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Threshold Register bits </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

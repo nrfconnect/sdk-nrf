@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__nus__client__cb" kind="struct" language="C++" prot="public">
+    <compoundname>bt_nus_client_cb</compoundname>
+    <includes refid="nus__client_8h" local="no">nus_client.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__nus__client__cb_a78907212ca45dfaabf471f399f9a942f_1a78907212ca45dfaabf471f399f9a942f" prot="public" static="no" mutable="no">
+        <type>uint8_t(*</type>
+        <definition>uint8_t(* bt_nus_client_cb::received) (const uint8_t *data, uint16_t len)</definition>
+        <argsstring>)(const uint8_t *data, uint16_t len)</argsstring>
+        <name>received</name>
+        <briefdescription>
+<para>Data received callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The data has been received as a notification of the NUS TX Characteristic.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Received data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of received data.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>BT_GATT_ITER_CONTINUE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>To keep notifications enabled. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>BT_GATT_ITER_STOP</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>To disable notifications. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus_client.h" line="59" column="1" bodyfile="include/bluetooth/services/nus_client.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__nus__client__cb_aeb9ce2e615b832fa374862a9fe391e94_1aeb9ce2e615b832fa374862a9fe391e94" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_nus_client_cb::sent) (uint8_t err, const uint8_t *data, uint16_t len)</definition>
+        <argsstring>)(uint8_t err, const uint8_t *data, uint16_t len)</argsstring>
+        <name>sent</name>
+        <briefdescription>
+<para>Data sent callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The data has been sent and written to the NUS RX Characteristic.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ATT error code. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Transmitted data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of transmitted data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus_client.h" line="69" column="1" bodyfile="include/bluetooth/services/nus_client.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__nus__client__cb_a77555e3abddbcd0c07b758842cd8e042_1a77555e3abddbcd0c07b758842cd8e042" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_nus_client_cb::unsubscribed) (void)</definition>
+        <argsstring>)(void)</argsstring>
+        <name>unsubscribed</name>
+        <briefdescription>
+<para>TX notifications disabled callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>TX notifications have been disabled. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/nus_client.h" line="75" column="1" bodyfile="include/bluetooth/services/nus_client.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>NUS Client callback structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/nus_client.h" line="47" column="1" bodyfile="include/bluetooth/services/nus_client.h" bodystart="47" bodyend="76"/>
+    <listofallmembers>
+      <member refid="structbt__nus__client__cb_a78907212ca45dfaabf471f399f9a942f_1a78907212ca45dfaabf471f399f9a942f" prot="public" virt="non-virtual"><scope>bt_nus_client_cb</scope><name>received</name></member>
+      <member refid="structbt__nus__client__cb_aeb9ce2e615b832fa374862a9fe391e94_1aeb9ce2e615b832fa374862a9fe391e94" prot="public" virt="non-virtual"><scope>bt_nus_client_cb</scope><name>sent</name></member>
+      <member refid="structbt__nus__client__cb_a77555e3abddbcd0c07b758842cd8e042_1a77555e3abddbcd0c07b758842cd8e042" prot="public" virt="non-virtual"><scope>bt_nus_client_cb</scope><name>unsubscribed</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

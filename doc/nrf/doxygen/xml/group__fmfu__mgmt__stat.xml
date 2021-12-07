@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__fmfu__mgmt__stat" kind="group">
+    <compoundname>fmfu_mgmt_stat</compoundname>
+    <title>MCUMgr hooks for Full Modem Firmware Upgrade stats</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__fmfu__mgmt__stat_1ga7a8b95327fbbe45a1e828c21754d8bcc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int fmfu_mgmt_stat_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>fmfu_mgmt_stat_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Setup and register the command handlers responsible for communicating SMP buffer sizes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This functions setups the stat group for mcumgr so that the serial modem module update script can negotiate the SMP protocol frame size.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>on success, negative integer on failure. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/mgmt/fmfu_mgmt_stat.h" line="32" column="5" declfile="include/mgmt/fmfu_mgmt_stat.h" declline="32" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Full Modem Firmware Update(FMFU) statistics for MCUMgr over SMP. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This registers a handler for the MCUMgr stat command to report back the SMP protocol MTU and frame size. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

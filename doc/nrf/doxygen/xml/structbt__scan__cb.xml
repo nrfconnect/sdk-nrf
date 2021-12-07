@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__scan__cb" kind="struct" language="C++" prot="public">
+    <compoundname>bt_scan_cb</compoundname>
+    <includes refid="scan_8h" local="no">scan.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__scan__cb_a3fbce1e100e2dc185c76bbb955c5144a_1a3fbce1e100e2dc185c76bbb955c5144a" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structcb__data" kindref="compound">cb_data</ref> *</type>
+        <definition>const struct cb_data* bt_scan_cb::cb_addr</definition>
+        <argsstring></argsstring>
+        <name>cb_addr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="386" column="20" bodyfile="include/bluetooth/scan.h" bodystart="386" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__scan__cb_ab0fc4c49f700d03a26017826eeb06526_1ab0fc4c49f700d03a26017826eeb06526" prot="public" static="no" mutable="no">
+        <type>sys_snode_t</type>
+        <definition>sys_snode_t bt_scan_cb::node</definition>
+        <argsstring></argsstring>
+        <name>node</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/scan.h" line="387" column="13" bodyfile="include/bluetooth/scan.h" bodystart="387" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Scanning callback structure. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This structure is used for tracking the state of a scanning. It is registered with the help of the <ref refid="group__nrf__bt__scan_ga9d503c79f44b6df1f9f1048f64e6c0df_1ga9d503c79f44b6df1f9f1048f64e6c0df" kindref="member">bt_scan_cb_register()</ref> API. It&apos;s permissible to register multiple instances of this <ref refid="structbt__scan__cb" kindref="compound">bt_scan_cb</ref> type, in case different modules of an application are interested in tracking the scanning state. If a callback is not of interest for an instance, it may be set to NULL and will as a consequence not be used for that instance. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>bt_scan_cb</label>
+        <link refid="structbt__scan__cb"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>cb_addr</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>cb_data</label>
+        <link refid="structcb__data"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/bluetooth/scan.h" line="385" column="1" bodyfile="include/bluetooth/scan.h" bodystart="385" bodyend="388"/>
+    <listofallmembers>
+      <member refid="structbt__scan__cb_a3fbce1e100e2dc185c76bbb955c5144a_1a3fbce1e100e2dc185c76bbb955c5144a" prot="public" virt="non-virtual"><scope>bt_scan_cb</scope><name>cb_addr</name></member>
+      <member refid="structbt__scan__cb_ab0fc4c49f700d03a26017826eeb06526_1ab0fc4c49f700d03a26017826eeb06526" prot="public" virt="non-virtual"><scope>bt_scan_cb</scope><name>node</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

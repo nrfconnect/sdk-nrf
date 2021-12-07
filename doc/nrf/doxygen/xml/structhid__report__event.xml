@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structhid__report__event" kind="struct" language="C++" prot="public">
+    <compoundname>hid_report_event</compoundname>
+    <includes refid="hid__event_8h" local="no">hid_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structhid__report__event_afc6e80bf1dcb5553383e60ea18771832_1afc6e80bf1dcb5553383e60ea18771832" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header hid_report_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Event header. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/hid_event.h" line="33" column="19" bodyfile="applications/nrf_desktop/src/events/hid_event.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structhid__report__event_a13108364712975b55140334cfe50d402_1a13108364712975b55140334cfe50d402" prot="public" static="no" mutable="no">
+        <type>const void *</type>
+        <definition>const void* hid_report_event::source</definition>
+        <argsstring></argsstring>
+        <name>source</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Id of the report source. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/hid_event.h" line="35" column="12" bodyfile="applications/nrf_desktop/src/events/hid_event.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structhid__report__event_a3a0a5cfe12485ec8a2db6b21d0e12afe_1a3a0a5cfe12485ec8a2db6b21d0e12afe" prot="public" static="no" mutable="no">
+        <type>const void *</type>
+        <definition>const void* hid_report_event::subscriber</definition>
+        <argsstring></argsstring>
+        <name>subscriber</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Id of the report subscriber. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/hid_event.h" line="36" column="12" bodyfile="applications/nrf_desktop/src/events/hid_event.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structhid__report__event_a1a6c08f02db07378ab5b510aa4eac635_1a1a6c08f02db07378ab5b510aa4eac635" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__dyndata" kindref="compound">event_dyndata</ref></type>
+        <definition>struct event_dyndata hid_report_event::dyndata</definition>
+        <argsstring></argsstring>
+        <name>dyndata</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Report data. The first byte is a report id. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/src/events/hid_event.h" line="37" column="20" bodyfile="applications/nrf_desktop/src/events/hid_event.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>HID report event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="6">
+        <label>event_dyndata</label>
+        <link refid="structevent__dyndata"/>
+      </node>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>hid_report_event</label>
+        <link refid="structhid__report__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>dyndata</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/nrf_desktop/src/events/hid_event.h" line="32" column="1" bodyfile="applications/nrf_desktop/src/events/hid_event.h" bodystart="32" bodyend="38"/>
+    <listofallmembers>
+      <member refid="structhid__report__event_a1a6c08f02db07378ab5b510aa4eac635_1a1a6c08f02db07378ab5b510aa4eac635" prot="public" virt="non-virtual"><scope>hid_report_event</scope><name>dyndata</name></member>
+      <member refid="structhid__report__event_afc6e80bf1dcb5553383e60ea18771832_1afc6e80bf1dcb5553383e60ea18771832" prot="public" virt="non-virtual"><scope>hid_report_event</scope><name>header</name></member>
+      <member refid="structhid__report__event_a13108364712975b55140334cfe50d402_1a13108364712975b55140334cfe50d402" prot="public" virt="non-virtual"><scope>hid_report_event</scope><name>source</name></member>
+      <member refid="structhid__report__event_a3a0a5cfe12485ec8a2db6b21d0e12afe_1a3a0a5cfe12485ec8a2db6b21d0e12afe" prot="public" virt="non-virtual"><scope>hid_report_event</scope><name>subscriber</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

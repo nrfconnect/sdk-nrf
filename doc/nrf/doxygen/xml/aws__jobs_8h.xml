@@ -1,0 +1,1301 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="aws__jobs_8h" kind="file" language="C++">
+    <compoundname>aws_jobs.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <includes local="no">zephyr/types.h</includes>
+    <includes local="no">net/mqtt.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>include/net/aws_jobs.h</label>
+        <link refid="aws__jobs_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>net/mqtt.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="user-defined">
+      <header>MQTT message IDs used for identifying subscribe message ACKs</header>
+      <memberdef kind="define" id="group__aws__jobs_ga545975da49570f7a7e145684c7baaa26_1ga545975da49570f7a7e145684c7baaa26" prot="public" static="no">
+        <name>SUBSCRIBE_ID_BASE</name>
+        <initializer>(2110)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="42" column="9" bodyfile="include/net/aws_jobs.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__aws__jobs_ga1a1420b52f7e20b208d3f72bd8ed73a2_1ga1a1420b52f7e20b208d3f72bd8ed73a2" prot="public" static="no">
+        <name>SUBSCRIBE_NOTIFY</name>
+        <initializer>(<ref refid="group__aws__jobs_ga545975da49570f7a7e145684c7baaa26_1ga545975da49570f7a7e145684c7baaa26" kindref="member">SUBSCRIBE_ID_BASE</ref> + 1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="43" column="9" bodyfile="include/net/aws_jobs.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__aws__jobs_gaddf70040f26e8e0b99db7b14ca0094b6_1gaddf70040f26e8e0b99db7b14ca0094b6" prot="public" static="no">
+        <name>SUBSCRIBE_NOTIFY_NEXT</name>
+        <initializer>(<ref refid="group__aws__jobs_ga545975da49570f7a7e145684c7baaa26_1ga545975da49570f7a7e145684c7baaa26" kindref="member">SUBSCRIBE_ID_BASE</ref> + 2)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="44" column="9" bodyfile="include/net/aws_jobs.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__aws__jobs_ga1a99327f53ad691b6aa2d23c8bf16721_1ga1a99327f53ad691b6aa2d23c8bf16721" prot="public" static="no">
+        <name>SUBSCRIBE_GET</name>
+        <initializer>(<ref refid="group__aws__jobs_ga545975da49570f7a7e145684c7baaa26_1ga545975da49570f7a7e145684c7baaa26" kindref="member">SUBSCRIBE_ID_BASE</ref> + 3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="45" column="9" bodyfile="include/net/aws_jobs.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__aws__jobs_gaf1465aebcc17e24e322c0cae62c56582_1gaf1465aebcc17e24e322c0cae62c56582" prot="public" static="no">
+        <name>SUBSCRIBE_JOB_ID_GET</name>
+        <initializer>(<ref refid="group__aws__jobs_ga545975da49570f7a7e145684c7baaa26_1ga545975da49570f7a7e145684c7baaa26" kindref="member">SUBSCRIBE_ID_BASE</ref> + 4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="46" column="9" bodyfile="include/net/aws_jobs.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__aws__jobs_ga3ff99cf697061b9403bb223d85cad1ec_1ga3ff99cf697061b9403bb223d85cad1ec" prot="public" static="no">
+        <name>SUBSCRIBE_JOB_ID_UPDATE</name>
+        <initializer>(<ref refid="group__aws__jobs_ga545975da49570f7a7e145684c7baaa26_1ga545975da49570f7a7e145684c7baaa26" kindref="member">SUBSCRIBE_ID_BASE</ref> + 5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="47" column="9" bodyfile="include/net/aws_jobs.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__aws__jobs_ga23f620c70ba79c1553c5ad92224749cc_1ga23f620c70ba79c1553c5ad92224749cc" prot="public" static="no">
+        <name>SUBSCRIBE_EXPECTED</name>
+        <initializer>(<ref refid="group__aws__jobs_ga545975da49570f7a7e145684c7baaa26_1ga545975da49570f7a7e145684c7baaa26" kindref="member">SUBSCRIBE_ID_BASE</ref> + 10)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="48" column="9" bodyfile="include/net/aws_jobs.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__aws__jobs_ga44e2c07321d566b4f34ae9faa43e1e62_1ga44e2c07321d566b4f34ae9faa43e1e62" prot="public" static="no">
+        <name>AWS</name>
+        <initializer>&quot;$aws/things/&quot;</initializer>
+        <briefdescription>
+<para>The max JOB_ID_LEN according to AWS docs <ulink url="https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html">https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html</ulink>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="55" column="9" bodyfile="include/net/aws_jobs.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__aws__jobs_gabbc2bb895c83f290fb07bead314f7f42_1gabbc2bb895c83f290fb07bead314f7f42" prot="public" static="no">
+        <name>AWS_LEN</name>
+        <initializer>(sizeof(<ref refid="group__aws__jobs_ga44e2c07321d566b4f34ae9faa43e1e62_1ga44e2c07321d566b4f34ae9faa43e1e62" kindref="member">AWS</ref>) - 1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="56" column="9" bodyfile="include/net/aws_jobs.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__aws__jobs_ga798a7730b8cc1707b6fff4619e090863_1ga798a7730b8cc1707b6fff4619e090863" prot="public" static="no">
+        <name>AWS_JOBS_JOB_ID_MAX_LEN</name>
+        <initializer>(64 + 1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="57" column="9" bodyfile="include/net/aws_jobs.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__aws__jobs_ga7cdf4c4cc8a0fa3b4a05934fd09a317b_1ga7cdf4c4cc8a0fa3b4a05934fd09a317b" prot="public" static="no">
+        <name>AWS_JOBS_TOPIC_STATIC_LEN</name>
+        <initializer>20 /* &apos;$aws/token&apos; etc... */</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="58" column="9" bodyfile="include/net/aws_jobs.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__aws__jobs_gaf9d6952c589161386bc05e95a590289f_1gaf9d6952c589161386bc05e95a590289f" prot="public" static="no">
+        <name>AWS_JOBS_TOPIC_MAX_LEN</name>
+        <initializer>		(CONFIG_CLIENT_ID_MAX_LEN + \
+		<ref refid="group__aws__jobs_ga7cdf4c4cc8a0fa3b4a05934fd09a317b_1ga7cdf4c4cc8a0fa3b4a05934fd09a317b" kindref="member">AWS_JOBS_TOPIC_STATIC_LEN</ref> + <ref refid="group__aws__jobs_ga798a7730b8cc1707b6fff4619e090863_1ga798a7730b8cc1707b6fff4619e090863" kindref="member">AWS_JOBS_JOB_ID_MAX_LEN</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="59" column="9" bodyfile="include/net/aws_jobs.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1gaa39cb9e2826c0e98162de4f41a9605cc" prot="public" static="no" strong="no">
+        <type></type>
+        <name>execution_status</name>
+        <enumvalue id="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605cca9ad91166421ff0c1a8b84db2e0a6b03d" prot="public">
+          <name>AWS_JOBS_QUEUED</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605cca19ff256edcc9f6273d186132f6f76ba9" prot="public">
+          <name>AWS_JOBS_IN_PROGRESS</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605cca0cd318714aaacf7299dad98db315c4e0" prot="public">
+          <name>AWS_JOBS_SUCCEEDED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605ccad704d943ce4507ed4c266a5dbce21619" prot="public">
+          <name>AWS_JOBS_FAILED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605cca70cc57945e5c266b1a534e16f9dd72f3" prot="public">
+          <name>AWS_JOBS_TIMED_OUT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605cca1c8ac2214c6738a283c1186250b02b6f" prot="public">
+          <name>AWS_JOBS_REJECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605cca5edb1d8b754952b863ce1d1314841ae2" prot="public">
+          <name>AWS_JOBS_REMOVED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605ccad5349b27bf450da5b0a1da8a430bea2f" prot="public">
+          <name>AWS_JOBS_CANCELED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Job Execution Status. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="28" column="1" bodyfile="include/net/aws_jobs.h" bodystart="28" bodyend="37"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__aws__jobs_ga22f47564c4056d0c2cbb6afda6bb21ae_1ga22f47564c4056d0c2cbb6afda6bb21ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_jobs_create_topic_notify_next</definition>
+        <argsstring>(struct mqtt_client *const client, uint8_t *topic_buf)</argsstring>
+        <name>aws_jobs_create_topic_notify_next</name>
+        <param>
+          <type>struct mqtt_client *const</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>topic_buf</declname>
+        </param>
+        <briefdescription>
+<para>Construct the notify-next topic for receiving AWS IoT jobs. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connected MQTT client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">topic_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to store the topic in.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the provided input parameter is not valid. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If cannot fit in the buffer, which is assumed to be AWS_JOBS_TOPIC_MAX_LEN in size. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="74" column="5" declfile="include/net/aws_jobs.h" declline="74" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__jobs_ga2e151890b1f4b8c92009389c5010ebde_1ga2e151890b1f4b8c92009389c5010ebde" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_jobs_subscribe_topic_notify_next</definition>
+        <argsstring>(struct mqtt_client *const client, uint8_t *topic_buf)</argsstring>
+        <name>aws_jobs_subscribe_topic_notify_next</name>
+        <param>
+          <type>struct mqtt_client *const</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>topic_buf</declname>
+        </param>
+        <briefdescription>
+<para>Construct the notify-next topic and subscribe to it for receiving AWS IoT jobs. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connected MQTT client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">topic_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to store the topic in.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful, otherwise the return code of mqtt_subscribe or snprintf.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the provided input parameter is not valid. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="89" column="5" declfile="include/net/aws_jobs.h" declline="89" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__jobs_ga3d911b4340878fd01329bf573f3a797f_1ga3d911b4340878fd01329bf573f3a797f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_jobs_unsubscribe_topic_notify_next</definition>
+        <argsstring>(struct mqtt_client *const client, uint8_t *topic_buf)</argsstring>
+        <name>aws_jobs_unsubscribe_topic_notify_next</name>
+        <param>
+          <type>struct mqtt_client *const</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>topic_buf</declname>
+        </param>
+        <briefdescription>
+<para>Construct the notify-next topic and unsubscribe from it to stop receiving AWS IoT jobs. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connected MQTT client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">topic_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to store the topic in.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful, otherwise the return code of mqtt_unsubscribe or snprintf.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the provided input parameter is not valid. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="104" column="5" declfile="include/net/aws_jobs.h" declline="104" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__jobs_gad850470b8c40c71279dc85af9d0b51c8_1gad850470b8c40c71279dc85af9d0b51c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_jobs_create_topic_notify</definition>
+        <argsstring>(struct mqtt_client *const client, uint8_t *topic_buf)</argsstring>
+        <name>aws_jobs_create_topic_notify</name>
+        <param>
+          <type>struct mqtt_client *const</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>topic_buf</declname>
+        </param>
+        <briefdescription>
+<para>Construct the notify topic for receiving AWS IoT jobs. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connected MQTT client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">topic_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to store the topic in.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the provided input parameter is not valid. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If cannot fit in the buffer, which is assumed to be AWS_JOBS_TOPIC_MAX_LEN in size. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="118" column="5" declfile="include/net/aws_jobs.h" declline="118" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__jobs_ga4682d5d191e15e39f1443ffd6f1fab8f_1ga4682d5d191e15e39f1443ffd6f1fab8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_jobs_subscribe_topic_notify</definition>
+        <argsstring>(struct mqtt_client *const client, uint8_t *topic_buf)</argsstring>
+        <name>aws_jobs_subscribe_topic_notify</name>
+        <param>
+          <type>struct mqtt_client *const</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>topic_buf</declname>
+        </param>
+        <briefdescription>
+<para>Construct the notify topic and subscribe to it for receiving AWS IoT jobs lists. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connected MQTT client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">topic_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to store the topic in.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful, otherwise the return code of mqtt_subscribe or snprintf. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the provided input parameter is not valid. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="132" column="5" declfile="include/net/aws_jobs.h" declline="132" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__jobs_ga7e0c06fd8baccf208409bcbfadde6db3_1ga7e0c06fd8baccf208409bcbfadde6db3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_jobs_unsubscribe_topic_notify</definition>
+        <argsstring>(struct mqtt_client *const client, uint8_t *topic_buf)</argsstring>
+        <name>aws_jobs_unsubscribe_topic_notify</name>
+        <param>
+          <type>struct mqtt_client *const</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>topic_buf</declname>
+        </param>
+        <briefdescription>
+<para>Construct the notify topic and unsubscribe to stop receiving AWS IoT jobs lists. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connected MQTT client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">topic_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to store the topic in.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful, otherwise the return code of mqtt_unsubscribe or snprintf.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the provided input parameter is not valid. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="147" column="5" declfile="include/net/aws_jobs.h" declline="147" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__jobs_ga72d0172a4be9137b3e9cd6a010f6bfd0_1ga72d0172a4be9137b3e9cd6a010f6bfd0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_jobs_create_topic_get</definition>
+        <argsstring>(struct mqtt_client *const client, const uint8_t *job_id, uint8_t *topic_buf)</argsstring>
+        <name>aws_jobs_create_topic_get</name>
+        <param>
+          <type>struct mqtt_client *const</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>job_id</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>topic_buf</declname>
+        </param>
+        <briefdescription>
+<para>Construct the get topic for a job ID. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connected MQTT client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">job_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Job ID of the currently accepted job. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">topic_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to store the topic in.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the provided input parameter is not valid. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If cannot fit in the buffer, which is assumed to be AWS_JOBS_TOPIC_MAX_LEN in size. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="162" column="5" declfile="include/net/aws_jobs.h" declline="162" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__jobs_gafcef11dca0561e358aa91ea35955e995_1gafcef11dca0561e358aa91ea35955e995" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_jobs_subscribe_topic_get</definition>
+        <argsstring>(struct mqtt_client *const client, const uint8_t *job_id, uint8_t *topic_buf)</argsstring>
+        <name>aws_jobs_subscribe_topic_get</name>
+        <param>
+          <type>struct mqtt_client *const</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>job_id</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>topic_buf</declname>
+        </param>
+        <briefdescription>
+<para>Construct the get topic for a job ID and subscribe to it for both accepted and rejected. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connected MQTT client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">job_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Job ID of the currently accepted job. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">topic_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to store the topic in.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful, otherwise the return code of mqtt_subscribe or snprintf. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the provided input parameter is not valid. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="177" column="5" declfile="include/net/aws_jobs.h" declline="177" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__jobs_gabe7ced48d47b9a8cbcab2e195ccf5dd5_1gabe7ced48d47b9a8cbcab2e195ccf5dd5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_jobs_unsubscribe_topic_get</definition>
+        <argsstring>(struct mqtt_client *const client, const uint8_t *job_id, uint8_t *topic_buf)</argsstring>
+        <name>aws_jobs_unsubscribe_topic_get</name>
+        <param>
+          <type>struct mqtt_client *const</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>job_id</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>topic_buf</declname>
+        </param>
+        <briefdescription>
+<para>Construct the get topic for a job ID and unsubscribe from it for both accepted and rejected. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connected MQTT client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">job_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Job ID of the currently accepted job. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">topic_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to store the topic in.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful, otherwise the return code of mqtt_unsubscribe or snprintf.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the provided input parameters are not valid. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="193" column="5" declfile="include/net/aws_jobs.h" declline="193" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__jobs_ga720400fdf0a2717961bbd60ec5676c1c_1ga720400fdf0a2717961bbd60ec5676c1c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_jobs_subscribe_topic_update</definition>
+        <argsstring>(struct mqtt_client *const client, const uint8_t *job_id, uint8_t *topic_buf)</argsstring>
+        <name>aws_jobs_subscribe_topic_update</name>
+        <param>
+          <type>struct mqtt_client *const</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>job_id</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>topic_buf</declname>
+        </param>
+        <briefdescription>
+<para>Construct the update topic for a job ID and subscribe to rejected and accepted to receive feedback when submitting a job execution update. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connected MQTT client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">job_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Job ID of the currently accepted job. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">topic_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to store the topic in.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful, otherwise the return code of mqtt_subscribe or snprintf. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the provided input parameters are not valid. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="208" column="5" declfile="include/net/aws_jobs.h" declline="208" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__jobs_gab8444d6d35cc90c0913e1d5ae0c49d57_1gab8444d6d35cc90c0913e1d5ae0c49d57" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_jobs_unsubscribe_topic_update</definition>
+        <argsstring>(struct mqtt_client *const client, const uint8_t *job_id, uint8_t *topic_buf)</argsstring>
+        <name>aws_jobs_unsubscribe_topic_update</name>
+        <param>
+          <type>struct mqtt_client *const</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>job_id</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>topic_buf</declname>
+        </param>
+        <briefdescription>
+<para>Construct the update topic for a job ID and unsubscribe from rejected and accepted to stop receiving feedback from the job execution. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connected MQTT client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">job_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Job ID of the currently accepted job. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">topic_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to store the topic in.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successful, otherwise the return code of mqtt_unsubscribe or snprintf.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the provided input parameters are not valid. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="224" column="5" declfile="include/net/aws_jobs.h" declline="224" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__jobs_ga2701da65d605a9aa929a4acc9430c76b_1ga2701da65d605a9aa929a4acc9430c76b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_jobs_update_job_execution</definition>
+        <argsstring>(struct mqtt_client *const client, const uint8_t *job_id, enum execution_status status, const uint8_t *status_details, int expected_version, const uint8_t *client_token, uint8_t *topic_buf)</argsstring>
+        <name>aws_jobs_update_job_execution</name>
+        <param>
+          <type>struct mqtt_client *const</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>job_id</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1gaa39cb9e2826c0e98162de4f41a9605cc" kindref="member">execution_status</ref></type>
+          <declname>status</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>status_details</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>expected_version</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>client_token</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>topic_buf</declname>
+        </param>
+        <briefdescription>
+<para>AWS Jobs update job execution status function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This implements the minimal requirements for running an AWS job. Only updating status and status details is supported.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Initialized and connected MQTT Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">job_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The ID of the job which you are updating. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The job execution status. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">status_details</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>JSON object in string format containing additional information. Max 10 fields. Can be NULL. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">expected_version</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The expected job document version. Must be incremented by 1 for every update. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">client_token</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This can be an arbitrary value and will be reflected in the response to the update. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">topic_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to store the topic in.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the update is published successfully, otherwise return mqtt_publish error code or the error code of snprintf.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-EINVAL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the provided input parameters are not valid. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="250" column="5" declfile="include/net/aws_jobs.h" declline="250" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__jobs_ga9b63030e041a6839fd0ed6eafb0171ff_1ga9b63030e041a6839fd0ed6eafb0171ff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int aws_jobs_get_job_execution</definition>
+        <argsstring>(struct mqtt_client *const client, const char *job_id, uint8_t *topic_buf)</argsstring>
+        <name>aws_jobs_get_job_execution</name>
+        <param>
+          <type>struct mqtt_client *const</type>
+          <declname>client</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>job_id</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>topic_buf</declname>
+        </param>
+        <briefdescription>
+<para>AWS Jobs get job execution. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This implements fetching a job from the queue in AWS.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">client</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Initialized and connected MQTT Client instance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">job_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The ID of the job you are fetching use &quot;$next&quot; for fetching the next IN_PROGRESS. or QUEUED job. It will fetch the first created job if multiple exsists. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">topic_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to store the topic in.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the update is published successfully, otherwise return mqtt_publish error code or the error code of snprintf. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="272" column="5" declfile="include/net/aws_jobs.h" declline="272" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__aws__jobs_gafb3a27a65c1c6c80094834ea650f1dff_1gafb3a27a65c1c6c80094834ea650f1dff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool aws_jobs_cmp</definition>
+        <argsstring>(const char *sub, const char *pub, size_t pub_len, const uint8_t *suffix)</argsstring>
+        <name>aws_jobs_cmp</name>
+        <param>
+          <type>const char *</type>
+          <declname>sub</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>pub</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>pub_len</declname>
+        </param>
+        <param>
+          <type>const uint8_t *</type>
+          <declname>suffix</declname>
+        </param>
+        <briefdescription>
+<para>Compare topics. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Check if topics match</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">sub</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Topic subscribed to </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">pub</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Published topic </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">pub_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of published topic </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">suffix</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Suffix to match. Can not be NULL. Must be empty string for sub topics not ending with &apos;#&apos;.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if topics with given suffix match, false otherwise. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_jobs.h" line="288" column="6" declfile="include/net/aws_jobs.h" declline="288" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>AWS_JOBS_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AWS_JOBS_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;net/mqtt.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1gaa39cb9e2826c0e98162de4f41a9605cc" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1gaa39cb9e2826c0e98162de4f41a9605cc" kindref="member">execution_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="29" refid="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605cca9ad91166421ff0c1a8b84db2e0a6b03d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605cca9ad91166421ff0c1a8b84db2e0a6b03d" kindref="member">AWS_JOBS_QUEUED</ref><sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="30" refid="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605cca19ff256edcc9f6273d186132f6f76ba9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605cca19ff256edcc9f6273d186132f6f76ba9" kindref="member">AWS_JOBS_IN_PROGRESS</ref>,</highlight></codeline>
+<codeline lineno="31" refid="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605cca0cd318714aaacf7299dad98db315c4e0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605cca0cd318714aaacf7299dad98db315c4e0" kindref="member">AWS_JOBS_SUCCEEDED</ref>,</highlight></codeline>
+<codeline lineno="32" refid="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605ccad704d943ce4507ed4c266a5dbce21619" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605ccad704d943ce4507ed4c266a5dbce21619" kindref="member">AWS_JOBS_FAILED</ref>,</highlight></codeline>
+<codeline lineno="33" refid="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605cca70cc57945e5c266b1a534e16f9dd72f3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605cca70cc57945e5c266b1a534e16f9dd72f3" kindref="member">AWS_JOBS_TIMED_OUT</ref>,</highlight></codeline>
+<codeline lineno="34" refid="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605cca1c8ac2214c6738a283c1186250b02b6f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605cca1c8ac2214c6738a283c1186250b02b6f" kindref="member">AWS_JOBS_REJECTED</ref>,</highlight></codeline>
+<codeline lineno="35" refid="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605cca5edb1d8b754952b863ce1d1314841ae2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605cca5edb1d8b754952b863ce1d1314841ae2" kindref="member">AWS_JOBS_REMOVED</ref>,</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605ccad5349b27bf450da5b0a1da8a430bea2f" kindref="member">AWS_JOBS_CANCELED</ref></highlight></codeline>
+<codeline lineno="37" refid="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1ggaa39cb9e2826c0e98162de4f41a9605ccad5349b27bf450da5b0a1da8a430bea2f" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="group__aws__jobs_ga545975da49570f7a7e145684c7baaa26_1ga545975da49570f7a7e145684c7baaa26" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SUBSCRIBE_ID_BASE<sp/>(2110)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="group__aws__jobs_ga1a1420b52f7e20b208d3f72bd8ed73a2_1ga1a1420b52f7e20b208d3f72bd8ed73a2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SUBSCRIBE_NOTIFY<sp/>(SUBSCRIBE_ID_BASE<sp/>+<sp/>1)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="group__aws__jobs_gaddf70040f26e8e0b99db7b14ca0094b6_1gaddf70040f26e8e0b99db7b14ca0094b6" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SUBSCRIBE_NOTIFY_NEXT<sp/>(SUBSCRIBE_ID_BASE<sp/>+<sp/>2)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="group__aws__jobs_ga1a99327f53ad691b6aa2d23c8bf16721_1ga1a99327f53ad691b6aa2d23c8bf16721" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SUBSCRIBE_GET<sp/>(SUBSCRIBE_ID_BASE<sp/>+<sp/>3)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="group__aws__jobs_gaf1465aebcc17e24e322c0cae62c56582_1gaf1465aebcc17e24e322c0cae62c56582" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SUBSCRIBE_JOB_ID_GET<sp/>(SUBSCRIBE_ID_BASE<sp/>+<sp/>4)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="group__aws__jobs_ga3ff99cf697061b9403bb223d85cad1ec_1ga3ff99cf697061b9403bb223d85cad1ec" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SUBSCRIBE_JOB_ID_UPDATE<sp/>(SUBSCRIBE_ID_BASE<sp/>+<sp/>5)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="group__aws__jobs_ga23f620c70ba79c1553c5ad92224749cc_1ga23f620c70ba79c1553c5ad92224749cc" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SUBSCRIBE_EXPECTED<sp/>(SUBSCRIBE_ID_BASE<sp/>+<sp/>10)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="group__aws__jobs_ga44e2c07321d566b4f34ae9faa43e1e62_1ga44e2c07321d566b4f34ae9faa43e1e62" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AWS<sp/>&quot;$aws/things/&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="group__aws__jobs_gabbc2bb895c83f290fb07bead314f7f42_1gabbc2bb895c83f290fb07bead314f7f42" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AWS_LEN<sp/>(sizeof(AWS)<sp/>-<sp/>1)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="group__aws__jobs_ga798a7730b8cc1707b6fff4619e090863_1ga798a7730b8cc1707b6fff4619e090863" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AWS_JOBS_JOB_ID_MAX_LEN<sp/>(64<sp/>+<sp/>1)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58" refid="group__aws__jobs_ga7cdf4c4cc8a0fa3b4a05934fd09a317b_1ga7cdf4c4cc8a0fa3b4a05934fd09a317b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AWS_JOBS_TOPIC_STATIC_LEN<sp/>20<sp/></highlight><highlight class="comment">/*<sp/>&apos;$aws/token&apos;<sp/>etc...<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="group__aws__jobs_gaf9d6952c589161386bc05e95a590289f_1gaf9d6952c589161386bc05e95a590289f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>AWS_JOBS_TOPIC_MAX_LEN<sp/>(CONFIG_CLIENT_ID_MAX_LEN<sp/>+<sp/>\</highlight></codeline>
+<codeline lineno="60"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>AWS_JOBS_TOPIC_STATIC_LEN<sp/>+<sp/>AWS_JOBS_JOB_ID_MAX_LEN)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="group__aws__jobs_ga22f47564c4056d0c2cbb6afda6bb21ae_1ga22f47564c4056d0c2cbb6afda6bb21ae" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__aws__jobs_ga22f47564c4056d0c2cbb6afda6bb21ae_1ga22f47564c4056d0c2cbb6afda6bb21ae" kindref="member">aws_jobs_create_topic_notify_next</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>mqtt_client<sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>client,</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*topic_buf);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89" refid="group__aws__jobs_ga2e151890b1f4b8c92009389c5010ebde_1ga2e151890b1f4b8c92009389c5010ebde" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__aws__jobs_ga2e151890b1f4b8c92009389c5010ebde_1ga2e151890b1f4b8c92009389c5010ebde" kindref="member">aws_jobs_subscribe_topic_notify_next</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>mqtt_client<sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>client,</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*topic_buf);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104" refid="group__aws__jobs_ga3d911b4340878fd01329bf573f3a797f_1ga3d911b4340878fd01329bf573f3a797f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__aws__jobs_ga3d911b4340878fd01329bf573f3a797f_1ga3d911b4340878fd01329bf573f3a797f" kindref="member">aws_jobs_unsubscribe_topic_notify_next</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>mqtt_client<sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>client,</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*topic_buf);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118" refid="group__aws__jobs_gad850470b8c40c71279dc85af9d0b51c8_1gad850470b8c40c71279dc85af9d0b51c8" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__aws__jobs_gad850470b8c40c71279dc85af9d0b51c8_1gad850470b8c40c71279dc85af9d0b51c8" kindref="member">aws_jobs_create_topic_notify</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>mqtt_client<sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>client,</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*topic_buf);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132" refid="group__aws__jobs_ga4682d5d191e15e39f1443ffd6f1fab8f_1ga4682d5d191e15e39f1443ffd6f1fab8f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__aws__jobs_ga4682d5d191e15e39f1443ffd6f1fab8f_1ga4682d5d191e15e39f1443ffd6f1fab8f" kindref="member">aws_jobs_subscribe_topic_notify</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>mqtt_client<sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>client,</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*topic_buf);</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147" refid="group__aws__jobs_ga7e0c06fd8baccf208409bcbfadde6db3_1ga7e0c06fd8baccf208409bcbfadde6db3" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__aws__jobs_ga7e0c06fd8baccf208409bcbfadde6db3_1ga7e0c06fd8baccf208409bcbfadde6db3" kindref="member">aws_jobs_unsubscribe_topic_notify</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>mqtt_client<sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>client,</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*topic_buf);</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162" refid="group__aws__jobs_ga72d0172a4be9137b3e9cd6a010f6bfd0_1ga72d0172a4be9137b3e9cd6a010f6bfd0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__aws__jobs_ga72d0172a4be9137b3e9cd6a010f6bfd0_1ga72d0172a4be9137b3e9cd6a010f6bfd0" kindref="member">aws_jobs_create_topic_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>mqtt_client<sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>client,</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*job_id,<sp/>uint8_t<sp/>*topic_buf);</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight></codeline>
+<codeline lineno="177" refid="group__aws__jobs_gafcef11dca0561e358aa91ea35955e995_1gafcef11dca0561e358aa91ea35955e995" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__aws__jobs_gafcef11dca0561e358aa91ea35955e995_1gafcef11dca0561e358aa91ea35955e995" kindref="member">aws_jobs_subscribe_topic_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>mqtt_client<sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>client,</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*job_id,<sp/>uint8_t<sp/>*topic_buf);</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight></codeline>
+<codeline lineno="193" refid="group__aws__jobs_gabe7ced48d47b9a8cbcab2e195ccf5dd5_1gabe7ced48d47b9a8cbcab2e195ccf5dd5" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__aws__jobs_gabe7ced48d47b9a8cbcab2e195ccf5dd5_1gabe7ced48d47b9a8cbcab2e195ccf5dd5" kindref="member">aws_jobs_unsubscribe_topic_get</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>mqtt_client<sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>client,</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*job_id,<sp/>uint8_t<sp/>*topic_buf);</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight></codeline>
+<codeline lineno="208" refid="group__aws__jobs_ga720400fdf0a2717961bbd60ec5676c1c_1ga720400fdf0a2717961bbd60ec5676c1c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__aws__jobs_ga720400fdf0a2717961bbd60ec5676c1c_1ga720400fdf0a2717961bbd60ec5676c1c" kindref="member">aws_jobs_subscribe_topic_update</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>mqtt_client<sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>client,</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*job_id,<sp/>uint8_t<sp/>*topic_buf);</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"></highlight></codeline>
+<codeline lineno="224" refid="group__aws__jobs_gab8444d6d35cc90c0913e1d5ae0c49d57_1gab8444d6d35cc90c0913e1d5ae0c49d57" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__aws__jobs_gab8444d6d35cc90c0913e1d5ae0c49d57_1gab8444d6d35cc90c0913e1d5ae0c49d57" kindref="member">aws_jobs_unsubscribe_topic_update</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>mqtt_client<sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>client,</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*job_id,<sp/>uint8_t<sp/>*topic_buf);</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight></codeline>
+<codeline lineno="250" refid="group__aws__jobs_ga2701da65d605a9aa929a4acc9430c76b_1ga2701da65d605a9aa929a4acc9430c76b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__aws__jobs_ga2701da65d605a9aa929a4acc9430c76b_1ga2701da65d605a9aa929a4acc9430c76b" kindref="member">aws_jobs_update_job_execution</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>mqtt_client<sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>client,</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*job_id,</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__aws__jobs_gaa39cb9e2826c0e98162de4f41a9605cc_1gaa39cb9e2826c0e98162de4f41a9605cc" kindref="member">execution_status</ref><sp/>status,</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*status_details,</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>expected_version,</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*client_token,</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*topic_buf);</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"></highlight></codeline>
+<codeline lineno="272" refid="group__aws__jobs_ga9b63030e041a6839fd0ed6eafb0171ff_1ga9b63030e041a6839fd0ed6eafb0171ff" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__aws__jobs_ga9b63030e041a6839fd0ed6eafb0171ff_1ga9b63030e041a6839fd0ed6eafb0171ff" kindref="member">aws_jobs_get_job_execution</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>mqtt_client<sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>client,</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*job_id,<sp/>uint8_t<sp/>*topic_buf);</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"></highlight></codeline>
+<codeline lineno="288" refid="group__aws__jobs_gafb3a27a65c1c6c80094834ea650f1dff_1gafb3a27a65c1c6c80094834ea650f1dff" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="group__aws__jobs_gafb3a27a65c1c6c80094834ea650f1dff_1gafb3a27a65c1c6c80094834ea650f1dff" kindref="member">aws_jobs_cmp</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*sub,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*pub,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pub_len,</highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint8_t<sp/>*suffix);</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"></highlight></codeline>
+<codeline lineno="291"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="292"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="294"><highlight class="normal"></highlight></codeline>
+<codeline lineno="299"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>AWS_JOBS_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="include/net/aws_jobs.h"/>
+  </compounddef>
+</doxygen>

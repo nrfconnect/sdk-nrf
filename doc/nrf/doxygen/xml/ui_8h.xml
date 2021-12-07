@@ -1,0 +1,953 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="ui_8h" kind="file" language="C++">
+    <compoundname>ui.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <includes refid="dk__buttons__and__leds_8h" local="no">dk_buttons_and_leds.h</includes>
+    <includes refid="applications_2asset__tracker_2src_2ui_2include_2led__effect_8h" local="yes">led_effect.h</includes>
+    <includedby refid="led__pwm_8h" local="yes">applications/asset_tracker/src/ui/include/led_pwm.h</includedby>
+    <incdepgraph>
+      <node id="6">
+        <label>led_effect.h</label>
+        <link refid="applications_2asset__tracker_2src_2ui_2include_2led__effect_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>applications/asset_tracker/src/ui/include/ui.h</label>
+        <link refid="ui_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>dk_buttons_and_leds.h</label>
+        <link refid="dk__buttons__and__leds_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>sys/slist.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+      <node id="4">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>applications/asset_tracker/src/ui/include/led_pwm.h</label>
+        <link refid="led__pwm_8h"/>
+      </node>
+      <node id="1">
+        <label>applications/asset_tracker/src/ui/include/ui.h</label>
+        <link refid="ui_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structui__evt" prot="public">ui_evt</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="ui_8h_a2c801f41ff2b7f0fc3f0a71a05cc17b0_1a2c801f41ff2b7f0fc3f0a71a05cc17b0" prot="public" static="no">
+        <name>UI_BUTTON_1</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="26" column="9" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="ui_8h_a18223dc29717341a9566450d09f03ba4_1a18223dc29717341a9566450d09f03ba4" prot="public" static="no">
+        <name>UI_BUTTON_2</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="27" column="9" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="ui_8h_aed0b783c8e38867741f46d5de7a5746f_1aed0b783c8e38867741f46d5de7a5746f" prot="public" static="no">
+        <name>UI_SWITCH_1</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="28" column="9" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="ui_8h_ae63196dada5ebc086677a6687acd412d_1ae63196dada5ebc086677a6687acd412d" prot="public" static="no">
+        <name>UI_SWITCH_2</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="29" column="9" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="ui_8h_ab32509fe75fc0bed89077b75d187e0c8_1ab32509fe75fc0bed89077b75d187e0c8" prot="public" static="no">
+        <name>UI_LED_1</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="31" column="9" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="ui_8h_a33f2f4efb162b09393ef5a4611beba37_1a33f2f4efb162b09393ef5a4611beba37" prot="public" static="no">
+        <name>UI_LED_2</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="32" column="9" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="ui_8h_a55f41f38dc0d6c3acdc50c131b516630_1a55f41f38dc0d6c3acdc50c131b516630" prot="public" static="no">
+        <name>UI_LED_3</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="33" column="9" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="ui_8h_a4e1ef6c091eb549315b2ed8e423bbaec_1a4e1ef6c091eb549315b2ed8e423bbaec" prot="public" static="no">
+        <name>UI_LED_4</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="34" column="9" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="ui_8h_a729c7167efcea8567037a6b8de292fba_1a729c7167efcea8567037a6b8de292fba" prot="public" static="no">
+        <name>UI_NMOS_1</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="36" column="9" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="ui_8h_a965cada54226c25732e26782aa4cffb2_1a965cada54226c25732e26782aa4cffb2" prot="public" static="no">
+        <name>UI_NMOS_2</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="37" column="9" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="ui_8h_ad75dbb9edd58d530f4427f4adf09da4b_1ad75dbb9edd58d530f4427f4adf09da4b" prot="public" static="no">
+        <name>UI_NMOS_3</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="38" column="9" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="ui_8h_a6a4197e68452bf3447ac0588726990c9_1a6a4197e68452bf3447ac0588726990c9" prot="public" static="no">
+        <name>UI_NMOS_4</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="39" column="9" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="ui_8h_a06145d52ed64ec861ac12a910a7f62a5_1a06145d52ed64ec861ac12a910a7f62a5" prot="public" static="no">
+        <name>UI_LED_ON</name>
+        <param><defname>x</defname></param>
+        <initializer>(x)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="41" column="9" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="ui_8h_a20845a20ab5b21640529f56f5cd7a26e_1a20845a20ab5b21640529f56f5cd7a26e" prot="public" static="no">
+        <name>UI_LED_BLINK</name>
+        <param><defname>x</defname></param>
+        <initializer>((x) &lt;&lt; 8)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="42" column="9" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="ui_8h_a6798ee15988d7fd9c6ee1a426a9ba516_1a6798ee15988d7fd9c6ee1a426a9ba516" prot="public" static="no">
+        <name>UI_LED_GET_ON</name>
+        <param><defname>x</defname></param>
+        <initializer>((x) &amp; 0xFF)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="43" column="9" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="ui_8h_ad8e1359d8048cb8ea17b4e9420ff27e2_1ad8e1359d8048cb8ea17b4e9420ff27e2" prot="public" static="no">
+        <name>UI_LED_GET_BLINK</name>
+        <param><defname>x</defname></param>
+        <initializer>(((x) &gt;&gt; 8) &amp; 0xFF)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="44" column="9" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="ui_8h_a4bf5c5acac3464f5bf35db03baba01a5_1a4bf5c5acac3464f5bf35db03baba01a5" prot="public" static="no">
+        <name>UI_LED_ON_PERIOD_NORMAL</name>
+        <initializer>500</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="83" column="9" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="ui_8h_ad86531d841632f2fa7134388a4d7d761_1ad86531d841632f2fa7134388a4d7d761" prot="public" static="no">
+        <name>UI_LED_OFF_PERIOD_NORMAL</name>
+        <initializer>500</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="84" column="9" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309" prot="public" static="no" strong="no">
+        <type></type>
+        <name>ui_led_pattern</name>
+        <enumvalue id="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a034f4f5b88da3e35eb7e9c27b84ad37d" prot="public">
+          <name>UI_LTE_DISCONNECTED</name>
+          <initializer>= ( 0 )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a569163119a5339f8d48cb5d6507d2c9c" prot="public">
+          <name>UI_LTE_CONNECTING</name>
+          <initializer>= (( DK_LED3_MSK ) &lt;&lt; 8)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309aadb5bbef246ce7e74782aac133f593b9" prot="public">
+          <name>UI_LTE_CONNECTED</name>
+          <initializer>= ( DK_LED3_MSK )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a15603ad71155be879e6391b225504b19" prot="public">
+          <name>UI_CLOUD_CONNECTING</name>
+          <initializer>= (( DK_LED4_MSK ) &lt;&lt; 8)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309af69b634e093b51d91bf40916024be222" prot="public">
+          <name>UI_CLOUD_CONNECTED</name>
+          <initializer>= ( DK_LED4_MSK )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309afcbe65ef778defaa2cc5b8dca1f3c914" prot="public">
+          <name>UI_LED_GPS_SEARCHING</name>
+          <initializer>= ( DK_LED4_MSK )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309ad0a0c2faab7bdac0d33a3251e1d7c56f" prot="public">
+          <name>UI_LED_GPS_FIX</name>
+          <initializer>= ( DK_LED4_MSK )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a7bf7e8d4da778831d2ea480e1b128234" prot="public">
+          <name>UI_LED_GPS_BLOCKED</name>
+          <initializer>= ( DK_LED4_MSK )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a8d97a8a863f6066490a7969e88564354" prot="public">
+          <name>UI_CLOUD_PAIRING</name>
+          <initializer>= (( DK_LED3_MSK | DK_LED4_MSK ) &lt;&lt; 8)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309afc95cb159cf8f3761232795fbcd6e8c1" prot="public">
+          <name>UI_ACCEL_CALIBRATING</name>
+          <initializer>= ( DK_LED1_MSK | DK_LED3_MSK )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309aa9072e0bed45d2a2226f989fdafa740c" prot="public">
+          <name>UI_LED_ERROR_CLOUD</name>
+          <initializer>= (( DK_LED1_MSK | DK_LED4_MSK ) &lt;&lt; 8)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a92d3a8ad5b215935959731facad22c44" prot="public">
+          <name>UI_LED_ERROR_MODEM_REC</name>
+          <initializer>= (( DK_LED1_MSK | DK_LED3_MSK ) &lt;&lt; 8)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309ad941ea672911c26ae18d87ea6ea1d780" prot="public">
+          <name>UI_LED_ERROR_MODEM_IRREC</name>
+          <initializer>= (( DK_ALL_LEDS_MSK ) &lt;&lt; 8)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a922e3ad6ba39e1db4c877cb1d54f62d0" prot="public">
+          <name>UI_LED_ERROR_LTE_LC</name>
+          <initializer>= (( DK_LED1_MSK | DK_LED2_MSK ) &lt;&lt; 8)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a9eb33e1294c78faa57648c2dd1c70d97" prot="public">
+          <name>UI_LED_ERROR_UNKNOWN</name>
+          <initializer>= ( DK_ALL_LEDS_MSK )</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>UI LED state pattern definitions. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="89" column="1" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="89" bodyend="123"/>
+      </memberdef>
+      <memberdef kind="enum" id="ui_8h_a7252397dca463ab7196a509c7480f798_1a7252397dca463ab7196a509c7480f798" prot="public" static="no" strong="no">
+        <type></type>
+        <name>ui_evt_type</name>
+        <enumvalue id="ui_8h_a7252397dca463ab7196a509c7480f798_1a7252397dca463ab7196a509c7480f798ab933e6eb62151c8e927adabed83f1090" prot="public">
+          <name>UI_EVT_BUTTON_ACTIVE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="ui_8h_a7252397dca463ab7196a509c7480f798_1a7252397dca463ab7196a509c7480f798aeb978eca6574b10f1bb287f32a7e1d36" prot="public">
+          <name>UI_EVT_BUTTON_INACTIVE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>UI event types. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="126" column="1" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="126" bodyend="129"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="ui_8h_acedc69b81e43304e705335e287dc7cf8_1acedc69b81e43304e705335e287dc7cf8" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* ui_callback_t) (struct ui_evt evt)</definition>
+        <argsstring>)(struct ui_evt evt)</argsstring>
+        <name>ui_callback_t</name>
+        <briefdescription>
+<para>UI callback handler type definition. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to event struct. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="145" column="9" bodyfile="applications/asset_tracker/src/ui/include/ui.h" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="ui_8h_a43d485a2a8babd8eed14e7c30c648865_1a43d485a2a8babd8eed14e7c30c648865" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ui_init</definition>
+        <argsstring>(ui_callback_t cb)</argsstring>
+        <name>ui_init</name>
+        <param>
+          <type><ref refid="ui_8h_acedc69b81e43304e705335e287dc7cf8_1acedc69b81e43304e705335e287dc7cf8" kindref="member">ui_callback_t</ref></type>
+          <declname>cb</declname>
+        </param>
+        <briefdescription>
+<para>Initializes the user interface module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>UI callback handler. Can be NULL to disable callbacks.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success or negative error value on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="154" column="5" declfile="applications/asset_tracker/src/ui/include/ui.h" declline="154" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="ui_8h_a4d8f1974827c84066e14582f777ee4e5_1a4d8f1974827c84066e14582f777ee4e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ui_led_set_pattern</definition>
+        <argsstring>(enum ui_led_pattern pattern)</argsstring>
+        <name>ui_led_set_pattern</name>
+        <param>
+          <type>enum <ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309" kindref="member">ui_led_pattern</ref></type>
+          <declname>pattern</declname>
+        </param>
+        <briefdescription>
+<para>Sets the LED pattern. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>pattern</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>LED pattern. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="161" column="6" declfile="applications/asset_tracker/src/ui/include/ui.h" declline="161" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="ui_8h_ae83a51c06f393fb91c8fc3fda63179dc_1ae83a51c06f393fb91c8fc3fda63179dc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ui_led_set_state</definition>
+        <argsstring>(uint32_t led, uint8_t value)</argsstring>
+        <name>ui_led_set_state</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>led</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Sets a LED&apos;s state. Only the one LED is affected, the rest of the LED pattern is preserved. Only has effect if the specified LED is not controlled by PWM. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>led</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>LED number to be controlled. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>0 turns the LED off, a non-zero value turns the LED on. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="171" column="6" declfile="applications/asset_tracker/src/ui/include/ui.h" declline="171" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="ui_8h_a2027c2fe10dba505198907c23cbbce7b_1a2027c2fe10dba505198907c23cbbce7b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>enum <ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309" kindref="member">ui_led_pattern</ref></type>
+        <definition>enum ui_led_pattern ui_led_get_pattern</definition>
+        <argsstring>(void)</argsstring>
+        <name>ui_led_get_pattern</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Gets the LED pattern. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Current LED pattern. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="178" column="20" declfile="applications/asset_tracker/src/ui/include/ui.h" declline="178" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="ui_8h_a2ccb3dc681932b6b4e7ce13a7863e888_1a2ccb3dc681932b6b4e7ce13a7863e888" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ui_led_set_color</definition>
+        <argsstring>(uint8_t red, uint8_t green, uint8_t blue)</argsstring>
+        <name>ui_led_set_color</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>red</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>green</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>blue</declname>
+        </param>
+        <briefdescription>
+<para>Sets the LED RGB color. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>red</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Red, in range 0 - 255. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>green</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Green, in range 0 - 255. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>blue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Blue, in range 0 - 255.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success or negative error value on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="189" column="5" declfile="applications/asset_tracker/src/ui/include/ui.h" declline="189" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="ui_8h_af257e1d581ce60cbf87ee023a6ce68d6_1af257e1d581ce60cbf87ee023a6ce68d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ui_button_is_active</definition>
+        <argsstring>(uint32_t button)</argsstring>
+        <name>ui_button_is_active</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>button</declname>
+        </param>
+        <briefdescription>
+<para>Get the state of a button. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>button</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Button number.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>1 if button is active, 0 if it&apos;s inactive. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="198" column="6" declfile="applications/asset_tracker/src/ui/include/ui.h" declline="198" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="ui_8h_a8d622776992cc95fdf4c4271cdeae47a_1a8d622776992cc95fdf4c4271cdeae47a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ui_buzzer_set_frequency</definition>
+        <argsstring>(uint32_t frequency, uint8_t intensity)</argsstring>
+        <name>ui_buzzer_set_frequency</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>frequency</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>intensity</declname>
+        </param>
+        <briefdescription>
+<para>Set the buzzer frequency. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>frequency</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Frequency. If set to 0, the buzzer is disabled. The frequency is limited to the range 100 - 10 000 Hz. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>intensity</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Intensity of the buzzer output. If set to 0, the buzzer is disabled. The frequency is limited to the range 0 - 100 %.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success or negative error value on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="211" column="5" declfile="applications/asset_tracker/src/ui/include/ui.h" declline="211" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="ui_8h_a8602daf73ff3f484e7a4f57835db0edf_1a8602daf73ff3f484e7a4f57835db0edf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ui_nmos_write</definition>
+        <argsstring>(size_t nmos_idx, uint8_t value)</argsstring>
+        <name>ui_nmos_write</name>
+        <param>
+          <type>size_t</type>
+          <declname>nmos_idx</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Write value to pin controlling NMOS transistor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>nmos_idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>NMOS to control. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>1 sets high signal on NMOS gate, 0 sets it low.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success or negative error value on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="221" column="5" declfile="applications/asset_tracker/src/ui/include/ui.h" declline="221" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="ui_8h_a663f50dad9b5b887dc58e4ef1d4890e6_1a663f50dad9b5b887dc58e4ef1d4890e6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ui_nmos_pwm_set</definition>
+        <argsstring>(size_t nmos_idx, uint32_t period, uint32_t pulse)</argsstring>
+        <name>ui_nmos_pwm_set</name>
+        <param>
+          <type>size_t</type>
+          <declname>nmos_idx</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>period</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>pulse</declname>
+        </param>
+        <briefdescription>
+<para>Control NMOS with PWM signal. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>nmos_idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>NMOS to control. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>period</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>PWM signal period in microseconds. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>pulse</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>PWM signal Pulse in microseconds.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success or negative error value on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/ui.h" line="232" column="5" declfile="applications/asset_tracker/src/ui/include/ui.h" declline="232" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>User interface module. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Module that handles user interaction through button, RGB LED and buzzer. </para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>UI_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="dk__buttons__and__leds_8h" kindref="compound">dk_buttons_and_leds.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="include_2caf_2led__effect_8h" kindref="compound">led_effect.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="ui_8h_a2c801f41ff2b7f0fc3f0a71a05cc17b0_1a2c801f41ff2b7f0fc3f0a71a05cc17b0" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_BUTTON_1<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="ui_8h_a18223dc29717341a9566450d09f03ba4_1a18223dc29717341a9566450d09f03ba4" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_BUTTON_2<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="ui_8h_aed0b783c8e38867741f46d5de7a5746f_1aed0b783c8e38867741f46d5de7a5746f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_SWITCH_1<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="ui_8h_ae63196dada5ebc086677a6687acd412d_1ae63196dada5ebc086677a6687acd412d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_SWITCH_2<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="ui_8h_ab32509fe75fc0bed89077b75d187e0c8_1ab32509fe75fc0bed89077b75d187e0c8" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_1<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="ui_8h_a33f2f4efb162b09393ef5a4611beba37_1a33f2f4efb162b09393ef5a4611beba37" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_2<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="ui_8h_a55f41f38dc0d6c3acdc50c131b516630_1a55f41f38dc0d6c3acdc50c131b516630" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_3<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="ui_8h_a4e1ef6c091eb549315b2ed8e423bbaec_1a4e1ef6c091eb549315b2ed8e423bbaec" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_4<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="ui_8h_a729c7167efcea8567037a6b8de292fba_1a729c7167efcea8567037a6b8de292fba" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_NMOS_1<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="ui_8h_a965cada54226c25732e26782aa4cffb2_1a965cada54226c25732e26782aa4cffb2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_NMOS_2<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="ui_8h_ad75dbb9edd58d530f4427f4adf09da4b_1ad75dbb9edd58d530f4427f4adf09da4b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_NMOS_3<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="ui_8h_a6a4197e68452bf3447ac0588726990c9_1a6a4197e68452bf3447ac0588726990c9" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_NMOS_4<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="ui_8h_a06145d52ed64ec861ac12a910a7f62a5_1a06145d52ed64ec861ac12a910a7f62a5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_ON(x)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(x)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="ui_8h_a20845a20ab5b21640529f56f5cd7a26e_1a20845a20ab5b21640529f56f5cd7a26e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_BLINK(x)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>((x)<sp/>&lt;&lt;<sp/>8)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="ui_8h_a6798ee15988d7fd9c6ee1a426a9ba516_1a6798ee15988d7fd9c6ee1a426a9ba516" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_GET_ON(x)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>((x)<sp/>&amp;<sp/>0xFF)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="ui_8h_ad8e1359d8048cb8ea17b4e9420ff27e2_1ad8e1359d8048cb8ea17b4e9420ff27e2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_GET_BLINK(x)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(((x)<sp/>&gt;&gt;<sp/>8)<sp/>&amp;<sp/>0xFF)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_UI_LED_USE_PWM</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_ON_PERIOD_NORMAL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>500</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_OFF_PERIOD_NORMAL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>5000</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_ON_PERIOD_ERROR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>500</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_OFF_PERIOD_ERROR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>500</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_MAX<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>50</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_COLOR_OFF<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>LED_COLOR(0,<sp/>0,<sp/>0)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_COLOR_RED<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>LED_COLOR(UI_LED_MAX,<sp/>0,<sp/>0)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_COLOR_GREEN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>LED_COLOR(0,<sp/>UI_LED_MAX,<sp/>0)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_COLOR_BLUE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>LED_COLOR(0,<sp/>0,<sp/>UI_LED_MAX)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_COLOR_WHITE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>LED_COLOR(UI_LED_MAX,<sp/>UI_LED_MAX,<sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="60"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UI_LED_MAX)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_COLOR_YELLOW<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>LED_COLOR(UI_LED_MAX,<sp/>UI_LED_MAX,<sp/>0)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_COLOR_CYAN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>LED_COLOR(0,<sp/>UI_LED_MAX,<sp/>UI_LED_MAX)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_COLOR_PURPLE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>LED_COLOR(UI_LED_MAX,<sp/>0,<sp/>UI_LED_MAX)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LTE_DISCONNECTED_COLOR<sp/><sp/><sp/><sp/><sp/><sp/><sp/>UI_LED_COLOR_OFF</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LTE_CONNECTING_COLOR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UI_LED_COLOR_WHITE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LTE_CONNECTED_COLOR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UI_LED_COLOR_CYAN</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_CLOUD_CONNECTING_COLOR<sp/><sp/><sp/><sp/><sp/><sp/><sp/>UI_LED_COLOR_CYAN</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_CLOUD_CONNECTED_COLOR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UI_LED_COLOR_BLUE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_CLOUD_PAIRING_COLOR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UI_LED_COLOR_YELLOW</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_ACCEL_CALIBRATING_COLOR<sp/><sp/><sp/><sp/><sp/><sp/>UI_LED_COLOR_PURPLE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_ERROR_CLOUD_COLOR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UI_LED_COLOR_RED</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_ERROR_MODEM_REC_COLOR<sp/><sp/><sp/><sp/>UI_LED_COLOR_RED</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_ERROR_MODEM_IRREC_COLOR<sp/><sp/>UI_LED_COLOR_RED</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_ERROR_LTE_LC_COLOR<sp/><sp/><sp/><sp/><sp/><sp/><sp/>UI_LED_COLOR_RED</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_ERROR_UNKNOWN_COLOR<sp/><sp/><sp/><sp/><sp/><sp/>UI_LED_COLOR_WHITE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_GPS_SEARCHING_COLOR<sp/><sp/><sp/><sp/><sp/><sp/>UI_LED_COLOR_PURPLE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_GPS_BLOCKED_COLOR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UI_LED_COLOR_BLUE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_GPS_FIX_COLOR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>UI_LED_COLOR_GREEN</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83" refid="ui_8h_a4bf5c5acac3464f5bf35db03baba01a5_1a4bf5c5acac3464f5bf35db03baba01a5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_ON_PERIOD_NORMAL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>500</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84" refid="ui_8h_ad86531d841632f2fa7134388a4d7d761_1ad86531d841632f2fa7134388a4d7d761" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UI_LED_OFF_PERIOD_NORMAL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>500</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>CONFIG_UI_LED_USE_PWM<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89" refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309" kindref="member">ui_led_pattern</ref><sp/>{</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>CONFIG_UI_LED_USE_PWM</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a034f4f5b88da3e35eb7e9c27b84ad37d" kindref="member">UI_LTE_DISCONNECTED</ref>,</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a569163119a5339f8d48cb5d6507d2c9c" kindref="member">UI_LTE_CONNECTING</ref>,</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309aadb5bbef246ce7e74782aac133f593b9" kindref="member">UI_LTE_CONNECTED</ref>,</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a15603ad71155be879e6391b225504b19" kindref="member">UI_CLOUD_CONNECTING</ref>,</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309af69b634e093b51d91bf40916024be222" kindref="member">UI_CLOUD_CONNECTED</ref>,</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a8d97a8a863f6066490a7969e88564354" kindref="member">UI_CLOUD_PAIRING</ref>,</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309afc95cb159cf8f3761232795fbcd6e8c1" kindref="member">UI_ACCEL_CALIBRATING</ref>,</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309aa9072e0bed45d2a2226f989fdafa740c" kindref="member">UI_LED_ERROR_CLOUD</ref>,</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a92d3a8ad5b215935959731facad22c44" kindref="member">UI_LED_ERROR_MODEM_REC</ref>,</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309ad941ea672911c26ae18d87ea6ea1d780" kindref="member">UI_LED_ERROR_MODEM_IRREC</ref>,</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a922e3ad6ba39e1db4c877cb1d54f62d0" kindref="member">UI_LED_ERROR_LTE_LC</ref>,</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a9eb33e1294c78faa57648c2dd1c70d97" kindref="member">UI_LED_ERROR_UNKNOWN</ref>,</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309afcbe65ef778defaa2cc5b8dca1f3c914" kindref="member">UI_LED_GPS_SEARCHING</ref>,</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a7bf7e8d4da778831d2ea480e1b128234" kindref="member">UI_LED_GPS_BLOCKED</ref>,</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309ad0a0c2faab7bdac0d33a3251e1d7c56f" kindref="member">UI_LED_GPS_FIX</ref></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight><highlight class="preprocessor">#else<sp/></highlight><highlight class="comment">/*<sp/>LED<sp/>patterns<sp/>without<sp/>using<sp/>PWM.<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="107" refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a034f4f5b88da3e35eb7e9c27b84ad37d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a034f4f5b88da3e35eb7e9c27b84ad37d" kindref="member">UI_LTE_DISCONNECTED</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="ui_8h_a06145d52ed64ec861ac12a910a7f62a5_1a06145d52ed64ec861ac12a910a7f62a5" kindref="member">UI_LED_ON</ref>(0),</highlight></codeline>
+<codeline lineno="108" refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a569163119a5339f8d48cb5d6507d2c9c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a569163119a5339f8d48cb5d6507d2c9c" kindref="member">UI_LTE_CONNECTING</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="ui_8h_a20845a20ab5b21640529f56f5cd7a26e_1a20845a20ab5b21640529f56f5cd7a26e" kindref="member">UI_LED_BLINK</ref>(<ref refid="group__dk__buttons__and__leds_ga353881bc28c249b7bfa2a445c9724c98_1ga353881bc28c249b7bfa2a445c9724c98" kindref="member">DK_LED3_MSK</ref>),</highlight></codeline>
+<codeline lineno="109" refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309aadb5bbef246ce7e74782aac133f593b9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309aadb5bbef246ce7e74782aac133f593b9" kindref="member">UI_LTE_CONNECTED</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="ui_8h_a06145d52ed64ec861ac12a910a7f62a5_1a06145d52ed64ec861ac12a910a7f62a5" kindref="member">UI_LED_ON</ref>(<ref refid="group__dk__buttons__and__leds_ga353881bc28c249b7bfa2a445c9724c98_1ga353881bc28c249b7bfa2a445c9724c98" kindref="member">DK_LED3_MSK</ref>),</highlight></codeline>
+<codeline lineno="110" refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a15603ad71155be879e6391b225504b19" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a15603ad71155be879e6391b225504b19" kindref="member">UI_CLOUD_CONNECTING</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="ui_8h_a20845a20ab5b21640529f56f5cd7a26e_1a20845a20ab5b21640529f56f5cd7a26e" kindref="member">UI_LED_BLINK</ref>(<ref refid="group__dk__buttons__and__leds_ga7acca9aa4ffb1e20f716f0579225c9af_1ga7acca9aa4ffb1e20f716f0579225c9af" kindref="member">DK_LED4_MSK</ref>),</highlight></codeline>
+<codeline lineno="111" refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309af69b634e093b51d91bf40916024be222" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309af69b634e093b51d91bf40916024be222" kindref="member">UI_CLOUD_CONNECTED</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="ui_8h_a06145d52ed64ec861ac12a910a7f62a5_1a06145d52ed64ec861ac12a910a7f62a5" kindref="member">UI_LED_ON</ref>(<ref refid="group__dk__buttons__and__leds_ga7acca9aa4ffb1e20f716f0579225c9af_1ga7acca9aa4ffb1e20f716f0579225c9af" kindref="member">DK_LED4_MSK</ref>),</highlight></codeline>
+<codeline lineno="112" refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309afcbe65ef778defaa2cc5b8dca1f3c914" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309afcbe65ef778defaa2cc5b8dca1f3c914" kindref="member">UI_LED_GPS_SEARCHING</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="ui_8h_a06145d52ed64ec861ac12a910a7f62a5_1a06145d52ed64ec861ac12a910a7f62a5" kindref="member">UI_LED_ON</ref>(<ref refid="group__dk__buttons__and__leds_ga7acca9aa4ffb1e20f716f0579225c9af_1ga7acca9aa4ffb1e20f716f0579225c9af" kindref="member">DK_LED4_MSK</ref>),</highlight></codeline>
+<codeline lineno="113" refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309ad0a0c2faab7bdac0d33a3251e1d7c56f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309ad0a0c2faab7bdac0d33a3251e1d7c56f" kindref="member">UI_LED_GPS_FIX</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="ui_8h_a06145d52ed64ec861ac12a910a7f62a5_1a06145d52ed64ec861ac12a910a7f62a5" kindref="member">UI_LED_ON</ref>(<ref refid="group__dk__buttons__and__leds_ga7acca9aa4ffb1e20f716f0579225c9af_1ga7acca9aa4ffb1e20f716f0579225c9af" kindref="member">DK_LED4_MSK</ref>),</highlight></codeline>
+<codeline lineno="114" refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a7bf7e8d4da778831d2ea480e1b128234" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a7bf7e8d4da778831d2ea480e1b128234" kindref="member">UI_LED_GPS_BLOCKED</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="ui_8h_a06145d52ed64ec861ac12a910a7f62a5_1a06145d52ed64ec861ac12a910a7f62a5" kindref="member">UI_LED_ON</ref>(<ref refid="group__dk__buttons__and__leds_ga7acca9aa4ffb1e20f716f0579225c9af_1ga7acca9aa4ffb1e20f716f0579225c9af" kindref="member">DK_LED4_MSK</ref>),</highlight></codeline>
+<codeline lineno="115" refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a8d97a8a863f6066490a7969e88564354" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a8d97a8a863f6066490a7969e88564354" kindref="member">UI_CLOUD_PAIRING</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="ui_8h_a20845a20ab5b21640529f56f5cd7a26e_1a20845a20ab5b21640529f56f5cd7a26e" kindref="member">UI_LED_BLINK</ref>(<ref refid="group__dk__buttons__and__leds_ga353881bc28c249b7bfa2a445c9724c98_1ga353881bc28c249b7bfa2a445c9724c98" kindref="member">DK_LED3_MSK</ref><sp/>|<sp/><ref refid="group__dk__buttons__and__leds_ga7acca9aa4ffb1e20f716f0579225c9af_1ga7acca9aa4ffb1e20f716f0579225c9af" kindref="member">DK_LED4_MSK</ref>),</highlight></codeline>
+<codeline lineno="116" refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309afc95cb159cf8f3761232795fbcd6e8c1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309afc95cb159cf8f3761232795fbcd6e8c1" kindref="member">UI_ACCEL_CALIBRATING</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="ui_8h_a06145d52ed64ec861ac12a910a7f62a5_1a06145d52ed64ec861ac12a910a7f62a5" kindref="member">UI_LED_ON</ref>(<ref refid="group__dk__buttons__and__leds_gaa625961b3da635a4b706e9d552ca948f_1gaa625961b3da635a4b706e9d552ca948f" kindref="member">DK_LED1_MSK</ref><sp/>|<sp/><ref refid="group__dk__buttons__and__leds_ga353881bc28c249b7bfa2a445c9724c98_1ga353881bc28c249b7bfa2a445c9724c98" kindref="member">DK_LED3_MSK</ref>),</highlight></codeline>
+<codeline lineno="117" refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309aa9072e0bed45d2a2226f989fdafa740c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309aa9072e0bed45d2a2226f989fdafa740c" kindref="member">UI_LED_ERROR_CLOUD</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="ui_8h_a20845a20ab5b21640529f56f5cd7a26e_1a20845a20ab5b21640529f56f5cd7a26e" kindref="member">UI_LED_BLINK</ref>(<ref refid="group__dk__buttons__and__leds_gaa625961b3da635a4b706e9d552ca948f_1gaa625961b3da635a4b706e9d552ca948f" kindref="member">DK_LED1_MSK</ref><sp/>|<sp/><ref refid="group__dk__buttons__and__leds_ga7acca9aa4ffb1e20f716f0579225c9af_1ga7acca9aa4ffb1e20f716f0579225c9af" kindref="member">DK_LED4_MSK</ref>),</highlight></codeline>
+<codeline lineno="118" refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a92d3a8ad5b215935959731facad22c44" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a92d3a8ad5b215935959731facad22c44" kindref="member">UI_LED_ERROR_MODEM_REC</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="ui_8h_a20845a20ab5b21640529f56f5cd7a26e_1a20845a20ab5b21640529f56f5cd7a26e" kindref="member">UI_LED_BLINK</ref>(<ref refid="group__dk__buttons__and__leds_gaa625961b3da635a4b706e9d552ca948f_1gaa625961b3da635a4b706e9d552ca948f" kindref="member">DK_LED1_MSK</ref><sp/>|<sp/><ref refid="group__dk__buttons__and__leds_ga353881bc28c249b7bfa2a445c9724c98_1ga353881bc28c249b7bfa2a445c9724c98" kindref="member">DK_LED3_MSK</ref>),</highlight></codeline>
+<codeline lineno="119" refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309ad941ea672911c26ae18d87ea6ea1d780" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309ad941ea672911c26ae18d87ea6ea1d780" kindref="member">UI_LED_ERROR_MODEM_IRREC</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="ui_8h_a20845a20ab5b21640529f56f5cd7a26e_1a20845a20ab5b21640529f56f5cd7a26e" kindref="member">UI_LED_BLINK</ref>(<ref refid="group__dk__buttons__and__leds_ga701c94529c61f2314ce98a4bd5db8bcb_1ga701c94529c61f2314ce98a4bd5db8bcb" kindref="member">DK_ALL_LEDS_MSK</ref>),</highlight></codeline>
+<codeline lineno="120" refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a922e3ad6ba39e1db4c877cb1d54f62d0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a922e3ad6ba39e1db4c877cb1d54f62d0" kindref="member">UI_LED_ERROR_LTE_LC</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="ui_8h_a20845a20ab5b21640529f56f5cd7a26e_1a20845a20ab5b21640529f56f5cd7a26e" kindref="member">UI_LED_BLINK</ref>(<ref refid="group__dk__buttons__and__leds_gaa625961b3da635a4b706e9d552ca948f_1gaa625961b3da635a4b706e9d552ca948f" kindref="member">DK_LED1_MSK</ref><sp/>|<sp/><ref refid="group__dk__buttons__and__leds_ga1de2f8629a113c35296a3e72b735478d_1ga1de2f8629a113c35296a3e72b735478d" kindref="member">DK_LED2_MSK</ref>),</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a9eb33e1294c78faa57648c2dd1c70d97" kindref="member">UI_LED_ERROR_UNKNOWN</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="ui_8h_a06145d52ed64ec861ac12a910a7f62a5_1a06145d52ed64ec861ac12a910a7f62a5" kindref="member">UI_LED_ON</ref>(<ref refid="group__dk__buttons__and__leds_ga701c94529c61f2314ce98a4bd5db8bcb_1ga701c94529c61f2314ce98a4bd5db8bcb" kindref="member">DK_ALL_LEDS_MSK</ref>)</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>CONFIG_UI_LED_USE_PWM<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123" refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309a9eb33e1294c78faa57648c2dd1c70d97" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126" refid="ui_8h_a7252397dca463ab7196a509c7480f798_1a7252397dca463ab7196a509c7480f798" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="ui_8h_a7252397dca463ab7196a509c7480f798_1a7252397dca463ab7196a509c7480f798" kindref="member">ui_evt_type</ref><sp/>{</highlight></codeline>
+<codeline lineno="127" refid="ui_8h_a7252397dca463ab7196a509c7480f798_1a7252397dca463ab7196a509c7480f798ab933e6eb62151c8e927adabed83f1090" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_a7252397dca463ab7196a509c7480f798_1a7252397dca463ab7196a509c7480f798ab933e6eb62151c8e927adabed83f1090" kindref="member">UI_EVT_BUTTON_ACTIVE</ref>,</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="ui_8h_a7252397dca463ab7196a509c7480f798_1a7252397dca463ab7196a509c7480f798aeb978eca6574b10f1bb287f32a7e1d36" kindref="member">UI_EVT_BUTTON_INACTIVE</ref></highlight></codeline>
+<codeline lineno="129" refid="ui_8h_a7252397dca463ab7196a509c7480f798_1a7252397dca463ab7196a509c7480f798aeb978eca6574b10f1bb287f32a7e1d36" refkind="member"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132" refid="structui__evt" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structui__evt" kindref="compound">ui_evt</ref><sp/>{</highlight></codeline>
+<codeline lineno="133" refid="structui__evt_a15aa74fe75db1166f7ed5bffe4cd6cd3_1a15aa74fe75db1166f7ed5bffe4cd6cd3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="ui_8h_a7252397dca463ab7196a509c7480f798_1a7252397dca463ab7196a509c7480f798" kindref="member">ui_evt_type</ref><sp/><ref refid="structui__evt_a15aa74fe75db1166f7ed5bffe4cd6cd3_1a15aa74fe75db1166f7ed5bffe4cd6cd3" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">union<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="136" refid="structui__evt_a5eb9cecae171d3a88edebbc253ad12fb_1a5eb9cecae171d3a88edebbc253ad12fb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structui__evt_a5eb9cecae171d3a88edebbc253ad12fb_1a5eb9cecae171d3a88edebbc253ad12fb" kindref="member">button</ref>;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="138"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145" refid="ui_8h_acedc69b81e43304e705335e287dc7cf8_1acedc69b81e43304e705335e287dc7cf8" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>void<sp/>(*<ref refid="ui_8h_acedc69b81e43304e705335e287dc7cf8_1acedc69b81e43304e705335e287dc7cf8" kindref="member">ui_callback_t</ref>)(</highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structui__evt" kindref="compound">ui_evt</ref><sp/>evt);</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154" refid="ui_8h_a43d485a2a8babd8eed14e7c30c648865_1a43d485a2a8babd8eed14e7c30c648865" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="ui_8h_a43d485a2a8babd8eed14e7c30c648865_1a43d485a2a8babd8eed14e7c30c648865" kindref="member">ui_init</ref>(<ref refid="ui_8h_acedc69b81e43304e705335e287dc7cf8_1acedc69b81e43304e705335e287dc7cf8" kindref="member">ui_callback_t</ref><sp/>cb);</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161" refid="ui_8h_a4d8f1974827c84066e14582f777ee4e5_1a4d8f1974827c84066e14582f777ee4e5" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="ui_8h_a4d8f1974827c84066e14582f777ee4e5_1a4d8f1974827c84066e14582f777ee4e5" kindref="member">ui_led_set_pattern</ref>(</highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309" kindref="member">ui_led_pattern</ref><sp/>pattern);</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171" refid="ui_8h_ae83a51c06f393fb91c8fc3fda63179dc_1ae83a51c06f393fb91c8fc3fda63179dc" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="ui_8h_ae83a51c06f393fb91c8fc3fda63179dc_1ae83a51c06f393fb91c8fc3fda63179dc" kindref="member">ui_led_set_state</ref>(uint32_t<sp/>led,<sp/>uint8_t<sp/>value);</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178" refid="ui_8h_a2027c2fe10dba505198907c23cbbce7b_1a2027c2fe10dba505198907c23cbbce7b" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="ui_8h_af7b1ece1a93f7668c8fb98f18036b309_1af7b1ece1a93f7668c8fb98f18036b309" kindref="member">ui_led_pattern</ref><sp/><ref refid="ui_8h_a2027c2fe10dba505198907c23cbbce7b_1a2027c2fe10dba505198907c23cbbce7b" kindref="member">ui_led_get_pattern</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189" refid="ui_8h_a2ccb3dc681932b6b4e7ce13a7863e888_1a2ccb3dc681932b6b4e7ce13a7863e888" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="ui_8h_a2ccb3dc681932b6b4e7ce13a7863e888_1a2ccb3dc681932b6b4e7ce13a7863e888" kindref="member">ui_led_set_color</ref>(uint8_t<sp/>red,<sp/>uint8_t<sp/>green,<sp/>uint8_t<sp/>blue);</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight></codeline>
+<codeline lineno="198" refid="ui_8h_af257e1d581ce60cbf87ee023a6ce68d6_1af257e1d581ce60cbf87ee023a6ce68d6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="ui_8h_af257e1d581ce60cbf87ee023a6ce68d6_1af257e1d581ce60cbf87ee023a6ce68d6" kindref="member">ui_button_is_active</ref>(uint32_t<sp/><ref refid="structui__evt_a5eb9cecae171d3a88edebbc253ad12fb_1a5eb9cecae171d3a88edebbc253ad12fb" kindref="member">button</ref>);</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="211" refid="ui_8h_a8d622776992cc95fdf4c4271cdeae47a_1a8d622776992cc95fdf4c4271cdeae47a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="ui_8h_a8d622776992cc95fdf4c4271cdeae47a_1a8d622776992cc95fdf4c4271cdeae47a" kindref="member">ui_buzzer_set_frequency</ref>(uint32_t<sp/>frequency,<sp/>uint8_t<sp/>intensity);</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight></codeline>
+<codeline lineno="221" refid="ui_8h_a8602daf73ff3f484e7a4f57835db0edf_1a8602daf73ff3f484e7a4f57835db0edf" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="ui_8h_a8602daf73ff3f484e7a4f57835db0edf_1a8602daf73ff3f484e7a4f57835db0edf" kindref="member">ui_nmos_write</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>nmos_idx,<sp/>uint8_t<sp/>value);</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight></codeline>
+<codeline lineno="232" refid="ui_8h_a663f50dad9b5b887dc58e4ef1d4890e6_1a663f50dad9b5b887dc58e4ef1d4890e6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="ui_8h_a663f50dad9b5b887dc58e4ef1d4890e6_1a663f50dad9b5b887dc58e4ef1d4890e6" kindref="member">ui_nmos_pwm_set</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>nmos_idx,<sp/>uint32_t<sp/>period,<sp/>uint32_t<sp/>pulse);</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight></codeline>
+<codeline lineno="234"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="235"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="237"><highlight class="normal"></highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>UI_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/asset_tracker/src/ui/include/ui.h"/>
+  </compounddef>
+</doxygen>

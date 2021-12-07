@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__secure__partition__manager" kind="group">
+    <compoundname>secure_partition_manager</compoundname>
+    <title>Secure Partition Manager</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__secure__partition__manager_1ga8e62e1f7f5a6b11ff9dccce058d622d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void spm_jump</definition>
+        <argsstring>(void)</argsstring>
+        <name>spm_jump</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Jump to non-secure partition. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function extracts the VTOR_NS from DT_FLASH_AREA_IMAGE_0_NONSECURE_OFFSET_0 and configures the MSP accordingly before jumping to VTOR_NS[1]. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/spm.h" line="34" column="6" declfile="include/spm.h" declline="34" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="group__secure__partition__manager_1gab7eee6f0216c0b35313ec15346362fb2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void spm_config</definition>
+        <argsstring>(void)</argsstring>
+        <name>spm_config</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Configure security attributes of flash, RAM, and peripherals. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function reads the security attribute options set for peripherals in Kconfig. The RAM and flash partitioning is configured statically. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/spm.h" line="42" column="6" declfile="include/spm.h" declline="42" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Secure Partition Manager (SPM). </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The Secure Partition Manager (SPM) provides functions for configuring the security attributes of flash, RAM, and peripherals. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structsim__wave" kind="struct" language="C++" prot="public">
+    <compoundname>sim_wave</compoundname>
+    <includes refid="sensor__sim__ctrl_8h" local="no">sensor_sim_ctrl.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structsim__wave_a557c5774c1a20fbd6852f7422485415f_1a557c5774c1a20fbd6852f7422485415f" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* sim_wave::label</definition>
+        <argsstring></argsstring>
+        <name>label</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/machine_learning/configuration/common/sensor_sim_ctrl.h" line="19" column="12" bodyfile="applications/machine_learning/configuration/common/sensor_sim_ctrl.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structsim__wave_a84cb0c94f525167a55c9deb4e8ae4101_1a84cb0c94f525167a55c9deb4e8ae4101" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structwave__gen__param" kindref="compound">wave_gen_param</ref></type>
+        <definition>struct wave_gen_param sim_wave::wave_param</definition>
+        <argsstring></argsstring>
+        <name>wave_param</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/machine_learning/configuration/common/sensor_sim_ctrl.h" line="20" column="21" bodyfile="applications/machine_learning/configuration/common/sensor_sim_ctrl.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>sim_wave</label>
+        <link refid="structsim__wave"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>wave_param</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>wave_gen_param</label>
+        <link refid="structwave__gen__param"/>
+      </node>
+    </collaborationgraph>
+    <location file="applications/machine_learning/configuration/common/sensor_sim_ctrl.h" line="18" column="1" bodyfile="applications/machine_learning/configuration/common/sensor_sim_ctrl.h" bodystart="18" bodyend="21"/>
+    <listofallmembers>
+      <member refid="structsim__wave_a557c5774c1a20fbd6852f7422485415f_1a557c5774c1a20fbd6852f7422485415f" prot="public" virt="non-virtual"><scope>sim_wave</scope><name>label</name></member>
+      <member refid="structsim__wave_a84cb0c94f525167a55c9deb4e8ae4101_1a84cb0c94f525167a55c9deb4e8ae4101" prot="public" virt="non-virtual"><scope>sim_wave</scope><name>wave_param</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

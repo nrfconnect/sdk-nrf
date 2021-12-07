@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structfs__event" kind="struct" language="C++" prot="public">
+    <compoundname>fs_event</compoundname>
+    <includes refid="fs__event_8h" local="no">fs_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structfs__event_ae31a749bfcf08bbb1c1d77103b65b996_1ae31a749bfcf08bbb1c1d77103b65b996" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header fs_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/fs_event.h" line="33" column="19" bodyfile="applications/connectivity_bridge/src/events/fs_event.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structfs__event_aa62fb7d38b62b39aa53a36c0926468f2_1aa62fb7d38b62b39aa53a36c0926468f2" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__fs__event_ga652404abdb8687a02ef7787b60621510_1ga652404abdb8687a02ef7787b60621510" kindref="member">fs_request</ref></type>
+        <definition>enum fs_request fs_event::req</definition>
+        <argsstring></argsstring>
+        <name>req</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/fs_event.h" line="35" column="16" bodyfile="applications/connectivity_bridge/src/events/fs_event.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structfs__event_a0753645b1ef8e060cedb4660102cf14e_1a0753645b1ef8e060cedb4660102cf14e" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* fs_event::mnt_point</definition>
+        <argsstring></argsstring>
+        <name>mnt_point</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/fs_event.h" line="36" column="12" bodyfile="applications/connectivity_bridge/src/events/fs_event.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Peer connection event. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>fs_event</label>
+        <link refid="structfs__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/connectivity_bridge/src/events/fs_event.h" line="32" column="1" bodyfile="applications/connectivity_bridge/src/events/fs_event.h" bodystart="32" bodyend="37"/>
+    <listofallmembers>
+      <member refid="structfs__event_ae31a749bfcf08bbb1c1d77103b65b996_1ae31a749bfcf08bbb1c1d77103b65b996" prot="public" virt="non-virtual"><scope>fs_event</scope><name>header</name></member>
+      <member refid="structfs__event_a0753645b1ef8e060cedb4660102cf14e_1a0753645b1ef8e060cedb4660102cf14e" prot="public" virt="non-virtual"><scope>fs_event</scope><name>mnt_point</name></member>
+      <member refid="structfs__event_aa62fb7d38b62b39aa53a36c0926468f2_1aa62fb7d38b62b39aa53a36c0926468f2" prot="public" virt="non-virtual"><scope>fs_event</scope><name>req</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

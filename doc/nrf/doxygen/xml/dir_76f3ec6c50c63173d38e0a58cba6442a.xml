@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_76f3ec6c50c63173d38e0a58cba6442a" kind="dir">
+    <compoundname>lib/bin/lwm2m_carrier</compoundname>
+    <innerdir refid="dir_9bac36f54b4c633c62747bd5db5853d9">lib/bin/lwm2m_carrier/include</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="lib/bin/lwm2m_carrier/"/>
+  </compounddef>
+</doxygen>

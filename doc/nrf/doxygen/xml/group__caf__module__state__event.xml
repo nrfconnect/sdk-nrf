@@ -1,0 +1,629 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__caf__module__state__event" kind="group">
+    <compoundname>caf_module_state_event</compoundname>
+    <title>CAF Module State Event</title>
+    <innerclass refid="structmodule__flags" prot="public">module_flags</innerclass>
+    <innerclass refid="structmodule__state__event" prot="public">module_state_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__caf__module__state__event_1ga17d626d50e9a9d43cc372a32d2bd8f90" prot="public" static="no" strong="no">
+        <type></type>
+        <name>module_state</name>
+        <enumvalue id="group__caf__module__state__event_ga17d626d50e9a9d43cc372a32d2bd8f90_1gga17d626d50e9a9d43cc372a32d2bd8f90add04efffd8c5ccc4239fe56063edb068" prot="public">
+          <name>MODULE_STATE_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Module is active. This state is reported when the module is initialized or woken up after suspending. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__module__state__event_ga17d626d50e9a9d43cc372a32d2bd8f90_1gga17d626d50e9a9d43cc372a32d2bd8f90a78bb39cfd1f00e49daf67deac08b5249" prot="public">
+          <name>MODULE_STATE_OFF</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Module is suspended in reaction to <ref refid="structpower__down__event" kindref="compound">power_down_event</ref>. The module cannot submit <ref refid="structwake__up__event" kindref="compound">wake_up_event</ref>. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__module__state__event_ga17d626d50e9a9d43cc372a32d2bd8f90_1gga17d626d50e9a9d43cc372a32d2bd8f90ab2a33747987d341a01bc84d4b24ce51b" prot="public">
+          <name>MODULE_STATE_STANDBY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Module is suspended in reaction to <ref refid="structpower__down__event" kindref="compound">power_down_event</ref>. The module can submit <ref refid="structwake__up__event" kindref="compound">wake_up_event</ref>. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__module__state__event_ga17d626d50e9a9d43cc372a32d2bd8f90_1gga17d626d50e9a9d43cc372a32d2bd8f90af21c1f9f54d1a8d4a17fd2ebb49b6183" prot="public">
+          <name>MODULE_STATE_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Module reported fatal error. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__caf__module__state__event_ga17d626d50e9a9d43cc372a32d2bd8f90_1gga17d626d50e9a9d43cc372a32d2bd8f90ab81ba308aa290191a055111e009382f1" prot="public">
+          <name>MODULE_STATE_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Number of module states. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Module states. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="165" column="1" bodyfile="include/caf/events/module_state_event.h" bodystart="165" bodyend="186"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__caf__module__state__event_1ga32b8e30b4c975b605d211d8ce890f654" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>static size_t module_count</definition>
+        <argsstring>(void)</argsstring>
+        <name>module_count</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Get number of modules. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Number of modules. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="43" column="22" bodyfile="include/caf/events/module_state_event.h" bodystart="43" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="group__caf__module__state__event_1ga7f6b26834cd6ad82ed7e495deb8230c4" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const void *</type>
+        <definition>static const void * module_id_get</definition>
+        <argsstring>(size_t idx)</argsstring>
+        <name>module_id_get</name>
+        <param>
+          <type>size_t</type>
+          <declname>idx</declname>
+        </param>
+        <briefdescription>
+<para>Get ID of module with given index. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the module.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Module ID. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="55" column="26" bodyfile="include/caf/events/module_state_event.h" bodystart="55" bodyend="61"/>
+      </memberdef>
+      <memberdef kind="function" id="group__caf__module__state__event_1ga7f6c12c14b206ba3a64c8b55df4c8039" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool module_check_id_valid</definition>
+        <argsstring>(size_t module_idx)</argsstring>
+        <name>module_check_id_valid</name>
+        <param>
+          <type>size_t</type>
+          <declname>module_idx</declname>
+        </param>
+        <briefdescription>
+<para>Check if given module index is valid. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">module_idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index to check.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index is valid. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index is out of valid range. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="91" column="20" bodyfile="include/caf/events/module_state_event.h" bodystart="91" bodyend="94"/>
+      </memberdef>
+      <memberdef kind="function" id="group__caf__module__state__event_1ga3f7672e0b5d6085118c98803b52997fb" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool module_flags_check_zero</definition>
+        <argsstring>(const struct module_flags *mf)</argsstring>
+        <name>module_flags_check_zero</name>
+        <param>
+          <type>const struct <ref refid="structmodule__flags" kindref="compound">module_flags</ref> *</type>
+          <declname>mf</declname>
+        </param>
+        <briefdescription>
+<para>Check if there is 0 in all the flags. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">mf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to module flags variable.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>All the flags have value of 0. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Any of the flags is not 0. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="104" column="20" bodyfile="include/caf/events/module_state_event.h" bodystart="104" bodyend="114"/>
+      </memberdef>
+      <memberdef kind="function" id="group__caf__module__state__event_1gae974e4875d9ae03e6bae14f4e586236c" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool module_flags_test_bit</definition>
+        <argsstring>(const struct module_flags *mf, size_t module_idx)</argsstring>
+        <name>module_flags_test_bit</name>
+        <param>
+          <type>const struct <ref refid="structmodule__flags" kindref="compound">module_flags</ref> *</type>
+          <declname>mf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>module_idx</declname>
+        </param>
+        <briefdescription>
+<para>Test single module bit. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">mf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to module flags variable. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">module_idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the selected module.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The module bit in flags is set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The module bit in flags is cleared. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="125" column="20" bodyfile="include/caf/events/module_state_event.h" bodystart="125" bodyend="128"/>
+      </memberdef>
+      <memberdef kind="function" id="group__caf__module__state__event_1gaa992d6526211f173595825ee8ce4f246" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void module_flags_clear_bit</definition>
+        <argsstring>(struct module_flags *mf, size_t module_idx)</argsstring>
+        <name>module_flags_clear_bit</name>
+        <param>
+          <type>struct <ref refid="structmodule__flags" kindref="compound">module_flags</ref> *</type>
+          <declname>mf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>module_idx</declname>
+        </param>
+        <briefdescription>
+<para>Clear single module bit. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">mf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to module flags variable. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">module_idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the selected module. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="136" column="20" bodyfile="include/caf/events/module_state_event.h" bodystart="136" bodyend="139"/>
+      </memberdef>
+      <memberdef kind="function" id="group__caf__module__state__event_1ga5d301ee178db9869f013e31136d46910" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void module_flags_set_bit</definition>
+        <argsstring>(struct module_flags *mf, size_t module_idx)</argsstring>
+        <name>module_flags_set_bit</name>
+        <param>
+          <type>struct <ref refid="structmodule__flags" kindref="compound">module_flags</ref> *</type>
+          <declname>mf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>module_idx</declname>
+        </param>
+        <briefdescription>
+<para>Set single module bit. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">mf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to module flags variable. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">module_idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the selected module. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="147" column="20" bodyfile="include/caf/events/module_state_event.h" bodystart="147" bodyend="150"/>
+      </memberdef>
+      <memberdef kind="function" id="group__caf__module__state__event_1ga171adf2bdcb325175aff6e87bdb99b86" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void module_flags_set_bit_to</definition>
+        <argsstring>(struct module_flags *mf, size_t module_idx, bool val)</argsstring>
+        <name>module_flags_set_bit_to</name>
+        <param>
+          <type>struct <ref refid="structmodule__flags" kindref="compound">module_flags</ref> *</type>
+          <declname>mf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>module_idx</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+<para>Set single module bit to specified value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">mf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to module flags variable. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">module_idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the selected module. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The value to be set in a specified module&apos;s bit. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="159" column="20" bodyfile="include/caf/events/module_state_event.h" bodystart="159" bodyend="162"/>
+      </memberdef>
+      <memberdef kind="function" id="group__caf__module__state__event_1gad1a80ac5733dc3538a4e4511b1081803" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool check_state</definition>
+        <argsstring>(const struct module_state_event *event, const void *module_id, enum module_state state)</argsstring>
+        <name>check_state</name>
+        <param>
+          <type>const struct <ref refid="structmodule__state__event" kindref="compound">module_state_event</ref> *</type>
+          <declname>event</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>module_id</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="group__caf__module__state__event_ga17d626d50e9a9d43cc372a32d2bd8f90_1ga17d626d50e9a9d43cc372a32d2bd8f90" kindref="member">module_state</ref></type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+<para>Check if the selected module reported the selected state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The function can be used in event handler to verify if received module state event informs that selected module reported selected state. The <ref refid="group__caf__module__state__event_ga41dcbdc9825119792bee0adb1604ed19_1ga41dcbdc9825119792bee0adb1604ed19" kindref="member">MODULE_ID</ref> can be used to get module ID of module with selected name.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">event</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Poitner to handled module state event. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">module_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ID of the selected module. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">state</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Selected module state.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The module state event informs that selected module reported selected state. Otherwise, false is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="232" column="20" bodyfile="include/caf/events/module_state_event.h" bodystart="232" bodyend="239"/>
+      </memberdef>
+      <memberdef kind="function" id="group__caf__module__state__event_1gadfd325057870175b5df3bd26759175e4" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void module_set_state</definition>
+        <argsstring>(enum module_state state)</argsstring>
+        <name>module_set_state</name>
+        <param>
+          <type>enum <ref refid="group__caf__module__state__event_ga17d626d50e9a9d43cc372a32d2bd8f90_1ga17d626d50e9a9d43cc372a32d2bd8f90" kindref="member">module_state</ref></type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+<para>Submit module state event to inform that state of the module changed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>ID of the module is automatically assigned based on name that is defined as MODULE.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">state</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New state of the module. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="285" column="20" bodyfile="include/caf/events/module_state_event.h" bodystart="285" bodyend="294"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__caf__module__state__event_1gab67bf9372a6820c068c16b731c4b0b5f" prot="public" static="no">
+        <name>MODULE_ID_LIST_SECTION_PREFIX</name>
+        <initializer>module_id_list</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="25" column="9" bodyfile="include/caf/events/module_state_event.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__caf__module__state__event_1ga10fd3e6504aeeb04f0f206450a5e0291" prot="public" static="no">
+        <name>MODULE_ID_PTR_VAR</name>
+        <param><defname>mname</defname></param>
+        <initializer>_CONCAT(__module_, mname)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="27" column="9" bodyfile="include/caf/events/module_state_event.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__caf__module__state__event_1gaf5bf39cdacd24165674f6b3261c86184" prot="public" static="no">
+        <name>MODULE_ID_LIST_SECTION_NAME</name>
+        <initializer>STRINGIFY(<ref refid="group__caf__module__state__event_gab67bf9372a6820c068c16b731c4b0b5f_1gab67bf9372a6820c068c16b731c4b0b5f" kindref="member">MODULE_ID_LIST_SECTION_PREFIX</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="28" column="9" bodyfile="include/caf/events/module_state_event.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__caf__module__state__event_1gaabee10159a72a9a6dcc5d68f4c2677b0" prot="public" static="no">
+        <name>MODULE_ID_LIST_START</name>
+        <initializer>_CONCAT(__start_, <ref refid="group__caf__module__state__event_gab67bf9372a6820c068c16b731c4b0b5f_1gab67bf9372a6820c068c16b731c4b0b5f" kindref="member">MODULE_ID_LIST_SECTION_PREFIX</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="29" column="9" bodyfile="include/caf/events/module_state_event.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__caf__module__state__event_1gaa65e11879283d401925a9e7002ffcdf1" prot="public" static="no">
+        <name>MODULE_ID_LIST_STOP</name>
+        <initializer>_CONCAT(__stop_,  <ref refid="group__caf__module__state__event_gab67bf9372a6820c068c16b731c4b0b5f_1gab67bf9372a6820c068c16b731c4b0b5f" kindref="member">MODULE_ID_LIST_SECTION_PREFIX</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="30" column="9" bodyfile="include/caf/events/module_state_event.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__caf__module__state__event_1ga53842783c01a9929f72555ed1035f337" prot="public" static="no">
+        <name>MODULE_ID_PTR_VAR_EXTERN_DEC</name>
+        <param><defname>mname</defname></param>
+        <initializer>	extern const void * const <ref refid="group__caf__module__state__event_ga10fd3e6504aeeb04f0f206450a5e0291_1ga10fd3e6504aeeb04f0f206450a5e0291" kindref="member">MODULE_ID_PTR_VAR</ref>(mname)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="31" column="9" bodyfile="include/caf/events/module_state_event.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__caf__module__state__event_1ga245e68ba25ad6f4e675ebc59226c2ed5" prot="public" static="no">
+        <name>MODULE_IDX</name>
+        <param><defname>mname</defname></param>
+        <initializer>		({                                        \
+		<ref refid="group__caf__module__state__event_ga53842783c01a9929f72555ed1035f337_1ga53842783c01a9929f72555ed1035f337" kindref="member">MODULE_ID_PTR_VAR_EXTERN_DEC</ref>(mname);                \
+		&amp;<ref refid="group__caf__module__state__event_ga10fd3e6504aeeb04f0f206450a5e0291_1ga10fd3e6504aeeb04f0f206450a5e0291" kindref="member">MODULE_ID_PTR_VAR</ref>(mname) - &amp;<ref refid="group__caf__module__state__event_gaabee10159a72a9a6dcc5d68f4c2677b0_1gaabee10159a72a9a6dcc5d68f4c2677b0" kindref="member">MODULE_ID_LIST_START</ref>;  \
+	})</initializer>
+        <briefdescription>
+<para>Get index of module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For example, the <ref refid="group__caf__module__state__event_ga245e68ba25ad6f4e675ebc59226c2ed5_1ga245e68ba25ad6f4e675ebc59226c2ed5" kindref="member">MODULE_IDX(buttons)</ref> can be used to get module index of module named buttons.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">mname</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the module.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Index of the module. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="71" column="9" bodyfile="include/caf/events/module_state_event.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__caf__module__state__event_1ga41dcbdc9825119792bee0adb1604ed19" prot="public" static="no">
+        <name>MODULE_ID</name>
+        <param><defname>mname</defname></param>
+        <initializer>			({                                  \
+			<ref refid="group__caf__module__state__event_ga53842783c01a9929f72555ed1035f337_1ga53842783c01a9929f72555ed1035f337" kindref="member">MODULE_ID_PTR_VAR_EXTERN_DEC</ref>(mname); \
+			<ref refid="group__caf__module__state__event_ga10fd3e6504aeeb04f0f206450a5e0291_1ga10fd3e6504aeeb04f0f206450a5e0291" kindref="member">MODULE_ID_PTR_VAR</ref>(mname);            \
+		})</initializer>
+        <briefdescription>
+<para>Get module ID. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For example, the <ref refid="group__caf__module__state__event_ga41dcbdc9825119792bee0adb1604ed19_1ga41dcbdc9825119792bee0adb1604ed19" kindref="member">MODULE_ID(buttons)</ref> can be used to get module ID of module named buttons.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">mname</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the module.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>ID of the module. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="250" column="9" bodyfile="include/caf/events/module_state_event.h" bodystart="250" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__caf__module__state__event_1ga14ded244c47bbba850a8a4be6d16c7e3" prot="public" static="no">
+        <name>MODULE_NAME</name>
+        <initializer>STRINGIFY(MODULE)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/caf/events/module_state_event.h" line="271" column="9" bodyfile="include/caf/events/module_state_event.h" bodystart="271" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>CAF Module State Event. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

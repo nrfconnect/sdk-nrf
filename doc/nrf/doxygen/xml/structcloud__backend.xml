@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structcloud__backend" kind="struct" language="C++" prot="public">
+    <compoundname>cloud_backend</compoundname>
+    <includes refid="cloud_8h" local="no">cloud.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structcloud__api" kindref="compound">cloud_api</ref> *const</type>
+        <definition>const struct cloud_api* const cloud_backend::api</definition>
+        <argsstring></argsstring>
+        <name>api</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="206" column="28" bodyfile="include/net/cloud.h" bodystart="206" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__backend_a31c8126e59484178c913c3544f459ec9_1a31c8126e59484178c913c3544f459ec9" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structcloud__backend__config" kindref="compound">cloud_backend_config</ref> *const</type>
+        <definition>struct cloud_backend_config* const cloud_backend::config</definition>
+        <argsstring></argsstring>
+        <name>config</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/cloud.h" line="207" column="33" bodyfile="include/net/cloud.h" bodystart="207" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Structure for cloud backend. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>cloud_api</label>
+        <link refid="structcloud__api"/>
+      </node>
+      <node id="1">
+        <label>cloud_backend</label>
+        <link refid="structcloud__backend"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>api</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>config</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>cloud_backend_config</label>
+        <link refid="structcloud__backend__config"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>handler</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/net/cloud.h" line="205" column="1" bodyfile="include/net/cloud.h" bodystart="205" bodyend="208"/>
+    <listofallmembers>
+      <member refid="structcloud__backend_a299a3670d2af6c9fa8c9854164bb5f97_1a299a3670d2af6c9fa8c9854164bb5f97" prot="public" virt="non-virtual"><scope>cloud_backend</scope><name>api</name></member>
+      <member refid="structcloud__backend_a31c8126e59484178c913c3544f459ec9_1a31c8126e59484178c913c3544f459ec9" prot="public" virt="non-virtual"><scope>cloud_backend</scope><name>config</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_1ab68e3a6cf73f2183687fdd48c50d12" kind="dir">
+    <compoundname>applications/nrf_desktop/configuration/nrf52dmouse_nrf52832</compoundname>
+    <innerfile refid="nrf52dmouse__nrf52832_2battery__def_8h">battery_def.h</innerfile>
+    <innerfile refid="nrf__desktop_2configuration_2nrf52dmouse__nrf52832_2buttons__def_8h">buttons_def.h</innerfile>
+    <innerfile refid="nrf__desktop_2configuration_2nrf52dmouse__nrf52832_2click__detector__def_8h">click_detector_def.h</innerfile>
+    <innerfile refid="nrf52dmouse__nrf52832_2hid__keyboard__leds__def_8h">hid_keyboard_leds_def.h</innerfile>
+    <innerfile refid="nrf52dmouse__nrf52832_2hid__keymap__def_8h">hid_keymap_def.h</innerfile>
+    <innerfile refid="nrf52dmouse__nrf52832_2port__state__def_8h">port_state_def.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/nrf_desktop/configuration/nrf52dmouse_nrf52832/"/>
+  </compounddef>
+</doxygen>

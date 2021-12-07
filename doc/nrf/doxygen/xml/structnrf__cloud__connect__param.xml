@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnrf__cloud__connect__param" kind="struct" language="C++" prot="public">
+    <compoundname>nrf_cloud_connect_param</compoundname>
+    <includes refid="nrf__cloud_8h" local="no">nrf_cloud.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnrf__cloud__connect__param_a91c338c164b2afb4b46703cce5aa27c7_1a91c338c164b2afb4b46703cce5aa27c7" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structnrf__cloud__sensor__list" kindref="compound">nrf_cloud_sensor_list</ref> *</type>
+        <definition>const struct nrf_cloud_sensor_list* nrf_cloud_connect_param::sensor</definition>
+        <argsstring></argsstring>
+        <name>sensor</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Supported sensor types. May be NULL. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud.h" line="257" column="34" bodyfile="include/net/nrf_cloud.h" bodystart="257" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Connection parameters. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>nrf_cloud_connect_param</label>
+        <link refid="structnrf__cloud__connect__param"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>sensor</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>nrf_cloud_sensor_list</label>
+        <link refid="structnrf__cloud__sensor__list"/>
+      </node>
+    </collaborationgraph>
+    <location file="include/net/nrf_cloud.h" line="255" column="1" bodyfile="include/net/nrf_cloud.h" bodystart="255" bodyend="258"/>
+    <listofallmembers>
+      <member refid="structnrf__cloud__connect__param_a91c338c164b2afb4b46703cce5aa27c7_1a91c338c164b2afb4b46703cce5aa27c7" prot="public" virt="non-virtual"><scope>nrf_cloud_connect_param</scope><name>sensor</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

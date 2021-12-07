@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__bt__mesh__loc" kind="group">
+    <compoundname>bt_mesh_loc</compoundname>
+    <title>Generic Location models</title>
+    <innerclass refid="structbt__mesh__loc__global" prot="public">bt_mesh_loc_global</innerclass>
+    <innerclass refid="structbt__mesh__loc__local" prot="public">bt_mesh_loc_local</innerclass>
+    <innergroup refid="group__bt__mesh__loc__altitude__defines">Defines for altitude.</innergroup>
+    <innergroup refid="group__bt__mesh__loc__floor__number__defines">Defines for floor number.</innergroup>
+    <innergroup refid="group__bt__mesh__loc__srv">Generic Location Server model</innergroup>
+    <briefdescription>
+<para>API for the Generic Location models. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

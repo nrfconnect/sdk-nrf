@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnfc__tnep__poller__ndef__api" kind="struct" language="C++" prot="public">
+    <compoundname>nfc_tnep_poller_ndef_api</compoundname>
+    <includes refid="poller_8h" local="no">poller.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnfc__tnep__poller__ndef__api_ae48e9617d242e88384d05a980e69d5d8_1ae48e9617d242e88384d05a980e69d5d8" prot="public" static="no" mutable="no">
+        <type>int(*</type>
+        <definition>int(* nfc_tnep_poller_ndef_api::ndef_read) (uint8_t *ndef_buf, uint16_t ndef_len)</definition>
+        <argsstring>)(uint8_t *ndef_buf, uint16_t ndef_len)</argsstring>
+        <name>ndef_read</name>
+        <briefdescription>
+<para>Function used to read the NDEF Message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>It is called when TNEP Poller has to read NDEF data from NFC TNEP Tag Device.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">ndef_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to buffer where NDEF Message will be stored. This buffer has to be kept until the read operation is finished. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ndef_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the NDEF Buffer</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="74" column="1" bodyfile="include/nfc/tnep/poller.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnfc__tnep__poller__ndef__api_adabb4c9d39dfbce0bb8e18c5504bdf33_1adabb4c9d39dfbce0bb8e18c5504bdf33" prot="public" static="no" mutable="no">
+        <type>int(*</type>
+        <definition>int(* nfc_tnep_poller_ndef_api::ndef_update) (const uint8_t *ndef_buf, uint16_t ndef_len)</definition>
+        <argsstring>)(const uint8_t *ndef_buf, uint16_t ndef_len)</argsstring>
+        <name>ndef_update</name>
+        <briefdescription>
+<para>Function used to write the NDEF Message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>It is called when TNEP Poller attempts to update NDEF data on NFC TNEP Tag Device.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">ndef_buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer with NDEF Message to write. Buffer has to be kept until the write operation is finished. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ndef_len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of NDEF Message to write.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/nfc/tnep/poller.h" line="88" column="1" bodyfile="include/nfc/tnep/poller.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>TNEP Poller API structure. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This structure is used to provide an API for NFC NDEF Message operations like reading and writing. Depending on the connected tag type, appropriate API should be used. </para>
+    </detaileddescription>
+    <location file="include/nfc/tnep/poller.h" line="60" column="1" bodyfile="include/nfc/tnep/poller.h" bodystart="60" bodyend="89"/>
+    <listofallmembers>
+      <member refid="structnfc__tnep__poller__ndef__api_ae48e9617d242e88384d05a980e69d5d8_1ae48e9617d242e88384d05a980e69d5d8" prot="public" virt="non-virtual"><scope>nfc_tnep_poller_ndef_api</scope><name>ndef_read</name></member>
+      <member refid="structnfc__tnep__poller__ndef__api_adabb4c9d39dfbce0bb8e18c5504bdf33_1adabb4c9d39dfbce0bb8e18c5504bdf33" prot="public" virt="non-virtual"><scope>nfc_tnep_poller_ndef_api</scope><name>ndef_update</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

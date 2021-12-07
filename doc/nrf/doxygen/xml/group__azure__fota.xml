@@ -1,0 +1,196 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__azure__fota" kind="group">
+    <compoundname>azure_fota</compoundname>
+    <title>Azure FOTA library</title>
+    <innerclass refid="structazure__fota__event" prot="public">azure_fota_event</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__azure__fota_1gad2d2a2354ae00f180851b7561379a822" prot="public" static="no" strong="no">
+        <type></type>
+        <name>azure_fota_evt_type</name>
+        <enumvalue id="group__azure__fota_gad2d2a2354ae00f180851b7561379a822_1ggad2d2a2354ae00f180851b7561379a822af20502a6c7928b3c0c4571620e0642a5" prot="public">
+          <name>AZURE_FOTA_EVT_REPORT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Azure FOTA state report is created and ready to be sent </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__fota_gad2d2a2354ae00f180851b7561379a822_1ggad2d2a2354ae00f180851b7561379a822afc49fee6e0712e0c72069a61ad7bf97b" prot="public">
+          <name>AZURE_FOTA_EVT_START</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Azure FOTA download has started </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__fota_gad2d2a2354ae00f180851b7561379a822_1ggad2d2a2354ae00f180851b7561379a822a094a3d915e6edf809ad0e5529b8c93cf" prot="public">
+          <name>AZURE_FOTA_EVT_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Azure FOTA complete and status reported to job document </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__fota_gad2d2a2354ae00f180851b7561379a822_1ggad2d2a2354ae00f180851b7561379a822a6ab122785f9054130ae83b9bd70166ce" prot="public">
+          <name>AZURE_FOTA_EVT_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Azure FOTA error </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__fota_gad2d2a2354ae00f180851b7561379a822_1ggad2d2a2354ae00f180851b7561379a822a255a5fed41538a4f3b9c519d6457f531" prot="public">
+          <name>AZURE_FOTA_EVT_ERASE_PENDING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Azure FOTA erase pending </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__azure__fota_gad2d2a2354ae00f180851b7561379a822_1ggad2d2a2354ae00f180851b7561379a822a8d315fcbf36d4b8d12c726bb785d8ae1" prot="public">
+          <name>AZURE_FOTA_EVT_ERASE_DONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Azure FOTA erase done </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_fota.h" line="25" column="1" bodyfile="include/net/azure_fota.h" bodystart="25" bodyend="38"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__azure__fota_1gacef93166cf3bd0eec9af12168a5db32f" prot="public" static="no">
+        <type>void(*</type>
+        <definition>azure_fota_callback_t</definition>
+        <argsstring>)(struct azure_fota_event *evt)</argsstring>
+        <name>azure_fota_callback_t</name>
+        <briefdescription>
+<para>Callback to receive Azure FOTA events. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>evt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to event structure. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_fota.h" line="60" column="9" bodyfile="include/net/azure_fota.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__azure__fota_1gaf6325b8800e1994e18e90dc61e2f00f1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int azure_fota_init</definition>
+        <argsstring>(azure_fota_callback_t evt_handler)</argsstring>
+        <name>azure_fota_init</name>
+        <param>
+          <type><ref refid="group__azure__fota_gacef93166cf3bd0eec9af12168a5db32f_1gacef93166cf3bd0eec9af12168a5db32f" kindref="member">azure_fota_callback_t</ref></type>
+          <declname>evt_handler</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the Azure Firmware Over the Air library. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>evt_handler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback function to receive events.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If successfully initialized. Otherwise, a negative value is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_fota.h" line="69" column="5" declfile="include/net/azure_fota.h" declline="69" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__azure__fota_1gab3202c7d6dfbed8f3e8db26e4508a3b3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int azure_fota_msg_process</definition>
+        <argsstring>(const char *const buf, size_t size)</argsstring>
+        <name>azure_fota_msg_process</name>
+        <param>
+          <type>const char *const</type>
+          <declname>buf</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+<para>Process an Azure IoT Hub device twin JSON object, check for FOTA information and act accordingly if found. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to buffer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If no FOTA information found. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>1</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If FOTA information was processed. If an error occurs, a negative value is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/azure_fota.h" line="81" column="5" declfile="include/net/azure_fota.h" declline="81" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Library for performing Firmware Over The Air updates using firmware information in JSON format. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

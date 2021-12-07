@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__tim__ctrl__reg" kind="group">
+    <compoundname>st25r3911b_tim_ctrl_reg</compoundname>
+    <title>General Purpose and</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__tim__ctrl__reg_1ga8ee36ee520338c6af878d2006f701705" prot="public" static="no">
+        <name>ST25R3911B_REG_TIM_CTRl_NRT_STEP</name>
+        <initializer>BIT(0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="372" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="372" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__tim__ctrl__reg_1gabfa3adf3dc449b6e6ae15a55f7a2fc7e" prot="public" static="no">
+        <name>ST25R3911B_REG_TIM_CTRl_NRT_EMV</name>
+        <initializer>BIT(1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="373" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="373" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__tim__ctrl__reg_1ga9decbb9494e469d96ed40cf9f021eecd" prot="public" static="no">
+        <name>ST25R3911B_REG_TIM_CTRl_GPTC0</name>
+        <initializer>BIT(5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="374" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="374" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__tim__ctrl__reg_1gab9d4638ef0431847fdce049571fbca59" prot="public" static="no">
+        <name>ST25R3911B_REG_TIM_CTRl_GPTC1</name>
+        <initializer>BIT(6)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="375" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="375" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__tim__ctrl__reg_1ga4f5052cdd824e8c3b696b507084d5fe0" prot="public" static="no">
+        <name>ST25R3911B_REG_TIM_CTRl_GPTC2</name>
+        <initializer>BIT(7)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="376" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="376" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>No-Response Timer Control Register bits </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

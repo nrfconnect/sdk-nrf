@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__auxiliary__disp__reg" kind="group">
+    <compoundname>st25r3911b_auxiliary_disp_reg</compoundname>
+    <title>Auxiliary Display</title>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__auxiliary__disp__reg_1gadc42de8db7b89cef883592c30e4a1253" prot="public" static="no">
+        <name>ST25R3911B_REG_AUXILIARY_DISP_EN_AC</name>
+        <initializer>BIT(0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="629" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="629" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__auxiliary__disp__reg_1gaa3025c1c4e51121100a7bc8fe0a2eb85" prot="public" static="no">
+        <name>ST25R3911B_REG_AUXILIARY_DISP_NFC_T</name>
+        <initializer>BIT(1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="630" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="630" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__auxiliary__disp__reg_1ga549a5577bbf91ddec0e7b21e1c264bc1" prot="public" static="no">
+        <name>ST25R3911B_REG_AUXILIARY_DISP_RX_ACT</name>
+        <initializer>BIT(2)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="631" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="631" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__auxiliary__disp__reg_1ga296db770e5aeb7b2b56c7d5ce75cabcb" prot="public" static="no">
+        <name>ST25R3911B_REG_AUXILIARY_DISP_RX_ON</name>
+        <initializer>BIT(3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="632" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="632" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__auxiliary__disp__reg_1gabba2a9234c4a141c3dfa63608d66c24d" prot="public" static="no">
+        <name>ST25R3911B_REG_AUXILIARY_DISP_OSC_OK</name>
+        <initializer>BIT(4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="633" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="633" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__auxiliary__disp__reg_1gaf8aa0271515877485ebe187ae24c20cc" prot="public" static="no">
+        <name>ST25R3911B_REG_AUXILIARY_DISP_TX_ON</name>
+        <initializer>BIT(5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="634" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="634" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__auxiliary__disp__reg_1gaa50fc7e13c45cf09d30feb3f91a8d23f" prot="public" static="no">
+        <name>ST25R3911B_REG_AUXILIARY_DISP_EFD_O</name>
+        <initializer>BIT(6)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="635" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="635" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__auxiliary__disp__reg_1ga7df910233a406439ea4f1e810969cc4a" prot="public" static="no">
+        <name>ST25R3911B_REG_AUXILIARY_DISP_A_CHA</name>
+        <initializer>BIT(7)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_reg.h" line="636" column="9" bodyfile="lib/st25r3911b/st25r3911b_reg.h" bodystart="636" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Register bits </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

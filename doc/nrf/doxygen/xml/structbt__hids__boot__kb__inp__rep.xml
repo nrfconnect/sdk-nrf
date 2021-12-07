@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__hids__boot__kb__inp__rep" kind="struct" language="C++" prot="public">
+    <compoundname>bt_hids_boot_kb_inp_rep</compoundname>
+    <includes refid="hids_8h" local="no">hids.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__hids__boot__kb__inp__rep_a6201b521e14c8d188ea546a0d1243b38_1a6201b521e14c8d188ea546a0d1243b38" prot="public" static="no" mutable="no">
+        <type>struct _bt_gatt_ccc</type>
+        <definition>struct _bt_gatt_ccc bt_hids_boot_kb_inp_rep::ccc</definition>
+        <argsstring></argsstring>
+        <name>ccc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>CCC descriptor. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="287" column="19" bodyfile="include/bluetooth/services/hids.h" bodystart="287" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__boot__kb__inp__rep_abfb19b9471cff9515ec6543b92d63882_1abfb19b9471cff9515ec6543b92d63882" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_hids_boot_kb_inp_rep::att_ind</definition>
+        <argsstring></argsstring>
+        <name>att_ind</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Index in the service attribute array. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="290" column="9" bodyfile="include/bluetooth/services/hids.h" bodystart="290" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__hids__boot__kb__inp__rep_a49514291ccb59beb86589e24d2b377be_1a49514291ccb59beb86589e24d2b377be" prot="public" static="no" mutable="no">
+        <type><ref refid="group__bt__hids_gab1b327abc112792947b20763cb1b8936_1gab1b327abc112792947b20763cb1b8936" kindref="member">bt_hids_notify_handler_t</ref></type>
+        <definition>bt_hids_notify_handler_t bt_hids_boot_kb_inp_rep::handler</definition>
+        <argsstring></argsstring>
+        <name>handler</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Callback with the notification event. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/hids.h" line="293" column="26" bodyfile="include/bluetooth/services/hids.h" bodystart="293" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Boot Keyboard Input Report. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/hids.h" line="285" column="1" bodyfile="include/bluetooth/services/hids.h" bodystart="285" bodyend="294"/>
+    <listofallmembers>
+      <member refid="structbt__hids__boot__kb__inp__rep_abfb19b9471cff9515ec6543b92d63882_1abfb19b9471cff9515ec6543b92d63882" prot="public" virt="non-virtual"><scope>bt_hids_boot_kb_inp_rep</scope><name>att_ind</name></member>
+      <member refid="structbt__hids__boot__kb__inp__rep_a6201b521e14c8d188ea546a0d1243b38_1a6201b521e14c8d188ea546a0d1243b38" prot="public" virt="non-virtual"><scope>bt_hids_boot_kb_inp_rep</scope><name>ccc</name></member>
+      <member refid="structbt__hids__boot__kb__inp__rep_a49514291ccb59beb86589e24d2b377be_1a49514291ccb59beb86589e24d2b377be" prot="public" virt="non-virtual"><scope>bt_hids_boot_kb_inp_rep</scope><name>handler</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

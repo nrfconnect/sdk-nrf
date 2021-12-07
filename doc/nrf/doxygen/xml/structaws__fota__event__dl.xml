@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structaws__fota__event__dl" kind="struct" language="C++" prot="public">
+    <compoundname>aws_fota_event_dl</compoundname>
+    <includes refid="aws__fota_8h" local="no">aws_fota.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structaws__fota__event__dl_a84e52918ac31b104d2f01c293d226b3a_1a84e52918ac31b104d2f01c293d226b3a" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int aws_fota_event_dl::progress</definition>
+        <argsstring></argsstring>
+        <name>progress</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/aws_fota.h" line="41" column="5" bodyfile="include/net/aws_fota.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/aws_fota.h" line="40" column="1" bodyfile="include/net/aws_fota.h" bodystart="40" bodyend="42"/>
+    <listofallmembers>
+      <member refid="structaws__fota__event__dl_a84e52918ac31b104d2f01c293d226b3a_1a84e52918ac31b104d2f01c293d226b3a" prot="public" virt="non-virtual"><scope>aws_fota_event_dl</scope><name>progress</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

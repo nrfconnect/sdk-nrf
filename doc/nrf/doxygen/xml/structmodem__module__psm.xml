@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structmodem__module__psm" kind="struct" language="C++" prot="public">
+    <compoundname>modem_module_psm</compoundname>
+    <includes refid="modem__module__event_8h" local="no">modem_module_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmodem__module__psm_a50ba7c82a1f2659fa38961f45b12c5d7_1a50ba7c82a1f2659fa38961f45b12c5d7" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int modem_module_psm::tau</definition>
+        <argsstring></argsstring>
+        <name>tau</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Tracking Area Update interval [s]. -1 if the timer is disabled. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="79" column="5" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmodem__module__psm_ab2a23bfc59fef19985a63e766e09906e_1ab2a23bfc59fef19985a63e766e09906e" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int modem_module_psm::active_time</definition>
+        <argsstring></argsstring>
+        <name>active_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Active time [s]. -1 if the timer is disabled. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="81" column="5" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>PSM information. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/events/modem_module_event.h" line="77" column="1" bodyfile="applications/asset_tracker_v2/src/events/modem_module_event.h" bodystart="77" bodyend="82"/>
+    <listofallmembers>
+      <member refid="structmodem__module__psm_ab2a23bfc59fef19985a63e766e09906e_1ab2a23bfc59fef19985a63e766e09906e" prot="public" virt="non-virtual"><scope>modem_module_psm</scope><name>active_time</name></member>
+      <member refid="structmodem__module__psm_a50ba7c82a1f2659fa38961f45b12c5d7_1a50ba7c82a1f2659fa38961f45b12c5d7" prot="public" virt="non-virtual"><scope>modem_module_psm</scope><name>tau</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

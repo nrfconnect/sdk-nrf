@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structgps__sv" kind="struct" language="C++" prot="public">
+    <compoundname>gps_sv</compoundname>
+    <includes refid="gps_8h" local="no">gps.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structgps__sv_abfc584e28ae77c20b2d2fecdff30f431_1abfc584e28ae77c20b2d2fecdff30f431" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t gps_sv::sv</definition>
+        <argsstring></argsstring>
+        <name>sv</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>SV number 1...32 for GPS. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="50" column="10" bodyfile="include/drivers/gps.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__sv_a9a7a6ec0a1d0984698f9ab7f2428a57c_1a9a7a6ec0a1d0984698f9ab7f2428a57c" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t gps_sv::cn0</definition>
+        <argsstring></argsstring>
+        <name>cn0</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>0.1 dB/Hz. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="53" column="10" bodyfile="include/drivers/gps.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__sv_ab519d3530c8441e4a0238f4a6c67536b_1ab519d3530c8441e4a0238f4a6c67536b" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t gps_sv::elevation</definition>
+        <argsstring></argsstring>
+        <name>elevation</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>SV elevation angle in degrees. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="56" column="9" bodyfile="include/drivers/gps.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__sv_ad5bc38fe719c47e7953f9f516699113d_1ad5bc38fe719c47e7953f9f516699113d" prot="public" static="no" mutable="no">
+        <type>int16_t</type>
+        <definition>int16_t gps_sv::azimuth</definition>
+        <argsstring></argsstring>
+        <name>azimuth</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>SV azimuth angle in degrees. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="59" column="9" bodyfile="include/drivers/gps.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__sv_aa54fd311759df69b0dbe905823be038b_1aa54fd311759df69b0dbe905823be038b" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t gps_sv::signal</definition>
+        <argsstring></argsstring>
+        <name>signal</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Signal type. 0: invalid, 1: GPS L1C/A. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="62" column="9" bodyfile="include/drivers/gps.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__sv_ace8ceb47ced3a57f683eb425e9cbe1e3_1ace8ceb47ced3a57f683eb425e9cbe1e3" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t gps_sv::in_fix</definition>
+        <argsstring></argsstring>
+        <name>in_fix</name>
+        <bitfield>1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Satellite used in fix calculation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="65" column="9" bodyfile="include/drivers/gps.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgps__sv_ab76597ba3bdb48cc7c032fa40896a230_1ab76597ba3bdb48cc7c032fa40896a230" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t gps_sv::unhealthy</definition>
+        <argsstring></argsstring>
+        <name>unhealthy</name>
+        <bitfield>1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Satellite is marked as unhealthy. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/drivers/gps.h" line="68" column="9" bodyfile="include/drivers/gps.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/drivers/gps.h" line="48" column="1" bodyfile="include/drivers/gps.h" bodystart="48" bodyend="69"/>
+    <listofallmembers>
+      <member refid="structgps__sv_ad5bc38fe719c47e7953f9f516699113d_1ad5bc38fe719c47e7953f9f516699113d" prot="public" virt="non-virtual"><scope>gps_sv</scope><name>azimuth</name></member>
+      <member refid="structgps__sv_a9a7a6ec0a1d0984698f9ab7f2428a57c_1a9a7a6ec0a1d0984698f9ab7f2428a57c" prot="public" virt="non-virtual"><scope>gps_sv</scope><name>cn0</name></member>
+      <member refid="structgps__sv_ab519d3530c8441e4a0238f4a6c67536b_1ab519d3530c8441e4a0238f4a6c67536b" prot="public" virt="non-virtual"><scope>gps_sv</scope><name>elevation</name></member>
+      <member refid="structgps__sv_ace8ceb47ced3a57f683eb425e9cbe1e3_1ace8ceb47ced3a57f683eb425e9cbe1e3" prot="public" virt="non-virtual"><scope>gps_sv</scope><name>in_fix</name></member>
+      <member refid="structgps__sv_aa54fd311759df69b0dbe905823be038b_1aa54fd311759df69b0dbe905823be038b" prot="public" virt="non-virtual"><scope>gps_sv</scope><name>signal</name></member>
+      <member refid="structgps__sv_abfc584e28ae77c20b2d2fecdff30f431_1abfc584e28ae77c20b2d2fecdff30f431" prot="public" virt="non-virtual"><scope>gps_sv</scope><name>sv</name></member>
+      <member refid="structgps__sv_ab76597ba3bdb48cc7c032fa40896a230_1ab76597ba3bdb48cc7c032fa40896a230" prot="public" virt="non-virtual"><scope>gps_sv</scope><name>unhealthy</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

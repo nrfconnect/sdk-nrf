@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="gps__controller_8h" kind="file" language="C++">
+    <compoundname>gps_controller.h</compoundname>
+    <includes local="no">zephyr.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/asset_tracker/src/gps_controller/gps_controller.h</label>
+        <link refid="gps__controller_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>zephyr.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="gps__controller_8h_a8e423971fdb635fc0a90b10fd02a8508_1a8e423971fdb635fc0a90b10fd02a8508" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int gps_control_init</definition>
+        <argsstring>(struct k_work_q *work_q, gps_event_handler_t handler)</argsstring>
+        <name>gps_control_init</name>
+        <param>
+          <type>struct k_work_q *</type>
+          <declname>work_q</declname>
+        </param>
+        <param>
+          <type><ref refid="group__gpsapi_gac25165e60fbf6688d807f34dc69668c0_1gac25165e60fbf6688d807f34dc69668c0" kindref="member">gps_event_handler_t</ref></type>
+          <declname>handler</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/gps_controller/gps_controller.h" line="21" column="5" declfile="applications/asset_tracker/src/gps_controller/gps_controller.h" declline="21" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="gps__controller_8h_acaad12a879be455712cdd94752894120_1acaad12a879be455712cdd94752894120" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void gps_control_on_trigger</definition>
+        <argsstring>(void)</argsstring>
+        <name>gps_control_on_trigger</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/gps_controller/gps_controller.h" line="23" column="6" declfile="applications/asset_tracker/src/gps_controller/gps_controller.h" declline="23" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="gps__controller_8h_a7b630e5f4489867f0f0483116d81d4f8_1a7b630e5f4489867f0f0483116d81d4f8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void gps_control_stop</definition>
+        <argsstring>(uint32_t delay_ms)</argsstring>
+        <name>gps_control_stop</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>delay_ms</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/gps_controller/gps_controller.h" line="25" column="6" declfile="applications/asset_tracker/src/gps_controller/gps_controller.h" declline="25" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="gps__controller_8h_a2958c143196b4dad26323441a957c18e_1a2958c143196b4dad26323441a957c18e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void gps_control_start</definition>
+        <argsstring>(uint32_t delay_ms)</argsstring>
+        <name>gps_control_start</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>delay_ms</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/gps_controller/gps_controller.h" line="27" column="6" declfile="applications/asset_tracker/src/gps_controller/gps_controller.h" declline="27" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="gps__controller_8h_a468b146f4af171bc251ce4ff2fdf9365_1a468b146f4af171bc251ce4ff2fdf9365" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool gps_control_is_enabled</definition>
+        <argsstring>(void)</argsstring>
+        <name>gps_control_is_enabled</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/gps_controller/gps_controller.h" line="29" column="6" declfile="applications/asset_tracker/src/gps_controller/gps_controller.h" declline="29" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="gps__controller_8h_ac79e6e6070c8e4af70d063ea241aec60_1ac79e6e6070c8e4af70d063ea241aec60" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool gps_control_is_active</definition>
+        <argsstring>(void)</argsstring>
+        <name>gps_control_is_active</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/gps_controller/gps_controller.h" line="31" column="6" declfile="applications/asset_tracker/src/gps_controller/gps_controller.h" declline="31" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="gps__controller_8h_a151054f53bf2db17490b6f1fe7e6c8ae_1a151054f53bf2db17490b6f1fe7e6c8ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int gps_control_get_gps_reporting_interval</definition>
+        <argsstring>(void)</argsstring>
+        <name>gps_control_get_gps_reporting_interval</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/gps_controller/gps_controller.h" line="33" column="5" declfile="applications/asset_tracker/src/gps_controller/gps_controller.h" declline="33" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="gps__controller_8h_a97bcf8a1b15cc925875ab135ad9c53a2_1a97bcf8a1b15cc925875ab135ad9c53a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool gps_control_set_active</definition>
+        <argsstring>(bool active)</argsstring>
+        <name>gps_control_set_active</name>
+        <param>
+          <type>bool</type>
+          <declname>active</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/gps_controller/gps_controller.h" line="35" column="6" declfile="applications/asset_tracker/src/gps_controller/gps_controller.h" declline="35" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>GPS module for asset tracker. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2019<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>GPS_CONTROLLER_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>GPS_CONTROLLER_H__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="gps__controller_8h_a8e423971fdb635fc0a90b10fd02a8508_1a8e423971fdb635fc0a90b10fd02a8508" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="gps__controller_8h_a8e423971fdb635fc0a90b10fd02a8508_1a8e423971fdb635fc0a90b10fd02a8508" kindref="member">gps_control_init</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>k_work_q<sp/>*work_q,<sp/><ref refid="group__gpsapi_gac25165e60fbf6688d807f34dc69668c0_1gac25165e60fbf6688d807f34dc69668c0" kindref="member">gps_event_handler_t</ref><sp/>handler);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="gps__controller_8h_acaad12a879be455712cdd94752894120_1acaad12a879be455712cdd94752894120" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="gps__controller_8h_acaad12a879be455712cdd94752894120_1acaad12a879be455712cdd94752894120" kindref="member">gps_control_on_trigger</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="gps__controller_8h_a7b630e5f4489867f0f0483116d81d4f8_1a7b630e5f4489867f0f0483116d81d4f8" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="gps__controller_8h_a7b630e5f4489867f0f0483116d81d4f8_1a7b630e5f4489867f0f0483116d81d4f8" kindref="member">gps_control_stop</ref>(uint32_t<sp/>delay_ms);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="gps__controller_8h_a2958c143196b4dad26323441a957c18e_1a2958c143196b4dad26323441a957c18e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="gps__controller_8h_a2958c143196b4dad26323441a957c18e_1a2958c143196b4dad26323441a957c18e" kindref="member">gps_control_start</ref>(uint32_t<sp/>delay_ms);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="gps__controller_8h_a468b146f4af171bc251ce4ff2fdf9365_1a468b146f4af171bc251ce4ff2fdf9365" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="gps__controller_8h_a468b146f4af171bc251ce4ff2fdf9365_1a468b146f4af171bc251ce4ff2fdf9365" kindref="member">gps_control_is_enabled</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="gps__controller_8h_ac79e6e6070c8e4af70d063ea241aec60_1ac79e6e6070c8e4af70d063ea241aec60" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="gps__controller_8h_ac79e6e6070c8e4af70d063ea241aec60_1ac79e6e6070c8e4af70d063ea241aec60" kindref="member">gps_control_is_active</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="gps__controller_8h_a151054f53bf2db17490b6f1fe7e6c8ae_1a151054f53bf2db17490b6f1fe7e6c8ae" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="gps__controller_8h_a151054f53bf2db17490b6f1fe7e6c8ae_1a151054f53bf2db17490b6f1fe7e6c8ae" kindref="member">gps_control_get_gps_reporting_interval</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="gps__controller_8h_a97bcf8a1b15cc925875ab135ad9c53a2_1a97bcf8a1b15cc925875ab135ad9c53a2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="gps__controller_8h_a97bcf8a1b15cc925875ab135ad9c53a2_1a97bcf8a1b15cc925875ab135ad9c53a2" kindref="member">gps_control_set_active</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>active);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>GPS_CONTROLLER_H__<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/asset_tracker/src/gps_controller/gps_controller.h"/>
+  </compounddef>
+</doxygen>

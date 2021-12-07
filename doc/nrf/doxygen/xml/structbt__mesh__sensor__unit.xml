@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__sensor__unit" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_sensor_unit</compoundname>
+    <includes refid="sensor_8h" local="no">sensor.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__sensor__unit_a7bd9c77b6b4dd750e461dca2015cec21_1a7bd9c77b6b4dd750e461dca2015cec21" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* bt_mesh_sensor_unit::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>English name of the unit, e.g. &quot;Decibel&quot;. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="149" column="12" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="149" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__sensor__unit_ae68a0304884816e8cb71edfa27b3b7f8_1ae68a0304884816e8cb71edfa27b3b7f8" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* bt_mesh_sensor_unit::symbol</definition>
+        <argsstring></argsstring>
+        <name>symbol</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Symbol of the unit, e.g. &quot;dB&quot;. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/sensor.h" line="151" column="12" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Unit for single sensor channel values. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/sensor.h" line="147" column="1" bodyfile="include/bluetooth/mesh/sensor.h" bodystart="147" bodyend="152"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__sensor__unit_a7bd9c77b6b4dd750e461dca2015cec21_1a7bd9c77b6b4dd750e461dca2015cec21" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_unit</scope><name>name</name></member>
+      <member refid="structbt__mesh__sensor__unit_ae68a0304884816e8cb71edfa27b3b7f8_1ae68a0304884816e8cb71edfa27b3b7f8" prot="public" virt="non-virtual"><scope>bt_mesh_sensor_unit</scope><name>symbol</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

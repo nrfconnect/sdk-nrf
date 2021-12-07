@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structfw__info__ext__api__request" kind="struct" language="C++" prot="public">
+    <compoundname>fw_info_ext_api_request</compoundname>
+    <includes refid="fw__info_8h" local="no">fw_info.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structfw__info__ext__api__request_a4d4dcf28e92121434968b30d02485bf0_1a4d4dcf28e92121434968b30d02485bf0" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structfw__info__ext__api" kindref="compound">fw_info_ext_api</ref></type>
+        <definition>struct fw_info_ext_api fw_info_ext_api_request::request</definition>
+        <argsstring></argsstring>
+        <name>request</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="145" column="22" bodyfile="include/fw_info.h" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structfw__info__ext__api__request_aa529e6d2a1c186f696903e57c138b4a7_1aa529e6d2a1c186f696903e57c138b4a7" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t fw_info_ext_api_request::ext_api_max_version</definition>
+        <argsstring></argsstring>
+        <name>ext_api_max_version</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="148" column="10" bodyfile="include/fw_info.h" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structfw__info__ext__api__request_a0d7e339d5c46ad45e36e1b2aad4df023_1a0d7e339d5c46ad45e36e1b2aad4df023" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t fw_info_ext_api_request::required</definition>
+        <argsstring></argsstring>
+        <name>required</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="153" column="10" bodyfile="include/fw_info.h" bodystart="153" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structfw__info__ext__api__request_aa58cf18594eeedb8c21a817873741dbf_1aa58cf18594eeedb8c21a817873741dbf" prot="public" static="no" mutable="no">
+        <type>const struct <ref refid="structfw__info__ext__api" kindref="compound">fw_info_ext_api</ref> **</type>
+        <definition>const struct fw_info_ext_api** fw_info_ext_api_request::ext_api</definition>
+        <argsstring></argsstring>
+        <name>ext_api</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/fw_info.h" line="156" column="28" bodyfile="include/fw_info.h" bodystart="156" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>A struct that is used to request an EXT_API.</para>
+<para>It contains a pointer to a non-initialized pointer that a previous boot stage will populate with a pointer to a compliant EXT_API. The EXT_API could be located in the boot stage itself, or in a third image. An EXT_API fulfills a request if the ID matches, all flags in the request are set in the EXT_API, and the version falls between the minimum and maximum (inclusive).</para>
+<para>The request is placed in the list of requests in the <ref refid="structfw__info" kindref="compound">fw_info</ref> struct.</para>
+<para><simplesect kind="note"><para>If <computeroutput>required</computeroutput> is true, the image making the request will not function unless it has access to the EXT_API. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>fw_info_ext_api</label>
+        <link refid="structfw__info__ext__api"/>
+      </node>
+      <node id="1">
+        <label>fw_info_ext_api_request</label>
+        <link refid="structfw__info__ext__api__request"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>ext_api</edgelabel>
+          <edgelabel>request</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="include/fw_info.h" line="141" column="1" bodyfile="include/fw_info.h" bodystart="141" bodyend="157"/>
+    <listofallmembers>
+      <member refid="structfw__info__ext__api__request_aa58cf18594eeedb8c21a817873741dbf_1aa58cf18594eeedb8c21a817873741dbf" prot="public" virt="non-virtual"><scope>fw_info_ext_api_request</scope><name>ext_api</name></member>
+      <member refid="structfw__info__ext__api__request_aa529e6d2a1c186f696903e57c138b4a7_1aa529e6d2a1c186f696903e57c138b4a7" prot="public" virt="non-virtual"><scope>fw_info_ext_api_request</scope><name>ext_api_max_version</name></member>
+      <member refid="structfw__info__ext__api__request_a4d4dcf28e92121434968b30d02485bf0_1a4d4dcf28e92121434968b30d02485bf0" prot="public" virt="non-virtual"><scope>fw_info_ext_api_request</scope><name>request</name></member>
+      <member refid="structfw__info__ext__api__request_a0d7e339d5c46ad45e36e1b2aad4df023_1a0d7e339d5c46ad45e36e1b2aad4df023" prot="public" virt="non-virtual"><scope>fw_info_ext_api_request</scope><name>required</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

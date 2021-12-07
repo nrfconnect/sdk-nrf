@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__dtt__cli" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_dtt_cli</compoundname>
+    <includes refid="gen__dtt__cli_8h" local="no">gen_dtt_cli.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__dtt__cli_a992bbd39043a46fb3c467e30a645fb23_1a992bbd39043a46fb3c467e30a645fb23" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_dtt_cli::status_handler) (struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx, int32_t transition_time)</definition>
+        <argsstring>)(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx, int32_t transition_time)</argsstring>
+        <name>status_handler</name>
+        <briefdescription>
+<para>Default Transition Time status message handler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">cli</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Client that received the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">transition_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Transition time presented in the message, in milliseconds. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_dtt_cli.h" line="65" column="1" bodyfile="include/bluetooth/mesh/gen_dtt_cli.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__dtt__cli_ad7e61751bea615efa6770273c0684270_1ad7e61751bea615efa6770273c0684270" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_msg_ack_ctx</type>
+        <definition>struct bt_mesh_msg_ack_ctx bt_mesh_dtt_cli::ack_ctx</definition>
+        <argsstring></argsstring>
+        <name>ack_ctx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Response context for tracking acknowledged messages. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_dtt_cli.h" line="70" column="26" bodyfile="include/bluetooth/mesh/gen_dtt_cli.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__dtt__cli_ad59089e7b30351f9dec0a104dbf964ea_1ad59089e7b30351f9dec0a104dbf964ea" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model_pub</type>
+        <definition>struct bt_mesh_model_pub bt_mesh_dtt_cli::pub</definition>
+        <argsstring></argsstring>
+        <name>pub</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Model publish parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_dtt_cli.h" line="72" column="24" bodyfile="include/bluetooth/mesh/gen_dtt_cli.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__dtt__cli_ac0657d1f5f1a9f45505473fbf1d8bd6c_1ac0657d1f5f1a9f45505473fbf1d8bd6c" prot="public" static="no" mutable="no">
+        <type>struct net_buf_simple</type>
+        <definition>struct net_buf_simple bt_mesh_dtt_cli::pub_buf</definition>
+        <argsstring></argsstring>
+        <name>pub_buf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_dtt_cli.h" line="74" column="21" bodyfile="include/bluetooth/mesh/gen_dtt_cli.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__dtt__cli_af0ce8ce075859da87871167d97f2b0e0_1af0ce8ce075859da87871167d97f2b0e0" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t bt_mesh_dtt_cli::pub_data[BT_MESH_MODEL_BUF_LEN(BT_MESH_DTT_OP_SET, BT_MESH_DTT_MSG_LEN_SET)]</definition>
+        <argsstring>[BT_MESH_MODEL_BUF_LEN(BT_MESH_DTT_OP_SET, BT_MESH_DTT_MSG_LEN_SET)]</argsstring>
+        <name>pub_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_dtt_cli.h" line="76" column="9" bodyfile="include/bluetooth/mesh/gen_dtt_cli.h" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__dtt__cli_a739c78ecbafa561e07af5e40c99bc8db_1a739c78ecbafa561e07af5e40c99bc8db" prot="public" static="no" mutable="no">
+        <type>struct bt_mesh_model *</type>
+        <definition>struct bt_mesh_model* bt_mesh_dtt_cli::model</definition>
+        <argsstring></argsstring>
+        <name>model</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Composition data model entry pointer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_dtt_cli.h" line="79" column="20" bodyfile="include/bluetooth/mesh/gen_dtt_cli.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Generic DTT client structure.</para>
+<para>Should be initialized using the <ref refid="group__bt__mesh__dtt__cli_ga9b0156425c4427858c2012846618f49b_1ga9b0156425c4427858c2012846618f49b" kindref="member">BT_MESH_DTT_CLI_INIT</ref> macro. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/gen_dtt_cli.h" line="57" column="1" bodyfile="include/bluetooth/mesh/gen_dtt_cli.h" bodystart="57" bodyend="80"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__dtt__cli_ad7e61751bea615efa6770273c0684270_1ad7e61751bea615efa6770273c0684270" prot="public" virt="non-virtual"><scope>bt_mesh_dtt_cli</scope><name>ack_ctx</name></member>
+      <member refid="structbt__mesh__dtt__cli_a739c78ecbafa561e07af5e40c99bc8db_1a739c78ecbafa561e07af5e40c99bc8db" prot="public" virt="non-virtual"><scope>bt_mesh_dtt_cli</scope><name>model</name></member>
+      <member refid="structbt__mesh__dtt__cli_ad59089e7b30351f9dec0a104dbf964ea_1ad59089e7b30351f9dec0a104dbf964ea" prot="public" virt="non-virtual"><scope>bt_mesh_dtt_cli</scope><name>pub</name></member>
+      <member refid="structbt__mesh__dtt__cli_ac0657d1f5f1a9f45505473fbf1d8bd6c_1ac0657d1f5f1a9f45505473fbf1d8bd6c" prot="public" virt="non-virtual"><scope>bt_mesh_dtt_cli</scope><name>pub_buf</name></member>
+      <member refid="structbt__mesh__dtt__cli_af0ce8ce075859da87871167d97f2b0e0_1af0ce8ce075859da87871167d97f2b0e0" prot="public" virt="non-virtual"><scope>bt_mesh_dtt_cli</scope><name>pub_data</name></member>
+      <member refid="structbt__mesh__dtt__cli_a992bbd39043a46fb3c467e30a645fb23_1a992bbd39043a46fb3c467e30a645fb23" prot="public" virt="non-virtual"><scope>bt_mesh_dtt_cli</scope><name>status_handler</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

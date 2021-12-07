@@ -1,0 +1,212 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__mesh__plvl__srv__handlers" kind="struct" language="C++" prot="public">
+    <compoundname>bt_mesh_plvl_srv_handlers</compoundname>
+    <includes refid="gen__plvl__srv_8h" local="no">gen_plvl_srv.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__mesh__plvl__srv__handlers_a94acfcba35bf3d2a6e69e08326b69dc8_1a94acfcba35bf3d2a6e69e08326b69dc8" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_plvl_srv_handlers::power_set) (struct bt_mesh_plvl_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_plvl_set *set, struct bt_mesh_plvl_status *rsp)</definition>
+        <argsstring>)(struct bt_mesh_plvl_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_plvl_set *set, struct bt_mesh_plvl_status *rsp)</argsstring>
+        <name>power_set</name>
+        <briefdescription>
+<para>Set the Power state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When a set message is received, the model publishes a status message, with the response set to <computeroutput>rsp</computeroutput>. When an acknowledged set message is received, the model also sends a response back to a client. If a state change is non-instantaneous, for example when <ref refid="group__bt__mesh__model__types_gaa845685eb265d1294b17bb80fbde4996_1gaa845685eb265d1294b17bb80fbde4996" kindref="member">bt_mesh_model_transition_time</ref> returns a nonzero value, the application is responsible for publishing a value of the Power state at the end of the transition.</para>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server to set the Power state of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message context, or NULL if the state change was not a result of a message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">set</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters of the state change. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response structure to be filled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl_srv.h" line="82" column="1" bodyfile="include/bluetooth/mesh/gen_plvl_srv.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__srv__handlers_aa56df3b0fbcbce27baf10d645fc3c9cd_1aa56df3b0fbcbce27baf10d645fc3c9cd" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_plvl_srv_handlers::power_get) (struct bt_mesh_plvl_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_plvl_status *rsp)</definition>
+        <argsstring>)(struct bt_mesh_plvl_srv *srv, struct bt_mesh_msg_ctx *ctx, struct bt_mesh_plvl_status *rsp)</argsstring>
+        <name>power_get</name>
+        <briefdescription>
+<para>Get the current Power state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This handler is mandatory.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server to get the Power state of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the get message that triggered the query, or NULL if it was not triggered by a message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rsp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Response structure to be filled. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl_srv.h" line="96" column="1" bodyfile="include/bluetooth/mesh/gen_plvl_srv.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__srv__handlers_a2ac60fa92127e214c632b5839da6e3d8_1a2ac60fa92127e214c632b5839da6e3d8" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_plvl_srv_handlers::default_update) (struct bt_mesh_plvl_srv *srv, struct bt_mesh_msg_ctx *ctx, uint16_t old_default, uint16_t new_default)</definition>
+        <argsstring>)(struct bt_mesh_plvl_srv *srv, struct bt_mesh_msg_ctx *ctx, uint16_t old_default, uint16_t new_default)</argsstring>
+        <name>default_update</name>
+        <briefdescription>
+<para>The Default Power state has changed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The user may implement this handler to subscribe to changes to the Default Power state.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server the Default Power state was changed on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the set message that triggered the update, or NULL if it was not triggered by a message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">old_default</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Default Power before the change. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">new_default</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Default Power after the change. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl_srv.h" line="111" column="1" bodyfile="include/bluetooth/mesh/gen_plvl_srv.h" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbt__mesh__plvl__srv__handlers_aafda065122289590f3c56867888e2b12_1aafda065122289590f3c56867888e2b12" prot="public" static="no" mutable="no">
+        <type>void(*const</type>
+        <definition>void(*const bt_mesh_plvl_srv_handlers::range_update) (struct bt_mesh_plvl_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_plvl_range *old_range, const struct bt_mesh_plvl_range *new_range)</definition>
+        <argsstring>)(struct bt_mesh_plvl_srv *srv, struct bt_mesh_msg_ctx *ctx, const struct bt_mesh_plvl_range *old_range, const struct bt_mesh_plvl_range *new_range)</argsstring>
+        <name>range_update</name>
+        <briefdescription>
+<para>The Power Range state has changed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The user may implement this handler to subscribe to change to the Power Range state. If the change in range causes the current Power state to be out of range, the Power state should be changed to the nearest value inside the range. It&apos;s recommended to call <ref refid="group__bt__mesh__plvl__srv_gaf68b4a23457d020280d06ed63e8a9e1a_1gaf68b4a23457d020280d06ed63e8a9e1a" kindref="member">bt_mesh_plvl_srv_pub</ref> to notify the mesh if the Power state changes.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">srv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Server the Power Range state was changed on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Context of the set message that triggered the update, or NULL if it was not triggered by a message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">old_range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Power Range before the change. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">new_range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Power Range after the change. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/mesh/gen_plvl_srv.h" line="130" column="1" bodyfile="include/bluetooth/mesh/gen_plvl_srv.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Collection of handler callbacks for the Generic Power Level Server. </para>
+    </detaileddescription>
+    <location file="include/bluetooth/mesh/gen_plvl_srv.h" line="65" column="1" bodyfile="include/bluetooth/mesh/gen_plvl_srv.h" bodystart="65" bodyend="134"/>
+    <listofallmembers>
+      <member refid="structbt__mesh__plvl__srv__handlers_a2ac60fa92127e214c632b5839da6e3d8_1a2ac60fa92127e214c632b5839da6e3d8" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_srv_handlers</scope><name>default_update</name></member>
+      <member refid="structbt__mesh__plvl__srv__handlers_aa56df3b0fbcbce27baf10d645fc3c9cd_1aa56df3b0fbcbce27baf10d645fc3c9cd" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_srv_handlers</scope><name>power_get</name></member>
+      <member refid="structbt__mesh__plvl__srv__handlers_a94acfcba35bf3d2a6e69e08326b69dc8_1a94acfcba35bf3d2a6e69e08326b69dc8" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_srv_handlers</scope><name>power_set</name></member>
+      <member refid="structbt__mesh__plvl__srv__handlers_aafda065122289590f3c56867888e2b12_1aafda065122289590f3c56867888e2b12" prot="public" virt="non-virtual"><scope>bt_mesh_plvl_srv_handlers</scope><name>range_update</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

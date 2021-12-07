@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structbt__latency__cb" kind="struct" language="C++" prot="public">
+    <compoundname>bt_latency_cb</compoundname>
+    <includes refid="latency_8h" local="no">latency.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbt__latency__cb_a40514a5d477ab183400752a3d021ec2f_1a40514a5d477ab183400752a3d021ec2f" prot="public" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* bt_latency_cb::latency_request) (const void *buf, uint16_t len)</definition>
+        <argsstring>)(const void *buf, uint16_t len)</argsstring>
+        <name>latency_request</name>
+        <briefdescription>
+<para>Latency received callback. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is called when a GATT write request has been received by the Latency characteristic.</para>
+<para>It is optional for an application to handle the write request when measuring the latency.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">buf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Latency data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Latency data length. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/bluetooth/services/latency.h" line="38" column="1" bodyfile="include/bluetooth/services/latency.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Latency callback structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/bluetooth/services/latency.h" line="26" column="1" bodyfile="include/bluetooth/services/latency.h" bodystart="26" bodyend="39"/>
+    <listofallmembers>
+      <member refid="structbt__latency__cb_a40514a5d477ab183400752a3d021ec2f_1a40514a5d477ab183400752a3d021ec2f" prot="public" virt="non-virtual"><scope>bt_latency_cb</scope><name>latency_request</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

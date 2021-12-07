@@ -1,0 +1,184 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__multicell__location" kind="group">
+    <compoundname>multicell_location</compoundname>
+    <title>Multicell location</title>
+    <innerclass refid="structmulticell__location" prot="public">multicell_location</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__multicell__location_1ga9567c3abc8b007ab123ba94828319fc0" prot="public" static="no" strong="no">
+        <type></type>
+        <name>multicell_service</name>
+        <enumvalue id="group__multicell__location_ga9567c3abc8b007ab123ba94828319fc0_1gga9567c3abc8b007ab123ba94828319fc0a7f1c1dfa5df22decc878afe0d7a7fa70" prot="public">
+          <name>MULTICELL_SERVICE_ANY</name>
+          <briefdescription>
+<para>Use any location service that has been configured to be available. </para>
+          </briefdescription>
+          <detaileddescription>
+<para>This is especially useful when only one service is configured but can be used even if many are available, in which case selected service is undefined. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__multicell__location_ga9567c3abc8b007ab123ba94828319fc0_1gga9567c3abc8b007ab123ba94828319fc0a46794f939d900f3b1b844273b1307ee1" prot="public">
+          <name>MULTICELL_SERVICE_NRF_CLOUD</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>nRF Cloud location service. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__multicell__location_ga9567c3abc8b007ab123ba94828319fc0_1gga9567c3abc8b007ab123ba94828319fc0aa7dd29eb8d849e67cadfec16e46cfff2" prot="public">
+          <name>MULTICELL_SERVICE_HERE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Here location service. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__multicell__location_ga9567c3abc8b007ab123ba94828319fc0_1gga9567c3abc8b007ab123ba94828319fc0abce4363517d01ce499abce0ee1fc0b12" prot="public">
+          <name>MULTICELL_SERVICE_SKYHOOK</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Skyhook location service. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__multicell__location_ga9567c3abc8b007ab123ba94828319fc0_1gga9567c3abc8b007ab123ba94828319fc0a7a652aba5c00d844e71dd1a19a25aa7e" prot="public">
+          <name>MULTICELL_SERVICE_POLTE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Polte location service. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Cellular positioning service. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/multicell_location.h" line="28" column="1" bodyfile="include/net/multicell_location.h" bodystart="28" bodyend="44"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__multicell__location_1ga1460ffa5448e78e72fc1fc0183ca5200" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int multicell_location_get</definition>
+        <argsstring>(enum multicell_service service, const struct lte_lc_cells_info *cell_data, struct multicell_location *location)</argsstring>
+        <name>multicell_location_get</name>
+        <param>
+          <type>enum <ref refid="group__multicell__location_ga9567c3abc8b007ab123ba94828319fc0_1ga9567c3abc8b007ab123ba94828319fc0" kindref="member">multicell_service</ref></type>
+          <declname>service</declname>
+        </param>
+        <param>
+          <type>const struct <ref refid="structlte__lc__cells__info" kindref="compound">lte_lc_cells_info</ref> *</type>
+          <declname>cell_data</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structmulticell__location" kindref="compound">multicell_location</ref> *</type>
+          <declname>location</declname>
+        </param>
+        <briefdescription>
+<para>Send a request for location based on cell measurements to the selected location service. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This function will block the calling thread until a response is received from the location service.</para>
+</simplesect>
+<simplesect kind="note"><para>Certificate must be provisioned before a request can be sent, <ref refid="group__multicell__location_ga2e9889f7d39e7cbecf2f1187d28d473f_1ga2e9889f7d39e7cbecf2f1187d28d473f" kindref="member">multicell_location_provision_certificate</ref>.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">service</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Cellular positioning service to be used. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">cell_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to neighbor cell data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">location</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to location.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, or negative error code on failure. </para>
+</simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>-ENOENT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>No cellular cells found from cell_data. I.e., even current cell is not available and there is no cellular connectivity. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMEM</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Out of memory. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>-ENOMSG</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parsing response from the location service failed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/multicell_location.h" line="66" column="5" declfile="include/net/multicell_location.h" declline="66" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__multicell__location_1ga2e9889f7d39e7cbecf2f1187d28d473f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int multicell_location_provision_certificate</definition>
+        <argsstring>(bool overwrite)</argsstring>
+        <name>multicell_location_provision_certificate</name>
+        <param>
+          <type>bool</type>
+          <declname>overwrite</declname>
+        </param>
+        <briefdescription>
+<para>Provision TLS certificate that the selected location service requires for HTTPS connections. Certificate provisioning must be done before location requests can successfully be executed, either using this API or some other method. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Certificate provisioning must happen when LTE is not active in the modem. This is typically achieved by calling this API prior to setting up the LTE link in an application, but it can also be done by setting the modem in offline mode before provisioning.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">overwrite</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If this flag is set, any CA certificate currently provisioned to CONFIG_MULTICELL_LOCATION_TLS_SEC_TAG is overwritten.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, or negative error code on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/multicell_location.h" line="87" column="5" declfile="include/net/multicell_location.h" declline="87" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

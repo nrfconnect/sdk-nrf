@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="sensor__sim__ctrl_8h" kind="file" language="C++">
+    <compoundname>sensor_sim_ctrl.h</compoundname>
+    <includes local="no">zephyr/types.h</includes>
+    <includes local="no">drivers/sensor.h</includes>
+    <includes refid="wave__gen_8h" local="no">wave_gen.h</includes>
+    <includedby refid="nrf52840dk__nrf52840_2sensor__sim__ctrl__def_8h" local="yes">applications/machine_learning/configuration/nrf52840dk_nrf52840/sensor_sim_ctrl_def.h</includedby>
+    <includedby refid="nrf5340dk__nrf5340__cpuapp_2sensor__sim__ctrl__def_8h" local="yes">applications/machine_learning/configuration/nrf5340dk_nrf5340_cpuapp/sensor_sim_ctrl_def.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/machine_learning/configuration/common/sensor_sim_ctrl.h</label>
+        <link refid="sensor__sim__ctrl_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>wave_gen.h</label>
+        <link refid="wave__gen_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>drivers/sensor.h</label>
+      </node>
+      <node id="2">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>applications/machine_learning/configuration/common/sensor_sim_ctrl.h</label>
+        <link refid="sensor__sim__ctrl_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>applications/machine_learning/configuration/nrf52840dk_nrf52840/sensor_sim_ctrl_def.h</label>
+        <link refid="nrf52840dk__nrf52840_2sensor__sim__ctrl__def_8h"/>
+      </node>
+      <node id="3">
+        <label>applications/machine_learning/configuration/nrf5340dk_nrf5340_cpuapp/sensor_sim_ctrl_def.h</label>
+        <link refid="nrf5340dk__nrf5340__cpuapp_2sensor__sim__ctrl__def_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structsim__wave" prot="public">sim_wave</innerclass>
+    <innerclass refid="structsim__signal__params" prot="public">sim_signal_params</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2021<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_SENSOR_SIM_CTRL_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_SENSOR_SIM_CTRL_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;drivers/sensor.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="wave__gen_8h" kindref="compound">wave_gen.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="structsim__wave" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structsim__wave" kindref="compound">sim_wave</ref><sp/>{</highlight></codeline>
+<codeline lineno="19" refid="structsim__wave_a557c5774c1a20fbd6852f7422485415f_1a557c5774c1a20fbd6852f7422485415f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structsim__wave_a557c5774c1a20fbd6852f7422485415f_1a557c5774c1a20fbd6852f7422485415f" kindref="member">label</ref>;</highlight></codeline>
+<codeline lineno="20" refid="structsim__wave_a84cb0c94f525167a55c9deb4e8ae4101_1a84cb0c94f525167a55c9deb4e8ae4101" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structwave__gen__param" kindref="compound">wave_gen_param</ref><sp/><ref refid="structsim__wave_a84cb0c94f525167a55c9deb4e8ae4101_1a84cb0c94f525167a55c9deb4e8ae4101" kindref="member">wave_param</ref>;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="structsim__signal__params" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structsim__signal__params" kindref="compound">sim_signal_params</ref><sp/>{</highlight></codeline>
+<codeline lineno="24" refid="structsim__signal__params_a3b08fa103ff64ceeb8f99a23876db4e4_1a3b08fa103ff64ceeb8f99a23876db4e4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/>sensor_channel<sp/><ref refid="structsim__signal__params_a3b08fa103ff64ceeb8f99a23876db4e4_1a3b08fa103ff64ceeb8f99a23876db4e4" kindref="member">chan</ref>;</highlight></codeline>
+<codeline lineno="25" refid="structsim__signal__params_a74f6da680914c8bb7a228dd9e814c901_1a74f6da680914c8bb7a228dd9e814c901" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structsim__wave" kindref="compound">sim_wave</ref><sp/>*<ref refid="structsim__signal__params_a74f6da680914c8bb7a228dd9e814c901_1a74f6da680914c8bb7a228dd9e814c901" kindref="member">waves</ref>;</highlight></codeline>
+<codeline lineno="26" refid="structsim__signal__params_aaa9e4c0ca6b409b181bf4fc82557b299_1aaa9e4c0ca6b409b181bf4fc82557b299" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structsim__signal__params_aaa9e4c0ca6b409b181bf4fc82557b299_1aaa9e4c0ca6b409b181bf4fc82557b299" kindref="member">waves_cnt</ref>;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_SENSOR_SIM_CTRL_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/machine_learning/configuration/common/sensor_sim_ctrl.h"/>
+  </compounddef>
+</doxygen>

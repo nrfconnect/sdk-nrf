@@ -1,0 +1,536 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__st25r3911b__common" kind="group">
+    <compoundname>st25r3911b_common</compoundname>
+    <title>ST25R3911B NFC Reader common functionality</title>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__st25r3911b__common_1ga679117ae14e947ccaf945b989c0ff498" prot="public" static="no" strong="no">
+        <type></type>
+        <name>st25r3911b_leds</name>
+        <enumvalue id="group__st25r3911b__common_ga679117ae14e947ccaf945b989c0ff498_1gga679117ae14e947ccaf945b989c0ff498a4c297a762ed2884e3b03ee6930b2a9e4" prot="public">
+          <name>ST25R3911B_NFCA_LED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>ST25R3911B NFCA LED ID. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__st25r3911b__common_ga679117ae14e947ccaf945b989c0ff498_1gga679117ae14e947ccaf945b989c0ff498af89db5930526c2a9d73f290c5db7a3ec" prot="public">
+          <name>ST25R3911B_NFCB_LED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>ST25R3911B NFCB LED ID. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__st25r3911b__common_ga679117ae14e947ccaf945b989c0ff498_1gga679117ae14e947ccaf945b989c0ff498aa7066a75ea36fd5876a23dc1f883da44" prot="public">
+          <name>ST25R3911B_NFCF_LED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>ST25R3911B NFCF LED ID. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>ST25R3911B on shield the NFC technology indication LEDs. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_common.h" line="53" column="1" bodyfile="lib/st25r3911b/st25r3911b_common.h" bodystart="53" bodyend="62"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__st25r3911b__common_1ga3b2d694f1cecf075fd9b97f04671f5b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_init</definition>
+        <argsstring>(void)</argsstring>
+        <name>st25r3911b_init</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Initialize the NFC reader. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The NFC reader initialization is common for all NFC technology.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_common.h" line="84" column="5" declfile="lib/st25r3911b/st25r3911b_common.h" declline="84" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__common_1gaf2a64eed31b55a2aead55a95e1348f69" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_tx_len_set</definition>
+        <argsstring>(uint16_t len)</argsstring>
+        <name>st25r3911b_tx_len_set</name>
+        <param>
+          <type>uint16_t</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Set the NFC Reader TX packet length. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The maximum packet length is <ref refid="group__st25r3911b__common_gac6d9d2cb0684362fe1ab3705af33a3b6_1gac6d9d2cb0684362fe1ab3705af33a3b6" kindref="member">ST25R3911B_MAX_TX_LEN</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>TX packet length.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_common.h" line="95" column="5" declfile="lib/st25r3911b/st25r3911b_common.h" declline="95" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__common_1ga778660106d1135e9e58a15fddf678e8c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_non_response_timer_set</definition>
+        <argsstring>(uint16_t fc, bool long_range, bool emv)</argsstring>
+        <name>st25r3911b_non_response_timer_set</name>
+        <param>
+          <type>uint16_t</type>
+          <declname>fc</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>long_range</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>emv</declname>
+        </param>
+        <briefdescription>
+<para>Set NFC Reader No-Response timer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This timer is set to verify whether a tag response is received within the configured time. Time measurement is started at the end of the ST25R3911B transmission. According to NFC Forum Digital 2.0 6.10.1.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">fc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Wait time defined in 64/fc or 4096/fc unit. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">long_range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Long range mode. If this parameter is set, one FDT time is fc * 4096, otherwise fc * 64. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">emv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Emv mode. If set, the timer unconditionally produces an IRQ when it expires and is not stopped by a direct command Clear. This means that IRQ is independent of whether a tag reply was detected. If a tag reply is being processed at the moment of time-out, no other action is taken. If no tag response is being processed, the signal rx_on is forced to low to stop the receive process. If emv mode is not set, the IRQ is produced if the No-Response timer expires before a start of a tag reply is detected, and rx_on is forced to low to stop the receiver process. If the start of a tag reply is detected before time-out, the timer is stopped, and no IRQ is produced.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_common.h" line="126" column="5" declfile="lib/st25r3911b/st25r3911b_common.h" declline="126" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__common_1ga4333ee5e48ba9dce8d31668a0b436c54" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_mask_receive_timer_set</definition>
+        <argsstring>(uint32_t fc)</argsstring>
+        <name>st25r3911b_mask_receive_timer_set</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>fc</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set NFC Reader Mask Receive timer.</para>
+<para>The Mask Receive timer blocks the receiver and reception process in framing logic by keeping the RX disabled after the end of TX during the time the tag reply is not expected. The Mask Receive timer is automatically started at the end of transmission (at the end of EOF). According to NFC Forum Digital 2.0 6.10.1.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">fc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Disable time in 64/fc.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_common.h" line="142" column="5" declfile="lib/st25r3911b/st25r3911b_common.h" declline="142" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__common_1ga9520190be57c05f1d77e2cb94456acc0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_field_on</definition>
+        <argsstring>(uint8_t collision_threshold, uint8_t peer_threshold, uint8_t delay)</argsstring>
+        <name>st25r3911b_field_on</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>collision_threshold</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>peer_threshold</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>delay</declname>
+        </param>
+        <briefdescription>
+<para>Perform automatic collision resolution and switch on the NFC Reader field. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Perform automatic collision resolution and switch the field on if no collision was detected. If thresholds are set to <ref refid="group__st25r3911b__common_gacac16fff82feda9752552a6f000121ff_1gacac16fff82feda9752552a6f000121ff" kindref="member">ST25R3911B_NO_THRESHOLD_ANTICOLLISION</ref>, then RF Collision Avoidance will not be performed.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">collision_threshold</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Collision resolution threshold in mV peek-to-peek. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">peer_threshold</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Peer detection threshold in mV peek-to-peek. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">delay</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Delay after field on in milliseconds, according to NFC Forum Digital 2.0 Guard Time.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_common.h" line="162" column="5" declfile="lib/st25r3911b/st25r3911b_common.h" declline="162" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__common_1gaf213f6b918083fcf456c3e71b05f0f79" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_rx_tx_disable</definition>
+        <argsstring>(void)</argsstring>
+        <name>st25r3911b_rx_tx_disable</name>
+        <param>
+          <type>void</type>
+        </param>
+        <briefdescription>
+<para>Disable NFC Reader Receiver and Transceiver. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Returns 0 if initialization was successful, otherwise negative value. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_common.h" line="170" column="5" declfile="lib/st25r3911b/st25r3911b_common.h" declline="170" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__common_1ga8d83bfda74a66a185d13d839f345f6f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_fifo_reload_lvl_get</definition>
+        <argsstring>(uint8_t *tx_lvl, uint8_t *rx_lvl)</argsstring>
+        <name>st25r3911b_fifo_reload_lvl_get</name>
+        <param>
+          <type>uint8_t *</type>
+          <declname>tx_lvl</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>rx_lvl</declname>
+        </param>
+        <briefdescription>
+<para>Get NFC Reader FIFO reload level. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The interrupt trigger level for read/write FIFO water level is configurable, so it must be read to read/write FIFO bytes if necessary. The NFC Reader supports transfer up to <ref refid="group__st25r3911b__common_gac6d9d2cb0684362fe1ab3705af33a3b6_1gac6d9d2cb0684362fe1ab3705af33a3b6" kindref="member">ST25R3911B_MAX_TX_LEN</ref>, but FIFO is only <ref refid="group__st25r3911b__nfc__spi_ga626f4b68d5c1426241d923cc8d122702_1ga626f4b68d5c1426241d923cc8d122702" kindref="member">ST25R3911B_MAX_FIFO_LEN</ref> bytes.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">tx_lvl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of bytes to write to FIFO if a reload is needed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">rx_lvl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of bytes to read to avoid FIFO overflow.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_common.h" line="187" column="5" declfile="lib/st25r3911b/st25r3911b_common.h" declline="187" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__st25r3911b__common_1gae03fa42851b56df1955f64d2a278e5bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int st25r3911b_technology_led_set</definition>
+        <argsstring>(enum st25r3911b_leds led, bool on)</argsstring>
+        <name>st25r3911b_technology_led_set</name>
+        <param>
+          <type>enum <ref refid="group__st25r3911b__common_ga679117ae14e947ccaf945b989c0ff498_1ga679117ae14e947ccaf945b989c0ff498" kindref="member">st25r3911b_leds</ref></type>
+          <declname>led</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>on</declname>
+        </param>
+        <briefdescription>
+<para>Enable/disable NFC Reader technology LED. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The NFC Reader has several LEDs to indicate which technology is used.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">led</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>LED to set <ref refid="group__st25r3911b__common_ga679117ae14e947ccaf945b989c0ff498_1ga679117ae14e947ccaf945b989c0ff498" kindref="member">st25r3911b_leds</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">on</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If set, LED is on, otherwise LED is off.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the operation was successful. Otherwise, a (negative) error code is returned. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_common.h" line="200" column="5" declfile="lib/st25r3911b/st25r3911b_common.h" declline="200" declcolumn="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__st25r3911b__common_1gac6d9d2cb0684362fe1ab3705af33a3b6" prot="public" static="no">
+        <name>ST25R3911B_MAX_TX_LEN</name>
+        <initializer>8191</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum TX packet length. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_common.h" line="25" column="9" bodyfile="lib/st25r3911b/st25r3911b_common.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__common_1gacac16fff82feda9752552a6f000121ff" prot="public" static="no">
+        <name>ST25R3911B_NO_THRESHOLD_ANTICOLLISION</name>
+        <initializer>0xFF</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>No automatic collision resolution. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_common.h" line="28" column="9" bodyfile="lib/st25r3911b/st25r3911b_common.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__common_1ga2afa6bdcb3c63792cdc4f04248ebde27" prot="public" static="no">
+        <name>ST25R3911B_MAX_THRESHOLD</name>
+        <initializer>0x0F</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum collision resolution threshold. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_common.h" line="31" column="9" bodyfile="lib/st25r3911b/st25r3911b_common.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__common_1ga70d030e37ea0cbdfea185a032e4af058" prot="public" static="no">
+        <name>ST25R3911B_FDT_ADJUST</name>
+        <initializer>64</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Frame delay time (FDT) adjustment. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_common.h" line="34" column="9" bodyfile="lib/st25r3911b/st25r3911b_common.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__common_1ga52da8dba98357f4f4b63b1d0cc4f606b" prot="public" static="no">
+        <name>ST25R3911B_MASK_RECEIVER_MAX_FDT</name>
+        <initializer>0xFC0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum FDT for the Mask Receive timer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_common.h" line="37" column="9" bodyfile="lib/st25r3911b/st25r3911b_common.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__common_1ga8e2ba88342e27683c847e6dafaaaac18" prot="public" static="no">
+        <name>ST25R3911B_NRT_64FC_MAX</name>
+        <initializer>0x3FFFC0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>No-Response timer maximum value for step 64/fc. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_common.h" line="40" column="9" bodyfile="lib/st25r3911b/st25r3911b_common.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__common_1gafa21dacb4e84452e9dd55a155a545291" prot="public" static="no">
+        <name>ST25R3911B_NRT_FC_MAX</name>
+        <initializer>0x4095BF6A000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum FDT for the No-Response timer (in fc). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_common.h" line="43" column="9" bodyfile="lib/st25r3911b/st25r3911b_common.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__common_1ga8922ed8781c514fa22f2e0c069979833" prot="public" static="no">
+        <name>NFC_1FC_IN_64FC</name>
+        <initializer>64</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>FC in 64/fc. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_common.h" line="46" column="9" bodyfile="lib/st25r3911b/st25r3911b_common.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__common_1gae5a55de8e07c3d548ff5758c6a105016" prot="public" static="no">
+        <name>NFC_1FC_IN_4096FC</name>
+        <initializer>4096</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>FC in 4096/fc. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_common.h" line="49" column="9" bodyfile="lib/st25r3911b/st25r3911b_common.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__common_1ga57732c2f8557a3000dd2a31264c11365" prot="public" static="no">
+        <name>ST25R3911B_FC_TO_64FC</name>
+        <param><defname>_fc</defname></param>
+        <initializer>	ceiling_fraction((_fc), <ref refid="group__st25r3911b__common_ga8922ed8781c514fa22f2e0c069979833_1ga8922ed8781c514fa22f2e0c069979833" kindref="member">NFC_1FC_IN_64FC</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Conversion fc to 64/fc. The timer register can be set using the following formula: <computeroutput>register value * 64fc</computeroutput> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_common.h" line="67" column="9" bodyfile="lib/st25r3911b/st25r3911b_common.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__st25r3911b__common_1gae9b1d6a88149ef062865790318c254ad" prot="public" static="no">
+        <name>ST25R3911B_FC_TO_4096FC</name>
+        <param><defname>_fc</defname></param>
+        <initializer>	ceiling_fraction((_fc), <ref refid="group__st25r3911b__common_gae5a55de8e07c3d548ff5758c6a105016_1gae5a55de8e07c3d548ff5758c6a105016" kindref="member">NFC_1FC_IN_4096FC</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Conversion fc to 4096/fc. The timer register can be set using the following formula: <computeroutput>register value * 4096fc</computeroutput> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="lib/st25r3911b/st25r3911b_common.h" line="73" column="9" bodyfile="lib/st25r3911b/st25r3911b_common.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>API for the ST25R3911B NFC Reader common functionality. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

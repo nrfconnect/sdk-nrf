@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structcloud__data__gps" kind="struct" language="C++" prot="public">
+    <compoundname>cloud_data_gps</compoundname>
+    <includes refid="v2_2src_2cloud_2cloud__codec_2cloud__codec_8h" local="no">cloud_codec.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structcloud__data__gps_a169d5936df5538f707541117db33bfd5_1a169d5936df5538f707541117db33bfd5" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t cloud_data_gps::gps_ts</definition>
+        <argsstring></argsstring>
+        <name>gps_ts</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>GPS data timestamp. UNIX milliseconds. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="65" column="9" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__gps_acb7968dc779bf05059830693c7b53056_1acb7968dc779bf05059830693c7b53056" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structcloud__data__gps__pvt" kindref="compound">cloud_data_gps_pvt</ref></type>
+        <definition>struct cloud_data_gps_pvt cloud_data_gps::pvt</definition>
+        <argsstring></argsstring>
+        <name>pvt</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Structure containing PVT data. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="69" column="25" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__gps_af352976f27da3d338a37e07b6e3a7f3c_1af352976f27da3d338a37e07b6e3a7f3c" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char cloud_data_gps::nmea[83]</definition>
+        <argsstring>[83]</argsstring>
+        <name>nmea</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="74" column="6" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__gps_aece0bd7ecba86b8338906ce8139f4661_1aece0bd7ecba86b8338906ce8139f4661" prot="public" static="no" mutable="no">
+        <type>union cloud_data_gps::@5</type>
+        <definition>union cloud_data_gps::@5 cloud_data_gps::@6</definition>
+        <argsstring></argsstring>
+        <name>@6</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="75" column="1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__gps_a30c4a3345acf4e7c651cef28ec1cf171_1a30c4a3345acf4e7c651cef28ec1cf171" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__cloud__codec_gaa18c19f379a624d574e0db849a86f700_1gaa18c19f379a624d574e0db849a86f700" kindref="member">cloud_data_gps_format</ref></type>
+        <definition>enum cloud_data_gps_format cloud_data_gps::format</definition>
+        <argsstring></argsstring>
+        <name>format</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Enum signifying the type of GPS data that is valid. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="78" column="27" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structcloud__data__gps_ac2eac244ce05426a25ca092b983cd175_1ac2eac244ce05426a25ca092b983cd175" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool cloud_data_gps::queued</definition>
+        <argsstring></argsstring>
+        <name>queued</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Flag signifying that the data entry is to be encoded. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="81" column="6" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Structure containing GPS data published to cloud. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>cloud_data_gps</label>
+        <link refid="structcloud__data__gps"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>pvt</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>cloud_data_gps_pvt</label>
+        <link refid="structcloud__data__gps__pvt"/>
+      </node>
+    </collaborationgraph>
+    <location file="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" line="63" column="1" bodyfile="applications/asset_tracker_v2/src/cloud/cloud_codec/cloud_codec.h" bodystart="63" bodyend="82"/>
+    <listofallmembers>
+      <member refid="structcloud__data__gps_a30c4a3345acf4e7c651cef28ec1cf171_1a30c4a3345acf4e7c651cef28ec1cf171" prot="public" virt="non-virtual"><scope>cloud_data_gps</scope><name>format</name></member>
+      <member refid="structcloud__data__gps_a169d5936df5538f707541117db33bfd5_1a169d5936df5538f707541117db33bfd5" prot="public" virt="non-virtual"><scope>cloud_data_gps</scope><name>gps_ts</name></member>
+      <member refid="structcloud__data__gps_af352976f27da3d338a37e07b6e3a7f3c_1af352976f27da3d338a37e07b6e3a7f3c" prot="public" virt="non-virtual"><scope>cloud_data_gps</scope><name>nmea</name></member>
+      <member refid="structcloud__data__gps_acb7968dc779bf05059830693c7b53056_1acb7968dc779bf05059830693c7b53056" prot="public" virt="non-virtual"><scope>cloud_data_gps</scope><name>pvt</name></member>
+      <member refid="structcloud__data__gps_ac2eac244ce05426a25ca092b983cd175_1ac2eac244ce05426a25ca092b983cd175" prot="public" virt="non-virtual"><scope>cloud_data_gps</scope><name>queued</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

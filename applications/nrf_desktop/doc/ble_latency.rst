@@ -52,7 +52,7 @@ The module listens for the following events related to data transfer initiated b
 * ``ble_smp_transfer_event`` - This event is received when the firmware update is received by :ref:`nrf_desktop_ble_smp`.
 
 When these events are received, the module sets the connection latency to low.
-When the :ref:`nrf_desktop_config_channel` is no longer in use and firmware update is not received by :ref:`nrf_desktop_ble_smp` (no mentioned events for ``LOW_LATENCY_CHECK_PERIOD_MS``), the module sets the connection latency to :kconfig:`CONFIG_BT_PERIPHERAL_PREF_LATENCY`  to reduce the power consumption.
+When the :ref:`nrf_desktop_config_channel` is no longer in use and the firmware update is not received by :ref:`nrf_desktop_ble_smp` (no mentioned events for ``LOW_LATENCY_CHECK_PERIOD_MS``), the module sets the connection latency to :kconfig:`CONFIG_BT_PERIPHERAL_PREF_LATENCY`  to reduce the power consumption.
 
   .. note::
      If the option :kconfig:`CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK` is enabled, the LLPM connection latency is not increased unless the device is in the low power mode.
@@ -66,7 +66,7 @@ The module does not register itself using the ``GEN_CONFIG_EVENT_HANDLERS`` macr
    Zephyr's :ref:`zephyr:bluetooth` API does not allow to use the LLPM connection intervals in the connection parameter update request.
    If the LLPM connection interval is in use:
 
-   * The nRF Desktop peripheral uses a 7.5-ms interval in the request.
+   * The nRF Desktop peripheral uses a 7.5 ms interval in the request.
    * The nRF Desktop central ignores the requested connection interval, and only the connection latency is updated.
 
    For more detailed information, see the :ref:`nrf_desktop_ble_conn_params` documentation page.

@@ -1,0 +1,522 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__led__state" kind="group">
+    <compoundname>led_state</compoundname>
+    <title>LED State</title>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__led__state_1ga06c73079be7887a2b71a1a53ed953168" prot="public" static="no" strong="no">
+        <type></type>
+        <name>led_system_state</name>
+        <enumvalue id="group__led__state_ga06c73079be7887a2b71a1a53ed953168_1gga06c73079be7887a2b71a1a53ed953168a9781d816f3b0e57c3bc0bef84cd02f10" prot="public">
+          <name>LED_SYSTEM_STATE_IDLE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_ga06c73079be7887a2b71a1a53ed953168_1gga06c73079be7887a2b71a1a53ed953168a7e91c41d6cca0a46b5870bcf9e39363e" prot="public">
+          <name>LED_SYSTEM_STATE_CHARGING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_ga06c73079be7887a2b71a1a53ed953168_1gga06c73079be7887a2b71a1a53ed953168ae2ecc418b2c8072bff10453191763ac4" prot="public">
+          <name>LED_SYSTEM_STATE_ERROR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_ga06c73079be7887a2b71a1a53ed953168_1gga06c73079be7887a2b71a1a53ed953168acd0d24787c2af6ed8154939d09991164" prot="public">
+          <name>LED_SYSTEM_STATE_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/led_state.h" line="23" column="1" bodyfile="applications/nrf_desktop/configuration/common/led_state.h" bodystart="23" bodyend="29"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__led__state_1ga03c50f11898f21966e568b7e933c84ef" prot="public" static="no" strong="no">
+        <type></type>
+        <name>led_peer_state</name>
+        <enumvalue id="group__led__state_ga03c50f11898f21966e568b7e933c84ef_1gga03c50f11898f21966e568b7e933c84efa383fabe5a5dd7f1a7bc44a96a5c24922" prot="public">
+          <name>LED_PEER_STATE_DISCONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_ga03c50f11898f21966e568b7e933c84ef_1gga03c50f11898f21966e568b7e933c84efa0d07ac7d9d5dfc1ed44d8bd3cdda33b7" prot="public">
+          <name>LED_PEER_STATE_CONNECTED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_ga03c50f11898f21966e568b7e933c84ef_1gga03c50f11898f21966e568b7e933c84efaaf875ea764375b041bdd17574061a45c" prot="public">
+          <name>LED_PEER_STATE_PEER_SEARCH</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_ga03c50f11898f21966e568b7e933c84ef_1gga03c50f11898f21966e568b7e933c84efa7a16273df0f4c72324ded0029d6fc990" prot="public">
+          <name>LED_PEER_STATE_CONFIRM_SELECT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_ga03c50f11898f21966e568b7e933c84ef_1gga03c50f11898f21966e568b7e933c84efa0f88fb57d991f7202a902a601b7242fb" prot="public">
+          <name>LED_PEER_STATE_CONFIRM_ERASE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_ga03c50f11898f21966e568b7e933c84ef_1gga03c50f11898f21966e568b7e933c84efa378790eae706c5a63e4e3bf3317d73c0" prot="public">
+          <name>LED_PEER_STATE_ERASE_ADV</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_ga03c50f11898f21966e568b7e933c84ef_1gga03c50f11898f21966e568b7e933c84efae1e7798139b94e846bfcc8a33a318604" prot="public">
+          <name>LED_PEER_STATE_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/led_state.h" line="31" column="1" bodyfile="applications/nrf_desktop/configuration/common/led_state.h" bodystart="31" bodyend="40"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__led__state_1gacb7e9e867e9fca70f6201b3c5c6a71ea" prot="public" static="no" strong="no">
+        <type></type>
+        <name>led_id</name>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa651e0c5e43d0152c8c0b15a25e4d8680" prot="public">
+          <name>LED_ID_1</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa32c22eac06eacdd0c5894a843035a54c" prot="public">
+          <name>LED_ID_2</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa55ab5c87a8274df9cf3d9be0bd925666" prot="public">
+          <name>LED_ID_3</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa07e0545f50f8dc52af5d8322e90db366" prot="public">
+          <name>LED_ID_4</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa02b155ecc1a1d4083c058aa46d6c4446" prot="public">
+          <name>LED_ID_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa4e8e600211b6c2b4a6a46c90fb88fdeb" prot="public">
+          <name>LED_ID_CONNECTING</name>
+          <initializer>= LED_ID_1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaaa212679aa1fcf3396a3fd818157bf32c" prot="public">
+          <name>LED_ID_SEARCHING</name>
+          <initializer>= LED_ID_2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa9e0359cfa1d45e2d105253d7becf1b69" prot="public">
+          <name>LED_ID_PUBLISHING</name>
+          <initializer>= LED_ID_3</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa0d159f1ef41a84e5fee297bd334aa731" prot="public">
+          <name>LED_ID_MODE</name>
+          <initializer>= LED_ID_4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa651e0c5e43d0152c8c0b15a25e4d8680" prot="public">
+          <name>LED_ID_1</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa02b155ecc1a1d4083c058aa46d6c4446" prot="public">
+          <name>LED_ID_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa4e8e600211b6c2b4a6a46c90fb88fdeb" prot="public">
+          <name>LED_ID_CONNECTING</name>
+          <initializer>= LED_ID_1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaaa212679aa1fcf3396a3fd818157bf32c" prot="public">
+          <name>LED_ID_SEARCHING</name>
+          <initializer>= LED_ID_1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa9e0359cfa1d45e2d105253d7becf1b69" prot="public">
+          <name>LED_ID_PUBLISHING</name>
+          <initializer>= LED_ID_1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa0d159f1ef41a84e5fee297bd334aa731" prot="public">
+          <name>LED_ID_MODE</name>
+          <initializer>= LED_ID_1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaaa19d31747d4684387c87bac64aa61fc7" prot="public">
+          <name>LED_ID_ML_STATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa1046499c4127379d00588563f8b39df3" prot="public">
+          <name>LED_ID_SENSOR_SIM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa02b155ecc1a1d4083c058aa46d6c4446" prot="public">
+          <name>LED_ID_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa5e7b8915c50a0d7770d8c875e69e8ad4" prot="public">
+          <name>LED_ID_SYSTEM_STATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaab2123c9f2b5f8c768197c2d492b13421" prot="public">
+          <name>LED_ID_PEER_STATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa02b155ecc1a1d4083c058aa46d6c4446" prot="public">
+          <name>LED_ID_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa0a63ae12524c4a6186bdef8291bc0480" prot="public">
+          <name>LED_ID_NET_STATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa1f8a672ec7ce72465525bfbca246be82" prot="public">
+          <name>LED_ID_PELION_STATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa02b155ecc1a1d4083c058aa46d6c4446" prot="public">
+          <name>LED_ID_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/led_state.h" line="42" column="1" bodyfile="applications/nrf_desktop/configuration/common/led_state.h" bodystart="42" bodyend="47"/>
+      </memberdef>
+      <memberdef kind="enum" id="group__led__state_1gacb7e9e867e9fca70f6201b3c5c6a71ea" prot="public" static="no" strong="no">
+        <type></type>
+        <name>led_id</name>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa651e0c5e43d0152c8c0b15a25e4d8680" prot="public">
+          <name>LED_ID_1</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa32c22eac06eacdd0c5894a843035a54c" prot="public">
+          <name>LED_ID_2</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa55ab5c87a8274df9cf3d9be0bd925666" prot="public">
+          <name>LED_ID_3</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa07e0545f50f8dc52af5d8322e90db366" prot="public">
+          <name>LED_ID_4</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa02b155ecc1a1d4083c058aa46d6c4446" prot="public">
+          <name>LED_ID_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa4e8e600211b6c2b4a6a46c90fb88fdeb" prot="public">
+          <name>LED_ID_CONNECTING</name>
+          <initializer>= LED_ID_1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaaa212679aa1fcf3396a3fd818157bf32c" prot="public">
+          <name>LED_ID_SEARCHING</name>
+          <initializer>= LED_ID_2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa9e0359cfa1d45e2d105253d7becf1b69" prot="public">
+          <name>LED_ID_PUBLISHING</name>
+          <initializer>= LED_ID_3</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa0d159f1ef41a84e5fee297bd334aa731" prot="public">
+          <name>LED_ID_MODE</name>
+          <initializer>= LED_ID_4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa651e0c5e43d0152c8c0b15a25e4d8680" prot="public">
+          <name>LED_ID_1</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa02b155ecc1a1d4083c058aa46d6c4446" prot="public">
+          <name>LED_ID_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa4e8e600211b6c2b4a6a46c90fb88fdeb" prot="public">
+          <name>LED_ID_CONNECTING</name>
+          <initializer>= LED_ID_1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaaa212679aa1fcf3396a3fd818157bf32c" prot="public">
+          <name>LED_ID_SEARCHING</name>
+          <initializer>= LED_ID_1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa9e0359cfa1d45e2d105253d7becf1b69" prot="public">
+          <name>LED_ID_PUBLISHING</name>
+          <initializer>= LED_ID_1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa0d159f1ef41a84e5fee297bd334aa731" prot="public">
+          <name>LED_ID_MODE</name>
+          <initializer>= LED_ID_1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaaa19d31747d4684387c87bac64aa61fc7" prot="public">
+          <name>LED_ID_ML_STATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa1046499c4127379d00588563f8b39df3" prot="public">
+          <name>LED_ID_SENSOR_SIM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa02b155ecc1a1d4083c058aa46d6c4446" prot="public">
+          <name>LED_ID_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa5e7b8915c50a0d7770d8c875e69e8ad4" prot="public">
+          <name>LED_ID_SYSTEM_STATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaab2123c9f2b5f8c768197c2d492b13421" prot="public">
+          <name>LED_ID_PEER_STATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa02b155ecc1a1d4083c058aa46d6c4446" prot="public">
+          <name>LED_ID_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa0a63ae12524c4a6186bdef8291bc0480" prot="public">
+          <name>LED_ID_NET_STATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa1f8a672ec7ce72465525bfbca246be82" prot="public">
+          <name>LED_ID_PELION_STATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__led__state_gacb7e9e867e9fca70f6201b3c5c6a71ea_1ggacb7e9e867e9fca70f6201b3c5c6a71eaa02b155ecc1a1d4083c058aa46d6c4446" prot="public">
+          <name>LED_ID_COUNT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/pelion_client/configuration/common/led_state.h" line="20" column="1" bodyfile="applications/pelion_client/configuration/common/led_state.h" bodystart="20" bodyend="25"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__led__state_1gadc8c409756ef96aeb3ef4db80c3f7e71" prot="public" static="no">
+        <name>LED_UNAVAILABLE</name>
+        <initializer>0xFF</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/led_state.h" line="49" column="9" bodyfile="applications/nrf_desktop/configuration/common/led_state.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__led__state_1ga92c4aadfd3f53f9040a7f46a1451ffab" prot="public" static="no">
+        <name>LED_PEER_COUNT</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/nrf_desktop/configuration/common/led_state.h" line="59" column="10" bodyfile="applications/nrf_desktop/configuration/common/led_state.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__led__state_1gadc8c409756ef96aeb3ef4db80c3f7e71" prot="public" static="no">
+        <name>LED_UNAVAILABLE</name>
+        <initializer>0xFF</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/pelion_client/configuration/common/led_state.h" line="27" column="9" bodyfile="applications/pelion_client/configuration/common/led_state.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>LED State. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

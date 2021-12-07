@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structnrf__cloud__pgps__system__time" kind="struct" language="C++" prot="public">
+    <compoundname>nrf_cloud_pgps_system_time</compoundname>
+    <includes refid="nrf__cloud__pgps_8h" local="no">nrf_cloud_pgps.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnrf__cloud__pgps__system__time_a78b01910533a6130189ee6a676ad4304_1a78b01910533a6130189ee6a676ad4304" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t nrf_cloud_pgps_system_time::date_day</definition>
+        <argsstring></argsstring>
+        <name>date_day</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of days since GPS time began on 6 Jan 1980 for the center of a prediction&apos;s validity period. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="38" column="10" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__pgps__system__time_a0765a1c4f092ae8b1470dbb9fbd98887_1a0765a1c4f092ae8b1470dbb9fbd98887" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t nrf_cloud_pgps_system_time::time_full_s</definition>
+        <argsstring></argsstring>
+        <name>time_full_s</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Seconds into GPS day for center of validity period. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="40" column="10" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__pgps__system__time_ae9d13fa06cae85c5cfb74d04bff9ae8e_1ae9d13fa06cae85c5cfb74d04bff9ae8e" prot="public" static="no" mutable="no">
+        <type>uint16_t</type>
+        <definition>uint16_t nrf_cloud_pgps_system_time::time_frac_ms</definition>
+        <argsstring></argsstring>
+        <name>time_frac_ms</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Will be 0. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="42" column="10" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__pgps__system__time_aa0471057caa1a3927afb947a56b1ef1a_1aa0471057caa1a3927afb947a56b1ef1a" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t nrf_cloud_pgps_system_time::sv_mask</definition>
+        <argsstring></argsstring>
+        <name>sv_mask</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Will be 0. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="44" column="10" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnrf__cloud__pgps__system__time_a7fabac5fc5076bec527308a8fc8be201_1a7fabac5fc5076bec527308a8fc8be201" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t nrf_cloud_pgps_system_time::pad</definition>
+        <argsstring></argsstring>
+        <name>pad</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Placeholder where sv_tow[32] is for A-GPS. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/net/nrf_cloud_pgps.h" line="46" column="10" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="structnrf__cloud__pgps__system__time" kindref="compound">nrf_cloud_pgps_system_time</ref> is a special version of nrf_cloud_agps_system_time that does not include the full array of sv_tow values; this is transferred from the cloud as part of each prediction, to indicate the date_day and time_full_s for the center of each prediction&apos;s validity period. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="include/net/nrf_cloud_pgps.h" line="34" column="1" bodyfile="include/net/nrf_cloud_pgps.h" bodystart="34" bodyend="47"/>
+    <listofallmembers>
+      <member refid="structnrf__cloud__pgps__system__time_a78b01910533a6130189ee6a676ad4304_1a78b01910533a6130189ee6a676ad4304" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_system_time</scope><name>date_day</name></member>
+      <member refid="structnrf__cloud__pgps__system__time_a7fabac5fc5076bec527308a8fc8be201_1a7fabac5fc5076bec527308a8fc8be201" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_system_time</scope><name>pad</name></member>
+      <member refid="structnrf__cloud__pgps__system__time_aa0471057caa1a3927afb947a56b1ef1a_1aa0471057caa1a3927afb947a56b1ef1a" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_system_time</scope><name>sv_mask</name></member>
+      <member refid="structnrf__cloud__pgps__system__time_ae9d13fa06cae85c5cfb74d04bff9ae8e_1ae9d13fa06cae85c5cfb74d04bff9ae8e" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_system_time</scope><name>time_frac_ms</name></member>
+      <member refid="structnrf__cloud__pgps__system__time_a0765a1c4f092ae8b1470dbb9fbd98887_1a0765a1c4f092ae8b1470dbb9fbd98887" prot="public" virt="non-virtual"><scope>nrf_cloud_pgps_system_time</scope><name>time_full_s</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

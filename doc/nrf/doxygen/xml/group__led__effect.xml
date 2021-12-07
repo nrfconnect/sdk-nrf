@@ -1,0 +1,152 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="group__led__effect" kind="group">
+    <compoundname>led_effect</compoundname>
+    <title>LED Effect</title>
+    <innerclass refid="structled__color" prot="public">led_color</innerclass>
+    <innerclass refid="structled__effect__step" prot="public">led_effect_step</innerclass>
+    <innerclass refid="structled__effect" prot="public">led_effect</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="group__led__effect_1ga0598a87619ee2a4515a7168a5c59fe62" prot="public" static="no">
+        <name>LED_COLOR</name>
+        <param><defname>_r</defname></param>
+        <param><defname>_g</defname></param>
+        <param><defname>_b</defname></param>
+        <initializer>		{		\
+		.c = {_r, _g, _b}	\
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/led_effect.h" line="38" column="9" bodyfile="applications/asset_tracker/src/ui/include/led_effect.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__led__effect_1ga7c6428435c2dc83069d5a843f4553691" prot="public" static="no">
+        <name>LED_NOCOLOR</name>
+        <param></param>
+        <initializer>		{			\
+		.c = {0, 0, 0}		\
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/led_effect.h" line="41" column="9" bodyfile="applications/asset_tracker/src/ui/include/led_effect.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__led__effect_1ga7fb4ef307bd2b1730f82410432b823c9" prot="public" static="no">
+        <name>LED_EFFECT_LED_ON</name>
+        <param><defname>_color</defname></param>
+        <initializer>	{								       \
+		.steps = ((const struct <ref refid="structled__effect__step" kindref="compound">led_effect_step</ref>[]) {		       \
+			{						       \
+				.color = _color,			       \
+				.substep_count = 1,			       \
+				.substep_time = 0,			       \
+			},						       \
+		}),							       \
+		.step_count = 1,					       \
+		.loop_forever = false,					       \
+	}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/led_effect.h" line="45" column="9" bodyfile="applications/asset_tracker/src/ui/include/led_effect.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__led__effect_1ga6eb404e4fd938a846223091c2d5dbb97" prot="public" static="no">
+        <name>LED_EFFECT_LED_OFF</name>
+        <param></param>
+        <initializer><ref refid="group__led__effect__CAF_ga7fb4ef307bd2b1730f82410432b823c9_1ga7fb4ef307bd2b1730f82410432b823c9" kindref="member">LED_EFFECT_LED_ON</ref>(<ref refid="group__led__effect__CAF_ga7c6428435c2dc83069d5a843f4553691_1ga7c6428435c2dc83069d5a843f4553691" kindref="member">LED_NOCOLOR</ref>())</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/led_effect.h" line="58" column="9" bodyfile="applications/asset_tracker/src/ui/include/led_effect.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__led__effect_1ga3cbbf6d5748a1dd5c33af7d3e97fe2cf" prot="public" static="no">
+        <name>LED_EFFECT_LED_BLINK</name>
+        <param><defname>_period</defname></param>
+        <param><defname>_color</defname></param>
+        <initializer>	{								       \
+		.steps = ((const struct <ref refid="structled__effect__step" kindref="compound">led_effect_step</ref>[]) {		       \
+			{						       \
+				.color = _color,			       \
+				.substep_count = 1,			       \
+				.substep_time = (_period),		       \
+			},						       \
+			{						       \
+				.color = <ref refid="group__led__effect__CAF_ga7c6428435c2dc83069d5a843f4553691_1ga7c6428435c2dc83069d5a843f4553691" kindref="member">LED_NOCOLOR</ref>(),			       \
+				.substep_count = 1,			       \
+				.substep_time = (_period),		       \
+			},						       \
+		}),							       \
+		.step_count = 2,					       \
+		.loop_forever = true,					       \
+	}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/led_effect.h" line="60" column="9" bodyfile="applications/asset_tracker/src/ui/include/led_effect.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__led__effect_1gad4b95635b0de60aef46b75c6e443f635" prot="public" static="no">
+        <name>LED_EFFECT_LED_BREATHE</name>
+        <param><defname>_period</defname></param>
+        <param><defname>_pause</defname></param>
+        <param><defname>_color</defname></param>
+        <initializer>	{								       \
+		.steps = ((struct <ref refid="structled__effect__step" kindref="compound">led_effect_step</ref>[]) {			       \
+			{						       \
+				.color = _color,			       \
+				.substep_count = _BREATH_SUBSTEPS,	       \
+				.substep_time = ((_period +		       \
+					(_BREATH_SUBSTEPS - 1))		       \
+					/ _BREATH_SUBSTEPS),		       \
+			},						       \
+			{						       \
+				.color = _color,			       \
+				.substep_count = 1,			       \
+				.substep_time = _period,		       \
+			},						       \
+			{						       \
+				.color = <ref refid="group__led__effect__CAF_ga7c6428435c2dc83069d5a843f4553691_1ga7c6428435c2dc83069d5a843f4553691" kindref="member">LED_NOCOLOR</ref>(),			       \
+				.substep_count = _BREATH_SUBSTEPS,	       \
+				.substep_time = ((_period +		       \
+					(_BREATH_SUBSTEPS - 1))		       \
+					/ _BREATH_SUBSTEPS),		       \
+			},						       \
+			{						       \
+				.color = <ref refid="group__led__effect__CAF_ga7c6428435c2dc83069d5a843f4553691_1ga7c6428435c2dc83069d5a843f4553691" kindref="member">LED_NOCOLOR</ref>(),			       \
+				.substep_count = _BREATH_PAUSE_SUBSTEPS,       \
+				.substep_time = _pause,			       \
+			},						       \
+		}),							       \
+		.step_count = 4,					       \
+		.loop_forever = true,					       \
+	}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker/src/ui/include/led_effect.h" line="80" column="9" bodyfile="applications/asset_tracker/src/ui/include/led_effect.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>LED Effect. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

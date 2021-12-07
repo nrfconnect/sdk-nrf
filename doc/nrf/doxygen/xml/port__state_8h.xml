@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="port__state_8h" kind="file" language="C++">
+    <compoundname>port_state.h</compoundname>
+    <includes local="no">stddef.h</includes>
+    <includes local="no">zephyr/types.h</includes>
+    <includedby refid="nrf52810dmouse__nrf52810_2port__state__def_8h" local="yes">applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/port_state_def.h</includedby>
+    <includedby refid="nrf52820dongle__nrf52820_2port__state__def_8h" local="yes">applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/port_state_def.h</includedby>
+    <includedby refid="nrf52833dk__nrf52833_2port__state__def_8h" local="yes">applications/nrf_desktop/configuration/nrf52833dk_nrf52833/port_state_def.h</includedby>
+    <includedby refid="nrf52833dongle__nrf52833_2port__state__def_8h" local="yes">applications/nrf_desktop/configuration/nrf52833dongle_nrf52833/port_state_def.h</includedby>
+    <includedby refid="nrf52840dk__nrf52840_2port__state__def_8h" local="yes">applications/nrf_desktop/configuration/nrf52840dk_nrf52840/port_state_def.h</includedby>
+    <includedby refid="nrf52840dongle__nrf52840_2port__state__def_8h" local="yes">applications/nrf_desktop/configuration/nrf52840dongle_nrf52840/port_state_def.h</includedby>
+    <includedby refid="nrf52840gmouse__nrf52840_2port__state__def_8h" local="yes">applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/port_state_def.h</includedby>
+    <includedby refid="nrf52dmouse__nrf52832_2port__state__def_8h" local="yes">applications/nrf_desktop/configuration/nrf52dmouse_nrf52832/port_state_def.h</includedby>
+    <includedby refid="nrf52kbd__nrf52832_2port__state__def_8h" local="yes">applications/nrf_desktop/configuration/nrf52kbd_nrf52832/port_state_def.h</includedby>
+    <includedby refid="nrf5340dk__nrf5340__cpuapp_2port__state__def_8h" local="yes">applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp/port_state_def.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/common/port_state.h</label>
+        <link refid="port__state_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stddef.h</label>
+      </node>
+      <node id="3">
+        <label>zephyr/types.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>applications/nrf_desktop/configuration/common/port_state.h</label>
+        <link refid="port__state_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>applications/nrf_desktop/configuration/nrf52810dmouse_nrf52810/port_state_def.h</label>
+        <link refid="nrf52810dmouse__nrf52810_2port__state__def_8h"/>
+      </node>
+      <node id="3">
+        <label>applications/nrf_desktop/configuration/nrf52820dongle_nrf52820/port_state_def.h</label>
+        <link refid="nrf52820dongle__nrf52820_2port__state__def_8h"/>
+      </node>
+      <node id="4">
+        <label>applications/nrf_desktop/configuration/nrf52833dk_nrf52833/port_state_def.h</label>
+        <link refid="nrf52833dk__nrf52833_2port__state__def_8h"/>
+      </node>
+      <node id="5">
+        <label>applications/nrf_desktop/configuration/nrf52833dongle_nrf52833/port_state_def.h</label>
+        <link refid="nrf52833dongle__nrf52833_2port__state__def_8h"/>
+      </node>
+      <node id="6">
+        <label>applications/nrf_desktop/configuration/nrf52840dk_nrf52840/port_state_def.h</label>
+        <link refid="nrf52840dk__nrf52840_2port__state__def_8h"/>
+      </node>
+      <node id="7">
+        <label>applications/nrf_desktop/configuration/nrf52840dongle_nrf52840/port_state_def.h</label>
+        <link refid="nrf52840dongle__nrf52840_2port__state__def_8h"/>
+      </node>
+      <node id="8">
+        <label>applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840/port_state_def.h</label>
+        <link refid="nrf52840gmouse__nrf52840_2port__state__def_8h"/>
+      </node>
+      <node id="9">
+        <label>applications/nrf_desktop/configuration/nrf52dmouse_nrf52832/port_state_def.h</label>
+        <link refid="nrf52dmouse__nrf52832_2port__state__def_8h"/>
+      </node>
+      <node id="10">
+        <label>applications/nrf_desktop/configuration/nrf52kbd_nrf52832/port_state_def.h</label>
+        <link refid="nrf52kbd__nrf52832_2port__state__def_8h"/>
+      </node>
+      <node id="11">
+        <label>applications/nrf_desktop/configuration/nrf5340dk_nrf5340_cpuapp/port_state_def.h</label>
+        <link refid="nrf5340dk__nrf5340__cpuapp_2port__state__def_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structpin__state" prot="public">pin_state</innerclass>
+    <innerclass refid="structport__state" prot="public">port_state</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Copyright<sp/>(c)<sp/>2018<sp/>Nordic<sp/>Semiconductor<sp/>ASA</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>SPDX-License-Identifier:<sp/>LicenseRef-Nordic-5-Clause</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_PORT_STATE_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_PORT_STATE_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stddef.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;zephyr/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="structpin__state" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structpin__state" kindref="compound">pin_state</ref><sp/>{</highlight></codeline>
+<codeline lineno="19" refid="structpin__state_a39a363f995c9f194f8bb63723f515362_1a39a363f995c9f194f8bb63723f515362" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structpin__state_a39a363f995c9f194f8bb63723f515362_1a39a363f995c9f194f8bb63723f515362" kindref="member">pin</ref>;</highlight></codeline>
+<codeline lineno="20" refid="structpin__state_a178bb3f467aac07c258c8b6173944f8f_1a178bb3f467aac07c258c8b6173944f8f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structpin__state_a178bb3f467aac07c258c8b6173944f8f_1a178bb3f467aac07c258c8b6173944f8f" kindref="member">val</ref>;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="structport__state" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structport__state" kindref="compound">port_state</ref><sp/>{</highlight></codeline>
+<codeline lineno="24" refid="structport__state_a7951c56b8ef9a0cd0b924c745033ad73_1a7951c56b8ef9a0cd0b924c745033ad73" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<ref refid="structport__state_a7951c56b8ef9a0cd0b924c745033ad73_1a7951c56b8ef9a0cd0b924c745033ad73" kindref="member">name</ref>;</highlight></codeline>
+<codeline lineno="25" refid="structport__state_ae04de965ad9676967a4a3d72fd139f92_1ae04de965ad9676967a4a3d72fd139f92" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structpin__state" kindref="compound">pin_state</ref><sp/>*<ref refid="structport__state_ae04de965ad9676967a4a3d72fd139f92_1ae04de965ad9676967a4a3d72fd139f92" kindref="member">ps</ref>;</highlight></codeline>
+<codeline lineno="26" refid="structport__state_a301d764c7d9281946832433de9ede82d_1a301d764c7d9281946832433de9ede82d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structport__state_a301d764c7d9281946832433de9ede82d_1a301d764c7d9281946832433de9ede82d" kindref="member">ps_count</ref>;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_PORT_STATE_H_<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
+    </programlisting>
+    <location file="applications/nrf_desktop/configuration/common/port_state.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structpeer__conn__event" kind="struct" language="C++" prot="public">
+    <compoundname>peer_conn_event</compoundname>
+    <includes refid="peer__conn__event_8h" local="no">peer_conn_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structpeer__conn__event_a4ecc6722a10a8c4dd23d707b70571537_1a4ecc6722a10a8c4dd23d707b70571537" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="structevent__header" kindref="compound">event_header</ref></type>
+        <definition>struct event_header peer_conn_event::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/peer_conn_event.h" line="47" column="19" bodyfile="applications/connectivity_bridge/src/events/peer_conn_event.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structpeer__conn__event_a05b0e6303180edf7e3fd420f5872c734_1a05b0e6303180edf7e3fd420f5872c734" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__peer__conn__event_ga94dc9b7a737f8d6a3d887f3d3274fbd6_1ga94dc9b7a737f8d6a3d887f3d3274fbd6" kindref="member">peer_id</ref></type>
+        <definition>enum peer_id peer_conn_event::peer_id</definition>
+        <argsstring></argsstring>
+        <name>peer_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/peer_conn_event.h" line="49" column="13" bodyfile="applications/connectivity_bridge/src/events/peer_conn_event.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structpeer__conn__event_a6975df5787212985202eb2349abde353_1a6975df5787212985202eb2349abde353" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t peer_conn_event::dev_idx</definition>
+        <argsstring></argsstring>
+        <name>dev_idx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/peer_conn_event.h" line="50" column="9" bodyfile="applications/connectivity_bridge/src/events/peer_conn_event.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structpeer__conn__event_a68e51710826904bd6aa81a80181eba22_1a68e51710826904bd6aa81a80181eba22" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="group__peer__conn__event_ga33b043d79cb9d6cbd9c0ae1372c984e0_1ga33b043d79cb9d6cbd9c0ae1372c984e0" kindref="member">peer_conn_state</ref></type>
+        <definition>enum peer_conn_state peer_conn_event::conn_state</definition>
+        <argsstring></argsstring>
+        <name>conn_state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/peer_conn_event.h" line="51" column="21" bodyfile="applications/connectivity_bridge/src/events/peer_conn_event.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structpeer__conn__event_ac4cf40838dcafba04cb4ca6c0a4b0ecc_1ac4cf40838dcafba04cb4ca6c0a4b0ecc" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t peer_conn_event::baudrate</definition>
+        <argsstring></argsstring>
+        <name>baudrate</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/connectivity_bridge/src/events/peer_conn_event.h" line="52" column="10" bodyfile="applications/connectivity_bridge/src/events/peer_conn_event.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Peer connection event. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>event_header</label>
+        <link refid="structevent__header"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type_id</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>event_listener</label>
+        <link refid="structevent__listener"/>
+      </node>
+      <node id="4">
+        <label>event_subscriber</label>
+        <link refid="structevent__subscriber"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>listener</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>event_type</label>
+        <link refid="structevent__type"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>subs_start</edgelabel>
+          <edgelabel>subs_stop</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>peer_conn_event</label>
+        <link refid="structpeer__conn__event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>header</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="applications/connectivity_bridge/src/events/peer_conn_event.h" line="46" column="1" bodyfile="applications/connectivity_bridge/src/events/peer_conn_event.h" bodystart="46" bodyend="53"/>
+    <listofallmembers>
+      <member refid="structpeer__conn__event_ac4cf40838dcafba04cb4ca6c0a4b0ecc_1ac4cf40838dcafba04cb4ca6c0a4b0ecc" prot="public" virt="non-virtual"><scope>peer_conn_event</scope><name>baudrate</name></member>
+      <member refid="structpeer__conn__event_a68e51710826904bd6aa81a80181eba22_1a68e51710826904bd6aa81a80181eba22" prot="public" virt="non-virtual"><scope>peer_conn_event</scope><name>conn_state</name></member>
+      <member refid="structpeer__conn__event_a6975df5787212985202eb2349abde353_1a6975df5787212985202eb2349abde353" prot="public" virt="non-virtual"><scope>peer_conn_event</scope><name>dev_idx</name></member>
+      <member refid="structpeer__conn__event_a4ecc6722a10a8c4dd23d707b70571537_1a4ecc6722a10a8c4dd23d707b70571537" prot="public" virt="non-virtual"><scope>peer_conn_event</scope><name>header</name></member>
+      <member refid="structpeer__conn__event_a05b0e6303180edf7e3fd420f5872c734_1a05b0e6303180edf7e3fd420f5872c734" prot="public" virt="non-virtual"><scope>peer_conn_event</scope><name>peer_id</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

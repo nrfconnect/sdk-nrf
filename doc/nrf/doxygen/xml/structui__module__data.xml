@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="structui__module__data" kind="struct" language="C++" prot="public">
+    <compoundname>ui_module_data</compoundname>
+    <includes refid="ui__module__event_8h" local="no">ui_module_event.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structui__module__data_ad165d642990793d536ba7571b766011a_1ad165d642990793d536ba7571b766011a" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int ui_module_data::button_number</definition>
+        <argsstring></argsstring>
+        <name>button_number</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/ui_module_event.h" line="31" column="5" bodyfile="applications/asset_tracker_v2/src/events/ui_module_event.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structui__module__data_a50ac326df7400c799e794bba5220fab7_1a50ac326df7400c799e794bba5220fab7" prot="public" static="no" mutable="no">
+        <type>int64_t</type>
+        <definition>int64_t ui_module_data::timestamp</definition>
+        <argsstring></argsstring>
+        <name>timestamp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="applications/asset_tracker_v2/src/events/ui_module_event.h" line="32" column="9" bodyfile="applications/asset_tracker_v2/src/events/ui_module_event.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/asset_tracker_v2/src/events/ui_module_event.h" line="30" column="1" bodyfile="applications/asset_tracker_v2/src/events/ui_module_event.h" bodystart="30" bodyend="33"/>
+    <listofallmembers>
+      <member refid="structui__module__data_ad165d642990793d536ba7571b766011a_1ad165d642990793d536ba7571b766011a" prot="public" virt="non-virtual"><scope>ui_module_data</scope><name>button_number</name></member>
+      <member refid="structui__module__data_a50ac326df7400c799e794bba5220fab7_1a50ac326df7400c799e794bba5220fab7" prot="public" virt="non-virtual"><scope>ui_module_data</scope><name>timestamp</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

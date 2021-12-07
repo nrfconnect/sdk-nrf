@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.2" xml:lang="en-US">
+  <compounddef id="dir_e88cae9839a4dfe98058b5537737ab06" kind="dir">
+    <compoundname>applications/pelion_client/src/util/net</compoundname>
+    <innerfile refid="net__wrapper_8h">net_wrapper.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="applications/pelion_client/src/util/net/"/>
+  </compounddef>
+</doxygen>
